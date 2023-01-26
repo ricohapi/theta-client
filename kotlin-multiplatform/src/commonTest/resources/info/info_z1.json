@@ -1,0 +1,26 @@
+{
+    "api": [
+      "/osc/info",
+      "/osc/state",
+      "/osc/checkForUpdates",
+      "/osc/commands/execute",
+      "/osc/commands/status"
+    ],
+    "apiLevel": [
+      2
+    ],
+    "_bluetoothMacAddress": "58:38:79:03:0C:EB",
+    "endpoints": {
+      "httpPort": 80,
+      "httpUpdatesPort": 80
+    },
+    "firmwareVersion": "2.10.3",
+    "gps": false,
+    "gyro": true,
+    "manufacturer": "RICOH",
+    "model": "RICOH THETA Z1",
+    "serialNumber": "10010065",
+    "supportUrl": "https://theta360.com/en/support/",
+    "uptime": 142,
+    "_wlanMacAddress": "58:38:79:03:17:AA"
+}

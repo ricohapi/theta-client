@@ -1,0 +1,8 @@
+{
+    "error": {
+        "code": "UnitTest",
+        "message": "UnitTest error"
+    },
+    "name": "camera.delete",
+    "state": "error"
+}

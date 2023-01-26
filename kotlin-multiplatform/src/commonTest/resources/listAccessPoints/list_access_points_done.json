@@ -1,0 +1,32 @@
+{
+  "name": "camera._listAccessPoints",
+  "results": {
+    "accessPoints": [
+      {
+        "connectionPriority": 1,
+        "defaultGateway": "192.168.1.11",
+        "ipAddress": "192.168.1.10",
+        "ipAddressAllocation": "static",
+        "security": "WEP",
+        "ssid": "ssid_to_set",
+        "ssidStealth": false,
+        "subnetMask": "255.255.0.0"
+      },
+      {
+        "connectionPriority": 2,
+        "ipAddressAllocation": "dynamic",
+        "security": "WPA/WPA2 PSK",
+        "ssid": "MightyThor2",
+        "ssidStealth": true
+      },
+      {
+        "connectionPriority": 3,
+        "ipAddressAllocation": "dynamic",
+        "security": "WPA/WPA2 PSK",
+        "ssid": "abcd",
+        "ssidStealth": true
+      }
+    ]
+  },
+  "state": "done"
+}

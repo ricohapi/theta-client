@@ -1,0 +1,37 @@
+{
+  "name": "camera._getMetadata",
+  "results": {
+    "exif": {
+      "ApertureValue": 2.14,
+      "BrightnessValue": -3.44,
+      "ColorSpace": 1,
+      "Copyright": "",
+      "DateTime": "2022:11:14 11:57:13",
+      "ExifVersion": "0231",
+      "ExposureBiasValue": 0.0,
+      "ExposureProgram": 2,
+      "ExposureTime": 0.125,
+      "FNumber": 2.1,
+      "Flash": 32,
+      "FocalLength": 2.57,
+      "ImageDescription": "                                                               ",
+      "Make": "RICOH",
+      "Model": "RICOH THETA Z1",
+      "Orientation": 1,
+      "PhotographicSensitivity": 1600,
+      "Software": "RICOH THETA Z1 Ver 2.10.3",
+      "WhiteBalance": 0
+    },
+    "xmp": {
+      "CroppedAreaImageHeightPixels": 3360,
+      "CroppedAreaImageWidthPixels": 6720,
+      "CroppedAreaLeftPixels": 0,
+      "CroppedAreaTopPixels": 0,
+      "FullPanoHeightPixels": 3360,
+      "FullPanoWidthPixels": 6720,
+      "ProjectionType": "equirectangular",
+      "UsePanoramaViewer": true
+    }
+  },
+  "state": "done"
+}

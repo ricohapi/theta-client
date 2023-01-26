@@ -1,0 +1,25 @@
+{
+  "manufacturer": "RICOH",
+  "model": "RICOH THETA S",
+  "serialNumber": "00301770",
+  "firmwareVersion": "01.90",
+  "supportUrl": "https://theta360.com/en/support/",
+  "apiLevel": [
+      1,
+      2
+  ],
+  "endpoints": {
+      "httpPort": 80,
+      "httpUpdatesPort": 80
+  },
+  "gps": false,
+  "gyro": false,
+  "uptime": 942,
+  "api": [
+      "/osc/info",
+      "/osc/state",
+      "/osc/checkForUpdates",
+      "/osc/commands/execute",
+      "/osc/commands/status"
+  ]
+}
