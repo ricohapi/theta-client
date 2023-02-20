@@ -63,6 +63,7 @@ fun PreviewScreen(toPhoto: (photoUrl: String) -> Unit, viewModel: ThetaViewModel
                 verticalArrangement = Arrangement.Center
             ) {
                 viewModel.startPreview()
+                //viewModel.startPreviewWithCallback()
                 val bitmap by viewModel.previewFlow.collectAsState()
                 bitmap?.let {
                     // Viewer360(bitmap!!)

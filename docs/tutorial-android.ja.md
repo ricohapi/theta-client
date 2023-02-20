@@ -66,6 +66,7 @@ thetaRepository.getPhotoCaptureBuilder()
 	.setIsoAutoHighLimit(ThetaRepository.IsoAutoHighLimitEnum.ISO_800)
 	.setFilter(ThetaRepository.FilterEnum.HDR)
 	.setExposureDelay(ThetaRepository.ExposureDelayEnum.DELAY_OFF) // self-timer
+	.setFileFormat(ThetaRepository.IMAGE_11K)
 	.build()
 	.takePicture(TakenCallback())
 ```
@@ -79,17 +80,13 @@ thetaRepository.getPhotoCaptureBuilder()
 * セルフタイマー
   * 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 * 解像度
-  * 標準
-  * 高解像度
 
 | 機種 | 解像度指定 | 横(pixel) | 縦(pixel) |
 | ---- | --------- |-- | -- |
-| THETA X | high | 11,008 | 5,504 |
-| THETA X | normal | 5,504 | 2,752 |
-| THETA Z1 | normal, high | 6,720 | 3,360 |
-| THETA V | normal, high | 5,376 | 2,688 |
-| THETA S | normal, high | 5,376 | 2,688 |
-| THETA SC | normal, high | 5,376 | 2,688 |
+| THETA X | IMAGE_11K | 11,008 | 5,504 |
+| THETA X | IMAGE_5_5K | 5,504 | 2,752 |
+| THETA Z1 | IMAGE_6_7K | 6,720 | 3,360 |
+| THETA S, SC, SC2, V | IMAGE_5K | 5,376 | 2,688 |
 
 * 画像処理
   * なし
@@ -97,8 +94,8 @@ thetaRepository.getPhotoCaptureBuilder()
   * HDR
 
 * GPSオン/オフ (THETA X以外は指定しても無視される)
-  * on
-  * off
+  * ON
+  * OFF
 
 * ISO上限 (THETA V ファームウェア v2.50.1以前、THETA S、THETA SCでは指定しても無視される)
   * 200, 250, 320, 400, 500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200
@@ -111,20 +108,27 @@ thetaRepository.getPhotoCaptureBuilder()
 ``` kotlin
 val videoCapture: VideoCapture = VideoCapture.Builder()
     .setAutoIsoUpperLimit(IsoEnum.ISO_800)
-    .setResolution(VideoResolutionEnum.R_4K)
+    .setFileFormat(VideoFileFormatEnum.VIDEO_5_7K_30F)
     .build()
 ```
 
-上の例ではISO感度の最大値を800に、解像度を4Kに設定しています。
+上の例ではISO感度の最大値を800に、解像度を5.7Kに設定しています。
 
 Theta SとTheta SC以外ではプレビューを表示できます。表示方法は[プレビューを表示する](#プレビューを表示する)をご覧ください
 
 次に`VideoCapture.startCapture()`を呼んで動画の撮影を開始します。引数にはMP4ファイルをHTTP GETするコールバック関数を渡します。
 
 ``` kotlin
-val videoCapturing: VideoCapturing = videoCapture.startCapture { url ->
-	// GETリクエストを送信してMP4ファイルを受け取る処理
+class TakenCallback : VideoCapture.StartCaptureCallback {
+	override fun onSuccess(fileUrl: String) {
+		// get MP4 file
+	}
+	override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
+		// error processing
+	}
 }
+
+val videoCapturing: VideoCapturing = videoCapture.startCapture(TakenCallback())
 ```
 
 次に`VideoCapturing.stopCapture()`を呼んで動画の撮影を終了します。撮影終了後、MP4ファイルの生成が完了すると、`startCapture()`に渡したコールバック関数が呼ばれます。
@@ -139,14 +143,14 @@ videoCapturing.stopCapture()
 
 | 機種 | 解像度指定 | 横(pixel) | 縦(pixel) |
 | ---- | --------- |-- | -- |
-| THETA X | high | 3,840 | 1,920 |
-| THETA X | normal | 1,920 | 960 |
-| THETA Z1 | high | 3,840 | 1,920 |
-| THETA Z1 | normal | 1,920 | 960 |
-| THETA V | high | 3,840 | 1,920 |
-| THETA V | normal | 1,920 | 960 |
-| THETA S | normal, high | 1,920 | 1,080 |
-| THETA SC | normal, high | 1,920 | 1,080 |
+| THETA X | VIDEO_5_7K_30F | 5,760 | 2,880 |
+| THETA X | VIDEO_4K_30F | 3,840 | 1,920 |
+| THETA X | VIDEO_2K_30F | 1,920 | 960 |
+| THETA Z1 | VIDEO_4K | 3,840 | 1,920 |
+| THETA Z1 | VIDEO_2K | 1,920 | 960 |
+| THETA SC2, V | VIDEO_4K | 3,840 | 1,920 |
+| THETA SC2, V | VIDEO_2K | 1,920 | 960 |
+| THETA S, SC | VIDEO_FULL_HD | 1,920 | 1,080 |
 
 * 最長撮影時間(分)
   * 5
@@ -165,8 +169,8 @@ videoCapturing.stopCapture()
 | THETA Z1 | 1024 | 512 | 30 | |
 | THETA V | 1024 | 512 | 30 | ファームウェア v2.21.1以降 |
 | THETA V | 1024 | 512 | 8 | ファームウェア v2.20.1以前 |
-| THETA S | 640 | 320 | 10 | |
-| THETA SC | 640 | 320 | 10 | |
+| THETA SC2 | 1024 | 512 | 30 ||
+| THETA S, SC | 640 | 320 | 10 | |
 
 `ThetaRepository.getLivePreview()`を呼ぶと、`Flow<io.ktor.utils.io.core.ByteReadPacket>`が返るので、そこか各フレームのJPEGを取得します。
 ```kotlin
@@ -209,10 +213,6 @@ JPEGファイル、MP4ファイルは`FileInfo.fileUrl`、サムネイルのJPEG
   |fileUrl|String|ファイルのURLを表します|
   |thumbnailUrl|String|サムネールのURLを表します|
 
-## THETAをリセットする
-`ThetaRepository.reset()`を呼びます。
-
-
 ## THETAの情報を取得する
 
 `ThetaRepository.getThetaInfo()`を呼びます。
@@ -220,3 +220,6 @@ JPEGファイル、MP4ファイルは`FileInfo.fileUrl`、サムネイルのJPEG
 ## THETAの状態を取得する
 
 `ThetaRepository.getThetaState()`を呼びます。
+
+## THETAをリセットする
+`ThetaRepository.reset()`を呼びます。

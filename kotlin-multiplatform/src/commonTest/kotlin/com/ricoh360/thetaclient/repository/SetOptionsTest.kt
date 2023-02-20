@@ -19,7 +19,7 @@ import kotlin.test.*
 
 @OptIn(ExperimentalSerializationApi::class, ExperimentalCoroutinesApi::class)
 class SetOptionsTest {
-    private val endpoint = "http://dummy/"
+    private val endpoint = "http://192.168.1.1:80/"
 
     @BeforeTest
     fun setup() {

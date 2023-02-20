@@ -13,7 +13,7 @@ import kotlin.test.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class GetThetaInfoTest {
-    private val endpoint = "http://dummy/"
+    private val endpoint = "http://192.168.1.1:80/"
 
     @BeforeTest
     fun setup() {
@@ -99,6 +99,32 @@ class GetThetaInfoTest {
         assertTrue(thetaInfo.serialNumber.length > 1, "info serialNumber")
         assertTrue(thetaInfo.firmwareVersion.length > 1, "info firmwareVersion")
         assertTrue(thetaInfo.hasGps, "info hasGps")
+        assertTrue(thetaInfo.hasGyro, "info hasGyro")
+        assertTrue(thetaInfo.uptime > 0, "info uptime")
+    }
+
+    /**
+     * call getThetaInfo for THETA SC2.
+     */
+    @Test
+    fun getThetaInfoForSC2Test() = runTest {
+        // setup
+        val jsonString = Resource("src/commonTest/resources/info/info_sc2.json").readText()
+        MockApiClient.onRequest = { request ->
+            assertEquals(request.url.encodedPath, "/osc/info", "request path")
+            ByteReadChannel(jsonString)
+        }
+
+        // test
+        val thetaRepository = ThetaRepository(endpoint)
+        val thetaInfo = thetaRepository.getThetaInfo()
+
+        // check
+        assertTrue(thetaRepository.cameraModel == "RICOH THETA SC2", "ThetaRepository cameraModel")
+        assertTrue(thetaInfo.model == "RICOH THETA SC2", "info model")
+        assertTrue(thetaInfo.serialNumber.length > 1, "info serialNumber")
+        assertTrue(thetaInfo.firmwareVersion.length > 1, "info firmwareVersion")
+        assertTrue(!thetaInfo.hasGps, "info hasGps")
         assertTrue(thetaInfo.hasGyro, "info hasGyro")
         assertTrue(thetaInfo.uptime > 0, "info uptime")
     }

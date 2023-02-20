@@ -195,7 +195,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     internal suspend fun setConfigSettings(config: Config) {
         val options = config.getOptions()
         ThetaModel.get(cameraModel)?.let {
-            if (it == ThetaModel.THETA_S || it == ThetaModel.THETA_SC) {
+            if (it == ThetaModel.THETA_S || it == ThetaModel.THETA_SC || it == ThetaModel.THETA_SC2) {
                 // _language is THETA V or later
                 options._language = null
             }
@@ -229,7 +229,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             OptionNameEnum.DateTimeZone.value,
             // For THETA V or later
             ThetaModel.get(model)
-                ?.let { if (it != ThetaModel.THETA_S && it != ThetaModel.THETA_SC) OptionNameEnum.Language.value else null },
+                ?.let { if (it != ThetaModel.THETA_S && it != ThetaModel.THETA_SC && it != ThetaModel.THETA_SC2) OptionNameEnum.Language.value else null },
             OptionNameEnum.OffDelay.value,
             OptionNameEnum.SleepDelay.value,
             OptionNameEnum.ShutterVolume.value
@@ -294,7 +294,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         /**
          * THETA X
          */
-        THETA_X("RICOH THETA X");
+        THETA_X("RICOH THETA X"),
+
+        /**
+         * THETA SC2
+         */
+        THETA_SC2("RICOH THETA SC2");
 
         companion object {
             /**
@@ -2379,12 +2384,17 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     enum class MaxRecordableTimeEnum(val sec: Int) {
         /**
-         * Maximum recordable time. 300sec.
+         * Maximum recordable time. 180sec for SC2 only.
+         */
+        RECORDABLE_TIME_180(180),
+
+        /**
+         * Maximum recordable time. 300sec for other than SC2.
          */
         RECORDABLE_TIME_300(300),
 
         /**
-         * Maximum recordable time. 1500sec.
+         * Maximum recordable time. 1500sec for other than SC2.
          */
         RECORDABLE_TIME_1500(1500);
 
@@ -3036,7 +3046,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                     size = VideoFormat.VIDEO_4K
                 )
             }
-            ThetaModel.THETA_S, ThetaModel.THETA_SC -> {
+            ThetaModel.THETA_S, ThetaModel.THETA_SC, ThetaModel.THETA_SC2 -> {
                 return fileUrl
             }
             else -> {

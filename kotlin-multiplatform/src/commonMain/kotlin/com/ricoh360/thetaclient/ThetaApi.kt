@@ -14,8 +14,10 @@ import io.ktor.client.statement.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.core.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
 
 /**
@@ -199,7 +201,6 @@ object ThetaApi {
      * @return You can get the newest frame in a CoroutineScope like this:
      * ```kotlin
      * callGetLivePreviewCommand(endpoint)
-     *     .conflate()
      *     .collect { byteReadPacket ->
      *         if (isActive) {
      *             // Read byteReadPacket
@@ -207,6 +208,7 @@ object ThetaApi {
      *         byteReadPacket.release()
      *     }
      * ```
+     * @exception com.ricoh360.thetaclient.PreviewClientException can not get preview frames
      * @exception java.net.ConnectException can not connect to target endpoint
      * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
      * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
@@ -215,19 +217,46 @@ object ThetaApi {
      */
     @Throws(Throwable::class)
     fun callGetLivePreviewCommand(endpoint: String): Flow<ByteReadPacket> = flow {
-        try {
-            previewClient.request(endpoint)
-            while (previewClient.hasNextPart()) {
-                val part = previewClient.nextPart()
-                emit(ByteReadPacket(part.first, 0, part.second))
+        while(true) {
+            var retry = 3 // retry count when preview command failed
+            val WAIT = 500L // time between retry (ms)
+            var isPreviewStarted = false
+
+            while(retry-- > 0) {
+                kotlin.runCatching {
+                    previewClient.request(endpoint)
+                }.onSuccess {
+                    isPreviewStarted = true
+                }.onFailure {
+                    if(retry <= 0) {
+                        throw(PreviewClientException("Can't start preview"))
+                    }
+                    runBlocking {
+                        delay(WAIT)
+                    }
+                }
+                if (isPreviewStarted) break
             }
-        } catch (t: Throwable) {
-            t.printStackTrace()
-            throw t
-        } finally {
+
             try {
-                previewClient.close()
-            } catch (_: Throwable) {
+                while (previewClient.hasNextPart()) {
+                    val part = previewClient.nextPart()
+                    emit(ByteReadPacket(part.first, 0, part.second))
+                }
+            } catch (t: Throwable) {
+                t.printStackTrace()
+                throw t
+            } finally {
+                try {
+                    previewClient.close()
+                } catch (_: Throwable) {
+                }
+            }
+
+            // Sometimes Theta SC2 doesn't send chunk data, so hasNextPart() finishes.
+            // After a while, call preview command again.
+            runBlocking {
+                delay(WAIT)
             }
         }
     }
@@ -237,6 +266,7 @@ object ThetaApi {
      * @param endpoint Endpoint of Theta web API
      * @param frameHandler Callback function for each JPEG data.  If
      * it returns false, this function exits.
+     * @exception com.ricoh360.thetaclient.PreviewClientException can not get preview frames
      * @exception java.net.ConnectException can not connect to target endpoint
      * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
      * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
@@ -248,19 +278,47 @@ object ThetaApi {
         endpoint: String,
         frameHandler: suspend (Pair<ByteArray, Int>) -> Boolean,
     ) {
-        try {
-            var isContinued = true
-            previewClient.request(endpoint)
-            while (isContinued && previewClient.hasNextPart()) {
-                isContinued = frameHandler(previewClient.nextPart())
+        while(true) {
+            var retry = 3 // retry count when preview command failed
+            val WAIT = 500L // time between retry (ms)
+            var isPreviewStarted = false
+
+            while(retry-- > 0) {
+                kotlin.runCatching {
+                    previewClient.request(endpoint)
+                }.onSuccess {
+                    isPreviewStarted = true
+                }.onFailure {
+                    if(retry <= 0) {
+                        throw(PreviewClientException("Can't start preview"))
+                    }
+                    runBlocking {
+                        delay(WAIT)
+                    }
+                }
+                if (isPreviewStarted) break
             }
-        } catch (t: Throwable) {
-            t.printStackTrace()
-            throw t
-        } finally {
+
             try {
-                previewClient.close()
-            } catch (_: Throwable) {
+                var isContinued = true
+                while (isContinued && previewClient.hasNextPart()) {
+                    isContinued = frameHandler(previewClient.nextPart())
+                }
+                if (!isContinued) return
+            } catch (t: Throwable) {
+                t.printStackTrace()
+                throw t
+            } finally {
+                try {
+                    previewClient.close()
+                } catch (_: Throwable) {
+                }
+            }
+
+            // Sometimes Theta SC2 doesn't send chunk data, so hasNextPart() finishes.
+            // After a while, call preview command again.
+            runBlocking {
+                delay(WAIT)
             }
         }
     }

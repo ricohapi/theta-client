@@ -14,7 +14,7 @@ import kotlin.test.*
 @OptIn(ExperimentalCoroutinesApi::class)
 class PreviewTest {
 
-    private val endpoint = "http://dummy/"
+    private val endpoint = "http://192.168.1.1:80/"
 
     @BeforeTest
     fun setup() {

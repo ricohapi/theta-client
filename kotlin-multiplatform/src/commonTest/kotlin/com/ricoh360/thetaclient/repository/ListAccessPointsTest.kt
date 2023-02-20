@@ -16,7 +16,7 @@ import kotlin.test.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ListAccessPointsTest {
-    private val endpoint = "http://dummy/"
+    private val endpoint = "http://192.168.1.1:80/"
 
     @BeforeTest
     fun setup() {

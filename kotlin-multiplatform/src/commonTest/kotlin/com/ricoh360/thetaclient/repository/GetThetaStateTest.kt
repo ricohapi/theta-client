@@ -13,7 +13,7 @@ import kotlin.test.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class GetThetaStateTest {
-    private val endpoint = "http://dummy/"
+    private val endpoint = "http://192.168.1.1:80/"
 
     @BeforeTest
     fun setup() {
@@ -74,7 +74,7 @@ class GetThetaStateTest {
                         _recordableTime = 0,
                         _apiVersion = 2,
                         _currentStorage = it,
-                        _latestFileUrl = "http://dummy/dummy.JPG"
+                        _latestFileUrl = "http://192.168.1.1:80/dummy.JPG"
                     )
                 )
             )
