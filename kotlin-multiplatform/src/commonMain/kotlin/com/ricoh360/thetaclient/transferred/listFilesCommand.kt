@@ -1,5 +1,5 @@
 /*
- * [camera.listFiles](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera.list_files/)
+ * [camera.listFiles](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md)
  */
 package com.ricoh360.thetaclient.transferred
 

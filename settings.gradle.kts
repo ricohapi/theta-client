@@ -6,5 +6,5 @@ pluginManagement {
     }
 }
 
-rootProject.name = "r360-theta-sdk"
+rootProject.name = "theta-client"
 include(":kotlin-multiplatform")

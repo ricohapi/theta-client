@@ -19,7 +19,7 @@ class FileListScreen extends StatefulWidget {
 class _FileListScreen extends State<FileListScreen> {
   var itemCount = 0;
   List<FileInfo> _fileInfoList = List<FileInfo>.empty(growable: true);
-  final _thetaClientFlutterPlugin = ThetaClientFlutter();
+  final _thetaClientFlutter = ThetaClientFlutter();
 
   @override
   void initState() {
@@ -30,7 +30,7 @@ class _FileListScreen extends State<FileListScreen> {
   Future<void> getFileList() async {
     List<FileInfo>? fileInfoList;
     try {
-      fileInfoList = await _thetaClientFlutterPlugin.listFiles(FileTypeEnum.all, 10000);
+      fileInfoList = await _thetaClientFlutter.listFiles(FileTypeEnum.all, 10000);
     } on PlatformException {
       Navigator.pop(context);
       MessageBox.show(context, 'Error listFiles', () {

@@ -59,4 +59,4 @@ See tutorial in `docs` directory.
 
 ## License
 
-[MIT Licence](LICENSE)
+[MIT License](LICENSE)

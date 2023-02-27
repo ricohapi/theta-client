@@ -1,7 +1,7 @@
 {
-  "name": "@ricohapi/theta-client-react-native",
-  "version": "0.1.0",
-  "description": "test",
+  "name": "theta-client-react-native",
+  "version": "1.0.0",
+  "description": "This library provides a way to control RICOH THETA using.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/index.d.ts",
@@ -32,14 +32,13 @@
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "prepare": "bob build",
     "release": "release-it",
-    "example": "yarn --cwd example",
-    "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build",
-    "bootstrap": "yarn example && yarn install && yarn example pods"
+    "bootstrap": "yarn install"
   },
   "keywords": [
     "react-native",
     "ios",
-    "android"
+    "android",
+    "theta"
   ],
   "repository": "https://github.com/ricohapi/theta-client",
   "author": "ricoh API (https://github.com/ricohapi)",
@@ -84,7 +83,6 @@
   "jest": {
     "preset": "react-native",
     "modulePathIgnorePatterns": [
-      "<rootDir>/example/node_modules",
       "<rootDir>/lib/"
     ]
   },

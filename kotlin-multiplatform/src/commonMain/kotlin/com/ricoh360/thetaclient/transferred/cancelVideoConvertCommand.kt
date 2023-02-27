@@ -1,5 +1,5 @@
 /*
- * [camera._cancelVideoConvert](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera._cancel_video_onvert)
+ * [camera._cancelVideoConvert](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._cancel_video_convert.md)
  */
 package com.ricoh360.thetaclient.transferred
 

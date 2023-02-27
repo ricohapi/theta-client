@@ -1,3 +1,5 @@
+import java.util.*
+
 plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization") version "1.7.20"
@@ -5,18 +7,23 @@ plugins {
     id("maven-publish")
     id("org.jetbrains.dokka")
     kotlin("native.cocoapods")
+    signing
 }
+
+val theta_client_version = "1.0.0"
+// Init publish property
+initProp()
 
 kotlin {
     android()
 
     cocoapods {
         summary = "THETA Client"
-        homepage = "https://theta360.com/"
+        homepage = "https://github.com/ricohapi/theta-client"
         name = "THETAClient"
         authors = "Ricoh Co, Ltd."
-        version = "1.0"
-        source = "{ :http => ''}"
+        version = theta_client_version
+        source = "{ :http => 'https://github.com/ricohapi/theta-client/releases/download/${theta_client_version}/THETAClient.xcframework.zip' }"
         license = "MIT"
         ios.deploymentTarget = "14.0"
         framework {
@@ -87,37 +94,107 @@ android {
     }
 }
 
+val javadocJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+}
+
 // Publish the library to GitHub Packages Mavan repository.
 // Because the components are created only during the afterEvaluate phase, you must
 // configure your publications using the afterEvaluate() lifecycle method.
 afterEvaluate {
+    initProp()
     publishing {
         publications {
             // Creates a Maven publication called "release".
             create<MavenPublication>("release") {
                 // Applies the component for the release build variant.
                 from(components["release"])
-                groupId = "ricoh360.com"
+                artifact(javadocJar.get())
+                groupId = "com.ricoh360.thetaclient"
                 artifactId = "theta-client"
-                version = "0.1"
+                version = theta_client_version
+                pom {
+                    name.set("theta-client")
+                    description.set("This library provides a way to control RICOH THETA using RICOH THETA API v2.1")
+                    url.set("https://github.com/ricohapi/theta-client")
+                    licenses {
+                        license {
+                            name.set("MIT")
+                            url.set("https://github.com/ricohapi/theta-client/blob/main/LICENSE")
+                        }
+                    }
+                    developers {
+                        developer {
+                            organization.set("RICOH360")
+                            organizationUrl.set("https://github.com/ricohapi/theta-client")
+                        }
+                    }
+                    scm {
+                        connection.set("scm:git:git@github.com:ricohapi/theta-client.git")
+                        developerConnection.set("scm:git:git@github.com:ricohapi/theta-client.git")
+                        url.set("https://github.com/ricohapi/theta-client/tree/main")
+                    }
+                }
             }
-            // Creates a Maven publication called “debug”.
             create<MavenPublication>("debug") {
                 // Applies the component for the debug build variant.
                 from(components["debug"])
-                groupId = "ricoh360.com"
+                groupId = "com.ricoh360.thetaclient"
                 artifactId = "theta-client-debug"
-                version = "0.1"
+                version = theta_client_version
             }
         }
         repositories {
             maven {
-                url = uri("https://maven.pkg.github.com/ricohapi/theta-client")
+                url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
                 credentials {
-                    username = System.getenv("GITHUB_USER")
-                    password = System.getenv("GITHUB_PAT") // Personal access token
+                    username = getExtraString("ossrhUsername")
+                    password = getExtraString("ossrhPassword")
                 }
             }
         }
     }
+}
+
+signing {
+    if (getExtraString("signing.keyId") != null) {
+        useInMemoryPgpKeys(
+            getExtraString("signing.keyId"),
+            getExtraString("signing.key"),
+            getExtraString("signing.password")
+        )
+        sign(publishing.publications)
+    }
+}
+
+ext["signing.keyId"] = null
+ext["signing.key"] = null
+ext["signing.password"] = null
+ext["ossrhUsername"] = null
+ext["ossrhPassword"] = null
+
+fun initProp() {
+    val secretPropsFile = project.rootProject.file("local.properties")
+    if (secretPropsFile.exists()) {
+        secretPropsFile.reader().use {
+            Properties().apply {
+                load(it)
+            }
+        }.onEach { (name, value) ->
+            ext[name.toString()] = value
+        }
+    } else {
+        ext["signing.keyId"] = System.getenv("SIGNING_KEY_ID")
+        ext["signing.key"] = System.getenv("SIGNING_KEY")
+        ext["signing.password"] = System.getenv("SIGNING_PASSWORD")
+        ext["ossrhUsername"] = System.getenv("OSSRH_USERNAME")
+        ext["ossrhPassword"] = System.getenv("OSSRH_PASSWORD")
+    }
+}
+
+fun getExtraString(name: String): String? {
+    if (ext.has(name)) {
+        return ext[name]?.toString()
+    }
+    return null
 }

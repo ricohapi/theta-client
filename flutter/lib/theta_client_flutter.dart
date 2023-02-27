@@ -1239,10 +1239,13 @@ enum LanguageEnum {
 
 /// Maximum recordable time (in seconds) of the camera.
 enum MaxRecordableTimeEnum {
-  /// Maximum recordable time. 300sec.
+  /// Maximum recordable time. 180sec for SC2 only.
+  time_180('RECORDABLE_TIME_180'),
+
+  /// Maximum recordable time. 300sec for other than SC2.
   time_300('RECORDABLE_TIME_300'),
 
-  /// Maximum recordable time. 1500sec.
+  /// Maximum recordable time. 1500sec for other than SC2.
   time_1500('RECORDABLE_TIME_1500');
 
   final String rawValue;

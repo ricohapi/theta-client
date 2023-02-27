@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 
 /**
- * POST [/osc/commands/execute](https://api.ricoh/docs/theta-web-api-v2.1/protocols/commands_execute/)
+ * POST [/osc/commands/execute](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/protocols/commands_execute.md)
  */
 object CommandApi {
     const val PATH = "/osc/commands/execute"

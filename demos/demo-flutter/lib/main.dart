@@ -21,7 +21,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
-  final _thetaClientFlutterPlugin = ThetaClientFlutter();
+  final _thetaClientFlutter = ThetaClientFlutter();
   bool _isInitTheta = false;
   bool _initializing = false;
 
@@ -38,7 +38,7 @@ class _MyAppState extends State<MyApp> {
     String platformVersion;
     try {
       platformVersion =
-          await _thetaClientFlutterPlugin.getPlatformVersion() ?? 'Unknown platform version';
+          await _thetaClientFlutter.getPlatformVersion() ?? 'Unknown platform version';
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
@@ -56,11 +56,11 @@ class _MyAppState extends State<MyApp> {
     }
     bool isInitTheta;
     try {
-      isInitTheta = await _thetaClientFlutterPlugin.isInitialized();
+      isInitTheta = await _thetaClientFlutter.isInitialized();
       if (!isInitTheta) {
         _initializing = true;
         debugPrint('start initialize');
-        await _thetaClientFlutterPlugin.initialize(endpoint);
+        await _thetaClientFlutter.initialize(endpoint);
         isInitTheta = true;
       }
     } on PlatformException {

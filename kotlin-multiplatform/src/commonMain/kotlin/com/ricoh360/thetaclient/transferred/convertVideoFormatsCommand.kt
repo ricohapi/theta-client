@@ -1,5 +1,5 @@
 /*
- * [camera._convertVideoFormats](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera._convert_video_formats)
+ * [camera._convertVideoFormats](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._convert_video_formats.md)
  */
 package com.ricoh360.thetaclient.transferred
 

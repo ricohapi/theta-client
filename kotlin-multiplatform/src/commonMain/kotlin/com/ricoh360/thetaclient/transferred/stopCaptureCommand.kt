@@ -1,5 +1,5 @@
 /*
- * [camera.stopCapture](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera.stop_capture/)
+ * [camera.stopCapture](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.stop_capture.md)
  */
 package com.ricoh360.thetaclient.transferred
 

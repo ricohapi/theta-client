@@ -15,11 +15,9 @@ Pod::Spec.new do |s|
   s.source       = { :git => "git@github.com:ricohapi/theta-client.git", :tag => "#{s.version}" }
 
   s.source_files = "ios/**/*.{h,m,mm}"
-  s.pod_target_xcconfig    = {
-    "HEADER_SEARCH_PATHS" => "\"" + ENV["THETA_CLIENT"] + "/kotlin-multiplatform/build/cocoapods/publish/debug/THETAClient.xcframework/ios-arm64/THETAClient.framework/Headers\"",
-  }
 
   s.dependency "React-Core"
+  s.dependency "THETAClient"
 
   # Don't install the dependencies when we run `pod install` in the old architecture.
   if ENV['RCT_NEW_ARCH_ENABLED'] == '1' then

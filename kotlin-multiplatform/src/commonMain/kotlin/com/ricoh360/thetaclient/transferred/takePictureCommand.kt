@@ -1,5 +1,5 @@
 /*
- * [camera.takePicture](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera.take_picture/)
+ * [camera.takePicture](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.take_picture.md)
  */
 package com.ricoh360.thetaclient.transferred
 

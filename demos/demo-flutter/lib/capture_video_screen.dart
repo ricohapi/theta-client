@@ -15,7 +15,7 @@ class CaptureVideoScreen extends StatefulWidget {
 }
 
 class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingObserver {
-  final _thetaClientFlutterPlugin = ThetaClientFlutter();
+  final _thetaClientFlutter = ThetaClientFlutter();
 
   Uint8List frameData = Uint8List(0);
   bool previewing = false;
@@ -54,7 +54,7 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingO
 
   void onResume() {
     debugPrint('onResume');
-    _thetaClientFlutterPlugin.isInitialized()
+    _thetaClientFlutter.isInitialized()
       .then((isInit) {
         if (isInit) {
           startLivePreview();
@@ -123,7 +123,7 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingO
   void initialize() {
     debugPrint('init CaptureVideo');
     // initialize VideoCapture
-    builder = _thetaClientFlutterPlugin.getVideoCaptureBuilder();
+    builder = _thetaClientFlutter.getVideoCaptureBuilder();
     builder!.build()
       .then((value) {
         videoCapture = value;
@@ -152,7 +152,7 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingO
 
   void startLivePreview() {
     previewing = true;
-    _thetaClientFlutterPlugin.getLivePreview(frameHandler)
+    _thetaClientFlutter.getLivePreview(frameHandler)
       .then((value) {
         debugPrint('LivePreview end.');
       })

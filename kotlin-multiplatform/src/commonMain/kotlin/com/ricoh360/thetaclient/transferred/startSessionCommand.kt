@@ -1,5 +1,5 @@
 /*
- * [camera.startSession](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera.startSession/)
+ * [camera.startSession](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.0/commands/camera.start_session.md)
  */
 package com.ricoh360.thetaclient.transferred
 

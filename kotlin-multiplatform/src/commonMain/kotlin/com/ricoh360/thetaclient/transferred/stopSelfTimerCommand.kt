@@ -1,5 +1,5 @@
 /*
- * [camera._stopSelfTimer](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera._stop_self_timer/)
+ * [camera._stopSelfTimer](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._stop_self_timer.md)
  */
 package com.ricoh360.thetaclient.transferred
 

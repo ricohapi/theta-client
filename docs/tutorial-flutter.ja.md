@@ -66,9 +66,9 @@ iOS Deployment Target を15以上に設定
 ``` Dart
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
-final _thetaClientFlutterPlugin = ThetaClientFlutter();
+final _thetaClientFlutter = ThetaClientFlutter();
 
-_thetaClientFlutterPlugin.initialize()
+_thetaClientFlutter.initialize()
   .then((value) {
     // success
   })
@@ -78,7 +78,7 @@ _thetaClientFlutterPlugin.initialize()
 
 OR
 
-_thetaClientFlutterPlugin.initialize('http://<IPアドレス>:<ポート番号>')
+_thetaClientFlutter.initialize('http://<IPアドレス>:<ポート番号>')
   .then((value) {
     // success
   })
@@ -141,7 +141,7 @@ _thetaClientFlutterPlugin.initialize('http://<IPアドレス>:<ポート番号>'
 まず`getPhotoCaptureBuilder()`を使って撮影設定を行い、`PhotoCapture`オブジェクトを生成します。
 
 ``` Dart
-_thetaClientFlutterPlugin.getPhotoCaptureBuilder()
+_thetaClientFlutter.getPhotoCaptureBuilder()
   .setIsoAutoHighLimit(IsoAutoHighLimitEnum.iso1000)
   .setFileFormat(PhotoFileFormatEnum.image_5K)
   .build()
@@ -338,7 +338,7 @@ _thetaClientFlutterPlugin.getPhotoCaptureBuilder()
 まず`getVideoCaptureBuilder()`を使って撮影設定を行い、`VideoCapture`オブジェクトを生成します。
 
 ``` Dart
-_thetaClientFlutterPlugin.getVideoCaptureBuilder()
+_thetaClientFlutter.getVideoCaptureBuilder()
   .setIsoAutoHighLimit(IsoAutoHighLimitEnum.iso800)
   .setFileFormat(VideoFileFormatEnum.videoHD)
   .build()
@@ -575,7 +575,7 @@ videoCapturing.stopCapture();
 
   void startLivePreview() {
     previewing = true;
-    _thetaClientFlutterPlugin.getLivePreview(frameHandler)
+    _thetaClientFlutter.getLivePreview(frameHandler)
       .then((value) {
         // preview done
       })
@@ -606,7 +606,7 @@ videoCapturing.stopCapture();
 ``` Dart
 final options = Options();
 options.aperture = ApertureEnum.apertureAuto;
-_thetaClientFlutterPlugin.setOptions(options)
+_thetaClientFlutter.setOptions(options)
   .then((value) {
     // done
   })
@@ -871,7 +871,7 @@ final optionNames = [
   OptionNameEnum.captureMode,
   OptionNameEnum.colorTemperature,
 ];
-_thetaClientFlutterPlugin.getOptions(optionNames)
+_thetaClientFlutter.getOptions(optionNames)
   .then((options) {
     // handle options
   })
@@ -931,7 +931,7 @@ THETA内の静止画（JPEGファイル）や動画（MP4ファイル）の一�
   |thumbnailUrl|String|サムネールのURLを表します|
 
 ``` Dart
-_thetaClientFlutterPlugin.listFiles(FileTypeEnum.image, 1000, 0)
+_thetaClientFlutter.listFiles(FileTypeEnum.image, 1000, 0)
   .then((files) {
     // handle file list
   })
@@ -990,7 +990,7 @@ THETA内のファイルのサムネイルは、`listFiles`を使って取得し�
 
   void startLivePreview() {
     previewing = true;
-    _thetaClientFlutterPlugin.getLivePreview(frameHandler)
+    _thetaClientFlutter.getLivePreview(frameHandler)
       .then((value) {
         // preview done
       })
@@ -1018,7 +1018,7 @@ THETA内のファイルのサムネイルは、`listFiles`を使って取得し�
 接続しているThetaをリセットするには、`reset()`を呼び出します。
 
 ``` Dart
-_thetaClientFlutterPlugin.reset()
+_thetaClientFlutter.reset()
   .then((value) {
     // reset done
   })
@@ -1042,7 +1042,7 @@ _thetaClientFlutterPlugin.reset()
   |uptime|int|Thetaの電源を入れてからの秒数を表します|
 
 ``` Dart
-_thetaClientFlutterPlugin.getThetaInfo()
+_thetaClientFlutter.getThetaInfo()
   .then((thetaInfo) {
     // processing thetaInfo
   })
@@ -1076,7 +1076,7 @@ _thetaClientFlutterPlugin.getThetaInfo()
 
 
 ``` Dart
-_thetaClientFlutterPlugin.getThetaState()
+_thetaClientFlutter.getThetaState()
   .then((thetaState) {
     // processing thetaState
   })

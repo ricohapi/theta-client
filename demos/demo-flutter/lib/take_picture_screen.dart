@@ -14,7 +14,7 @@ class TakePictureScreen extends StatefulWidget {
 }
 
 class _TakePictureScreen extends State<TakePictureScreen> with WidgetsBindingObserver {
-  final _thetaClientFlutterPlugin = ThetaClientFlutter();
+  final _thetaClientFlutter = ThetaClientFlutter();
 
   Uint8List frameData = Uint8List(0);
   bool previewing = false;
@@ -52,7 +52,7 @@ class _TakePictureScreen extends State<TakePictureScreen> with WidgetsBindingObs
 
   void onResume() {
     debugPrint('onResume');
-    _thetaClientFlutterPlugin.isInitialized()
+    _thetaClientFlutter.isInitialized()
       .then((isInit) {
         if (isInit) {
           startLivePreview();
@@ -121,7 +121,7 @@ class _TakePictureScreen extends State<TakePictureScreen> with WidgetsBindingObs
   void initialize() async {
     debugPrint('init TakePicture');
     // initialize PhotoCapture
-    builder = _thetaClientFlutterPlugin.getPhotoCaptureBuilder();
+    builder = _thetaClientFlutter.getPhotoCaptureBuilder();
     builder!.build()
       .then((value) {
         photoCapture = value;
@@ -150,7 +150,7 @@ class _TakePictureScreen extends State<TakePictureScreen> with WidgetsBindingObs
 
   void startLivePreview() {
     previewing = true;
-    _thetaClientFlutterPlugin.getLivePreview(frameHandler)
+    _thetaClientFlutter.getLivePreview(frameHandler)
       .then((value) {
         debugPrint('LivePreview end.');
       })

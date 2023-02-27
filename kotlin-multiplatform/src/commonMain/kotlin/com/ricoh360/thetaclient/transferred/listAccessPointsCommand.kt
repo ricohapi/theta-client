@@ -1,5 +1,5 @@
 /*
- * [camera._listAccessPoints](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera._list_access_points/)
+ * [camera._listAccessPoints](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._list_access_points.md)
  */
 package com.ricoh360.thetaclient.transferred
 

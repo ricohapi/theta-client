@@ -1,5 +1,5 @@
 /*
- * [/osc/state](https://api.ricoh/docs/theta-web-api-v2.1/protocols/state/)
+ * [/osc/state](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/protocols/state.md)
  */
 package com.ricoh360.thetaclient.transferred
 

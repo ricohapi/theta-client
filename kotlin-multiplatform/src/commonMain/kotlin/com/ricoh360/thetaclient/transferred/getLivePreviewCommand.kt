@@ -1,5 +1,5 @@
 /*
- * [camera.getLivePreview](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera.get_live_preview/)
+ * [camera.getLivePreview](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.get_live_preview.md)
  */
 package com.ricoh360.thetaclient.transferred
 

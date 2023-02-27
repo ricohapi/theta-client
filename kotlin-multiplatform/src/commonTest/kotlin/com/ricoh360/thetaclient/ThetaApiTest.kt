@@ -42,7 +42,7 @@ class ThetaApiTest {
         assertNull(fileList.progress, "progress")
         assertNull(fileList.error, "error")
 
-        // Test the recult of command [camera.listFiles](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera.list_files/)
+        // Test the recult of command [camera.listFiles](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md)
         assertTrue(fileList.results!!.totalEntries >= 1, "totalEntries")
         assertFalse(fileList.results!!.entries.isEmpty(), "entries")
         fileList.results!!.entries.forEach {

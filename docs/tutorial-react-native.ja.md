@@ -15,7 +15,7 @@
 ## THETA Clientの初期化
 
 ```Typescript
-import {initialize} from '@ricohapi/theta-client-react-native';
+import {initialize} from 'theta-client-react-native';
 
 initialize()
   .then(() => {
@@ -94,7 +94,7 @@ import {
   getPhotoCaptureBuilder,
   IsoAutoHighLimitEnum,
   PhotoFileFormatEnum,
-} from '@ricohapi/theta-client-react-native';
+} from 'theta-client-react-native';
 
 getPhotoCaptureBuilder()
     .setIsoAutoHighLimit(IsoAutoHighLimitEnum.ISO_1000)
@@ -300,7 +300,7 @@ import {
   getVideoCaptureBuilder,
   IsoAutoHighLimitEnum,
   VideoFileFormatEnum,
-} from '@ricohapi/theta-client-react-native';
+} from 'theta-client-react-native';
 
 getVideoCaptureBuilder()
   .setIsoAutoHighLimit(IsoAutoHighLimitEnum.ISO_1000)
@@ -534,7 +534,7 @@ import {
   getLivePreview,
   stopLivePreview,
   THETA_FRAME_EVENT,
-} from '@ricohapi/theta-client-react-native';
+} from 'theta-client-react-native';
 
 const LivePreview = () => {
   [dataUrl, setDataUrl] = React.useState<string | undefined>();
@@ -573,7 +573,7 @@ import {
   Options,
   setOptions,
   ApertureEnum,
-} from '@ricohapi/theta-client-react-native';
+} from 'theta-client-react-native';
 
 let options: Options = {};
 options.aperture = ApertureEnum.APERTURE_AUTO;
@@ -848,7 +848,7 @@ setOptions(options)
 import {
   OptionNameEnum,
   getOptions,
-} from '@ricohapi/theta-client-react-native';
+} from 'theta-client-react-native';
 
 
 let optionNames: [OptionNameEnum] = [
@@ -917,7 +917,7 @@ THETA内の静止画（JPEGファイル）や動画（MP4ファイル）の一�
   |thumbnailUrl|string|サムネールのURLを表します|
 
 ``` Typescript
-import {listFiles, FileTypeEnum} from '@ricohapi/theta-client-react-native';
+import {listFiles, FileTypeEnum} from 'theta-client-react-native';
 
 listFiles(FileTypeEnum.IMAGE, 0, 1000)
   .then(files => {
@@ -986,7 +986,7 @@ import {
   getLivePreview,
   stopLivePreview,
   THETA_FRAME_EVENT,
-} from '@ricohapi/theta-client-react-native';
+} from 'theta-client-react-native';
 
 const LivePreview = () => {
   [dataUrl, setDataUrl] = React.useState<string | undefined>();
@@ -1021,7 +1021,7 @@ const LivePreview = () => {
 接続しているThetaをリセットするには、`reset()`を呼び出します。
 
 ``` Typescript
-import {reset} from '@ricohapi/theta-client-react-native';
+import {reset} from 'theta-client-react-native';
 
 reset()
   .then(() => {
@@ -1047,7 +1047,7 @@ reset()
   |uptime|number|Thetaの電源を入れてからの秒数を表します|
 
 ``` Typescript
-import {getThetaInfo} from '@ricohapi/theta-client-react-native';
+import {getThetaInfo} from 'theta-client-react-native';
 
 getThetaInfo()
   .then((thetaInfo) => {
@@ -1083,7 +1083,7 @@ getThetaInfo()
 
 
 ``` Typescript
-import {getThetaState} from '@ricohapi/theta-client-react-native';
+import {getThetaState} from 'theta-client-react-native';
 
 getThetaState()
   .then((thetaState) => {

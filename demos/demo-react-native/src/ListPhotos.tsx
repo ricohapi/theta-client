@@ -16,7 +16,7 @@ import {
   getThetaInfo,
   FileTypeEnum,
   FileInfo,
-} from '@ricohapi/theta-client-react-native';
+} from 'theta-client-react-native';
 
 const listPhotos = async () => {
   return await listFiles(FileTypeEnum.IMAGE, 0, 1000);

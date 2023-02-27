@@ -438,9 +438,11 @@ export type LanguageEnum = typeof LanguageEnum[keyof typeof LanguageEnum];
 
 /** Maximum recordable time (in seconds) of the camera */
 export const MaxRecordableTimeEnum = {
-  /** 300 seconds */
+  /** 180 seconds for SC2 only. */
+  RECORDABLE_TIME_180: 'RECORDABLE_TIME_180',
+  /** 300 seconds for other than SC2. */
   RECORDABLE_TIME_300: 'RECORDABLE_TIME_300',
-  /** 1500 seconds */
+  /** 1500 seconds for other than SC2. */
   RECORDABLE_TIME_1500: 'RECORDABLE_TIME_1500',
 } as const;
 

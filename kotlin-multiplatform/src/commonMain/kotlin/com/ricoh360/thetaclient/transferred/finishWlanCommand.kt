@@ -1,5 +1,5 @@
 /*
- * [camera._finishWlan](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera._finish_wlan)
+ * [camera._finishWlan](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._finish_wlan.md)
  */
 package com.ricoh360.thetaclient.transferred
 

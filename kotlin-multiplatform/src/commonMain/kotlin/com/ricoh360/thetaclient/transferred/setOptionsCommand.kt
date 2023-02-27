@@ -1,5 +1,5 @@
 /*
- * [camera.setOptions](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera.setOptions)
+ * [camera.setOptions](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.set_options.md)
  */
 package com.ricoh360.thetaclient.transferred
 

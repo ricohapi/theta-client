@@ -1,5 +1,5 @@
 /*
- * [camera._getMetadata](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera._get_metadata)
+ * [camera._getMetadata](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._get_metadata.md)
  */
 package com.ricoh360.thetaclient.transferred
 

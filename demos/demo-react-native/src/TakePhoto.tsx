@@ -12,7 +12,7 @@ import {
   stopLivePreview,
   getPhotoCaptureBuilder,
   THETA_EVENT_NAME,
-} from '@ricohapi/theta-client-react-native';
+} from 'theta-client-react-native';
 import {useIsFocused} from '@react-navigation/native';
 
 const startLivePreview = async () => {

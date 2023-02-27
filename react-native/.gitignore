@@ -45,11 +45,7 @@ gradlew.bat
 
 # Cocoapods
 #
-example/ios/Pods
 ios/Pods
-
-# Ruby
-example/vendor/
 
 # node.js
 #

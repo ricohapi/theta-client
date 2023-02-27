@@ -8,18 +8,18 @@ theta-client$ ./scripts/build_flutter_build.sh
 ```
 
 ## Sample application
-Move to `theta-client/flutter/example` then execute sample application.
+Move to `theta-client/demos/demo-flutter` then execute sample application.
 
 ```
-theta-client$ cd ./flutter/example
-example$ flutter run
+theta-client$ cd ./demos/demo-flutter
+demo-flutter$ flutter run
 ```
 
 ## Switching Debug/Release of the library
 You have to change setting files. After changing, execute `flutter clean`.
 
 ```
-example$ flutter clean
+demo-flutter$ flutter clean
 ```
 
 ### Settings on Android
@@ -33,11 +33,11 @@ Theta client: `theta-client/flutter/android/build.gradle`
     // compileOnly files('aar/theta-client-release.aar')
 ```
 
-Sample application: `theta-client/flutter/example/android/app/build.gradle`
+Sample application: `theta-client/demos/demo-flutter/android/app/build.gradle`
 
 ```
-    implementation files('../../../android/aar/theta-client-debug.aar')
-    // implementation files('../../../android/aar/theta-client-release.aar')
+    implementation files('../../packages/theta_client_flutter/android/aar/theta-client-debug.aar')
+    // implementation files('../../packages/theta_client_flutter/android/aar/theta-client-release.aar')
 ```
 
 ### Settings on iOS

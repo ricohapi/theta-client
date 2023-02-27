@@ -11,11 +11,11 @@ theta-client$ ./scripts/build_flutter_build.sh
 ```
 
 ## サンプルアプリの実行
-`theta-client/flutter/example`に移動して、サンプルアプリの実行する。
+`theta-client/demos/demo-flutter`に移動して、サンプルアプリの実行する。
 
 ```
-theta-client$ cd ./flutter/example
-example$ flutter run
+theta-client$ cd ./demos/demo-flutter
+demo-flutter$ flutter run
 ```
 
 ## ライブラリのDebug/Release切り替え
@@ -23,7 +23,7 @@ example$ flutter run
 設定ファイルを変更した後は、`flutter clean`の実行が必要となる。
 
 ```
-example$ flutter clean
+demo-flutter$ flutter clean
 ```
 
 ### Androidの設定
@@ -36,11 +36,11 @@ Androidでは、Flutter pluginとサンプルアプリの両方の`build.gradle`
     // compileOnly files('aar/theta-client-release.aar')
 ```
 
-サンプルアプリ側: `theta-client/flutter/example/android/app/build.gradle`
+サンプルアプリ側: `theta-client/demos/demo-flutter/android/app/build.gradle`
 
 ```
-    implementation files('../../../android/aar/theta-client-debug.aar')
-    // implementation files('../../../android/aar/theta-client-release.aar')
+    implementation files('../../packages/theta_client_flutter/android/aar/theta-client-debug.aar')
+    // implementation files('../../packages/theta_client_flutter/android/aar/theta-client-release.aar')
 ```
 
 ### iOSの設定

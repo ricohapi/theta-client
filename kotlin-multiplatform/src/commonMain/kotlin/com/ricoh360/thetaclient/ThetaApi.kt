@@ -32,7 +32,7 @@ object ThetaApi {
         get() = getHPreviewClient()
 
     /**
-     * Call [/osc/info](https://api.ricoh/docs/theta-web-api-v2.1/protocols/info/)
+     * Call [/osc/info](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/protocols/info.md)
      * @param endpoint Endpoint of Theta web API
      * @return response of Theta web API
      * @see InfoApiResponse
@@ -50,7 +50,7 @@ object ThetaApi {
     }
 
     /**
-     * Call [/osc/state](https://api.ricoh/docs/theta-web-api-v2.1/protocols/state/)
+     * Call [/osc/state](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/protocols/state.md)
      * @param endpoint Endpoint of Theta web API
      * @return response of /osc/state API
      * @exception java.net.ConnectException can not connect to target endpoint
@@ -67,7 +67,7 @@ object ThetaApi {
     }
 
     /**
-     * Call [/osc/commands/status](https://api.ricoh/docs/theta-web-api-v2.1/protocols/commands_status/)
+     * Call [/osc/commands/status](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/protocols/commands_status.md)
      * @param endpoint Endpoint of Theta web API
      * @param params status parameters
      * @return response of /osc/commands/status API
@@ -100,7 +100,7 @@ object ThetaApi {
      */
 
     /**
-     * Call [camera.startSession](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera.startSession)
+     * Call [camera.startSession](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.0/commands/camera.start_session.md)
      * @param endpoint Endpoint of Theta web API
      * @return response of startSession command.
      * @see StartSessionResponse
@@ -119,7 +119,7 @@ object ThetaApi {
     }
 
     /**
-     * Call [camera._cancelVideoConvert](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera._cancel_video_onvert)
+     * Call [camera._cancelVideoConvert](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._cancel_video_convert.md)
      * @param endpoint Endpoint of Theta web API
      * @return response of cancelVideoConvert command.
      * @see CancelVideoConvertResponse
@@ -138,7 +138,7 @@ object ThetaApi {
     }
 
     /**
-     * Call [camera._convertVideoFormats](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera._convert_video_formats)
+     * Call [camera._convertVideoFormats](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._convert_video_formats.md)
      * @param endpoint Endpoint of Theta web API
      * @param params convert video formats parameters
      * @return response of convertVideoFormats command
@@ -160,7 +160,7 @@ object ThetaApi {
     }
 
     /**
-     * Call [camera.delete](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera.delete)
+     * Call [camera.delete](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.delete.md)
      * @param endpoint Endpoint of Theta web API
      * @param params delete fileUrls parameters
      * @return response of delete command
@@ -182,7 +182,7 @@ object ThetaApi {
     }
 
     /**
-     * Call [camera._finishWlan](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera._finish_wlan)
+     * Call [camera._finishWlan](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._finish_wlan.md)
      * @param endpoint Endpoint of Theta web API
      * @return response of _finishWlan command
      * @see FinishWlanResponse
@@ -196,7 +196,7 @@ object ThetaApi {
     }
 
     /**
-     * Call [camera.getLivePreview](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera.get_live_preview/)
+     * Call [camera.getLivePreview](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.get_live_preview.md)
      * @param endpoint Endpoint of Theta web API
      * @return You can get the newest frame in a CoroutineScope like this:
      * ```kotlin
@@ -262,7 +262,7 @@ object ThetaApi {
     }
 
     /**
-     * Call [camera.getLivePreview](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera.get_live_preview/)
+     * Call [camera.getLivePreview](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.get_live_preview.md)
      * @param endpoint Endpoint of Theta web API
      * @param frameHandler Callback function for each JPEG data.  If
      * it returns false, this function exits.
@@ -324,7 +324,7 @@ object ThetaApi {
     }
 
     /**
-     * Call [camera._getMetadata](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera._get_metadata)
+     * Call [camera._getMetadata](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._get_metadata.md)
      * @param endpoint Endpoint of Theta web API
      * @param params fileUrl to get metadata parameters
      * @return response of _getMetadata command
@@ -346,7 +346,7 @@ object ThetaApi {
     }
 
     /**
-     * Call [camera.listFiles](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera.list_files/)
+     * Call [camera.listFiles](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md)
      * @param endpoint Endpoint of Theta web API
      * @param params list files parameters
      * @return response of listFiles command
@@ -368,7 +368,7 @@ object ThetaApi {
     }
 
     /**
-     * Call [camera.reset](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera.reset/)
+     * Call [camera.reset](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.reset.md)
      * @param endpoint Endpoint of Theta web API
      * @return response of reset command
      * @see ResetResponse
@@ -387,7 +387,7 @@ object ThetaApi {
     }
 
     /**
-     * Call [camera._listAccessPoints](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera._list_access_points/)
+     * Call [camera._listAccessPoints](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._list_access_points.md)
      * @param endpoint Endpoint of Theta web API
      * @return response of _listAccessPoints command
      * @see ListAccessPointsResponse
@@ -406,7 +406,7 @@ object ThetaApi {
     }
 
     /**
-     * Call [camera.startCapture](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera.start_capture/)
+     * Call [camera.startCapture](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.start_capture.md)
      * @param endpoint Endpoint of Theta web API
      * @return response of startCapture command
      * @see StartCaptureParams
@@ -427,7 +427,7 @@ object ThetaApi {
     }
 
     /**
-     * Call [camera.stopCapture](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera.stop_capture/)
+     * Call [camera.stopCapture](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.stop_capture.md)
      * @param endpoint Endpoint of Theta web API
      * @return response of stopCapture command
      * @see StopCaptureResponse
@@ -446,7 +446,7 @@ object ThetaApi {
     }
 
     /**
-     * Call [camera.takePicture](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera.take_picture/)
+     * Call [camera.takePicture](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.take_picture.md)
      * @param endpoint Endpoint of Theta web API
      * @return response of takePicture command
      * @see TakePictureResponse
@@ -465,7 +465,7 @@ object ThetaApi {
     }
 
     /**
-     * Call [camera._deleteAccessPoint](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera._delete_access_point/)
+     * Call [camera._deleteAccessPoint](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._delete_access_point.md)
      * @param endpoint Endpoint of Theta web API
      * @param params delete access point parameters
      * @return response of _deleteAccessPoint command
@@ -487,7 +487,7 @@ object ThetaApi {
     }
 
     /**
-     * Call [camera._setAccessPoint](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera._set_access_point/)
+     * Call [camera._setAccessPoint](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._set_access_point.md)
      * @param endpoint Endpoint of Theta web API
      * @param params set access point parameters
      * @return response of _setAccessPoint command
@@ -509,7 +509,7 @@ object ThetaApi {
     }
 
     /**
-     * Call [camera._stopSelfTimer](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera._stop_self_timer/)
+     * Call [camera._stopSelfTimer](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._stop_self_timer.md)
      * @param endpoint Endpoint of Theta web API
      * @return response of _stopSelfTimer command
      * @see StopSelfTimerResponse
@@ -528,7 +528,7 @@ object ThetaApi {
     }
 
     /**
-     * Call [camera.setOptions](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera.setOptions/)
+     * Call [camera.setOptions](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.set_options.md)
      * @param endpoint Endpoint of Theta web API
      * @param params set options parameters
      * @return response of setOptions command
@@ -550,7 +550,7 @@ object ThetaApi {
     }
 
     /**
-     * Call [camera.getOptions](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera.getOptions/)
+     * Call [camera.getOptions](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.get_options.md)
      * @param endpoint Endpoint of Theta web API
      * @param params get options parameters
      * @return response of getOptions command

@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'theta_client_flutter'
-  s.version          = '0.0.1'
+  s.version          = '1.0.0'
   s.summary          = 'theta-client plugin project.'
   s.description      = <<-DESC
   theta-client Flutter plugin project.

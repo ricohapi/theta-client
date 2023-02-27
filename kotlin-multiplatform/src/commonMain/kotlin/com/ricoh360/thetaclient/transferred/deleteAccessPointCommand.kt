@@ -1,5 +1,5 @@
 /*
- * [camera._deleteAccessPoint](https://api.ricoh/docs/theta-web-api-v2.1/commands/camera._delete_access_point/)
+ * [camera._deleteAccessPoint](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._delete_access_point.md)
  */
 package com.ricoh360.thetaclient.transferred
 
