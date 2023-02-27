@@ -48,8 +48,7 @@
   },
   "homepage": "https://github.com/ricohapi/theta-client#readme",
   "publishConfig": {
-    "access": "restricted",
-    "registry": "https://npm.pkg.github.com/ricohapi"
+    "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
     "@arkweid/lefthook": "^0.7.7",
