@@ -7,8 +7,6 @@ install! 'cocoapods', :deterministic_uuids => false
 target 'DemoReactNative' do
   config = use_native_modules!
 
-  pod "THETAClient", :path => ENV["THETA_CLIENT"] + "/kotlin-multiplatform/build/cocoapods/publish/debug"
-
   # Flags change depending on the env values.
   flags = get_default_flags()
 

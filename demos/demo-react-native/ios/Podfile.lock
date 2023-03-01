@@ -380,6 +380,7 @@ PODS:
   - SocketRocket (0.6.0)
   - theta-client-react-native (1.0.0):
     - React-Core
+    - THETAClient
   - THETAClient (1.0.0)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -447,7 +448,6 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - theta-client-react-native (from `../node_modules/theta-client-react-native`)
-  - THETAClient (from `/Users/osaki/Desktop/Project/ThetaSDK/theta-client-private/kotlin-multiplatform/build/cocoapods/publish/debug`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -466,6 +466,7 @@ SPEC REPOS:
     - libevent
     - OpenSSL-Universal
     - SocketRocket
+    - THETAClient
     - YogaKit
 
 EXTERNAL SOURCES:
@@ -541,8 +542,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-screens"
   theta-client-react-native:
     :path: "../node_modules/theta-client-react-native"
-  THETAClient:
-    :path: "/Users/osaki/Desktop/Project/ThetaSDK/theta-client-private/kotlin-multiplatform/build/cocoapods/publish/debug"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -596,11 +595,11 @@ SPEC CHECKSUMS:
   ReactCommon: 349be31adeecffc7986a0de875d7fb0dcf4e251c
   RNScreens: ea4cd3a853063cda19a4e3c28d2e52180c80f4eb
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
-  theta-client-react-native: 6efb22732491a571d5c4b82d59ac03f5e687d7b0
-  THETAClient: de7915bf2d0d07f4e9f8753f306e7bc0a94567bc
+  theta-client-react-native: 207c9fe90835dc26c96906edd7e1a566a2097b4c
+  THETAClient: b3901a99b133d3980128f4a1b0aaa09859ee8da4
   Yoga: 99caf8d5ab45e9d637ee6e0174ec16fbbb01bcfc
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 9b3ff67922f0dd1e02a4df07b30b8ca3aa3abee2
+PODFILE CHECKSUM: f4faaa3f7c2b2c5f9ae188c4ca9c4549e94dc2cb
 
 COCOAPODS: 1.11.3

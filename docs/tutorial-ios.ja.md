@@ -15,7 +15,7 @@
 ## SDKのインスタンス作成
 
 ``` swift
-import ThetaSdk
+import THETAClient
 
 // THETAがIPアドレスを指定して作成する
 ThetaRepository.Companion.shared.doNewInstance(

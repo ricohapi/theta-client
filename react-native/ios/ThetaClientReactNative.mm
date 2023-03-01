@@ -1,4 +1,4 @@
-#import "THETAClient.h"
+#import "THETAClient/THETAClient.h"
 #import "ThetaClientReactNative.h"
 #import "RCTConvert.h"
 

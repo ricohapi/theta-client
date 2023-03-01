@@ -2,7 +2,11 @@
 
 ## 事前準備
 
-本SDKを使用したアプリケーションが動作するスマートフォンとTHETAを無線LAN接続しておきます。
+* モジュールの`build.gradle`の`dependencies`に次を追加します。
+  ```
+  implementation "com.ricoh360.thetaclient:theta-client:1.0.0"
+  ```
+* 本SDKを使用したアプリケーションが動作するスマートフォンとTHETAを無線LAN接続しておきます。
 
 ## THETA clientのインスタンス作成
 

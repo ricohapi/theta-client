@@ -2,7 +2,12 @@
 
 ## Advance preparation
 
-Connect the wireless LAN between THETA and the smartphone that runs on the application using this SDK.
+* Add following descriptions to the `dependencies` of your module's `build.gradle`.
+  ```
+  implementation "com.ricoh360.thetaclient:theta-client:1.0.0"
+  ```
+
+* Connect the wireless LAN between THETA and the smartphone that runs on the application using this SDK.
 
 ## Create an instance of THETA client
 

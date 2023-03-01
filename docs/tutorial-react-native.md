@@ -5,7 +5,7 @@ Connect the wireless LAN between the smartphone and THETA that runs on the appli
 
 ## Initialize THETA Client
 ```Typescript
-import {initialize} from '@ricohapi/theta-client-react-native';
+import {initialize} from 'theta-client-react-native';
 
 initialize()
   .then(() => {
@@ -84,7 +84,7 @@ import {
   getPhotoCaptureBuilder,
   IsoAutoHighLimitEnum,
   PhotoFileFormatEnum,
-} from '@ricohapi/theta-client-react-native';
+} from 'theta-client-react-native';
 
 getPhotoCaptureBuilder()
     .setIsoAutoHighLimit(IsoAutoHighLimitEnum.ISO_1000)
@@ -122,7 +122,7 @@ import {
   getVideoCaptureBuilder,
   IsoAutoHighLimitEnum,
   VideoFileFormatEnum,
-} from '@ricohapi/theta-client-react-native';
+} from 'theta-client-react-native';
 
 getVideoCaptureBuilder()
   .setIsoAutoHighLimit(IsoAutoHighLimitEnum.ISO_1000)
@@ -174,7 +174,7 @@ import {
   getLivePreview,
   stopLivePreview,
   THETA_FRAME_EVENT,
-} from '@ricohapi/theta-client-react-native';
+} from 'theta-client-react-native';
 
 const LivePreview = () => {
   [dataUrl, setDataUrl] = React.useState<string | undefined>();
@@ -214,7 +214,7 @@ import {
   Options,
   setOptions,
   ApertureEnum,
-} from '@ricohapi/theta-client-react-native';
+} from 'theta-client-react-native';
 
 let options: Options = {};
 options.aperture = ApertureEnum.APERTURE_AUTO;
@@ -235,7 +235,7 @@ To get the camera settings, specify the list of options you want to obtain and c
 import {
   OptionNameEnum,
   getOptions,
-} from '@ricohapi/theta-client-react-native';
+} from 'theta-client-react-native';
 
 
 let optionNames: [OptionNameEnum] = [
@@ -259,7 +259,7 @@ The list of still pictures (JPEG file) and videos (MP4 file) in THETA can be obt
 The Item of the list is `FileInfo`.
 
 ``` Typescript
-import {listFiles, FileTypeEnum} from '@ricohapi/theta-client-react-native';
+import {listFiles, FileTypeEnum} from 'theta-client-react-native';
 
 listFiles(FileTypeEnum.IMAGE, 0, 1000)
   .then(files => {
@@ -319,7 +319,7 @@ To obtain the information about the connected THETA, call `getThetaInfo()`.
 If the call is successful, you can get `ThetaInfo`.
 
 ``` Typescript
-import {getThetaInfo} from '@ricohapi/theta-client-react-native';
+import {getThetaInfo} from 'theta-client-react-native';
 
 getThetaInfo()
   .then((thetaInfo) => {
@@ -336,7 +336,7 @@ To get the state of the connected THETA, call `getThetaState()`.
 Successful calling allows you to acquire the `ThetaState`.
 
 ``` Typescript
-import {getThetaState} from '@ricohapi/theta-client-react-native';
+import {getThetaState} from 'theta-client-react-native';
 
 getThetaState()
   .then((thetaState) => {
@@ -352,7 +352,7 @@ getThetaState()
 Call `reset()` to reset the connected THETA.
 
 ``` Typescript
-import {reset} from '@ricohapi/theta-client-react-native';
+import {reset} from 'theta-client-react-native';
 
 reset()
   .then(() => {

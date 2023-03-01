@@ -15,7 +15,7 @@ Connect the wireless LAN between THETA and the smartphone that runs on the appli
 ## To instantiate SDK
 
 ``` swift
-import ThetaSdk
+import THETAClient
 // Create ThetaRepository object by specifying an IP address
 ThetaRepository.Companion.shared.doNewInstance(
   endPoint:"http://<THETA IP ADDRESS>"

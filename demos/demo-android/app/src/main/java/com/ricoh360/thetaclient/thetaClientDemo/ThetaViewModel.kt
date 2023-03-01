@@ -24,7 +24,7 @@ class ThetaViewModel(
     private val thetaUrl: String = "http://192.168.1.1:80/",
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
-    private lateinit var thetaRepository: ThetaRepository
+    private var thetaRepository: ThetaRepository
     private val _thetaInfoState =  MutableStateFlow<ThetaRepository.ThetaInfo?>(null)
     val thetaInfoState: StateFlow<ThetaRepository.ThetaInfo?> = _thetaInfoState
     private val _thetaFilesState = MutableStateFlow<List<ThetaRepository.FileInfo>?>(null)

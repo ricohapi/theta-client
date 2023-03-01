@@ -28,6 +28,6 @@ A simple sample iOS application using [theta-client](https://github.com/ricohapi
     use_frameworks!
 
     # Pods for SdkSample
-    pod 'thetasdk', :path => '../../shared/build/cocoapods/publish/debug/'
+    pod 'THETAClient'
   end
   ```

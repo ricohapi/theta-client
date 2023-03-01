@@ -145,10 +145,8 @@ fun Viewer360Core(photoDataUrl: String) {
             }
         },
         update = { webView ->
-            if(photoDataUrl != null) {
-                webView.evaluateJavascript("viewer.viewers[0].switchScene('sceneEqui');console.log('js evaled');", null)
-                //webView.evaluateJavascript("viewer.removeViewer(); viewer.addNewViewer();console.log('evaled');", null)
-            }
+            webView.evaluateJavascript("viewer.viewers[0].switchScene('sceneEqui');console.log('js evaled');", null)
+            //webView.evaluateJavascript("viewer.removeViewer(); viewer.addNewViewer();console.log('evaled');", null)
         },
         modifier = Modifier.fillMaxSize()
     )
