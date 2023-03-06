@@ -26,7 +26,7 @@ Your app can perform the following actions:
   * demos: Demo applications
   * docs: Documentation
   * kotlin-multiplatform: Library body ([Kotlin Multiplatform Mobile](https://kotlinlang.org/docs/multiplatform-mobile-getting-started.html))
-  * reactNativeMain: React Native package
+  * react-native: React Native package
   * flutter: Flutter plugin
 
 ## Build
@@ -46,7 +46,7 @@ theta-client$ ./gradlew podPublishXCFramework
 XCFramework is output to `theta-client/shared/build/cocoapods/publish`
 
 ### ReactNative & Flutter
-See README in each directory.(`reactNativeMain`, `flutter`)
+See README in each directory.(`react-native`, `flutter`)
 
 ### Test
 ```
