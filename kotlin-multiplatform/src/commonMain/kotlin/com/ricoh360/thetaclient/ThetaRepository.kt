@@ -2730,7 +2730,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     @Throws(Throwable::class)
     fun getLivePreview(): Flow<ByteReadPacket> {
-        return ThetaApi.callGetLivePreviewCommand(endpoint)
+        try {
+            return ThetaApi.callGetLivePreviewCommand(endpoint)
+        } catch (e: PreviewClientException) {
+            throw ThetaWebApiException("PreviewClientException")
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
     }
 
     /**
@@ -2748,7 +2754,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 return@callGetLivePreviewCommand frameHandler(it)
             }
         } catch (e: PreviewClientException) {
-            throw ThetaWebApiException(e.message!!)
+            throw ThetaWebApiException("PreviewClientException")
         } catch (e: Exception) {
             throw NotConnectedException(e.message ?: e.toString())
         }

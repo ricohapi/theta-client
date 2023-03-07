@@ -851,7 +851,7 @@ import {
 } from 'theta-client-react-native';
 
 
-let optionNames: [OptionNameEnum] = [
+let optionNames: OptionNameEnum[] = [
   OptionNameEnum.Aperture,
   OptionNameEnum.CaptureMode,
   OptionNameEnum.ColorTemperature

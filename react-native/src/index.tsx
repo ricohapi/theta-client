@@ -126,31 +126,31 @@ export type CaptureModeEnum =
 /** Exposure compensation (EV). */
 export const ExposureCompensationEnum = {
   /** -2.0 */
-  M_2_0: 'M_2_0',
+  M_2_0: 'M2_0',
   /** -1.7 */
-  M_1_7: 'M_1_7',
+  M_1_7: 'M1_7',
   /** -1.3 */
-  M_1_3: 'M_1_3',
+  M_1_3: 'M1_3',
   /** -1.0 */
-  M_1_0: 'M_1_0',
+  M_1_0: 'M1_0',
   /** -0.7 */
-  M_0_7: 'M_0_7',
+  M_0_7: 'M0_7',
   /** -0.3 */
-  M_0_3: 'M_0_3',
+  M_0_3: 'M0_3',
   /** 0 */
   ZERO: 'ZERO',
   /** 0.3 */
-  P_0_3: 'P_0_3',
+  P_0_3: 'P0_3',
   /** 0.7 */
-  P_0_7: 'P_0_7',
+  P_0_7: 'P0_7',
   /** 1.0 */
-  P_1_0: 'P_1_0',
+  P_1_0: 'P1_0',
   /** 1.3 */
-  P_1_3: 'P_1_3',
+  P_1_3: 'P1_3',
   /** 1.7 */
-  P_1_7: 'P_1_7',
+  P_1_7: 'P1_7',
   /** 2.0 */
-  P_2_0: 'P_2_0',
+  P_2_0: 'P2_0',
 } as const;
 
 /** type definition of ExposureCompensationEnum */
@@ -677,7 +677,7 @@ export function listFiles(
   fileTypeEnum: FileTypeEnum,
   startPosition: number = 0,
   entryCount: number
-): Promise<[FileInfo]> {
+): Promise<FileInfo[]> {
   return ThetaClientReactNative.listFiles(fileTypeEnum, startPosition, entryCount);
 }
 
@@ -685,10 +685,10 @@ export function listFiles(
  * Delete files in Theta.
  *
  * @function deleteFiles
- * @param {[string]} fileUrls URLs of the file to be deleted.
+ * @param {string[]} fileUrls URLs of the file to be deleted.
  * @return promise of boolean result
  */
-export function deleteFiles(fileUrls: [string]): Promise<boolean> {
+export function deleteFiles(fileUrls: string[]): Promise<boolean> {
   return ThetaClientReactNative.deleteFiles(fileUrls);
 }
 
@@ -727,10 +727,10 @@ export function deleteAllVideoFiles(): Promise<boolean> {
  * shooting, the camera, etc.
  *
  * @function getOptions
- * @param {[OptionNameEnum]} optionNames List of OptionNameEnum.
+ * @param {OptionNameEnum[]} optionNames List of OptionNameEnum.
  * @return promise of Options acquired
  */
-export function getOptions(optionNames: [OptionNameEnum]): Promise<Options> {
+export function getOptions(optionNames: OptionNameEnum[]): Promise<Options> {
   return ThetaClientReactNative.getOptions(optionNames);
 }
 
@@ -1186,7 +1186,7 @@ export type AccessPoint = {
  * @function listAccessPoints
  * @return promise of AccessPoint list
  */
-export function listAccessPoints(): Promise<[AccessPoint]> {
+export function listAccessPoints(): Promise<AccessPoint[]> {
   return ThetaClientReactNative.listAccessPoints();
 }
 

@@ -14,11 +14,6 @@ A simple sample Flutter application using [theta-client](https://github.com/rico
 * Capture video with Theta.
 
 ## ビルドと実行例
-
-* theta-clientのビルドとパッケージのコピー
-theta-clientをビルドする為の`theta-client/scripts/build_flutter_build.sh`を実行してください。
-
-* ビルドと実行
 Flutterのビルドと実行は以下の通りです。
 
   ```

@@ -24,7 +24,7 @@ const listPhotos = async () => {
 
 const ListPhotos = ({navigation}) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [files, setFiles] = useState<[FileInfo]>([]);
+  const [files, setFiles] = useState<FileInfo[]>([]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

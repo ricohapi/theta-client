@@ -52,6 +52,5 @@ dependencies {
     implementation("io.ktor:ktor-client-logging:2.1.2")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.1.2")
 
-    compileOnly files('aar/theta-client-debug.aar')
-    // compileOnly files('aar/theta-client-release.aar')
+    implementation("com.ricoh360.thetaclient:theta-client:1.0.0")
 }

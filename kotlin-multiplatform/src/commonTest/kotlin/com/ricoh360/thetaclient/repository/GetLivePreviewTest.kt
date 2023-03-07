@@ -118,7 +118,7 @@ class GetLivePreviewTest {
     @Test
     fun getLivePreviewExceptionRequestTest(): TestResult = runTest {
         MockApiClient.onPreviewRequest = { _, _, _, _, _ ->
-            throw PreviewClientException("Error PreviewClientException")
+            throw PreviewClientException("Can't start preview")
         }
 
         val thetaRepository = ThetaRepository(endpoint)
@@ -138,7 +138,7 @@ class GetLivePreviewTest {
     @Test
     fun flowGetLivePreviewExceptionRequestTest(): TestResult = runTest {
         MockApiClient.onPreviewRequest = { _, _, _, _, _ ->
-            throw PreviewClientException("Error PreviewClientException")
+            throw PreviewClientException("Can't start preview")
         }
 
         val thetaRepository = ThetaRepository(endpoint)
@@ -148,8 +148,10 @@ class GetLivePreviewTest {
                 byteReadPacket.release()
             }
             assertTrue(false, "call getLivePreview")
+        } catch (e: ThetaRepository.ThetaWebApiException) {
+            assertTrue(e.message!!.indexOf("PreviewClientException") >= 0, "Exception ThetaWebApiException")
         } catch (e: PreviewClientException) {
-            assertTrue(e.message!!.indexOf("PreviewClientException") >= 0, "Exception PreviewClientException")
+            assertTrue(e.message!!.indexOf("Can't start preview") >= 0, "Exception PreviewClientException")
         }
     }
 

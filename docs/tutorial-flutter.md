@@ -10,16 +10,11 @@ flutter create --platforms=android,ios -i swift -a kotlin your_app_name
 
 ## Project setup
 
-### Flutter plugin package build for THETA Client
-
-Run `theta-client/scripts` in `build_flutter_build.sh` to build the Flutter plugin package for the THETA Client.
-
 ### Copy of the THETA client
 
 Copy to the project that created the Flutter plugin package for THETA Client.
 
 `demo-flutter` is placed in `demo-flutter/packages/theta_client_flutter` under the project.
-(`build_flutter_build.sh` does not require this operation).
 
 ### Flutter plug-in setting
 
@@ -33,18 +28,7 @@ dependencies:
     path: ./packages/theta_client_flutter
 ```
 ### Android setting
-
-* Describe library settings to `android/app/build.grade`.
-
-``` build.gradle
-    dependencies {
-        ...
-        implementation files('../../packages/theta_client_flutter/android/aar/theta-client-debug.aar')
-        ...
-    }
-```
-
-* Set the minimum SDK version to 26 or higher
+Set the minimum SDK version to 26 or higher
 
 ``` build.gradle
     MinSdkVersion 26

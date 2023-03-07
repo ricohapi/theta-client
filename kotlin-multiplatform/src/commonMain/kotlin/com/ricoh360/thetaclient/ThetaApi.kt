@@ -7,6 +7,7 @@ import com.ricoh360.thetaclient.transferred.*
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
+import io.ktor.client.network.sockets.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
@@ -217,25 +218,17 @@ object ThetaApi {
      */
     @Throws(Throwable::class)
     fun callGetLivePreviewCommand(endpoint: String): Flow<ByteReadPacket> = flow {
-        while(true) {
-            var retry = 3 // retry count when preview command failed
-            val WAIT = 500L // time between retry (ms)
-            var isPreviewStarted = false
-
-            while(retry-- > 0) {
-                kotlin.runCatching {
-                    previewClient.request(endpoint)
-                }.onSuccess {
-                    isPreviewStarted = true
-                }.onFailure {
-                    if(retry <= 0) {
-                        throw(PreviewClientException("Can't start preview"))
-                    }
-                    runBlocking {
-                        delay(WAIT)
-                    }
+        var retry = 4 // retry count when preview command failed
+        val WAIT = 500L // time between retry (ms)
+        while (retry-- > 0) {
+            try {
+                previewClient.request(endpoint)
+            } catch (ex: PreviewClientException) {
+                if (retry <= 0) throw ex
+                runBlocking {
+                    delay(WAIT)
                 }
-                if (isPreviewStarted) break
+                continue
             }
 
             try {
@@ -243,9 +236,8 @@ object ThetaApi {
                     val part = previewClient.nextPart()
                     emit(ByteReadPacket(part.first, 0, part.second))
                 }
-            } catch (t: Throwable) {
-                t.printStackTrace()
-                throw t
+            } catch (ex: PreviewClientException) {
+                if (retry <= 0) throw ex
             } finally {
                 try {
                     previewClient.close()
@@ -278,25 +270,17 @@ object ThetaApi {
         endpoint: String,
         frameHandler: suspend (Pair<ByteArray, Int>) -> Boolean,
     ) {
-        while(true) {
-            var retry = 3 // retry count when preview command failed
-            val WAIT = 500L // time between retry (ms)
-            var isPreviewStarted = false
-
-            while(retry-- > 0) {
-                kotlin.runCatching {
-                    previewClient.request(endpoint)
-                }.onSuccess {
-                    isPreviewStarted = true
-                }.onFailure {
-                    if(retry <= 0) {
-                        throw(PreviewClientException("Can't start preview"))
-                    }
-                    runBlocking {
-                        delay(WAIT)
-                    }
+        var retry = 4 // retry count when preview command failed
+        val WAIT = 500L // time between retry (ms)
+        while(retry-- > 0) {
+            try {
+                previewClient.request(endpoint)
+            } catch(ex: PreviewClientException) {
+                if(retry <= 0) throw ex
+                runBlocking {
+                    delay(WAIT)
                 }
-                if (isPreviewStarted) break
+                continue
             }
 
             try {
@@ -305,9 +289,6 @@ object ThetaApi {
                     isContinued = frameHandler(previewClient.nextPart())
                 }
                 if (!isContinued) return
-            } catch (t: Throwable) {
-                t.printStackTrace()
-                throw t
             } finally {
                 try {
                     previewClient.close()

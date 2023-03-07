@@ -17,14 +17,10 @@ flutter create --platforms=android,ios -i swift -a kotlin your_app_name
 ```
 
 ## プロジェクトの設定
-### THETA ClientのFlutter pluginパッケージのビルド
-`theta-client/scripts`の`build_flutter_build.sh`を実行して、THETA ClientのFlutter pluginパッケージをビルドする。
-
 ### theta clientのコピー
 THETA ClientのFlutter pluginパッケージを作成したプロジェクトにコピーする。
 
 `demo-flutter`では、プロジェクト直下`demo-flutter/packages/theta_client_flutter`に配置。
-（`build_flutter_build.sh`を実行した場合は、この操作は不要。）
 
 ### Flutterのプラグインの設定
 `pubspec.yaml`の`dependencies`にコピーした`theta_client_flutter`を追加。
@@ -38,17 +34,7 @@ dependencies:
 ```
 
 ### Androidの設定
-* `android/app/build.gradle`にライブラリの設定
-
-    ``` build.gradle
-    dependencies {
-        ...略
-        implementation files('../../packages/theta_client_flutter/android/aar/theta-client-debug.aar')
-        ...略
-    }
-    ```
-
-* 最小SDKバージョンを26以上に設定
+最小SDKバージョンを26以上に設定
 
     ``` build.gradle
         minSdkVersion 26
