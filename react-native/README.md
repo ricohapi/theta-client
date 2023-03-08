@@ -5,7 +5,7 @@
 * Build theta-client.
 
   ```shell
-  $ gradle publishToMavenLocal podPublishXCFramework
+  $ gradlew publishToMavenLocal podPublishXCFramework
   ```
 
 * Set the directory of theta-client to environment variable `THETA_CLIENT`.
