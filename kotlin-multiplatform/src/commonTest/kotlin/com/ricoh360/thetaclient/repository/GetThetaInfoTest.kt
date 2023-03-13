@@ -3,6 +3,7 @@ package com.ricoh360.thetaclient.repository
 import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
+import com.ricoh360.thetaclient.transferred.EndPoint
 import io.ktor.client.network.sockets.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -43,12 +44,20 @@ class GetThetaInfoTest {
 
         // check
         assertTrue(thetaRepository.cameraModel == "RICOH THETA Z1", "ThetaRepository cameraModel")
+        assertTrue(thetaInfo.manufacturer == "RICOH", "info manufacturer")
         assertTrue(thetaInfo.model == "RICOH THETA Z1", "info model")
         assertTrue(thetaInfo.serialNumber.length > 1, "info serialNumber")
+        assertNotNull(thetaInfo.wlanMacAddress, "info wlanMacAddress")
+        assertNotNull(thetaInfo.bluetoothMacAddress, "info bluetoothMacAddress")
         assertTrue(thetaInfo.firmwareVersion.length > 1, "info firmwareVersion")
+        assertTrue(thetaInfo.supportUrl == "https://theta360.com/en/support/", "info supportUrl")
         assertTrue(!thetaInfo.hasGps, "info hasGps")
         assertTrue(thetaInfo.hasGyro, "info hasGyro")
         assertTrue(thetaInfo.uptime > 0, "info uptime")
+        assertTrue(thetaInfo.api == listOf("/osc/info", "/osc/state", "/osc/checkForUpdates",
+            "/osc/commands/execute", "/osc/commands/status"), "info api")
+        assertTrue(thetaInfo.endpoints == EndPoint(80, 80), "info endpoints")
+        assertTrue(thetaInfo.apiLevel == listOf(2), "info apiLevel")
     }
 
     /**
@@ -69,12 +78,20 @@ class GetThetaInfoTest {
 
         // check
         assertTrue(thetaRepository.cameraModel == "RICOH THETA S", "ThetaRepository cameraModel")
+        assertTrue(thetaInfo.manufacturer == "RICOH", "info manufacturer")
         assertTrue(thetaInfo.model == "RICOH THETA S", "info model")
         assertTrue(thetaInfo.serialNumber.length > 1, "info serialNumber")
+        assertNull(thetaInfo.wlanMacAddress, "info wlanMacAddress")
+        assertNull(thetaInfo.bluetoothMacAddress, "info bluetoothMacAddress")
         assertTrue(thetaInfo.firmwareVersion.length > 1, "info firmwareVersion")
+        assertTrue(thetaInfo.supportUrl == "https://theta360.com/en/support/", "info supportUrl")
         assertTrue(!thetaInfo.hasGps, "info hasGps")
         assertTrue(!thetaInfo.hasGyro, "info hasGyro")
         assertTrue(thetaInfo.uptime > 0, "info uptime")
+        assertTrue(thetaInfo.api == listOf("/osc/info", "/osc/state", "/osc/checkForUpdates",
+            "/osc/commands/execute", "/osc/commands/status"), "info api")
+        assertTrue(thetaInfo.endpoints == EndPoint(80, 80), "info endpoints")
+        assertTrue(thetaInfo.apiLevel == listOf(1, 2), "info apiLevel")
     }
 
     /**
@@ -95,12 +112,20 @@ class GetThetaInfoTest {
 
         // check
         assertTrue(thetaRepository.cameraModel == "RICOH THETA X", "ThetaRepository cameraModel")
+        assertTrue(thetaInfo.manufacturer == "RICOH", "info manufacturer")
         assertTrue(thetaInfo.model == "RICOH THETA X", "info model")
         assertTrue(thetaInfo.serialNumber.length > 1, "info serialNumber")
+        assertNotNull(thetaInfo.wlanMacAddress, "info wlanMacAddress")
+        assertNotNull(thetaInfo.bluetoothMacAddress, "info bluetoothMacAddress")
         assertTrue(thetaInfo.firmwareVersion.length > 1, "info firmwareVersion")
+        assertTrue(thetaInfo.supportUrl == "https://theta360.com/en/support/", "info supportUrl")
         assertTrue(thetaInfo.hasGps, "info hasGps")
         assertTrue(thetaInfo.hasGyro, "info hasGyro")
         assertTrue(thetaInfo.uptime > 0, "info uptime")
+        assertTrue(thetaInfo.api == listOf("/osc/info", "/osc/state", "/osc/checkForUpdates",
+            "/osc/commands/execute", "/osc/commands/status"), "info api")
+        assertTrue(thetaInfo.endpoints == EndPoint(80, 80), "info endpoints")
+        assertTrue(thetaInfo.apiLevel == listOf(2), "info apiLevel")
     }
 
     /**
@@ -121,12 +146,20 @@ class GetThetaInfoTest {
 
         // check
         assertTrue(thetaRepository.cameraModel == "RICOH THETA SC2", "ThetaRepository cameraModel")
+        assertTrue(thetaInfo.manufacturer == "RICOH", "info manufacturer")
         assertTrue(thetaInfo.model == "RICOH THETA SC2", "info model")
         assertTrue(thetaInfo.serialNumber.length > 1, "info serialNumber")
+        assertNotNull(thetaInfo.wlanMacAddress, "info wlanMacAddress")
+        assertNotNull(thetaInfo.bluetoothMacAddress, "info bluetoothMacAddress")
         assertTrue(thetaInfo.firmwareVersion.length > 1, "info firmwareVersion")
+        assertTrue(thetaInfo.supportUrl == "https://theta360.com/en/support/", "info supportUrl")
         assertTrue(!thetaInfo.hasGps, "info hasGps")
         assertTrue(thetaInfo.hasGyro, "info hasGyro")
         assertTrue(thetaInfo.uptime > 0, "info uptime")
+        assertTrue(thetaInfo.api == listOf("/osc/info", "/osc/state", "/osc/checkForUpdates",
+            "/osc/commands/execute", "/osc/commands/status"), "info api")
+        assertTrue(thetaInfo.endpoints == EndPoint(80, 80), "info endpoints")
+        assertTrue(thetaInfo.apiLevel == listOf(2), "info apiLevel")
     }
 
     /**
