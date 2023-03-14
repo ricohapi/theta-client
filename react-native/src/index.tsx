@@ -26,9 +26,9 @@ export type ThetaInfo = {
   /** Theta serial number */
   serialNumber: string;
   /** MAC address of wireless LAN (RICOH THETA V firmware v2.11.1 or later) */
-  wlanMacAddress: string;
+  wlanMacAddress: string | null;
   /** MAC address of Bluetooth (RICOH THETA V firmware v2.11.1 or later) */
-  bluetoothMacAddress: string;
+  bluetoothMacAddress: string | null;
   /** Theta firmware version */
   firmwareVersion: string;
   /** true if Theta has GPS. */
