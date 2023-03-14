@@ -258,14 +258,26 @@ class ThetaClientFlutter {
 
 /// Static attributes of Theta.
 class ThetaInfo {
+  /// Manufacturer name
+  final String manufacturer;
+
   /// Theta model name.
   final String model;
 
   /// Theta serial number.
   final String serialNumber;
 
+  /// MAC address of wireless LAN (RICOH THETA V firmware v2.11.1 or later)
+  final String? wlanMacAddress;
+
+  /// MAC address of Bluetooth (RICOH THETA V firmware v2.11.1 or later)
+  final String? bluetoothMacAddress;
+
   /// Theta firmware version.
   final String firmwareVersion;
+
+  /// URL of the support page
+  final String supportUrl;
 
   /// True if Theta has GPS.
   final bool hasGps;
@@ -276,7 +288,29 @@ class ThetaInfo {
   /// Number of seconds since Theta boot.
   final int uptime;
 
-  ThetaInfo(this.model, this.serialNumber, this.firmwareVersion, this.hasGps, this.hasGyro, this.uptime);
+  /// List of supported APIs
+  final List<String> api;
+
+  /// Endpoint information
+  final Endpoints endpoints;
+
+  /// List of supported APIs (1: v2.0, 2: v2.1)
+  final List<int> apiLevel;
+
+  ThetaInfo(this.manufacturer, this.model, this.serialNumber, this.wlanMacAddress,
+    this.bluetoothMacAddress, this.firmwareVersion, this.supportUrl, this.hasGps, this.hasGyro,
+    this.uptime, this.api, this.endpoints, this.apiLevel);
+}
+
+/// Endpoint information
+class Endpoints {
+  /// Port number for using APIs
+  final int httpPort;
+
+  /// Port number for status update check (CheckForUpdates)
+  final int httpUpdatesPort;
+
+  Endpoints(this.httpPort, this.httpUpdatesPort);
 }
 
 /// File type in Theta.

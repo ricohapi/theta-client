@@ -18,12 +18,19 @@ class ConvertUtils {
 
   static ThetaInfo convertThetaInfo(Map<dynamic, dynamic> data) {
     var thetaInfo = ThetaInfo(
+      data['manufacturer'],
       data['model'],
       data['serialNumber'],
+      data['wlanMacAddress'],
+      data['bluetoothMacAddress'],
       data['firmwareVersion'],
+      data['supportUrl'],
       data['hasGps'],
       data['hasGyro'],
-      data['uptime']
+      data['uptime'],
+      data['api'],
+      data['endpoints'],
+      data['apiLevel']
     );
     return thetaInfo;
   }
