@@ -30,7 +30,7 @@ func convertResult(fileInfoList: [ThetaRepository.FileInfo]) -> [[String: Any]] 
     return resultList
 }
 
-func convertResult(thetaInfo: ThetaRepository.ThetaInfo) -> [String: Any] {
+func convertResult(thetaInfo: ThetaRepository.ThetaInfo) -> [String: Any?] {
     return  [
         "manufacturer": thetaInfo.manufacturer,
         "model": thetaInfo.model,
