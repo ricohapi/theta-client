@@ -31,6 +31,8 @@ export type ThetaInfo = {
   bluetoothMacAddress: string | null;
   /** Theta firmware version */
   firmwareVersion: string;
+  /* URL of the support page */
+  supportUrl: string;
   /** true if Theta has GPS. */
   hasGps: boolean;
   /** true if Theta has Gyroscope */
