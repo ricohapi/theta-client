@@ -17,6 +17,18 @@ class ConvertUtils {
   }
 
   static ThetaInfo convertThetaInfo(Map<dynamic, dynamic> data) {
+    List<String> apiList = [];
+    data['api'].forEach((str) {
+      apiList.add(str);
+    });
+    Endpoints endpoints = Endpoints(
+      data['endpoints']['httpPort'],
+      data['endpoints']['httpUpdatesPort']
+    );
+    List<int> apiLevelList = [];
+    data['apiLevel'].forEach((n) {
+      apiLevelList.add(n);
+    });
     var thetaInfo = ThetaInfo(
       data['manufacturer'],
       data['model'],
@@ -28,9 +40,9 @@ class ConvertUtils {
       data['hasGps'],
       data['hasGyro'],
       data['uptime'],
-      data['api'],
-      data['endpoints'],
-      data['apiLevel']
+      apiList,
+      endpoints,
+      apiLevelList
     );
     return thetaInfo;
   }

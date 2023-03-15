@@ -228,8 +228,12 @@ void main() {
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     const model = 'RICOH THETA Z1';
+    const api = ['a', 'b'];
+    const apiLevel = [2];
+    var endpoints = Endpoints(80, 80);
     onGetThetaInfo = () {
-      return Future.value(ThetaInfo(model, '11', '22', true, true, 1));
+      return Future.value(ThetaInfo('RICOH', model, 'serialNo', 'wlanMac', 'blMac',
+      'firmVersion', 'supportUrl', true, true, 1, api, endpoints, apiLevel));
     };
 
     var thetaInfo = await thetaClientPlugin.getThetaInfo();
