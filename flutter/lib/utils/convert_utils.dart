@@ -17,7 +17,7 @@ class ConvertUtils {
   }
 
   static ThetaInfo convertThetaInfo(Map<dynamic, dynamic> data) {
-    List<String> apiList = [];
+    var apiList = List<String>.empty(growable: true);
     data['api'].forEach((str) {
       apiList.add(str);
     });
@@ -25,7 +25,7 @@ class ConvertUtils {
       data['endpoints']['httpPort'],
       data['endpoints']['httpUpdatesPort']
     );
-    List<int> apiLevelList = [];
+    var apiLevelList = List<int>.empty(growable: true);
     data['apiLevel'].forEach((n) {
       apiLevelList.add(n);
     });
