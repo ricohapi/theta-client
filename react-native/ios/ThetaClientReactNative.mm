@@ -1382,12 +1382,22 @@ RCT_REMAP_METHOD(getThetaInfo,
       if (error) {
         reject(@"error", [error localizedDescription], error);
       } else if (info) {
-        resolve(@{@"model": info.model,
-              @"serialNumber":info.serialNumber,
-              @"firmwareVersion":info.firmwareVersion,
-              @"hasGps":@(info.hasGps),
-              @"hasGyro":@(info.hasGyro),
-              @"uptime":@(info.uptime)});
+        resolve(@{@"manufacturer": info.manufacturer,
+              @"model": info.model,
+              @"serialNumber": info.serialNumber,
+              @"wlanMacAddress": info.wlanMacAddress != nil? info.wlanMacAddress : [NSNull null],
+              @"bluetoothMacAddress": info.bluetoothMacAddress != nil? info.bluetoothMacAddress : [NSNull null],
+              @"firmwareVersion": info.firmwareVersion,
+              @"supportUrl": info.supportUrl,
+              @"hasGps": @(info.hasGps),
+              @"hasGyro": @(info.hasGyro),
+              @"uptime": @(info.uptime),
+              @"api": info.api,
+              @"endpoints": @{
+                  @"httpPort": @(info.endpoints.httpPort),
+                  @"httpUpdatesPort": @(info.endpoints.httpUpdatesPort),
+              },
+              @"apiLevel": info.apiLevel});
       } else {
         reject(@"error", @"no info", nil);
       }

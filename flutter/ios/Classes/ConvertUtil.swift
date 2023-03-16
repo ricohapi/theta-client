@@ -30,14 +30,24 @@ func convertResult(fileInfoList: [ThetaRepository.FileInfo]) -> [[String: Any]] 
     return resultList
 }
 
-func convertResult(thetaInfo: ThetaRepository.ThetaInfo) -> [String: Any] {
+func convertResult(thetaInfo: ThetaRepository.ThetaInfo) -> [String: Any?] {
     return  [
+        "manufacturer": thetaInfo.manufacturer,
         "model": thetaInfo.model,
         "serialNumber": thetaInfo.serialNumber,
+        "wlanMacAddress": thetaInfo.wlanMacAddress,
+        "bluetoothMacAddress": thetaInfo.bluetoothMacAddress,
         "firmwareVersion": thetaInfo.firmwareVersion,
+        "supportUrl": thetaInfo.supportUrl,
         "hasGps": thetaInfo.hasGps,
         "hasGyro": thetaInfo.hasGyro,
         "uptime": thetaInfo.uptime,
+        "api": thetaInfo.api,
+        "endpoints": [
+            "httpPort": thetaInfo.endpoints.httpPort,
+            "httpUpdatesPort": thetaInfo.endpoints.httpUpdatesPort,
+        ],
+        "apiLevel": thetaInfo.apiLevel,
     ]
 }
 

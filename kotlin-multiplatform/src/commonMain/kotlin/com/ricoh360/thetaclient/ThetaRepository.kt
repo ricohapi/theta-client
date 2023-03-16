@@ -2808,28 +2808,49 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Static attributes of Theta.
      *
+     * @property manufacturer Manufacturer name
      * @property model Theta model name
      * @property serialNumber Theta serial number
+     * @property wlanMacAddress MAC address of wireless LAN (RICOH THETA V firmware v2.11.1 or later)
+     * @property bluetoothMacAddress MAC address of Bluetooth (RICOH THETA V firmware v2.11.1 or later)
      * @property firmwareVersion Theta firmware version
+     * @property supportUrl URL of the support page
      * @property hasGps True if Theta has GPS.
      * @property hasGyro True if Theta has Gyroscope
      * @property uptime Number of seconds since Theta boot
+     * @property api List of supported APIs
+     * @property endpoints Endpoint information
+     * @property apiLevel List of supported APIs (1: v2.0, 2: v2.1)
      */
     data class ThetaInfo(
+        val manufacturer: String,
         val model: String,
         val serialNumber: String,
+        val wlanMacAddress: String?,
+        val bluetoothMacAddress: String?,
         val firmwareVersion: String,
+        val supportUrl: String,
         val hasGps: Boolean,
         val hasGyro: Boolean,
-        val uptime: Int
+        val uptime: Int,
+        val api: List<String>,
+        val endpoints: EndPoint,
+        val apiLevel: List<Int>,
     ) {
         constructor(res: InfoApiResponse) : this(
+            manufacturer = res.manufacturer,
             model = res.model,
             serialNumber = res.serialNumber,
+            wlanMacAddress = res._wlanMacAddress,
+            bluetoothMacAddress = res._bluetoothMacAddress,
             firmwareVersion = res.firmwareVersion,
+            supportUrl = res.supportUrl,
             hasGps = res.gps,
             hasGyro = res.gyro,
-            uptime = res.uptime
+            uptime = res.uptime,
+            api = res.api,
+            endpoints = res.endpoints,
+            apiLevel = res.apiLevel
         )
     }
 

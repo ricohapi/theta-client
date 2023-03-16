@@ -85,12 +85,26 @@ class ThetaClientReactNativeModule(
       try {
         val info = theta.getThetaInfo()
         val result = Arguments.createMap()
+        result.putString("manufacturer", info.manufacturer)
         result.putString("model", info.model)
         result.putString("serialNumber", info.serialNumber)
+	      info.wlanMacAddress?.also {
+          result.putString("wlanMacAddress", info.wlanMacAddress)
+        } ?: result.putNull("wlanMacAddress")
+        info.bluetoothMacAddress?.also {
+          result.putString("bluetoothMacAddress", info.bluetoothMacAddress)
+        } ?: result.putNull("bluetoothMacAddress")
         result.putString("firmwareVersion", info.firmwareVersion)
+        result.putString("supportUrl", info.supportUrl)
         result.putBoolean("hasGps", info.hasGps)
         result.putBoolean("hasGyro", info.hasGyro)
         result.putInt("uptime", info.uptime)
+        result.putArray("api", Arguments.fromList(info.api))
+        val ep = Arguments.createMap()
+        ep.putInt("httpPort", info.endpoints.httpPort)
+        ep.putInt("httpUpdatesPort", info.endpoints.httpUpdatesPort)
+        result.putMap("endpoints", ep)
+        result.putArray("apiLevel", Arguments.fromList(info.apiLevel))
         promise.resolve(result)
       } catch (t: Throwable) {
         promise.reject(t)

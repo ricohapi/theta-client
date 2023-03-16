@@ -25,31 +25,54 @@ void main() {
   });
 
   test('getThetaInfo', () async {
+    const manufacturer = 'RICOH';
     const model = 'RICOH THETA Z1';
     const serialNumber = '10010065';
+    const wlanMacAddress = '00:26:73:D7:93:C2';
+    const bluetoothMacAddress = '00:26:73:D6:93:C2';
     const firmwareVersion = '2.10.3';
+    const supportUrl = 'https://theta360.com/en/support/';
     const hasGps = true;
     const hasGyro = true;
     const uptime = 142;
+    const api = ['/osc/info', '/osc/state', '/osc/checkForUpdates',
+      '/osc/commands/execute','/osc/commands/status'];
+    var endpoints = <String, int>{'httpPort': 80, 'httpUpdatesPort': 80};
+    const apiLevel = [2];
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       final Map info = <String, dynamic> {
+        'manufacturer': manufacturer,
         'model': model,
         'serialNumber': serialNumber,
+        'wlanMacAddress': wlanMacAddress,
+        'bluetoothMacAddress': bluetoothMacAddress,
         'firmwareVersion': firmwareVersion,
+        'supportUrl': supportUrl,
         'hasGps': hasGps,
         'hasGyro': hasGyro,
         'uptime': uptime,
+        'api': api,
+        'endpoints': endpoints,
+        'apiLevel': apiLevel,
       };
       return info;
     });
 
     var thetaInfo = await platform.getThetaInfo();
+    expect(thetaInfo.manufacturer, manufacturer);
     expect(thetaInfo.model, model);
     expect(thetaInfo.serialNumber, serialNumber);
+    expect(thetaInfo.wlanMacAddress, wlanMacAddress);
+    expect(thetaInfo.bluetoothMacAddress, bluetoothMacAddress);
     expect(thetaInfo.firmwareVersion, firmwareVersion);
+    expect(thetaInfo.supportUrl, supportUrl);
     expect(thetaInfo.hasGps, hasGps);
     expect(thetaInfo.hasGyro, hasGyro);
     expect(thetaInfo.uptime, uptime);
+    expect(thetaInfo.api, api);
+    expect(thetaInfo.endpoints.httpPort, 80);
+    expect(thetaInfo.endpoints.httpUpdatesPort, 80);
+    expect(thetaInfo.apiLevel, apiLevel);
   });
 
   test('getThetaState', () async {

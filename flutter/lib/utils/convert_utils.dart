@@ -17,13 +17,32 @@ class ConvertUtils {
   }
 
   static ThetaInfo convertThetaInfo(Map<dynamic, dynamic> data) {
+    var apiList = List<String>.empty(growable: true);
+    data['api'].forEach((str) {
+      apiList.add(str);
+    });
+    Endpoints endpoints = Endpoints(
+      data['endpoints']['httpPort'],
+      data['endpoints']['httpUpdatesPort']
+    );
+    var apiLevelList = List<int>.empty(growable: true);
+    data['apiLevel'].forEach((n) {
+      apiLevelList.add(n);
+    });
     var thetaInfo = ThetaInfo(
+      data['manufacturer'],
       data['model'],
       data['serialNumber'],
+      data['wlanMacAddress'],
+      data['bluetoothMacAddress'],
       data['firmwareVersion'],
+      data['supportUrl'],
       data['hasGps'],
       data['hasGyro'],
-      data['uptime']
+      data['uptime'],
+      apiList,
+      endpoints,
+      apiLevelList
     );
     return thetaInfo;
   }

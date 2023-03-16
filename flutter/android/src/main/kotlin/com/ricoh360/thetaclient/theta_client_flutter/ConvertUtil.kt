@@ -6,14 +6,24 @@ import com.ricoh360.thetaclient.capture.PhotoCapture
 import com.ricoh360.thetaclient.capture.VideoCapture
 import io.flutter.plugin.common.MethodCall
 
-fun toResult(thetaInfo: ThetaInfo): Map<String, Any> {
-    return mapOf<String, Any>(
+fun toResult(thetaInfo: ThetaInfo): Map<String, Any?> {
+    return mapOf<String, Any?>(
+        "manufacturer" to thetaInfo.manufacturer,
         "model" to thetaInfo.model,
         "serialNumber" to thetaInfo.serialNumber,
+        "wlanMacAddress" to thetaInfo.wlanMacAddress,
+        "bluetoothMacAddress" to thetaInfo.bluetoothMacAddress,
         "firmwareVersion" to thetaInfo.firmwareVersion,
+        "supportUrl" to thetaInfo.supportUrl,
         "hasGps" to thetaInfo.hasGps,
         "hasGyro" to thetaInfo.hasGyro,
-        "uptime" to thetaInfo.uptime
+        "uptime" to thetaInfo.uptime,
+        "api" to thetaInfo.api,
+        "endpoints" to mapOf<String, Int>(
+            "httpPort" to thetaInfo.endpoints.httpPort,
+            "httpUpdatesPort" to thetaInfo.endpoints.httpUpdatesPort
+        ),
+        "apiLevel" to thetaInfo.apiLevel
     )
 }
 
