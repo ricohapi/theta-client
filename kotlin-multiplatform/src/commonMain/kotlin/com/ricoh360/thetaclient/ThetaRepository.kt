@@ -1233,7 +1233,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         /**
          * Self-timer time. 10sec.
          */
-        DELAY_10(10);
+        DELAY_10(10),
+
+        /**
+         * Just used by getMySetting/setMySetting command.
+         */
+        DO_NOT_UPDATE_MY_SETTING_CONDITION(-1);
 
         companion object {
             /**
@@ -1397,6 +1402,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         IMAGE_11K(FileFormatTypeEnum.JPEG, 11008, 5504, null, null),
 
         /**
+         * Just used by getMySetting/setMySetting command
+         */
+        IMAGE_DO_NOT_UPDATE_MY_SETTING_CONDITION(FileFormatTypeEnum.JPEG, 0, 0, null, null),
+
+        /**
          * Video File format.
          *
          * type: mp4
@@ -1556,7 +1566,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          *
          * For RICOH THETA X or later
          */
-        VIDEO_7K_10F(FileFormatTypeEnum.MP4, 7680, 3840, "H.264/MPEG-4 AVC", 10);
+        VIDEO_7K_10F(FileFormatTypeEnum.MP4, 7680, 3840, "H.264/MPEG-4 AVC", 10),
+
+        /**
+         * Just used by getMySetting/setMySetting command
+         */
+        VIDEO_DO_NOT_UPDATE_MY_SETTING_CONDITION(FileFormatTypeEnum.MP4, 0, 0, null, null);
 
         /**
          * Convert FileFormatEnum to MediaFileFormat.
@@ -2293,7 +2308,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          *
          * Enabled with RICOH THETA Z1's image shooting mode and video shooting mode, and with RICOH THETA V's video shooting mode.
          */
-        ISO_6400(6400);
+        ISO_6400(6400),
+
+        /**
+         * Just used by getMySetting/setMySetting command
+         */
+        DO_NOT_UPDATE_MY_SETTING_CONDITION(-1);
 
         companion object {
             /**
@@ -2396,7 +2416,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         /**
          * Maximum recordable time. 1500sec for other than SC2.
          */
-        RECORDABLE_TIME_1500(1500);
+        RECORDABLE_TIME_1500(1500),
+
+        /**
+         * Just used by getMySetting/setMySetting command
+         */
+        DO_NOT_UPDATE_MY_SETTING_CONDITION(-1);
 
         companion object {
             /**
@@ -3407,6 +3432,74 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             }
         }
     }
+
+    /**
+     * Acquires the shooting properties set by the camera._setMySetting command.
+     * Just for Theta V and later.
+     *
+     * Refer to the [options Overview](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
+     * of API v2.1 reference  for properties available for acquisition.
+     *
+     * @param captureMode The target shooting mode.
+     * @return Options of my setting
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun getMySetting(captureMode: CaptureModeEnum): Options {
+        try {
+            val params = GetMySettingParams(mode = captureMode.value)
+            val getMySettingResponse = ThetaApi.callGetMySettingCommand(endpoint, params)
+            getMySettingResponse.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+            return Options(getMySettingResponse.results!!.options)
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
+    /**
+     * Acquires the shooting properties set by the camera._setMySetting command.
+     * Just for Theta S and SC.
+     *
+     * Refer to the [options Overview](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
+     * of API v2.1 reference  for properties available for acquisition.
+     *
+     * @param optionNames List of option names to acquire.
+     * @return Options of my setting
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun getMySetting(optionNames: List<OptionNameEnum>): Options {
+        try {
+            val names = optionNames.map {
+                it.value
+            }
+            val params = GetMySettingParams(optionNames = names)
+            val getMySettingResponse = ThetaApi.callGetMySettingCommand(endpoint, params)
+            getMySettingResponse.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+            return Options(getMySettingResponse.results!!.options)
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
 }
 
 /**
