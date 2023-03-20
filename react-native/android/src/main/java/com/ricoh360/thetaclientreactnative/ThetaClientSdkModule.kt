@@ -124,11 +124,40 @@ class ThetaClientReactNativeModule(
         val result = Arguments.createMap()
         result.putString("fingerprint", state.fingerprint)
         result.putDouble("batteryLevel", state.batteryLevel.toDouble())
-        result.putString("chargingState", state.chargingState.toString())
-        result.putBoolean("isSdCard", state.isSdCard)
+        result.putString("storageUri", state.storageUri)
+        result.putString("storageID", state.storageID)
+        result.putString("captureStatus", state.captureStatus.toString())
         result.putInt("recordedTime", state.recordedTime)
         result.putInt("recordableTime", state.recordableTime)
+        state.capturedPictures?.also {
+          result.putInt("capturedPictures", state.capturedPictures!!)
+        } ?: result.putNull("capturedPictures")
+        state.compositeShootingElapsedTime?.also {
+          result.putString("compositeShootingElapsedTime", state.compositeShootingElapsedTime.toString())
+        } ?: result.putNull("compositeShootingElapsedTime")
         result.putString("latestFileUrl", state.latestFileUrl)
+        result.putString("chargingState", state.chargingState.toString())
+        result.putInt("apiVersion", state.apiVersion)
+        state.isPluginRunning?.also {
+          result.putBoolean("isPluginRunning", state.isPluginRunning!!)
+        } ?: result.putNull("isPluginRunning")
+        state.isPluginWebServer?.also {
+          result.putBoolean("isPluginWebServer", state.isPluginWebServer!!)
+        } ?: result.putNull("isPluginWebServer")
+        state.function?.also {
+          result.putString("function", state.function.toString())
+        } ?: result.putNull("function")
+        state.isMySettingChanged?.also {
+          result.putBoolean("isMySettingChanged", state.isMySettingChanged!!)
+        } ?: result.putNull("isMySettingChanged")
+        result.putString("currentMicrophone", state.currentMicrophone?.toString())
+        result.putBoolean("isSdCard", state.isSdCard)
+        state.cameraError?.also {
+          result.putArray("cameraError", Arguments.makeNativeArray(state.cameraError!!.map { it.toString() }))
+        } ?: result.putNull("cameraError")
+        state.isBatteryInsert?.also {
+          result.putString("isBatteryInsert", state.isBatteryInsert.toString())
+        } ?: result.putNull("isBatteryInsert")
         promise.resolve(result)
       } catch (t: Throwable) {
         promise.reject(t)

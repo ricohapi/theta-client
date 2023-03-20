@@ -197,6 +197,62 @@ static convert_t ChargingStateEnum = {
   }
 };
 
+static convert_t CaptureStatusEnum = {
+  .fromTheta = @{
+      THETACThetaRepositoryCaptureStatusEnum.shooting: @"SHOOTING",
+      THETACThetaRepositoryCaptureStatusEnum.idle: @"IDLE",
+      THETACThetaRepositoryCaptureStatusEnum.selfTimerCountdown: @"SELF_TIMER_COUNTDOWN",
+      THETACThetaRepositoryCaptureStatusEnum.bracketShooting: @"BRACKET_SHOOTING",
+      THETACThetaRepositoryCaptureStatusEnum.converting: @"CONVERTING",
+      THETACThetaRepositoryCaptureStatusEnum.timeShiftShooting: @"TIME_SHIFT_SHOOTING",
+      THETACThetaRepositoryCaptureStatusEnum.continuousShooting: @"CONTINUOUS_SHOOTING",
+      THETACThetaRepositoryCaptureStatusEnum.retrospectiveImageRecording: @"RETROSPECTIVE_IMAGE_RECORDING"
+  }
+};
+
+static convert_t ShootingFunctionEnum = {
+  .fromTheta = @{
+      THETACThetaRepositoryShootingFunctionEnum.normal: @"NORMAL",
+      THETACThetaRepositoryShootingFunctionEnum.selfTimer: @"SELF_TIMER",
+      THETACThetaRepositoryShootingFunctionEnum.mySetting: @"MY_SETTING"
+  }
+};
+
+static convert_t MicrophoneOptionEnum = {
+  .fromTheta = @{
+      THETACThetaRepositoryMicrophoneOptionEnum.auto_: @"AUTO",
+      THETACThetaRepositoryMicrophoneOptionEnum.internal: @"INTERNAL",
+      THETACThetaRepositoryMicrophoneOptionEnum.external: @"EXTERNAL"
+  }
+};
+
+static convert_t CameraErrorEnum = {
+  .fromTheta = @{
+      THETACThetaRepositoryCameraErrorEnum.noMemory: @"NO_MEMORY",
+      THETACThetaRepositoryCameraErrorEnum.fileNumberOver: @"FILE_NUMBER_OVER",
+      THETACThetaRepositoryCameraErrorEnum.noDataSetting: @"NO_DATE_SETTING",
+      THETACThetaRepositoryCameraErrorEnum.readError: @"READ_ERROR",
+      THETACThetaRepositoryCameraErrorEnum.notSupportedMediaType: @"NOT_SUPPORTED_MEDIA_TYPE",
+      THETACThetaRepositoryCameraErrorEnum.notSupportedFileSystem: @"NOT_SUPPORTED_FILE_SYSTEM",
+      THETACThetaRepositoryCameraErrorEnum.mediaNotReady: @"MEDIA_NOT_READY",
+      THETACThetaRepositoryCameraErrorEnum.notEnoughBattery: @"NOT_ENOUGH_BATTERY",
+      THETACThetaRepositoryCameraErrorEnum.invalidFile: @"INVALID_FILE",
+      THETACThetaRepositoryCameraErrorEnum.pluginBootError: @"PLUGIN_BOOT_ERROR",
+      THETACThetaRepositoryCameraErrorEnum.inProgressError: @"IN_PROGRESS_ERROR",
+      THETACThetaRepositoryCameraErrorEnum.cannotRecording: @"CANNOT_RECORDING",
+      THETACThetaRepositoryCameraErrorEnum.cannotRecordLowbat: @"CANNOT_RECORD_LOWBAT",
+      THETACThetaRepositoryCameraErrorEnum.captureHwFailed: @"CAPTURE_HW_FAILED",
+      THETACThetaRepositoryCameraErrorEnum.captureSwFailed: @"CAPTURE_SW_FAILED",
+      THETACThetaRepositoryCameraErrorEnum.internalMemAccessFail: @"INTERNAL_MEM_ACCESS_FAIL",
+      THETACThetaRepositoryCameraErrorEnum.unexpectedError: @"UNEXPECTED_ERROR",
+      THETACThetaRepositoryCameraErrorEnum.batteryChargeFail: @"BATTERY_CHARGE_FAIL",
+      THETACThetaRepositoryCameraErrorEnum.highTemperatureWarning: @"HIGH_TEMPERATURE_WARNING",
+      THETACThetaRepositoryCameraErrorEnum.highTemperature: @"HIGH_TEMPERATURE",
+      THETACThetaRepositoryCameraErrorEnum.batteryHighTemperature: @"BATTERY_HIGH_TEMPERATURE",
+      THETACThetaRepositoryCameraErrorEnum.compassCalibration: @"COMPASS_CALIBRATION"
+  }
+};
+ 
 /**
  * FileTypeEnum converter
  */
@@ -1418,14 +1474,32 @@ RCT_REMAP_METHOD(getThetaState,
       if (error) {
         reject(@"error", [error localizedDescription], error);
       } else if (state) {
+        NSMutableArray *cameraErrorList = [[NSMutableArray alloc] init];
+        if (state.cameraError != nil) {
+            for (THETACThetaRepositoryCameraErrorEnum *element in state.cameraError) {
+                [cameraErrorList addObject:[CameraErrorEnum.fromTheta objectForKey:element]];
+            }
+        }
         resolve(@{@"fingerprint": state.fingerprint,
-              @"batteryLevel":@(state.batteryLevel),
-              @"chargingState":[ChargingStateEnum.fromTheta
-                                   objectForKey:state.chargingState],
-              @"isSdCard":@(state.isSdCard),
-              @"recordedTime":@(state.recordedTime),
-              @"recordableTime":@(state.recordableTime),
-              @"latestFileUrl":state.latestFileUrl});
+              @"batteryLevel": @(state.batteryLevel),
+              @"storageUri": state.storageUri,
+              @"storageID": state.storageID,
+              @"captureStatus": [CaptureStatusEnum.fromTheta objectForKey:state.captureStatus],
+              @"recordedTime": @(state.recordedTime),
+              @"recordableTime": @(state.recordableTime),
+              @"capturedPictures": state.capturedPictures != nil ? @([state.capturedPictures intValue]): [NSNull null],
+              @"compositeShootingElapsedTime": state.compositeShootingElapsedTime != nil ? @([state.compositeShootingElapsedTime intValue]): [NSNull null],
+              @"latestFileUrl": state.latestFileUrl,
+              @"chargingState": [ChargingStateEnum.fromTheta objectForKey:state.chargingState],
+              @"apiVersion": @(state.apiVersion),
+              @"isPluginRunning": state.isPluginRunning != nil ? @([state.isPluginRunning boolValue]) : [NSNull null],
+              @"isPluginWebServer": state.isPluginWebServer != nil ? @([state.isPluginWebServer boolValue]) : [NSNull null],
+              @"function": state.function != nil ? [ShootingFunctionEnum.fromTheta objectForKey:state.function] : [NSNull null],
+              @"isMySettingChanged": state.isMySettingChanged != nil? @([state.isMySettingChanged boolValue]) : [NSNull null],
+              @"currentMicrophone": state.currentMicrophone != nil ? [MicrophoneOptionEnum.fromTheta objectForKey:state.currentMicrophone] : [NSNull null],
+              @"isSdCard": @(state.isSdCard),
+              @"cameraError": state.cameraError != nil ? cameraErrorList : [NSNull null],
+              @"isBatteryInsert": state.isBatteryInsert != nil ? @([state.isBatteryInsert boolValue]) : [NSNull null]});
       } else {
         reject(@"error", @"no state", nil);
       }

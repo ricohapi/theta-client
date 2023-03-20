@@ -450,6 +450,12 @@ enum class CameraError {
     BATTERY_CHARGE_FAIL,
 
     /**
+     * 0x00100000: (Board) temperature warning
+     */
+    @SerialName("HIGH_TEMPERATURE_WARNING")
+    HIGH_TEMPERATURE_WARNING,
+
+    /**
      * 0x80000000: (Board) temperature error
      */
     @SerialName("HIGH_TEMPERATURE")
