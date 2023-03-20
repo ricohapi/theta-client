@@ -4,36 +4,32 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 
 /**
- * Set my setting request
+ * delete my setting request
  */
 @Serializable
-data class SetMySettingRequest(
-    override val name: String = "camera._setMySetting",
-    override val parameters: SetMySettingParams,
+data class DeleteMySettingRequest(
+    override val name: String = "camera._deleteMySetting",
+    override val parameters: DeleteMySettingParams,
 ) : CommandApiRequest
 
 /**
- * Set my setting parameters
+ * delete my setting parameters
  */
 @Serializable
-data class SetMySettingParams(
+data class DeleteMySettingParams(
     /**
      * The target shooting mode
      * ("image": still image capture mode, "video": video capture)
      * In RICOH THETA S and SC, do not set then it can be acquired for still image.
      */
     val mode: CaptureMode? = null,
-    /**
-     * Names of the options specified for acquisition in the JSON format and the set of current values.
-     */
-    val options: Options,
 )
 
 /**
- * Set my setting response
+ * delete my setting response
  */
 @Serializable
-data class SetMySettingResponse(
+data class DeleteMySettingResponse(
     /**
      * Executed command
      */
@@ -68,6 +64,4 @@ data class SetMySettingResponse(
      * "inProgress"
      */
     override val progress: CommandProgress? = null,
-
 ) : CommandApiResponse
-

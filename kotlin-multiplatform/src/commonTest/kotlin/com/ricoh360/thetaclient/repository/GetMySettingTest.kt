@@ -2,21 +2,12 @@ package com.ricoh360.thetaclient.repository
 
 import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.MockApiClient
-import com.ricoh360.thetaclient.ThetaApi
 import com.ricoh360.thetaclient.ThetaRepository
-import com.ricoh360.thetaclient.transferred.CaptureMode
-import com.ricoh360.thetaclient.transferred.GetMySettingParams
-import com.ricoh360.thetaclient.transferred.GetMySettingRequest
-import com.ricoh360.thetaclient.transferred.GetMySettingResponse
-import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.http.content.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import kotlin.test.*
 
 @OptIn(ExperimentalSerializationApi::class, ExperimentalCoroutinesApi::class)

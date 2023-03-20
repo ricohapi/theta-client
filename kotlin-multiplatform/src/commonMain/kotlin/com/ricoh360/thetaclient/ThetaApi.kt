@@ -599,6 +599,29 @@ object ThetaApi {
     }
 
     /**
+     * call [camera._deleteMySetting](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._delete_mysetting.md)
+     *
+     * @param endpoint Endpoint of Theta web API
+     * @param params deleteMySetting parameters
+     * @return response of deleteMySetting command
+     * @see DeleteMySettingParams
+     * @see DeleteMySettingResponse
+     * @exception java.net.ConnectException can not connect to target endpoint
+     * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
+     * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
+     * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
+     * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
+     */
+    @Throws(Throwable::class)
+    suspend fun callDeleteMySettingCommand(
+        endpoint: String,
+        params: DeleteMySettingParams,
+    ): DeleteMySettingResponse {
+        val request = DeleteMySettingRequest(parameters = params)
+        return postCommandApi(endpoint, request).body()
+    }
+
+    /**
      * Post request {body} to {endpoint} APIs then return its response
      */
     private suspend fun postCommandApi(

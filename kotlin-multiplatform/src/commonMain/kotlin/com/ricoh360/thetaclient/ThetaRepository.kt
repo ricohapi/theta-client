@@ -3500,6 +3500,54 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         }
     }
 
+    /**
+     * Registers shooting conditions in My Settings.
+     *
+     * @param captureMode The target shooting mode.  In RICOH THETA S and SC, do not set then it can be acquired for still image.
+     * @param options registered to My Settings.
+     */
+    @Throws(Throwable::class)
+    suspend fun setMySetting(captureMode: CaptureModeEnum, options: Options) {
+        try {
+            val params = SetMySettingParams(captureMode.value, options.toOptions())
+            val setMySettingResponse = ThetaApi.callSetMySettingCommand(endpoint, params)
+            setMySettingResponse.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
+    /**
+     * Delete shooting conditions in My Settings. Supported just by Theta X and Z1.
+     *
+     * @param captureMode The target shooting mode.
+     */
+    @Throws(Throwable::class)
+    suspend fun deleteMySetting(captureMode: CaptureModeEnum) {
+        try {
+            val params = DeleteMySettingParams(captureMode.value)
+            val deleteMySettingResponse = ThetaApi.callDeleteMySettingCommand(endpoint, params)
+            deleteMySettingResponse.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
 }
 
 /**
