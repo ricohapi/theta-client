@@ -64,3 +64,8 @@
   ```
   $ yarn start
   ```
+
+### Tips for Windows 11
+
+* Convert your `mkpackage.sh` file from Carriage Return Line Feed "CRLF" to Line Feed "LF"
+* Instead of running `sh mkpackage.sh` use `bash mkpackage.sh`
