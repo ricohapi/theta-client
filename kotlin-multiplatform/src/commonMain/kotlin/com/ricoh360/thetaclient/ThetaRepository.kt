@@ -3434,6 +3434,46 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Plugin information
+     *
+     * @property name Plugin name
+     * @property packageName Package name
+     * @property version Plugin version
+     * @property isPreInstalled Pre-installed plugin or not
+     * @property isRunning Plugin power status
+     * @property isForeground Process status
+     * @property isBoot To be started on boot or not
+     * @property hasWebServer Has Web UI or not
+     * @property exitStatus Exit status
+     * @property message Message
+     */
+    data class PluginInfo(
+        val name: String,
+        val packageName: String,
+        val version: String,
+        val isPreInstalled: Boolean,
+        val isRunning: Boolean,
+        val isForeground: Boolean,
+        val isBoot: Boolean,
+        val hasWebServer: Boolean,
+        val exitStatus: String,
+        val message: String,
+    ) {
+        constructor(plugin: Plugin) : this(
+            name = plugin.pluginName,
+            packageName = plugin.packageName,
+            version = plugin.version,
+            isPreInstalled = plugin.type == "system",
+            isRunning = plugin.running,
+            isForeground = plugin.foreground,
+            isBoot = plugin.boot,
+            hasWebServer = plugin.webServer,
+            exitStatus = plugin.exitStatus,
+            message = plugin.message,
+        )
+    }
+
+    /**
      * Acquires the shooting properties set by the camera._setMySetting command.
      * Just for Theta V and later.
      *
@@ -3548,7 +3588,35 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             throw NotConnectedException(e.message ?: e.toString())
         }
     }
+
+    /**
+     * Acquires a list of installed plugins. Supported just by Theta V and later.
+     */
+    @Throws(Throwable::class)
+    suspend fun listPlugins(): List<PluginInfo> {
+        val listPluginsResponse: ListPluginsResponse
+        try {
+            listPluginsResponse = ThetaApi.callListPluginsCommand(endpoint)
+            listPluginsResponse.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+
+        return listPluginsResponse.results!!.plugins.map {
+            PluginInfo(it)
+        }
+    }
+
 }
+
 
 /**
  * Check status interval for Command

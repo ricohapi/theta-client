@@ -553,8 +553,7 @@ object ThetaApi {
     }
 
     /**
-     * call [camera._getMySetting](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._get_my_setting.md)
-     *
+     * Call [camera._getMySetting](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._get_my_setting.md)
      * @param endpoint Endpoint of Theta web API
      * @param params getMySetting parameters
      * @return response of getMySetting command
@@ -576,8 +575,7 @@ object ThetaApi {
     }
 
     /**
-     * call [camera._setMySetting](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._set_my_setting.md)
-     *
+     * Call [camera._setMySetting](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._set_my_setting.md)
      * @param endpoint Endpoint of Theta web API
      * @param params setMySetting parameters
      * @return response of setMySetting command
@@ -599,8 +597,7 @@ object ThetaApi {
     }
 
     /**
-     * call [camera._deleteMySetting](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._delete_mysetting.md)
-     *
+     * Call [camera._deleteMySetting](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._delete_mysetting.md)
      * @param endpoint Endpoint of Theta web API
      * @param params deleteMySetting parameters
      * @return response of deleteMySetting command
@@ -618,6 +615,25 @@ object ThetaApi {
         params: DeleteMySettingParams,
     ): DeleteMySettingResponse {
         val request = DeleteMySettingRequest(parameters = params)
+        return postCommandApi(endpoint, request).body()
+    }
+
+    /**
+     * Call [camera._listPlugins](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._list_plugins.md)
+     * @param endpoint Endpoint of Theta web API
+     * @return response of listPlugins command
+     * @see ListPluginsResponse
+     * @exception java.net.ConnectException can not connect to target endpoint
+     * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
+     * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
+     * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
+     * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
+     */
+    @Throws(Throwable::class)
+    suspend fun callListPluginsCommand(
+        endpoint: String,
+    ): ListPluginsResponse {
+        val request = ListPluginsRequest()
         return postCommandApi(endpoint, request).body()
     }
 
