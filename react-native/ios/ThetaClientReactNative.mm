@@ -230,7 +230,7 @@ static convert_t CameraErrorEnum = {
   .fromTheta = @{
       THETACThetaRepositoryCameraErrorEnum.noMemory: @"NO_MEMORY",
       THETACThetaRepositoryCameraErrorEnum.fileNumberOver: @"FILE_NUMBER_OVER",
-      THETACThetaRepositoryCameraErrorEnum.noDataSetting: @"NO_DATE_SETTING",
+      THETACThetaRepositoryCameraErrorEnum.noDateSetting: @"NO_DATE_SETTING",
       THETACThetaRepositoryCameraErrorEnum.readError: @"READ_ERROR",
       THETACThetaRepositoryCameraErrorEnum.notSupportedMediaType: @"NOT_SUPPORTED_MEDIA_TYPE",
       THETACThetaRepositoryCameraErrorEnum.notSupportedFileSystem: @"NOT_SUPPORTED_FILE_SYSTEM",
