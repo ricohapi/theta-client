@@ -12,7 +12,7 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class ListPluginsTest {
+class SetPluginTest {
     private val endpoint = "http://192.168.1.1:80/"
 
     @BeforeTest
@@ -26,9 +26,9 @@ class ListPluginsTest {
     }
 
     @Test
-    fun listPluginsTest() = runTest {
+    fun setPluginTest() = runTest {
         // setup
-        val jsonString = Resource("src/commonTest/resources/listPlugins/list_plugins_done.json").readText()
+        val jsonString = Resource("src/commonTest/resources/setPlugin/set_plugin_done_v.json").readText()
         MockApiClient.onRequest = { request ->
             assertEquals(request.url.encodedPath, "/osc/commands/execute", "request path")
             ByteReadChannel(jsonString)
@@ -36,13 +36,14 @@ class ListPluginsTest {
 
         // test
         val thetaRepository = ThetaRepository(endpoint)
-        val plugins = thetaRepository.listPlugins()
-        plugins.forEach {
-            assertTrue(it.name.length >= 1, "pluginName")
-            assertTrue(it.packageName.length >= 1, "packageName")
-            assertTrue(it.version.length >= 1, "version")
-            assertTrue(it.exitStatus.length >= 1, "exitStatus")
+        kotlin.runCatching {
+            thetaRepository.setPlugin("com.theta360.automaticfaceblur")
+        }.onSuccess {
+            assertTrue(true, "setPlugin")
+        }.onFailure {
+            println(it.toString())
+            assertTrue(false, "setPlugin")
         }
-    }
 
+    }
 }

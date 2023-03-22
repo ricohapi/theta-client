@@ -637,6 +637,15 @@ object ThetaApi {
         return postCommandApi(endpoint, request).body()
     }
 
+    @Throws(Throwable::class)
+    suspend fun callSetPluginCommand(
+        endpoint: String,
+        params: SetPluginParams,
+    ): SetPluginResponse {
+        val request = SetPluginRequest(parameters = params)
+        return postCommandApi(endpoint, request).body()
+    }
+
     /**
      * Post request {body} to {endpoint} APIs then return its response
      */

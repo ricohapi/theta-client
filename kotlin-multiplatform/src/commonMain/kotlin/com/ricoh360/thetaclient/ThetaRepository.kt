@@ -3615,6 +3615,30 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         }
     }
 
+    /**
+     * Sets the installed pugin for boot. Supported just by Theta V.
+     *
+     * @param packageName package name of the plugin
+     */
+    @Throws(Throwable::class)
+    suspend fun setPlugin(packageName: String) {
+        try {
+            val params = SetPluginParams(packageName, true)
+            val setPluginResponse = ThetaApi.callSetPluginCommand(endpoint, params)
+            setPluginResponse.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
 }
 
 
