@@ -637,12 +637,47 @@ object ThetaApi {
         return postCommandApi(endpoint, request).body()
     }
 
+    /**
+     * Call [camera_setPlugin](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._set_plugin.md)
+     *
+     * @param endpoint Endpoint of Theta web API
+     * @param params setPlugin parameters
+     * @return response of setPlugin command
+     * @see SetPluginResponse
+     * @exception java.net.ConnectException can not connect to target endpoint
+     * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
+     * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
+     * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
+     * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
+     */
     @Throws(Throwable::class)
     suspend fun callSetPluginCommand(
         endpoint: String,
         params: SetPluginParams,
     ): SetPluginResponse {
         val request = SetPluginRequest(parameters = params)
+        return postCommandApi(endpoint, request).body()
+    }
+
+    /**
+     * Call [camera._pluginControl](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._plugin_control.md)
+     *
+     * @param endpoint Endpoint of Theta web API
+     * @param params _pluginControl parameters
+     * @return response of _pluginControl command
+     * @see PluginControlResponse
+     * @exception java.net.ConnectException can not connect to target endpoint
+     * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
+     * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
+     * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
+     * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
+     */
+    @Throws(Throwable::class)
+    suspend fun callPluginControlCommand(
+        endpoint: String,
+        params: PluginControlParams,
+    ): PluginControlResponse {
+        val request = PluginControlRequest(parameters = params)
         return postCommandApi(endpoint, request).body()
     }
 

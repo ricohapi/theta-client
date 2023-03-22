@@ -3639,6 +3639,53 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         }
     }
 
+    /**
+     * Start the plugin specified by the [packageName].
+     * If [packageName] is not specified, plugin 1 will start.
+     *
+     * @param packageName package name of the plugin.  Theta V does not support this parameter.
+     */
+    @Throws(Throwable::class)
+    suspend fun startPlugin(packageName: String? = null) {
+        try {
+            val params = PluginControlParams(action = "boot", plugin = packageName)
+            val pluginControlResponse = ThetaApi.callPluginControlCommand(endpoint, params)
+            pluginControlResponse.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
+    /**
+     * Stop the running plugin.
+     */
+    @Throws(Throwable::class)
+    suspend fun stopPlugin() {
+        try {
+            val params = PluginControlParams(action = "finish")
+            val pluginControlResponse = ThetaApi.callPluginControlCommand(endpoint, params)
+            pluginControlResponse.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
 }
 
 
