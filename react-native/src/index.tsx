@@ -698,7 +698,11 @@ export function listFiles(
   startPosition: number = 0,
   entryCount: number
 ): Promise<FileInfo[]> {
-  return ThetaClientReactNative.listFiles(fileTypeEnum, startPosition, entryCount);
+  return ThetaClientReactNative.listFiles(
+    fileTypeEnum,
+    startPosition,
+    entryCount
+  );
 }
 
 /**
@@ -806,7 +810,7 @@ export class PhotoCapture {
 /**
  * Capture Builder class
  */
-export class CaptureBuilder {
+export abstract class CaptureBuilder<T extends CaptureBuilder<T>> {
   /** capture options */
   options: Options;
 
@@ -820,9 +824,9 @@ export class CaptureBuilder {
    * @param {ApertureEnum} aperture aperture value to set
    * @return CaptureBuilder
    */
-  setAperture(aperture: ApertureEnum): CaptureBuilder {
+  setAperture(aperture: ApertureEnum): T {
     this.options.aperture = aperture;
-    return this;
+    return this as unknown as T;
   }
 
   /**
@@ -830,9 +834,9 @@ export class CaptureBuilder {
    * @param {number} kelvin Color temperature to set
    * @return CaptureBuilder
    */
-  setColorTemperature(kelvin: number): CaptureBuilder {
+  setColorTemperature(kelvin: number): T {
     this.options.colorTemperature = kelvin;
-    return this;
+    return this as unknown as T;
   }
 
   /**
@@ -840,9 +844,9 @@ export class CaptureBuilder {
    * @param {ExposureCompensationEnum} value Exposure compensation to set
    * @return CaptureBuilder
    */
-  setExposureCompensation(value: ExposureCompensationEnum): CaptureBuilder {
+  setExposureCompensation(value: ExposureCompensationEnum): T {
     this.options.exposureCompensation = value;
-    return this;
+    return this as unknown as T;
   }
 
   /**
@@ -850,9 +854,9 @@ export class CaptureBuilder {
    * @param {ExposureDelayEnum} delay Operating time to set
    * @return CaptureBuilder
    */
-  setExposureDelay(delay: ExposureDelayEnum): CaptureBuilder {
+  setExposureDelay(delay: ExposureDelayEnum): T {
     this.options.exposureDelay = delay;
-    return this;
+    return this as unknown as T;
   }
 
   /**
@@ -860,18 +864,18 @@ export class CaptureBuilder {
    * @param {ExposureProgramEnum} program Exposure program to set
    * @return CaptureBuilder
    */
-  setExposureProgram(program: ExposureProgramEnum): CaptureBuilder {
+  setExposureProgram(program: ExposureProgramEnum): T {
     this.options.exposureProgram = program;
-    return this;
+    return this as unknown as T;
   }
   /**
    * Set GPS information.
    * @param {GpsInfo} gpsInfo GPS information to set
    * @return CaptureBuilder
    */
-  setGpsInfo(gpsInfo: GpsInfo): CaptureBuilder {
+  setGpsInfo(gpsInfo: GpsInfo): T {
     this.options.gpsInfo = gpsInfo;
-    return this;
+    return this as unknown as T;
   }
 
   /**
@@ -879,9 +883,9 @@ export class CaptureBuilder {
    * @param {GpsTagRecordingEnum} value Turns position information assigning ON/OFF to set
    * @return CaptureBuilder
    */
-  setGpsTagRecording(value: GpsTagRecordingEnum): CaptureBuilder {
+  setGpsTagRecording(value: GpsTagRecordingEnum): T {
     this.options._gpsTagRecording = value;
-    return this;
+    return this as unknown as T;
   }
 
   /**
@@ -889,9 +893,9 @@ export class CaptureBuilder {
    * @param {IsoEnum} iso ISO sensitivity to set
    * @return CaptureBuilder
    */
-  setIso(iso: IsoEnum): CaptureBuilder {
+  setIso(iso: IsoEnum): T {
     this.options.iso = iso;
-    return this;
+    return this as unknown as T;
   }
 
   /**
@@ -899,9 +903,9 @@ export class CaptureBuilder {
    * @param {IsoAutoHighLimitEnum} iso ISO sensitivity upper limit to set
    * @return CaptureBuilder
    */
-  setIsoAutoHighLimit(iso: IsoAutoHighLimitEnum): CaptureBuilder {
+  setIsoAutoHighLimit(iso: IsoAutoHighLimitEnum): T {
     this.options.isoAutoHighLimit = iso;
-    return this;
+    return this as unknown as T;
   }
 
   /**
@@ -909,16 +913,16 @@ export class CaptureBuilder {
    * @param {WhiteBalanceEnum} whiteBalance White balance to set
    * @return CaptureBuilder
    */
-  setWhiteBalance(whiteBalance: WhiteBalanceEnum): CaptureBuilder {
+  setWhiteBalance(whiteBalance: WhiteBalanceEnum): T {
     this.options.whiteBalance = whiteBalance;
-    return this;
+    return this as unknown as T;
   }
 }
 
 /**
  * PhotoCaptureBuilder class
  */
-export class PhotoCaptureBuilder extends CaptureBuilder {
+export class PhotoCaptureBuilder extends CaptureBuilder<PhotoCaptureBuilder> {
   /** construct PhotoCaptureBuilder instance */
   constructor() {
     super();
@@ -990,7 +994,7 @@ export class VideoCapture {
 /**
  * VideoCaptureBuilder class
  */
-export class VideoCaptureBuilder extends CaptureBuilder {
+export class VideoCaptureBuilder extends CaptureBuilder<VideoCaptureBuilder> {
   /** construct VideoCaptureBuilder instance */
   constructor() {
     super();
