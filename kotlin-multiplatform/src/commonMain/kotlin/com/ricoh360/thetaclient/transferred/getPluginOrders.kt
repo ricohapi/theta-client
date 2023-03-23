@@ -1,39 +1,21 @@
 package com.ricoh360.thetaclient.transferred
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonElement
 
 /**
- * Set my setting request
+ * get plugin order request
  */
 @Serializable
-data class SetMySettingRequest(
-    override val name: String = "camera._setMySetting",
-    override val parameters: SetMySettingParams,
+data class GetPluginOrdersRequest(
+    override val name: String = "camera._getPluginOrders",
+    override val parameters: EmptyParameter = EmptyParameter(),
 ) : CommandApiRequest
 
 /**
- * Set my setting parameters
+ * get plugin order response
  */
 @Serializable
-data class SetMySettingParams(
-    /**
-     * The target shooting mode
-     * ("image": still image capture mode, "video": video capture)
-     * In RICOH THETA S and SC, do not set then it can be acquired for still image.
-     */
-    val mode: CaptureMode? = null,
-    /**
-     * Names of the options specified for acquisition in the JSON format and the set of current values.
-     */
-    val options: Options,
-)
-
-/**
- * Set my setting response
- */
-@Serializable
-data class SetMySettingResponse(
+data class GetPluginOrdersResponse(
     /**
      * Executed command
      */
@@ -55,7 +37,7 @@ data class SetMySettingResponse(
      * Results when each command is successfully executed.  This
      * output occurs in state "done"
      */
-    override val results: JsonElement? = null,
+    override val results: ResultGetPluginOrders? = null,
 
     /**
      * Error information (See Errors for details).  This output occurs
@@ -68,5 +50,17 @@ data class SetMySettingResponse(
      * "inProgress"
      */
     override val progress: CommandProgress? = null,
-
 ) : CommandApiResponse
+
+/**
+ * plugin order results
+ */
+@Serializable
+data class ResultGetPluginOrders(
+    /**
+     * Supported just by Theta X and  Z1.
+     * For Z1, list of three package names for the start-up plugin.
+     * No restrictions for the number of package names for X.
+     */
+    val pluginOrders: List<String>,
+)

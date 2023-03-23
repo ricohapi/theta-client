@@ -682,6 +682,49 @@ object ThetaApi {
     }
 
     /**
+     * Return the plugins for plugin mode.
+     * Supported just by Theta X and Z1.
+     *
+     * @param endpoint Endpoint of Theta web API
+     * @return list of plugin package names.  For Z1, list lenghth is fixed to three. For X, list length is not fixed.
+     * @see GetPluginOrdersResponse
+     * @exception java.net.ConnectException can not connect to target endpoint
+     * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
+     * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
+     * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
+     * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
+     */
+    @Throws(Throwable::class)
+    suspend fun callGetPluginOrdersCommand(
+        endpoint: String,
+    ): GetPluginOrdersResponse {
+        val request = GetPluginOrdersRequest()
+        return postCommandApi(endpoint, request).body()
+    }
+
+    /**
+     * Sets the plugins for plugin mode.
+     *
+     * @param endpoint Endpoint of Theta web API
+     * @param params camera._setPluginOrders parameters
+     * @return no return value
+     * @see SetPluginOrdersResponse
+     * @exception java.net.ConnectException can not connect to target endpoint
+     * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
+     * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
+     * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
+     * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
+     */
+    @Throws(Throwable::class)
+    suspend fun callSetPluginOrdersCommand(
+        endpoint: String,
+        params: SetPluginOrdersParams,
+    ): SetPluginOrdersResponse {
+        val request = SetPluginOrdersRequest(parameters = params)
+        return postCommandApi(endpoint, request).body()
+    }
+
+    /**
      * Post request {body} to {endpoint} APIs then return its response
      */
     private suspend fun postCommandApi(

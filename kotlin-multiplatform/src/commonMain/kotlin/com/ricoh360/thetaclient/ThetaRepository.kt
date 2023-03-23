@@ -3545,6 +3545,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      *
      * @param captureMode The target shooting mode.  In RICOH THETA S and SC, do not set then it can be acquired for still image.
      * @param options registered to My Settings.
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
      */
     @Throws(Throwable::class)
     suspend fun setMySetting(captureMode: CaptureModeEnum, options: Options) {
@@ -3569,6 +3571,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * Delete shooting conditions in My Settings. Supported just by Theta X and Z1.
      *
      * @param captureMode The target shooting mode.
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
      */
     @Throws(Throwable::class)
     suspend fun deleteMySetting(captureMode: CaptureModeEnum) {
@@ -3590,7 +3594,10 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
-     * Acquires a list of installed plugins. Supported just by Theta V and later.
+     * Acquires a list of installed plugins. Supported just by Theta X, Z1 and V.
+     * @return a list of installed plugin information
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
      */
     @Throws(Throwable::class)
     suspend fun listPlugins(): List<PluginInfo> {
@@ -3619,6 +3626,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * Sets the installed pugin for boot. Supported just by Theta V.
      *
      * @param packageName package name of the plugin
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
      */
     @Throws(Throwable::class)
     suspend fun setPlugin(packageName: String) {
@@ -3642,8 +3651,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Start the plugin specified by the [packageName].
      * If [packageName] is not specified, plugin 1 will start.
+     * Supported just by Theta X, Z1 and V.
      *
      * @param packageName package name of the plugin.  Theta V does not support this parameter.
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
      */
     @Throws(Throwable::class)
     suspend fun startPlugin(packageName: String? = null) {
@@ -3666,6 +3678,9 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
     /**
      * Stop the running plugin.
+     * Supported just by Theta X, Z1 and V.
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
      */
     @Throws(Throwable::class)
     suspend fun stopPlugin() {
@@ -3673,6 +3688,63 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             val params = PluginControlParams(action = "finish")
             val pluginControlResponse = ThetaApi.callPluginControlCommand(endpoint, params)
             pluginControlResponse.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
+    /**
+     * Return the plugin orders.  Supported just by Theta X and Z1.
+     *
+     * @return list of package names of plugins
+     * For Z1, list of three package names for the start-up plugin. No restrictions for the number of package names for X.
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun getPluginOrders(): List<String> {
+        try {
+            val response = ThetaApi.callGetPluginOrdersCommand(endpoint)
+            response.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+            return response.results!!.pluginOrders
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
+    /**
+     * Sets the plugin orders.  Supported just by Theta X and Z1.
+     *
+     * @param plugins list of package names of plugins
+     * For Z1, list size must be three. No restrictions for the size for X.
+     * When not specifying, set an empty string.
+     * If an empty string is placed mid-way, it will be moved to the front.
+     * Specifying zero package name will result in an error.
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun setPluginOrders(plugins: List<String>) {
+        try {
+            val params = SetPluginOrdersParams(pluginOrders = plugins)
+            val response = ThetaApi.callSetPluginOrdersCommand(endpoint, params)
+            response.error?.let {
                 throw ThetaWebApiException(it.message)
             }
         } catch (e: JsonConvertException) {

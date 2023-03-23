@@ -4,36 +4,33 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 
 /**
- * Set my setting request
+ * Set plugin orders request
  */
 @Serializable
-data class SetMySettingRequest(
-    override val name: String = "camera._setMySetting",
-    override val parameters: SetMySettingParams,
+data class SetPluginOrdersRequest(
+    override val name: String = "camera._setPluginOrders",
+    override val parameters: SetPluginOrdersParams,
 ) : CommandApiRequest
 
 /**
- * Set my setting parameters
+ * Set plugin orders parameters
  */
 @Serializable
-data class SetMySettingParams(
+data class SetPluginOrdersParams(
     /**
-     * The target shooting mode
-     * ("image": still image capture mode, "video": video capture)
-     * In RICOH THETA S and SC, do not set then it can be acquired for still image.
+     * List of plugin package names.
+     * For Z1, array of three package names for the start-up plugin. No restrictions for the number of package names for X.
+     * When not specifying, set an empty string. If an empty string is placed mid-way, it will be moved to the front.
+     * Specifying zero package name will result in an error.
      */
-    val mode: CaptureMode? = null,
-    /**
-     * Names of the options specified for acquisition in the JSON format and the set of current values.
-     */
-    val options: Options,
+    val pluginOrders: List<String>,
 )
 
 /**
- * Set my setting response
+ * Set plugin orders response
  */
 @Serializable
-data class SetMySettingResponse(
+data class SetPluginOrdersResponse(
     /**
      * Executed command
      */
@@ -69,4 +66,4 @@ data class SetMySettingResponse(
      */
     override val progress: CommandProgress? = null,
 
-) : CommandApiResponse
+    ) : CommandApiResponse
