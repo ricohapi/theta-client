@@ -725,6 +725,28 @@ object ThetaApi {
     }
 
     /**
+     * Registers identification information (UUID) of a BLE device (Smartphone application) connected to the camera.
+     * UUID can be set while the wireless LAN function of the camera is placed in the direct mode.
+     *
+     * @param endpoint Endpoint of Theta web API
+     * @param params camera._setBluetoothDevice parameters
+     * @return Device name generated from the serial number (S/N) of the camera.
+     * @see SetBluetoothDeviceResponse
+     * @exception java.net.ConnectException can not connect to target endpoint
+     * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
+     * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
+     * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
+     * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
+     */
+    suspend fun callSetBluetoothDeviceCommand(
+        endpoint: String,
+        params: SetBluetoothDeviceParams,
+    ): SetBluetoothDeviceResponse {
+        val request = SetBluetoothDeviceRequest(parameters = params)
+        return postCommandApi(endpoint, request).body()
+    }
+
+    /**
      * Post request {body} to {endpoint} APIs then return its response
      */
     private suspend fun postCommandApi(
