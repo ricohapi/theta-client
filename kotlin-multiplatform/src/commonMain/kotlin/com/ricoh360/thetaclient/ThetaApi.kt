@@ -682,6 +682,28 @@ object ThetaApi {
     }
 
     /**
+     * Acquires the license for the installed plugin
+     *
+     * @param endpoint Endpoint of Theta web API
+     * @param params camera._getPluginLicense parameters
+     * @return [HttpResponse](https://api.ktor.io/ktor-client/ktor-client-core/io.ktor.client.statement/-http-response/index.html)
+     * If `response.status` is `OK`, you can get html string of the license to call `response.bodyAsText()`.
+     * @exception java.net.ConnectException can not connect to target endpoint
+     * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
+     * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
+     * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
+     * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
+     */
+    @Throws(Throwable::class)
+    suspend fun callGetPluginLicenseCommand(
+        endpoint: String,
+        params: GetPluginLicenseParams,
+    ): HttpResponse {
+        val request = GetPluginLicenseRequest(parameters = params)
+        return postCommandApi(endpoint, request)
+    }
+
+    /**
      * Return the plugins for plugin mode.
      * Supported just by Theta X and Z1.
      *
@@ -738,6 +760,7 @@ object ThetaApi {
      * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
      * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
      */
+    @Throws(Throwable::class)
     suspend fun callSetBluetoothDeviceCommand(
         endpoint: String,
         params: SetBluetoothDeviceParams,

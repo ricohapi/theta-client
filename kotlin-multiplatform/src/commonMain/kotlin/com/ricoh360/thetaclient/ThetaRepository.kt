@@ -5,6 +5,8 @@ import com.ricoh360.thetaclient.capture.VideoCapture
 import com.ricoh360.thetaclient.transferred.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import io.ktor.serialization.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.delay
@@ -3690,6 +3692,34 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             pluginControlResponse.error?.let {
                 throw ThetaWebApiException(it.message)
             }
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
+    /**
+     * Acquires the license for the installed plugin
+     *
+     * @param packageName package name of the target plugin
+     * @return HTML string of the license
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun getPluginLicense(packageName: String): String {
+        try {
+            val params = GetPluginLicenseParams(packageName)
+            val response = ThetaApi.callGetPluginLicenseCommand(endpoint, params)
+            if(response.status != HttpStatusCode.OK) {
+                throw ThetaWebApiException(response.toString())
+            }
+            return response.bodyAsText()
         } catch (e: JsonConvertException) {
             throw ThetaWebApiException(e.message ?: e.toString())
         } catch (e: ResponseException) {
