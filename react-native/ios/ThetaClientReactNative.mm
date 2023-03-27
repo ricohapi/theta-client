@@ -2103,6 +2103,27 @@ RCT_REMAP_METHOD(deleteAccessPoint,
     }];
 }
 
+/**
+ * setBluetoothDevice  -  register uuid of a BLE device
+ * @param uuid uuid to set
+ * @param resolve resolver for setAccessPointStaticcaly
+ * @param rejecter rejecter for setAccessPointStaticcaly
+ */
+RCT_REMAP_METHOD(setBluetoothDevice,
+                 setBluetoothDeviceWithUuid:(NSString *)uuid
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+{
+  [_theta setBluetoothDeviceUuid:uuid
+              completionHandler:^(NSString *deviceName, NSError *error) {
+      if (error) {
+        reject(@"error", [error localizedDescription], error);
+      } else {
+        resolve(deviceName);
+      }
+    }];
+}
+
 // Don't compile this code when we build for the old architecture.
 #ifdef RCT_NEW_ARCH_ENABLED
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:

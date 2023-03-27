@@ -1283,3 +1283,14 @@ export function setAccessPointStatically(
 export function deleteAccessPoint(ssid: string): Promise<boolean> {
   return ThetaClientReactNative.deleteAccessPoint(ssid);
 }
+
+/**
+ * Registers identification information (UUID) of a BLE device.
+ *
+ * @function setBluetoothDevice
+ * @param {string} uuid UUID of the BLE device to set.
+ * @return promise of String result
+ */
+export function setBluetoothDevice(uuid: string): Promise<String> {
+  return ThetaClientReactNative.setBluetoothDevice(uuid);
+}

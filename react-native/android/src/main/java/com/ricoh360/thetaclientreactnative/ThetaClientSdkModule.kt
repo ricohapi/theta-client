@@ -781,6 +781,23 @@ class ThetaClientReactNativeModule(
     }
   }
 
+  /**
+   * setBluetoothDevice  -  register uuid of a BLE device
+   * @param uuid uuid to set
+   * @param promise promise to set result
+   */
+  @ReactMethod
+  fun setBluetoothDevice(uuid: String, promise: Promise) {
+    launch {
+      try {
+        val deviceName = theta.setBluetoothDevice(uuid)
+        promise.resolve(deviceName)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+    }
+  }
+
   companion object {
     const val NAME = "ThetaClientReactNative"
     const val EVENT_NAME = "ThetaFrameEvent"
