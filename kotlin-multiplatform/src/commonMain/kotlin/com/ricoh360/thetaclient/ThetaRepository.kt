@@ -532,6 +532,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _bluetoothPower
+         */
+        BluetoothPower("_bluetoothPower", BluetoothPowerEnum::class),
+
+        /**
+         * Option name
          * captureMode
          */
         CaptureMode("captureMode", CaptureModeEnum::class),
@@ -674,6 +680,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Aperture value.
          */
         var aperture: ApertureEnum? = null,
+
+        /**
+         * Bluetooth power.
+         */
+        var bluetoothPower: BluetoothPowerEnum? = null,
 
         /**
          * Shooting mode.
@@ -841,6 +852,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     ) {
         constructor() : this(
             aperture = null,
+            bluetoothPower = null,
             captureMode = null,
             colorTemperature = null,
             dateTimeZone = null,
@@ -866,6 +878,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         )
         constructor(options: com.ricoh360.thetaclient.transferred.Options) : this(
             aperture = options.aperture?.let { ApertureEnum.get(it) },
+            bluetoothPower = options._bluetoothPower?.let { BluetoothPowerEnum.get(it) },
             captureMode = options.captureMode?.let { CaptureModeEnum.get(it) },
             colorTemperature = options._colorTemperature,
             dateTimeZone = options.dateTimeZone,
@@ -901,6 +914,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         fun toOptions(): com.ricoh360.thetaclient.transferred.Options {
             return Options(
                 aperture = aperture?.value,
+                _bluetoothPower = bluetoothPower?.value,
                 captureMode = captureMode?.value,
                 _colorTemperature = colorTemperature,
                 dateTimeZone = dateTimeZone,
@@ -939,6 +953,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             @Suppress("UNCHECKED_CAST")
             return when (name) {
                 OptionNameEnum.Aperture -> aperture
+                OptionNameEnum.BluetoothPower -> bluetoothPower
                 OptionNameEnum.CaptureMode -> captureMode
                 OptionNameEnum.ColorTemperature -> colorTemperature
                 OptionNameEnum.DateTimeZone -> dateTimeZone
@@ -978,6 +993,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             }
             when (name) {
                 OptionNameEnum.Aperture -> aperture = value as ApertureEnum
+                OptionNameEnum.BluetoothPower -> bluetoothPower = value as BluetoothPowerEnum
                 OptionNameEnum.CaptureMode -> captureMode = value as CaptureModeEnum
                 OptionNameEnum.ColorTemperature -> colorTemperature = value as Int
                 OptionNameEnum.DateTimeZone -> dateTimeZone = value as String
@@ -1062,6 +1078,33 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @return ApertureEnum
              */
             fun get(value: Float): ApertureEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * bluetooth power.
+     */
+    enum class BluetoothPowerEnum(val value: BluetoothPower) {
+        /**
+         * bluetooth ON
+         */
+        ON(BluetoothPower.ON),
+
+        /**
+         * bluetooth OFF
+         */
+        OFF(BluetoothPower.OFF);
+
+        companion object {
+            /**
+             * Convert BluetoothPower to BluetoothPowerEnum
+             *
+             * @param value bluetooth power.
+             * @return BluetoothPowerEnum
+             */
+            fun get(value: BluetoothPower): BluetoothPowerEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }

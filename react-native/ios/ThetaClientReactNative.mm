@@ -271,6 +271,32 @@ static convert_t ApertureEnum = {
 };
 
 /**
+ * BluetoothPowerEnum converter
+ */
+static convert_t BluetoothPowerEnum = {
+  .toTheta = @{
+    @"ON": THETACThetaRepositoryBluetoothPowerEnum.on,
+    @"OFF": THETACThetaRepositoryBluetoothPowerEnum.off
+  },
+  .fromTheta = @{
+    THETACThetaRepositoryBluetoothPowerEnum.on: @"ON",
+    THETACThetaRepositoryBluetoothPowerEnum.off: @"OFF"
+  },
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [BluetoothPowerEnum.toTheta objectForKey:[rct objectForKey:@"bluetoothPower"]];
+    if (val) {
+      opt.bluetoothPower = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [BluetoothPowerEnum.fromTheta objectForKey:opt.bluetoothPower];
+    if (val) {
+      [rct setObject:val forKey:@"bluetoothPower"];
+    }
+  }
+};
+
+/**
  * CaptureModeEnum converter
  */
 static convert_t CaptureModeEnum = {
@@ -1193,6 +1219,7 @@ static convert_t GpsInfoCvt = {
  */
 static NSDictionary *NameToOptionEnum = @{
   @"Aperture": THETACThetaRepositoryOptionNameEnum.aperture,
+  @"BluetoothPower": THETACThetaRepositoryOptionNameEnum.bluetoothpower,
   @"CaptureMode": THETACThetaRepositoryOptionNameEnum.capturemode,
   @"ColorTemperature": THETACThetaRepositoryOptionNameEnum.colortemperature,
   @"DateTimeZone": THETACThetaRepositoryOptionNameEnum.datetimezone,
@@ -1222,6 +1249,7 @@ static NSDictionary *NameToOptionEnum = @{
  */
 static NSDictionary *OptionEnumToOption = @{
   @"Aperture": @"aperture",
+  @"BluetoothPower": @"bluetoothPower",
   @"CaptureMode": @"captureMode",
   @"ColorTemperature": @"colorTemperature",
   @"DateTimeZone": @"dateTimeZone",
@@ -1254,6 +1282,7 @@ typedef convert_t * (^OptionConverter)();
  */
 static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"aperture": ^{return &ApertureEnum;},
+  @"bluetoothPower": ^{return &BluetoothPowerEnum;},
   @"captureMode": ^{return &CaptureModeEnum;},
   @"colorTemperature": ^{return &ColorTemperatureCvt;},
   @"dateTimeZone": ^{return &DateTimeZoneCvt;},

@@ -241,6 +241,7 @@ class ThetaClientReactNativeModule(
   /** option converter */
   private val converters = mapOf(
     "aperture" to ApertureConverter(),
+    "bluetoothPower" to BluetoothPowerConverter(),
     "captureMode" to CaptureModeConverter(),
     "colorTemperature" to ColorTemperatureConverter(),
     "dateTimeZone" to DateTimeZoneConverter(),
@@ -269,6 +270,7 @@ class ThetaClientReactNativeModule(
   private val optionEnumToOption = mapOf(
     "Aperture" to "aperture",
     "Aperture" to "aperture",
+    "BluetoothPower" to "bluetoothPower",
     "CaptureMode" to "captureMode",
     "ColorTemperature" to "colorTemperature",
     "DateTimeZone" to "dateTimeZone",

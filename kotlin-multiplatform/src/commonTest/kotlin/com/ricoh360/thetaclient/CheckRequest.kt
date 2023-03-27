@@ -54,7 +54,8 @@ class CheckRequest {
             whiteBalance: WhiteBalance? = null,
             clientVersion: Int? = null,
             shutterVolume: Int? = null,
-            dateTimeZone: String? = null
+            dateTimeZone: String? = null,
+            bluetoothPower: BluetoothPower? = null
         ) {
             assertEquals(request.url.encodedPath, "/osc/commands/execute", "command request path")
 
@@ -125,6 +126,9 @@ class CheckRequest {
             }
             dateTimeZone?.let {
                 assertEquals(optionsRequest.parameters.options.dateTimeZone, it, "setOptions dateTimeZone")
+            }
+            bluetoothPower?.let {
+                assertEquals(optionsRequest.parameters.options._bluetoothPower, it, "setOptions bluetoothPower")
             }
         }
 
