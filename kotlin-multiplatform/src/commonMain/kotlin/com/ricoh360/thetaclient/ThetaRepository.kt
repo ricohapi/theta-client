@@ -2859,30 +2859,143 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      *
      * @property fingerprint Fingerprint (unique identifier) of the current camera state
      * @property batteryLevel Battery level between 0.0 and 1.0
-     * @property chargingState Charging state
-     * @property isSdCard True if record to SD card
+     * @property storageUri Storage URI
+     * @property storageID Storage ID
+     * @property captureStatus Continuously shoots state
      * @property recordedTime Recorded time of movie (seconds)
      * @property recordableTime Recordable time of movie (seconds)
+     * @property capturedPictures Number of still images captured during continuous shooting, Unit: images
+     * @property compositeShootingElapsedTime Elapsed time for interval composite shooting (sec)
      * @property latestFileUrl URL of the last saved file
+     * @property chargingState Charging state
+     * @property apiVersion API version currently set (1: v2.0, 2: v2.1)
+     * @property isPluginRunning Plugin running state (true: running, false: stop)
+     * @property isPluginWebServer Plugin web server state (true: enabled, false: disabled)
+     * @property function Shooting function status
+     * @property isMySettingChanged My setting changed state
+     * @property currentMicrophone Identifies the microphone used while recording video
+     * @property isSdCard True if record to SD card
+     * @property cameraError Error information of the camera
+     * @property isBatteryInsert true: Battery inserted; false: Battery not inserted
      */
     data class ThetaState(
         val fingerprint: String,
         val batteryLevel: Float,
-        val chargingState: ChargingStateEnum,
-        val isSdCard: Boolean,
+        val storageUri: String?,
+        val storageID: String?,
+        val captureStatus: CaptureStatusEnum,
         val recordedTime: Int,
         val recordableTime: Int,
-        val latestFileUrl: String
+        val capturedPictures: Int?,
+        val compositeShootingElapsedTime: Int?,
+        val latestFileUrl: String,
+        val chargingState: ChargingStateEnum,
+        val apiVersion: Int,
+        val isPluginRunning: Boolean?,
+        val isPluginWebServer: Boolean?,
+        val function: ShootingFunctionEnum?,
+        val isMySettingChanged: Boolean?,
+        val currentMicrophone: MicrophoneOptionEnum?,
+        val isSdCard: Boolean,
+        val cameraError: List<CameraErrorEnum>?,
+        val isBatteryInsert: Boolean?
     ) {
         constructor(response: StateApiResponse) : this(
             response.fingerprint,
             response.state.batteryLevel.toFloat(),
+            response.state.storageUri,
+            response.state._storageID,
+            CaptureStatusEnum.get(response.state._captureStatus),
+            response.state._recordedTime,
+            response.state._recordedTime,
+            response.state._capturedPictures,
+            response.state._compositeShootingElapsedTime,
+            response.state._latestFileUrl ?: "",
             ChargingStateEnum.get(response.state._batteryState),
+            response.state._apiVersion,
+            response.state._pluginRunning,
+            response.state._pluginWebServer,
+            response.state._function?.let { ShootingFunctionEnum.get(response.state._function) },
+            response.state._mySettingChanged,
+            response.state._currentMicrophone?.let { MicrophoneOptionEnum.get(response.state._currentMicrophone) },
             response.state._currentStorage == StorageOption.SD,
-            response.state._recordedTime,
-            response.state._recordedTime,
-            response.state._latestFileUrl ?: ""
+            response.state._cameraError?.map { it -> CameraErrorEnum.get(it) },
+            response.state._batteryInsert
         )
+    }
+
+    /**
+     *  Capture Status
+     */
+    enum class CaptureStatusEnum {
+        /**
+         * Capture status
+         * Performing continuously shoot
+         */
+        SHOOTING,
+
+        /**
+         * Capture status
+         * In standby
+         */
+        IDLE,
+
+        /**
+         * Capture status
+         * Self-timer is operating
+         */
+        SELF_TIMER_COUNTDOWN,
+
+        /**
+         * Capture status
+         * Performing multi bracket shooting
+         */
+        BRACKET_SHOOTING,
+
+        /**
+         * Capture status
+         * Converting post file...
+         */
+        CONVERTING,
+
+        /**
+         * Capture status
+         * Performing timeShift shooting
+         */
+        TIME_SHIFT_SHOOTING,
+
+        /**
+         * Capture status
+         * Performing continuous shooting
+         */
+        CONTINUOUS_SHOOTING,
+
+        /**
+         * Capture status
+         * Waiting for retrospective video...
+         */
+        RETROSPECTIVE_IMAGE_RECORDING;
+
+        companion object {
+            /**
+             * Convert value to CaptureStatus
+             *
+             * @param captureStatus Capture status.
+             * @return CaptureStatusEnum
+             */
+            fun get(captureStatus: CaptureStatus): CaptureStatusEnum {
+                return when (captureStatus) {
+                    CaptureStatus.SHOOTING -> SHOOTING
+                    CaptureStatus.IDLE -> IDLE
+                    CaptureStatus.SELF_TIMER_COUNTDOWN -> SELF_TIMER_COUNTDOWN
+                    CaptureStatus.BRACKET_SHOOTING -> BRACKET_SHOOTING
+                    CaptureStatus.CONVERTING -> CONVERTING
+                    CaptureStatus.TIME_SHIFT_SHOOTING -> TIME_SHIFT_SHOOTING
+                    CaptureStatus.CONTINUOUS_SHOOTING -> CONTINUOUS_SHOOTING
+                    CaptureStatus.RETROSPECTIVE_IMAGE_RECORDING -> RETROSPECTIVE_IMAGE_RECORDING
+                }
+            }
+        }
     }
 
     /**
@@ -2919,6 +3032,257 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                     ChargingState.CHARGING -> CHARGING
                     ChargingState.CHARGED -> COMPLETED
                     ChargingState.DISCONNECT -> NOT_CHARGING
+                }
+            }
+        }
+    }
+
+    /**
+     * Shooting function status
+     */
+    enum class ShootingFunctionEnum {
+        /**
+         * Shooting function status
+         * normal
+         */
+        NORMAL,
+
+        /**
+         * Shooting function status
+         * selfTimer
+         */
+        SELF_TIMER,
+
+        /**
+         * Shooting function status
+         * mySetting
+         */
+        MY_SETTING;
+
+        companion object {
+            /**
+             * Convert value to ShootingFunction
+             *
+             * @param shootingFunction Shooting function.
+             * @return ShootingFunctionEnum
+             */
+            fun get(shootingFunction: ShootingFunction): ShootingFunctionEnum {
+                return when (shootingFunction) {
+                    ShootingFunction.NORMAL -> NORMAL
+                    ShootingFunction.SELF_TIMER -> SELF_TIMER
+                    ShootingFunction.MY_SETTING -> MY_SETTING
+                }
+            }
+        }
+    }
+
+    /**
+     * Microphone option
+     */
+    enum class MicrophoneOptionEnum {
+        /**
+         * Microphone option
+         * auto
+         */
+        AUTO,
+
+        /**
+         * Microphone option
+         * built-in microphone
+         */
+        INTERNAL,
+
+        /**
+         * Microphone option
+         * external microphone
+         */
+        EXTERNAL;
+
+        companion object {
+            /**
+             * Convert value to MicrophoneOption
+             *
+             * @param microphoneOption Microphone option.
+             * @return MicrophoneOptionEnum
+             */
+            fun get(microphoneOption: MicrophoneOption): MicrophoneOptionEnum {
+                return when (microphoneOption) {
+                    MicrophoneOption.AUTO -> AUTO
+                    MicrophoneOption.INTERNAL -> INTERNAL
+                    MicrophoneOption.EXTERNAL -> EXTERNAL
+                }
+            }
+        }
+    }
+
+    /**
+     * Camera error
+     */
+    enum class CameraErrorEnum {
+        /**
+         * Camera error
+         * Insufficient memory
+         */
+        NO_MEMORY,
+
+        /**
+         * Camera error
+         * Maximum file number exceeded
+         */
+        FILE_NUMBER_OVER,
+
+        /**
+         * Camera error
+         * Camera clock not set
+         */
+        NO_DATE_SETTING,
+
+        /**
+         * Camera error
+         * Includes when the card is removed
+         */
+        READ_ERROR,
+
+        /**
+         * Camera error
+         * Unsupported media (SDHC, etc.)
+         */
+        NOT_SUPPORTED_MEDIA_TYPE,
+
+        /**
+         * Camera error
+         * FAT32, etc.
+         */
+        NOT_SUPPORTED_FILE_SYSTEM,
+
+        /**
+         * Camera error
+         * Error warning while mounting
+         */
+        MEDIA_NOT_READY,
+
+        /**
+         * Camera error
+         * Battery level warning (firmware update)
+         */
+        NOT_ENOUGH_BATTERY,
+
+        /**
+         * Camera error
+         * Firmware file mismatch warning
+         */
+        INVALID_FILE,
+
+        /**
+         * Camera error
+         * Plugin start warning (IoT technical standards compliance)
+         */
+        PLUGIN_BOOT_ERROR,
+
+        /**
+         * Camera error
+         * When performing continuous shooting by operating the camera while executing <Delete object>,
+         * <Transfer firmware file>, <Install plugin> or <Uninstall plugin> with the WebAPI or MTP.
+         */
+        IN_PROGRESS_ERROR,
+
+        /**
+         * Camera error
+         * Battery inserted + WLAN ON + Video mode + 4K 60fps / 5.7K 10fps / 5.7K 15fps / 5.7K 30fps / 8K 10fps
+         */
+        CANNOT_RECORDING,
+
+        /**
+         * Camera error
+         * Battery inserted AND Specified battery level or lower + WLAN ON + Video mode + 4K 30fps
+         */
+        CANNOT_RECORD_LOWBAT,
+
+        /**
+         * Camera error
+         * Shooting hardware failure
+         */
+        CAPTURE_HW_FAILED,
+
+        /**
+         * Camera error
+         * Software error
+         */
+        CAPTURE_SW_FAILED,
+
+        /**
+         * Camera error
+         * Internal memory access error
+         */
+        INTERNAL_MEM_ACCESS_FAIL,
+
+        /**
+         * Camera error
+         * Undefined error
+         */
+        UNEXPECTED_ERROR,
+
+        /**
+         * Camera error
+         * Charging error
+         */
+        BATTERY_CHARGE_FAIL,
+
+        /**
+         * Camera error
+         * (Board) temperature warning
+         */
+        HIGH_TEMPERATURE_WARNING,
+
+        /**
+         * Camera error
+         * (Board) temperature error
+         */
+        HIGH_TEMPERATURE,
+
+        /**
+         * Camera error
+         * Battery temperature error
+         */
+        BATTERY_HIGH_TEMPERATURE,
+
+        /**
+         * Camera error
+         * Electronic compass error
+         */
+        COMPASS_CALIBRATION;
+
+        companion object {
+            /**
+             * Convert value to CameraError
+             *
+             * @param cameraError Camera error.
+             * @return CameraErrorEnum
+             */
+            fun get(cameraError: CameraError): CameraErrorEnum {
+                return when (cameraError) {
+                    CameraError.NO_MEMORY-> NO_MEMORY
+                    CameraError.FILE_NUMBER_OVER -> FILE_NUMBER_OVER
+                    CameraError.NO_DATE_SETTING -> NO_DATE_SETTING
+                    CameraError.READ_ERROR -> READ_ERROR
+                    CameraError.NOT_SUPPORTED_MEDIA_TYPE -> NOT_SUPPORTED_MEDIA_TYPE
+                    CameraError.NOT_SUPPORTED_FILE_SYSTEM -> NOT_SUPPORTED_FILE_SYSTEM
+                    CameraError.MEDIA_NOT_READY -> MEDIA_NOT_READY
+                    CameraError.NOT_ENOUGH_BATTERY -> NOT_ENOUGH_BATTERY
+                    CameraError.INVALID_FILE -> INVALID_FILE
+                    CameraError.PLUGIN_BOOT_ERROR -> PLUGIN_BOOT_ERROR
+                    CameraError.IN_PROGRESS_ERROR -> IN_PROGRESS_ERROR
+                    CameraError.CANNOT_RECORDING -> CANNOT_RECORDING
+                    CameraError.CANNOT_RECORD_LOWBAT -> CANNOT_RECORD_LOWBAT
+                    CameraError.CAPTURE_HW_FAILED -> CAPTURE_HW_FAILED
+                    CameraError.CAPTURE_SW_FAILED -> CAPTURE_SW_FAILED
+                    CameraError.INTERNAL_MEM_ACCESS_FAIL -> INTERNAL_MEM_ACCESS_FAIL
+                    CameraError.UNEXPECTED_ERROR -> UNEXPECTED_ERROR
+                    CameraError.BATTERY_CHARGE_FAIL -> BATTERY_CHARGE_FAIL
+                    CameraError.HIGH_TEMPERATURE_WARNING -> HIGH_TEMPERATURE_WARNING
+                    CameraError.HIGH_TEMPERATURE -> HIGH_TEMPERATURE
+                    CameraError.BATTERY_HIGH_TEMPERATURE -> BATTERY_HIGH_TEMPERATURE
+                    CameraError.COMPASS_CALIBRATION -> COMPASS_CALIBRATION
                 }
             }
         }

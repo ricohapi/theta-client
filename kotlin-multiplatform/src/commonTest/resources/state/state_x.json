@@ -1,0 +1,23 @@
+{
+  "fingerprint": "FIG_0001",
+  "state": {
+    "_apiVersion": 2,
+    "_batteryInsert": true,
+    "batteryLevel": 0.33,
+    "_batteryState": "disconnect",
+    "_cameraError": ["HIGH_TEMPERATURE_WARNING"],
+    "_captureStatus": "idle",
+    "_capturedPictures": 0,
+    "_currentMicrophone": "Internal",
+    "_currentStorage": "IN",
+    "_function": "normal",
+    "_latestFileUrl": "http://192.168.1.1/files/100RICOH/R0010015.JPG",
+    "_mySettingChanged": false,
+    "_pluginRunning": false,
+    "_pluginWebServer": true,
+    "_recordableTime": 0,
+    "_recordedTime": 0,
+    "_storageID": "90014a68423861503e030277e0c2b500",
+    "storageUri": "http://192.168.1.1/files/"
+  }
+}
