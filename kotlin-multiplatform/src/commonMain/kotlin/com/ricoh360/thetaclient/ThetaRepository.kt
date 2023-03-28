@@ -367,12 +367,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * If [startPosition] is larger than the position of the last file, an empty list is returned.
      * @param[entryCount] Desired number of entries to return.
      * If [entryCount] is more than the number of remaining files, just return entries of actual remaining files.
-     * @return A list of file information.
+     * @return A list of file information and number of totalEntries.
+     * see [camera.listFiles](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md).
      * @exception ThetaWebApiException If an error occurs in THETA.
      * @exception NotConnectedException
      */
     @Throws(Throwable::class)
-    suspend fun listFiles(fileType: FileTypeEnum, startPosition: Int = 0, entryCount: Int): List<FileInfo> {
+    suspend fun listFiles(fileType: FileTypeEnum, startPosition: Int = 0, entryCount: Int): ThetaFiles {
         try {
             val params = ListFilesParams(
                 fileType = fileType.value,
@@ -387,7 +388,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             listFilesResponse.results!!.entries.forEach {
                 fileList.add(FileInfo(it))
             }
-            return fileList
+            return ThetaFiles(fileList, listFilesResponse.results!!.totalEntries)
         } catch (e: JsonConvertException) {
             throw ThetaWebApiException(e.message ?: e.toString())
         } catch (e: ResponseException) {
@@ -398,6 +399,18 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             throw NotConnectedException(e.message ?: e.toString())
         }
     }
+
+    /**
+     * Data about files in Theta.
+     *
+     * @property fileList A list of file information
+     * @property totalEntries number of totalEntries
+     * see [camera.listFiles](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md).
+     */
+    data class ThetaFiles(
+        val fileList: List<FileInfo>,
+        val totalEntries: Int,
+    )
 
     /**
      * Delete files in Theta.

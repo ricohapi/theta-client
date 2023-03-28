@@ -67,7 +67,7 @@ class ListFilesTest {
 
         val thetaRepository = ThetaRepository(endpoint)
         val response = thetaRepository.listFiles(fileType, startPosition, entryCount)
-        response.forEach {
+        response.fileList.forEach {
             assertTrue(it.name.endsWith(".JPG") || it.name.endsWith(".MP4"), "FileInfo name")
             assertTrue(!it.name.startsWith("http://"), "FileInfo name not url")
             assertTrue(it.fileUrl.startsWith("http://"), "FileInfo fileUrl")
@@ -76,7 +76,8 @@ class ListFilesTest {
             assertTrue(it.size >= 0, "FileInfo size")
             assertEquals(it.thumbnailUrl, it.fileUrl + "?type=thumb", "FileInfo thumbnailUrl")
         }
-        assertTrue(response.isNotEmpty(), "entryCount")
+        assertTrue(response.fileList.isNotEmpty(), "entryCount")
+        assertEquals(response.totalEntries, 54,"totalEntries")
     }
 
     /**
@@ -98,7 +99,7 @@ class ListFilesTest {
 
         val thetaRepository = ThetaRepository(endpoint)
         val response = thetaRepository.listFiles(fileType, startPosition, entryCount)
-        response.forEach {
+        response.fileList.forEach {
             assertTrue(it.name.endsWith(".JPG"), "FileInfo name")
             assertTrue(!it.name.startsWith("http://"), "FileInfo name not url")
             assertTrue(it.fileUrl.startsWith("http://"), "FileInfo fileUrl")
@@ -107,7 +108,8 @@ class ListFilesTest {
             assertTrue(it.size >= 0, "FileInfo size")
             assertEquals(it.thumbnailUrl, it.fileUrl + "?type=thumb", "FileInfo thumbnailUrl")
         }
-        assertTrue(response.isNotEmpty(), "entryCount")
+        assertTrue(response.fileList.isNotEmpty(), "entryCount")
+        assertEquals(response.totalEntries, 37,"totalEntries")
     }
 
     /**
@@ -129,7 +131,7 @@ class ListFilesTest {
 
         val thetaRepository = ThetaRepository(endpoint)
         val response = thetaRepository.listFiles(fileType, startPosition, entryCount)
-        response.forEach {
+        response.fileList.forEach {
             assertTrue(it.name.endsWith(".MP4"), "FileInfo name")
             assertTrue(!it.name.startsWith("http://"), "FileInfo name not url")
             assertTrue(it.fileUrl.startsWith("http://"), "FileInfo fileUrl")
@@ -138,7 +140,8 @@ class ListFilesTest {
             assertTrue(it.size >= 0, "FileInfo size")
             assertEquals(it.thumbnailUrl, it.fileUrl + "?type=thumb", "FileInfo thumbnailUrl")
         }
-        assertTrue(response.isNotEmpty(), "entryCount")
+        assertTrue(response.fileList.isNotEmpty(), "entryCount")
+        assertEquals(response.totalEntries, 17,"totalEntries")
     }
 
     /**
@@ -160,7 +163,8 @@ class ListFilesTest {
 
         val thetaRepository = ThetaRepository(endpoint)
         val response = thetaRepository.listFiles(fileType, startPosition, entryCount)
-        assertTrue(response.isEmpty(), "entryCount")
+        assertTrue(response.fileList.isEmpty(), "entryCount")
+        assertEquals(response.totalEntries, 36,"totalEntries")
     }
 
     /**
