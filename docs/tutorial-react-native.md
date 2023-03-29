@@ -256,13 +256,39 @@ getOptions(optionNames)
 ## List still images and videos in THETA
 
 The list of still pictures (JPEG file) and videos (MP4 file) in THETA can be obtained using `listFiles(fileType:FileType Enum, startPosition:number, entryCount:number)`
-The Item of the list is `FileInfo`.
+The return type of `listFiles()` is `ThetaFiles`, and property `fileList` of `ThetaFiles` is the list of files in THETA.
+`fileList` is a list of `FileInfo`.
+
+* FileTypeEnum
+
+  |Value|Content|
+  |---|---|
+  |IMAGE|List of still images (JPEG files)|
+  |VIDEO|List of videos (MP4 files)|
+  |ALL|List all files|
+
+* ThetaFiles
+
+  |Property name|Type|Contents|
+  |---|---|---|
+  |fileList|List\<FileInfo\>|The list of files in THETA|
+  |totalEntries|number| Number of files in THETA (see [api spec](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md))
+
+* FileInfo
+
+  |Property name|Type|Contents|
+  |---|---|---|
+  |name|string|Represents the file name|
+  |size|number|Indicates the file size (in bytes)|
+  |dateTime|string|Shooting date and time (YYYY:MM:DD HH:MM:SS)|
+  |fileUrl|string|Represents the URL of the file|
+  |thumbnailUrl|string|Represents a thumbnail URL|
 
 ``` Typescript
 import {listFiles, FileTypeEnum} from 'theta-client-react-native';
 
-listFiles(FileTypeEnum.IMAGE, 0, 1000)
-  .then(files => {
+await listFiles(FileTypeEnum.IMAGE, 0, 1000)
+  .then(({fileList, totalEntries}) => {
     // handle file list
   })
   .catch(error => {

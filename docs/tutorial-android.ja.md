@@ -195,7 +195,8 @@ thetaRepository.getLivePreview()
 ## THETA内の静止画・動画を一覧する
 THETA内の静止画（JPEGファイル）や動画（MP4ファイル）の一覧は`ThetaRepository.listFiles(fileType, startPosition, entryCount)`を使って取得できます。
 `fileType`は`ThetaRepository.FileTypeEnum`型で内容は以下の通りです。
-一覧は、`ThetaRepository.FileInfo`のリストになります。
+`ThetaRepository.listFiles()`の戻り値型は`ThetaRepository.ThetaFiles`で、`ThetaFiles`のプロパティ`fileList` がTHETA内のファイル一覧です。
+`fileList`は `ThetaRepository.FileInfo`のリストです。
 
 JPEGファイル、MP4ファイルは`FileInfo.fileUrl`、サムネイルのJPEGファイルは`FileInfo.thumbnailUrl`の値を参照し、HTTP GETします。
 
@@ -206,6 +207,13 @@ JPEGファイル、MP4ファイルは`FileInfo.fileUrl`、サムネイルのJPEG
   |IMAGE|静止画（JPEGファイル）を一覧|
   |VIDEO|動画（MP4ファイル）を一覧|
   |ALL|全てのファイルを一覧|
+
+* ThetaRepository.ThetaFiles
+
+  |Property name|Type|Contents|
+  |---|---|---|
+  |fileList|List\<FileInfo\>|THETA内のファイル一覧|
+  |totalEntries|Int| THETA内のファイル数 ([api spec](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md)参照)
 
 * ThetaRepository.FileInfo
 

@@ -896,7 +896,8 @@ getOptions(optionNames)
 
 ## THETA内の静止画・動画を一覧する
 THETA内の静止画（JPEGファイル）や動画（MP4ファイル）の一覧は`listFiles(fileType:FileTypeEnum, startPosition:number, entryCount:number)`を使って取得できます。
-一覧は、`FileInfo`の一覧になります。
+`listFiles()`の戻り値型は`ThetaFiles`で、`ThetaFiles`のプロパティ`fileList` がTHETA内のファイル一覧です。
+`fileList`は `FileInfo`のリストです。
 
 * FileTypeEnum
 
@@ -905,6 +906,13 @@ THETA内の静止画（JPEGファイル）や動画（MP4ファイル）の一�
   |IMAGE|静止画（JPEGファイル）を一覧|
   |VIDEO|動画（MP4ファイル）を一覧|
   |ALL|全てのファイルを一覧|
+
+* ThetaFiles
+
+  |Property name|Type|Contents|
+  |---|---|---|
+  |fileList|List\<FileInfo\>|THETA内のファイル一覧|
+  |totalEntries|number| THETA内のファイル数 ([api spec](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md)参照)
 
 * FileInfo
 
@@ -919,8 +927,8 @@ THETA内の静止画（JPEGファイル）や動画（MP4ファイル）の一�
 ``` Typescript
 import {listFiles, FileTypeEnum} from 'theta-client-react-native';
 
-listFiles(FileTypeEnum.IMAGE, 0, 1000)
-  .then(files => {
+await listFiles(FileTypeEnum.IMAGE, 0, 1000)
+  .then(({fileList, totalEntries}) => {
     // handle file list
   })
   .catch(error => {

@@ -173,7 +173,14 @@ Default is the top of the list.
 The `entryCount` is the number of files to acquire.
 If the number of existing files is smaller than the specified number of files, all available files are only acquired.
 
-`listFiles()` returns a list of `ThetaRepository.FileInfo`:
+`listFiles()` returns `ThetaFiles` Object:
+
+  |Property name|Value|
+  |---|---|
+  |fileList|The list of files in THETA|
+  |totalEntries|Number of files in THETA (see [api spec](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md))
+
+Property `fileList` of `ThetaFiles` is a list of `ThetaRepository.FileInfo`:
 
 | Property | Value |
 | -------- | ----- |

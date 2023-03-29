@@ -922,7 +922,8 @@ Task {
 ## THETA内の静止画・動画を一覧する
 THETA内の静止画（JPEGファイル）や動画（MP4ファイル）の一覧は`ThetaRepository.listFiles(fileType:startPosition:entryCount:)`を使って取得できます。
 `fileType`は`ThetaRepository.FileTypeEnum`型で内容は以下の通りです。
-一覧は、`ThetaRepository.FileInfo`の一覧になります。
+`ThetaRepository.listFiles()`の戻り値型は`ThetaRepository.ThetaFiles`で、`ThetaFiles`のプロパティ`fileList` がTHETA内のファイル一覧です。
+`fileList`は `ThetaRepository.FileInfo`のリストです。
 
 * ThetaRepository.FileTypeEnum
 
@@ -931,6 +932,13 @@ THETA内の静止画（JPEGファイル）や動画（MP4ファイル）の一�
   |image|静止画（JPEGファイル）を一覧|
   |video|動画（MP4ファイル）を一覧|
   |all|全てのファイルを一覧|
+
+* ThetaRepository.ThetaFiles
+
+  |Property name|Type|Contents|
+  |---|---|---|
+  |fileList|[ThetaRepository.FileInfo]|THETA内のファイル一覧|
+  |totalEntries|Int32| THETA内のファイル数 ([api spec](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md)参照)
 
 * ThetaRepository.FileInfo
 
@@ -950,8 +958,8 @@ Task {
         theta.listFiles(fileType:ThetaRepository.FileTypeEnum.image,
                         startPosition: 0,
                         entryCount: 100) {response, error in
-          if let listFiles = response {
-            continuation.resume(returning: listFiles)
+          if let resp = response {
+            continuation.resume(returning: resp.fileList)
           }
           if let thetaError = error {
             continuation.resume(throwing: thetaError)

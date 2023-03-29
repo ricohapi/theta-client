@@ -944,7 +944,8 @@ See the table below for the `ThetaRepository.OptionNameEnum`:
 ## List still images and videos in THETA
 
 You can obtain the list of still images (JPEG files) and videos (MP4 files) in THETA using the `ThetaRepository.listFiles(fileType:startPosition:entryCount:)`.
-An item of the list is `ThetaRepository.FileInfo`. 
+The return type of `ThetaRepository.listFiles()` is `ThetaRepository.ThetaFiles`, and property `fileList` of `ThetaFiles` is the list of files in THETA.
+`fileList` is a list of `ThetaRepository.FileInfo`.
 
 The `fileType` is the `ThetaRepository.FileTypeEnum` type, whose contents are as follows:
 
@@ -955,6 +956,14 @@ The `fileType` is the `ThetaRepository.FileTypeEnum` type, whose contents are as
 |image| List of still images (JPEG files)|
 |video| List of videos (MP4 files)|
 |all| List all files|
+
+* ThetaFiles
+
+    |Property name|Type|Contents|
+    |---|---|---|
+    |fileList|[ThetaRepository.FileInfo]|The list of files in THETA|
+    |totalEntries|Int32| Number of files in THETA (see [api spec](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md))
+
 
 * ThetaRepository.FileInfo
 
@@ -974,8 +983,8 @@ Task {
         theta.listFiles(fileType:ThetaRepository.FileTypeEnum.image,
                         startPosition: 0,
                         entryCount: 100) {response, error in
-          if let listFiles = response {
-            continuation.resume(returning: listFiles)
+          if let resp = response {
+            continuation.resume(returning: resp.fileList)
           }
           if let thetaError = error {
             continuation.resume(throwing: thetaError)
