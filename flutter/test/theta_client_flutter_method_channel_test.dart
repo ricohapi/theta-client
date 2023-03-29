@@ -133,19 +133,24 @@ void main() {
       };
       fileList.add(info);
       fileList.add(info);
-      return fileList;
+      final Map thetaFiles = <String, dynamic> {
+        'fileList': fileList,
+        'totalEntries': 10,
+      };
+      return thetaFiles;
     });
 
     for (int i = 0; i < fileTypes.length; i++) {
       index = i;
-      var fileList = await platform.listFiles(fileTypes[i], entryCount, startPosition);
-      expect(fileList.length, 2);
-      var fileInfo = fileList[0];
+      var thetaFiles = await platform.listFiles(fileTypes[i], entryCount, startPosition);
+      expect(thetaFiles.fileList.length, 2);
+      var fileInfo = thetaFiles.fileList[0];
       expect(fileInfo.name, name);
       expect(fileInfo.size, size);
       expect(fileInfo.dateTime, dateTime);
       expect(fileInfo.fileUrl, fileUrl);
       expect(fileInfo.thumbnailUrl, thumbnailUrl);
+      expect(thetaFiles.totalEntries, 10);
     }
   });
 

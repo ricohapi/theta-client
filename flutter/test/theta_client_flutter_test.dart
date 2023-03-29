@@ -40,7 +40,7 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
-  Future<List<FileInfo>> listFiles(FileTypeEnum fileType, int entryCount, int startPosition) {
+  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, int startPosition) {
     return onCallListFiles();
   }
 
@@ -173,7 +173,7 @@ Future<bool> Function() onCallIsInitialized = Future.value;
 Future<ThetaInfo> Function() onGetThetaInfo = Future.value;
 Future<ThetaState> Function() onGetThetaState = Future.value;
 Future<void> Function() onCallGetLivePreview = Future.value;
-Future<List<FileInfo>> Function() onCallListFiles = Future.value;
+Future<ThetaFiles> Function() onCallListFiles = Future.value;
 Future<void> Function() onCallGetPhotoCaptureBuilder = Future.value;
 Future<void> Function(Map<String, dynamic> options) onCallBuildPhotoCapture = Future.value;
 Future<String?> Function() onCallTakePicture = Future.value;
@@ -278,12 +278,13 @@ void main() {
         'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG?type=thumb'
       )
     );
+    var input = ThetaFiles(infoList, 10);
     onCallListFiles = () {
-      return Future.value(infoList);
+      return Future.value(input);
     };
 
-    var resultList = await thetaClientPlugin.listFiles(FileTypeEnum.image, 10, 10);
-    expect(resultList, infoList);
+    var result = await thetaClientPlugin.listFiles(FileTypeEnum.image, 10, 10);
+    expect(result, input);
   });
 
   test('getPhotoCaptureBuilder', () async {
