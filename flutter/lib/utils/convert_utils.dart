@@ -1,9 +1,10 @@
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
 class ConvertUtils {
-  static List<FileInfo> toFileInfoList(List<Map<dynamic, dynamic>> data) {
-    var infoList = List<FileInfo>.empty(growable: true);
-    for (Map<dynamic, dynamic> element in data) {
+  static ThetaFiles convertThetaFiles(Map<dynamic, dynamic> data) {
+    var inputList = data['fileList'] as List<dynamic>;
+    var fileList = List<FileInfo>.empty(growable: true);
+    for (Map<dynamic, dynamic> element in inputList.cast<Map<dynamic, dynamic>>()) {
       var info = FileInfo(
         element['name'],
         element['size'],
@@ -11,9 +12,9 @@ class ConvertUtils {
         element['fileUrl'],
         element['thumbnailUrl']
       );
-      infoList.add(info);
+      fileList.add(info);
     }
-    return infoList;
+    return ThetaFiles(fileList, data['totalEntries']);
   }
 
   static ThetaInfo convertThetaInfo(Map<dynamic, dynamic> data) {

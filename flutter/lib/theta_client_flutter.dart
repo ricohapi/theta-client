@@ -66,9 +66,10 @@ class ThetaClientFlutter {
   /// If [entryCount] is more than the number of remaining files, just return entries of actual remaining files.
   /// * @param [startPosition] The position of the first file to be returned in the list. 0 represents the first file.
   /// If [startPosition] is larger than the position of the last file, an empty list is returned.
-  /// * @return A list of file information.
+  /// * @return A list of file information and number of totalEntries.
+  /// see https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md
   /// * @throws If an error occurs in THETA.
-  Future<List<FileInfo>> listFiles(FileTypeEnum fileType, int entryCount, [int startPosition = 0]) {
+  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, [int startPosition = 0]) {
     return ThetaClientFlutterPlatform.instance.listFiles(fileType, entryCount, startPosition);
   }
 
@@ -351,6 +352,17 @@ class FileInfo {
   final String thumbnailUrl;
 
   FileInfo(this.name, this.size, this.dateTime, this.fileUrl, this.thumbnailUrl);
+}
+
+/// Data about files in Theta.
+class ThetaFiles {
+  /// A list of file information.
+  final List<FileInfo> fileList;
+
+  /// Number of totalEntries.
+  final int totalEntries;
+
+  ThetaFiles(this.fileList, this.totalEntries);
 }
 
 /// Battery charging state

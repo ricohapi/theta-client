@@ -239,13 +239,14 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         let fileType = getEnumValue(values: ThetaRepository.FileTypeEnum.values(), name: fileTypeName)!
         let startPosition: Int32 = arguments["startPosition"] as! Int32
         let entryCount: Int32 = arguments["entryCount"] as! Int32
-        thetaRepository!.listFiles(fileType: fileType, startPosition: startPosition, entryCount: entryCount) { fileInfoList, error in
+        thetaRepository!.listFiles(fileType: fileType, startPosition: startPosition, entryCount: entryCount) { files, error in
             if let thetaError = error {
                 let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
                 result(flutterError)
             } else {
-                let resultList = convertResult(fileInfoList: fileInfoList!)
-                result(resultList)
+                let resultList = convertResult(fileInfoList: files!.fileList)
+                let resultMap = ["fileList": resultList, "totalEntries": files!.totalEntries]
+                result(resultMap)
             }
         }
     }

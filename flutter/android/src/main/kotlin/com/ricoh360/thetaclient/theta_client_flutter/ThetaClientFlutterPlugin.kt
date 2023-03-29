@@ -402,7 +402,11 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             val startPosition = call.argument<Int>("startPosition")!!
             val entryCount = call.argument<Int>("entryCount")!!
             val response = thetaRepository!!.listFiles(fileType, startPosition, entryCount)
-            result.success(toResult(response))
+            val resultmap: Map<String, Any> = mapOf(
+                "fileList" to toResult(response!!.fileList),
+                "totalEntries" to response!!.totalEntries,
+            )
+            result.success(resultmap)
         } catch (e: Exception) {
             result.error(e.javaClass.simpleName, e.message, null)
         }

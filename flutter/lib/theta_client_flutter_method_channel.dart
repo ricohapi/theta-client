@@ -125,8 +125,8 @@ void enableEventReceiver() {
   }
 
   @override
-  Future<List<FileInfo>> listFiles(FileTypeEnum fileType, int entryCount, int startPosition) async {
-    var completer = Completer<List<FileInfo>>();
+  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, int startPosition) async {
+    var completer = Completer<ThetaFiles>();
     try {
       debugPrint('call listFiles');
       final Map params = <String, dynamic> {
@@ -134,9 +134,9 @@ void enableEventReceiver() {
         'entryCount': entryCount,
         'startPosition': startPosition,
       };
-      var result = await methodChannel.invokeMethod<List<dynamic>>('listFiles', params) as List<dynamic>;
-      var fileInfoList = ConvertUtils.toFileInfoList(result.cast<Map<dynamic, dynamic>>());
-      completer.complete(fileInfoList);
+      var result = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('listFiles', params) as Map<dynamic, dynamic>;
+      var thetaFiles = ConvertUtils.convertThetaFiles(result);
+      completer.complete(thetaFiles);
     } catch(e) {
       completer.completeError(e);
     }
