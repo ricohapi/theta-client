@@ -27,7 +27,7 @@ fun PhotoListScreen(
     viewModel: ThetaViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     val oscInfo : ThetaRepository.ThetaInfo? by viewModel.thetaInfoState.collectAsState(initial = null)
-    val thetaFiles: List<ThetaRepository.FileInfo>? by viewModel.thetaFilesState.collectAsState(initial = null)
+    val thetaFiles: ThetaRepository.ThetaFiles? by viewModel.thetaFilesState.collectAsState(initial = null)
 
     ThetaSimpleAndroidAppTheme {
         Scaffold(
@@ -43,7 +43,7 @@ fun PhotoListScreen(
                 LazyColumn(modifier = Modifier
                     .fillMaxSize()
                     .padding(pad)) {
-                    items(it) { file ->
+                    items(it.fileList) { file ->
                         Row(horizontalArrangement = Arrangement.Center) {
                             ThumbnailImage(
                                 url = file.thumbnailUrl,

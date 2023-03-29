@@ -106,7 +106,7 @@ class Theta {
               thetaRepository!.listFiles(fileType: ThetaFileType.image, startPosition: 0,
                                          entryCount: 1000) {resp, error in
                   if let response = resp {
-                      continuation.resume(returning: response)
+                      continuation.resume(returning: response.fileList)
                   }
                   if let thetaError = error {
                       continuation.resume(throwing: thetaError)
