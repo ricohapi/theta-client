@@ -36,14 +36,14 @@ Your app can perform the following actions:
 theta-client$ ./gradlew publishToMavenLocal
 ```
 
-aar is output to `theta-client/shared/build/outputs/aar`
+aar is output to `theta-client/kotlin-multiplatform/build/outputs/aar`
 
 ### iOS (XCFramework)
 ```
 theta-client$ ./gradlew podPublishXCFramework
 ```
 
-XCFramework is output to `theta-client/shared/build/cocoapods/publish`
+XCFramework is output to `theta-client/kotlin-multiplatform/build/cocoapods/publish`
 
 ### ReactNative & Flutter
 See README in each directory.(`react-native`, `flutter`)
