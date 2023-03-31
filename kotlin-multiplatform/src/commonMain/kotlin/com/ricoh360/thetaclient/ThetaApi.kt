@@ -553,6 +553,223 @@ object ThetaApi {
     }
 
     /**
+     * Call [camera._getMySetting](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._get_my_setting.md)
+     * @param endpoint Endpoint of Theta web API
+     * @param params getMySetting parameters
+     * @return response of getMySetting command
+     * @see GetMySettingParams
+     * @see GetMySettingResponse
+     * @exception java.net.ConnectException can not connect to target endpoint
+     * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
+     * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
+     * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
+     * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
+     */
+    @Throws(Throwable::class)
+    suspend fun callGetMySettingCommand(
+        endpoint: String,
+        params: GetMySettingParams,
+    ): GetMySettingResponse {
+        val request = GetMySettingRequest(parameters = params)
+        return postCommandApi(endpoint, request).body()
+    }
+
+    /**
+     * Call [camera._setMySetting](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._set_my_setting.md)
+     * @param endpoint Endpoint of Theta web API
+     * @param params setMySetting parameters
+     * @return response of setMySetting command
+     * @see SetMySettingParams
+     * @see SetMySettingResponse
+     * @exception java.net.ConnectException can not connect to target endpoint
+     * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
+     * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
+     * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
+     * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
+     */
+    @Throws(Throwable::class)
+    suspend fun callSetMySettingCommand(
+        endpoint: String,
+        params: SetMySettingParams,
+    ): SetMySettingResponse {
+        val request = SetMySettingRequest(parameters = params)
+        return postCommandApi(endpoint, request).body()
+    }
+
+    /**
+     * Call [camera._deleteMySetting](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._delete_mysetting.md)
+     * @param endpoint Endpoint of Theta web API
+     * @param params deleteMySetting parameters
+     * @return response of deleteMySetting command
+     * @see DeleteMySettingParams
+     * @see DeleteMySettingResponse
+     * @exception java.net.ConnectException can not connect to target endpoint
+     * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
+     * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
+     * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
+     * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
+     */
+    @Throws(Throwable::class)
+    suspend fun callDeleteMySettingCommand(
+        endpoint: String,
+        params: DeleteMySettingParams,
+    ): DeleteMySettingResponse {
+        val request = DeleteMySettingRequest(parameters = params)
+        return postCommandApi(endpoint, request).body()
+    }
+
+    /**
+     * Call [camera._listPlugins](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._list_plugins.md)
+     * @param endpoint Endpoint of Theta web API
+     * @return response of listPlugins command
+     * @see ListPluginsResponse
+     * @exception java.net.ConnectException can not connect to target endpoint
+     * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
+     * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
+     * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
+     * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
+     */
+    @Throws(Throwable::class)
+    suspend fun callListPluginsCommand(
+        endpoint: String,
+    ): ListPluginsResponse {
+        val request = ListPluginsRequest()
+        return postCommandApi(endpoint, request).body()
+    }
+
+    /**
+     * Call [camera_setPlugin](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._set_plugin.md)
+     *
+     * @param endpoint Endpoint of Theta web API
+     * @param params setPlugin parameters
+     * @return response of setPlugin command
+     * @see SetPluginResponse
+     * @exception java.net.ConnectException can not connect to target endpoint
+     * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
+     * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
+     * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
+     * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
+     */
+    @Throws(Throwable::class)
+    suspend fun callSetPluginCommand(
+        endpoint: String,
+        params: SetPluginParams,
+    ): SetPluginResponse {
+        val request = SetPluginRequest(parameters = params)
+        return postCommandApi(endpoint, request).body()
+    }
+
+    /**
+     * Call [camera._pluginControl](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._plugin_control.md)
+     *
+     * @param endpoint Endpoint of Theta web API
+     * @param params _pluginControl parameters
+     * @return response of _pluginControl command
+     * @see PluginControlResponse
+     * @exception java.net.ConnectException can not connect to target endpoint
+     * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
+     * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
+     * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
+     * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
+     */
+    @Throws(Throwable::class)
+    suspend fun callPluginControlCommand(
+        endpoint: String,
+        params: PluginControlParams,
+    ): PluginControlResponse {
+        val request = PluginControlRequest(parameters = params)
+        return postCommandApi(endpoint, request).body()
+    }
+
+    /**
+     * Acquires the license for the installed plugin
+     *
+     * @param endpoint Endpoint of Theta web API
+     * @param params camera._getPluginLicense parameters
+     * @return [HttpResponse](https://api.ktor.io/ktor-client/ktor-client-core/io.ktor.client.statement/-http-response/index.html)
+     * If `response.status` is `OK`, you can get html string of the license to call `response.bodyAsText()`.
+     * @exception java.net.ConnectException can not connect to target endpoint
+     * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
+     * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
+     * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
+     * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
+     */
+    @Throws(Throwable::class)
+    suspend fun callGetPluginLicenseCommand(
+        endpoint: String,
+        params: GetPluginLicenseParams,
+    ): HttpResponse {
+        val request = GetPluginLicenseRequest(parameters = params)
+        return postCommandApi(endpoint, request)
+    }
+
+    /**
+     * Return the plugins for plugin mode.
+     * Supported just by Theta X and Z1.
+     *
+     * @param endpoint Endpoint of Theta web API
+     * @return list of plugin package names.  For Z1, list length is fixed to three. For X, list length is not fixed.
+     * @see GetPluginOrdersResponse
+     * @exception java.net.ConnectException can not connect to target endpoint
+     * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
+     * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
+     * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
+     * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
+     */
+    @Throws(Throwable::class)
+    suspend fun callGetPluginOrdersCommand(
+        endpoint: String,
+    ): GetPluginOrdersResponse {
+        val request = GetPluginOrdersRequest()
+        return postCommandApi(endpoint, request).body()
+    }
+
+    /**
+     * Sets the plugins for plugin mode.
+     *
+     * @param endpoint Endpoint of Theta web API
+     * @param params camera._setPluginOrders parameters
+     * @return no return value
+     * @see SetPluginOrdersResponse
+     * @exception java.net.ConnectException can not connect to target endpoint
+     * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
+     * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
+     * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
+     * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
+     */
+    @Throws(Throwable::class)
+    suspend fun callSetPluginOrdersCommand(
+        endpoint: String,
+        params: SetPluginOrdersParams,
+    ): SetPluginOrdersResponse {
+        val request = SetPluginOrdersRequest(parameters = params)
+        return postCommandApi(endpoint, request).body()
+    }
+
+    /**
+     * Registers identification information (UUID) of a BLE device (Smartphone application) connected to the camera.
+     * UUID can be set while the wireless LAN function of the camera is placed in the direct mode.
+     *
+     * @param endpoint Endpoint of Theta web API
+     * @param params camera._setBluetoothDevice parameters
+     * @return Device name generated from the serial number (S/N) of the camera.
+     * @see SetBluetoothDeviceResponse
+     * @exception java.net.ConnectException can not connect to target endpoint
+     * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
+     * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
+     * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
+     * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
+     */
+    @Throws(Throwable::class)
+    suspend fun callSetBluetoothDeviceCommand(
+        endpoint: String,
+        params: SetBluetoothDeviceParams,
+    ): SetBluetoothDeviceResponse {
+        val request = SetBluetoothDeviceRequest(parameters = params)
+        return postCommandApi(endpoint, request).body()
+    }
+
+    /**
      * Post request {body} to {endpoint} APIs then return its response
      */
     private suspend fun postCommandApi(

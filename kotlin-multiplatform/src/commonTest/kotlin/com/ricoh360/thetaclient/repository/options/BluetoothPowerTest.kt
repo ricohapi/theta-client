@@ -4,6 +4,7 @@ import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
+import com.ricoh360.thetaclient.transferred.BluetoothPower
 import com.ricoh360.thetaclient.transferred.Options
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -14,7 +15,7 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class MaxRecordableTimeTest {
+class BluetoothPowerTest {
     private val endpoint = "http://192.168.1.1:80/"
 
     @BeforeTest
@@ -28,46 +29,46 @@ class MaxRecordableTimeTest {
     }
 
     /**
-     * Get option maxRecordableTime.
+     * Get option bluetoothPower.
      */
     @Test
-    fun getOptionMaxRecordableTimeTest() = runTest {
+    fun getOptionBluetoothPowerTest() = runTest {
         val optionNames = listOf(
-            ThetaRepository.OptionNameEnum.MaxRecordableTime
+            ThetaRepository.OptionNameEnum.BluetoothPower
         )
         val stringOptionNames = listOf(
-            "_maxRecordableTime"
+            "_bluetoothPower"
         )
 
         MockApiClient.onRequest = { request ->
             // check request
             CheckRequest.checkGetOptions(request, stringOptionNames)
 
-            ByteReadChannel(Resource("src/commonTest/resources/options/option_max_recordable_time_1500.json").readText())
+            ByteReadChannel(Resource("src/commonTest/resources/options/option_bluetooth_power_on.json").readText())
         }
 
         val thetaRepository = ThetaRepository(endpoint)
         val options = thetaRepository.getOptions(optionNames)
-        assertEquals(options.maxRecordableTime, ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500, "maxRecordableTime")
+        assertEquals(options.bluetoothPower, ThetaRepository.BluetoothPowerEnum.ON)
     }
 
     /**
-     * Set option maxRecordableTime.
+     * Set option bluetoothPower.
      */
     @Test
-    fun setOptionMaxRecordableTimeTest() = runTest {
-        val value = Pair(ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500, 1500)
+    fun setOptionBluetoothPowerTest() = runTest {
+        val value = Pair(ThetaRepository.BluetoothPowerEnum.ON, BluetoothPower.ON)
 
         MockApiClient.onRequest = { request ->
             // check request
-            CheckRequest.checkSetOptions(request, maxRecordableTime = value.second)
+            CheckRequest.checkSetOptions(request, bluetoothPower = value.second)
 
             ByteReadChannel(Resource("src/commonTest/resources/setOptions/set_options_done.json").readText())
         }
 
         val thetaRepository = ThetaRepository(endpoint)
         val options = ThetaRepository.Options(
-            maxRecordableTime = value.first
+            bluetoothPower = value.first
         )
         thetaRepository.setOptions(options)
     }
@@ -76,27 +77,26 @@ class MaxRecordableTimeTest {
      * Convert ThetaRepository.Options to Options.
      */
     @Test
-    fun convertOptionMaxRecordableTimeTest() = runTest {
+    fun convertOptionBluetoothPowerTest() = runTest {
         val values = listOf(
-            Pair(ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_300, 300),
-            Pair(ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500, 1500),
-            Pair(ThetaRepository.MaxRecordableTimeEnum.DO_NOT_UPDATE_MY_SETTING_CONDITION, -1)
+            Pair(ThetaRepository.BluetoothPowerEnum.ON, BluetoothPower.ON),
+            Pair(ThetaRepository.BluetoothPowerEnum.OFF, BluetoothPower.OFF),
         )
 
         values.forEach {
             val orgOptions = Options(
-                _maxRecordableTime = it.second
+                _bluetoothPower = it.second
             )
             val options = ThetaRepository.Options(orgOptions)
-            assertEquals(options.maxRecordableTime, it.first, "maxRecordableTime ${it.second}")
+            assertEquals(options.bluetoothPower, it.first, "bluetoothPower ${it.second}")
         }
 
         values.forEach {
             val orgOptions = ThetaRepository.Options(
-                maxRecordableTime = it.first
+                bluetoothPower = it.first
             )
             val options = orgOptions.toOptions()
-            assertEquals(options._maxRecordableTime, it.second, "maxRecordableTime ${it.second}")
+            assertEquals(options._bluetoothPower, it.second, "bluetoothPower ${it.second}")
         }
     }
 }

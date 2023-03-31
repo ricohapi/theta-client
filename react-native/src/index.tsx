@@ -272,6 +272,17 @@ export const ApertureEnum = {
 /** type definition of ApertureEnum */
 export type ApertureEnum = typeof ApertureEnum[keyof typeof ApertureEnum];
 
+/** BluetoothPower value. */
+export const BluetoothPowerEnum = {
+  /** ON */
+  ON: 'ON',
+  /** OFF */
+  OFF: 'OFF',
+} as const;
+
+/** type definition of BluetoothPowerEnum */
+export type BluetoothPowerEnum = typeof BluetoothPowerEnum[keyof typeof BluetoothPowerEnum];
+
 /** Shooting mode. */
 export const CaptureModeEnum = {
   /** Still image capture mode */
@@ -685,6 +696,8 @@ export type WhiteBalanceEnum =
 export const OptionNameEnum = {
   /** aperture */
   Aperture: 'Aperture',
+  /** _bluetoothPower*/
+  BluetoothPower: 'BluetoothPower',
   /** captureMode */
   CaptureMode: 'CaptureMode',
   /** colorTemperature */
@@ -738,6 +751,8 @@ export type OptionNameEnum = typeof OptionNameEnum[keyof typeof OptionNameEnum];
 export type Options = {
   /** Aperture value. */
   aperture?: ApertureEnum;
+  /** BluetoothPower */
+  bluetoothPower?: BluetoothPowerEnum;
   /** Shooting mode. */
   captureMode?: CaptureModeEnum;
   /** Color temperature of the camera (Kelvin). */
@@ -1428,4 +1443,15 @@ export function setAccessPointStatically(
  */
 export function deleteAccessPoint(ssid: string): Promise<boolean> {
   return ThetaClientReactNative.deleteAccessPoint(ssid);
+}
+
+/**
+ * Registers identification information (UUID) of a BLE device.
+ *
+ * @function setBluetoothDevice
+ * @param {string} uuid UUID of the BLE device to set.
+ * @return promise of String result
+ */
+export function setBluetoothDevice(uuid: string): Promise<String> {
+  return ThetaClientReactNative.setBluetoothDevice(uuid);
 }

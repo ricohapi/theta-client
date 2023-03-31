@@ -273,6 +273,7 @@ class ThetaClientReactNativeModule(
   /** option converter */
   private val converters = mapOf(
     "aperture" to ApertureConverter(),
+    "bluetoothPower" to BluetoothPowerConverter(),
     "captureMode" to CaptureModeConverter(),
     "colorTemperature" to ColorTemperatureConverter(),
     "dateTimeZone" to DateTimeZoneConverter(),
@@ -301,6 +302,7 @@ class ThetaClientReactNativeModule(
   private val optionEnumToOption = mapOf(
     "Aperture" to "aperture",
     "Aperture" to "aperture",
+    "BluetoothPower" to "bluetoothPower",
     "CaptureMode" to "captureMode",
     "ColorTemperature" to "colorTemperature",
     "DateTimeZone" to "dateTimeZone",
@@ -807,6 +809,23 @@ class ThetaClientReactNativeModule(
       try {
         theta.deleteAccessPoint(ssid)
         promise.resolve(true)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+    }
+  }
+
+  /**
+   * setBluetoothDevice  -  register uuid of a BLE device
+   * @param uuid uuid to set
+   * @param promise promise to set result
+   */
+  @ReactMethod
+  fun setBluetoothDevice(uuid: String, promise: Promise) {
+    launch {
+      try {
+        val deviceName = theta.setBluetoothDevice(uuid)
+        promise.resolve(deviceName)
       } catch (t: Throwable) {
         promise.reject(t)
       }

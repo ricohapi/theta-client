@@ -103,7 +103,9 @@ class FileFormatTest {
             Pair(ThetaRepository.FileFormatEnum.VIDEO_7K_2F, MediaFileFormat(MediaType.MP4, 7680, 3840, "H.264/MPEG-4 AVC", 2)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_7K_5F, MediaFileFormat(MediaType.MP4, 7680, 3840, "H.264/MPEG-4 AVC", 5)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_7K_10F, MediaFileFormat(MediaType.MP4, 7680, 3840, "H.264/MPEG-4 AVC", 10)),
-            Pair(null, MediaFileFormat(MediaType.MP4, 0, 0, "H.264/MPEG-4 AVC", 10))
+            Pair(null, MediaFileFormat(MediaType.MP4, 0, 0, "H.264/MPEG-4 AVC", 10)),
+            Pair(ThetaRepository.FileFormatEnum.IMAGE_DO_NOT_UPDATE_MY_SETTING_CONDITION, MediaFileFormat(MediaType.JPEG, 0, 0, null, null)),
+            Pair(ThetaRepository.FileFormatEnum.VIDEO_DO_NOT_UPDATE_MY_SETTING_CONDITION, MediaFileFormat(MediaType.MP4, 0, 0, null, null))
         )
 
         values.forEach {

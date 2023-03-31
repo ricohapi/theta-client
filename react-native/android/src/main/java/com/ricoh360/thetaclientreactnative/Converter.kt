@@ -48,6 +48,23 @@ class ApertureConverter : OptionConverter {
 }
 
 /**
+ * BluetoothPowerConverter
+ */
+class BluetoothPowerConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("bluetoothPower")?.let {
+      options.bluetoothPower = ThetaRepository.BluetoothPowerEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.bluetoothPower?.let {
+      objects.putString("bluetoothPower", it.toString())
+    }
+  }
+}
+
+/**
  * CaptureModeConverter
  */
 class CaptureModeConverter : OptionConverter {

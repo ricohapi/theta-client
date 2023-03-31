@@ -5,6 +5,8 @@ import com.ricoh360.thetaclient.capture.VideoCapture
 import com.ricoh360.thetaclient.transferred.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import io.ktor.serialization.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.delay
@@ -543,6 +545,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _bluetoothPower
+         */
+        BluetoothPower("_bluetoothPower", BluetoothPowerEnum::class),
+
+        /**
+         * Option name
          * captureMode
          */
         CaptureMode("captureMode", CaptureModeEnum::class),
@@ -685,6 +693,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Aperture value.
          */
         var aperture: ApertureEnum? = null,
+
+        /**
+         * Bluetooth power.
+         */
+        var bluetoothPower: BluetoothPowerEnum? = null,
 
         /**
          * Shooting mode.
@@ -852,6 +865,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     ) {
         constructor() : this(
             aperture = null,
+            bluetoothPower = null,
             captureMode = null,
             colorTemperature = null,
             dateTimeZone = null,
@@ -877,6 +891,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         )
         constructor(options: com.ricoh360.thetaclient.transferred.Options) : this(
             aperture = options.aperture?.let { ApertureEnum.get(it) },
+            bluetoothPower = options._bluetoothPower?.let { BluetoothPowerEnum.get(it) },
             captureMode = options.captureMode?.let { CaptureModeEnum.get(it) },
             colorTemperature = options._colorTemperature,
             dateTimeZone = options.dateTimeZone,
@@ -912,6 +927,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         fun toOptions(): com.ricoh360.thetaclient.transferred.Options {
             return Options(
                 aperture = aperture?.value,
+                _bluetoothPower = bluetoothPower?.value,
                 captureMode = captureMode?.value,
                 _colorTemperature = colorTemperature,
                 dateTimeZone = dateTimeZone,
@@ -950,6 +966,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             @Suppress("UNCHECKED_CAST")
             return when (name) {
                 OptionNameEnum.Aperture -> aperture
+                OptionNameEnum.BluetoothPower -> bluetoothPower
                 OptionNameEnum.CaptureMode -> captureMode
                 OptionNameEnum.ColorTemperature -> colorTemperature
                 OptionNameEnum.DateTimeZone -> dateTimeZone
@@ -989,6 +1006,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             }
             when (name) {
                 OptionNameEnum.Aperture -> aperture = value as ApertureEnum
+                OptionNameEnum.BluetoothPower -> bluetoothPower = value as BluetoothPowerEnum
                 OptionNameEnum.CaptureMode -> captureMode = value as CaptureModeEnum
                 OptionNameEnum.ColorTemperature -> colorTemperature = value as Int
                 OptionNameEnum.DateTimeZone -> dateTimeZone = value as String
@@ -1073,6 +1091,33 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @return ApertureEnum
              */
             fun get(value: Float): ApertureEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * bluetooth power.
+     */
+    enum class BluetoothPowerEnum(val value: BluetoothPower) {
+        /**
+         * bluetooth ON
+         */
+        ON(BluetoothPower.ON),
+
+        /**
+         * bluetooth OFF
+         */
+        OFF(BluetoothPower.OFF);
+
+        companion object {
+            /**
+             * Convert BluetoothPower to BluetoothPowerEnum
+             *
+             * @param value bluetooth power.
+             * @return BluetoothPowerEnum
+             */
+            fun get(value: BluetoothPower): BluetoothPowerEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -1246,7 +1291,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         /**
          * Self-timer time. 10sec.
          */
-        DELAY_10(10);
+        DELAY_10(10),
+
+        /**
+         * Just used by getMySetting/setMySetting command.
+         */
+        DO_NOT_UPDATE_MY_SETTING_CONDITION(-1);
 
         companion object {
             /**
@@ -1410,6 +1460,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         IMAGE_11K(FileFormatTypeEnum.JPEG, 11008, 5504, null, null),
 
         /**
+         * Just used by getMySetting/setMySetting command
+         */
+        IMAGE_DO_NOT_UPDATE_MY_SETTING_CONDITION(FileFormatTypeEnum.JPEG, 0, 0, null, null),
+
+        /**
          * Video File format.
          *
          * type: mp4
@@ -1569,7 +1624,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          *
          * For RICOH THETA X or later
          */
-        VIDEO_7K_10F(FileFormatTypeEnum.MP4, 7680, 3840, "H.264/MPEG-4 AVC", 10);
+        VIDEO_7K_10F(FileFormatTypeEnum.MP4, 7680, 3840, "H.264/MPEG-4 AVC", 10),
+
+        /**
+         * Just used by getMySetting/setMySetting command
+         */
+        VIDEO_DO_NOT_UPDATE_MY_SETTING_CONDITION(FileFormatTypeEnum.MP4, 0, 0, null, null);
 
         /**
          * Convert FileFormatEnum to MediaFileFormat.
@@ -2306,7 +2366,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          *
          * Enabled with RICOH THETA Z1's image shooting mode and video shooting mode, and with RICOH THETA V's video shooting mode.
          */
-        ISO_6400(6400);
+        ISO_6400(6400),
+
+        /**
+         * Just used by getMySetting/setMySetting command
+         */
+        DO_NOT_UPDATE_MY_SETTING_CONDITION(-1);
 
         companion object {
             /**
@@ -2409,7 +2474,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         /**
          * Maximum recordable time. 1500sec for other than SC2.
          */
-        RECORDABLE_TIME_1500(1500);
+        RECORDABLE_TIME_1500(1500),
+
+        /**
+         * Just used by getMySetting/setMySetting command
+         */
+        DO_NOT_UPDATE_MY_SETTING_CONDITION(-1);
 
         companion object {
             /**
@@ -3784,7 +3854,393 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             }
         }
     }
+
+    /**
+     * Plugin information
+     *
+     * @property name Plugin name
+     * @property packageName Package name
+     * @property version Plugin version
+     * @property isPreInstalled Pre-installed plugin or not
+     * @property isRunning Plugin power status
+     * @property isForeground Process status
+     * @property isBoot To be started on boot or not
+     * @property hasWebServer Has Web UI or not
+     * @property exitStatus Exit status
+     * @property message Message
+     */
+    data class PluginInfo(
+        val name: String,
+        val packageName: String,
+        val version: String,
+        val isPreInstalled: Boolean,
+        val isRunning: Boolean,
+        val isForeground: Boolean,
+        val isBoot: Boolean,
+        val hasWebServer: Boolean,
+        val exitStatus: String,
+        val message: String,
+    ) {
+        constructor(plugin: Plugin) : this(
+            name = plugin.pluginName,
+            packageName = plugin.packageName,
+            version = plugin.version,
+            isPreInstalled = plugin.type == "system",
+            isRunning = plugin.running,
+            isForeground = plugin.foreground,
+            isBoot = plugin.boot,
+            hasWebServer = plugin.webServer,
+            exitStatus = plugin.exitStatus,
+            message = plugin.message,
+        )
+    }
+
+    /**
+     * Acquires the shooting properties set by the camera._setMySetting command.
+     * Just for Theta V and later.
+     *
+     * Refer to the [options Overview](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
+     * of API v2.1 reference  for properties available for acquisition.
+     *
+     * @param captureMode The target shooting mode.
+     * @return Options of my setting
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun getMySetting(captureMode: CaptureModeEnum): Options {
+        try {
+            val params = GetMySettingParams(mode = captureMode.value)
+            val getMySettingResponse = ThetaApi.callGetMySettingCommand(endpoint, params)
+            getMySettingResponse.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+            return Options(getMySettingResponse.results!!.options)
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
+    /**
+     * Acquires the shooting properties set by the camera._setMySetting command.
+     * Just for Theta S and SC.
+     *
+     * Refer to the [options Overview](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
+     * of API v2.1 reference  for properties available for acquisition.
+     *
+     * @param optionNames List of option names to acquire.
+     * @return Options of my setting
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun getMySetting(optionNames: List<OptionNameEnum>): Options {
+        try {
+            val names = optionNames.map {
+                it.value
+            }
+            val params = GetMySettingParams(optionNames = names)
+            val getMySettingResponse = ThetaApi.callGetMySettingCommand(endpoint, params)
+            getMySettingResponse.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+            return Options(getMySettingResponse.results!!.options)
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
+    /**
+     * Registers shooting conditions in My Settings.
+     *
+     * @param captureMode The target shooting mode.  In RICOH THETA S and SC, do not set then it can be acquired for still image.
+     * @param options registered to My Settings.
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun setMySetting(captureMode: CaptureModeEnum, options: Options) {
+        try {
+            val params = SetMySettingParams(captureMode.value, options.toOptions())
+            val setMySettingResponse = ThetaApi.callSetMySettingCommand(endpoint, params)
+            setMySettingResponse.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
+    /**
+     * Delete shooting conditions in My Settings. Supported just by Theta X and Z1.
+     *
+     * @param captureMode The target shooting mode.
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun deleteMySetting(captureMode: CaptureModeEnum) {
+        try {
+            val params = DeleteMySettingParams(captureMode.value)
+            val deleteMySettingResponse = ThetaApi.callDeleteMySettingCommand(endpoint, params)
+            deleteMySettingResponse.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
+    /**
+     * Acquires a list of installed plugins. Supported just by Theta X, Z1 and V.
+     * @return a list of installed plugin information
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun listPlugins(): List<PluginInfo> {
+        val listPluginsResponse: ListPluginsResponse
+        try {
+            listPluginsResponse = ThetaApi.callListPluginsCommand(endpoint)
+            listPluginsResponse.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+
+        return listPluginsResponse.results!!.plugins.map {
+            PluginInfo(it)
+        }
+    }
+
+    /**
+     * Sets the installed plugin for boot. Supported just by Theta V.
+     *
+     * @param packageName package name of the plugin
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun setPlugin(packageName: String) {
+        try {
+            val params = SetPluginParams(packageName, true)
+            val setPluginResponse = ThetaApi.callSetPluginCommand(endpoint, params)
+            setPluginResponse.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
+    /**
+     * Start the plugin specified by the [packageName].
+     * If [packageName] is not specified, plugin 1 will start.
+     * Supported just by Theta X, Z1 and V.
+     *
+     * @param packageName package name of the plugin.  Theta V does not support this parameter.
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun startPlugin(packageName: String? = null) {
+        try {
+            val params = PluginControlParams(action = "boot", plugin = packageName)
+            val pluginControlResponse = ThetaApi.callPluginControlCommand(endpoint, params)
+            pluginControlResponse.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
+    /**
+     * Stop the running plugin.
+     * Supported just by Theta X, Z1 and V.
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun stopPlugin() {
+        try {
+            val params = PluginControlParams(action = "finish")
+            val pluginControlResponse = ThetaApi.callPluginControlCommand(endpoint, params)
+            pluginControlResponse.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
+    /**
+     * Acquires the license for the installed plugin
+     *
+     * @param packageName package name of the target plugin
+     * @return HTML string of the license
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun getPluginLicense(packageName: String): String {
+        try {
+            val params = GetPluginLicenseParams(packageName)
+            val response = ThetaApi.callGetPluginLicenseCommand(endpoint, params)
+            if(response.status != HttpStatusCode.OK) {
+                throw ThetaWebApiException(response.toString())
+            }
+            return response.bodyAsText()
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
+    /**
+     * Return the plugin orders.  Supported just by Theta X and Z1.
+     *
+     * @return list of package names of plugins
+     * For Z1, list of three package names for the start-up plugin. No restrictions for the number of package names for X.
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun getPluginOrders(): List<String> {
+        try {
+            val response = ThetaApi.callGetPluginOrdersCommand(endpoint)
+            response.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+            return response.results!!.pluginOrders
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
+    /**
+     * Sets the plugin orders.  Supported just by Theta X and Z1.
+     *
+     * @param plugins list of package names of plugins
+     * For Z1, list size must be three. No restrictions for the size for X.
+     * When not specifying, set an empty string.
+     * If an empty string is placed mid-way, it will be moved to the front.
+     * Specifying zero package name will result in an error.
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun setPluginOrders(plugins: List<String>) {
+        try {
+            val params = SetPluginOrdersParams(pluginOrders = plugins)
+            val response = ThetaApi.callSetPluginOrdersCommand(endpoint, params)
+            response.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
+    /**
+     * Registers identification information (UUID) of a BLE device (Smartphone application) connected to the camera.
+     * UUID can be set while the wireless LAN function of the camera is placed in the direct mode.
+     *
+     * @param uuid Format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+     * Alphabetic letters are not case-sensitive.
+     * @return Device name generated from the serial number (S/N) of the camera.
+     * Eg. "00101234" or "THETAXS00101234" when the serial number (S/N) is "XS00101234"
+     * @exception ThetaWebApiException When an invalid option is specified.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun setBluetoothDevice(uuid: String): String {
+        try {
+            val params = SetBluetoothDeviceParams(uuid)
+            val response = ThetaApi.callSetBluetoothDeviceCommand(endpoint, params)
+            response.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+            return response.results!!.deviceName
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
 }
+
 
 /**
  * Check status interval for Command

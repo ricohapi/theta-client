@@ -112,6 +112,13 @@ data class Options(
     var apertureSupport: List<Float>? = null,
 
     /**
+     * bluetooth power
+     *
+     * @see BluetoothPower
+     */
+    var _bluetoothPower: BluetoothPower? = null,
+
+    /**
      * camera control source
      *
      * @see CameraControlSource
@@ -557,6 +564,24 @@ data class Options(
      */
     var whiteBalanceSupport: List<WhiteBalance>? = null,
 )
+
+/**
+ * bluetooth power
+ */
+@Serializable
+enum class BluetoothPower {
+    /**
+     * Power ON status
+     */
+    @SerialName("ON")
+    ON,
+
+    /**
+     * Power OFF status
+     */
+    @SerialName("OFF")
+    OFF,
+}
 
 /**
  * camera control source
