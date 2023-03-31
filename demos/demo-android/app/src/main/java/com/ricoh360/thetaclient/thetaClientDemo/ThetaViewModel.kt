@@ -27,8 +27,8 @@ class ThetaViewModel(
     private var thetaRepository: ThetaRepository
     private val _thetaInfoState =  MutableStateFlow<ThetaRepository.ThetaInfo?>(null)
     val thetaInfoState: StateFlow<ThetaRepository.ThetaInfo?> = _thetaInfoState
-    private val _thetaFilesState = MutableStateFlow<List<ThetaRepository.FileInfo>?>(null)
-    val thetaFilesState: StateFlow<List<ThetaRepository.FileInfo>?>  = _thetaFilesState
+    private val _thetaFilesState = MutableStateFlow<ThetaRepository.ThetaFiles?>(null)
+    val thetaFilesState: StateFlow<ThetaRepository.ThetaFiles?>  = _thetaFilesState
 
     private val _previewFlow = MutableStateFlow<Bitmap?>(null)
     val previewFlow: StateFlow<Bitmap?> = _previewFlow

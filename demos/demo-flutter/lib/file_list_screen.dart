@@ -30,7 +30,8 @@ class _FileListScreen extends State<FileListScreen> {
   Future<void> getFileList() async {
     List<FileInfo>? fileInfoList;
     try {
-      fileInfoList = await _thetaClientFlutter.listFiles(FileTypeEnum.all, 10000);
+      var result = await _thetaClientFlutter.listFiles(FileTypeEnum.all, 10000);
+      fileInfoList = result.fileList;
     } on PlatformException {
       Navigator.pop(context);
       MessageBox.show(context, 'Error listFiles', () {

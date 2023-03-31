@@ -176,13 +176,13 @@ class ThetaClientReactNativeModule(
   fun listFiles(fileType: String, startPosition: Int, entryCount: Int, promise: Promise) {
     launch {
       try {
-        val response = theta.listFiles(
+        val (fileList, totalEntries) = theta.listFiles(
           ThetaRepository.FileTypeEnum.valueOf(fileType),
           startPosition,
           entryCount
         )
         val resultlist = Arguments.createArray()
-        response.forEach {
+        fileList.forEach {
           val result = Arguments.createMap()
           result.putString("name", it.name)
           result.putDouble("size", it.size.toDouble())
@@ -191,7 +191,10 @@ class ThetaClientReactNativeModule(
           result.putString("fileUrl", it.fileUrl)
           resultlist.pushMap(result)
         }
-        promise.resolve(resultlist)
+        val resultmap = Arguments.createMap()
+        resultmap.putArray("fileList", resultlist)
+        resultmap.putInt("totalEntries", totalEntries)
+        promise.resolve(resultmap)
       } catch (t: Throwable) {
         promise.reject(t)
       }

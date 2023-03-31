@@ -232,6 +232,14 @@ export type FileInfo = {
   fileUrl: string;
 };
 
+/** Data about files in Theta. */
+export type ThetaFiles = {
+  /** A list of file information */
+  fileList: FileInfo[],
+  /** number of totalEntries */
+  totalEntries: Number,
+};
+
 /** File type in Theta. */
 export const FileTypeEnum = {
   /** still image files. */
@@ -824,13 +832,14 @@ export function getThetaState(): Promise<ThetaState> {
  * @param {number} entryCount Desired number of entries to return.  If
  *   entryCount is more than the number of remaining files, just
  *   return entries of actual remaining files.
- * @return promise of A list of file information.
+ * @return promise with a list of file information and number of totalEntries.
+ *   see [camera.listFiles](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md).
  */
 export function listFiles(
   fileTypeEnum: FileTypeEnum,
   startPosition: number = 0,
   entryCount: number
-): Promise<FileInfo[]> {
+): Promise<ThetaFiles> {
   return ThetaClientReactNative.listFiles(
     fileTypeEnum,
     startPosition,

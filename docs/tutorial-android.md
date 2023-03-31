@@ -181,27 +181,35 @@ thetaRepository.getLivePreview()
 
 The list of still pictures (JPEG file) and videos (MP4 file) in THETA can be obtained using `ThetaRepository.listFiles(fileType, startPosition, entryCount)`.
 The `fileType` is the `ThetaRepository.FileTypeEnum` type, whose contents are as follows.
-The list is a list of `ThetaRepository.FileInfo`.
+The return type of `ThetaRepository.listFiles()` is `ThetaRepository.ThetaFiles`, and property `fileList` of `ThetaFiles` is the list of files in THETA.
+`fileList` is a list of `ThetaRepository.FileInfo`.
 
 JPEG and MP4 files refer to `FileInfo.fileUrl` and thumbnail JPEG files refer to `FileInfo.thumbnailUrl` and HTTP GET.
 
 * ThetaRepository.FileTypeEnum
 
-|Value|Content|
-|---|---|
-|IMAGE|List of still images (JPEG files)|
-|VIDEO|List of videos (MP4 files)|
-|ALL|List all files|
+    |Value|Content|
+    |---|---|
+    |IMAGE|List of still images (JPEG files)|
+    |VIDEO|List of videos (MP4 files)|
+    |ALL|List all files|
+
+* ThetaFiles
+
+    |Property name|Type|Contents|
+    |---|---|---|
+    |fileList|List\<FileInfo\>|The list of files in THETA|
+    |totalEntries|Int| Number of files in THETA (see [api spec](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md))
 
 * ThetaRepository.FileInfo
 
-|Property name|Type|Contents|
-|---|---|---|
-|name|String|Represents the file name|
-|size|Long|Indicates the file size (in bytes)|
-|dateTime|String|Shooting date and time (YYYY:MM:DD HH:MM:SS)|
-|fileUrl|String|Represents the URL of the file|
-|thumbnailUrl|String|Represents a thumbnail URL|
+    |Property name|Type|Contents|
+    |---|---|---|
+    |name|String|Represents the file name|
+    |size|Long|Indicates the file size (in bytes)|
+    |dateTime|String|Shooting date and time (YYYY:MM:DD HH:MM:SS)|
+    |fileUrl|String|Represents the URL of the file|
+    |thumbnailUrl|String|Represents a thumbnail URL|
 
 ## Get the THETA information
 `ThetaRepository.getThetaInfo()` is called.

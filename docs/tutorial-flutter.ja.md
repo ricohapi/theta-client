@@ -896,7 +896,8 @@ _thetaClientFlutter.getOptions(optionNames)
 
 ## THETA内の静止画・動画を一覧する
 THETA内の静止画（JPEGファイル）や動画（MP4ファイル）の一覧は`listFiles(FileTypeEnum fileType, int entryCount, [int startPosition])`を使って取得できます。
-一覧は、`FileInfo`の一覧になります。
+`listFiles()`の戻り値型は`ThetaFiles`で、`ThetaFiles`のプロパティ`fileList` がTHETA内のファイル一覧です。
+`fileList`は `FileInfo`のリストです。
 
 * FileTypeEnum
 
@@ -905,6 +906,13 @@ THETA内の静止画（JPEGファイル）や動画（MP4ファイル）の一�
   |all|全てのファイルを一覧|
   |image|静止画（JPEGファイル）を一覧|
   |video|動画（MP4ファイル）を一覧|
+
+* ThetaFiles
+
+  |Property name|Type|Contents|
+  |---|---|---|
+  |fileList|List\<FileInfo\>|THETA内のファイル一覧|
+  |totalEntries|int| THETA内のファイル数 ([api spec](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md)参照)
 
 * FileInfo
 
@@ -919,7 +927,7 @@ THETA内の静止画（JPEGファイル）や動画（MP4ファイル）の一�
 ``` Dart
 _thetaClientFlutter.listFiles(FileTypeEnum.image, 1000, 0)
   .then((files) {
-    // handle file list
+    // handle file list(files.fileList)
   })
   .onError((error, stackTrace) {
     // handle error
