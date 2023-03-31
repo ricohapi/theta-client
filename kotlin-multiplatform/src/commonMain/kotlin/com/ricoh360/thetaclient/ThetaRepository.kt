@@ -3668,7 +3668,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
-     * Sets the installed pugin for boot. Supported just by Theta V.
+     * Sets the installed plugin for boot. Supported just by Theta V.
      *
      * @param packageName package name of the plugin
      * @exception ThetaWebApiException When an invalid option is specified.

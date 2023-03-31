@@ -13,7 +13,7 @@ data class SetPluginRequest(
 ) : CommandApiRequest
 
 /**
- * Sets the installed pugin for boot.
+ * Sets the installed plugin for boot.
  * Supported just by Theta V.
  */
 @Serializable

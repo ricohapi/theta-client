@@ -708,7 +708,7 @@ object ThetaApi {
      * Supported just by Theta X and Z1.
      *
      * @param endpoint Endpoint of Theta web API
-     * @return list of plugin package names.  For Z1, list lenghth is fixed to three. For X, list length is not fixed.
+     * @return list of plugin package names.  For Z1, list length is fixed to three. For X, list length is not fixed.
      * @see GetPluginOrdersResponse
      * @exception java.net.ConnectException can not connect to target endpoint
      * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint

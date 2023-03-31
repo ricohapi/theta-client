@@ -96,7 +96,8 @@ class IsoAutoHighLimitTest {
             Pair(ThetaRepository.IsoAutoHighLimitEnum.ISO_3200, 3200),
             Pair(ThetaRepository.IsoAutoHighLimitEnum.ISO_4000, 4000),
             Pair(ThetaRepository.IsoAutoHighLimitEnum.ISO_5000, 5000),
-            Pair(ThetaRepository.IsoAutoHighLimitEnum.ISO_6400, 6400)
+            Pair(ThetaRepository.IsoAutoHighLimitEnum.ISO_6400, 6400),
+            Pair(ThetaRepository.IsoAutoHighLimitEnum.DO_NOT_UPDATE_MY_SETTING_CONDITION, -1)
         )
 
         values.forEach {

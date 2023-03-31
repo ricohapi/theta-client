@@ -88,7 +88,8 @@ class ExposureDelayTest {
             Pair(ThetaRepository.ExposureDelayEnum.DELAY_7, 7),
             Pair(ThetaRepository.ExposureDelayEnum.DELAY_8, 8),
             Pair(ThetaRepository.ExposureDelayEnum.DELAY_9, 9),
-            Pair(ThetaRepository.ExposureDelayEnum.DELAY_10, 10)
+            Pair(ThetaRepository.ExposureDelayEnum.DELAY_10, 10),
+            Pair(ThetaRepository.ExposureDelayEnum.DO_NOT_UPDATE_MY_SETTING_CONDITION, -1)
         )
 
         values.forEach {
