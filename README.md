@@ -60,3 +60,6 @@ See tutorial in `docs` directory.
 ## License
 
 [MIT License](LICENSE)
+
+## Useful guides
+* [THETA SDK docs | help](https://theta360developers.github.io/sdk/)
