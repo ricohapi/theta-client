@@ -75,35 +75,134 @@ void main() {
     expect(thetaInfo.apiLevel, apiLevel);
   });
 
+  List<String> convertCameraErrorParam(List<CameraErrorEnum> cameraErrorList) {
+      var stringList = List<String>.empty(growable: true);
+    for (CameraErrorEnum element in cameraErrorList) {
+      stringList.add(element.rawValue);
+    }
+    return stringList;
+  }
+
   test('getThetaState', () async {
     const fingerprint = 'fingerprint_1';
-    const batteryLevel = 0.9;
+    const batteryLevel = 1.0;
+    const storageUri = 'storageUri storageUri';
+    const storageID = 'storageID storageID';
+    const captureStatus = CaptureStatusEnum.idle;
+    const recordedTime = 1;
+    const recordableTime = 2;
+    const capturedPictures = 3;
+    const compositeShootingElapsedTime = 4;
+    const latestFileUrl = 'latestFileUrl latestFileUrl';
     const chargingState = ChargingStateEnum.charging;
+    const apiVersion = 2;
+    const isPluginRunning = true;
+    const isPluginWebServer = false;
+    const function = ShootingFunctionEnum.normal;
+    const isMySettingChanged = true;
+    const currentMicrophone = MicrophoneOptionEnum.auto;
     const isSdCard = true;
-    const recordedTime = 10;
-    const recordableTime = 20;
-    const latestFileUrl = 'http://dumy.jpg';
+    const cameraError = [CameraErrorEnum.batteryChargeFail, CameraErrorEnum.batteryHighTemperature];
+    const isBatteryInsert = false;
+
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       final Map state = <String, dynamic> {
         'fingerprint': fingerprint,
         'batteryLevel': batteryLevel,
-        'chargingState': chargingState.rawValue,
-        'isSdCard': isSdCard,
+        'storageUri': storageUri,
+        'storageID': storageID,
+        'captureStatus': captureStatus.rawValue,
         'recordedTime': recordedTime,
         'recordableTime': recordableTime,
+        'capturedPictures': capturedPictures,
+        'compositeShootingElapsedTime': compositeShootingElapsedTime,
         'latestFileUrl': latestFileUrl,
+        'chargingState': chargingState.rawValue,
+        'apiVersion': apiVersion,
+        'isPluginRunning': isPluginRunning,
+        'isPluginWebServer': isPluginWebServer,
+        'function': function.rawValue,
+        'isMySettingChanged': isMySettingChanged,
+        'currentMicrophone': currentMicrophone.rawValue,
+        'isSdCard': isSdCard,
+        'cameraError': convertCameraErrorParam(cameraError),
+        'isBatteryInsert': isBatteryInsert,
       };
       return state;
     });
 
     var thetaState = await platform.getThetaState();
+
     expect(thetaState.fingerprint, fingerprint);
     expect(thetaState.batteryLevel, batteryLevel);
-    expect(thetaState.chargingState, chargingState);
-    expect(thetaState.isSdCard, isSdCard);
+    expect(thetaState.storageUri, storageUri);
+    expect(thetaState.storageID, storageID);
+    expect(thetaState.captureStatus, captureStatus);
     expect(thetaState.recordedTime, recordedTime);
     expect(thetaState.recordableTime, recordableTime);
+    expect(thetaState.capturedPictures, capturedPictures);
+    expect(thetaState.compositeShootingElapsedTime, compositeShootingElapsedTime);
     expect(thetaState.latestFileUrl, latestFileUrl);
+    expect(thetaState.chargingState, chargingState);
+    expect(thetaState.apiVersion, apiVersion);
+    expect(thetaState.isPluginRunning, isPluginRunning);
+    expect(thetaState.isPluginWebServer, isPluginWebServer);
+    expect(thetaState.function, function);
+    expect(thetaState.isMySettingChanged, isMySettingChanged);
+    expect(thetaState.currentMicrophone, currentMicrophone);
+    expect(thetaState.isSdCard, isSdCard);
+    expect(thetaState.cameraError, cameraError);
+    expect(thetaState.isBatteryInsert, isBatteryInsert);
+  });
+
+  test('getThetaState nullable', () async {
+    const fingerprint = 'fingerprint_1';
+    const batteryLevel = 1.0;
+    const captureStatus = CaptureStatusEnum.idle;
+    const recordedTime = 1;
+    const recordableTime = 2;
+    const latestFileUrl = 'latestFileUrl latestFileUrl';
+    const chargingState = ChargingStateEnum.charging;
+    const apiVersion = 2;
+    const isSdCard = true;
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      final Map state = <String, dynamic> {
+        'fingerprint': fingerprint,
+        'batteryLevel': batteryLevel,
+        'captureStatus': captureStatus.rawValue,
+        'recordedTime': recordedTime,
+        'recordableTime': recordableTime,
+        'latestFileUrl': latestFileUrl,
+        'chargingState': chargingState.rawValue,
+        'apiVersion': apiVersion,
+        'isSdCard': isSdCard,
+      };
+      return state;
+    });
+
+    var thetaState = await platform.getThetaState();
+
+    expect(thetaState.fingerprint, fingerprint);
+    expect(thetaState.batteryLevel, batteryLevel);
+    expect(thetaState.storageUri, isNull);
+    expect(thetaState.storageID, isNull);
+    expect(thetaState.captureStatus, captureStatus);
+    expect(thetaState.recordedTime, recordedTime);
+    expect(thetaState.recordableTime, recordableTime);
+    expect(thetaState.capturedPictures, isNull);
+    expect(thetaState.compositeShootingElapsedTime, isNull);
+    expect(thetaState.latestFileUrl, latestFileUrl);
+    expect(thetaState.chargingState, chargingState);
+    expect(thetaState.apiVersion, apiVersion);
+    expect(thetaState.isPluginRunning, isNull);
+    expect(thetaState.isPluginWebServer, isNull);
+    expect(thetaState.function, isNull);
+    expect(thetaState.isMySettingChanged, isNull);
+    expect(thetaState.currentMicrophone, isNull);
+    expect(thetaState.isSdCard, isSdCard);
+    expect(thetaState.cameraError, isNull);
+    expect(thetaState.isBatteryInsert, isNull);
   });
 
   test('listFiles', () async {

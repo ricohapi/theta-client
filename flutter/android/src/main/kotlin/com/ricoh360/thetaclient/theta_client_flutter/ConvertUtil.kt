@@ -27,15 +27,39 @@ fun toResult(thetaInfo: ThetaInfo): Map<String, Any?> {
     )
 }
 
-fun toResult(thetaState: ThetaState): Map<String, Any> {
-    return mapOf<String, Any>(
+fun toResult(cameraErrorList: List<CameraErrorEnum>?): List<String>? {
+    if (cameraErrorList == null) {
+        return null
+    }
+    val result = mutableListOf<String>()
+    cameraErrorList.forEach {
+        result.add(it.name)
+    }
+    return result
+}
+
+fun toResult(thetaState: ThetaState): Map<String, Any?> {
+    return mapOf<String, Any?>(
         "fingerprint" to thetaState.fingerprint,
         "batteryLevel" to thetaState.batteryLevel,
-        "chargingState" to thetaState.chargingState.name,
-        "isSdCard" to thetaState.isSdCard,
+        "storageUri" to thetaState.storageUri,
+        "storageID" to thetaState.storageID,
+        "captureStatus" to thetaState.captureStatus.name,
         "recordedTime" to thetaState.recordedTime,
         "recordableTime" to thetaState.recordableTime,
-        "latestFileUrl" to thetaState.latestFileUrl
+        "capturedPictures" to thetaState.capturedPictures,
+        "compositeShootingElapsedTime" to thetaState.compositeShootingElapsedTime,
+        "latestFileUrl" to thetaState.latestFileUrl,
+        "chargingState" to thetaState.chargingState.name,
+        "apiVersion" to thetaState.apiVersion,
+        "isPluginRunning" to thetaState.isPluginRunning,
+        "isPluginWebServer" to thetaState.isPluginWebServer,
+        "function" to thetaState.function?.name,
+        "isMySettingChanged" to thetaState.isMySettingChanged,
+        "currentMicrophone" to thetaState.currentMicrophone?.name,
+        "isSdCard" to thetaState.isSdCard,
+        "cameraError" to toResult(thetaState.cameraError),
+        "isBatteryInsert" to thetaState.isBatteryInsert,
     )
 }
 

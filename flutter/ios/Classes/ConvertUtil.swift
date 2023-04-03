@@ -51,15 +51,39 @@ func convertResult(thetaInfo: ThetaRepository.ThetaInfo) -> [String: Any?] {
     ]
 }
 
-func convertResult(thetaState: ThetaRepository.ThetaState) -> [String: Any] {
+func convertResult(cameraErrorList: [ThetaRepository.CameraErrorEnum]?) -> [String]? {
+    guard let cameraErrorList = cameraErrorList else {
+        return nil
+    }
+    var result: [String] = []
+    cameraErrorList.forEach { error in
+        result.append(error.name)
+    }
+    return result
+}
+
+func convertResult(thetaState: ThetaRepository.ThetaState) -> [String: Any?] {
     return  [
         "fingerprint": thetaState.fingerprint,
         "batteryLevel": thetaState.batteryLevel,
-        "chargingState": thetaState.chargingState.name,
-        "isSdCard": thetaState.isSdCard,
+        "storageUri": thetaState.storageUri,
+        "storageID": thetaState.storageID,
+        "captureStatus": thetaState.captureStatus.name,
         "recordedTime": thetaState.recordedTime,
         "recordableTime": thetaState.recordableTime,
+        "capturedPictures": thetaState.capturedPictures,
+        "compositeShootingElapsedTime": thetaState.compositeShootingElapsedTime,
         "latestFileUrl": thetaState.latestFileUrl,
+        "chargingState": thetaState.chargingState.name,
+        "apiVersion": thetaState.apiVersion,
+        "isPluginRunning": thetaState.isPluginRunning,
+        "isPluginWebServer": thetaState.isPluginWebServer,
+        "function": thetaState.function?.name,
+        "isMySettingChanged": thetaState.isMySettingChanged,
+        "currentMicrophone": thetaState.currentMicrophone?.name,
+        "isSdCard": thetaState.isSdCard,
+        "cameraError": convertResult(cameraErrorList: thetaState.cameraError),
+        "isBatteryInsert": thetaState.isBatteryInsert,
     ]
 }
 
