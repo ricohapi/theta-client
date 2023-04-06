@@ -78,15 +78,23 @@ class _TakePictureScreen extends State<TakePictureScreen> with WidgetsBindingObs
               Container(
                 color: Colors.black,
                 child: Center(
-                  child: Image.memory(
-                    frameData,
-                    errorBuilder: (a, b, c) {
-                      return Container(
-                        color: Colors.black,
-                      );
-                    },
-                    gaplessPlayback: true,
-                  ),
+                  child:
+                    shooting ? const Text(
+                      'Take Picture...',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
+                    ):
+                    Image.memory(
+                      frameData,
+                      errorBuilder: (a, b, c) {
+                        return Container(
+                          color: Colors.black,
+                        );
+                      },
+                      gaplessPlayback: true,
+                    ),
                 )
               ),
               Container(
@@ -155,7 +163,7 @@ class _TakePictureScreen extends State<TakePictureScreen> with WidgetsBindingObs
         debugPrint('LivePreview end.');
       })
       .onError((error, stackTrace) {
-        debugPrint('Error getLivePreview.');
+        debugPrint('Error getLivePreview.$error');
         MessageBox.show(context, 'Error getLivePreview', () {
           backScreen();
         });
@@ -177,12 +185,19 @@ class _TakePictureScreen extends State<TakePictureScreen> with WidgetsBindingObs
         debugPrint('already shooting');
       return;
     }
-    shooting = true;
-    photoCapture!.takePicture((fileUrl) { 
-      shooting = false;
+    setState(() {
+      shooting = true;
+    });
+
+    // Stops while shooting is in progress
+    stopLivePreview();
+
+    photoCapture!.takePicture((fileUrl) {
+      setState(() {
+        shooting = false;
+      });
       debugPrint('take picture: $fileUrl');
       if (!mounted) return;
-      stopLivePreview();
       Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => PhotoScreen(
           name: 'Take Picture',
@@ -191,7 +206,9 @@ class _TakePictureScreen extends State<TakePictureScreen> with WidgetsBindingObs
         )
       ).then((value) => startLivePreview());
     }, (exception) {
-      shooting = false;
+      setState(() {
+        shooting = false;
+      });
       debugPrint(exception.toString());
     });
   }
