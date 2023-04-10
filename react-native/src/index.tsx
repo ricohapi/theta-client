@@ -19,3 +19,7 @@ const ThetaClientReactNative = NativeModules.ThetaClientReactNative
 
 /** theta frame event name */
 export const THETA_EVENT_NAME = ThetaClientReactNative.DEFAULT_EVENT_NAME;
+
+export * from './theta-repository';
+export * from './theta-repository/options';
+export * from './capture';

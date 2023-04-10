@@ -7,7 +7,7 @@ import type { MetaInfo } from './theta-meta';
 import { NativeModules } from 'react-native';
 import type { OptionNameEnum, Options } from './options';
 import { PhotoCaptureBuilder, VideoCaptureBuilder } from '../capture';
-const ThetaClientReactNative = NativeModules.ThetaClientBleReactNative;
+const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 /**
  * initialize theta client sdk

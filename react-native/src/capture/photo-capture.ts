@@ -5,7 +5,7 @@ import type {
 } from '../theta-repository/options';
 
 import { NativeModules } from 'react-native';
-const ThetaClientReactNative = NativeModules.ThetaClientBleReactNative;
+const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 /**
  * PhotoCapture class
@@ -60,4 +60,3 @@ export class PhotoCaptureBuilder extends CaptureBuilder<PhotoCaptureBuilder> {
     );
   }
 }
-
