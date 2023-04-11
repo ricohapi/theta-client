@@ -1,4 +1,4 @@
-import { WhiteBalanceAutoStrengthEnum } from '../../theta-repository/options';
+import { WhiteBalanceAutoStrengthEnum } from '../../theta-repository/options/option-white-balance-auto-strength';
 
 describe('WhiteBalanceAutoStrengthEnum', () => {
   const data: string[][] = [
@@ -13,6 +13,6 @@ describe('WhiteBalanceAutoStrengthEnum', () => {
   test('data', () => {
     data.forEach((item) => {
       expect(item[0] ? item[0].toString() : '').toBe(item[1]);
-    })
+    });
   });
 });
