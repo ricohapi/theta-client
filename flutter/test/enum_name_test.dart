@@ -355,4 +355,15 @@ void main() {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
   });
+
+  test('WhiteBalanceAutoStrengthEnum', () async {
+    List<List<dynamic>> data = [
+      [WhiteBalanceAutoStrengthEnum.on, 'ON'],
+      [WhiteBalanceAutoStrengthEnum.off, 'OFF'],
+    ];
+    expect(data.length, WhiteBalanceAutoStrengthEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
 }

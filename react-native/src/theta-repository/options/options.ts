@@ -438,6 +438,26 @@ export const WhiteBalanceEnum = {
 export type WhiteBalanceEnum =
   typeof WhiteBalanceEnum[keyof typeof WhiteBalanceEnum];
 
+/**
+ * White balance auto strength
+ *
+ * To set the strength of white balance auto for low color temperature scene.
+ * This option can be set for photo mode and video mode separately.
+ * Also this option will not be cleared by power-off.
+ *
+ * For RICOH THETA Z1 firmware v2.20.3 or later
+ */
+export const WhiteBalanceAutoStrengthEnum = {
+  /** ON */
+  ON: 'ON',
+  /** OFF */
+  OFF: 'OFF',
+} as const;
+
+/** type definition of WhiteBalanceAutoStrengthEnum */
+export type WhiteBalanceAutoStrengthEnum =
+  typeof WhiteBalanceAutoStrengthEnum[keyof typeof WhiteBalanceAutoStrengthEnum];
+
 /** Camera setting options name. */
 export const OptionNameEnum = {
   /** aperture */
@@ -488,6 +508,8 @@ export const OptionNameEnum = {
   ShutterVolume: 'ShutterVolume',
   /** whiteBalance */
   WhiteBalance: 'WhiteBalance',
+  /** _whiteBalanceAutoStrength */
+  WhiteBalanceAutoStrength: 'WhiteBalanceAutoStrength',
 } as const;
 
 /** type definition of OptionNameEnum */
@@ -543,6 +565,8 @@ export type Options = {
   shutterVolume?: number;
   /** White balance. */
   whiteBalance?: WhiteBalanceEnum;
+  /** White balance auto strength. */
+  whiteBalanceAutoStrength?: WhiteBalanceAutoStrengthEnum;
   /** GPS setting used in only capturing */
   _gpsTagRecording?: GpsTagRecordingEnum;
 };
