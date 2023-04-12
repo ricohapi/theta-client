@@ -681,7 +681,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Option name
          * whiteBalance
          */
-        WhiteBalance("whiteBalance", WhiteBalanceEnum::class)
+        WhiteBalance("whiteBalance", WhiteBalanceEnum::class),
+
+        /**
+         * Option name
+         * _whiteBalanceAutoStrength
+         */
+        WhiteBalanceAutoStrength("_whiteBalanceAutoStrength", WhiteBalanceAutoStrengthEnum::class)
     }
 
     /**
@@ -861,7 +867,18 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
          * Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
          */
-        var whiteBalance: WhiteBalanceEnum? = null
+        var whiteBalance: WhiteBalanceEnum? = null,
+
+        /**
+         * White balance auto strength
+         *
+         * To set the strength of white balance auto for low color temperature scene.
+         * This option can be set for photo mode and video mode separately.
+         * Also this option will not be cleared by power-off.
+         *
+         * For RICOH THETA Z1 firmware v2.20.3 or later
+         */
+        var whiteBalanceAutoStrength: WhiteBalanceAutoStrengthEnum? = null
     ) {
         constructor() : this(
             aperture = null,
@@ -887,8 +904,10 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             remainingSpace = null,
             totalSpace = null,
             shutterVolume = null,
-            whiteBalance = null
+            whiteBalance = null,
+            whiteBalanceAutoStrength = null
         )
+
         constructor(options: com.ricoh360.thetaclient.transferred.Options) : this(
             aperture = options.aperture?.let { ApertureEnum.get(it) },
             bluetoothPower = options._bluetoothPower?.let { BluetoothPowerEnum.get(it) },
@@ -917,7 +936,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             remainingSpace = options.remainingSpace,
             totalSpace = options.totalSpace,
             shutterVolume = options._shutterVolume,
-            whiteBalance = options.whiteBalance?.let { WhiteBalanceEnum.get(it) }
+            whiteBalance = options.whiteBalance?.let { WhiteBalanceEnum.get(it) },
+            whiteBalanceAutoStrength = options._whiteBalanceAutoStrength?.let { WhiteBalanceAutoStrengthEnum.get(it) }
         )
 
         /**
@@ -949,7 +969,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 remainingSpace = remainingSpace,
                 totalSpace = totalSpace,
                 _shutterVolume = shutterVolume,
-                whiteBalance = whiteBalance?.value
+                whiteBalance = whiteBalance?.value,
+                _whiteBalanceAutoStrength = whiteBalanceAutoStrength?.value
             )
         }
 
@@ -989,6 +1010,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.TotalSpace -> totalSpace
                 OptionNameEnum.ShutterVolume -> shutterVolume
                 OptionNameEnum.WhiteBalance -> whiteBalance
+                OptionNameEnum.WhiteBalanceAutoStrength -> whiteBalanceAutoStrength
             } as T
         }
 
@@ -1029,6 +1051,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.TotalSpace -> totalSpace = value as Long
                 OptionNameEnum.ShutterVolume -> shutterVolume = value as Int
                 OptionNameEnum.WhiteBalance -> whiteBalance = value as WhiteBalanceEnum
+                OptionNameEnum.WhiteBalanceAutoStrength -> whiteBalanceAutoStrength = value as WhiteBalanceAutoStrengthEnum
             }
         }
     }
@@ -1650,10 +1673,10 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             fun get(mediaFileFormat: MediaFileFormat): FileFormatEnum? {
                 return values().firstOrNull {
                     it.type.mediaType == mediaFileFormat.type &&
-                        it.width == mediaFileFormat.width &&
-                        it.height == mediaFileFormat.height &&
-                        it._codec == mediaFileFormat._codec &&
-                        it._frameRate == mediaFileFormat._frameRate
+                            it.width == mediaFileFormat.width &&
+                            it.height == mediaFileFormat.height &&
+                            it._codec == mediaFileFormat._codec &&
+                            it._frameRate == mediaFileFormat._frameRate
                 }
             }
         }
@@ -2747,6 +2770,39 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * White balance auto strength
+     *
+     * To set the strength of white balance auto for low color temperature scene.
+     * This option can be set for photo mode and video mode separately.
+     * Also this option will not be cleared by power-off.
+     *
+     * For RICOH THETA Z1 firmware v2.20.3 or later
+     */
+    enum class WhiteBalanceAutoStrengthEnum(val value: WhiteBalanceAutoStrength) {
+        /**
+         * correct tint for low color temperature scene
+         */
+        ON(WhiteBalanceAutoStrength.ON),
+
+        /**
+         * not correct tint for low color temperature scene
+         */
+        OFF(WhiteBalanceAutoStrength.OFF);
+
+        companion object {
+            /**
+             * Convert WhiteBalanceAutoStrength to WhiteBalanceAutoStrengthEnum
+             *
+             * @param value White balance auto strength
+             * @return WhiteBalanceAutoStrengthEnum
+             */
+            fun get(value: WhiteBalanceAutoStrength): WhiteBalanceAutoStrengthEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
      * File type in Theta.
      */
     enum class FileTypeEnum(val value: FileType) {
@@ -3344,7 +3400,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              */
             fun get(cameraError: CameraError): CameraErrorEnum {
                 return when (cameraError) {
-                    CameraError.NO_MEMORY-> NO_MEMORY
+                    CameraError.NO_MEMORY -> NO_MEMORY
                     CameraError.FILE_NUMBER_OVER -> FILE_NUMBER_OVER
                     CameraError.NO_DATE_SETTING -> NO_DATE_SETTING
                     CameraError.READ_ERROR -> READ_ERROR
@@ -4136,7 +4192,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         try {
             val params = GetPluginLicenseParams(packageName)
             val response = ThetaApi.callGetPluginLicenseCommand(endpoint, params)
-            if(response.status != HttpStatusCode.OK) {
+            if (response.status != HttpStatusCode.OK) {
                 throw ThetaWebApiException(response.toString())
             }
             return response.bodyAsText()

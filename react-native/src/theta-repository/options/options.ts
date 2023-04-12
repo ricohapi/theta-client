@@ -1,3 +1,5 @@
+import type { WhiteBalanceAutoStrengthEnum } from './option-white-balance-auto-strength';
+
 /** Aperture value. */
 export const ApertureEnum = {
   /** AUTO(0) */
@@ -488,6 +490,8 @@ export const OptionNameEnum = {
   ShutterVolume: 'ShutterVolume',
   /** whiteBalance */
   WhiteBalance: 'WhiteBalance',
+  /** _whiteBalanceAutoStrength */
+  WhiteBalanceAutoStrength: 'WhiteBalanceAutoStrength',
 } as const;
 
 /** type definition of OptionNameEnum */
@@ -543,6 +547,8 @@ export type Options = {
   shutterVolume?: number;
   /** White balance. */
   whiteBalance?: WhiteBalanceEnum;
+  /** White balance auto strength. */
+  whiteBalanceAutoStrength?: WhiteBalanceAutoStrengthEnum;
   /** GPS setting used in only capturing */
   _gpsTagRecording?: GpsTagRecordingEnum;
 };

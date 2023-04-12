@@ -177,6 +177,9 @@ class ConvertUtils {
         case OptionNameEnum.whiteBalance:
           result.whiteBalance = WhiteBalanceEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.whiteBalanceAutoStrength:
+          result.whiteBalanceAutoStrength = WhiteBalanceAutoStrengthEnum.getValue(entry.value);
+          break;
       }
     }
     return result;
@@ -221,6 +224,8 @@ class ConvertUtils {
     } else if (value is SleepDelayEnum) {
       return value.rawValue;
     } else if (value is WhiteBalanceEnum) {
+      return value.rawValue;
+    } else if (value is WhiteBalanceAutoStrengthEnum) {
       return value.rawValue;
     } else if (value is int || value is double || value is String || value is bool) {
       return value;

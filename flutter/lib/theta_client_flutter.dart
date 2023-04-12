@@ -588,7 +588,10 @@ enum OptionNameEnum {
   shutterVolume('ShutterVolume', int),
 
   /// Option name whiteBalance
-  whiteBalance('WhiteBalance', WhiteBalanceEnum);
+  whiteBalance('WhiteBalance', WhiteBalanceEnum),
+
+  /// Option name WhiteBalanceAutoStrength
+  whiteBalanceAutoStrength('WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum);
 
   final String rawValue;
   final dynamic valueType;
@@ -1445,6 +1448,37 @@ enum WhiteBalanceEnum {
   }
 }
 
+/// White balance auto strength.
+///
+/// To set the strength of white balance auto for low color temperature scene.
+/// This option can be set for photo mode and video mode separately.
+/// Also this option will not be cleared by power-off.
+///
+/// For RICOH THETA Z1 firmware v2.20.3 or later
+enum WhiteBalanceAutoStrengthEnum {
+  /// correct tint for low color temperature scene
+  on('ON'),
+
+  /// not correct tint for low color temperature scene
+  off('OFF');
+
+  final String rawValue;
+
+  const WhiteBalanceAutoStrengthEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static WhiteBalanceAutoStrengthEnum? getValue(String rawValue) {
+    return WhiteBalanceAutoStrengthEnum.values
+        .cast<WhiteBalanceAutoStrengthEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
 /// Turns position information assigning ON/OFF.
 /// 
 /// For RICOH THETA X
@@ -1807,6 +1841,15 @@ class Options {
   /// Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
   WhiteBalanceEnum? whiteBalance;
 
+  /// White balance auto strength.
+  ///
+  /// To set the strength of white balance auto for low color temperature scene.
+  /// This option can be set for photo mode and video mode separately.
+  /// Also this option will not be cleared by power-off.
+  ///
+  /// For RICOH THETA Z1 firmware v2.20.3 or later
+  WhiteBalanceAutoStrengthEnum? whiteBalanceAutoStrength;
+
   /// Get Option value.
   T? getValue<T>(OptionNameEnum name) {
     switch (name) {
@@ -1856,6 +1899,8 @@ class Options {
         return shutterVolume as T;
       case OptionNameEnum.whiteBalance:
         return whiteBalance as T;
+      case OptionNameEnum.whiteBalanceAutoStrength:
+        return whiteBalanceAutoStrength as T;
     }
   }
 
@@ -1934,6 +1979,9 @@ class Options {
         break;
       case OptionNameEnum.whiteBalance:
         whiteBalance = value;
+        break;
+      case OptionNameEnum.whiteBalanceAutoStrength:
+        whiteBalanceAutoStrength = value;
         break;
     }
   }

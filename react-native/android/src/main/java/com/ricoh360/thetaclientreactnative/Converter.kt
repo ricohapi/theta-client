@@ -391,6 +391,23 @@ class WhiteBalanceConverter : OptionConverter {
 }
 
 /**
+ * WhiteBalanceAutoStrengthConverter
+ */
+class WhiteBalanceAutoStrengthConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("whiteBalanceAutoStrength")?.let {
+      options.whiteBalanceAutoStrength = ThetaRepository.WhiteBalanceAutoStrengthEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.whiteBalanceAutoStrength?.let {
+      objects.putString("whiteBalanceAutoStrength", it.toString())
+    }
+  }
+}
+
+/**
  * ColorTemperatureConverter
  */
 class ColorTemperatureConverter : OptionConverter {
