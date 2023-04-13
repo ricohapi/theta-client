@@ -1060,7 +1060,7 @@ static convert_t ColorTemperatureCvt = {
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     NSNumber* val = [rct objectForKey:@"colorTemperature"];
     if (val) {
-      opt.colorTemperature = (THETACInt *) val;
+      opt.colorTemperature = [THETACInt numberWithInt:[val intValue]];
     }
   },
   .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
@@ -1104,7 +1104,7 @@ static convert_t IsGpsOnCvt = {
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     NSNumber* val = [rct objectForKey:@"isGpsOn"];
     if (val) {
-      opt.isGpsOn = (THETACBoolean *) val;
+      opt.isGpsOn = [THETACBoolean numberWithBool:[val boolValue]];
     }
   },
   .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
@@ -1163,7 +1163,7 @@ static convert_t RemainingPicturesCvt = {
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     NSNumber* val = [rct objectForKey:@"remainingPictures"];
     if (val) {
-      opt.remainingPictures = (THETACInt *) val;
+      opt.remainingPictures = [THETACInt numberWithInt:[val intValue]];
     }
   },
   .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
@@ -1180,7 +1180,7 @@ static convert_t RemainingVideoSecondsCvt = {
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     NSNumber* val = [rct objectForKey:@"remainingVideoSeconds"];
     if (val) {
-      opt.remainingVideoSeconds = (THETACInt *) val;
+      opt.remainingVideoSeconds = [THETACInt numberWithInt:[val intValue]];
     }
   },
   .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
@@ -1197,7 +1197,7 @@ static convert_t RemainingSpaceCvt = {
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     NSNumber* val = [rct objectForKey:@"remainingSpace"];
     if (val) {
-      opt.remainingSpace = (THETACLong *) val;
+      opt.remainingSpace = [THETACLong numberWithLongLong:[val longLongValue]];
     }
   },
   .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
@@ -1214,7 +1214,7 @@ static convert_t TotalSpaceCvt = {
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     NSNumber* val = [rct objectForKey:@"totalSpace"];
     if (val) {
-      opt.totalSpace = (THETACLong *) val;
+      opt.totalSpace =  [THETACLong numberWithLongLong:[val longLongValue]];
     }
   },
   .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
@@ -1231,7 +1231,7 @@ static convert_t ShutterVolumeCvt = {
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     NSNumber* val = [rct objectForKey:@"shutterVolume"];
     if (val) {
-      opt.shutterVolume = (THETACInt *) val;
+      opt.shutterVolume = [THETACInt numberWithInt:[val intValue]];
     }
   },
   .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
