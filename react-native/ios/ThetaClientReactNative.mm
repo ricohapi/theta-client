@@ -1064,7 +1064,9 @@ static convert_t ColorTemperatureCvt = {
     }
   },
   .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
-    [rct setObject:opt.colorTemperature forKey:@"colorTemperature"];
+    if (opt.colorTemperature) {
+      [rct setObject:opt.colorTemperature forKey:@"colorTemperature"];
+    }
   },
   .setPhotoOption = ^(NSDictionary* rct, THETACPhotoCaptureBuilder *builder) {
     NSNumber *val = (NSNumber*) [rct objectForKey:@"colorTemperature"];
@@ -2203,6 +2205,286 @@ RCT_REMAP_METHOD(deleteAccessPoint,
         reject(@"error", [error localizedDescription], error);
       } else {
         resolve(@(YES));
+      }
+    }];
+}
+
+/**
+ * getMySetting  -  acquires the shooting properties ( just for Theta V and later )
+ * @param captureMode the target shooting mode
+ * @param resolve resolver for getMySetting
+ * @param rejecter rejecter for getMySetting
+ */
+RCT_REMAP_METHOD(getMySetting,
+                 getMySettingWithCaptureMode:(NSString *)captureMode
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+{
+  [_theta getMySettingCaptureMode:[CaptureModeEnum.toTheta objectForKey:captureMode]
+              completionHandler:^(THETACThetaRepositoryOptions *options, NSError *error) {
+      if (error) {
+        reject(@"error", [error localizedDescription], error);
+      } else if (options) {
+        NSMutableDictionary *results = [[NSMutableDictionary alloc] init];
+        for (OptionConverter value in [NameToConverter allValues]) {
+          convert_t *convert = value();
+          if (convert && convert->setFromTheta) {
+            convert->setFromTheta(results, options);
+          }
+        }
+        resolve(results);
+      } else {
+        reject(@"error", @"no options", nil);
+      }
+    }];
+}
+
+/**
+ * getMySetting  -  acquires the shooting properties ( just for Theta S and SC )
+ * @param optionNames list of option names to acquire
+ * @param resolve resolver for getMySetting
+ * @param rejecter rejecter for getMySetting
+ */
+RCT_REMAP_METHOD(getMySettingFromOldModel,
+                 getMySettingWithOptionNames:(NSArray*)optionNames
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+{
+  NSMutableArray *optionNameList = [[NSMutableArray alloc] init];
+  for (id name in optionNames) {
+    [optionNameList addObject:[NameToOptionEnum objectForKey:name]];
+  }
+  [_theta getMySettingOptionNames:optionNameList
+              completionHandler:^(THETACThetaRepositoryOptions *options, NSError *error) {
+      if (error) {
+        reject(@"error", [error localizedDescription], error);
+      } else if (options) {
+        NSMutableDictionary *results = [[NSMutableDictionary alloc] init];
+        for (id name in optionNames) {
+          id option = [OptionEnumToOption objectForKey:name];
+          convert_t *convert = [NameToConverter objectForKey:option]();
+          if (convert && convert->setFromTheta) {
+            convert->setFromTheta(results, options);
+          }
+        }
+        resolve(results);
+      } else {
+        reject(@"error", @"no options", nil);
+      }
+    }];
+}
+
+/**
+ * setMySetting  -  registers shooting conditions in My Settings
+ * @param captureMode the target shooting mode
+ * @param options registered to My Settings
+ * @param resolve resolver for setMySetting
+ * @param rejecter rejecter for setMySetting
+ */
+RCT_REMAP_METHOD(setMySetting,
+                 setMySettingWithCaptureMode:(NSString *)captureMode
+                 setMySettingWithOptions:(NSDictionary*)options
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+{
+  THETACThetaRepositoryOptions *newoptions = [[THETACThetaRepositoryOptions alloc] init];
+  for (id option in [options allKeys]) {
+    convert_t *convert = [NameToConverter objectForKey:option]();
+    if (convert && convert->setToTheta) {
+      convert->setToTheta(options, newoptions);
+    }
+  }
+  [_theta setMySettingCaptureMode:[CaptureModeEnum.toTheta objectForKey:captureMode]
+                          options:newoptions
+                completionHandler:^(NSError *error) {
+      if (error) {
+        reject(@"error", [error localizedDescription], error);
+      } else {
+        resolve(@(YES));
+      }
+    }];
+}
+
+/**
+ * deleteMySetting  -  delete shooting conditions in My Settings
+ * @param captureMode the target shooting mode
+ * @param resolve resolver for deleteMySetting
+ * @param rejecter rejecter for deleteMySetting
+ */
+RCT_REMAP_METHOD(deleteMySetting,
+                 deleteMySettingWithCaptureMode:(NSString *)captureMode
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+{
+  [_theta deleteMySettingCaptureMode:[CaptureModeEnum.toTheta objectForKey:captureMode]
+                completionHandler:^(NSError *error) {
+      if (error) {
+        reject(@"error", [error localizedDescription], error);
+      } else {
+        resolve(@(YES));
+      }
+    }];
+}
+
+/**
+ * listPlugins  -  acquires a list of installed plugins
+ * @param resolve resolver for listPlugins
+ * @param rejecter rejecter for listPlugins
+ */
+RCT_REMAP_METHOD(listPlugins,
+                 listPluginsWithResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+{
+  [_theta listPluginsWithCompletionHandler:^(NSArray *pluginList, NSError *error) {
+      if (error) {
+        reject(@"error", [error localizedDescription], error);
+      } else if (pluginList) {
+        NSMutableArray *ary = [[NSMutableArray alloc] init];
+          for (int i = 0; i < pluginList.count; i++) {
+              THETACThetaRepositoryPluginInfo *plugininfo = pluginList[i];
+              [ary addObject: @{
+                  @"name": plugininfo.name,
+                    @"packageName": plugininfo.packageName,
+                    @"version": plugininfo.version,
+                    @"isPreInstalled": @(plugininfo.isPreInstalled),
+                    @"isRunning": @(plugininfo.isRunning),
+                    @"isForeground": @(plugininfo.isForeground),
+                    @"isBoot": @(plugininfo.isBoot),
+                    @"hasWebServer": @(plugininfo.hasWebServer),
+                    @"exitStatus": plugininfo.exitStatus,
+                    @"message": plugininfo.message
+                    }];
+          }
+          resolve(ary);
+      } else {
+        reject(@"error", @"no plugin", nil);
+      }
+    }];
+}
+
+/**
+ * setPlugin  -  sets the installed plugin for boot
+ * @param packageName package name of the target plugin
+ * @param resolve resolver for setPlugin
+ * @param rejecter rejecter for setPlugin
+ */
+RCT_REMAP_METHOD(setPlugin,
+                 setPluginPackageName:(NSString *)packageName
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+{
+  [_theta setPluginPackageName:packageName
+             completionHandler:^(NSError *error) {
+      if (error) {
+        reject(@"error", [error localizedDescription], error);
+      } else {
+        resolve(@(YES));
+      }
+    }];
+}
+
+/**
+ * startPlugin  - start the plugin specified by the packageName
+ * @param packageName package name of the target plugin
+ * @param resolve resolver for startPlugin
+ * @param rejecter rejecter for startPlugin
+ */
+RCT_REMAP_METHOD(startPlugin,
+                 startPluginPackageName:(NSString *)packageName
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+{
+  [_theta startPluginPackageName:packageName
+             completionHandler:^(NSError *error) {
+      if (error) {
+          reject(@"error", [error localizedDescription], error);
+
+      } else {
+          resolve(@(YES));
+      }
+    }];
+}
+
+/**
+ * stopPlugin  -  stop the running plugin
+ * @param resolve resolver for stopPlugin
+ * @param rejecter rejecter for stopPlugin
+ */
+RCT_REMAP_METHOD(stopPlugin,
+                 stopPluginWithResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+{
+  [_theta stopPluginWithCompletionHandler:^(NSError *error) {
+      if (error) {
+          reject(@"error", [error localizedDescription], error);
+
+      } else {
+          resolve(@(YES));
+      }
+    }];
+}
+
+/**
+ * getPluginLicense  -  acquires the license for the installed plugin
+ * @param packageName package name of the target plugin
+ * @param resolve resolver for getPluginLicense
+ * @param rejecter rejecter for getPluginLicense
+ */
+RCT_REMAP_METHOD(getPluginLicense,
+                 getPluginLicensePackageName:(NSString *)packageName
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+{
+  [_theta getPluginLicensePackageName:packageName
+             completionHandler:^(NSString *pluginLicense, NSError *error) {
+      if (error) {
+          reject(@"error", [error localizedDescription], error);
+
+      } else if (pluginLicense) {
+          resolve(pluginLicense);
+      } else {
+          reject(@"error", @"no plugin lincense", nil);
+      }
+    }];
+}
+
+/**
+ * getPluginOrders  -  return the plugin orders
+ * @param resolve resolver for getPluginOrders
+ * @param rejecter rejecter for getPluginOrders
+ */
+RCT_REMAP_METHOD(getPluginOrders,
+                 getPluginOrdersWithResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+{
+  [_theta getPluginOrdersWithCompletionHandler:^(NSArray *pluginOrders, NSError *error) {
+      if (error) {
+        reject(@"error", [error localizedDescription], error);
+      } else if (pluginOrders) {
+        resolve(pluginOrders);
+      } else {
+        reject(@"error", @"no plugin orders", nil);
+      }
+    }];
+}
+
+/**
+ * setPluginOrders  - sets the plugin orders
+ * @param list of package names of plugins
+ * @param resolve resolver for setPluginOrders
+ * @param rejecter rejecter for setPluginOrders
+ */
+RCT_REMAP_METHOD(setPluginOrders,
+                 setPluginOrdersPlugins:(NSArray *) plugins
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+{
+  [_theta setPluginOrdersPlugins:plugins
+               completionHandler:^(NSError *error) {
+      if (error) {
+          reject(@"error", [error localizedDescription], error);
+      } else {
+          resolve(@(YES));
       }
     }];
 }
