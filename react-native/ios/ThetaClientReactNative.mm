@@ -252,7 +252,7 @@ static convert_t CameraErrorEnum = {
       THETACThetaRepositoryCameraErrorEnum.compassCalibration: @"COMPASS_CALIBRATION"
   }
 };
- 
+
 /**
  * FileTypeEnum converter
  */
@@ -1053,6 +1053,33 @@ static convert_t WhiteBalanceEnum = {
   }
 };
 
+
+/**
+ * WhiteBalanceAutoStrengthEnum converter
+ */
+static convert_t WhiteBalanceAutoStrengthEnum = {
+  .toTheta = @{
+    @"ON": THETACThetaRepositoryWhiteBalanceAutoStrengthEnum.on,
+    @"OFF": THETACThetaRepositoryWhiteBalanceAutoStrengthEnum.off
+  },
+  .fromTheta = @{
+      THETACThetaRepositoryWhiteBalanceAutoStrengthEnum.on: @"ON",
+      THETACThetaRepositoryWhiteBalanceAutoStrengthEnum.off: @"OFF"
+  },
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [WhiteBalanceAutoStrengthEnum.toTheta objectForKey:[rct objectForKey:@"whiteBalanceAutoStrength"]];
+    if (val) {
+      opt.whiteBalanceAutoStrength = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [WhiteBalanceAutoStrengthEnum.fromTheta objectForKey:opt.whiteBalanceAutoStrength];
+    if (val) {
+      [rct setObject:val forKey:@"whiteBalanceAutoStrength"];
+    }
+  }
+};
+
 /**
  * ColorTemperature converter
  */
@@ -1297,7 +1324,8 @@ static NSDictionary *NameToOptionEnum = @{
   @"RemainingSpace": THETACThetaRepositoryOptionNameEnum.remainingspace,
   @"TotalSpace": THETACThetaRepositoryOptionNameEnum.totalspace,
   @"ShutterVolume": THETACThetaRepositoryOptionNameEnum.shuttervolume,
-  @"WhiteBalance": THETACThetaRepositoryOptionNameEnum.whitebalance
+  @"WhiteBalance": THETACThetaRepositoryOptionNameEnum.whitebalance,
+  @"WhiteBalanceAutoStrength": THETACThetaRepositoryOptionNameEnum.whitebalanceautostrength
 };
 
 /**
@@ -1327,7 +1355,8 @@ static NSDictionary *OptionEnumToOption = @{
   @"RemainingSpace": @"remainingSpace",
   @"TotalSpace": @"totalSpace",
   @"ShutterVolume": @"shutterVolume",
-  @"WhiteBalance": @"whiteBalance"
+  @"WhiteBalance": @"whiteBalance",
+  @"WhiteBalanceAutoStrength": @"whiteBalanceAutoStrength"
 };
 
 /** Option converter builder */
@@ -1361,7 +1390,8 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"totalSpace": ^{return &TotalSpaceCvt;},
   @"shutterVolume": ^{return &ShutterVolumeCvt;},
   @"whiteBalance": ^{return &WhiteBalanceEnum;},
-  @"_gpsTagRecording": ^{return &GpsTagRecordingEnum;}
+  @"_gpsTagRecording": ^{return &GpsTagRecordingEnum;},
+  @"whiteBalanceAutoStrength": ^{return &WhiteBalanceAutoStrengthEnum;}
 };
 
 static NSString *EVENT_NAME = @"ThetaFrameEvent";

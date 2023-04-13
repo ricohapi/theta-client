@@ -268,6 +268,7 @@ void main() {
       [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
       [OptionNameEnum.shutterVolume, 'ShutterVolume', 7, 7],
       [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
+      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
     ];
 
     Map<String, dynamic> optionMap = {};
@@ -323,6 +324,7 @@ void main() {
       [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
       [OptionNameEnum.shutterVolume, 'ShutterVolume', 7, 7],
       [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
+      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.on, 'ON'],
     ];
 
     Map<String, dynamic> optionMap = {};

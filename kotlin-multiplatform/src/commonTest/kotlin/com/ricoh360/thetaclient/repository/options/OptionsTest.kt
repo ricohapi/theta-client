@@ -42,6 +42,7 @@ class OptionsTest {
         val totalSpace = 100L
         val shutterVolume = 100
         val whiteBalance = ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT
+        val whiteBalanceAutoStrength = ThetaRepository.WhiteBalanceAutoStrengthEnum.OFF
 
         val options = ThetaRepository.Options(
             aperture = aperture,
@@ -67,7 +68,8 @@ class OptionsTest {
             remainingSpace = remainingSpace,
             totalSpace = totalSpace,
             shutterVolume = shutterVolume,
-            whiteBalance = whiteBalance
+            whiteBalance = whiteBalance,
+            whiteBalanceAutoStrength = whiteBalanceAutoStrength
         )
 
         ThetaRepository.OptionNameEnum.values().forEach {
@@ -98,6 +100,7 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.TotalSpace), totalSpace, "totalSpace")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ShutterVolume), shutterVolume, "shutterVolume")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.WhiteBalance), whiteBalance, "whiteBalance")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.WhiteBalanceAutoStrength), whiteBalanceAutoStrength, "whiteBalanceAutoStrength")
     }
 
     /**
@@ -129,7 +132,8 @@ class OptionsTest {
             Pair(ThetaRepository.OptionNameEnum.RemainingSpace, 103L),
             Pair(ThetaRepository.OptionNameEnum.TotalSpace, 104L),
             Pair(ThetaRepository.OptionNameEnum.ShutterVolume, 10),
-            Pair(ThetaRepository.OptionNameEnum.WhiteBalance, ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT)
+            Pair(ThetaRepository.OptionNameEnum.WhiteBalance, ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT),
+            Pair(ThetaRepository.OptionNameEnum.WhiteBalanceAutoStrength, ThetaRepository.WhiteBalanceAutoStrengthEnum.ON)
         )
         val options = ThetaRepository.Options()
         values.forEach {
@@ -173,6 +177,7 @@ class OptionsTest {
         val totalSpace = Pair(104L, 104L)
         val shutterVolume = Pair(10, 10)
         val whiteBalance = Pair(WhiteBalance._WARM_WHITE_FLUORESCENT, ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT)
+        val whiteBalanceAutoStrength = Pair(WhiteBalanceAutoStrength.OFF, ThetaRepository.WhiteBalanceAutoStrengthEnum.OFF)
 
         val orgOptions = Options(
             aperture = aperture.first,
@@ -198,7 +203,8 @@ class OptionsTest {
             remainingSpace = remainingSpace.first,
             totalSpace = totalSpace.first,
             _shutterVolume = shutterVolume.first,
-            whiteBalance = whiteBalance.first
+            whiteBalance = whiteBalance.first,
+            _whiteBalanceAutoStrength = whiteBalanceAutoStrength.first
         )
         val options = ThetaRepository.Options(orgOptions)
 
@@ -226,6 +232,7 @@ class OptionsTest {
         assertEquals(options.totalSpace, totalSpace.second, "totalSpace")
         assertEquals(options.shutterVolume, shutterVolume.second, "shutterVolume")
         assertEquals(options.whiteBalance, whiteBalance.second, "whiteBalance")
+        assertEquals(options.whiteBalanceAutoStrength, whiteBalanceAutoStrength.second, "whiteBalanceAutoStrength")
     }
 
     @Test
@@ -260,6 +267,7 @@ class OptionsTest {
         val totalSpace = Pair(104L, 104L)
         val shutterVolume = Pair(10, 10)
         val whiteBalance = Pair(WhiteBalance._WARM_WHITE_FLUORESCENT, ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT)
+        val whiteBalanceAutoStrength = Pair(WhiteBalanceAutoStrength.ON, ThetaRepository.WhiteBalanceAutoStrengthEnum.ON)
 
         val orgOptions = ThetaRepository.Options(
             aperture = aperture.second,
@@ -285,7 +293,8 @@ class OptionsTest {
             remainingSpace = remainingSpace.second,
             totalSpace = totalSpace.second,
             shutterVolume = shutterVolume.second,
-            whiteBalance = whiteBalance.second
+            whiteBalance = whiteBalance.second,
+            whiteBalanceAutoStrength = whiteBalanceAutoStrength.second
         )
         val options = orgOptions.toOptions()
 
@@ -313,5 +322,6 @@ class OptionsTest {
         assertEquals(options.totalSpace, totalSpace.first, "totalSpace")
         assertEquals(options._shutterVolume, shutterVolume.first, "shutterVolume")
         assertEquals(options.whiteBalance, whiteBalance.first, "whiteBalance")
+        assertEquals(options._whiteBalanceAutoStrength, whiteBalanceAutoStrength.first, "whiteBalanceAutoStrength")
     }
 }
