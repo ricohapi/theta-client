@@ -2226,8 +2226,8 @@ RCT_REMAP_METHOD(getMySetting,
         reject(@"error", [error localizedDescription], error);
       } else if (options) {
         NSMutableDictionary *results = [[NSMutableDictionary alloc] init];
-        for (OptionConverter value in [NameToConverter allValues]) {
-          convert_t *convert = value();
+        for (OptionConverter converter in [NameToConverter allValues]) {
+          convert_t *convert = converter();
           if (convert && convert->setFromTheta) {
             convert->setFromTheta(results, options);
           }
@@ -2262,9 +2262,12 @@ RCT_REMAP_METHOD(getMySettingFromOldModel,
         NSMutableDictionary *results = [[NSMutableDictionary alloc] init];
         for (id name in optionNames) {
           id option = [OptionEnumToOption objectForKey:name];
-          convert_t *convert = [NameToConverter objectForKey:option]();
-          if (convert && convert->setFromTheta) {
-            convert->setFromTheta(results, options);
+          OptionConverter converter = [NameToConverter objectForKey:option];
+          if (converter) {
+            convert_t *convert = converter();
+            if (convert && convert->setFromTheta) {
+                convert->setFromTheta(results, options);
+            }
           }
         }
         resolve(results);
@@ -2289,9 +2292,12 @@ RCT_REMAP_METHOD(setMySetting,
 {
   THETACThetaRepositoryOptions *newoptions = [[THETACThetaRepositoryOptions alloc] init];
   for (id option in [options allKeys]) {
-    convert_t *convert = [NameToConverter objectForKey:option]();
-    if (convert && convert->setToTheta) {
-      convert->setToTheta(options, newoptions);
+    OptionConverter converter = [NameToConverter objectForKey:option];
+    if (converter) {
+      convert_t *convert = converter();
+      if (convert && convert->setToTheta) {
+        convert->setToTheta(options, newoptions);
+      }
     }
   }
   [_theta setMySettingCaptureMode:[CaptureModeEnum.toTheta objectForKey:captureMode]
