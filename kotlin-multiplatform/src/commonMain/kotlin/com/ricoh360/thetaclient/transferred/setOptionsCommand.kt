@@ -563,6 +563,15 @@ data class Options(
      * Supported white balance
      */
     var whiteBalanceSupport: List<WhiteBalance>? = null,
+
+    /**
+     * To set the strength of white balance auto for low color temperature scene.
+     * This option can be set for photo mode and video mode separately.
+     * Also this option will not be cleared by power-off.
+     *
+     * For RICOH THETA Z1 firmware v2.20.3 or later
+     */
+    var _whiteBalanceAutoStrength: WhiteBalanceAutoStrength? = null,
 )
 
 /**
@@ -844,6 +853,30 @@ enum class WhiteBalance {
      */
     @SerialName("_underwater")
     _UNDERWATER,
+}
+
+/**
+ * White balance auto strength
+ *
+ * To set the strength of white balance auto for low color temperature scene.
+ * This option can be set for photo mode and video mode separately.
+ * Also this option will not be cleared by power-off.
+ *
+ * For RICOH THETA Z1 firmware v2.20.3 or later
+ */
+@Serializable
+enum class WhiteBalanceAutoStrength {
+    /**
+     * correct tint for low color temperature scene
+     */
+    @SerialName("ON")
+    ON,
+
+    /**
+     * not correct tint for low color temperature scene
+     */
+    @SerialName("OFF")
+    OFF,
 }
 
 /**

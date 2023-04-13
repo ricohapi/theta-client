@@ -289,6 +289,9 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.whitebalance.name:
         options.whiteBalance = getEnumValue(values: ThetaRepository.WhiteBalanceEnum.values(), name: value as! String)!
         break
+    case ThetaRepository.OptionNameEnum.whitebalanceautostrength.name:
+        options.whiteBalanceAutoStrength = getEnumValue(values: ThetaRepository.WhiteBalanceAutoStrengthEnum.values(), name: value as! String)!
+        break
     default: break
     }
 }
