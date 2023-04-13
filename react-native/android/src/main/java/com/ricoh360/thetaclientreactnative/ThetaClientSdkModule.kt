@@ -88,7 +88,7 @@ class ThetaClientReactNativeModule(
         result.putString("manufacturer", info.manufacturer)
         result.putString("model", info.model)
         result.putString("serialNumber", info.serialNumber)
-	      info.wlanMacAddress?.also {
+        info.wlanMacAddress?.also {
           result.putString("wlanMacAddress", info.wlanMacAddress)
         } ?: result.putNull("wlanMacAddress")
         info.bluetoothMacAddress?.also {
@@ -296,11 +296,12 @@ class ThetaClientReactNativeModule(
     "totalSpace" to TotalSpaceConverter(),
     "shutterVolume" to ShutterVolumeConverter(),
     "whiteBalance" to WhiteBalanceConverter(),
+    "whiteBalanceAutoStrength" to WhiteBalanceAutoStrengthConverter(),
     "_gpsTagRecording" to GpsTagRecordingConverter(),
   )
+
   /** OptionNameEnum to option */
   private val optionEnumToOption = mapOf(
-    "Aperture" to "aperture",
     "Aperture" to "aperture",
     "BluetoothPower" to "bluetoothPower",
     "CaptureMode" to "captureMode",
@@ -325,6 +326,7 @@ class ThetaClientReactNativeModule(
     "TotalSpace" to "totalSpace",
     "ShutterVolume" to "shutterVolume",
     "WhiteBalance" to "whiteBalance",
+    "WhiteBalanceAutoStrength" to "whiteBalanceAutoStrength",
   )
 
   /**
@@ -392,9 +394,11 @@ class ThetaClientReactNativeModule(
         return previewing
       }
       val param = Arguments.createMap()
-      param.putString("data",
-                      "data:image/jpeg;base64," +
-                      packet.first.copyOfRange(0, packet.second).toBase64())
+      param.putString(
+        "data",
+        "data:image/jpeg;base64," +
+          packet.first.copyOfRange(0, packet.second).toBase64()
+      )
       reactApplicationContext
         .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
         .emit(EVENT_NAME, param)

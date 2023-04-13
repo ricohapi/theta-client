@@ -252,7 +252,7 @@ static convert_t CameraErrorEnum = {
       THETACThetaRepositoryCameraErrorEnum.compassCalibration: @"COMPASS_CALIBRATION"
   }
 };
- 
+
 /**
  * FileTypeEnum converter
  */
@@ -1053,6 +1053,33 @@ static convert_t WhiteBalanceEnum = {
   }
 };
 
+
+/**
+ * WhiteBalanceAutoStrengthEnum converter
+ */
+static convert_t WhiteBalanceAutoStrengthEnum = {
+  .toTheta = @{
+    @"ON": THETACThetaRepositoryWhiteBalanceAutoStrengthEnum.on,
+    @"OFF": THETACThetaRepositoryWhiteBalanceAutoStrengthEnum.off
+  },
+  .fromTheta = @{
+      THETACThetaRepositoryWhiteBalanceAutoStrengthEnum.on: @"ON",
+      THETACThetaRepositoryWhiteBalanceAutoStrengthEnum.off: @"OFF"
+  },
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [WhiteBalanceAutoStrengthEnum.toTheta objectForKey:[rct objectForKey:@"whiteBalanceAutoStrength"]];
+    if (val) {
+      opt.whiteBalanceAutoStrength = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [WhiteBalanceAutoStrengthEnum.fromTheta objectForKey:opt.whiteBalanceAutoStrength];
+    if (val) {
+      [rct setObject:val forKey:@"whiteBalanceAutoStrength"];
+    }
+  }
+};
+
 /**
  * ColorTemperature converter
  */
@@ -1060,7 +1087,7 @@ static convert_t ColorTemperatureCvt = {
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     NSNumber* val = [rct objectForKey:@"colorTemperature"];
     if (val) {
-      opt.colorTemperature = (THETACInt *) val;
+      opt.colorTemperature = [THETACInt numberWithInt:[val intValue]];
     }
   },
   .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
@@ -1106,7 +1133,7 @@ static convert_t IsGpsOnCvt = {
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     NSNumber* val = [rct objectForKey:@"isGpsOn"];
     if (val) {
-      opt.isGpsOn = (THETACBoolean *) val;
+      opt.isGpsOn = [THETACBoolean numberWithBool:[val boolValue]];
     }
   },
   .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
@@ -1165,7 +1192,7 @@ static convert_t RemainingPicturesCvt = {
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     NSNumber* val = [rct objectForKey:@"remainingPictures"];
     if (val) {
-      opt.remainingPictures = (THETACInt *) val;
+      opt.remainingPictures = [THETACInt numberWithInt:[val intValue]];
     }
   },
   .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
@@ -1182,7 +1209,7 @@ static convert_t RemainingVideoSecondsCvt = {
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     NSNumber* val = [rct objectForKey:@"remainingVideoSeconds"];
     if (val) {
-      opt.remainingVideoSeconds = (THETACInt *) val;
+      opt.remainingVideoSeconds = [THETACInt numberWithInt:[val intValue]];
     }
   },
   .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
@@ -1199,7 +1226,7 @@ static convert_t RemainingSpaceCvt = {
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     NSNumber* val = [rct objectForKey:@"remainingSpace"];
     if (val) {
-      opt.remainingSpace = (THETACLong *) val;
+      opt.remainingSpace = [THETACLong numberWithLongLong:[val longLongValue]];
     }
   },
   .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
@@ -1216,7 +1243,7 @@ static convert_t TotalSpaceCvt = {
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     NSNumber* val = [rct objectForKey:@"totalSpace"];
     if (val) {
-      opt.totalSpace = (THETACLong *) val;
+      opt.totalSpace =  [THETACLong numberWithLongLong:[val longLongValue]];
     }
   },
   .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
@@ -1233,7 +1260,7 @@ static convert_t ShutterVolumeCvt = {
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     NSNumber* val = [rct objectForKey:@"shutterVolume"];
     if (val) {
-      opt.shutterVolume = (THETACInt *) val;
+      opt.shutterVolume = [THETACInt numberWithInt:[val intValue]];
     }
   },
   .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
@@ -1299,7 +1326,8 @@ static NSDictionary *NameToOptionEnum = @{
   @"RemainingSpace": THETACThetaRepositoryOptionNameEnum.remainingspace,
   @"TotalSpace": THETACThetaRepositoryOptionNameEnum.totalspace,
   @"ShutterVolume": THETACThetaRepositoryOptionNameEnum.shuttervolume,
-  @"WhiteBalance": THETACThetaRepositoryOptionNameEnum.whitebalance
+  @"WhiteBalance": THETACThetaRepositoryOptionNameEnum.whitebalance,
+  @"WhiteBalanceAutoStrength": THETACThetaRepositoryOptionNameEnum.whitebalanceautostrength
 };
 
 /**
@@ -1329,7 +1357,8 @@ static NSDictionary *OptionEnumToOption = @{
   @"RemainingSpace": @"remainingSpace",
   @"TotalSpace": @"totalSpace",
   @"ShutterVolume": @"shutterVolume",
-  @"WhiteBalance": @"whiteBalance"
+  @"WhiteBalance": @"whiteBalance",
+  @"WhiteBalanceAutoStrength": @"whiteBalanceAutoStrength"
 };
 
 /** Option converter builder */
@@ -1363,7 +1392,8 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"totalSpace": ^{return &TotalSpaceCvt;},
   @"shutterVolume": ^{return &ShutterVolumeCvt;},
   @"whiteBalance": ^{return &WhiteBalanceEnum;},
-  @"_gpsTagRecording": ^{return &GpsTagRecordingEnum;}
+  @"_gpsTagRecording": ^{return &GpsTagRecordingEnum;},
+  @"whiteBalanceAutoStrength": ^{return &WhiteBalanceAutoStrengthEnum;}
 };
 
 static NSString *EVENT_NAME = @"ThetaFrameEvent";
