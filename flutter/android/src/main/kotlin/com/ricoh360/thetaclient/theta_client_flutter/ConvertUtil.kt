@@ -27,7 +27,7 @@ fun toResult(thetaInfo: ThetaInfo): Map<String, Any?> {
     )
 }
 
-fun toResult(cameraErrorList: List<CameraErrorEnum>?): List<String>? {
+fun toCameraErrorList(cameraErrorList: List<CameraErrorEnum>?): List<String>? {
     if (cameraErrorList == null) {
         return null
     }
@@ -58,7 +58,7 @@ fun toResult(thetaState: ThetaState): Map<String, Any?> {
         "isMySettingChanged" to thetaState.isMySettingChanged,
         "currentMicrophone" to thetaState.currentMicrophone?.name,
         "isSdCard" to thetaState.isSdCard,
-        "cameraError" to toResult(thetaState.cameraError),
+        "cameraError" to toCameraErrorList(thetaState.cameraError),
         "isBatteryInsert" to thetaState.isBatteryInsert,
     )
 }

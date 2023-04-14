@@ -76,14 +76,14 @@ func convertResult(thetaState: ThetaRepository.ThetaState) -> [String: Any?] {
         "latestFileUrl": thetaState.latestFileUrl,
         "chargingState": thetaState.chargingState.name,
         "apiVersion": thetaState.apiVersion,
-        "isPluginRunning": thetaState.isPluginRunning,
-        "isPluginWebServer": thetaState.isPluginWebServer,
+        "isPluginRunning": convertBoolean(value: thetaState.isPluginRunning),
+        "isPluginWebServer": convertBoolean(value: thetaState.isPluginWebServer),
         "function": thetaState.function?.name,
-        "isMySettingChanged": thetaState.isMySettingChanged,
+        "isMySettingChanged": convertBoolean(value: thetaState.isMySettingChanged),
         "currentMicrophone": thetaState.currentMicrophone?.name,
-        "isSdCard": thetaState.isSdCard,
+        "isSdCard": convertBoolean(value: thetaState.isSdCard),
         "cameraError": convertResult(cameraErrorList: thetaState.cameraError),
-        "isBatteryInsert": thetaState.isBatteryInsert,
+        "isBatteryInsert": convertBoolean(value: thetaState.isBatteryInsert),
     ]
 }
 
@@ -209,6 +209,13 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
         }
     }
     return result
+}
+
+func convertBoolean(value: Any?) -> Bool? {
+    guard let value = value else { return nil }
+    guard value is KotlinBoolean, let numVal = value as? NSNumber else { return false }
+
+    return numVal.boolValue
 }
 
 func convertSetOptionsParam(params: [String: Any]) -> ThetaRepository.Options {
