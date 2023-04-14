@@ -75,14 +75,6 @@ void main() {
     expect(thetaInfo.apiLevel, apiLevel);
   });
 
-  List<String> convertCameraErrorParam(List<CameraErrorEnum> cameraErrorList) {
-      var stringList = List<String>.empty(growable: true);
-    for (CameraErrorEnum element in cameraErrorList) {
-      stringList.add(element.rawValue);
-    }
-    return stringList;
-  }
-
   test('getThetaState', () async {
     const fingerprint = 'fingerprint_1';
     const batteryLevel = 1.0;
@@ -104,6 +96,14 @@ void main() {
     const isSdCard = true;
     const cameraError = [CameraErrorEnum.batteryChargeFail, CameraErrorEnum.batteryHighTemperature];
     const isBatteryInsert = false;
+
+    List<String> convertCameraErrorParam(List<CameraErrorEnum> cameraErrorList) {
+      var stringList = List<String>.empty(growable: true);
+      for (CameraErrorEnum element in cameraErrorList) {
+        stringList.add(element.rawValue);
+      }
+      return stringList;
+    }
 
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       final Map state = <String, dynamic> {
