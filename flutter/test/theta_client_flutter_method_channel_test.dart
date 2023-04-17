@@ -750,4 +750,133 @@ void main() {
     });
     await platform.deleteAccessPoint(ssid);
   });
+
+  test('getMySetting by captureMode', () async {
+    List<List<dynamic>> data = [
+      [OptionNameEnum.aperture, 'Aperture', ApertureEnum.apertureAuto, 'APERTURE_AUTO'],
+      [OptionNameEnum.colorTemperature, 'ColorTemperature', 5000, 5000],
+      [OptionNameEnum.exposureCompensation, 'ExposureCompensation', ExposureCompensationEnum.zero, 'ZERO'],
+      [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delayOff, 'DELAY_OFF'],
+      [OptionNameEnum.exposureProgram, 'ExposureProgram', ExposureProgramEnum.normalProgram, 'NORMAL_PROGRAM'],
+      [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_6_7K, 'IMAGE_6_7K'],
+      [OptionNameEnum.filter, 'Filter', FilterEnum.off, 'OFF'],
+      [OptionNameEnum.iso, 'Iso', IsoEnum.isoAuto, 'ISO_AUTO'],
+      [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso6400, 'ISO_6400'],
+      [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.auto, 'AUTO'],
+      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
+    ];
+
+    Map<String, dynamic> optionMap = {};
+    var optionNames = List<OptionNameEnum>.empty(growable: true);
+
+    for (int i = 0; i < data.length; i++) {
+      optionMap[data[i][1]] = data[i][3];
+      optionNames.add(data[i][0]);
+    }
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      var arguments = methodCall.arguments as Map<dynamic, dynamic>;
+      expect(arguments['captureMode'], CaptureModeEnum.image.rawValue);
+      return Future.value(optionMap);
+    });
+    Options options = await platform.getMySetting(captureMode: CaptureModeEnum.image);
+
+    expect(options, isNotNull);
+    expect(options.aperture, data[0][2]);
+    expect(options.colorTemperature, data[1][2]);
+    for (int i = 0; i < data.length; i++) {
+      expect(options.getValue(data[i][0]), data[i][2], reason: data[i][1]);
+    }
+  });
+
+  test('getMySetting by optionNames', () async {
+    List<List<dynamic>> data = [
+      [OptionNameEnum.aperture, 'Aperture', ApertureEnum.apertureAuto, 'APERTURE_AUTO'],
+      [OptionNameEnum.colorTemperature, 'ColorTemperature', 5000, 5000],
+      [OptionNameEnum.exposureCompensation, 'ExposureCompensation', ExposureCompensationEnum.zero, 'ZERO'],
+      [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delayOff, 'DELAY_OFF'],
+      [OptionNameEnum.exposureProgram, 'ExposureProgram', ExposureProgramEnum.normalProgram, 'NORMAL_PROGRAM'],
+      [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_6_7K, 'IMAGE_6_7K'],
+      [OptionNameEnum.filter, 'Filter', FilterEnum.off, 'OFF'],
+      [OptionNameEnum.iso, 'Iso', IsoEnum.isoAuto, 'ISO_AUTO'],
+      [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso6400, 'ISO_6400'],
+      [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.auto, 'AUTO'],
+      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
+    ];
+
+    Map<String, dynamic> optionMap = {};
+    var optionNames = List<OptionNameEnum>.empty(growable: true);
+
+    for (int i = 0; i < data.length; i++) {
+      optionMap[data[i][1]] = data[i][3];
+      optionNames.add(data[i][0]);
+    }
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      var arguments = methodCall.arguments['optionNames'] as List<dynamic>;
+      for (int i = 0; i < data.length; i++) {
+        expect(arguments[i], data[i][1], reason: data[i][1]);
+      }
+      return Future.value(optionMap);
+    });
+    Options options = await platform.getMySetting(optionNames: optionNames);
+
+    expect(options, isNotNull);
+    expect(options.aperture, data[0][2]);
+    expect(options.colorTemperature, data[1][2]);
+    for (int i = 0; i < data.length; i++) {
+      expect(options.getValue(data[i][0]), data[i][2], reason: data[i][1]);
+    }
+  });
+
+  test('setMySetting', () async {
+    List<List<dynamic>> data = [
+      [OptionNameEnum.aperture, 'Aperture', ApertureEnum.apertureAuto, 'APERTURE_AUTO'],
+      [OptionNameEnum.colorTemperature, 'ColorTemperature', 100, 100],
+      [OptionNameEnum.exposureCompensation, 'ExposureCompensation', ExposureCompensationEnum.p0_3, 'P0_3'],
+      [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delay2, 'DELAY_2'],
+      [OptionNameEnum.exposureProgram, 'ExposureProgram', ExposureProgramEnum.shutterPriority, 'SHUTTER_PRIORITY'],
+      [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_2K, 'IMAGE_2K'],
+      [OptionNameEnum.filter, 'Filter', FilterEnum.hdr, 'HDR'],
+      [OptionNameEnum.iso, 'Iso', IsoEnum.iso100, 'ISO_100'],
+      [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso1250, 'ISO_1250'],
+      [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.auto, 'AUTO'],
+      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
+    ];
+
+    Map<String, dynamic> optionMap = {};
+    var optionNames = List<OptionNameEnum>.empty(growable: true);
+
+    for (int i = 0; i < data.length; i++) {
+      optionMap[data[i][1]] = data[i][3];
+      optionNames.add(data[i][0]);
+    }
+    final options = Options();
+    for (int i = 0; i < data.length; i++) {
+      options.setValue(data[i][0], data[i][2]);
+    }
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      var arguments = methodCall.arguments as Map<dynamic, dynamic>;
+      expect(arguments['captureMode'], CaptureModeEnum.image.rawValue);
+
+      var options = methodCall.arguments['options'] as Map<dynamic, dynamic>;
+      for (int i = 0; i < data.length; i++) {
+        expect(options[data[i][1]], data[i][3], reason: data[i][1]);
+      }
+      return Future.value();
+    });
+    await platform.setMySetting(CaptureModeEnum.image, options);
+
+    expect(true, isTrue);
+  });
+
+  test('deleteMySetting', () async {
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'deleteMySetting');
+      expect(methodCall.arguments['captureMode'], CaptureModeEnum.image.rawValue);
+      return Future.value();
+    });
+    await platform.deleteMySetting(CaptureModeEnum.image);
+  });
 }

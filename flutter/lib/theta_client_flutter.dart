@@ -255,6 +255,40 @@ class ThetaClientFlutter {
   Future<void> deleteAccessPoint(String ssid) {
     return ThetaClientFlutterPlatform.instance.deleteAccessPoint(ssid);
   }
+
+  /// Acquires the shooting properties set by the camera._setMySetting command.
+  /// Just for Theta V and later.
+  ///
+  /// Refer to the [options Overview](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
+  /// of API v2.1 reference  for properties available for acquisition.
+  ///
+  /// @param captureMode The target shooting mode.
+  /// @param optionNames List of option names to acquire.
+  /// @return Options of my setting
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<Options> getMySetting({CaptureModeEnum? captureMode, List<OptionNameEnum>? optionNames}) {
+    return ThetaClientFlutterPlatform.instance.getMySetting(captureMode: captureMode, optionNames: optionNames);
+  }
+
+  /// Registers shooting conditions in My Settings.
+  ///
+  /// @param captureMode The target shooting mode.  In RICOH THETA S and SC, do not set then it can be acquired for still image.
+  /// @param options registered to My Settings.
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<void> setMySetting(CaptureModeEnum captureMode, Options options) {
+    return ThetaClientFlutterPlatform.instance.setMySetting(captureMode, options);
+  }
+
+  /// Delete shooting conditions in My Settings. Supported just by Theta X and Z1.
+  ///
+  /// @param captureMode The target shooting mode.
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<void> deleteMySetting(CaptureModeEnum captureMode) {
+    return ThetaClientFlutterPlatform.instance.deleteMySetting(captureMode);
+  }
 }
 
 /// Static attributes of Theta.

@@ -166,6 +166,21 @@ class MockThetaClientFlutterPlatform
   Future<void> deleteAccessPoint(String ssid) {
     return Future.value();
   }
+
+  @override
+  Future<Options> getMySetting({CaptureModeEnum? captureMode, List<OptionNameEnum>? optionNames}) {
+    return Future.value(Options());
+  }
+
+  @override
+  Future<void> setMySetting(CaptureModeEnum captureMode, Options options) {
+    return Future.value();
+  }
+
+  @override
+  Future<void> deleteMySetting(CaptureModeEnum captureMode) {
+    return Future.value();
+  }
 }
 
 Future<void> Function() onCallInitialize = Future.value;
@@ -676,6 +691,62 @@ void main() {
     onCallRestoreSettings = Future.value;
     await thetaClientPlugin.restoreSettings();
 
+    expect(true, isTrue);
+  });
+
+  test('getMySetting by captureMode', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    onCallGetOptions = (optionNames) {
+      return Future.value(Options());
+    };
+
+    var options = thetaClientPlugin.getMySetting(captureMode: CaptureModeEnum.image);
+    expect(options, isNotNull);
+  });
+
+  test('getMySetting by optionNames', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    onCallGetOptions = (optionNames) {
+      return Future.value(Options());
+    };
+
+    const optionNames = [
+      OptionNameEnum.aperture,
+      OptionNameEnum.colorTemperature,
+    ];
+
+    var options = thetaClientPlugin.getMySetting(optionNames: optionNames);
+    expect(options, isNotNull);
+  });
+
+  test('setMySetting', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    onCallSetOptions = Future.value;
+
+    final options = Options();
+    options.aperture = ApertureEnum.apertureAuto;
+
+    thetaClientPlugin.setMySetting(CaptureModeEnum.image, options);
+    expect(true, isTrue);
+  });
+
+  test('deleteMySetting', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    onCallSetOptions = Future.value;
+
+    thetaClientPlugin.deleteMySetting(CaptureModeEnum.image);
     expect(true, isTrue);
   });
 }
