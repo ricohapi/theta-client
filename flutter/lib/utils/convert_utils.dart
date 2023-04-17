@@ -52,11 +52,24 @@ class ConvertUtils {
     var thetaInfo = ThetaState(
       data['fingerprint'],
       data['batteryLevel'],
-      ChargingStateEnum.getValue(data['chargingState'] as String)!,
-      data['isSdCard'],
+      data['storageUri'],
+      data['storageID'],
+      CaptureStatusEnum.getValue(data['captureStatus'] as String)!,
       data['recordedTime'],
       data['recordableTime'],
-      data['latestFileUrl']
+      data['capturedPictures'],
+      data['compositeShootingElapsedTime'],
+      data['latestFileUrl'],
+      ChargingStateEnum.getValue(data['chargingState'] as String)!,
+      data['apiVersion'],
+      data['isPluginRunning'],
+      data['isPluginWebServer'],
+      ShootingFunctionEnum.getValue(data['function'] as String? ?? ''),
+      data['isMySettingChanged'],
+      MicrophoneOptionEnum.getValue(data['currentMicrophone'] as String? ?? ''),
+      data['isSdCard'],
+      ConvertUtils.toCameraErrorList(data['cameraError']),
+      data['isBatteryInsert'],
     );
     return thetaInfo;
   }
@@ -308,6 +321,18 @@ class ConvertUtils {
       accessPointList.add(accessPoint);
     }
     return accessPointList;
+  }
+
+  static List<CameraErrorEnum>? toCameraErrorList(List<dynamic>? data) {
+    if (data == null) {
+      return null;
+    }
+    var cameraErrorList = List<CameraErrorEnum>.empty(growable: true);
+    for (String element in data) {
+      final cameraError = CameraErrorEnum.getValue(element)!;
+      cameraErrorList.add(cameraError);
+    }
+    return cameraErrorList;
   }
 }
 

@@ -9,6 +9,23 @@ void main() {
 
   });
 
+  test('CaptureStatusEnum', () async {
+    List<List<dynamic>> data = [
+      [CaptureStatusEnum.shooting, 'SHOOTING'],
+      [CaptureStatusEnum.idle, 'IDLE'],
+      [CaptureStatusEnum.selfTimerCountdown, 'SELF_TIMER_COUNTDOWN'],
+      [CaptureStatusEnum.bracketShooting, 'BRACKET_SHOOTING'],
+      [CaptureStatusEnum.converting, 'CONVERTING'],
+      [CaptureStatusEnum.timeShiftShooting, 'TIME_SHIFT_SHOOTING'],
+      [CaptureStatusEnum.continuousShooting, 'CONTINUOUS_SHOOTING'],
+      [CaptureStatusEnum.retrospectiveImageRecordinG, 'RETROSPECTIVE_IMAGE_RECORDING'],
+    ];
+    expect(data.length, CaptureStatusEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
   test('ChargingStateEnum', () async {
     List<List<dynamic>> data = [
       [ChargingStateEnum.charging, 'CHARGING'],
@@ -16,6 +33,61 @@ void main() {
       [ChargingStateEnum.notCharging, 'NOT_CHARGING'],
     ];
     expect(data.length, ChargingStateEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('ShootingFunctionEnum', () async {
+    List<List<dynamic>> data = [
+      [ShootingFunctionEnum.normal, 'NORMAL'],
+      [ShootingFunctionEnum.selfTimer, 'SELF_TIMER'],
+      [ShootingFunctionEnum.mySetting, 'MY_SETTING'],
+    ];
+    expect(data.length, ShootingFunctionEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('MicrophoneOptionEnum', () async {
+    List<List<dynamic>> data = [
+      [MicrophoneOptionEnum.auto, 'AUTO'],
+      [MicrophoneOptionEnum.internal, 'INTERNAL'],
+      [MicrophoneOptionEnum.external, 'EXTERNAL'],
+    ];
+    expect(data.length, MicrophoneOptionEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('CameraErrorEnum', () async {
+    List<List<dynamic>> data = [
+      [CameraErrorEnum.noMemory, 'NO_MEMORY'],
+      [CameraErrorEnum.fileNumberOver, 'FILE_NUMBER_OVER'],
+      [CameraErrorEnum.noDateSetting, 'NO_DATE_SETTING'],
+      [CameraErrorEnum.readError, 'READ_ERROR'],
+      [CameraErrorEnum.notSupportedMediaType, 'NOT_SUPPORTED_MEDIA_TYPE'],
+      [CameraErrorEnum.notSupportedFileSystem, 'NOT_SUPPORTED_FILE_SYSTEM'],
+      [CameraErrorEnum.mediaNotReady, 'MEDIA_NOT_READY'],
+      [CameraErrorEnum.notEnoughBattery, 'NOT_ENOUGH_BATTERY'],
+      [CameraErrorEnum.invalidFile, 'INVALID_FILE'],
+      [CameraErrorEnum.pluginBootError, 'PLUGIN_BOOT_ERROR'],
+      [CameraErrorEnum.inProgressError, 'IN_PROGRESS_ERROR'],
+      [CameraErrorEnum.cannotRecording, 'CANNOT_RECORDING'],
+      [CameraErrorEnum.cannotRecordLowbat, 'CANNOT_RECORD_LOWBAT'],
+      [CameraErrorEnum.captureHwFailed, 'CAPTURE_HW_FAILED'],
+      [CameraErrorEnum.captureSwFailed, 'CAPTURE_SW_FAILED'],
+      [CameraErrorEnum.internalMemAccessFail, 'INTERNAL_MEM_ACCESS_FAIL'],
+      [CameraErrorEnum.unexpectedError, 'UNEXPECTED_ERROR'],
+      [CameraErrorEnum.batteryChargeFail, 'BATTERY_CHARGE_FAIL'],
+      [CameraErrorEnum.highTemperatureWarning, 'HIGH_TEMPERATURE_WARNING'],
+      [CameraErrorEnum.highTemperature, 'HIGH_TEMPERATURE'],
+      [CameraErrorEnum.batteryHighTemperature, 'BATTERY_HIGH_TEMPERATURE'],
+      [CameraErrorEnum.compassCalibration, 'COMPASS_CALIBRATION'],
+    ];
+    expect(data.length, CameraErrorEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }

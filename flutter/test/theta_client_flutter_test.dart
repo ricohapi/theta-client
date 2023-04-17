@@ -246,20 +246,73 @@ void main() {
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     const fingerprint = 'fingerprint_1';
+    const batteryLevel = 1.0;
+    const storageUri = 'storageUri storageUri';
+    const storageID = 'storageID storageID';
+    const captureStatus = CaptureStatusEnum.idle;
+    const recordedTime = 1;
+    const recordableTime = 2;
+    const capturedPictures = 3;
+    const compositeShootingElapsedTime = 4;
+    const latestFileUrl = 'latestFileUrl latestFileUrl';
+    const chargingState = ChargingStateEnum.charging;
+    const apiVersion = 2;
+    const isPluginRunning = true;
+    const isPluginWebServer = false;
+    const function = ShootingFunctionEnum.normal;
+    const isMySettingChanged = true;
+    const currentMicrophone = MicrophoneOptionEnum.auto;
+    const isSdCard = true;
+    const cameraError = [CameraErrorEnum.batteryChargeFail, CameraErrorEnum.batteryHighTemperature];
+    const isBatteryInsert = false;
     onGetThetaState = () {
       return Future.value(ThetaState(
         fingerprint,
-        0.9,
-        ChargingStateEnum.charging,
-        true,
-        0,
-        0,
-        '')
+        batteryLevel,
+        storageUri,
+        storageID,
+        captureStatus,
+        recordedTime,
+        recordableTime,
+        capturedPictures,
+        compositeShootingElapsedTime,
+        latestFileUrl,
+        chargingState,
+        apiVersion,
+        isPluginRunning,
+        isPluginWebServer,
+        function,
+        isMySettingChanged,
+        currentMicrophone,
+        isSdCard,
+        cameraError,
+        isBatteryInsert
+        )
       );
     };
 
     var thetaState = await thetaClientPlugin.getThetaState();
+
     expect(thetaState.fingerprint, fingerprint);
+    expect(thetaState.batteryLevel, batteryLevel);
+    expect(thetaState.storageUri, storageUri);
+    expect(thetaState.storageID, storageID);
+    expect(thetaState.captureStatus, captureStatus);
+    expect(thetaState.recordedTime, recordedTime);
+    expect(thetaState.recordableTime, recordableTime);
+    expect(thetaState.capturedPictures, capturedPictures);
+    expect(thetaState.compositeShootingElapsedTime, compositeShootingElapsedTime);
+    expect(thetaState.latestFileUrl, latestFileUrl);
+    expect(thetaState.chargingState, chargingState);
+    expect(thetaState.apiVersion, apiVersion);
+    expect(thetaState.isPluginRunning, isPluginRunning);
+    expect(thetaState.isPluginWebServer, isPluginWebServer);
+    expect(thetaState.function, function);
+    expect(thetaState.isMySettingChanged, isMySettingChanged);
+    expect(thetaState.currentMicrophone, currentMicrophone);
+    expect(thetaState.isSdCard, isSdCard);
+    expect(thetaState.cameraError, cameraError);
+    expect(thetaState.isBatteryInsert, isBatteryInsert);
   });
 
   test('listFiles', () async {
