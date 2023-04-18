@@ -386,7 +386,7 @@ export function getMySettingFromOldModel(optionNames: OptionNameEnum[]): Promise
 /**
  * Registers shooting conditions in My Settings
  * @function setMySetting
- * @param captureMode The target shooting mode.  In RICOH THETA S and SC, do not set then it can be acquired for still image.
+ * @param captureMode The target shooting mode.  RICOH THETA S and SC do not support My Settings in video capture mode.
  * @param options registered to My Settings
  * @returns Promise of bolean result, always true
  */
