@@ -168,7 +168,12 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
-  Future<Options> getMySetting({CaptureModeEnum? captureMode, List<OptionNameEnum>? optionNames}) {
+  Future<Options> getMySetting(CaptureModeEnum? captureMode) {
+    return Future.value(Options());
+  }
+
+  @override
+  Future<Options> getMySettingFromOldModel(List<OptionNameEnum> optionNames) {
     return Future.value(Options());
   }
 
@@ -694,7 +699,7 @@ void main() {
     expect(true, isTrue);
   });
 
-  test('getMySetting by captureMode', () async {
+  test('getMySetting', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
     MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
@@ -703,11 +708,11 @@ void main() {
       return Future.value(Options());
     };
 
-    var options = thetaClientPlugin.getMySetting(captureMode: CaptureModeEnum.image);
+    var options = thetaClientPlugin.getMySetting(CaptureModeEnum.image);
     expect(options, isNotNull);
   });
 
-  test('getMySetting by optionNames', () async {
+  test('getMySettingFromOldModel', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
     MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
@@ -721,7 +726,7 @@ void main() {
       OptionNameEnum.colorTemperature,
     ];
 
-    var options = thetaClientPlugin.getMySetting(optionNames: optionNames);
+    var options = thetaClientPlugin.getMySettingFromOldModel(optionNames);
     expect(options, isNotNull);
   });
 

@@ -209,6 +209,11 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     getMySetting(call, result)
                 }
             }
+            "getMySettingFromOldModel" -> {
+                scope.launch {
+                    getMySettingFromOldModel(call, result)
+                }
+            }
             "setMySetting" -> {
                 scope.launch {
                     setMySetting(call, result)
@@ -675,28 +680,47 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         }
 
         try {
-            var captureMode: ThetaRepository.CaptureModeEnum? = null
-            var optionNames: List<ThetaRepository.OptionNameEnum>? = null
-            if (call.hasArgument("captureMode")) {
-                val captureModeName = call.argument<String>("captureMode")
-                captureMode = ThetaRepository.CaptureModeEnum.values().find {
-                    it.name == captureModeName
-                }
-            } else if (call.hasArgument("optionNames")) {
-                optionNames = toGetOptionsParam(data = call.argument<Any>("optionNames") as List<String>)
+            val captureModeName = call.argument<String>("captureMode")
+            val captureMode = ThetaRepository.CaptureModeEnum.values().find {
+                it.name == captureModeName
             }
 
             var response: ThetaRepository.Options? = null
             if (captureMode != null) {
                 response = thetaRepository?.getMySetting(captureMode = captureMode)
-            } else if (optionNames != null) {
-                response = thetaRepository?.getMySetting(optionNames = optionNames)
+            } else {
+                result.error(errorCode, messageNoArgument, null)
             }
 
             response?.let {
                 result.success(toResult(options = it))
             } ?: run {
                 result.error(errorCode, messageNoResult, null)
+            }
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun getMySettingFromOldModel(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+
+        try {
+            var names = call.argument<Any>("optionNames") as? List<String>
+            if (names != null) {
+                var optionNames = toGetOptionsParam(data = names)
+                var response = thetaRepository?.getMySetting(optionNames = optionNames)
+                response?.let {
+                    result.success(toResult(options = it))
+                } ?: run {
+                    result.error(errorCode, messageNoResult, null)
+                }
+            } else {
+                result.error(errorCode, messageNoArgument, null)
+                return
             }
         } catch (e: Exception) {
             result.error(e.javaClass.simpleName, e.message, null)

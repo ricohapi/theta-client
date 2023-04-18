@@ -263,12 +263,25 @@ class ThetaClientFlutter {
   /// of API v2.1 reference  for properties available for acquisition.
   ///
   /// @param captureMode The target shooting mode.
+  /// @return Options of my setting
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<Options> getMySetting(CaptureModeEnum captureMode) {
+    return ThetaClientFlutterPlatform.instance.getMySetting(captureMode);
+  }
+
+  /// Acquires the shooting properties set by the camera._setMySetting command.
+  /// Just for Theta S and SC.
+  ///
+  /// Refer to the [options Overview](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
+  /// of API v2.1 reference  for properties available for acquisition.
+  ///
   /// @param optionNames List of option names to acquire.
   /// @return Options of my setting
   /// @exception ThetaWebApiException When an invalid option is specified.
   /// @exception NotConnectedException
-  Future<Options> getMySetting({CaptureModeEnum? captureMode, List<OptionNameEnum>? optionNames}) {
-    return ThetaClientFlutterPlatform.instance.getMySetting(captureMode: captureMode, optionNames: optionNames);
+  Future<Options> getMySettingFromOldModel(List<OptionNameEnum> optionNames) {
+    return ThetaClientFlutterPlatform.instance.getMySettingFromOldModel(optionNames);
   }
 
   /// Registers shooting conditions in My Settings.

@@ -106,6 +106,8 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             deleteAccessPoint(call: call, result: result)
         case "getMySetting":
             getMySetting(call: call, result: result)
+        case "getMySettingFromOldModel":
+            getMySettingFromOldModel(call: call, result: result)
         case "setMySetting":
             setMySetting(call: call, result: result)
         case "deleteMySetting":
@@ -688,13 +690,9 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
         
         var captureMode: ThetaRepository.CaptureModeEnum?
-        var optionNames: [ThetaRepository.OptionNameEnum]?
         if let captureModeName = arguments["captureMode"] as? String,
            let mode = getEnumValue(values: ThetaRepository.CaptureModeEnum.values(), name: captureModeName) as? ThetaRepository.CaptureModeEnum {
             captureMode = mode
-        } else if let optionNameStrAry = arguments["optionNames"] as? [String],
-                  let names = convertGetOptionsParam(params: optionNameStrAry) as? [ThetaRepository.OptionNameEnum] {
-            optionNames = names
         }
         
         if let captureMode = captureMode {
@@ -706,7 +704,32 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                     result(convertResult(options: options!))
                 }
             })
-        } else if let optionNames = optionNames {
+        } else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoArgument, details: nil)
+            result(flutterError)
+        }
+    }
+    
+    func getMySettingFromOldModel(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let thetaRepository = thetaRepository else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        
+        guard let arguments = call.arguments as? [String : Any] else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoArgument, details: nil)
+            result(flutterError)
+            return
+        }
+        
+        var optionNames: [ThetaRepository.OptionNameEnum]?
+        if let optionNameStrAry = arguments["optionNames"] as? [String],
+           let names = convertGetOptionsParam(params: optionNameStrAry) as? [ThetaRepository.OptionNameEnum] {
+            optionNames = names
+        }
+        
+        if let optionNames = optionNames {
             thetaRepository.getMySetting(optionNames: optionNames, completionHandler: { options, error in
                 if let thetaError = error {
                     let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)

@@ -333,23 +333,34 @@ void enableEventReceiver() {
   }
 
   @override
-  Future<Options> getMySetting({CaptureModeEnum? captureMode, List<OptionNameEnum>? optionNames}) async {
+  Future<Options> getMySetting(CaptureModeEnum captureMode) async {
     var completer = Completer<Options>();
     try {
-      Map<dynamic, dynamic>? options;
-      if (captureMode != null) {
-        final Map params = <String, dynamic>{
-          'captureMode': captureMode.rawValue,
-        };
-        options = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('getMySetting', params);
-      } else if (optionNames != null) {
-        final Map params = <String, dynamic>{
-          'optionNames': ConvertUtils.convertGetOptionsParam(optionNames),
-        };
-        options = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('getMySetting', params);
+      final Map params = <String, dynamic>{
+        'captureMode': captureMode.rawValue,
+      };
+      var options = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('getMySetting', params);
+
+      if (options != null) {
+        completer.complete(ConvertUtils.convertOptions(options));
       } else {
-        completer.completeError(Exception('No argument.'));
+        completer.completeError(Exception('Got result failed.'));
       }
+    } catch (e) {
+      completer.completeError(e);
+    }
+
+    return completer.future;
+  }
+
+  @override
+  Future<Options> getMySettingFromOldModel(List<OptionNameEnum> optionNames) async {
+    var completer = Completer<Options>();
+    try {
+      final Map params = <String, dynamic>{
+        'optionNames': ConvertUtils.convertGetOptionsParam(optionNames),
+      };
+      var options = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('getMySettingFromOldModel', params);
 
       if (options != null) {
         completer.complete(ConvertUtils.convertOptions(options));
@@ -368,7 +379,7 @@ void enableEventReceiver() {
     var completer = Completer<void>();
     final Map params = <String, dynamic>{
       'captureMode': captureMode.rawValue,
-      'options':  ConvertUtils.convertSetOptionsParam(options),
+      'options': ConvertUtils.convertSetOptionsParam(options),
     };
     try {
       await methodChannel.invokeMethod<void>('setMySetting', params);

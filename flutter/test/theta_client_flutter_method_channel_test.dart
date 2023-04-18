@@ -751,7 +751,7 @@ void main() {
     await platform.deleteAccessPoint(ssid);
   });
 
-  test('getMySetting by captureMode', () async {
+  test('getMySetting', () async {
     List<List<dynamic>> data = [
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.apertureAuto, 'APERTURE_AUTO'],
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 5000, 5000],
@@ -779,7 +779,7 @@ void main() {
       expect(arguments['captureMode'], CaptureModeEnum.image.rawValue);
       return Future.value(optionMap);
     });
-    Options options = await platform.getMySetting(captureMode: CaptureModeEnum.image);
+    Options options = await platform.getMySetting(CaptureModeEnum.image);
 
     expect(options, isNotNull);
     expect(options.aperture, data[0][2]);
@@ -789,7 +789,7 @@ void main() {
     }
   });
 
-  test('getMySetting by optionNames', () async {
+  test('getMySettingFromOldModel', () async {
     List<List<dynamic>> data = [
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.apertureAuto, 'APERTURE_AUTO'],
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 5000, 5000],
@@ -819,7 +819,7 @@ void main() {
       }
       return Future.value(optionMap);
     });
-    Options options = await platform.getMySetting(optionNames: optionNames);
+    Options options = await platform.getMySettingFromOldModel(optionNames);
 
     expect(options, isNotNull);
     expect(options.aperture, data[0][2]);

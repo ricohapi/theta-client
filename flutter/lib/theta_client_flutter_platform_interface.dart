@@ -167,7 +167,11 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('deleteAccessPoint() has not been implemented.');
   }
 
-  Future<Options> getMySetting({CaptureModeEnum? captureMode, List<OptionNameEnum>? optionNames}) {
+  Future<Options> getMySetting(CaptureModeEnum captureMode) {
+    throw UnimplementedError('getMySetting() has not been implemented.');
+  }
+
+  Future<Options> getMySettingFromOldModel(List<OptionNameEnum> optionNames) {
     throw UnimplementedError('getMySetting() has not been implemented.');
   }
 
