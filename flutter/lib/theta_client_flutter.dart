@@ -436,7 +436,7 @@ enum CaptureStatusEnum {
   continuousShooting('CONTINUOUS_SHOOTING'),
 
   /// Capture status. Waiting for retrospective video...
-  retrospectiveImageRecordinG('RETROSPECTIVE_IMAGE_RECORDING');
+  retrospectiveImageRecording('RETROSPECTIVE_IMAGE_RECORDING');
 
   final String rawValue;
   const CaptureStatusEnum(this.rawValue);

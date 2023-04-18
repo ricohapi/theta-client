@@ -686,9 +686,9 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             }
 
             var response: ThetaRepository.Options? = null
-            if (captureMode != null) {
-                response = thetaRepository?.getMySetting(captureMode = captureMode)
-            } else {
+            captureMode?.let {
+                response = thetaRepository?.getMySetting(captureMode = it)
+            } ?: run {
                 result.error(errorCode, messageNoArgument, null)
             }
 
@@ -710,7 +710,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
 
         try {
             var names = call.argument<Any>("optionNames") as? List<String>
-            if (names != null) {
+            names?.let { names ->
                 var optionNames = toGetOptionsParam(data = names)
                 var response = thetaRepository?.getMySetting(optionNames = optionNames)
                 response?.let {
@@ -718,7 +718,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 } ?: run {
                     result.error(errorCode, messageNoResult, null)
                 }
-            } else {
+            } ?: run {
                 result.error(errorCode, messageNoArgument, null)
                 return
             }
