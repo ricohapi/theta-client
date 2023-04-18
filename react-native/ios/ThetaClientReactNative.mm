@@ -1729,9 +1729,12 @@ RCT_REMAP_METHOD(setOptions,
 {
   THETACThetaRepositoryOptions *newoptions = [[THETACThetaRepositoryOptions alloc] init];
   for (id option in [options allKeys]) {
-    convert_t *convert = [NameToConverter objectForKey:option]();
-    if (convert && convert->setToTheta) {
-      convert->setToTheta(options, newoptions);
+    OptionConverter converter = [NameToConverter objectForKey:option];
+    if (converter) {
+      convert_t *convert = converter();
+      if (convert && convert->setToTheta) {
+        convert->setToTheta(options, newoptions);
+      }
     }
   }
   [_theta setOptionsOptions:newoptions completionHandler:^(NSError *error) {
