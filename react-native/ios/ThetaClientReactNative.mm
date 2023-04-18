@@ -2345,7 +2345,7 @@ RCT_REMAP_METHOD(getMySettingFromOldModel,
 
 /**
  * setMySetting  -  registers shooting conditions in My Settings
- * @param captureMode the target shooting mode
+ * @param captureMode the target shooting mode. RICOH THETA S and SC do not support My Settings in video capture mode
  * @param options registered to My Settings
  * @param resolve resolver for setMySetting
  * @param rejecter rejecter for setMySetting
