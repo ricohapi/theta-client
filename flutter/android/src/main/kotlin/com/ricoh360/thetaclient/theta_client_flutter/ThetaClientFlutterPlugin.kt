@@ -224,6 +224,46 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     deleteMySetting(call, result)
                 }
             }
+            "listPlugins" -> {
+                scope.launch {
+                    listPlugins(call, result)
+                }
+            }
+            "setPlugin" -> {
+                scope.launch {
+                    setPlugin(call, result)
+                }
+            }
+            "startPlugin" -> {
+                scope.launch {
+                    startPlugin(call, result)
+                }
+            }
+            "stopPlugin" -> {
+                scope.launch {
+                    stopPlugin(call, result)
+                }
+            }
+            "getPluginLicense" -> {
+                scope.launch {
+                    getPluginLicense(call, result)
+                }
+            }
+            "getPluginOrders" -> {
+                scope.launch {
+                    getPluginOrders(call, result)
+                }
+            }
+            "setPluginOrders" -> {
+                scope.launch {
+                    setPluginOrders(call, result)
+                }
+            }
+            "setBluetoothDevice" -> {
+                scope.launch {
+                    setBluetoothDevice(call, result)
+                }
+            }
             else -> {
                 result.notImplemented()
             }
@@ -709,10 +749,10 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         }
 
         try {
-            var names = call.argument<Any>("optionNames") as? List<String>
+            val names = call.argument<Any>("optionNames") as? List<String>
             names?.let { names ->
-                var optionNames = toGetOptionsParam(data = names)
-                var response = thetaRepository?.getMySetting(optionNames = optionNames)
+                val optionNames = toGetOptionsParam(data = names)
+                val response = thetaRepository?.getMySetting(optionNames = optionNames)
                 response?.let {
                     result.success(toResult(options = it))
                 } ?: run {
@@ -766,6 +806,151 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 result.success(null)
             } ?: run {
                 result.error(errorCode, messageNoArgument, null)
+            }
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun listPlugins(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        try {
+            val response = thetaRepository?.listPlugins()
+            response?.let {
+                result.success(toPluginInfosResult(pluginInfoList = response))
+            } ?: run {
+                result.error(errorCode, messageNoResult, null)
+            }
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun setPlugin(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        try {
+            val params = call.arguments as? String
+            params?.let {
+                thetaRepository?.setPlugin(packageName = params)
+                result.success(null)
+            } ?: run {
+                result.error(errorCode, messageNoArgument, null)
+            }
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun startPlugin(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        try {
+            val params = call.arguments as? String
+            thetaRepository?.startPlugin(packageName = params)
+            result.success(null)
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun stopPlugin(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        try {
+            thetaRepository?.stopPlugin()
+            result.success(null)
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun getPluginLicense(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        try {
+            val params = call.arguments as? String
+            params?.let { params ->
+                val response = thetaRepository?.getPluginLicense(packageName = params)
+                response?.let {
+                    result.success(it)
+                } ?: run {
+                    result.error(errorCode, messageNoResult, null)
+                }
+            } ?: run {
+                result.error(errorCode, messageNoArgument, null)
+                return
+            }
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun getPluginOrders(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        try {
+            val response = thetaRepository?.getPluginOrders()
+            response?.let {
+                result.success(response)
+            } ?: run {
+                result.error(errorCode, messageNoResult, null)
+            }
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun setPluginOrders(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+
+        try {
+            val params = call.arguments as? List<String>
+            params?.let { params ->
+                thetaRepository?.setPluginOrders(plugins = params)
+                result.success(null)
+            } ?: run {
+                result.error(errorCode, messageNoArgument, null)
+                return
+            }
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun setBluetoothDevice(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        try {
+            val params = call.arguments as? String
+            params?.let { params ->
+                val response = thetaRepository?.setBluetoothDevice(uuid = params)
+                response?.let {
+                    result.success(it)
+                } ?: run {
+                    result.error(errorCode, messageNoResult, null)
+                }
+            } ?: run {
+                result.error(errorCode, messageNoArgument, null)
+                return
             }
         } catch (e: Exception) {
             result.error(e.javaClass.simpleName, e.message, null)
