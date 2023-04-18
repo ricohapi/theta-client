@@ -1396,6 +1396,40 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"whiteBalanceAutoStrength": ^{return &WhiteBalanceAutoStrengthEnum;}
 };
 
+/** opiotn name to null check  */
+typedef BOOL * (^OptionNullCheck)(THETACThetaRepositoryOptions *);
+
+/**
+ * opiotn name to null check tables
+ */
+static NSDictionary<NSString*, OptionNullCheck> *NameToNullCheck = @{
+  @"aperture": ^(THETACThetaRepositoryOptions *opt) {return (opt.aperture != nil);},
+  @"bluetoothPower": ^(THETACThetaRepositoryOptions *opt) {return (opt.bluetoothPower != nil);},
+  @"captureMode": ^(THETACThetaRepositoryOptions *opt) {return (opt.captureMode != nil);},
+  @"colorTemperature": ^(THETACThetaRepositoryOptions *opt) {return (opt.colorTemperature != nil);},
+  @"dateTimeZone": ^(THETACThetaRepositoryOptions *opt) {return (opt.dateTimeZone != nil);},
+  @"exposureCompensation": ^(THETACThetaRepositoryOptions *opt) {return (opt.exposureCompensation != nil);},
+  @"exposureDelay": ^(THETACThetaRepositoryOptions *opt) {return (opt.exposureDelay != nil);},
+  @"exposureProgram": ^(THETACThetaRepositoryOptions *opt) {return (opt.exposureProgram != nil);},
+  @"fileFormat": ^(THETACThetaRepositoryOptions *opt) {return (opt.fileFormat != nil);},
+  @"filter": ^(THETACThetaRepositoryOptions *opt) {return (opt.filter != nil);},
+  @"gpsInfo": ^(THETACThetaRepositoryOptions *opt) {return (opt.gpsInfo != nil);},
+  @"isGpsOn": ^(THETACThetaRepositoryOptions *opt) {return (opt.isGpsOn != nil);},
+  @"iso": ^(THETACThetaRepositoryOptions *opt) {return (opt.iso != nil);},
+  @"isoAutoHighLimit": ^(THETACThetaRepositoryOptions *opt) {return (opt.isoAutoHighLimit != nil);},
+  @"language": ^(THETACThetaRepositoryOptions *opt) {return (opt.language != nil);},
+  @"maxRecordableTime": ^(THETACThetaRepositoryOptions *opt) {return (opt.maxRecordableTime != nil);},
+  @"offDelay": ^(THETACThetaRepositoryOptions *opt) {return (opt.offDelay != nil);},
+  @"sleepDelay": ^(THETACThetaRepositoryOptions *opt) {return (opt.sleepDelay != nil);},
+  @"remainingPictures": ^(THETACThetaRepositoryOptions *opt) {return (opt.remainingPictures != nil);},
+  @"remainingVideoSeconds": ^(THETACThetaRepositoryOptions *opt) {return (opt.remainingVideoSeconds != nil);},
+  @"remainingSpace": ^(THETACThetaRepositoryOptions *opt) {return (opt.remainingSpace != nil);},
+  @"totalSpace": ^(THETACThetaRepositoryOptions *opt) {return (opt.totalSpace != nil);},
+  @"shutterVolume": ^(THETACThetaRepositoryOptions *opt) {return (opt.shutterVolume != nil);},
+  @"whiteBalance": ^(THETACThetaRepositoryOptions *opt) {return (opt.whiteBalance != nil);},
+  @"whiteBalanceAutoStrength": ^(THETACThetaRepositoryOptions *opt) {return (opt.whiteBalanceAutoStrength != nil);},
+};
+
 static NSString *EVENT_NAME = @"ThetaFrameEvent";
 
 /**
@@ -2256,10 +2290,12 @@ RCT_REMAP_METHOD(getMySetting,
         reject(@"error", [error localizedDescription], error);
       } else if (options) {
         NSMutableDictionary *results = [[NSMutableDictionary alloc] init];
-        for (OptionConverter converter in [NameToConverter allValues]) {
-          convert_t *convert = converter();
-          if (convert && convert->setFromTheta) {
-            convert->setFromTheta(results, options);
+        for (NSString * name in [NameToNullCheck allKeys]) {
+          if ([NameToNullCheck objectForKey:name](options)) {
+            convert_t *convert = [NameToConverter objectForKey:name]();
+            if (convert && convert->setFromTheta) {
+              convert->setFromTheta(results, options);
+            }
           }
         }
         resolve(results);
