@@ -879,4 +879,164 @@ void main() {
     });
     await platform.deleteMySetting(CaptureModeEnum.image);
   });
+
+  test('listPlugins', () async {
+    const data = [
+      {
+        "isBoot": false,
+        "exitStatus": "success",
+        "isPreInstalled": false,
+        "isForeground": false,
+        "message": "",
+        "packageName": "android.example.com.tflitecamerademo",
+        "name": "TfLite Camera Demo",
+        "isRunning": false,
+        "type": "user",
+        "version": "1.0",
+        "hasWebServer": false
+      },
+      {
+        "isBoot": false,
+        "exitStatus": "success",
+        "isPreInstalled": false,
+        "isForeground": false,
+        "message": "",
+        "packageName": "com.awesomeproject",
+        "name": "AwesomeProject",
+        "isRunning": false,
+        "type": "user",
+        "version": "1.0",
+        "hasWebServer": false
+      },
+      {
+        "isBoot": true,
+        "exitStatus": "success",
+        "isPreInstalled": false,
+        "isForeground": false,
+        "message": "",
+        "packageName": "com.theta.remoteplayback",
+        "name": "Remote Playback",
+        "isRunning": false,
+        "type": "system",
+        "version": "2.10.3",
+        "hasWebServer": false
+      }
+    ];
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'listPlugins');
+      return Future.value(data);
+    });
+    var resultList = await platform.listPlugins();
+    for (int i = 0; i < resultList.length; i++) {
+      expect(resultList[i].name, data[i]['name']);
+      expect(resultList[i].packageName, data[i]['packageName']);
+      expect(resultList[i].version, data[i]['version']);
+      expect(resultList[i].isPreInstalled, data[i]['isPreInstalled']);
+      expect(resultList[i].isRunning, data[i]['isRunning']);
+      expect(resultList[i].isForeground, data[i]['isForeground']);
+      expect(resultList[i].isBoot, data[i]['isBoot']);
+      expect(resultList[i].hasWebServer, data[i]['hasWebServer']);
+      expect(resultList[i].exitStatus, data[i]['exitStatus']);
+      expect(resultList[i].message, data[i]['message']);
+    }
+  });
+
+  test('setPlugin', () async {
+    const packageName = 'android.example.com.tflitecamerademo';
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'setPlugin');
+
+      var arguments = methodCall.arguments as String;
+      expect(arguments, packageName);
+      return Future.value();
+    });
+    await platform.setPlugin(packageName);
+  });
+
+  test('startPlugin', () async {
+    const packageName = 'android.example.com.tflitecamerademo';
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'startPlugin');
+
+      var arguments = methodCall.arguments as String;
+      expect(arguments, packageName);
+      return Future.value();
+    });
+    await platform.startPlugin(packageName);
+  });
+
+  test('stopPlugin', () async {
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'stopPlugin');
+      return Future.value();
+    });
+    await platform.stopPlugin();
+  });
+
+  test('getPluginLicense', () async {
+    const packageName = 'android.example.com.tflitecamerademo';
+    const license = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8"/>
+      <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+      <title>RICOH THETA - Underside cover</title>
+    </head>
+    <body>
+    </body>
+    </html>
+    """;
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'getPluginLicense');
+
+      var arguments = methodCall.arguments as String;
+      expect(arguments, packageName);
+      return Future.value(license);
+    });
+    var result = await platform.getPluginLicense(packageName);
+    expect(result, license);
+  });
+
+  test('getPluginOrders', () async {
+    const plugins = ["com.theta360.usbstorage", "com.theta.remoteplayback", "com.theta360.undersidecover"];
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'getPluginOrders');
+      return Future.value(plugins);
+    });
+    var result = await platform.getPluginOrders();
+    expect(result, plugins);
+  });
+
+  test('setPluginOrders', () async {
+    const packageNames = ['android.example.com.tflitecamerademo'];
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'setPluginOrders');
+
+      var arguments = methodCall.arguments as List<dynamic>;
+      for (int i = 0; i < packageNames.length; i++) {
+        expect(arguments[i], packageNames[i]);
+      }
+      return Future.value();
+    });
+    await platform.setPluginOrders(packageNames);
+  });
+
+  test('setBluetoothDevice', () async {
+    const name = '10107709';
+    const uuid = '00000000-1111-2222-3333-555555555555';
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'setBluetoothDevice');
+
+      var arguments = methodCall.arguments as String;
+      expect(arguments, uuid);
+      return Future.value(name);
+    });
+    var result = await platform.setBluetoothDevice(uuid);
+    expect(result, name);
+  });
 }
