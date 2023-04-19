@@ -1738,12 +1738,12 @@ RCT_REMAP_METHOD(setOptions,
     }
   }
   [_theta setOptionsOptions:newoptions completionHandler:^(NSError *error) {
-      if (error) {
-        reject(@"error", [error localizedDescription], error);
-      } else {
-        resolve(@(YES));
-      }
-    }];
+    if (error) {
+      reject(@"error", [error localizedDescription], error);
+    } else {
+      resolve(@(YES));
+    }
+  }];
 }
 
 /**
