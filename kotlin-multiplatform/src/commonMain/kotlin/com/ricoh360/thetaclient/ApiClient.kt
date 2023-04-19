@@ -25,7 +25,7 @@ internal object ApiClient {
     var httpClient: HttpClient? = null
     fun newHttpClient() =  HttpClient(CIO) {
         expectSuccess = true
-        engine {
+        engine{
             endpoint {
                 connectTimeout = timeout.connectTimeout
                 requestTimeout = timeout.requestTimeout
