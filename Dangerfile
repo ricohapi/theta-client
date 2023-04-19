@@ -1,4 +1,4 @@
-# 変更した行以外は指摘しないように
+# only check the diff
 # github.dismiss_out_of_range_messages
 
 checkstyle_format.base_path = Dir.pwd

@@ -172,9 +172,9 @@ detekt {
     ignoreFailures = false
     buildUponDefaultConfig = true // preconfigure defaults
     allRules = false // activate all available (even unstable) rules.
-    config = files("$rootDir/config/detekt.yml") // チェック項目の設定ファイル
+    config = files("$rootDir/config/detekt.yml") // config file
     baseline = file("$rootDir/config/baseline.xml")
-    input = files("$projectDir/src/commonMain/") // 対象フォルダ
+    source = files("$projectDir/src/commonMain/") // the folders to be checked
 }
 
 ext["signing.keyId"] = null
