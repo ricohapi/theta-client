@@ -168,14 +168,14 @@ signing {
     }
 }
 
-//detekt {
-//    ignoreFailures = false
-//    buildUponDefaultConfig = true // preconfigure defaults
-//    allRules = false // activate all available (even unstable) rules.
-//    config = files("$rootDir/config/detekt.yml") // チェック項目の設定ファイル
-//    baseline = file("$rootDir/config/baseline.xml")
-//    input = files("$projectDir/src/jp/co/nttcom/hourensou/") // 対象フォルダ
-//}
+detekt {
+    ignoreFailures = false
+    buildUponDefaultConfig = true // preconfigure defaults
+    allRules = false // activate all available (even unstable) rules.
+    config = files("$rootDir/config/detekt.yml") // チェック項目の設定ファイル
+    baseline = file("$rootDir/config/baseline.xml")
+    input = files("$projectDir/src/commonMain/") // 対象フォルダ
+}
 
 ext["signing.keyId"] = null
 ext["signing.key"] = null
