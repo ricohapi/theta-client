@@ -2284,25 +2284,25 @@ RCT_REMAP_METHOD(getMySetting,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
-  [_theta getMySettingCaptureMode:[CaptureModeEnum.toTheta objectForKey:captureMode]
-              completionHandler:^(THETACThetaRepositoryOptions *options, NSError *error) {
-      if (error) {
-        reject(@"error", [error localizedDescription], error);
-      } else if (options) {
-        NSMutableDictionary *results = [[NSMutableDictionary alloc] init];
-        for (NSString * name in [NameToNullCheck allKeys]) {
-          if ([NameToNullCheck objectForKey:name](options)) {
-            convert_t *convert = [NameToConverter objectForKey:name]();
-            if (convert && convert->setFromTheta) {
-              convert->setFromTheta(results, options);
-            }
+  [_theta getMySettingCaptureMode:[CaptureModeEnum.toTheta       objectForKey:captureMode]
+                completionHandler:^(THETACThetaRepositoryOptions *options, NSError *error) {
+    if (error) {
+      reject(@"error", [error localizedDescription], error);
+    } else if (options) {
+      NSMutableDictionary *results = [[NSMutableDictionary alloc] init];
+      for (NSString * name in [NameToNullCheck allKeys]) {
+        if ([NameToNullCheck objectForKey:name](options)) {
+          convert_t *convert = [NameToConverter objectForKey:name]();
+          if (convert && convert->setFromTheta) {
+            convert->setFromTheta(results, options);
           }
         }
-        resolve(results);
-      } else {
-        reject(@"error", @"no options", nil);
       }
-    }];
+      resolve(results);
+    } else {
+      reject(@"error", @"no options", nil);
+    }
+  }];
 }
 
 /**
@@ -2321,26 +2321,26 @@ RCT_REMAP_METHOD(getMySettingFromOldModel,
     [optionNameList addObject:[NameToOptionEnum objectForKey:name]];
   }
   [_theta getMySettingOptionNames:optionNameList
-              completionHandler:^(THETACThetaRepositoryOptions *options, NSError *error) {
-      if (error) {
-        reject(@"error", [error localizedDescription], error);
-      } else if (options) {
-        NSMutableDictionary *results = [[NSMutableDictionary alloc] init];
-        for (id name in optionNames) {
-          id option = [OptionEnumToOption objectForKey:name];
-          OptionConverter converter = [NameToConverter objectForKey:option];
-          if (converter) {
-            convert_t *convert = converter();
-            if (convert && convert->setFromTheta) {
-                convert->setFromTheta(results, options);
-            }
+                completionHandler:^(THETACThetaRepositoryOptions *options, NSError *error) {
+    if (error) {
+      reject(@"error", [error localizedDescription], error);
+    } else if (options) {
+      NSMutableDictionary *results = [[NSMutableDictionary alloc] init];
+      for (id name in optionNames) {
+        id option = [OptionEnumToOption objectForKey:name];
+        OptionConverter converter = [NameToConverter objectForKey:option];
+        if (converter) {
+          convert_t *convert = converter();
+          if (convert && convert->setFromTheta) {
+            convert->setFromTheta(results, options);
           }
         }
-        resolve(results);
-      } else {
-        reject(@"error", @"no options", nil);
       }
-    }];
+      resolve(results);
+    } else {
+      reject(@"error", @"no options", nil);
+    }
+  }];
 }
 
 /**
@@ -2369,12 +2369,12 @@ RCT_REMAP_METHOD(setMySetting,
   [_theta setMySettingCaptureMode:[CaptureModeEnum.toTheta objectForKey:captureMode]
                           options:newoptions
                 completionHandler:^(NSError *error) {
-      if (error) {
-        reject(@"error", [error localizedDescription], error);
-      } else {
-        resolve(@(YES));
-      }
-    }];
+    if (error) {
+      reject(@"error", [error localizedDescription], error);
+    } else {
+      resolve(@(YES));
+    }
+  }];
 }
 
 /**
@@ -2389,13 +2389,13 @@ RCT_REMAP_METHOD(deleteMySetting,
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
   [_theta deleteMySettingCaptureMode:[CaptureModeEnum.toTheta objectForKey:captureMode]
-                completionHandler:^(NSError *error) {
-      if (error) {
-        reject(@"error", [error localizedDescription], error);
-      } else {
-        resolve(@(YES));
-      }
-    }];
+                   completionHandler:^(NSError *error) {
+    if (error) {
+      reject(@"error", [error localizedDescription], error);
+    } else {
+      resolve(@(YES));
+    }
+  }];
 }
 
 /**
@@ -2408,30 +2408,30 @@ RCT_REMAP_METHOD(listPlugins,
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
   [_theta listPluginsWithCompletionHandler:^(NSArray *pluginList, NSError *error) {
-      if (error) {
-        reject(@"error", [error localizedDescription], error);
-      } else if (pluginList) {
-        NSMutableArray *ary = [[NSMutableArray alloc] init];
-          for (int i = 0; i < pluginList.count; i++) {
-              THETACThetaRepositoryPluginInfo *plugininfo = pluginList[i];
-              [ary addObject: @{
-                  @"name": plugininfo.name,
-                    @"packageName": plugininfo.packageName,
-                    @"version": plugininfo.version,
-                    @"isPreInstalled": @(plugininfo.isPreInstalled),
-                    @"isRunning": @(plugininfo.isRunning),
-                    @"isForeground": @(plugininfo.isForeground),
-                    @"isBoot": @(plugininfo.isBoot),
-                    @"hasWebServer": @(plugininfo.hasWebServer),
-                    @"exitStatus": plugininfo.exitStatus,
-                    @"message": plugininfo.message
-                    }];
-          }
-          resolve(ary);
-      } else {
-        reject(@"error", @"no plugin", nil);
+    if (error) {
+      reject(@"error", [error localizedDescription], error);
+    } else if (pluginList) {
+      NSMutableArray *ary = [[NSMutableArray alloc] init];
+      for (int i = 0; i < pluginList.count; i++) {
+        THETACThetaRepositoryPluginInfo *plugininfo = pluginList[i];
+        [ary addObject: @{
+          @"name": plugininfo.name,
+          @"packageName": plugininfo.packageName,
+          @"version": plugininfo.version,
+          @"isPreInstalled": @(plugininfo.isPreInstalled),
+          @"isRunning": @(plugininfo.isRunning),
+          @"isForeground": @(plugininfo.isForeground),
+          @"isBoot": @(plugininfo.isBoot),
+          @"hasWebServer": @(plugininfo.hasWebServer),
+          @"exitStatus": plugininfo.exitStatus,
+          @"message": plugininfo.message
+        }];
       }
-    }];
+      resolve(ary);
+    } else {
+      reject(@"error", @"no plugin", nil);
+    }
+  }];
 }
 
 /**
@@ -2447,12 +2447,12 @@ RCT_REMAP_METHOD(setPlugin,
 {
   [_theta setPluginPackageName:packageName
              completionHandler:^(NSError *error) {
-      if (error) {
-        reject(@"error", [error localizedDescription], error);
-      } else {
-        resolve(@(YES));
-      }
-    }];
+    if (error) {
+      reject(@"error", [error localizedDescription], error);
+    } else {
+      resolve(@(YES));
+    }
+  }];
 }
 
 /**
@@ -2467,14 +2467,14 @@ RCT_REMAP_METHOD(startPlugin,
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
   [_theta startPluginPackageName:packageName
-             completionHandler:^(NSError *error) {
-      if (error) {
-          reject(@"error", [error localizedDescription], error);
-
-      } else {
-          resolve(@(YES));
-      }
-    }];
+               completionHandler:^(NSError *error) {
+    if (error) {
+      reject(@"error", [error localizedDescription], error);
+      
+    } else {
+      resolve(@(YES));
+    }
+  }];
 }
 
 /**
@@ -2487,13 +2487,13 @@ RCT_REMAP_METHOD(stopPlugin,
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
   [_theta stopPluginWithCompletionHandler:^(NSError *error) {
-      if (error) {
-          reject(@"error", [error localizedDescription], error);
-
-      } else {
-          resolve(@(YES));
-      }
-    }];
+    if (error) {
+      reject(@"error", [error localizedDescription], error);
+      
+    } else {
+      resolve(@(YES));
+    }
+  }];
 }
 
 /**
@@ -2508,16 +2508,16 @@ RCT_REMAP_METHOD(getPluginLicense,
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
   [_theta getPluginLicensePackageName:packageName
-             completionHandler:^(NSString *pluginLicense, NSError *error) {
-      if (error) {
-          reject(@"error", [error localizedDescription], error);
-
-      } else if (pluginLicense) {
-          resolve(pluginLicense);
-      } else {
-          reject(@"error", @"no plugin lincense", nil);
-      }
-    }];
+                    completionHandler:^(NSString *pluginLicense, NSError *error) {
+    if (error) {
+      reject(@"error", [error localizedDescription], error);
+      
+    } else if (pluginLicense) {
+      resolve(pluginLicense);
+    } else {
+      reject(@"error", @"no plugin lincense", nil);
+    }
+  }];
 }
 
 /**
@@ -2530,14 +2530,14 @@ RCT_REMAP_METHOD(getPluginOrders,
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
   [_theta getPluginOrdersWithCompletionHandler:^(NSArray *pluginOrders, NSError *error) {
-      if (error) {
-        reject(@"error", [error localizedDescription], error);
-      } else if (pluginOrders) {
-        resolve(pluginOrders);
-      } else {
-        reject(@"error", @"no plugin orders", nil);
-      }
-    }];
+    if (error) {
+      reject(@"error", [error localizedDescription], error);
+    } else if (pluginOrders) {
+      resolve(pluginOrders);
+    } else {
+      reject(@"error", @"no plugin orders", nil);
+    }
+  }];
 }
 
 /**
@@ -2553,12 +2553,12 @@ RCT_REMAP_METHOD(setPluginOrders,
 {
   [_theta setPluginOrdersPlugins:plugins
                completionHandler:^(NSError *error) {
-      if (error) {
-          reject(@"error", [error localizedDescription], error);
-      } else {
-          resolve(@(YES));
-      }
-    }];
+    if (error) {
+      reject(@"error", [error localizedDescription], error);
+    } else {
+      resolve(@(YES));
+    }
+  }];
 }
 
 /**
