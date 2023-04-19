@@ -174,7 +174,11 @@ detekt {
     allRules = false // activate all available (even unstable) rules.
     config = files("$rootDir/config/detekt.yml") // config file
     baseline = file("$rootDir/config/baseline.xml")
-    source = files("$projectDir/src/commonMain/") // the folders to be checked
+    source = files(
+        "$rootDir/kotlin-multiplatform/src/commonMain/",
+        "$rootDir/flutter/android/src/",
+        "$rootDir/react-native/android/src/"
+    ) // the folders to be checked
 }
 
 ext["signing.keyId"] = null
