@@ -4021,7 +4021,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Registers shooting conditions in My Settings.
      *
-     * @param captureMode The target shooting mode.  In RICOH THETA S and SC, do not set then it can be acquired for still image.
+     * @param captureMode The target shooting mode.  RICOH THETA S and SC do not support My Settings in video capture mode.
      * @param options registered to My Settings.
      * @exception ThetaWebApiException When an invalid option is specified.
      * @exception NotConnectedException

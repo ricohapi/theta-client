@@ -836,6 +836,239 @@ class ThetaClientReactNativeModule(
     }
   }
 
+  /**
+   * getMySetting - Acquires the shooting properties set by the camera._setMySetting command.
+   * Just for Theta V and later
+   * @param captureMode The target shooting mode
+   * @param promise promise to set result
+  */
+  @ReactMethod
+  fun getMySetting(captureMode: String, promise: Promise) {
+    launch {
+      try {
+        val options = theta.getMySetting(ThetaRepository.CaptureModeEnum.valueOf(captureMode))
+        val result = Arguments.createMap()
+        converters.forEach {
+          val cvt = it.value
+          cvt?.setFromTheta(options, result)
+        }
+        promise.resolve(result)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+    }
+  }
+
+  /**
+   * getMySettingFromOldModel - Acquires the shooting properties set by the camera._setMySetting command.
+   * Just for Theta S and SC.
+   * @param optionNames The target shooting mode
+   * @param promise promise to set result
+   */
+   @ReactMethod
+   fun getMySettingFromOldModel(optionNames: ReadableArray, promise: Promise) {
+    launch {
+      try {
+        val optionNameList = mutableListOf<ThetaRepository.OptionNameEnum>()
+        for (index in 0..(optionNames.size() - 1)) {
+          val option = optionNames.getString(index)
+          optionNameList.add(ThetaRepository.OptionNameEnum.valueOf(option))
+        }
+        val options = theta.getMySetting(optionNameList)
+        val result = Arguments.createMap()
+        for (index in 0..(optionNames.size() - 1)) {
+          val option = optionEnumToOption[optionNames.getString(index)]
+          val cvt = converters[option]
+          cvt?.setFromTheta(options, result)
+        }
+        promise.resolve(result)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+    }
+  }
+
+  /**
+   * setMySetting - Registers shooting conditions in My Settings
+   * @param captureMode The target shooting mode.  RICOH THETA S and SC do not support My Settings in video capture mode.
+   * @param options registered to My Settings
+   * @param Promise of bolean result, always true
+   */
+  @ReactMethod
+  fun setMySetting(captureMode: String, options: ReadableMap, promise: Promise) {
+    launch {
+      try {
+        val thetaOptions = ThetaRepository.Options()
+        val iterator = options.keySetIterator()
+        while (iterator.hasNextKey()) {
+          val key = iterator.nextKey()
+          val cvt = converters[key]
+          cvt?.setToTheta(thetaOptions, options)
+        }
+        theta.setMySetting(ThetaRepository.CaptureModeEnum.valueOf(captureMode), thetaOptions)
+        promise.resolve(true)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+    }
+  }
+
+  /**
+   * deleteMySetting - Delete shooting conditions in My Settings. Supported just by Theta X and Z1.
+   * @param captureMode The target shooting mode
+   * @param promise promise to set result, always true
+   */
+  @ReactMethod
+  fun deleteMySetting(captureMode: String, promise: Promise) {
+    launch {
+      try {
+        theta.deleteMySetting(ThetaRepository.CaptureModeEnum.valueOf(captureMode))
+        promise.resolve(true)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+    }
+  }
+
+  /**
+   * listPlugins - acquires a list of installed plugins
+   * @param promise promise to set result
+   */
+   @ReactMethod
+   fun listPlugins(promise: Promise) {
+    launch {
+      try {
+        val result = Arguments.createArray()
+        theta.listPlugins().forEach {
+          val pinfo = Arguments.createMap()
+          pinfo.putString("name", it.name)
+          pinfo.putString("packageName", it.packageName)
+          pinfo.putString("version", it.version)
+          pinfo.putBoolean("isPreInstalled", it.isPreInstalled)
+          pinfo.putBoolean("isRunning", it.isRunning)
+          pinfo.putBoolean("isForeground", it.isForeground)
+          pinfo.putBoolean("isBoot", it.isBoot)
+          pinfo.putBoolean("hasWebServer", it.hasWebServer)
+          pinfo.putString("exitStatus", it.exitStatus)
+          pinfo.putString("message", it.message)
+          result.pushMap(pinfo)
+        }
+        promise.resolve(result)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+    }
+   }
+
+   /**
+    * setPlugin - sets the installed plugin for boot. Supported just by Theta V.
+    * @param packageName Package name of the target plugin.
+    * @param promise promise to set result
+    */
+    @ReactMethod
+    fun setPlugin(packageName: String, promise: Promise) {
+     launch {
+      try {
+        theta.setPlugin(packageName)
+        promise.resolve(true)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+     }
+    }
+
+   /**
+    * startPlugin - start the plugin specified by the [packageName].
+    * @param packageName Package name of the target plugin.
+    * @param promise promise to set result
+    */
+    @ReactMethod
+    fun startPlugin(packageName: String, promise: Promise) {
+     launch {
+      try {
+        theta.startPlugin(packageName)
+        promise.resolve(true)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+     }
+    }
+
+  /**
+    * stopPlugin - Stop the running plugin.
+    * @param promise promise to set result
+    */
+    @ReactMethod
+    fun stopPlugin(promise: Promise) {
+     launch {
+      try {
+        theta.stopPlugin()
+        promise.resolve(true)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+     }
+    }
+
+  /**
+    * getPluginLicense - acquires the license for the installed plugin.
+    * @param packageName Package name of the target plugin.
+    * @param promise promise to set result
+    */
+    @ReactMethod
+    fun getPluginLicense(packageName: String, promise: Promise) {
+     launch {
+      try {
+        val result = theta.getPluginLicense(packageName)
+        promise.resolve(result)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+     }
+    }
+
+  /**
+    * getPluginOrders - Return the plugin orders.  Supported just by Theta X and Z1..
+    * @param promise promise to set result, list of package names of plugins.
+    */
+    @ReactMethod
+    fun getPluginOrders(promise: Promise) {
+     launch {
+      try {
+        val result = theta.getPluginOrders()
+        promise.resolve(Arguments.fromList(result))
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+     }
+    }
+
+  /**
+    * setPluginOrders - Return the plugin orders.  Supported just by Theta X and Z1.
+    * @param plugins list of package names of plugins
+    * For Z1, list size must be three. No restrictions for the size for X.
+    * When not specifying, set an empty string.
+    * If an empty string is placed mid-way, it will be moved to the front.
+    * Specifying zero package name will result in an error.
+    * @param promise promise to set result
+    */
+    @ReactMethod
+    fun setPluginOrders(plugins: ReadableArray, promise: Promise) {
+     launch {
+      try {
+        val pluginList = mutableListOf<String>()
+        for (index in 0..(plugins.size() - 1)) {
+          val plugin = plugins.getString(index)
+          pluginList.add(plugin)
+        }
+        theta.setPluginOrders(pluginList)
+        promise.resolve(true)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+     }
+    }
+
   companion object {
     const val NAME = "ThetaClientReactNative"
     const val EVENT_NAME = "ThetaFrameEvent"

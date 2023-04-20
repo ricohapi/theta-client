@@ -3,9 +3,10 @@ import type { FileTypeEnum, ThetaFiles } from './theta-files';
 import type { ThetaState } from './theta-state';
 import type { ThetaInfo } from './theta-info';
 import type { MetaInfo } from './theta-meta';
+import type { PluginInfo } from './theta-plugin';
 
 import { NativeModules } from 'react-native';
-import type { OptionNameEnum, Options } from './options';
+import type { OptionNameEnum, Options, CaptureModeEnum } from './options';
 import { PhotoCaptureBuilder, VideoCaptureBuilder } from '../capture';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
@@ -357,4 +358,119 @@ export function setAccessPointStatically(
  */
 export function deleteAccessPoint(ssid: string): Promise<boolean> {
   return ThetaClientReactNative.deleteAccessPoint(ssid);
+}
+
+/**
+ * Acquires the shooting properties set by the camera._setMySetting command.
+ * Just for Theta V and later.
+ *
+ * @function getMySetting
+ * @param captureMode The target shooting mode
+ * @returns Options of my setting
+ */
+export function getMySetting(captureMode: CaptureModeEnum): Promise<Options> {
+  return ThetaClientReactNative.getMySetting(captureMode);
+}
+
+/**
+ * Acquires the shooting properties set by the camera._setMySetting command.
+ * Just for Theta S and SC.
+ *
+ * @function getMySetting
+ * @param optionNames List of option names to acquire
+ * @returns Options of my setting
+ */
+export function getMySettingFromOldModel(optionNames: OptionNameEnum[]): Promise<Options> {
+  return ThetaClientReactNative.getMySettingFromOldModel(optionNames);
+}
+
+/**
+ * Registers shooting conditions in My Settings
+ * @function setMySetting
+ * @param captureMode The target shooting mode.  RICOH THETA S and SC do not support My Settings in video capture mode.
+ * @param options registered to My Settings
+ * @returns Promise of boolean result, always true
+ */
+export function setMySetting(captureMode: CaptureModeEnum, options: Options): Promise<boolean> {
+  return ThetaClientReactNative.setMySetting(captureMode, options);
+}
+
+/**
+ * Delete shooting conditions in My Settings. Supported just by Theta X and Z1.
+ * @param captureMode The target shooting mode
+ * @returns Promise of boolean result, always true
+ */
+export function deleteMySetting(captureMode: CaptureModeEnum): Promise<boolean> {
+  return ThetaClientReactNative.deleteMySetting(captureMode);
+}
+
+/**
+ * Acquires a list of installed plugins
+ * @function listPlugins
+ * @return A list of the plugins installed in Theta.
+ */
+export function listPlugins(): Promise<PluginInfo[]> {
+  return ThetaClientReactNative.listPlugins();
+}
+
+/**
+ * Sets the installed plugin for boot. Supported just by Theta V.
+ * @function setPlugin
+ * @param packageName Package name of the target plugin.
+ * @return Promise of boolean result, always true.
+ */
+export function setPlugin(packageName: string): Promise<boolean> {
+  return ThetaClientReactNative.setPlugin(packageName);
+}
+
+/**
+ * Start the plugin specified by the [packageName].
+ * @function startPlugin
+ * @param packageName Package name of the target plugin.
+ * @return Promise of boolean result, always true.
+ */
+export function startPlugin(packageName: string): Promise<boolean> {
+  return ThetaClientReactNative.startPlugin(packageName);
+}
+
+/**
+ * Stop the running plugin.
+ * @function stopPlugin
+ * @return Promise of boolean result, always true.
+ */
+export function stopPlugin(): Promise<boolean> {
+  return ThetaClientReactNative.stopPlugin();
+}
+
+/**
+ * Acquires the license for the installed plugin.
+ * @function getPluginLicense
+ * @param packageName Package name of the target plugin.
+ * @return Promise of string result, HTML string of the license.
+ */
+export function getPluginLicense(packageName: string): Promise<string> {
+  return ThetaClientReactNative.getPluginLicense(packageName);
+}
+
+/**
+ * Return the plugin orders.  Supported just by Theta X and Z1.
+ * @function getPluginOrders
+ * @return Promise of string[] result, list of package names of plugins.
+ */
+export function getPluginOrders(): Promise<string[]> {
+  return ThetaClientReactNative.getPluginOrders();
+}
+
+/**
+ * Sets the plugin orders.  Supported just by Theta X and Z1.
+ * @function setPluginOrders
+ * @param plugins list of package names of plugins.
+ * For Z1, list size must be three. No restrictions for the size for X.
+ * When not specifying, set an empty string.
+ * If an empty string is placed mid-way, it will be moved to the front.
+ * Specifying zero package name will result in an error
+ * @return Promise of boolean result, always true.
+ */
+export function setPluginOrders(plugins: string[]): Promise<boolean> {
+  return ThetaClientReactNative.setPluginOrders(plugins);
 }
