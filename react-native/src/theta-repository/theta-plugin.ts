@@ -1,7 +1,7 @@
 /**
  * plugin information used by ThetaRepository.listPlugins().
  */
-export type PluginInfo {
+export type PluginInfo = {
   /** Plugin name */
   name: string;
   /** Package name */
@@ -22,4 +22,4 @@ export type PluginInfo {
   exitStatus: string;
   /** Message of the plugin */
   message: string;
-}
+};
