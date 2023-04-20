@@ -3,6 +3,7 @@ import type { FileTypeEnum, ThetaFiles } from './theta-files';
 import type { ThetaState } from './theta-state';
 import type { ThetaInfo } from './theta-info';
 import type { MetaInfo } from './theta-meta';
+import type { PluginInfo } from './theta-plugin';
 
 import { NativeModules } from 'react-native';
 import type { OptionNameEnum, Options, CaptureModeEnum } from './options';
