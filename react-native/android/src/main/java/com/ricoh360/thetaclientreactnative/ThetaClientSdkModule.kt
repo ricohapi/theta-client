@@ -862,7 +862,7 @@ class ThetaClientReactNativeModule(
   /**
    * getMySettingFromOldModel - Acquires the shooting properties set by the camera._setMySetting command.
    * Just for Theta S and SC.
-   * @param captureMode The target shooting mode
+   * @param optionNames The target shooting mode
    * @param promise promise to set result
    */
    @ReactMethod

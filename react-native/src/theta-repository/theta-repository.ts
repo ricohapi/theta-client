@@ -3,9 +3,10 @@ import type { FileTypeEnum, ThetaFiles } from './theta-files';
 import type { ThetaState } from './theta-state';
 import type { ThetaInfo } from './theta-info';
 import type { MetaInfo } from './theta-meta';
+import type { PluginInfo } from './theta-plugin';
 
 import { NativeModules } from 'react-native';
-import type { OptionNameEnum, Options } from './options';
+import type { OptionNameEnum, Options, CaptureModeEnum } from './options';
 import { PhotoCaptureBuilder, VideoCaptureBuilder } from '../capture';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
@@ -388,7 +389,7 @@ export function getMySettingFromOldModel(optionNames: OptionNameEnum[]): Promise
  * @function setMySetting
  * @param captureMode The target shooting mode.  RICOH THETA S and SC do not support My Settings in video capture mode.
  * @param options registered to My Settings
- * @returns Promise of bolean result, always true
+ * @returns Promise of boolean result, always true
  */
 export function setMySetting(captureMode: CaptureModeEnum, options: Options): Promise<boolean> {
   return ThetaClientReactNative.setMySetting(captureMode, options);
@@ -397,16 +398,11 @@ export function setMySetting(captureMode: CaptureModeEnum, options: Options): Pr
 /**
  * Delete shooting conditions in My Settings. Supported just by Theta X and Z1.
  * @param captureMode The target shooting mode
- * @returns Promise of bolean result, always true
+ * @returns Promise of boolean result, always true
  */
 export function deleteMySetting(captureMode: CaptureModeEnum): Promise<boolean> {
   return ThetaClientReactNative.deleteMySetting(captureMode);
 }
-
-/*
-export function getMySetting(optionNames: OptionNameEnum[]): Promise<Options> {
-  return ThetaClientReactNative.getMySetting(optionNames);
-}*/
 
 /**
  * Acquires a list of installed plugins
@@ -421,7 +417,7 @@ export function listPlugins(): Promise<PluginInfo[]> {
  * Sets the installed plugin for boot. Supported just by Theta V.
  * @function setPlugin
  * @param packageName Package name of the target plugin.
- * @return Promise of bolean result, always true.
+ * @return Promise of boolean result, always true.
  */
 export function setPlugin(packageName: string): Promise<boolean> {
   return ThetaClientReactNative.setPlugin(packageName);
@@ -431,7 +427,7 @@ export function setPlugin(packageName: string): Promise<boolean> {
  * Start the plugin specified by the [packageName].
  * @function startPlugin
  * @param packageName Package name of the target plugin.
- * @return Promise of bolean result, always true.
+ * @return Promise of boolean result, always true.
  */
 export function startPlugin(packageName: string): Promise<boolean> {
   return ThetaClientReactNative.startPlugin(packageName);
@@ -440,7 +436,7 @@ export function startPlugin(packageName: string): Promise<boolean> {
 /**
  * Stop the running plugin.
  * @function stopPlugin
- * @return Promise of bolean result, always true.
+ * @return Promise of boolean result, always true.
  */
 export function stopPlugin(): Promise<boolean> {
   return ThetaClientReactNative.stopPlugin();
@@ -473,7 +469,7 @@ export function getPluginOrders(): Promise<string[]> {
  * When not specifying, set an empty string.
  * If an empty string is placed mid-way, it will be moved to the front.
  * Specifying zero package name will result in an error
- * @return Promise of bolean result, always true.
+ * @return Promise of boolean result, always true.
  */
 export function setPluginOrders(plugins: string[]): Promise<boolean> {
   return ThetaClientReactNative.setPluginOrders(plugins);
