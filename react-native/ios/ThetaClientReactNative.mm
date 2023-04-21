@@ -1499,6 +1499,10 @@ RCT_REMAP_METHOD(getThetaInfo,
       if (error) {
         reject(@"error", [error localizedDescription], error);
       } else if (info) {
+        NSMutableArray *apiLevelList = [[NSMutableArray alloc] init];
+        for (THETACInt *element in info.apiLevel) {
+          [apiLevelList addObject:@([element intValue])];
+        }
         resolve(@{@"manufacturer": info.manufacturer,
               @"model": info.model,
               @"serialNumber": info.serialNumber,
@@ -1514,7 +1518,7 @@ RCT_REMAP_METHOD(getThetaInfo,
                   @"httpPort": @(info.endpoints.httpPort),
                   @"httpUpdatesPort": @(info.endpoints.httpUpdatesPort),
               },
-              @"apiLevel": info.apiLevel});
+              @"apiLevel": apiLevelList});
       } else {
         reject(@"error", @"no info", nil);
       }
