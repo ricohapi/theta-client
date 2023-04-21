@@ -1496,33 +1496,33 @@ RCT_REMAP_METHOD(getThetaInfo,
 {
   [_theta getThetaInfoWithCompletionHandler:^(THETACThetaRepositoryThetaInfo *info,
                                               NSError *error) {
-      if (error) {
-        reject(@"error", [error localizedDescription], error);
-      } else if (info) {
-        NSMutableArray *apiLevelList = [[NSMutableArray alloc] init];
-        for (THETACInt *element in info.apiLevel) {
-          [apiLevelList addObject:@([element intValue])];
-        }
-        resolve(@{@"manufacturer": info.manufacturer,
-              @"model": info.model,
-              @"serialNumber": info.serialNumber,
-              @"wlanMacAddress": info.wlanMacAddress != nil? info.wlanMacAddress : [NSNull null],
-              @"bluetoothMacAddress": info.bluetoothMacAddress != nil? info.bluetoothMacAddress : [NSNull null],
-              @"firmwareVersion": info.firmwareVersion,
-              @"supportUrl": info.supportUrl,
-              @"hasGps": @(info.hasGps),
-              @"hasGyro": @(info.hasGyro),
-              @"uptime": @(info.uptime),
-              @"api": info.api,
-              @"endpoints": @{
+    if (error) {
+      reject(@"error", [error localizedDescription], error);
+    } else if (info) {
+      NSMutableArray *apiLevelList = [[NSMutableArray alloc] init];
+      for (THETACInt *element in info.apiLevel) {
+        [apiLevelList addObject:@([element intValue])];
+      }
+      resolve(@{@"manufacturer": info.manufacturer,
+                @"model": info.model,
+                @"serialNumber": info.serialNumber,
+                @"wlanMacAddress": info.wlanMacAddress != nil? info.wlanMacAddress : [NSNull null],
+                @"bluetoothMacAddress": info.bluetoothMacAddress != nil? info.bluetoothMacAddress : [NSNull null],
+                @"firmwareVersion": info.firmwareVersion,
+                @"supportUrl": info.supportUrl,
+                @"hasGps": @(info.hasGps),
+                @"hasGyro": @(info.hasGyro),
+                @"uptime": @(info.uptime),
+                @"api": info.api,
+                @"endpoints": @{
                   @"httpPort": @(info.endpoints.httpPort),
                   @"httpUpdatesPort": @(info.endpoints.httpUpdatesPort),
-              },
-              @"apiLevel": apiLevelList});
-      } else {
-        reject(@"error", @"no info", nil);
-      }
-    }];
+                },
+                @"apiLevel": apiLevelList});
+    } else {
+      reject(@"error", @"no info", nil);
+    }
+  }];
 }
 
 /**
