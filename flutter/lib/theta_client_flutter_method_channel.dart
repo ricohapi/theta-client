@@ -331,4 +331,75 @@ void enableEventReceiver() {
   Future<void> deleteAccessPoint(String ssid) async {
     return methodChannel.invokeMethod<void>('deleteAccessPoint', ssid);
   }
+
+  @override
+  Future<Options> getMySetting(CaptureModeEnum captureMode) async {
+    var completer = Completer<Options>();
+    try {
+      final Map params = <String, dynamic>{
+        'captureMode': captureMode.rawValue,
+      };
+      var options = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('getMySetting', params);
+
+      if (options != null) {
+        completer.complete(ConvertUtils.convertOptions(options));
+      } else {
+        completer.completeError(Exception('Got result failed.'));
+      }
+    } catch (e) {
+      completer.completeError(e);
+    }
+
+    return completer.future;
+  }
+
+  @override
+  Future<Options> getMySettingFromOldModel(List<OptionNameEnum> optionNames) async {
+    var completer = Completer<Options>();
+    try {
+      final Map params = <String, dynamic>{
+        'optionNames': ConvertUtils.convertGetOptionsParam(optionNames),
+      };
+      var options = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('getMySettingFromOldModel', params);
+
+      if (options != null) {
+        completer.complete(ConvertUtils.convertOptions(options));
+      } else {
+        completer.completeError(Exception('Got result failed.'));
+      }
+    } catch (e) {
+      completer.completeError(e);
+    }
+
+    return completer.future;
+  }
+
+  @override
+  Future<void> setMySetting(CaptureModeEnum captureMode, Options options) async {
+    var completer = Completer<void>();
+    final Map params = <String, dynamic>{
+      'captureMode': captureMode.rawValue,
+      'options': ConvertUtils.convertSetOptionsParam(options),
+    };
+    try {
+      await methodChannel.invokeMethod<void>('setMySetting', params);
+      completer.complete();
+    } catch (e) {
+      completer.completeError(e);
+    }
+    return completer.future;
+  }
+
+  @override
+  Future<void> deleteMySetting(CaptureModeEnum captureMode) async {
+    var completer = Completer<void>();
+    final Map params = <String, dynamic>{'captureMode': captureMode.rawValue};
+    try {
+      await methodChannel.invokeMethod<void>('deleteMySetting', params);
+      completer.complete();
+    } catch (e) {
+      completer.completeError(e);
+    }
+    return completer.future;
+  }
 }

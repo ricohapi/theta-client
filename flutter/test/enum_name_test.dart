@@ -18,7 +18,7 @@ void main() {
       [CaptureStatusEnum.converting, 'CONVERTING'],
       [CaptureStatusEnum.timeShiftShooting, 'TIME_SHIFT_SHOOTING'],
       [CaptureStatusEnum.continuousShooting, 'CONTINUOUS_SHOOTING'],
-      [CaptureStatusEnum.retrospectiveImageRecordinG, 'RETROSPECTIVE_IMAGE_RECORDING'],
+      [CaptureStatusEnum.retrospectiveImageRecording, 'RETROSPECTIVE_IMAGE_RECORDING'],
     ];
     expect(data.length, CaptureStatusEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {

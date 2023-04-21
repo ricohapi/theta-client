@@ -39,6 +39,8 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
 
     val errorCode: String = "Error"
     val messageNotInit: String = "Not initialized."
+    val messageNoResult: String = "Result is Null."
+    val messageNoArgument: String = "No Argument."
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "theta_client_flutter")
@@ -200,6 +202,26 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             "deleteAccessPoint" -> {
                 scope.launch {
                     deleteAccessPoint(call, result)
+                }
+            }
+            "getMySetting" -> {
+                scope.launch {
+                    getMySetting(call, result)
+                }
+            }
+            "getMySettingFromOldModel" -> {
+                scope.launch {
+                    getMySettingFromOldModel(call, result)
+                }
+            }
+            "setMySetting" -> {
+                scope.launch {
+                    setMySetting(call, result)
+                }
+            }
+            "deleteMySetting" -> {
+                scope.launch {
+                    deleteMySetting(call, result)
                 }
             }
             else -> {
@@ -646,6 +668,105 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             val params = call.arguments as String
             thetaRepository!!.deleteAccessPoint(params)
             result.success(null)
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun getMySetting(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+
+        try {
+            val captureModeName = call.argument<String>("captureMode")
+            val captureMode = ThetaRepository.CaptureModeEnum.values().find {
+                it.name == captureModeName
+            }
+
+            var response: ThetaRepository.Options? = null
+            captureMode?.let {
+                response = thetaRepository?.getMySetting(captureMode = it)
+            } ?: run {
+                result.error(errorCode, messageNoArgument, null)
+            }
+
+            response?.let {
+                result.success(toResult(options = it))
+            } ?: run {
+                result.error(errorCode, messageNoResult, null)
+            }
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun getMySettingFromOldModel(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+
+        try {
+            var names = call.argument<Any>("optionNames") as? List<String>
+            names?.let { names ->
+                var optionNames = toGetOptionsParam(data = names)
+                var response = thetaRepository?.getMySetting(optionNames = optionNames)
+                response?.let {
+                    result.success(toResult(options = it))
+                } ?: run {
+                    result.error(errorCode, messageNoResult, null)
+                }
+            } ?: run {
+                result.error(errorCode, messageNoArgument, null)
+                return
+            }
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun setMySetting(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        try {
+            val captureModeName = call.argument<String>("captureMode")
+            val captureMode = ThetaRepository.CaptureModeEnum.values().find {
+                it.name == captureModeName
+            }
+            val options = toSetOptionsParam(call.argument<Any>("options") as Map<String, Any>)
+
+            captureMode?.let {
+                thetaRepository?.setMySetting(captureMode = it, options = options)
+                result.success(null)
+            } ?: run {
+                result.error(errorCode, messageNoArgument, null)
+            }
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun deleteMySetting(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        try {
+            val captureModeName = call.argument<String>("captureMode")
+            val captureMode = ThetaRepository.CaptureModeEnum.values().find {
+                it.name == captureModeName
+            }
+
+            captureMode?.let {
+                thetaRepository?.deleteMySetting(captureMode = it)
+                result.success(null)
+            } ?: run {
+                result.error(errorCode, messageNoArgument, null)
+            }
         } catch (e: Exception) {
             result.error(e.javaClass.simpleName, e.message, null)
         }
