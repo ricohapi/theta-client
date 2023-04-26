@@ -327,7 +327,7 @@ class ThetaClientFlutter {
   /// @param packageName package name of the plugin.  Theta V does not support this parameter.
   /// @exception ThetaWebApiException When an invalid option is specified.
   /// @exception NotConnectedException
-  Future<void> startPlugin(String? packageName) {
+  Future<void> startPlugin([String? packageName]) {
     return ThetaClientFlutterPlatform.instance.startPlugin(packageName);
   }
 
