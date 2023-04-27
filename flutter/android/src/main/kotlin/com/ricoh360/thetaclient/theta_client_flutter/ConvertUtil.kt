@@ -356,3 +356,22 @@ fun toListAccessPointsResult(accessPointList: List<AccessPoint>): List<Map<Strin
     }
     return resultList
 }
+
+fun toPluginInfosResult(pluginInfoList: List<PluginInfo>): List<Map<String, Any>> {
+    val resultList = mutableListOf<Map<String, Any>>()
+    pluginInfoList.forEach { pluginInfo ->
+        val result = mutableMapOf<String, Any>()
+        result["name"] = pluginInfo.name
+        result["packageName"] = pluginInfo.packageName
+        result["version"] = pluginInfo.version
+        result["isPreInstalled"] = pluginInfo.isPreInstalled
+        result["isRunning"] = pluginInfo.isRunning
+        result["isForeground"] = pluginInfo.isForeground
+        result["isBoot"] = pluginInfo.isBoot
+        result["hasWebServer"] = pluginInfo.hasWebServer
+        result["exitStatus"] = pluginInfo.exitStatus
+        result["message"] = pluginInfo.message
+        resultList.add(result)
+    }
+    return resultList
+}

@@ -305,6 +305,16 @@ class ConvertUtils {
     return metadata;
   }
 
+  static List<String> convertStringList(List<dynamic> data) {
+    var nameList = List<String>.empty(growable: true);
+    for (var element in data) {
+      if (element is String) {
+        nameList.add(element);
+      }
+    }
+    return nameList;
+  }
+
   static List<AccessPoint> toAccessPointList(List<Map<dynamic, dynamic>> data) {
     var accessPointList = List<AccessPoint>.empty(growable: true);
     for (Map<dynamic, dynamic> element in data) {
@@ -333,6 +343,29 @@ class ConvertUtils {
       cameraErrorList.add(cameraError);
     }
     return cameraErrorList;
+  }
+
+  static List<PluginInfo>? toPluginInfoList(List<Map<dynamic, dynamic>>? data) {
+    if (data == null) {
+      return null;
+    }
+
+    var pluginInfoList = List<PluginInfo>.empty(growable: true);
+    for (Map<dynamic, dynamic> element in data) {
+      var pluginInfo = PluginInfo(
+          element['name'],
+          element['packageName'],
+          element['version'],
+          element['isPreInstalled'],
+          element['isRunning'],
+          element['isForeground'],
+          element['isBoot'],
+          element['hasWebServer'],
+          element['exitStatus'],
+          element['message']);
+      pluginInfoList.add(pluginInfo);
+    }
+    return pluginInfoList;
   }
 }
 

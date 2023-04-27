@@ -16,6 +16,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     var thetaRepository: ThetaRepository? = nil
     static let errorCode: String = "Error"
     static let messageNotInit: String = "Not initialized."
+    static let messageNoResult: String = "Result is Null."
     static let messageNoArgument: String = "No Argument."
     static var endPoint: String = "http://192.168.1.1"
     var eventSink: FlutterEventSink? = nil
@@ -112,6 +113,22 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             setMySetting(call: call, result: result)
         case "deleteMySetting":
             deleteMySetting(call: call, result: result)
+        case "listPlugins":
+            listPlugins(result: result)
+        case "setPlugin":
+            setPlugin(call: call, result: result)
+        case "startPlugin":
+            startPlugin(call: call, result: result)
+        case "stopPlugin":
+            stopPlugin(result: result)
+        case "getPluginLicense":
+            getPluginLicense(call: call, result: result)
+        case "getPluginOrders":
+            getPluginOrders(result: result)
+        case "setPluginOrders":
+            setPluginOrders(call: call, result: result)
+        case "setBluetoothDevice":
+            setBluetoothDevice(call: call, result: result)
         default:
             result("Error. no method: " + call.method)
         }
@@ -701,7 +718,12 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                     let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
                     result(flutterError)
                 } else {
-                    result(convertResult(options: options!))
+                    if let options = options {
+                        result(convertResult(options: options))
+                    } else {
+                        let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoResult, details: nil)
+                        result(flutterError)
+                    }
                 }
             })
         } else {
@@ -792,6 +814,187 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 result(flutterError)
             } else {
                 result(nil)
+            }
+        })
+    }
+    
+    func listPlugins(result: @escaping FlutterResult) {
+        guard let thetaRepository = thetaRepository else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        
+        thetaRepository.listPlugins() { response, error in
+            if let thetaError = error {
+                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                result(flutterError)
+            } else {
+                if let response = response {
+                    result(toPluginInfosResult(pluginInfoList: response))
+                } else {
+                    let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoResult, details: nil)
+                    result(flutterError)
+                }
+            }
+        }
+    }
+    
+    func setPlugin(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let thetaRepository = thetaRepository else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        
+        guard let arguments = call.arguments as? String else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoArgument, details: nil)
+            result(flutterError)
+            return
+        }
+        
+        thetaRepository.setPlugin(packageName: arguments, completionHandler: { error in
+            if let thetaError = error {
+                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                result(flutterError)
+            } else {
+                result(nil)
+            }
+        })
+    }
+    
+    func startPlugin(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let thetaRepository = thetaRepository else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        
+        let arguments = call.arguments as? String
+        thetaRepository.startPlugin(packageName: arguments, completionHandler: { error in
+            if let thetaError = error {
+                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                result(flutterError)
+            } else {
+                result(nil)
+            }
+        })
+    }
+    
+    func stopPlugin(result: @escaping FlutterResult) {
+        guard let thetaRepository = thetaRepository else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        
+        thetaRepository.stopPlugin(completionHandler: { error in
+            if let thetaError = error {
+                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                result(flutterError)
+            } else {
+                result(nil)
+            }
+        })
+    }
+    
+    func getPluginLicense(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let thetaRepository = thetaRepository else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        
+        guard let arguments = call.arguments as? String else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoArgument, details: nil)
+            result(flutterError)
+            return
+        }
+        
+        thetaRepository.getPluginLicense(packageName: arguments, completionHandler: { response, error in
+            if let thetaError = error {
+                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                result(flutterError)
+            } else {
+                if let response = response {
+                    result(response)
+                } else {
+                    let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoResult, details: nil)
+                    result(flutterError)
+                }
+            }
+        })
+    }
+    
+    func getPluginOrders(result: @escaping FlutterResult) {
+        guard let thetaRepository = thetaRepository else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        
+        thetaRepository.getPluginOrders(completionHandler: { response, error in
+            if let thetaError = error {
+                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                result(flutterError)
+            } else {
+                if let response = response {
+                    result(response)
+                } else {
+                    let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoResult, details: nil)
+                    result(flutterError)
+                }
+            }
+        })
+    }
+    
+    func setPluginOrders(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let thetaRepository = thetaRepository else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        
+        guard let arguments = call.arguments as? [String] else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoArgument, details: nil)
+            result(flutterError)
+            return
+        }
+        
+        thetaRepository.setPluginOrders(plugins: arguments, completionHandler: { error in
+            if let thetaError = error {
+                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                result(flutterError)
+            } else {
+                result(nil)
+            }
+        })
+    }
+    
+    func setBluetoothDevice(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let thetaRepository = thetaRepository else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        
+        guard let arguments = call.arguments as? String else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoArgument, details: nil)
+            result(flutterError)
+            return
+        }
+        
+        thetaRepository.setBluetoothDevice(uuid: arguments, completionHandler: { response, error in
+            if let thetaError = error {
+                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                result(flutterError)
+            } else {
+                if let response = response {
+                    result(response)
+                } else {
+                    let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoResult, details: nil)
+                    result(flutterError)
+                }
             }
         })
     }

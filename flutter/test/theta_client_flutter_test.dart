@@ -186,6 +186,46 @@ class MockThetaClientFlutterPlatform
   Future<void> deleteMySetting(CaptureModeEnum captureMode) {
     return Future.value();
   }
+
+  @override
+  Future<List<PluginInfo>> listPlugins() {
+    return onCallGetPluginInfos();
+  }
+
+  @override
+  Future<void> setPlugin(String packageName) {
+    return Future.value();
+  }
+
+  @override
+  Future<void> startPlugin(String? packageName) {
+    return Future.value();
+  }
+
+  @override
+  Future<void> stopPlugin() {
+    return Future.value();
+  }
+
+  @override
+  Future<String> getPluginLicense(String packageName) {
+    return onCallGetString(packageName);
+  }
+
+  @override
+  Future<List<String>> getPluginOrders() {
+    return onCallGetStringList();
+  }
+
+  @override
+  Future<void> setPluginOrders(List<String> plugins) {
+    return Future.value();
+  }
+
+  @override
+  Future<String> setBluetoothDevice(String uuid) {
+    return onCallGetString(uuid);
+  }
 }
 
 Future<void> Function() onCallInitialize = Future.value;
@@ -204,6 +244,9 @@ Future<void> Function() onCallStopVideoCapture = Future.value;
 Future<Options> Function(List<OptionNameEnum> optionNames) onCallGetOptions = (optionNames) => Future.value(Options());
 Future<void> Function(Options options) onCallSetOptions = Future.value;
 Future<void> Function() onCallRestoreSettings = Future.value;
+Future<List<PluginInfo>> Function() onCallGetPluginInfos = Future.value;
+Future<String> Function(String str) onCallGetString = Future.value;
+Future<List<String>> Function() onCallGetStringList = Future.value;
 
 void main() {
   final ThetaClientFlutterPlatform initialPlatform = ThetaClientFlutterPlatform.instance;
@@ -749,9 +792,127 @@ void main() {
     MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
-    onCallSetOptions = Future.value;
-
     thetaClientPlugin.deleteMySetting(CaptureModeEnum.image);
     expect(true, isTrue);
+  });
+
+  test('listPlugins', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    var infoList = List<PluginInfo>.empty(growable: true);
+    infoList.add(PluginInfo(
+      "AwesomeProject",
+      "com.awesomeproject",
+      '1.0',
+      false,
+      false,
+      false,
+      false,
+      false,
+      "success",
+      '',
+    ));
+
+    onCallGetPluginInfos = () {
+      return Future.value(infoList);
+    };
+
+    var result = await thetaClientPlugin.listPlugins();
+    expect(result, infoList);
+  });
+
+  test('setPlugin', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    thetaClientPlugin.setPlugin('com.theta360.usbstorage');
+    expect(true, isTrue);
+  });
+
+  test('startPlugin', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    thetaClientPlugin.startPlugin('com.theta360.usbstorage');
+    expect(true, isTrue);
+  });
+
+  test('stopPlugin', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    thetaClientPlugin.stopPlugin();
+    expect(true, isTrue);
+  });
+
+  test('getPluginLicense', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    var license = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8"/>
+      <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+      <title>RICOH THETA - Underside cover</title>
+    </head>
+    <body>
+    </body>
+    </html>
+    """;
+    var packageName = 'com.theta360.usbstorage';
+    onCallGetString = (packageName) {
+      return Future.value(license);
+    };
+
+    var result = await thetaClientPlugin.getPluginLicense(packageName);
+    expect(result, license);
+  });
+
+  test('getPluginOrders', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    var strList = List<String>.empty(growable: true);
+    strList.add("com.awesomeproject");
+
+    onCallGetStringList = () {
+      return Future.value(strList);
+    };
+
+    var result = await thetaClientPlugin.getPluginOrders();
+    expect(result, strList);
+  });
+
+  test('setPluginOrders', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    thetaClientPlugin.setPluginOrders(['com.theta360.usbstorage']);
+    expect(true, isTrue);
+  });
+
+  test('setBluetoothDevice', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    var name = '10107709';
+    var uuid = '00000000-1111-2222-3333-555555555555';
+    onCallGetString = (uuid) {
+      return Future.value(name);
+    };
+
+    var result = await thetaClientPlugin.setBluetoothDevice(uuid);
+    expect(result, name);
   });
 }

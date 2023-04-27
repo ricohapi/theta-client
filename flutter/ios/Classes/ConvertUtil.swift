@@ -390,3 +390,23 @@ func convertResult(accessPointList: [ThetaRepository.AccessPoint]) -> [[String: 
     })
     return resultList
 }
+
+func toPluginInfosResult(pluginInfoList: [ThetaRepository.PluginInfo]) -> [[String: Any]] {
+    var resultList = [[String: Any]]()
+    pluginInfoList.forEach({ pluginInfo in
+        let item = [
+            "name": pluginInfo.name,
+            "packageName": pluginInfo.packageName,
+            "version": pluginInfo.version,
+            "isPreInstalled": pluginInfo.isPreInstalled,
+            "isRunning": pluginInfo.isRunning,
+            "isForeground": pluginInfo.isForeground,
+            "isBoot": pluginInfo.isBoot,
+            "hasWebServer": pluginInfo.hasWebServer,
+            "exitStatus": pluginInfo.exitStatus,
+            "message": pluginInfo.message,
+        ]
+        resultList.append(item)
+    })
+    return resultList
+}

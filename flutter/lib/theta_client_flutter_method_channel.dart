@@ -402,4 +402,73 @@ void enableEventReceiver() {
     }
     return completer.future;
   }
+
+  @override
+  Future<List<PluginInfo>> listPlugins() async {
+    var completer = Completer<List<PluginInfo>>();
+    try {
+      var result = await methodChannel.invokeMethod<List<dynamic>>('listPlugins') as List<dynamic>;
+      var plugins = ConvertUtils.toPluginInfoList(result.cast<Map<dynamic, dynamic>>());
+      completer.complete(plugins);
+    } catch (e) {
+      completer.completeError(e);
+    }
+    return completer.future;
+  }
+
+  @override
+  Future<void> setPlugin(String packageName) async {
+    return methodChannel.invokeMethod<void>('setPlugin', packageName);
+  }
+
+  @override
+  Future<void> startPlugin(String? packageName) async {
+    return methodChannel.invokeMethod<void>('startPlugin', packageName);
+  }
+
+  @override
+  Future<void> stopPlugin() async {
+    return methodChannel.invokeMethod<void>('stopPlugin');
+  }
+
+  @override
+  Future<String> getPluginLicense(String packageName) async {
+    var completer = Completer<String>();
+    try {
+      var result = await methodChannel.invokeMethod<String>('getPluginLicense', packageName);
+      completer.complete(result);
+    } catch (e) {
+      completer.completeError(e);
+    }
+    return completer.future;
+  }
+
+  @override
+  Future<List<String>> getPluginOrders() async {
+    var completer = Completer<List<String>>();
+    try {
+      var result = await methodChannel.invokeMethod<List<dynamic>>('getPluginOrders') as List<dynamic>;
+      completer.complete(ConvertUtils.convertStringList(result));
+    } catch (e) {
+      completer.completeError(e);
+    }
+    return completer.future;
+  }
+
+  @override
+  Future<void> setPluginOrders(List<String> plugins) async {
+    return methodChannel.invokeMethod<void>('setPluginOrders', plugins);
+  }
+
+  @override
+  Future<String> setBluetoothDevice(String uuid) async {
+    var completer = Completer<String>();
+    try {
+      var result = await methodChannel.invokeMethod<String>('setBluetoothDevice', uuid);
+      completer.complete(result);
+    } catch (e) {
+      completer.completeError(e);
+    }
+    return completer.future;
+  }
 }

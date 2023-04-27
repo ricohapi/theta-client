@@ -182,4 +182,36 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
   Future<void> deleteMySetting(CaptureModeEnum captureMode) {
     throw UnimplementedError('deleteMySetting() has not been implemented.');
   }
+
+  Future<List<PluginInfo>> listPlugins() {
+    throw UnimplementedError('listPlugins() has not been implemented.');
+  }
+
+  Future<void> setPlugin(String packageName) {
+    throw UnimplementedError('setPlugin() has not been implemented.');
+  }
+
+  Future<void> startPlugin(String? packageName) {
+    throw UnimplementedError('startPlugin() has not been implemented.');
+  }
+
+  Future<void> stopPlugin() {
+    throw UnimplementedError('stopPlugin() has not been implemented.');
+  }
+
+  Future<String> getPluginLicense(String packageName) {
+    throw UnimplementedError('getPluginLicense() has not been implemented.');
+  }
+
+  Future<List<String>> getPluginOrders() {
+    throw UnimplementedError('getPluginOrders() has not been implemented.');
+  }
+
+  Future<void> setPluginOrders(List<String> plugins) {
+    throw UnimplementedError('setPluginOrders() has not been implemented.');
+  }
+
+  Future<String> setBluetoothDevice(String uuid) {
+    throw UnimplementedError('setBluetoothDevice() has not been implemented.');
+  }
 }
