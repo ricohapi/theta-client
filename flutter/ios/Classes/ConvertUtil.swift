@@ -51,15 +51,39 @@ func convertResult(thetaInfo: ThetaRepository.ThetaInfo) -> [String: Any?] {
     ]
 }
 
-func convertResult(thetaState: ThetaRepository.ThetaState) -> [String: Any] {
+func convertResult(cameraErrorList: [ThetaRepository.CameraErrorEnum]?) -> [String]? {
+    guard let cameraErrorList = cameraErrorList else {
+        return nil
+    }
+    var result: [String] = []
+    cameraErrorList.forEach { error in
+        result.append(error.name)
+    }
+    return result
+}
+
+func convertResult(thetaState: ThetaRepository.ThetaState) -> [String: Any?] {
     return  [
         "fingerprint": thetaState.fingerprint,
         "batteryLevel": thetaState.batteryLevel,
-        "chargingState": thetaState.chargingState.name,
-        "isSdCard": thetaState.isSdCard,
+        "storageUri": thetaState.storageUri,
+        "storageID": thetaState.storageID,
+        "captureStatus": thetaState.captureStatus.name,
         "recordedTime": thetaState.recordedTime,
         "recordableTime": thetaState.recordableTime,
+        "capturedPictures": thetaState.capturedPictures,
+        "compositeShootingElapsedTime": thetaState.compositeShootingElapsedTime,
         "latestFileUrl": thetaState.latestFileUrl,
+        "chargingState": thetaState.chargingState.name,
+        "apiVersion": thetaState.apiVersion,
+        "isPluginRunning": convertKotlinBooleanToBool(value: thetaState.isPluginRunning),
+        "isPluginWebServer": convertKotlinBooleanToBool(value: thetaState.isPluginWebServer),
+        "function": thetaState.function?.name,
+        "isMySettingChanged": convertKotlinBooleanToBool(value: thetaState.isMySettingChanged),
+        "currentMicrophone": thetaState.currentMicrophone?.name,
+        "isSdCard": convertKotlinBooleanToBool(value: thetaState.isSdCard),
+        "cameraError": convertResult(cameraErrorList: thetaState.cameraError),
+        "isBatteryInsert": convertKotlinBooleanToBool(value: thetaState.isBatteryInsert),
     ]
 }
 
@@ -187,6 +211,13 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
     return result
 }
 
+func convertKotlinBooleanToBool(value: Any?) -> Bool? {
+    guard let value = value else { return nil }
+    guard value is KotlinBoolean, let numVal = value as? NSNumber else { return false }
+
+    return numVal.boolValue
+}
+
 func convertSetOptionsParam(params: [String: Any]) -> ThetaRepository.Options {
     let options = ThetaRepository.Options()
     params.forEach { key, value in
@@ -264,6 +295,9 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         break
     case ThetaRepository.OptionNameEnum.whitebalance.name:
         options.whiteBalance = getEnumValue(values: ThetaRepository.WhiteBalanceEnum.values(), name: value as! String)!
+        break
+    case ThetaRepository.OptionNameEnum.whitebalanceautostrength.name:
+        options.whiteBalanceAutoStrength = getEnumValue(values: ThetaRepository.WhiteBalanceAutoStrengthEnum.values(), name: value as! String)!
         break
     default: break
     }
@@ -353,6 +387,26 @@ func convertResult(accessPointList: [ThetaRepository.AccessPoint]) -> [[String: 
             result["defaultGateway"] = defaultGateway
         }
         resultList.append(result)
+    })
+    return resultList
+}
+
+func toPluginInfosResult(pluginInfoList: [ThetaRepository.PluginInfo]) -> [[String: Any]] {
+    var resultList = [[String: Any]]()
+    pluginInfoList.forEach({ pluginInfo in
+        let item = [
+            "name": pluginInfo.name,
+            "packageName": pluginInfo.packageName,
+            "version": pluginInfo.version,
+            "isPreInstalled": pluginInfo.isPreInstalled,
+            "isRunning": pluginInfo.isRunning,
+            "isForeground": pluginInfo.isForeground,
+            "isBoot": pluginInfo.isBoot,
+            "hasWebServer": pluginInfo.hasWebServer,
+            "exitStatus": pluginInfo.exitStatus,
+            "message": pluginInfo.message,
+        ]
+        resultList.append(item)
     })
     return resultList
 }

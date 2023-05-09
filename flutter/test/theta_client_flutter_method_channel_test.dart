@@ -77,33 +77,132 @@ void main() {
 
   test('getThetaState', () async {
     const fingerprint = 'fingerprint_1';
-    const batteryLevel = 0.9;
+    const batteryLevel = 1.0;
+    const storageUri = 'storageUri storageUri';
+    const storageID = 'storageID storageID';
+    const captureStatus = CaptureStatusEnum.idle;
+    const recordedTime = 1;
+    const recordableTime = 2;
+    const capturedPictures = 3;
+    const compositeShootingElapsedTime = 4;
+    const latestFileUrl = 'latestFileUrl latestFileUrl';
     const chargingState = ChargingStateEnum.charging;
+    const apiVersion = 2;
+    const isPluginRunning = true;
+    const isPluginWebServer = false;
+    const function = ShootingFunctionEnum.normal;
+    const isMySettingChanged = true;
+    const currentMicrophone = MicrophoneOptionEnum.auto;
     const isSdCard = true;
-    const recordedTime = 10;
-    const recordableTime = 20;
-    const latestFileUrl = 'http://dumy.jpg';
+    const cameraError = [CameraErrorEnum.batteryChargeFail, CameraErrorEnum.batteryHighTemperature];
+    const isBatteryInsert = false;
+
+    List<String> convertCameraErrorParam(List<CameraErrorEnum> cameraErrorList) {
+      var stringList = List<String>.empty(growable: true);
+      for (CameraErrorEnum element in cameraErrorList) {
+        stringList.add(element.rawValue);
+      }
+      return stringList;
+    }
+
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       final Map state = <String, dynamic> {
         'fingerprint': fingerprint,
         'batteryLevel': batteryLevel,
-        'chargingState': chargingState.rawValue,
-        'isSdCard': isSdCard,
+        'storageUri': storageUri,
+        'storageID': storageID,
+        'captureStatus': captureStatus.rawValue,
         'recordedTime': recordedTime,
         'recordableTime': recordableTime,
+        'capturedPictures': capturedPictures,
+        'compositeShootingElapsedTime': compositeShootingElapsedTime,
         'latestFileUrl': latestFileUrl,
+        'chargingState': chargingState.rawValue,
+        'apiVersion': apiVersion,
+        'isPluginRunning': isPluginRunning,
+        'isPluginWebServer': isPluginWebServer,
+        'function': function.rawValue,
+        'isMySettingChanged': isMySettingChanged,
+        'currentMicrophone': currentMicrophone.rawValue,
+        'isSdCard': isSdCard,
+        'cameraError': convertCameraErrorParam(cameraError),
+        'isBatteryInsert': isBatteryInsert,
       };
       return state;
     });
 
     var thetaState = await platform.getThetaState();
+
     expect(thetaState.fingerprint, fingerprint);
     expect(thetaState.batteryLevel, batteryLevel);
-    expect(thetaState.chargingState, chargingState);
-    expect(thetaState.isSdCard, isSdCard);
+    expect(thetaState.storageUri, storageUri);
+    expect(thetaState.storageID, storageID);
+    expect(thetaState.captureStatus, captureStatus);
     expect(thetaState.recordedTime, recordedTime);
     expect(thetaState.recordableTime, recordableTime);
+    expect(thetaState.capturedPictures, capturedPictures);
+    expect(thetaState.compositeShootingElapsedTime, compositeShootingElapsedTime);
     expect(thetaState.latestFileUrl, latestFileUrl);
+    expect(thetaState.chargingState, chargingState);
+    expect(thetaState.apiVersion, apiVersion);
+    expect(thetaState.isPluginRunning, isPluginRunning);
+    expect(thetaState.isPluginWebServer, isPluginWebServer);
+    expect(thetaState.function, function);
+    expect(thetaState.isMySettingChanged, isMySettingChanged);
+    expect(thetaState.currentMicrophone, currentMicrophone);
+    expect(thetaState.isSdCard, isSdCard);
+    expect(thetaState.cameraError, cameraError);
+    expect(thetaState.isBatteryInsert, isBatteryInsert);
+  });
+
+  test('getThetaState nullable', () async {
+    const fingerprint = 'fingerprint_1';
+    const batteryLevel = 1.0;
+    const captureStatus = CaptureStatusEnum.idle;
+    const recordedTime = 1;
+    const recordableTime = 2;
+    const latestFileUrl = 'latestFileUrl latestFileUrl';
+    const chargingState = ChargingStateEnum.charging;
+    const apiVersion = 2;
+    const isSdCard = true;
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      final Map state = <String, dynamic> {
+        'fingerprint': fingerprint,
+        'batteryLevel': batteryLevel,
+        'captureStatus': captureStatus.rawValue,
+        'recordedTime': recordedTime,
+        'recordableTime': recordableTime,
+        'latestFileUrl': latestFileUrl,
+        'chargingState': chargingState.rawValue,
+        'apiVersion': apiVersion,
+        'isSdCard': isSdCard,
+      };
+      return state;
+    });
+
+    var thetaState = await platform.getThetaState();
+
+    expect(thetaState.fingerprint, fingerprint);
+    expect(thetaState.batteryLevel, batteryLevel);
+    expect(thetaState.storageUri, isNull);
+    expect(thetaState.storageID, isNull);
+    expect(thetaState.captureStatus, captureStatus);
+    expect(thetaState.recordedTime, recordedTime);
+    expect(thetaState.recordableTime, recordableTime);
+    expect(thetaState.capturedPictures, isNull);
+    expect(thetaState.compositeShootingElapsedTime, isNull);
+    expect(thetaState.latestFileUrl, latestFileUrl);
+    expect(thetaState.chargingState, chargingState);
+    expect(thetaState.apiVersion, apiVersion);
+    expect(thetaState.isPluginRunning, isNull);
+    expect(thetaState.isPluginWebServer, isNull);
+    expect(thetaState.function, isNull);
+    expect(thetaState.isMySettingChanged, isNull);
+    expect(thetaState.currentMicrophone, isNull);
+    expect(thetaState.isSdCard, isSdCard);
+    expect(thetaState.cameraError, isNull);
+    expect(thetaState.isBatteryInsert, isNull);
   });
 
   test('listFiles', () async {
@@ -268,6 +367,7 @@ void main() {
       [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
       [OptionNameEnum.shutterVolume, 'ShutterVolume', 7, 7],
       [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
+      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
     ];
 
     Map<String, dynamic> optionMap = {};
@@ -323,6 +423,7 @@ void main() {
       [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
       [OptionNameEnum.shutterVolume, 'ShutterVolume', 7, 7],
       [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
+      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.on, 'ON'],
     ];
 
     Map<String, dynamic> optionMap = {};
@@ -648,5 +749,294 @@ void main() {
       return Future.value();
     });
     await platform.deleteAccessPoint(ssid);
+  });
+
+  test('getMySetting', () async {
+    List<List<dynamic>> data = [
+      [OptionNameEnum.aperture, 'Aperture', ApertureEnum.apertureAuto, 'APERTURE_AUTO'],
+      [OptionNameEnum.colorTemperature, 'ColorTemperature', 5000, 5000],
+      [OptionNameEnum.exposureCompensation, 'ExposureCompensation', ExposureCompensationEnum.zero, 'ZERO'],
+      [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delayOff, 'DELAY_OFF'],
+      [OptionNameEnum.exposureProgram, 'ExposureProgram', ExposureProgramEnum.normalProgram, 'NORMAL_PROGRAM'],
+      [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_6_7K, 'IMAGE_6_7K'],
+      [OptionNameEnum.filter, 'Filter', FilterEnum.off, 'OFF'],
+      [OptionNameEnum.iso, 'Iso', IsoEnum.isoAuto, 'ISO_AUTO'],
+      [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso6400, 'ISO_6400'],
+      [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.auto, 'AUTO'],
+      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
+    ];
+
+    Map<String, dynamic> optionMap = {};
+    var optionNames = List<OptionNameEnum>.empty(growable: true);
+
+    for (int i = 0; i < data.length; i++) {
+      optionMap[data[i][1]] = data[i][3];
+      optionNames.add(data[i][0]);
+    }
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      var arguments = methodCall.arguments as Map<dynamic, dynamic>;
+      expect(arguments['captureMode'], CaptureModeEnum.image.rawValue);
+      return Future.value(optionMap);
+    });
+    Options options = await platform.getMySetting(CaptureModeEnum.image);
+
+    expect(options, isNotNull);
+    expect(options.aperture, data[0][2]);
+    expect(options.colorTemperature, data[1][2]);
+    for (int i = 0; i < data.length; i++) {
+      expect(options.getValue(data[i][0]), data[i][2], reason: data[i][1]);
+    }
+  });
+
+  test('getMySettingFromOldModel', () async {
+    List<List<dynamic>> data = [
+      [OptionNameEnum.aperture, 'Aperture', ApertureEnum.apertureAuto, 'APERTURE_AUTO'],
+      [OptionNameEnum.colorTemperature, 'ColorTemperature', 5000, 5000],
+      [OptionNameEnum.exposureCompensation, 'ExposureCompensation', ExposureCompensationEnum.zero, 'ZERO'],
+      [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delayOff, 'DELAY_OFF'],
+      [OptionNameEnum.exposureProgram, 'ExposureProgram', ExposureProgramEnum.normalProgram, 'NORMAL_PROGRAM'],
+      [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_6_7K, 'IMAGE_6_7K'],
+      [OptionNameEnum.filter, 'Filter', FilterEnum.off, 'OFF'],
+      [OptionNameEnum.iso, 'Iso', IsoEnum.isoAuto, 'ISO_AUTO'],
+      [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso6400, 'ISO_6400'],
+      [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.auto, 'AUTO'],
+      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
+    ];
+
+    Map<String, dynamic> optionMap = {};
+    var optionNames = List<OptionNameEnum>.empty(growable: true);
+
+    for (int i = 0; i < data.length; i++) {
+      optionMap[data[i][1]] = data[i][3];
+      optionNames.add(data[i][0]);
+    }
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      var arguments = methodCall.arguments['optionNames'] as List<dynamic>;
+      for (int i = 0; i < data.length; i++) {
+        expect(arguments[i], data[i][1], reason: data[i][1]);
+      }
+      return Future.value(optionMap);
+    });
+    Options options = await platform.getMySettingFromOldModel(optionNames);
+
+    expect(options, isNotNull);
+    expect(options.aperture, data[0][2]);
+    expect(options.colorTemperature, data[1][2]);
+    for (int i = 0; i < data.length; i++) {
+      expect(options.getValue(data[i][0]), data[i][2], reason: data[i][1]);
+    }
+  });
+
+  test('setMySetting', () async {
+    List<List<dynamic>> data = [
+      [OptionNameEnum.aperture, 'Aperture', ApertureEnum.apertureAuto, 'APERTURE_AUTO'],
+      [OptionNameEnum.colorTemperature, 'ColorTemperature', 100, 100],
+      [OptionNameEnum.exposureCompensation, 'ExposureCompensation', ExposureCompensationEnum.p0_3, 'P0_3'],
+      [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delay2, 'DELAY_2'],
+      [OptionNameEnum.exposureProgram, 'ExposureProgram', ExposureProgramEnum.shutterPriority, 'SHUTTER_PRIORITY'],
+      [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_2K, 'IMAGE_2K'],
+      [OptionNameEnum.filter, 'Filter', FilterEnum.hdr, 'HDR'],
+      [OptionNameEnum.iso, 'Iso', IsoEnum.iso100, 'ISO_100'],
+      [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso1250, 'ISO_1250'],
+      [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.auto, 'AUTO'],
+      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
+    ];
+
+    Map<String, dynamic> optionMap = {};
+    var optionNames = List<OptionNameEnum>.empty(growable: true);
+
+    for (int i = 0; i < data.length; i++) {
+      optionMap[data[i][1]] = data[i][3];
+      optionNames.add(data[i][0]);
+    }
+    final options = Options();
+    for (int i = 0; i < data.length; i++) {
+      options.setValue(data[i][0], data[i][2]);
+    }
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      var arguments = methodCall.arguments as Map<dynamic, dynamic>;
+      expect(arguments['captureMode'], CaptureModeEnum.image.rawValue);
+
+      var options = methodCall.arguments['options'] as Map<dynamic, dynamic>;
+      for (int i = 0; i < data.length; i++) {
+        expect(options[data[i][1]], data[i][3], reason: data[i][1]);
+      }
+      return Future.value();
+    });
+    await platform.setMySetting(CaptureModeEnum.image, options);
+
+    expect(true, isTrue);
+  });
+
+  test('deleteMySetting', () async {
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'deleteMySetting');
+      expect(methodCall.arguments['captureMode'], CaptureModeEnum.image.rawValue);
+      return Future.value();
+    });
+    await platform.deleteMySetting(CaptureModeEnum.image);
+  });
+
+  test('listPlugins', () async {
+    const data = [
+      {
+        "isBoot": false,
+        "exitStatus": "success",
+        "isPreInstalled": false,
+        "isForeground": false,
+        "message": "",
+        "packageName": "android.example.com.tflitecamerademo",
+        "name": "TfLite Camera Demo",
+        "isRunning": false,
+        "type": "user",
+        "version": "1.0",
+        "hasWebServer": false
+      },
+      {
+        "isBoot": false,
+        "exitStatus": "success",
+        "isPreInstalled": false,
+        "isForeground": false,
+        "message": "",
+        "packageName": "com.awesomeproject",
+        "name": "AwesomeProject",
+        "isRunning": false,
+        "type": "user",
+        "version": "1.0",
+        "hasWebServer": false
+      },
+      {
+        "isBoot": true,
+        "exitStatus": "success",
+        "isPreInstalled": false,
+        "isForeground": false,
+        "message": "",
+        "packageName": "com.theta.remoteplayback",
+        "name": "Remote Playback",
+        "isRunning": false,
+        "type": "system",
+        "version": "2.10.3",
+        "hasWebServer": false
+      }
+    ];
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'listPlugins');
+      return Future.value(data);
+    });
+    var resultList = await platform.listPlugins();
+    for (int i = 0; i < resultList.length; i++) {
+      expect(resultList[i].name, data[i]['name']);
+      expect(resultList[i].packageName, data[i]['packageName']);
+      expect(resultList[i].version, data[i]['version']);
+      expect(resultList[i].isPreInstalled, data[i]['isPreInstalled']);
+      expect(resultList[i].isRunning, data[i]['isRunning']);
+      expect(resultList[i].isForeground, data[i]['isForeground']);
+      expect(resultList[i].isBoot, data[i]['isBoot']);
+      expect(resultList[i].hasWebServer, data[i]['hasWebServer']);
+      expect(resultList[i].exitStatus, data[i]['exitStatus']);
+      expect(resultList[i].message, data[i]['message']);
+    }
+  });
+
+  test('setPlugin', () async {
+    const packageName = 'android.example.com.tflitecamerademo';
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'setPlugin');
+
+      var arguments = methodCall.arguments as String;
+      expect(arguments, packageName);
+      return Future.value();
+    });
+    await platform.setPlugin(packageName);
+  });
+
+  test('startPlugin', () async {
+    const packageName = 'android.example.com.tflitecamerademo';
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'startPlugin');
+
+      var arguments = methodCall.arguments as String;
+      expect(arguments, packageName);
+      return Future.value();
+    });
+    await platform.startPlugin(packageName);
+  });
+
+  test('stopPlugin', () async {
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'stopPlugin');
+      return Future.value();
+    });
+    await platform.stopPlugin();
+  });
+
+  test('getPluginLicense', () async {
+    const packageName = 'android.example.com.tflitecamerademo';
+    const license = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8"/>
+      <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+      <title>RICOH THETA - Underside cover</title>
+    </head>
+    <body>
+    </body>
+    </html>
+    """;
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'getPluginLicense');
+
+      var arguments = methodCall.arguments as String;
+      expect(arguments, packageName);
+      return Future.value(license);
+    });
+    var result = await platform.getPluginLicense(packageName);
+    expect(result, license);
+  });
+
+  test('getPluginOrders', () async {
+    const plugins = ["com.theta360.usbstorage", "com.theta.remoteplayback", "com.theta360.undersidecover"];
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'getPluginOrders');
+      return Future.value(plugins);
+    });
+    var result = await platform.getPluginOrders();
+    expect(result, plugins);
+  });
+
+  test('setPluginOrders', () async {
+    const packageNames = ['android.example.com.tflitecamerademo'];
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'setPluginOrders');
+
+      var arguments = methodCall.arguments as List<dynamic>;
+      for (int i = 0; i < packageNames.length; i++) {
+        expect(arguments[i], packageNames[i]);
+      }
+      return Future.value();
+    });
+    await platform.setPluginOrders(packageNames);
+  });
+
+  test('setBluetoothDevice', () async {
+    const name = '10107709';
+    const uuid = '00000000-1111-2222-3333-555555555555';
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'setBluetoothDevice');
+
+      var arguments = methodCall.arguments as String;
+      expect(arguments, uuid);
+      return Future.value(name);
+    });
+    var result = await platform.setBluetoothDevice(uuid);
+    expect(result, name);
   });
 }

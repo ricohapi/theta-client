@@ -166,6 +166,66 @@ class MockThetaClientFlutterPlatform
   Future<void> deleteAccessPoint(String ssid) {
     return Future.value();
   }
+
+  @override
+  Future<Options> getMySetting(CaptureModeEnum? captureMode) {
+    return Future.value(Options());
+  }
+
+  @override
+  Future<Options> getMySettingFromOldModel(List<OptionNameEnum> optionNames) {
+    return Future.value(Options());
+  }
+
+  @override
+  Future<void> setMySetting(CaptureModeEnum captureMode, Options options) {
+    return Future.value();
+  }
+
+  @override
+  Future<void> deleteMySetting(CaptureModeEnum captureMode) {
+    return Future.value();
+  }
+
+  @override
+  Future<List<PluginInfo>> listPlugins() {
+    return onCallGetPluginInfos();
+  }
+
+  @override
+  Future<void> setPlugin(String packageName) {
+    return Future.value();
+  }
+
+  @override
+  Future<void> startPlugin(String? packageName) {
+    return Future.value();
+  }
+
+  @override
+  Future<void> stopPlugin() {
+    return Future.value();
+  }
+
+  @override
+  Future<String> getPluginLicense(String packageName) {
+    return onCallGetString(packageName);
+  }
+
+  @override
+  Future<List<String>> getPluginOrders() {
+    return onCallGetStringList();
+  }
+
+  @override
+  Future<void> setPluginOrders(List<String> plugins) {
+    return Future.value();
+  }
+
+  @override
+  Future<String> setBluetoothDevice(String uuid) {
+    return onCallGetString(uuid);
+  }
 }
 
 Future<void> Function() onCallInitialize = Future.value;
@@ -184,6 +244,9 @@ Future<void> Function() onCallStopVideoCapture = Future.value;
 Future<Options> Function(List<OptionNameEnum> optionNames) onCallGetOptions = (optionNames) => Future.value(Options());
 Future<void> Function(Options options) onCallSetOptions = Future.value;
 Future<void> Function() onCallRestoreSettings = Future.value;
+Future<List<PluginInfo>> Function() onCallGetPluginInfos = Future.value;
+Future<String> Function(String str) onCallGetString = Future.value;
+Future<List<String>> Function() onCallGetStringList = Future.value;
 
 void main() {
   final ThetaClientFlutterPlatform initialPlatform = ThetaClientFlutterPlatform.instance;
@@ -246,20 +309,73 @@ void main() {
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     const fingerprint = 'fingerprint_1';
+    const batteryLevel = 1.0;
+    const storageUri = 'storageUri storageUri';
+    const storageID = 'storageID storageID';
+    const captureStatus = CaptureStatusEnum.idle;
+    const recordedTime = 1;
+    const recordableTime = 2;
+    const capturedPictures = 3;
+    const compositeShootingElapsedTime = 4;
+    const latestFileUrl = 'latestFileUrl latestFileUrl';
+    const chargingState = ChargingStateEnum.charging;
+    const apiVersion = 2;
+    const isPluginRunning = true;
+    const isPluginWebServer = false;
+    const function = ShootingFunctionEnum.normal;
+    const isMySettingChanged = true;
+    const currentMicrophone = MicrophoneOptionEnum.auto;
+    const isSdCard = true;
+    const cameraError = [CameraErrorEnum.batteryChargeFail, CameraErrorEnum.batteryHighTemperature];
+    const isBatteryInsert = false;
     onGetThetaState = () {
       return Future.value(ThetaState(
         fingerprint,
-        0.9,
-        ChargingStateEnum.charging,
-        true,
-        0,
-        0,
-        '')
+        batteryLevel,
+        storageUri,
+        storageID,
+        captureStatus,
+        recordedTime,
+        recordableTime,
+        capturedPictures,
+        compositeShootingElapsedTime,
+        latestFileUrl,
+        chargingState,
+        apiVersion,
+        isPluginRunning,
+        isPluginWebServer,
+        function,
+        isMySettingChanged,
+        currentMicrophone,
+        isSdCard,
+        cameraError,
+        isBatteryInsert
+        )
       );
     };
 
     var thetaState = await thetaClientPlugin.getThetaState();
+
     expect(thetaState.fingerprint, fingerprint);
+    expect(thetaState.batteryLevel, batteryLevel);
+    expect(thetaState.storageUri, storageUri);
+    expect(thetaState.storageID, storageID);
+    expect(thetaState.captureStatus, captureStatus);
+    expect(thetaState.recordedTime, recordedTime);
+    expect(thetaState.recordableTime, recordableTime);
+    expect(thetaState.capturedPictures, capturedPictures);
+    expect(thetaState.compositeShootingElapsedTime, compositeShootingElapsedTime);
+    expect(thetaState.latestFileUrl, latestFileUrl);
+    expect(thetaState.chargingState, chargingState);
+    expect(thetaState.apiVersion, apiVersion);
+    expect(thetaState.isPluginRunning, isPluginRunning);
+    expect(thetaState.isPluginWebServer, isPluginWebServer);
+    expect(thetaState.function, function);
+    expect(thetaState.isMySettingChanged, isMySettingChanged);
+    expect(thetaState.currentMicrophone, currentMicrophone);
+    expect(thetaState.isSdCard, isSdCard);
+    expect(thetaState.cameraError, cameraError);
+    expect(thetaState.isBatteryInsert, isBatteryInsert);
   });
 
   test('listFiles', () async {
@@ -624,5 +740,179 @@ void main() {
     await thetaClientPlugin.restoreSettings();
 
     expect(true, isTrue);
+  });
+
+  test('getMySetting', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    onCallGetOptions = (optionNames) {
+      return Future.value(Options());
+    };
+
+    var options = thetaClientPlugin.getMySetting(CaptureModeEnum.image);
+    expect(options, isNotNull);
+  });
+
+  test('getMySettingFromOldModel', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    onCallGetOptions = (optionNames) {
+      return Future.value(Options());
+    };
+
+    const optionNames = [
+      OptionNameEnum.aperture,
+      OptionNameEnum.colorTemperature,
+    ];
+
+    var options = thetaClientPlugin.getMySettingFromOldModel(optionNames);
+    expect(options, isNotNull);
+  });
+
+  test('setMySetting', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    onCallSetOptions = Future.value;
+
+    final options = Options();
+    options.aperture = ApertureEnum.apertureAuto;
+
+    thetaClientPlugin.setMySetting(CaptureModeEnum.image, options);
+    expect(true, isTrue);
+  });
+
+  test('deleteMySetting', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    thetaClientPlugin.deleteMySetting(CaptureModeEnum.image);
+    expect(true, isTrue);
+  });
+
+  test('listPlugins', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    var infoList = List<PluginInfo>.empty(growable: true);
+    infoList.add(PluginInfo(
+      "AwesomeProject",
+      "com.awesomeproject",
+      '1.0',
+      false,
+      false,
+      false,
+      false,
+      false,
+      "success",
+      '',
+    ));
+
+    onCallGetPluginInfos = () {
+      return Future.value(infoList);
+    };
+
+    var result = await thetaClientPlugin.listPlugins();
+    expect(result, infoList);
+  });
+
+  test('setPlugin', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    thetaClientPlugin.setPlugin('com.theta360.usbstorage');
+    expect(true, isTrue);
+  });
+
+  test('startPlugin', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    thetaClientPlugin.startPlugin('com.theta360.usbstorage');
+    expect(true, isTrue);
+  });
+
+  test('stopPlugin', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    thetaClientPlugin.stopPlugin();
+    expect(true, isTrue);
+  });
+
+  test('getPluginLicense', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    var license = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8"/>
+      <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+      <title>RICOH THETA - Underside cover</title>
+    </head>
+    <body>
+    </body>
+    </html>
+    """;
+    var packageName = 'com.theta360.usbstorage';
+    onCallGetString = (packageName) {
+      return Future.value(license);
+    };
+
+    var result = await thetaClientPlugin.getPluginLicense(packageName);
+    expect(result, license);
+  });
+
+  test('getPluginOrders', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    var strList = List<String>.empty(growable: true);
+    strList.add("com.awesomeproject");
+
+    onCallGetStringList = () {
+      return Future.value(strList);
+    };
+
+    var result = await thetaClientPlugin.getPluginOrders();
+    expect(result, strList);
+  });
+
+  test('setPluginOrders', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    thetaClientPlugin.setPluginOrders(['com.theta360.usbstorage']);
+    expect(true, isTrue);
+  });
+
+  test('setBluetoothDevice', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    var name = '10107709';
+    var uuid = '00000000-1111-2222-3333-555555555555';
+    onCallGetString = (uuid) {
+      return Future.value(name);
+    };
+
+    var result = await thetaClientPlugin.setBluetoothDevice(uuid);
+    expect(result, name);
   });
 }

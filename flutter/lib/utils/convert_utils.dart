@@ -52,11 +52,24 @@ class ConvertUtils {
     var thetaInfo = ThetaState(
       data['fingerprint'],
       data['batteryLevel'],
-      ChargingStateEnum.getValue(data['chargingState'] as String)!,
-      data['isSdCard'],
+      data['storageUri'],
+      data['storageID'],
+      CaptureStatusEnum.getValue(data['captureStatus'] as String)!,
       data['recordedTime'],
       data['recordableTime'],
-      data['latestFileUrl']
+      data['capturedPictures'],
+      data['compositeShootingElapsedTime'],
+      data['latestFileUrl'],
+      ChargingStateEnum.getValue(data['chargingState'] as String)!,
+      data['apiVersion'],
+      data['isPluginRunning'],
+      data['isPluginWebServer'],
+      ShootingFunctionEnum.getValue(data['function'] as String? ?? ''),
+      data['isMySettingChanged'],
+      MicrophoneOptionEnum.getValue(data['currentMicrophone'] as String? ?? ''),
+      data['isSdCard'],
+      ConvertUtils.toCameraErrorList(data['cameraError']),
+      data['isBatteryInsert'],
     );
     return thetaInfo;
   }
@@ -177,6 +190,9 @@ class ConvertUtils {
         case OptionNameEnum.whiteBalance:
           result.whiteBalance = WhiteBalanceEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.whiteBalanceAutoStrength:
+          result.whiteBalanceAutoStrength = WhiteBalanceAutoStrengthEnum.getValue(entry.value);
+          break;
       }
     }
     return result;
@@ -221,6 +237,8 @@ class ConvertUtils {
     } else if (value is SleepDelayEnum) {
       return value.rawValue;
     } else if (value is WhiteBalanceEnum) {
+      return value.rawValue;
+    } else if (value is WhiteBalanceAutoStrengthEnum) {
       return value.rawValue;
     } else if (value is int || value is double || value is String || value is bool) {
       return value;
@@ -287,6 +305,16 @@ class ConvertUtils {
     return metadata;
   }
 
+  static List<String> convertStringList(List<dynamic> data) {
+    var nameList = List<String>.empty(growable: true);
+    for (var element in data) {
+      if (element is String) {
+        nameList.add(element);
+      }
+    }
+    return nameList;
+  }
+
   static List<AccessPoint> toAccessPointList(List<Map<dynamic, dynamic>> data) {
     var accessPointList = List<AccessPoint>.empty(growable: true);
     for (Map<dynamic, dynamic> element in data) {
@@ -303,6 +331,41 @@ class ConvertUtils {
       accessPointList.add(accessPoint);
     }
     return accessPointList;
+  }
+
+  static List<CameraErrorEnum>? toCameraErrorList(List<dynamic>? data) {
+    if (data == null) {
+      return null;
+    }
+    var cameraErrorList = List<CameraErrorEnum>.empty(growable: true);
+    for (String element in data) {
+      final cameraError = CameraErrorEnum.getValue(element)!;
+      cameraErrorList.add(cameraError);
+    }
+    return cameraErrorList;
+  }
+
+  static List<PluginInfo>? toPluginInfoList(List<Map<dynamic, dynamic>>? data) {
+    if (data == null) {
+      return null;
+    }
+
+    var pluginInfoList = List<PluginInfo>.empty(growable: true);
+    for (Map<dynamic, dynamic> element in data) {
+      var pluginInfo = PluginInfo(
+          element['name'],
+          element['packageName'],
+          element['version'],
+          element['isPreInstalled'],
+          element['isRunning'],
+          element['isForeground'],
+          element['isBoot'],
+          element['hasWebServer'],
+          element['exitStatus'],
+          element['message']);
+      pluginInfoList.add(pluginInfo);
+    }
+    return pluginInfoList;
   }
 }
 

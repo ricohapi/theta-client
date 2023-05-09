@@ -255,6 +255,135 @@ class ThetaClientFlutter {
   Future<void> deleteAccessPoint(String ssid) {
     return ThetaClientFlutterPlatform.instance.deleteAccessPoint(ssid);
   }
+
+  /// Acquires the shooting properties set by the camera._setMySetting command.
+  /// Just for Theta V and later.
+  ///
+  /// Refer to the [options Overview](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
+  /// of API v2.1 reference  for properties available for acquisition.
+  ///
+  /// @param captureMode The target shooting mode.
+  /// @return Options of my setting
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<Options> getMySetting(CaptureModeEnum captureMode) {
+    return ThetaClientFlutterPlatform.instance.getMySetting(captureMode);
+  }
+
+  /// Acquires the shooting properties set by the camera._setMySetting command.
+  /// Just for Theta S and SC.
+  ///
+  /// Refer to the [options Overview](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
+  /// of API v2.1 reference  for properties available for acquisition.
+  ///
+  /// @param optionNames List of option names to acquire.
+  /// @return Options of my setting
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<Options> getMySettingFromOldModel(List<OptionNameEnum> optionNames) {
+    return ThetaClientFlutterPlatform.instance.getMySettingFromOldModel(optionNames);
+  }
+
+  /// Registers shooting conditions in My Settings.
+  ///
+  /// @param captureMode The target shooting mode.  RICOH THETA S and SC do not support My Settings in video capture mode.
+  /// @param options registered to My Settings.
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<void> setMySetting(CaptureModeEnum captureMode, Options options) {
+    return ThetaClientFlutterPlatform.instance.setMySetting(captureMode, options);
+  }
+
+  /// Delete shooting conditions in My Settings. Supported just by Theta X and Z1.
+  ///
+  /// @param captureMode The target shooting mode.
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<void> deleteMySetting(CaptureModeEnum captureMode) {
+    return ThetaClientFlutterPlatform.instance.deleteMySetting(captureMode);
+  }
+
+  /// Acquires a list of installed plugins. Supported just by Theta X, Z1 and V.
+  /// @return a list of installed plugin information
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<List<PluginInfo>> listPlugins() {
+    return ThetaClientFlutterPlatform.instance.listPlugins();
+  }
+
+  /// Sets the installed plugin for boot. Supported just by Theta V.
+  ///
+  /// @param packageName package name of the plugin
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<void> setPlugin(String packageName) {
+    return ThetaClientFlutterPlatform.instance.setPlugin(packageName);
+  }
+
+  /// Start the plugin specified by the [packageName].
+  /// If [packageName] is not specified, plugin 1 will start.
+  /// Supported just by Theta X, Z1 and V.
+  ///
+  /// @param packageName package name of the plugin.  Theta V does not support this parameter.
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<void> startPlugin([String? packageName]) {
+    return ThetaClientFlutterPlatform.instance.startPlugin(packageName);
+  }
+
+  /// Stop the running plugin.
+  /// Supported just by Theta X, Z1 and V.
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<void> stopPlugin() {
+    return ThetaClientFlutterPlatform.instance.stopPlugin();
+  }
+
+  /// Acquires the license for the installed plugin
+  ///
+  /// @param packageName package name of the target plugin
+  /// @return HTML string of the license
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<String> getPluginLicense(String packageName) {
+    return ThetaClientFlutterPlatform.instance.getPluginLicense(packageName);
+  }
+
+  /// Return the plugin orders.  Supported just by Theta X and Z1.
+  ///
+  /// @return list of package names of plugins
+  /// For Z1, list of three package names for the start-up plugin. No restrictions for the number of package names for X.
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<List<String>> getPluginOrders() {
+    return ThetaClientFlutterPlatform.instance.getPluginOrders();
+  }
+
+  /// Sets the plugin orders.  Supported just by Theta X and Z1.
+  ///
+  /// @param plugins list of package names of plugins
+  /// For Z1, list size must be three. No restrictions for the size for X.
+  /// When not specifying, set an empty string.
+  /// If an empty string is placed mid-way, it will be moved to the front.
+  /// Specifying zero package name will result in an error.
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<void> setPluginOrders(List<String> plugins) {
+    return ThetaClientFlutterPlatform.instance.setPluginOrders(plugins);
+  }
+
+  /// Registers identification information (UUID) of a BLE device (Smartphone application) connected to the camera.
+  /// UUID can be set while the wireless LAN function of the camera is placed in the direct mode.
+  ///
+  /// @param uuid Format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  /// Alphabetic letters are not case-sensitive.
+  /// @return Device name generated from the serial number (S/N) of the camera.
+  /// Eg. "00101234" or "THETAXS00101234" when the serial number (S/N) is "XS00101234"
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<String> setBluetoothDevice(String uuid) {
+    return ThetaClientFlutterPlatform.instance.setBluetoothDevice(uuid);
+  }
 }
 
 /// Static attributes of Theta.
@@ -365,6 +494,45 @@ class ThetaFiles {
   ThetaFiles(this.fileList, this.totalEntries);
 }
 
+/// Capture Status
+enum CaptureStatusEnum {
+  /// Capture status. Performing continuously shoot
+  shooting('SHOOTING'),
+
+  /// Capture status. In standby
+  idle('IDLE'),
+
+  /// Capture status. Self-timer is operating
+  selfTimerCountdown('SELF_TIMER_COUNTDOWN'),
+
+  /// Capture status. Performing multi bracket shooting
+  bracketShooting('BRACKET_SHOOTING'),
+
+  /// Capture status. Converting post file...
+  converting('CONVERTING'),
+
+  /// Capture status. Performing timeShift shooting
+  timeShiftShooting('TIME_SHIFT_SHOOTING'),
+
+  /// Capture status. Performing continuous shooting
+  continuousShooting('CONTINUOUS_SHOOTING'),
+
+  /// Capture status. Waiting for retrospective video...
+  retrospectiveImageRecording('RETROSPECTIVE_IMAGE_RECORDING');
+
+  final String rawValue;
+  const CaptureStatusEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static CaptureStatusEnum? getValue(String rawValue) {
+    return CaptureStatusEnum.values.cast<CaptureStatusEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
 /// Battery charging state
 enum ChargingStateEnum {
   /// Battery charging state. Charging
@@ -389,6 +557,158 @@ enum ChargingStateEnum {
   }
 }
 
+/// Shooting function status
+enum ShootingFunctionEnum {
+  /// Shooting function status. normal
+  normal('NORMAL'),
+
+  /// Shooting function status. selfTimer
+  selfTimer('SELF_TIMER'),
+
+  /// Shooting function status. mySetting
+  mySetting('MY_SETTING');
+
+  final String rawValue;
+  const ShootingFunctionEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static ShootingFunctionEnum? getValue(String rawValue) {
+    return ShootingFunctionEnum.values.cast<ShootingFunctionEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Microphone option
+enum MicrophoneOptionEnum {
+  /// Microphone option. auto
+  auto('AUTO'),
+
+  /// Microphone option. built-in microphone
+  internal('INTERNAL'),
+
+  /// Microphone option. external microphone
+  external('EXTERNAL');
+
+  final String rawValue;
+  const MicrophoneOptionEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static MicrophoneOptionEnum? getValue(String rawValue) {
+    return MicrophoneOptionEnum.values.cast<MicrophoneOptionEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Camera error
+enum CameraErrorEnum {
+  /// Camera error
+  /// Insufficient memory
+  noMemory('NO_MEMORY'),
+
+  /// Camera error
+  /// Maximum file number exceeded
+  fileNumberOver('FILE_NUMBER_OVER'),
+
+  /// Camera error
+  /// Camera clock not set
+  noDateSetting('NO_DATE_SETTING'),
+
+  /// Camera error
+  /// Includes when the card is removed
+  readError('READ_ERROR'),
+
+  /// Camera error
+  /// Unsupported media (SDHC, etc.)
+  notSupportedMediaType('NOT_SUPPORTED_MEDIA_TYPE'),
+
+  /// Camera error
+  /// FAT32, etc.
+  notSupportedFileSystem('NOT_SUPPORTED_FILE_SYSTEM'),
+
+  /// Camera error
+  /// Error warning while mounting
+  mediaNotReady('MEDIA_NOT_READY'),
+
+  /// Camera error
+  /// Battery level warning (firmware update)
+  notEnoughBattery('NOT_ENOUGH_BATTERY'),
+
+  /// Camera error
+  /// Firmware file mismatch warning
+  invalidFile('INVALID_FILE'),
+
+  /// Camera error
+  /// Plugin start warning (IoT technical standards compliance)
+  pluginBootError('PLUGIN_BOOT_ERROR'),
+
+  /// Camera error
+  /// When performing continuous shooting by operating the camera while executing <Delete object>,
+  /// <Transfer firmware file>, <Install plugin> or <Uninstall plugin> with the WebAPI or MTP.
+  inProgressError('IN_PROGRESS_ERROR'),
+
+  /// Camera error
+  /// Battery inserted + WLAN ON + Video mode + 4K 60fps / 5.7K 10fps / 5.7K 15fps / 5.7K 30fps / 8K 10fps
+  cannotRecording('CANNOT_RECORDING'),
+
+  /// Camera error
+  /// Battery inserted AND Specified battery level or lower + WLAN ON + Video mode + 4K 30fps
+  cannotRecordLowbat('CANNOT_RECORD_LOWBAT'),
+
+  /// Camera error
+  /// Shooting hardware failure
+  captureHwFailed('CAPTURE_HW_FAILED'),
+
+  /// Camera error
+  /// Software error
+  captureSwFailed('CAPTURE_SW_FAILED'),
+
+  /// Camera error
+  /// Internal memory access error
+  internalMemAccessFail('INTERNAL_MEM_ACCESS_FAIL'),
+
+  /// Camera error
+  /// Undefined error
+  unexpectedError('UNEXPECTED_ERROR'),
+
+  /// Camera error
+  /// Charging error
+  batteryChargeFail('BATTERY_CHARGE_FAIL'),
+
+  /// Camera error
+  /// (Board) temperature warning
+  highTemperatureWarning('HIGH_TEMPERATURE_WARNING'),
+
+  /// Camera error
+  /// (Board) temperature error
+  highTemperature('HIGH_TEMPERATURE'),
+
+  /// Camera error
+  /// Battery temperature error
+  batteryHighTemperature('BATTERY_HIGH_TEMPERATURE'),
+
+  /// Camera error
+  /// Electronic compass error
+  compassCalibration('COMPASS_CALIBRATION');
+
+  final String rawValue;
+  const CameraErrorEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static CameraErrorEnum? getValue(String rawValue) {
+    return CameraErrorEnum.values.cast<CameraErrorEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
 /// Mutable values representing Theta status.
 class ThetaState {
   /// Fingerprint (unique identifier) of the current camera state
@@ -397,11 +717,14 @@ class ThetaState {
   /// Battery level between 0.0 and 1.0
   double batteryLevel;
 
-  /// Charging state
-  ChargingStateEnum chargingState;
+  /// Storage URI
+  String? storageUri;
 
-  /// True if record to SD card
-  bool isSdCard;
+  /// Storage ID
+  String? storageID;
+
+  /// Continuously shoots state
+  CaptureStatusEnum captureStatus;
 
   /// Recorded time of movie (seconds)
   int recordedTime;
@@ -409,10 +732,64 @@ class ThetaState {
   /// Recordable time of movie (seconds)
   int recordableTime;
 
+  /// Number of still images captured during continuous shooting, Unit: images
+  int? capturedPictures;
+
+  /// Elapsed time for interval composite shooting (sec)
+  int? compositeShootingElapsedTime;
+
   /// URL of the last saved file
   String latestFileUrl;
 
-  ThetaState(this.fingerprint, this.batteryLevel, this.chargingState, this.isSdCard, this.recordedTime, this.recordableTime, this.latestFileUrl);
+  /// Charging state
+  ChargingStateEnum chargingState;
+
+  /// API version currently set (1: v2.0, 2: v2.1)
+  int apiVersion;
+  /// Plugin running state (true: running, false: stop)
+  bool? isPluginRunning;
+  /// Plugin web server state (true: enabled, false: disabled)
+  bool? isPluginWebServer;
+  /// Shooting function status
+  ShootingFunctionEnum? function;
+
+  /// My setting changed state
+  bool? isMySettingChanged;
+
+  /// Identifies the microphone used while recording video
+  MicrophoneOptionEnum? currentMicrophone;
+
+  /// True if record to SD card
+  bool isSdCard;
+
+  /// Error information of the camera
+  List<CameraErrorEnum>? cameraError;
+
+  /// true: Battery inserted; false: Battery not inserted
+  bool? isBatteryInsert;
+
+  ThetaState(
+    this.fingerprint,
+    this.batteryLevel,
+    this.storageUri,
+    this.storageID,
+    this.captureStatus,
+    this.recordedTime,
+    this.recordableTime,
+    this.capturedPictures,
+    this.compositeShootingElapsedTime,
+    this.latestFileUrl,
+    this.chargingState,
+    this.apiVersion,
+    this.isPluginRunning,
+    this.isPluginWebServer,
+    this.function,
+    this.isMySettingChanged,
+    this.currentMicrophone,
+    this.isSdCard,
+    this.cameraError,
+    this.isBatteryInsert
+  );
 }
 
 /// Exif metadata of a still image.
@@ -588,7 +965,10 @@ enum OptionNameEnum {
   shutterVolume('ShutterVolume', int),
 
   /// Option name whiteBalance
-  whiteBalance('WhiteBalance', WhiteBalanceEnum);
+  whiteBalance('WhiteBalance', WhiteBalanceEnum),
+
+  /// Option name WhiteBalanceAutoStrength
+  whiteBalanceAutoStrength('WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum);
 
   final String rawValue;
   final dynamic valueType;
@@ -1445,6 +1825,37 @@ enum WhiteBalanceEnum {
   }
 }
 
+/// White balance auto strength.
+///
+/// To set the strength of white balance auto for low color temperature scene.
+/// This option can be set for photo mode and video mode separately.
+/// Also this option will not be cleared by power-off.
+///
+/// For RICOH THETA Z1 firmware v2.20.3 or later
+enum WhiteBalanceAutoStrengthEnum {
+  /// correct tint for low color temperature scene
+  on('ON'),
+
+  /// not correct tint for low color temperature scene
+  off('OFF');
+
+  final String rawValue;
+
+  const WhiteBalanceAutoStrengthEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static WhiteBalanceAutoStrengthEnum? getValue(String rawValue) {
+    return WhiteBalanceAutoStrengthEnum.values
+        .cast<WhiteBalanceAutoStrengthEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
 /// Turns position information assigning ON/OFF.
 /// 
 /// For RICOH THETA X
@@ -1807,6 +2218,15 @@ class Options {
   /// Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
   WhiteBalanceEnum? whiteBalance;
 
+  /// White balance auto strength.
+  ///
+  /// To set the strength of white balance auto for low color temperature scene.
+  /// This option can be set for photo mode and video mode separately.
+  /// Also this option will not be cleared by power-off.
+  ///
+  /// For RICOH THETA Z1 firmware v2.20.3 or later
+  WhiteBalanceAutoStrengthEnum? whiteBalanceAutoStrength;
+
   /// Get Option value.
   T? getValue<T>(OptionNameEnum name) {
     switch (name) {
@@ -1856,6 +2276,8 @@ class Options {
         return shutterVolume as T;
       case OptionNameEnum.whiteBalance:
         return whiteBalance as T;
+      case OptionNameEnum.whiteBalanceAutoStrength:
+        return whiteBalanceAutoStrength as T;
     }
   }
 
@@ -1934,6 +2356,9 @@ class Options {
         break;
       case OptionNameEnum.whiteBalance:
         whiteBalance = value;
+        break;
+      case OptionNameEnum.whiteBalanceAutoStrength:
+        whiteBalanceAutoStrength = value;
         break;
     }
   }
@@ -2198,4 +2623,40 @@ class ThetaTimeout {
   /// Specifies a maximum time (in milliseconds) of inactivity between two data packets
   /// when exchanging data with a server.
   int socketTimeout = 20000;
+}
+
+/// Plugin information
+class PluginInfo {
+  /// Plugin name
+  String name;
+
+  /// Package name
+  String packageName;
+
+  /// Plugin version
+  String version;
+
+  /// Pre-installed plugin or not
+  bool isPreInstalled;
+
+  /// Plugin power status
+  bool isRunning;
+
+  /// Process status
+  bool isForeground;
+
+  /// To be started on boot or not
+  bool isBoot;
+
+  /// Has Web UI or not
+  bool hasWebServer;
+
+  /// Exit status
+  String exitStatus;
+
+  /// Message
+  String message;
+
+  PluginInfo(this.name, this.packageName, this.version, this.isPreInstalled, this.isRunning, this.isForeground,
+      this.isBoot, this.hasWebServer, this.exitStatus, this.message);
 }

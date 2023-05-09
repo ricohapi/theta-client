@@ -27,15 +27,39 @@ fun toResult(thetaInfo: ThetaInfo): Map<String, Any?> {
     )
 }
 
-fun toResult(thetaState: ThetaState): Map<String, Any> {
-    return mapOf<String, Any>(
+fun toCameraErrorList(cameraErrorList: List<CameraErrorEnum>?): List<String>? {
+    if (cameraErrorList == null) {
+        return null
+    }
+    val result = mutableListOf<String>()
+    cameraErrorList.forEach {
+        result.add(it.name)
+    }
+    return result
+}
+
+fun toResult(thetaState: ThetaState): Map<String, Any?> {
+    return mapOf<String, Any?>(
         "fingerprint" to thetaState.fingerprint,
         "batteryLevel" to thetaState.batteryLevel,
-        "chargingState" to thetaState.chargingState.name,
-        "isSdCard" to thetaState.isSdCard,
+        "storageUri" to thetaState.storageUri,
+        "storageID" to thetaState.storageID,
+        "captureStatus" to thetaState.captureStatus.name,
         "recordedTime" to thetaState.recordedTime,
         "recordableTime" to thetaState.recordableTime,
-        "latestFileUrl" to thetaState.latestFileUrl
+        "capturedPictures" to thetaState.capturedPictures,
+        "compositeShootingElapsedTime" to thetaState.compositeShootingElapsedTime,
+        "latestFileUrl" to thetaState.latestFileUrl,
+        "chargingState" to thetaState.chargingState.name,
+        "apiVersion" to thetaState.apiVersion,
+        "isPluginRunning" to thetaState.isPluginRunning,
+        "isPluginWebServer" to thetaState.isPluginWebServer,
+        "function" to thetaState.function?.name,
+        "isMySettingChanged" to thetaState.isMySettingChanged,
+        "currentMicrophone" to thetaState.currentMicrophone?.name,
+        "isSdCard" to thetaState.isSdCard,
+        "cameraError" to toCameraErrorList(thetaState.cameraError),
+        "isBatteryInsert" to thetaState.isBatteryInsert,
     )
 }
 
@@ -244,6 +268,7 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
         OptionNameEnum.OffDelay -> OffDelayEnum.values().find { it.name == valueName }
         OptionNameEnum.SleepDelay -> SleepDelayEnum.values().find { it.name == valueName }
         OptionNameEnum.WhiteBalance -> WhiteBalanceEnum.values().find { it.name == valueName }
+        OptionNameEnum.WhiteBalanceAutoStrength -> WhiteBalanceAutoStrengthEnum.values().find { it.name == valueName }
         else -> null
     }
 }
@@ -327,6 +352,25 @@ fun toListAccessPointsResult(accessPointList: List<AccessPoint>): List<Map<Strin
         accessPoint.defaultGateway?.let {
             result["defaultGateway"] = it
         }
+        resultList.add(result)
+    }
+    return resultList
+}
+
+fun toPluginInfosResult(pluginInfoList: List<PluginInfo>): List<Map<String, Any>> {
+    val resultList = mutableListOf<Map<String, Any>>()
+    pluginInfoList.forEach { pluginInfo ->
+        val result = mutableMapOf<String, Any>()
+        result["name"] = pluginInfo.name
+        result["packageName"] = pluginInfo.packageName
+        result["version"] = pluginInfo.version
+        result["isPreInstalled"] = pluginInfo.isPreInstalled
+        result["isRunning"] = pluginInfo.isRunning
+        result["isForeground"] = pluginInfo.isForeground
+        result["isBoot"] = pluginInfo.isBoot
+        result["hasWebServer"] = pluginInfo.hasWebServer
+        result["exitStatus"] = pluginInfo.exitStatus
+        result["message"] = pluginInfo.message
         resultList.add(result)
     }
     return resultList
