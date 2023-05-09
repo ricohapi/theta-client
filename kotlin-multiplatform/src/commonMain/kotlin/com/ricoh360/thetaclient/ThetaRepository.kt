@@ -2945,6 +2945,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     class NotConnectedException(message: String) : ThetaRepositoryException(message)
 
     /**
+     * Thrown if the argument wrong.
+     */
+    class ArgumentException(message: String) : ThetaRepositoryException(message)
+
+    /**
      * Static attributes of Theta.
      *
      * @property manufacturer Manufacturer name
@@ -4247,6 +4252,21 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     @Throws(Throwable::class)
     suspend fun setPluginOrders(plugins: List<String>) {
+        val plugins = plugins.toMutableList()
+        if (ThetaModel.get(cameraModel) == ThetaModel.THETA_Z1) {
+            when {
+                plugins.size > SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 -> {
+                    throw ArgumentException("Argument list must have $SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 or less elements for RICOH THETA Z1")
+                }
+                plugins.size < SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 -> {
+                    do { // autocomplete
+                        plugins += ""
+                    } while (plugins.size < SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1)
+                }
+                else -> {}
+            }
+        }
+
         try {
             val params = SetPluginOrdersParams(pluginOrders = plugins)
             val response = ThetaApi.callSetPluginOrdersCommand(endpoint, params)
@@ -4302,3 +4322,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
  * Check status interval for Command
  */
 const val CHECK_COMMAND_STATUS_INTERVAL = 1000L
+
+/**
+ * The size of setPluginOrders()'s argument list for Z1
+ */
+const val SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 = 3
