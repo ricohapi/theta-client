@@ -637,6 +637,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _networkType
+         */
+        NetworkType("_networkType", NetworkTypeEnum::class),
+
+        /**
+         * Option name
          * offDelay
          */
         OffDelay("offDelay", ThetaRepository.OffDelay::class),
@@ -821,6 +827,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var maxRecordableTime: MaxRecordableTimeEnum? = null,
 
         /**
+         * Network type of the camera.
+         */
+        var networkType: NetworkTypeEnum? = null,
+
+        /**
          * Length of standby time before the camera automatically powers OFF.
          *
          * Specify [OffDelayEnum] or [OffDelaySec]
@@ -897,6 +908,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             isoAutoHighLimit = null,
             language = null,
             maxRecordableTime = null,
+            networkType = null,
             offDelay = null,
             sleepDelay = null,
             remainingPictures = null,
@@ -929,6 +941,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             isoAutoHighLimit = options.isoAutoHighLimit?.let { IsoAutoHighLimitEnum.get(it) },
             language = options._language?.let { LanguageEnum.get(it) },
             maxRecordableTime = options._maxRecordableTime?.let { MaxRecordableTimeEnum.get(it) },
+            networkType = options._networkType?.let { NetworkTypeEnum.get(it) },
             offDelay = options.offDelay?.let { OffDelayEnum.get(it) },
             sleepDelay = options.sleepDelay?.let { SleepDelayEnum.get(it) },
             remainingPictures = options.remainingPictures,
@@ -962,6 +975,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 isoAutoHighLimit = isoAutoHighLimit?.value,
                 _language = language?.value,
                 _maxRecordableTime = maxRecordableTime?.sec,
+                _networkType = networkType?.value,
                 offDelay = offDelay?.sec,
                 sleepDelay = sleepDelay?.sec,
                 remainingPictures = remainingPictures,
@@ -1002,6 +1016,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.IsoAutoHighLimit -> isoAutoHighLimit
                 OptionNameEnum.Language -> language
                 OptionNameEnum.MaxRecordableTime -> maxRecordableTime
+                OptionNameEnum.NetworkType -> networkType
                 OptionNameEnum.OffDelay -> offDelay
                 OptionNameEnum.SleepDelay -> sleepDelay
                 OptionNameEnum.RemainingPictures -> remainingPictures
@@ -1043,6 +1058,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.IsoAutoHighLimit -> isoAutoHighLimit = value as IsoAutoHighLimitEnum
                 OptionNameEnum.Language -> language = value as LanguageEnum
                 OptionNameEnum.MaxRecordableTime -> maxRecordableTime = value as MaxRecordableTimeEnum
+                OptionNameEnum.NetworkType -> networkType = value as NetworkTypeEnum
                 OptionNameEnum.OffDelay -> offDelay = value as OffDelay
                 OptionNameEnum.SleepDelay -> sleepDelay = value as SleepDelay
                 OptionNameEnum.RemainingPictures -> remainingPictures = value as Int
@@ -2513,6 +2529,43 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              */
             fun get(sec: Int): MaxRecordableTimeEnum? {
                 return values().firstOrNull { it.sec == sec }
+            }
+        }
+    }
+
+    /**
+     * Network type supported by Theta V, Z1 and X.
+     */
+    enum class NetworkTypeEnum(val value: NetworkType) {
+        /**
+         * Direct mode
+         */
+        DIRECT(NetworkType.DIRECT),
+
+        /**
+         * Client mode via WLAN
+         */
+        CLIENT(NetworkType.CLIENT),
+
+        /**
+         * Client mode via Ethernet cable
+         */
+        ETHERNET(NetworkType.ETHERNET),
+
+        /**
+         * Network is off. This value can be gotten only by plugin
+         */
+        OFF(NetworkType.OFF);
+
+        companion object {
+            /**
+             * Convert Language to LanguageEnum
+             *
+             * @param value Language.
+             * @return LanguageEnum
+             */
+            fun get(value: NetworkType): NetworkTypeEnum? {
+                return values().firstOrNull { it.value == value }
             }
         }
     }

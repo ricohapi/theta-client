@@ -673,7 +673,7 @@ enum class MicrophoneChannel {
 }
 
 /**
- * Network type setting
+ * Network type setting supported by Theta V, Z1, and X.
  */
 @Serializable
 enum class NetworkType {
@@ -688,6 +688,18 @@ enum class NetworkType {
      */
     @SerialName("CL")
     CLIENT,
+
+    /**
+     * Client mode via Ethernet cable, supported only by Theta V and Z1.
+     */
+    @SerialName("ETHERNET")
+    ETHERNET,
+
+    /**
+     * Network is off. This value can be gotten only by plugin.
+     */
+    @SerialName("OFF")
+    OFF,
 }
 
 /**

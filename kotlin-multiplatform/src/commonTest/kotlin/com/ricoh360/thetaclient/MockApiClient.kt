@@ -15,7 +15,7 @@ import kotlinx.serialization.json.Json
 object MockApiClient {
     var onRequest: ((HttpRequestData) -> ByteReadChannel)? = null
     var status: HttpStatusCode? = null
-    var useMock = true
+    var useMock = false
     var onPreviewRequest: (
         (
             endpoint: String,

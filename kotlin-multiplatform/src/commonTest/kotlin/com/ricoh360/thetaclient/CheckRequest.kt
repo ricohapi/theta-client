@@ -39,6 +39,7 @@ class CheckRequest {
             filter: ImageFilter? = null,
             fileFormat: MediaFileFormat? = null,
             maxRecordableTime: Int? = null,
+            networkType: NetworkType? = null,
             offDelay: Int? = null,
             sleepDelay: Int? = null,
             aperture: Float? = null,
@@ -79,6 +80,9 @@ class CheckRequest {
             }
             maxRecordableTime?.let {
                 assertEquals(optionsRequest.parameters.options._maxRecordableTime, it, "setOptions maxRecordableTime")
+            }
+            networkType?.let {
+                assertEquals(optionsRequest.parameters.options._networkType, it, "setOptions networkType")
             }
             offDelay?.let {
                 assertEquals(optionsRequest.parameters.options.offDelay, it, "setOptions offDelay")
