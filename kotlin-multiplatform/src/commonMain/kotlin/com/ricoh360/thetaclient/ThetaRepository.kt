@@ -693,7 +693,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Option name
          * _whiteBalanceAutoStrength
          */
-        WhiteBalanceAutoStrength("_whiteBalanceAutoStrength", WhiteBalanceAutoStrengthEnum::class)
+        WhiteBalanceAutoStrength("_whiteBalanceAutoStrength", WhiteBalanceAutoStrengthEnum::class),
+
+        /**
+         * Option name
+         * _wlanFrequency
+         */
+        WlanFrequency("_wlanFrequency", WlanFrequencyEnum::class),
     }
 
     /**
@@ -889,7 +895,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          *
          * For RICOH THETA Z1 firmware v2.20.3 or later
          */
-        var whiteBalanceAutoStrength: WhiteBalanceAutoStrengthEnum? = null
+        var whiteBalanceAutoStrength: WhiteBalanceAutoStrengthEnum? = null,
+
+        /**
+         * Wireless LAN frequency of the camera
+         *
+         * For RICOH THETA X, Z1 and V.
+         */
+        var wlanFrequency: WlanFrequencyEnum? = null,
     ) {
         constructor() : this(
             aperture = null,
@@ -917,7 +930,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             totalSpace = null,
             shutterVolume = null,
             whiteBalance = null,
-            whiteBalanceAutoStrength = null
+            whiteBalanceAutoStrength = null,
+            wlanFrequency = null,
         )
 
         constructor(options: com.ricoh360.thetaclient.transferred.Options) : this(
@@ -950,7 +964,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             totalSpace = options.totalSpace,
             shutterVolume = options._shutterVolume,
             whiteBalance = options.whiteBalance?.let { WhiteBalanceEnum.get(it) },
-            whiteBalanceAutoStrength = options._whiteBalanceAutoStrength?.let { WhiteBalanceAutoStrengthEnum.get(it) }
+            whiteBalanceAutoStrength = options._whiteBalanceAutoStrength?.let { WhiteBalanceAutoStrengthEnum.get(it) },
+            wlanFrequency = options._wlanFrequency?.let { WlanFrequencyEnum.get(it) },
         )
 
         /**
@@ -984,7 +999,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 totalSpace = totalSpace,
                 _shutterVolume = shutterVolume,
                 whiteBalance = whiteBalance?.value,
-                _whiteBalanceAutoStrength = whiteBalanceAutoStrength?.value
+                _whiteBalanceAutoStrength = whiteBalanceAutoStrength?.value,
+                _wlanFrequency = wlanFrequency?.value,
             )
         }
 
@@ -1026,6 +1042,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.ShutterVolume -> shutterVolume
                 OptionNameEnum.WhiteBalance -> whiteBalance
                 OptionNameEnum.WhiteBalanceAutoStrength -> whiteBalanceAutoStrength
+                OptionNameEnum.WlanFrequency -> wlanFrequency
             } as T
         }
 
@@ -1068,6 +1085,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.ShutterVolume -> shutterVolume = value as Int
                 OptionNameEnum.WhiteBalance -> whiteBalance = value as WhiteBalanceEnum
                 OptionNameEnum.WhiteBalanceAutoStrength -> whiteBalanceAutoStrength = value as WhiteBalanceAutoStrengthEnum
+                OptionNameEnum.WlanFrequency -> wlanFrequency = value as WlanFrequencyEnum
             }
         }
     }
@@ -2853,6 +2871,34 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 return values().firstOrNull { it.value == value }
             }
         }
+    }
+
+    /**
+     * Wireless LAN frequency of the camera supported by Theta V, Z1 and X.
+     */
+    enum class WlanFrequencyEnum(val value: WlanFrequency) {
+        /**
+         * 2.4GHz
+         */
+        GHZ_2_4(WlanFrequency.GHZ_2_4),
+
+        /**
+         * 5GHz
+         */
+        GHZ_5(WlanFrequency.GHZ_5);
+
+        companion object {
+            /**
+             * Convert WlanFrequency to WlanFrequencyEnum
+             *
+             * @param value White balance auto strength
+             * @return WhiteBalanceAutoStrengthEnum
+             */
+            fun get(value: WlanFrequency): WlanFrequencyEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+
     }
 
     /**

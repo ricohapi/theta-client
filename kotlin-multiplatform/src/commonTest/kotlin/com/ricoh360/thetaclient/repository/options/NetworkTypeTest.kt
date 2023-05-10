@@ -45,7 +45,7 @@ class NetworkTypeTest {
             // check request
             CheckRequest.checkGetOptions(request, stringOptionNames)
 
-            ByteReadChannel(Resource("src/commonTest/resources/options/option_max_recordable_time_1500.json").readText())
+            ByteReadChannel(Resource("src/commonTest/resources/options/option_network_type_direct.json").readText())
         }
 
         val thetaRepository = ThetaRepository(endpoint)

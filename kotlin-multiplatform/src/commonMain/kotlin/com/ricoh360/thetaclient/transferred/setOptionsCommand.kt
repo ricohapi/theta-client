@@ -3,8 +3,14 @@
  */
 package com.ricoh360.thetaclient.transferred
 
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 /**
  * set options request
@@ -572,6 +578,21 @@ data class Options(
      * For RICOH THETA Z1 firmware v2.20.3 or later
      */
     var _whiteBalanceAutoStrength: WhiteBalanceAutoStrength? = null,
+
+    /**
+     * Supported WhiteBalanceAutoStrength
+     */
+    var _whiteBalanceAutoStrengthSupport: List<WhiteBalanceAutoStrength>? = null,
+
+    /**
+     * Wireless LAN frequency of the camera supported by Theta V, Z1 and X.
+     */
+    var _wlanFrequency: WlanFrequency? = null,
+
+    /**
+     * Supported WlanFrequency
+     */
+    var _wlanFrequencySupport: List<WlanFrequency>? = null,
 )
 
 /**
@@ -889,6 +910,40 @@ enum class WhiteBalanceAutoStrength {
      */
     @SerialName("OFF")
     OFF,
+}
+
+/**
+ * Wireless LAN frequency of the camera supported by Theta V, Z1 and X.
+ */
+@Serializable(with = WlanFrequencySerializer::class)
+enum class WlanFrequency(val frequency: Double) {
+    /**
+     * 2.4GHz
+     */
+    GHZ_2_4(2.4),
+
+    /**
+     * 5GHz
+     */
+    GHZ_5(5.0),
+}
+
+/**
+ * [Custom serializer](https://github.com/Kotlin/kotlinx.serialization/blob/master/docs/serializers.md#custom-serializers)
+ * for [WlanFrequency]
+ */
+object WlanFrequencySerializer : KSerializer<WlanFrequency> {
+    override val descriptor: SerialDescriptor
+        get() = PrimitiveSerialDescriptor("_wlanFrequency", PrimitiveKind.DOUBLE)
+
+    override fun serialize(encoder: Encoder, value: WlanFrequency) {
+        encoder.encodeDouble(value.frequency)
+    }
+
+    override fun deserialize(decoder: Decoder): WlanFrequency {
+        val frequency = decoder.decodeDouble()
+        return if(frequency < 5) WlanFrequency.GHZ_2_4 else WlanFrequency.GHZ_5
+    }
 }
 
 /**
