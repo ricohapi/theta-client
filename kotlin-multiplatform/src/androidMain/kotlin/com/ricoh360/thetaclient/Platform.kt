@@ -5,6 +5,7 @@ package com.ricoh360.thetaclient
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import java.util.UUID
 
 /**
  * describe platform
@@ -23,4 +24,8 @@ actual typealias FrameSource = Bitmap
  */
 actual fun frameFrom(packet: Pair<ByteArray, Int>): FrameSource {
     return BitmapFactory.decodeStream(packet.first.inputStream(0, packet.second))
+}
+
+actual fun randomUUID(): String {
+    return UUID.randomUUID().toString()
 }

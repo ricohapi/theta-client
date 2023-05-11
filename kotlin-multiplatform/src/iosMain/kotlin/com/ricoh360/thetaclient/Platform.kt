@@ -37,3 +37,7 @@ actual fun frameFrom(packet: Pair<ByteArray, Int>): FrameSource {
         return data
     }
 }
+
+actual fun randomUUID(): String {
+    return NSUUID.UUID().UUIDString
+}

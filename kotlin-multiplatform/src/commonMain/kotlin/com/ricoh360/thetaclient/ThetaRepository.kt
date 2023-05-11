@@ -30,8 +30,18 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var language: LanguageEnum? = null,
         var offDelay: OffDelay? = null,
         var sleepDelay: SleepDelay? = null,
-        var shutterVolume: Int? = null
+        var shutterVolume: Int? = null,
+        var clientMode: DigestAuth? = null,
     ) {
+        constructor() : this(
+            dateTime = null,
+            language = null,
+            offDelay = null,
+            sleepDelay = null,
+            shutterVolume = null,
+            clientMode = null,
+        )
+
         /**
          * Set transferred.Options value to Config
          *
@@ -118,7 +128,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     init {
-        timeout?.let { ApiClient.timeout = it }
+        timeout?.let { ApiClient.timeout = it } ?: run { ApiClient.timeout = Timeout() }
+        config?.clientMode?.let { ApiClient.digestAuth = it } ?: run { ApiClient.digestAuth = null }
         initConfig = config
     }
 
@@ -158,7 +169,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         } catch (e: JsonConvertException) {
             throw ThetaWebApiException(e.message ?: e.toString())
         } catch (e: ResponseException) {
-            throw ThetaWebApiException.create(e)
+            when (e.response.status) {
+                HttpStatusCode.Unauthorized -> {
+                    throw ThetaUnauthorizedException(e.message ?: e.toString())
+                }
+                else -> {
+                    throw ThetaWebApiException.create(e)
+                }
+            }
         } catch (e: ThetaWebApiException) {
             throw e
         } catch (e: Exception) {
@@ -2943,6 +2961,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * Thrown if the mobile device doesn't connect to Theta.
      */
     class NotConnectedException(message: String) : ThetaRepositoryException(message)
+
+    class ThetaUnauthorizedException(message: String) : ThetaRepositoryException(message)
 
     /**
      * Static attributes of Theta.

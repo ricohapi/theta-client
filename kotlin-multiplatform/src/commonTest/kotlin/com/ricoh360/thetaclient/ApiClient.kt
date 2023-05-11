@@ -1,6 +1,6 @@
 package com.ricoh360.thetaclient
 
-import io.ktor.client.*
+import io.ktor.client.HttpClient
 
 /**
  * Return default HttpClient for unit test.
@@ -13,10 +13,12 @@ fun getHttpClient(): HttpClient {
     return if (MockApiClient.useMock) {
         MockApiClient.mockHttpClient
     } else {
-        if (ApiClient.httpClient == null) {
-            ApiClient.httpClient = ApiClient.newHttpClient()
+        ApiClient.httpClient ?: run {
+            ApiClient.newHttpClient().let { httpClient ->
+                ApiClient.httpClient = httpClient
+                httpClient
+            }
         }
-        ApiClient.httpClient!!
     }
 }
 
