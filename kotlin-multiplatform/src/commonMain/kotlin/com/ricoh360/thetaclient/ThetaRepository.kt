@@ -31,6 +31,10 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var offDelay: OffDelay? = null,
         var sleepDelay: SleepDelay? = null,
         var shutterVolume: Int? = null,
+
+        /**
+         * Authentication information used for client mode connections
+         */
         var clientMode: DigestAuth? = null,
     ) {
         constructor() : this(
@@ -118,6 +122,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * @param timeout Timeout of HTTP call.
          * @exception ThetaWebApiException If an error occurs in THETA.
          * @exception NotConnectedException
+         * @exception ThetaUnauthorizedException If an authentication　error occurs in client mode.
          */
         @Throws(Throwable::class)
         suspend fun newInstance(endpoint: String, config: Config? = null, timeout: Timeout? = null): ThetaRepository {
@@ -2962,6 +2967,9 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     class NotConnectedException(message: String) : ThetaRepositoryException(message)
 
+    /**
+     * Thrown if an authentication　error occurs in client mode.
+     */
     class ThetaUnauthorizedException(message: String) : ThetaRepositoryException(message)
 
     /**

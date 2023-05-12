@@ -401,7 +401,7 @@ class PreviewClientImpl : PreviewClient {
             ApiClient.digestAuth?.let { digestAuth ->
                 responseHeaders?.get(HttpHeaders.WWWAuthenticate.lowercase())?.let { header ->
                     val authHeader = parseAuthorizationHeader(header) as HttpAuthHeader.Parameterized
-                    digestAuth.updateServerInfo(authHeader)
+                    digestAuth.updateAuthHeaderInfo(authHeader)
                     requestPreview(endpoint, method, path, body, contentType, digestAuth.makeDigest(url.path, HttpMethod.Post.value))
                 }
             } ?: client

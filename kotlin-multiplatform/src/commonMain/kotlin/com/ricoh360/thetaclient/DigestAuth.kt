@@ -18,7 +18,26 @@ internal const val KEY_AUTH_REALM = "realm"
 internal const val KEY_AUTH_NONCE = "nonce"
 internal const val KEY_AUTH_QOP = "qop"
 
-class DigestAuth(val username: String, password: String? = null) {
+/**
+ * Authentication information used for client mode
+ */
+class DigestAuth(
+    /**
+     * User name
+     */
+    val username: String,
+
+    /**
+     * Password
+     *
+     * If omitted, the default password is used.
+     * Default password is "THETA" + "XX" after the beginning of the serial number.
+     */
+    password: String? = null,
+) {
+    /**
+     * Password
+     */
     val password: String
 
     internal var realm: String? = null
@@ -29,6 +48,14 @@ class DigestAuth(val username: String, password: String? = null) {
         internal const val SERIAL_NO_PREFIX_LENGTH = 5 + 2 // THETA + XX
         internal const val NAME_THETA = "THETA"
     }
+
+    /**
+     * Constructor when using default password
+     *
+     * @param username Username
+     */
+    constructor(username: String) : this(username, null)
+
     init {
         this.password = password ?: let {
             if (username.indexOf(NAME_THETA) == 0 && username.length > SERIAL_NO_PREFIX_LENGTH) {
@@ -39,20 +66,35 @@ class DigestAuth(val username: String, password: String? = null) {
         }
     }
 
-    internal fun updateServerInfo(responseHeader: HttpAuthHeader.Parameterized?) {
+    internal fun updateAuthHeaderInfo(responseHeader: HttpAuthHeader.Parameterized?) {
         val realm = responseHeader?.parameter(KEY_AUTH_REALM)
         val nonce = responseHeader?.parameter(KEY_AUTH_NONCE)
         val qop = responseHeader?.parameter(KEY_AUTH_QOP) ?: DEFAULT_AUTH_QOP
 
-        setServerInfo(realm, nonce, qop)
+        setAuthHeaderInfo(realm, nonce, qop)
     }
 
-    fun setServerInfo(realm: String?, nonce: String?, qop: String = DEFAULT_AUTH_QOP) {
+    /**
+     * Set the value of WWW-Authenticate Header
+     *
+     * @param realm realm of header field
+     * @param nonce nonce of header field
+     * @param qop qop of header field
+     */
+    fun setAuthHeaderInfo(realm: String?, nonce: String?, qop: String = DEFAULT_AUTH_QOP) {
         this.realm = realm
         this.nonce = nonce
         this.qop = qop
     }
 
+    /**
+     * Create digest authentication header
+     *
+     * @param uri Requested uri
+     * @param method Request method. "GET" or "POST"
+     * @return digest authentication header string
+     *
+     */
     fun makeDigest(
         uri: String,
         method: String,
@@ -61,6 +103,19 @@ class DigestAuth(val username: String, password: String? = null) {
     }
 }
 
+/**
+ * Create digest authentication header
+ *
+ * @param username User name
+ * @param password Password
+ * @param uri Requested uri
+ * @param method Request method. "GET" or "POST"
+ * @param realm realm of header field
+ * @param nonce nonce of header field
+ * @param qop qop of header field
+ * @return digest authentication header string
+ *
+ */
 fun makeDigest(
     username: String,
     password: String,
@@ -106,7 +161,7 @@ internal fun setupDigestAuth(httpClient: HttpClient) {
                 ApiClient.digestAuth?.let {
                     originalCall.response.headers[HttpHeaders.WWWAuthenticate]?.let { wwwAuth ->
                         val authHeader = parseAuthorizationHeader(wwwAuth) as HttpAuthHeader.Parameterized
-                        it.updateServerInfo(authHeader)
+                        it.updateAuthHeaderInfo(authHeader)
                         request.headers.append(HttpHeaders.Authorization, it.makeDigest(request.url.encodedPath, request.method.value))
                         execute(request)
                     }
