@@ -370,6 +370,18 @@ export const MaxRecordableTimeEnum = {
 export type MaxRecordableTimeEnum =
   typeof MaxRecordableTimeEnum[keyof typeof MaxRecordableTimeEnum];
 
+/** Network type of the camera */
+export const NetworkTypeEnum = {
+  DIRECT: 'DIRECT',
+  CLIENT: 'CLIENT',
+  ETHERNET: 'ETHERNET',
+  OFF: 'OFF',
+} as const;
+
+/** Type definition of NetworkTypeEnum */
+export type NetworkTypeEnum =
+  typeof NetworkTypeEnum[keyof typeof NetworkTypeEnum];
+
 /** Length of standby time before the camera automatically powers OFF. */
 export const OffDelayEnum = {
   /** Do not turn power off. */
@@ -440,6 +452,16 @@ export const WhiteBalanceEnum = {
 export type WhiteBalanceEnum =
   typeof WhiteBalanceEnum[keyof typeof WhiteBalanceEnum];
 
+/** WLAN frequency */
+export const WlanFrequencyEnum = {
+  GHZ_2_4: 'GHZ_2_4',
+  GHZ_5: 'GHZ_5'
+} as const;
+
+/** type definition of WlanFrequency */
+export type WlanFrequencyEnum =
+typeof WlanFrequencyEnum[keyof typeof WlanFrequencyEnum];
+
 /** Camera setting options name. */
 export const OptionNameEnum = {
   /** aperture */
@@ -474,6 +496,8 @@ export const OptionNameEnum = {
   Language: 'Language',
   /** maxRecordableTime */
   MaxRecordableTime: 'MaxRecordableTime',
+  /** networkType */
+  NetworkType: 'NetworkType',
   /** offDelay */
   OffDelay: 'OffDelay',
   /** sleepDelay */
@@ -492,6 +516,8 @@ export const OptionNameEnum = {
   WhiteBalance: 'WhiteBalance',
   /** _whiteBalanceAutoStrength */
   WhiteBalanceAutoStrength: 'WhiteBalanceAutoStrength',
+  /** _wlanFrequency */
+  WlanFrequency: 'WlanFrequency',
 } as const;
 
 /** type definition of OptionNameEnum */
@@ -531,6 +557,8 @@ export type Options = {
   language?: LanguageEnum;
   /** Maximum recordable time (in seconds) of the camera. */
   maxRecordableTime?: MaxRecordableTimeEnum;
+  /** Network type of the camera */
+  networkType?: NetworkTypeEnum;
   /** Length of standby time before the camera automatically powers OFF. */
   offDelay?: OffDelayEnum;
   /** Length of standby time before the camera enters the sleep mode. */
@@ -549,6 +577,8 @@ export type Options = {
   whiteBalance?: WhiteBalanceEnum;
   /** White balance auto strength. */
   whiteBalanceAutoStrength?: WhiteBalanceAutoStrengthEnum;
+  /** WLAN frequency */
+  wlanFrequency?: WlanFrequencyEnum;
   /** GPS setting used in only capturing */
   _gpsTagRecording?: GpsTagRecordingEnum;
 };
