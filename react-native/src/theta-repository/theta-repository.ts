@@ -380,7 +380,9 @@ export function getMySetting(captureMode: CaptureModeEnum): Promise<Options> {
  * @param optionNames List of option names to acquire
  * @returns Options of my setting
  */
-export function getMySettingFromOldModel(optionNames: OptionNameEnum[]): Promise<Options> {
+export function getMySettingFromOldModel(
+  optionNames: OptionNameEnum[]
+): Promise<Options> {
   return ThetaClientReactNative.getMySettingFromOldModel(optionNames);
 }
 
@@ -391,7 +393,10 @@ export function getMySettingFromOldModel(optionNames: OptionNameEnum[]): Promise
  * @param options registered to My Settings
  * @returns Promise of boolean result, always true
  */
-export function setMySetting(captureMode: CaptureModeEnum, options: Options): Promise<boolean> {
+export function setMySetting(
+  captureMode: CaptureModeEnum,
+  options: Options
+): Promise<boolean> {
   return ThetaClientReactNative.setMySetting(captureMode, options);
 }
 
@@ -400,7 +405,9 @@ export function setMySetting(captureMode: CaptureModeEnum, options: Options): Pr
  * @param captureMode The target shooting mode
  * @returns Promise of boolean result, always true
  */
-export function deleteMySetting(captureMode: CaptureModeEnum): Promise<boolean> {
+export function deleteMySetting(
+  captureMode: CaptureModeEnum
+): Promise<boolean> {
   return ThetaClientReactNative.deleteMySetting(captureMode);
 }
 

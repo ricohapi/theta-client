@@ -35,6 +35,7 @@ class CheckRequest {
 
         fun checkSetOptions(
             request: HttpRequestData,
+            cameraMode: CameraMode? = null,
             captureMode: CaptureMode? = null,
             filter: ImageFilter? = null,
             fileFormat: MediaFileFormat? = null,
@@ -68,6 +69,9 @@ class CheckRequest {
             }
             val optionsRequest = js.decodeFromString<SetOptionsRequest>(body.text)
 
+            cameraMode?.let {
+                assertEquals(optionsRequest.parameters.options._cameraMode, it, "setOptions cameraMode")
+            }
             captureMode?.let {
                 assertEquals(optionsRequest.parameters.options.captureMode, it, "setOptions captureMode")
             }

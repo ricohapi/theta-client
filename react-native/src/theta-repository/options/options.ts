@@ -1,3 +1,4 @@
+import type { CameraModeEnum } from './option-camera-mode';
 import type { WhiteBalanceAutoStrengthEnum } from './option-white-balance-auto-strength';
 
 /** Aperture value. */
@@ -446,6 +447,8 @@ export const OptionNameEnum = {
   Aperture: 'Aperture',
   /** _bluetoothPower*/
   BluetoothPower: 'BluetoothPower',
+  /** cameraMode */
+  CameraMode: 'CameraMode',
   /** captureMode */
   CaptureMode: 'CaptureMode',
   /** colorTemperature */
@@ -503,6 +506,8 @@ export type Options = {
   aperture?: ApertureEnum;
   /** BluetoothPower */
   bluetoothPower?: BluetoothPowerEnum;
+  /** Camera mode. */
+  cameraMode?: CameraModeEnum;
   /** Shooting mode. */
   captureMode?: CaptureModeEnum;
   /** Color temperature of the camera (Kelvin). */

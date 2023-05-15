@@ -4,8 +4,8 @@ import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
+import com.ricoh360.thetaclient.transferred.CameraMode
 import com.ricoh360.thetaclient.transferred.Options
-import com.ricoh360.thetaclient.transferred.WhiteBalanceAutoStrength
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.http.content.*
@@ -15,7 +15,7 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class WhiteBalanceAutoStrengthTest {
+class CameraModeTest {
     private val endpoint = "http://192.168.1.1:80/"
 
     @BeforeTest
@@ -29,46 +29,46 @@ class WhiteBalanceAutoStrengthTest {
     }
 
     /**
-     * Get option _whiteBalanceAutoStrength.
+     * Get option _cameraMode.
      */
     @Test
-    fun getOptionWhiteBalanceAutoStrengthTest() = runTest {
+    fun getOptionCameraModeTest() = runTest {
         val optionNames = listOf(
-            ThetaRepository.OptionNameEnum.WhiteBalanceAutoStrength
+            ThetaRepository.OptionNameEnum.CameraMode
         )
         val stringOptionNames = listOf(
-            "_whiteBalanceAutoStrength"
+            "_cameraMode"
         )
 
         MockApiClient.onRequest = { request ->
             // check request
             CheckRequest.checkGetOptions(request, stringOptionNames)
 
-            ByteReadChannel(Resource("src/commonTest/resources/options/option_white_balance_auto_strength_off.json").readText())
+            ByteReadChannel(Resource("src/commonTest/resources/options/option_camera_mode_capture.json").readText())
         }
 
         val thetaRepository = ThetaRepository(endpoint)
         val options = thetaRepository.getOptions(optionNames)
-        assertEquals(options.whiteBalanceAutoStrength, ThetaRepository.WhiteBalanceAutoStrengthEnum.OFF)
+        assertEquals(options.cameraMode, ThetaRepository.CameraModeEnum.CAPTURE)
     }
 
     /**
-     * Set option _whiteBalanceAutoStrength.
+     * Set option _cameraMode.
      */
     @Test
-    fun setOptionWhiteBalanceAutoStrengthTest() = runTest {
-        val value = Pair(ThetaRepository.WhiteBalanceAutoStrengthEnum.ON, WhiteBalanceAutoStrength.ON)
+    fun setOptionCameraModeTest() = runTest {
+        val value = Pair(ThetaRepository.CameraModeEnum.CAPTURE, CameraMode.CAPTURE)
 
         MockApiClient.onRequest = { request ->
             // check request
-            CheckRequest.checkSetOptions(request, whiteBalanceAutoStrength = value.second)
+            CheckRequest.checkSetOptions(request, cameraMode = value.second)
 
             ByteReadChannel(Resource("src/commonTest/resources/setOptions/set_options_done.json").readText())
         }
 
         val thetaRepository = ThetaRepository(endpoint)
         val options = ThetaRepository.Options(
-            whiteBalanceAutoStrength = value.first
+            cameraMode = value.first
         )
         thetaRepository.setOptions(options)
     }
@@ -77,26 +77,26 @@ class WhiteBalanceAutoStrengthTest {
      * Convert ThetaRepository.Options to Options.
      */
     @Test
-    fun convertOptionWhiteBalanceAutoStrengthTest() = runTest {
+    fun convertOptionCameraModeTest() = runTest {
         val values = listOf(
-            Pair(ThetaRepository.WhiteBalanceAutoStrengthEnum.ON, WhiteBalanceAutoStrength.ON),
-            Pair(ThetaRepository.WhiteBalanceAutoStrengthEnum.OFF, WhiteBalanceAutoStrength.OFF),
+            Pair(ThetaRepository.CameraModeEnum.CAPTURE, CameraMode.CAPTURE),
+            Pair(ThetaRepository.CameraModeEnum.PLAYBACK, CameraMode.PLAYBACK),
         )
 
         values.forEach {
             val orgOptions = Options(
-                _whiteBalanceAutoStrength = it.second
+                _cameraMode = it.second
             )
             val options = ThetaRepository.Options(orgOptions)
-            assertEquals(options.whiteBalanceAutoStrength, it.first, "whiteBalanceAutoStrength ${it.second}")
+            assertEquals(options.cameraMode, it.first, "cameraMode ${it.second}")
         }
 
         values.forEach {
             val orgOptions = ThetaRepository.Options(
-                whiteBalanceAutoStrength = it.first
+                cameraMode = it.first
             )
             val options = orgOptions.toOptions()
-            assertEquals(options._whiteBalanceAutoStrength, it.second, "_whiteBalanceAutoStrength ${it.second}")
+            assertEquals(options._cameraMode, it.second, "_cameraMode ${it.second}")
         }
     }
 }

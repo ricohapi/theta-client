@@ -133,6 +133,13 @@ data class Options(
     var _cameraControlSourceSupport: List<CameraControlSource>? = null,
 
     /**
+     * Camera mode.
+     *
+     * @see CameraMode
+     */
+    var _cameraMode: CameraMode? = null,
+
+    /**
      * Shooting mode.
      *
      * The current setting can be acquired by camera.getOptions, and
@@ -565,11 +572,9 @@ data class Options(
     var whiteBalanceSupport: List<WhiteBalance>? = null,
 
     /**
-     * To set the strength of white balance auto for low color temperature scene.
-     * This option can be set for photo mode and video mode separately.
-     * Also this option will not be cleared by power-off.
+     * White Balance Auto Strength
      *
-     * For RICOH THETA Z1 firmware v2.20.3 or later
+     * @see WhiteBalanceAutoStrength
      */
     var _whiteBalanceAutoStrength: WhiteBalanceAutoStrength? = null,
 )
@@ -610,6 +615,39 @@ enum class CameraControlSource {
      */
     @SerialName("app")
     APP,
+}
+
+/**
+ * Camera mode.
+ * The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
+ *
+ * For RICOH THETA X
+ */
+@Serializable
+enum class CameraMode {
+    /**
+     * shooting screen
+     */
+    @SerialName("capture")
+    CAPTURE,
+
+    /**
+     * playback screen
+     */
+    @SerialName("playback")
+    PLAYBACK,
+
+    /**
+     * shooting setting screen
+     */
+    @SerialName("setting")
+    SETTING,
+
+    /**
+     * plugin selection screen
+     */
+    @SerialName("plugin")
+    PLUGIN,
 }
 
 /**

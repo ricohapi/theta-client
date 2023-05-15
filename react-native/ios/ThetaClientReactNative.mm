@@ -353,6 +353,36 @@ static convert_t BluetoothPowerEnum = {
 };
 
 /**
+ * CameraModeEnum converter
+ */
+static convert_t CameraModeEnum = {
+  .toTheta = @{
+      @"CAPTURE": THETACThetaRepositoryCameraModeEnum.capture,
+      @"PLAYBACK": THETACThetaRepositoryCameraModeEnum.playback,
+      @"SETTING": THETACThetaRepositoryCameraModeEnum.setting,
+      @"PLUGIN": THETACThetaRepositoryCameraModeEnum.plugin
+  },
+  .fromTheta = @{
+      THETACThetaRepositoryCameraModeEnum.capture: @"CAPTURE",
+      THETACThetaRepositoryCameraModeEnum.playback: @"PLAYBACK",
+      THETACThetaRepositoryCameraModeEnum.setting: @"SETTING",
+      THETACThetaRepositoryCameraModeEnum.plugin: @"PLUGIN"
+  },
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [CameraModeEnum.toTheta objectForKey:[rct objectForKey:@"cameraMode"]];
+    if (val) {
+      opt.cameraMode = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [CameraModeEnum.fromTheta objectForKey:opt.cameraMode];
+    if (val) {
+      [rct setObject:val forKey:@"cameraMode"];
+    }
+  }
+};
+
+/**
  * CaptureModeEnum converter
  */
 static convert_t CaptureModeEnum = {
@@ -1305,6 +1335,7 @@ static convert_t GpsInfoCvt = {
 static NSDictionary *NameToOptionEnum = @{
   @"Aperture": THETACThetaRepositoryOptionNameEnum.aperture,
   @"BluetoothPower": THETACThetaRepositoryOptionNameEnum.bluetoothpower,
+  @"CameraMode": THETACThetaRepositoryOptionNameEnum.cameraMode,
   @"CaptureMode": THETACThetaRepositoryOptionNameEnum.capturemode,
   @"ColorTemperature": THETACThetaRepositoryOptionNameEnum.colortemperature,
   @"DateTimeZone": THETACThetaRepositoryOptionNameEnum.datetimezone,
@@ -1336,6 +1367,7 @@ static NSDictionary *NameToOptionEnum = @{
 static NSDictionary *OptionEnumToOption = @{
   @"Aperture": @"aperture",
   @"BluetoothPower": @"bluetoothPower",
+  @"CameraMode": @"cameraMode",
   @"CaptureMode": @"captureMode",
   @"ColorTemperature": @"colorTemperature",
   @"DateTimeZone": @"dateTimeZone",
@@ -1370,6 +1402,7 @@ typedef convert_t * (^OptionConverter)();
 static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"aperture": ^{return &ApertureEnum;},
   @"bluetoothPower": ^{return &BluetoothPowerEnum;},
+  @"cameraMode": ^{return &CameraModeEnum;},
   @"captureMode": ^{return &CaptureModeEnum;},
   @"colorTemperature": ^{return &ColorTemperatureCvt;},
   @"dateTimeZone": ^{return &DateTimeZoneCvt;},

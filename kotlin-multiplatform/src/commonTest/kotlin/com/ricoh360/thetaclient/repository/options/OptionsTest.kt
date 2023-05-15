@@ -20,6 +20,7 @@ class OptionsTest {
     fun optionsPrimaryConstructorTest() {
         val aperture = ThetaRepository.ApertureEnum.APERTURE_2_1
         val bluetoothPower = ThetaRepository.BluetoothPowerEnum.ON
+        val cameraMode = ThetaRepository.CameraModeEnum.CAPTURE
         val captureMode = ThetaRepository.CaptureModeEnum.IMAGE
         val colorTemperature = 10
         val dateTimeZone = "2014:05:18 01:04:29+08:00"
@@ -47,6 +48,7 @@ class OptionsTest {
         val options = ThetaRepository.Options(
             aperture = aperture,
             bluetoothPower = bluetoothPower,
+            cameraMode = cameraMode,
             captureMode = captureMode,
             colorTemperature = colorTemperature,
             dateTimeZone = dateTimeZone,
@@ -78,6 +80,7 @@ class OptionsTest {
 
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Aperture), aperture, "aperture")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.BluetoothPower), bluetoothPower, "bluetoothPower")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CameraMode), cameraMode, "cameraMode")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CaptureMode), captureMode, "captureMode")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ColorTemperature), colorTemperature, "colorTemperature")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.DateTimeZone), dateTimeZone, "dateTimeZone")
@@ -111,6 +114,7 @@ class OptionsTest {
         val values = listOf(
             Pair(ThetaRepository.OptionNameEnum.Aperture, ThetaRepository.ApertureEnum.APERTURE_2_1),
             Pair(ThetaRepository.OptionNameEnum.BluetoothPower, ThetaRepository.BluetoothPowerEnum.ON),
+            Pair(ThetaRepository.OptionNameEnum.CameraMode, ThetaRepository.CameraModeEnum.CAPTURE),
             Pair(ThetaRepository.OptionNameEnum.CaptureMode, ThetaRepository.CaptureModeEnum.IMAGE),
             Pair(ThetaRepository.OptionNameEnum.ColorTemperature, 10),
             Pair(ThetaRepository.OptionNameEnum.DateTimeZone, "2014:05:18 01:04:29+08:00"),
@@ -152,6 +156,7 @@ class OptionsTest {
     fun optionsSecondaryConstructorTest() {
         val aperture = Pair(2.1f, ThetaRepository.ApertureEnum.APERTURE_2_1)
         val bluetoothPower = Pair(BluetoothPower.ON, ThetaRepository.BluetoothPowerEnum.ON)
+        val cameraMode = Pair(CameraMode.CAPTURE, ThetaRepository.CameraModeEnum.CAPTURE)
         val captureMode = Pair(CaptureMode.IMAGE, ThetaRepository.CaptureModeEnum.IMAGE)
         val colorTemperature = Pair(10, 10)
         val dateTimeZone = Pair("2014:05:18 01:04:29+08:00", "2014:05:18 01:04:29+08:00")
@@ -182,6 +187,7 @@ class OptionsTest {
         val orgOptions = Options(
             aperture = aperture.first,
             _bluetoothPower = bluetoothPower.first,
+            _cameraMode = cameraMode.first,
             captureMode = captureMode.first,
             _colorTemperature = colorTemperature.first,
             dateTimeZone = dateTimeZone.first,
@@ -210,6 +216,7 @@ class OptionsTest {
 
         assertEquals(options.aperture, aperture.second, "aperture")
         assertEquals(options.bluetoothPower, bluetoothPower.second, "bluetoothPower")
+        assertEquals(options.cameraMode, cameraMode.second, "cameraMode")
         assertEquals(options.captureMode, captureMode.second, "captureMode")
         assertEquals(options.colorTemperature, colorTemperature.second, "colorTemperature")
         assertEquals(options.dateTimeZone, dateTimeZone.second, "dateTimeZone")
@@ -239,6 +246,7 @@ class OptionsTest {
     fun optionsConvertTest() {
         val aperture = Pair(2.1f, ThetaRepository.ApertureEnum.APERTURE_2_1)
         val bluetoothPower = Pair(BluetoothPower.ON, ThetaRepository.BluetoothPowerEnum.ON)
+        val cameraMode = Pair(CameraMode.CAPTURE, ThetaRepository.CameraModeEnum.CAPTURE)
         val captureMode = Pair(CaptureMode.IMAGE, ThetaRepository.CaptureModeEnum.IMAGE)
         val colorTemperature = Pair(10, 10)
         val dateTimeZone = Pair("2014:05:18 01:04:29+08:00", "2014:05:18 01:04:29+08:00")
@@ -272,6 +280,7 @@ class OptionsTest {
         val orgOptions = ThetaRepository.Options(
             aperture = aperture.second,
             bluetoothPower = bluetoothPower.second,
+            cameraMode = cameraMode.second,
             captureMode = captureMode.second,
             colorTemperature = colorTemperature.second,
             dateTimeZone = dateTimeZone.second,
@@ -300,6 +309,7 @@ class OptionsTest {
 
         assertEquals(options.aperture, aperture.first, "aperture")
         assertEquals(options._bluetoothPower, bluetoothPower.first, "bluetoothPower")
+        assertEquals(options._cameraMode, cameraMode.first, "cameraMode")
         assertEquals(options.captureMode, captureMode.first, "captureMode")
         assertEquals(options._colorTemperature, colorTemperature.first, "colorTemperature")
         assertEquals(options.dateTimeZone, dateTimeZone.first, "dateTimeZone")
