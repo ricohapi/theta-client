@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:theta_client_flutter/digest_auth.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 import 'package:theta_client_flutter/theta_client_flutter_method_channel.dart';
 
@@ -483,6 +484,60 @@ void main() {
       expect(configMap['OffDelay'], config.offDelay!.rawValue);
       expect(configMap['SleepDelay'], config.sleepDelay!.rawValue);
       expect(configMap['ShutterVolume'], config.shutterVolume);
+      expect(configMap['clientMode'], isNull);
+
+      return Future.value();
+    });
+    await platform.initialize(endpoint, config, null);
+  });
+
+  test('initialize clientMode', () async {
+    const endpoint = 'http://dummy/';
+    final config = ThetaConfig();
+    const username = "THETAXX1234567";
+    const password = "1234567";
+    config.clientMode = DigestAuth(username, password);
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      var arguments = methodCall.arguments as Map<dynamic, dynamic>;
+      expect(arguments['endpoint'], endpoint);
+      expect(arguments['timeout'], isNull);
+
+      Map<dynamic, dynamic> configMap = arguments['config'];
+      expect(configMap['DateTimeZone'], isNull);
+      expect(configMap['Language'], isNull);
+      expect(configMap['OffDelay'], isNull);
+      expect(configMap['SleepDelay'], isNull);
+      expect(configMap['ShutterVolume'], isNull);
+      final clientMode = configMap['clientMode'];
+      expect(clientMode['username'], username);
+      expect(clientMode['password'], password);
+
+      return Future.value();
+    });
+    await platform.initialize(endpoint, config, null);
+  });
+
+  test('initialize clientMode no password', () async {
+    const endpoint = 'http://dummy/';
+    final config = ThetaConfig();
+    const username = "THETAXX1234567";
+    config.clientMode = DigestAuth(username);
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      var arguments = methodCall.arguments as Map<dynamic, dynamic>;
+      expect(arguments['endpoint'], endpoint);
+      expect(arguments['timeout'], isNull);
+
+      Map<dynamic, dynamic> configMap = arguments['config'];
+      expect(configMap['DateTimeZone'], isNull);
+      expect(configMap['Language'], isNull);
+      expect(configMap['OffDelay'], isNull);
+      expect(configMap['SleepDelay'], isNull);
+      expect(configMap['ShutterVolume'], isNull);
+      final clientMode = configMap['clientMode'];
+      expect(clientMode['username'], username);
+      expect(clientMode['password'], isNull);
 
       return Future.value();
     });

@@ -303,8 +303,17 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     }
 }
 
+func toDigetAuth(params: [String : String?]?) -> DigestAuth? {
+    guard let params = params else { return nil }
+    if let username = params["username"] as? String {
+        let password = params["password"] as? String
+        return DigestAuth(username: username, password: password)
+    }
+    return nil
+}
+
 func toConfig(params: [String : Any]) -> ThetaRepository.Config {
-    let config = ThetaRepository.Config(dateTime: nil, language: nil, offDelay: nil, sleepDelay: nil, shutterVolume: nil)
+    let config = ThetaRepository.Config()
     params.forEach { key, value in
         switch (key) {
         case ThetaRepository.OptionNameEnum.datetimezone.name:
@@ -317,6 +326,8 @@ func toConfig(params: [String : Any]) -> ThetaRepository.Config {
             config.sleepDelay = getEnumValue(values: ThetaRepository.SleepDelayEnum.values(), name: value as! String)!
         case ThetaRepository.OptionNameEnum.shuttervolume.name:
             config.shutterVolume = KotlinInt(integerLiteral: value as! Int)
+        case "clientMode":
+            config.clientMode = toDigetAuth(params: value as? [String : String?])
         default:
             break
         }
