@@ -265,10 +265,12 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
         OptionNameEnum.IsoAutoHighLimit -> ApertureEnum.values().find { it.name == valueName }
         OptionNameEnum.Language -> LanguageEnum.values().find { it.name == valueName }
         OptionNameEnum.MaxRecordableTime -> MaxRecordableTimeEnum.values().find { it.name == valueName }
+        OptionNameEnum.NetworkType -> NetworkTypeEnum.values().find { it.name == valueName }
         OptionNameEnum.OffDelay -> OffDelayEnum.values().find { it.name == valueName }
         OptionNameEnum.SleepDelay -> SleepDelayEnum.values().find { it.name == valueName }
         OptionNameEnum.WhiteBalance -> WhiteBalanceEnum.values().find { it.name == valueName }
         OptionNameEnum.WhiteBalanceAutoStrength -> WhiteBalanceAutoStrengthEnum.values().find { it.name == valueName }
+        OptionNameEnum.WlanFrequency -> WlanFrequencyEnum.values().find { it.name == valueName }
         else -> null
     }
 }

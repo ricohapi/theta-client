@@ -943,6 +943,9 @@ enum OptionNameEnum {
   /// Option name _maxRecordableTime
   maxRecordableTime('MaxRecordableTime', MaxRecordableTimeEnum),
 
+  /// Option name _networkType
+  networkType('NetworkType', NetworkTypeEnum),
+
   /// Option name offDelay
   offDelay('OffDelay', OffDelayEnum),
 
@@ -968,7 +971,10 @@ enum OptionNameEnum {
   whiteBalance('WhiteBalance', WhiteBalanceEnum),
 
   /// Option name WhiteBalanceAutoStrength
-  whiteBalanceAutoStrength('WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum);
+  whiteBalanceAutoStrength('WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum),
+
+  // Option name wlanfrequency
+  wlanFrequency('WlanFrequency', WlanFrequencyEnum);
 
   final String rawValue;
   final dynamic valueType;
@@ -1687,6 +1693,35 @@ enum MaxRecordableTimeEnum {
   }
 }
 
+/// Network type of the camera supported by Theta X, Z1 and V.
+enum NetworkTypeEnum {
+  // Direct mode
+  direct('DIRECT'),
+
+  // Client mode via WLAN
+  client('CLIENT'),
+
+  // Client mode via Ethernet cable supporte by Theta Z1 and V.
+  ethernet('ETHERNET'),
+
+  // Network is off. This value can be gotten only by plugin.
+  off('OFF');
+
+  final String rawValue;
+  const NetworkTypeEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static NetworkTypeEnum? getValue(String rawValue) {
+    return NetworkTypeEnum.values.cast<NetworkTypeEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
 /// Length of standby time before the camera automatically powers OFF.
 /// 
 /// For RICOH THETA V or later
@@ -1852,6 +1887,30 @@ enum WhiteBalanceAutoStrengthEnum {
     return WhiteBalanceAutoStrengthEnum.values
         .cast<WhiteBalanceAutoStrengthEnum?>()
         .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
+  }
+}
+
+/// Wireless LAN frequency of the camera supported by Theta X, Z1 and V.
+enum WlanFrequencyEnum {
+  /// 2.4GHz
+  ghz_2_4('GHZ_2_4'),
+
+  /// 5GHz
+  ghz_5('GHZ_5');
+
+  final String rawValue;
+
+  const WlanFrequencyEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static WlanFrequencyEnum? getValue(String rawValue) {
+    return WlanFrequencyEnum.values.cast<WlanFrequencyEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
         orElse: () => null);
   }
 }
@@ -2185,6 +2244,9 @@ class Options {
   /// Maximum recordable time (in seconds) of the camera.
   MaxRecordableTimeEnum? maxRecordableTime;
 
+  /// Network type of the camera supported by Theta X, Z1 and V.
+  NetworkTypeEnum? networkType;
+
   /// Length of standby time before the camera automatically powers OFF.
   /// 
   /// Specify [OffDelayEnum]
@@ -2227,6 +2289,9 @@ class Options {
   /// For RICOH THETA Z1 firmware v2.20.3 or later
   WhiteBalanceAutoStrengthEnum? whiteBalanceAutoStrength;
 
+  /// Wireless LAN frequency of the camera supported by Theta X, Z1 and V.
+  WlanFrequencyEnum? wlanFrequency;
+
   /// Get Option value.
   T? getValue<T>(OptionNameEnum name) {
     switch (name) {
@@ -2260,6 +2325,8 @@ class Options {
         return language as T;
       case OptionNameEnum.maxRecordableTime:
         return maxRecordableTime as T;
+      case OptionNameEnum.networkType:
+        return networkType as T;
       case OptionNameEnum.offDelay:
         return offDelay as T;
       case OptionNameEnum.sleepDelay:
@@ -2278,6 +2345,8 @@ class Options {
         return whiteBalance as T;
       case OptionNameEnum.whiteBalanceAutoStrength:
         return whiteBalanceAutoStrength as T;
+      case OptionNameEnum.wlanFrequency:
+        return wlanFrequency as T;
     }
   }
 
@@ -2333,6 +2402,9 @@ class Options {
       case OptionNameEnum.maxRecordableTime:
         maxRecordableTime = value;
         break;
+      case OptionNameEnum.networkType:
+        networkType = value;
+        break;
       case OptionNameEnum.offDelay:
         offDelay = value;
         break;
@@ -2359,6 +2431,9 @@ class Options {
         break;
       case OptionNameEnum.whiteBalanceAutoStrength:
         whiteBalanceAutoStrength = value;
+        break;
+      case OptionNameEnum.wlanFrequency:
+        wlanFrequency = value;
         break;
     }
   }

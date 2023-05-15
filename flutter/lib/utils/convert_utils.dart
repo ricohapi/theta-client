@@ -166,6 +166,9 @@ class ConvertUtils {
         case OptionNameEnum.maxRecordableTime:
           result.maxRecordableTime = MaxRecordableTimeEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.networkType:
+          result.networkType = NetworkTypeEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.offDelay:
           result.offDelay = OffDelayEnum.getValue(entry.value);
           break;
@@ -192,6 +195,9 @@ class ConvertUtils {
           break;
         case OptionNameEnum.whiteBalanceAutoStrength:
           result.whiteBalanceAutoStrength = WhiteBalanceAutoStrengthEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.wlanFrequency:
+          result.wlanFrequency = WlanFrequencyEnum.getValue(entry.value);
           break;
       }
     }
@@ -232,6 +238,8 @@ class ConvertUtils {
       return value.rawValue;
     } else if (value is MaxRecordableTimeEnum) {
       return value.rawValue;
+    } else if (value is NetworkTypeEnum) {
+      return value.rawValue;
     } else if (value is OffDelayEnum) {
       return value.rawValue;
     } else if (value is SleepDelayEnum) {
@@ -239,6 +247,8 @@ class ConvertUtils {
     } else if (value is WhiteBalanceEnum) {
       return value.rawValue;
     } else if (value is WhiteBalanceAutoStrengthEnum) {
+      return value.rawValue;
+    } else if (value is WlanFrequencyEnum) {
       return value.rawValue;
     } else if (value is int || value is double || value is String || value is bool) {
       return value;
