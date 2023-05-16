@@ -8,6 +8,8 @@ import type { PluginInfo } from './theta-plugin';
 import { NativeModules } from 'react-native';
 import type { OptionNameEnum, Options, CaptureModeEnum } from './options';
 import { PhotoCaptureBuilder, VideoCaptureBuilder } from '../capture';
+import type { ThetaConfig } from './theta-config';
+import type { ThetaTimeout } from './theta-timeout';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 /**
@@ -15,13 +17,16 @@ const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
  *
  * @function initialize
  * @param {string} endPoint optional endpoint of camera
+ * @param {ThetaConfig} config Configuration of initialize. If null, get from THETA.
+ * @param {ThetaTimeout} timeout Timeout of HTTP call.
  * @return promise of boolean result
  **/
-export function initialize(endPoint?: string): Promise<boolean> {
-  if (!endPoint) {
-    endPoint = 'http://192.168.1.1';
-  }
-  return ThetaClientReactNative.initialize(endPoint);
+export function initialize(
+  endPoint: string = 'http://192.168.1.1',
+  config?: ThetaConfig,
+  timeout?: ThetaTimeout
+): Promise<boolean> {
+  return ThetaClientReactNative.initialize(endPoint, config, timeout);
 }
 
 /**

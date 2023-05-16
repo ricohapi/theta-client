@@ -64,10 +64,14 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set initialize result
    */
   @ReactMethod
-  fun initialize(endpoint: String, promise: Promise) {
+  fun initialize(endpoint: String, config: ReadableMap?, timeout: ReadableMap?, promise: Promise) {
     launch {
       try {
-        theta = ThetaRepository.newInstance(endpoint)
+        theta = ThetaRepository.newInstance(
+          endpoint,
+          config?.let { configToTheta(it) },
+          timeout?.let { timeoutToTheta(it) }
+        )
         promise.resolve(true)
       } catch (t: Throwable) {
         promise.reject(t)
