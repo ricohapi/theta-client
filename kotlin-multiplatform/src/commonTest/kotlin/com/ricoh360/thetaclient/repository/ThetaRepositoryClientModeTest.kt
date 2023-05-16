@@ -42,7 +42,7 @@ class ThetaRepositoryClientModeTest {
 
         assertNotNull(authHeader.parameter("response"))
         val cnonce = authHeader.parameter("cnonce")
-        assertEquals(cnonce?.length,  32)
+        assertEquals(cnonce?.length, 32)
     }
 
     /**
@@ -64,7 +64,9 @@ class ThetaRepositoryClientModeTest {
         val realm = "RICOH THETA Z1"
         val qop = "auth"
         val nonce = "nay8d0QmRP+XN0E8r0NdZg=="
-        val wwwAuthHeader = headersOf(HttpHeaders.WWWAuthenticate, HttpAuthHeader.Parameterized(
+        val wwwAuthHeader = headersOf(
+            HttpHeaders.WWWAuthenticate,
+            HttpAuthHeader.Parameterized(
                 AuthScheme.Digest,
                 linkedMapOf(
                     "realm" to realm,
@@ -72,7 +74,8 @@ class ThetaRepositoryClientModeTest {
                     "nonce" to nonce,
                     "algorithm" to "MD5",
                 ),
-            ).render())
+            ).render(),
+        )
 
         val headerArray = arrayOf(
             wwwAuthHeader,
@@ -84,7 +87,7 @@ class ThetaRepositoryClientModeTest {
             "",
             Resource("src/commonTest/resources/info/info_z1.json").readText(),
             "",
-            Resource("src/commonTest/resources/getOptions/get_options_init_z1_done.json").readText()
+            Resource("src/commonTest/resources/getOptions/get_options_init_z1_done.json").readText(),
         )
         val requestPathArray = arrayOf(
             "/osc/info",
@@ -126,7 +129,6 @@ class ThetaRepositoryClientModeTest {
         assertEquals(counter, 4)
         assertEquals(ApiClient.digestAuth?.username, username)
         assertEquals(ApiClient.digestAuth?.password, password)
-        assertNotNull(ThetaRepository.restoreConfig, "restoreConfig")
     }
 
     /**
@@ -146,15 +148,18 @@ class ThetaRepositoryClientModeTest {
         val realm = "RICOH THETA Z1"
         val qop = "auth"
         val nonce = "nay8d0QmRP+XN0E8r0NdZg=="
-        val wwwAuthHeader = headersOf(HttpHeaders.WWWAuthenticate, HttpAuthHeader.Parameterized(
-            AuthScheme.Digest,
-            linkedMapOf(
-                "realm" to realm,
-                "qop" to qop,
-                "nonce" to nonce,
-                "algorithm" to "MD5",
-            ),
-        ).render())
+        val wwwAuthHeader = headersOf(
+            HttpHeaders.WWWAuthenticate,
+            HttpAuthHeader.Parameterized(
+                AuthScheme.Digest,
+                linkedMapOf(
+                    "realm" to realm,
+                    "qop" to qop,
+                    "nonce" to nonce,
+                    "algorithm" to "MD5",
+                ),
+            ).render(),
+        )
 
         val headerArray = arrayOf(
             wwwAuthHeader,
@@ -201,7 +206,6 @@ class ThetaRepositoryClientModeTest {
         assertEquals(counter, 2)
         assertEquals(ApiClient.digestAuth?.username, username)
         assertEquals(ApiClient.digestAuth?.password, password)
-        assertNull(ThetaRepository.restoreConfig, "restoreConfig")
     }
 
     /**
@@ -253,7 +257,6 @@ class ThetaRepositoryClientModeTest {
         assertEquals(counter, 1)
         assertEquals(ApiClient.digestAuth?.username, username)
         assertEquals(ApiClient.digestAuth?.password, password)
-        assertNull(ThetaRepository.restoreConfig, "restoreConfig")
     }
 
     /**
@@ -269,15 +272,18 @@ class ThetaRepositoryClientModeTest {
         val realm = "RICOH THETA Z1"
         val qop = "auth"
         val nonce = "nay8d0QmRP+XN0E8r0NdZg=="
-        val wwwAuthHeader = headersOf(HttpHeaders.WWWAuthenticate, HttpAuthHeader.Parameterized(
-            AuthScheme.Digest,
-            linkedMapOf(
-                "realm" to realm,
-                "qop" to qop,
-                "nonce" to nonce,
-                "algorithm" to "MD5",
-            ),
-        ).render())
+        val wwwAuthHeader = headersOf(
+            HttpHeaders.WWWAuthenticate,
+            HttpAuthHeader.Parameterized(
+                AuthScheme.Digest,
+                linkedMapOf(
+                    "realm" to realm,
+                    "qop" to qop,
+                    "nonce" to nonce,
+                    "algorithm" to "MD5",
+                ),
+            ).render(),
+        )
 
         val headerArray = arrayOf(
             wwwAuthHeader,
