@@ -231,7 +231,7 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.aperture.name:
         options.aperture = getEnumValue(values: ThetaRepository.ApertureEnum.values(), name: value as! String)!
         break
-    case ThetaRepository.OptionNameEnum.cameraMode.name:
+    case ThetaRepository.OptionNameEnum.cameramode.name:
         options.cameraMode = getEnumValue(values: ThetaRepository.CameraModeEnum.values(), name: value as! String)!
         break
     case ThetaRepository.OptionNameEnum.capturemode.name:

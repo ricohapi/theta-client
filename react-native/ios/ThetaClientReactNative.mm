@@ -1335,7 +1335,7 @@ static convert_t GpsInfoCvt = {
 static NSDictionary *NameToOptionEnum = @{
   @"Aperture": THETACThetaRepositoryOptionNameEnum.aperture,
   @"BluetoothPower": THETACThetaRepositoryOptionNameEnum.bluetoothpower,
-  @"CameraMode": THETACThetaRepositoryOptionNameEnum.cameraMode,
+  @"CameraMode": THETACThetaRepositoryOptionNameEnum.cameramode,
   @"CaptureMode": THETACThetaRepositoryOptionNameEnum.capturemode,
   @"ColorTemperature": THETACThetaRepositoryOptionNameEnum.colortemperature,
   @"DateTimeZone": THETACThetaRepositoryOptionNameEnum.datetimezone,
