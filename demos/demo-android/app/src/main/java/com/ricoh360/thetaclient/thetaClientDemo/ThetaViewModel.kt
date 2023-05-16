@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ricoh360.thetaclient.DigestAuth
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.capture.PhotoCapture
 import io.ktor.client.utils.*
@@ -44,6 +45,11 @@ class ThetaViewModel(
                 thetaConfig.shutterVolume = 40 // 0 to 100
                 thetaConfig.sleepDelay = ThetaRepository.SleepDelayEnum.SLEEP_DELAY_5M
                 thetaConfig.offDelay = ThetaRepository.OffDelayEnum.DISABLE
+
+                // Client mode authentication settings
+//                val clientMode = DigestAuth("THETAXX12345678", "12345678")
+//                thetaConfig.clientMode = clientMode
+
                 thetaRepository = ThetaRepository.newInstance(thetaUrl, thetaConfig)
                 // thetaRepository = ThetaRepository.newInstance(thetaUrl) // You can specify just a URL
             }
