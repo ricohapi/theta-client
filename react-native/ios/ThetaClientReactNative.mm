@@ -1305,7 +1305,7 @@ static convert_t GpsInfoCvt = {
 static convert_t NetworkTypeEnum = {
   .toTheta = @{
     @"DIRECT": THETACThetaRepositoryNetworkTypeEnum.direct,
-    @"CLIENT": THETACThetaRepositoryNetworkTypeEnum.client
+    @"CLIENT": THETACThetaRepositoryNetworkTypeEnum.client,
     @"ETHERNET": THETACThetaRepositoryNetworkTypeEnum.ethernet,
     @"OFF": THETACThetaRepositoryNetworkTypeEnum.off
   },
@@ -1320,7 +1320,7 @@ static convert_t NetworkTypeEnum = {
     if (val) {
       opt.networkType = val;
     }
-  }
+  },
   .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
     id val = [NetworkTypeEnum.fromTheta objectForKey:opt.networkType];
     if (val) {
@@ -1346,7 +1346,7 @@ static convert_t WlanFrequencyEnum = {
     if (val) {
       opt.wlanFrequency = val;
     }
-  }
+  },
   .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
     id val = [WlanFrequencyEnum.fromTheta objectForKey:opt.wlanFrequency];
     if (val) {
