@@ -10,6 +10,8 @@ export type FileInfo = {
   thumbnailUrl: string;
   /** fileUrl You can get a file using HTTP GET to [fileUrl]. */
   fileUrl: string;
+  /** Storage ID. (RICOH THETA X Version 2.00.0 or later) */
+  storageID?: String;
 };
 
 /** Data about files in Theta. */
@@ -31,4 +33,17 @@ export const FileTypeEnum = {
 } as const;
 
 /** type definition of FileTypeEnum */
-export type FileTypeEnum = typeof FileTypeEnum[keyof typeof FileTypeEnum];
+export type FileTypeEnum = (typeof FileTypeEnum)[keyof typeof FileTypeEnum];
+
+/** Specifies the storage. */
+export const StorageEnum = {
+  /** internal storage */
+  IN: 'IN',
+  /** external storage (SD card) */
+  SD: 'SD',
+  /** current storage */
+  DEFAULT: 'DEFAULT',
+} as const;
+
+/** type definition of StorageEnum */
+export type StorageEnum = (typeof StorageEnum)[keyof typeof StorageEnum];

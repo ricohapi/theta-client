@@ -1,5 +1,5 @@
 import { AccessPoint, AuthModeEnum } from './access-point';
-import type { FileTypeEnum, ThetaFiles } from './theta-files';
+import type { FileTypeEnum, StorageEnum, ThetaFiles } from './theta-files';
 import type { ThetaState } from './theta-state';
 import type { ThetaInfo } from './theta-info';
 import type { MetaInfo } from './theta-meta';
@@ -186,18 +186,21 @@ export function getThetaState(): Promise<ThetaState> {
  * @param {number} entryCount Desired number of entries to return.  If
  *   entryCount is more than the number of remaining files, just
  *   return entries of actual remaining files.
+ * @param {StorageEnum} storage Desired storage. If omitted, return current storage. (RICOH THETA X Version 2.00.0 or later)
  * @return promise with a list of file information and number of totalEntries.
  *   see [camera.listFiles](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md).
  */
 export function listFiles(
   fileTypeEnum: FileTypeEnum,
   startPosition: number = 0,
-  entryCount: number
+  entryCount: number,
+  storage?: StorageEnum
 ): Promise<ThetaFiles> {
   return ThetaClientReactNative.listFiles(
     fileTypeEnum,
     startPosition,
-    entryCount
+    entryCount,
+    storage
   );
 }
 
