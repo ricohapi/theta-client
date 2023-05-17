@@ -893,11 +893,14 @@ class AccessPoint {
 }
 
 /// Camera setting options name.
-/// 
+///
 /// [options name](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
 enum OptionNameEnum {
   /// Option name aperture
   aperture('Aperture', ApertureEnum),
+
+  /// Option name _cameraControlSource
+  cameraControlSource('CameraControlSource', CameraControlSourceEnum),
 
   /// Option name _cameraMode
   cameraMode('CameraMode', CameraModeEnum),
@@ -1033,6 +1036,30 @@ enum ApertureEnum {
 
   static ApertureEnum? getValue(String rawValue) {
     return ApertureEnum.values.cast<ApertureEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Camera control source.
+enum CameraControlSourceEnum {
+  /// Operation is possible with the camera. Locks the smartphone
+  /// application UI (supported app only).
+  camera('CAMERA'),
+
+  /// Operation is possible with the smartphone application. Locks
+  /// the UI on the shooting screen on the camera.
+  app('APP');
+
+  final String rawValue;
+
+  const CameraControlSourceEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static CameraControlSourceEnum? getValue(String rawValue) {
+    return CameraControlSourceEnum.values.cast<CameraControlSourceEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
   }
 }
 
@@ -2124,17 +2151,24 @@ class GpsInfo {
 
   @override
   bool operator ==(Object other) => hashCode == other.hashCode;
-  
+
   @override
   int get hashCode => Object.hashAll([latitude, longitude, altitude, dateTimeZone]);
 }
 
 /// Camera setting options.
-/// 
+///
 /// Refer to the [options category](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
 class Options {
   /// Aperture value.
   ApertureEnum? aperture;
+
+  /// camera control source
+  /// Sets whether to lock/unlock the camera UI.
+  /// The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
+  ///
+  /// For RICOH THETA X
+  CameraControlSourceEnum? cameraControlSource;
 
   /// Camera mode.
   /// The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
@@ -2282,6 +2316,8 @@ class Options {
     switch (name) {
       case OptionNameEnum.aperture:
         return aperture as T;
+      case OptionNameEnum.cameraControlSource:
+        return cameraControlSource as T;
       case OptionNameEnum.cameraMode:
         return cameraMode as T;
       case OptionNameEnum.captureMode:
@@ -2346,6 +2382,9 @@ class Options {
     switch (name) {
       case OptionNameEnum.aperture:
         aperture = value;
+        break;
+      case OptionNameEnum.cameraControlSource:
+        cameraControlSource = value;
         break;
       case OptionNameEnum.cameraMode:
         cameraMode = value;
@@ -2625,7 +2664,7 @@ class VideoCaptureBuilder extends CaptureBuilder<VideoCaptureBuilder> {
     try {
       await ThetaClientFlutterPlatform.instance.buildVideoCapture(_options);
       completer.complete(VideoCapture(_options));
-    } catch(e) {
+    } catch (e) {
       completer.completeError(e);
     }
     return completer.future;
