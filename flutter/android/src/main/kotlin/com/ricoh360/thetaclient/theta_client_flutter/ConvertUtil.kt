@@ -183,11 +183,13 @@ fun toResult(options: Options): Map<String, Any> {
         OptionNameEnum.ColorTemperature,
         OptionNameEnum.DateTimeZone,
         OptionNameEnum.IsGpsOn,
+        OptionNameEnum.Password,
         OptionNameEnum.RemainingPictures,
         OptionNameEnum.RemainingVideoSeconds,
         OptionNameEnum.RemainingSpace,
         OptionNameEnum.TotalSpace,
-        OptionNameEnum.ShutterVolume
+        OptionNameEnum.ShutterVolume,
+        OptionNameEnum.Username
     )
     OptionNameEnum.values().forEach { name ->
         if (name == OptionNameEnum.GpsInfo) {
@@ -230,11 +232,13 @@ fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
         OptionNameEnum.ColorTemperature,
         OptionNameEnum.DateTimeZone,
         OptionNameEnum.IsGpsOn,
+        OptionNameEnum.Password,
         OptionNameEnum.RemainingPictures,
         OptionNameEnum.RemainingVideoSeconds,
         OptionNameEnum.RemainingSpace,
         OptionNameEnum.TotalSpace,
-        OptionNameEnum.ShutterVolume
+        OptionNameEnum.ShutterVolume,
+        OptionNameEnum.Username
     )
     if (valueOptions.contains(name)) {
         var optionValue = value

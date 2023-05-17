@@ -589,3 +589,37 @@ class GpsInfoConverter : OptionConverter {
     }
   }
 }
+
+/**
+ * UsernameConverter
+ */
+class UsernameConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("username")?.let {
+      options.username = it
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.username?.let {
+      objects.putString("username", it)
+    }
+  }
+}
+
+/**
+ * PasswordConverter
+ */
+class PasswordConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("password")?.let {
+      options.password = it
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.password?.let {
+      objects.putString("password", it)
+    }
+  }
+}

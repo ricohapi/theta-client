@@ -415,6 +415,11 @@ data class Options(
     var offDelay: Int? = null,
 
     /**
+     * Password used for digest authentication when _networkType is set to client mode.
+     */
+    var _password: String? = null,
+
+    /**
      * Length of standby time before the camera automatically powers OFF.
      */
     @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
@@ -533,6 +538,11 @@ data class Options(
      */
     @Serializable(with = NumberAsLongSerializer::class)
     var totalSpace: Long? = null,
+
+    /**
+     * User name used for digest authentication when _networkType is set to client mode.
+     */
+    var _username: String? = null,
 
     /**
      * Video stitching during shooting.

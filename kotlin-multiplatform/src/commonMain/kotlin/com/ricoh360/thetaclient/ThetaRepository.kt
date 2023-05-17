@@ -643,6 +643,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * Password
+         */
+        Password("_password", String::class),
+
+        /**
+         * Option name
          * sleepDelay
          */
         SleepDelay("sleepDelay", ThetaRepository.SleepDelay::class),
@@ -676,6 +682,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * _shutterVolume
          */
         ShutterVolume("_shutterVolume", Int::class),
+
+        /**
+         *  Option name
+         *  _username
+         */
+        Username("_username", String::class),
 
         /**
          * Option name
@@ -828,6 +840,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var offDelay: OffDelay? = null,
 
         /**
+         * Password used for digest authentication when _networkType is set to client mode.
+         * Can be set by camera.setOptions during direct mode.
+         */
+        var password: String? = null,
+
+        /**
          * Length of standby time before the camera enters the sleep mode.
          */
         var sleepDelay: SleepDelay? = null,
@@ -860,6 +878,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * 100: Maximum volume (maxShutterVolume)
          */
         var shutterVolume: Int? = null,
+
+        /**
+         * User name used for digest authentication when _networkType is set to client mode.
+         * Can be set by camera.setOptions during direct mode.
+         */
+        var username: String? = null,
 
         /**
          * White balance.
@@ -898,12 +922,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             language = null,
             maxRecordableTime = null,
             offDelay = null,
+            password = null,
             sleepDelay = null,
             remainingPictures = null,
             remainingVideoSeconds = null,
             remainingSpace = null,
             totalSpace = null,
             shutterVolume = null,
+            username = null,
             whiteBalance = null,
             whiteBalanceAutoStrength = null
         )
@@ -930,12 +956,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             language = options._language?.let { LanguageEnum.get(it) },
             maxRecordableTime = options._maxRecordableTime?.let { MaxRecordableTimeEnum.get(it) },
             offDelay = options.offDelay?.let { OffDelayEnum.get(it) },
+            password = options._password,
             sleepDelay = options.sleepDelay?.let { SleepDelayEnum.get(it) },
             remainingPictures = options.remainingPictures,
             remainingVideoSeconds = options.remainingVideoSeconds,
             remainingSpace = options.remainingSpace,
             totalSpace = options.totalSpace,
             shutterVolume = options._shutterVolume,
+            username = options._username,
             whiteBalance = options.whiteBalance?.let { WhiteBalanceEnum.get(it) },
             whiteBalanceAutoStrength = options._whiteBalanceAutoStrength?.let { WhiteBalanceAutoStrengthEnum.get(it) }
         )
@@ -963,12 +991,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _language = language?.value,
                 _maxRecordableTime = maxRecordableTime?.sec,
                 offDelay = offDelay?.sec,
+                _password = password,
                 sleepDelay = sleepDelay?.sec,
                 remainingPictures = remainingPictures,
                 remainingVideoSeconds = remainingVideoSeconds,
                 remainingSpace = remainingSpace,
                 totalSpace = totalSpace,
                 _shutterVolume = shutterVolume,
+                _username = username,
                 whiteBalance = whiteBalance?.value,
                 _whiteBalanceAutoStrength = whiteBalanceAutoStrength?.value
             )
@@ -1003,12 +1033,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.Language -> language
                 OptionNameEnum.MaxRecordableTime -> maxRecordableTime
                 OptionNameEnum.OffDelay -> offDelay
+                OptionNameEnum.Password -> password
                 OptionNameEnum.SleepDelay -> sleepDelay
                 OptionNameEnum.RemainingPictures -> remainingPictures
                 OptionNameEnum.RemainingVideoSeconds -> remainingVideoSeconds
                 OptionNameEnum.RemainingSpace -> remainingSpace
                 OptionNameEnum.TotalSpace -> totalSpace
                 OptionNameEnum.ShutterVolume -> shutterVolume
+                OptionNameEnum.Username -> username
                 OptionNameEnum.WhiteBalance -> whiteBalance
                 OptionNameEnum.WhiteBalanceAutoStrength -> whiteBalanceAutoStrength
             } as T
@@ -1044,12 +1076,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.Language -> language = value as LanguageEnum
                 OptionNameEnum.MaxRecordableTime -> maxRecordableTime = value as MaxRecordableTimeEnum
                 OptionNameEnum.OffDelay -> offDelay = value as OffDelay
+                OptionNameEnum.Password -> password = value as String
                 OptionNameEnum.SleepDelay -> sleepDelay = value as SleepDelay
                 OptionNameEnum.RemainingPictures -> remainingPictures = value as Int
                 OptionNameEnum.RemainingVideoSeconds -> remainingVideoSeconds = value as Int
                 OptionNameEnum.RemainingSpace -> remainingSpace = value as Long
                 OptionNameEnum.TotalSpace -> totalSpace = value as Long
                 OptionNameEnum.ShutterVolume -> shutterVolume = value as Int
+                OptionNameEnum.Username -> username = value as String
                 OptionNameEnum.WhiteBalance -> whiteBalance = value as WhiteBalanceEnum
                 OptionNameEnum.WhiteBalanceAutoStrength -> whiteBalanceAutoStrength = value as WhiteBalanceAutoStrengthEnum
             }

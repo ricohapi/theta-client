@@ -169,6 +169,9 @@ class ConvertUtils {
         case OptionNameEnum.offDelay:
           result.offDelay = OffDelayEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.password:
+          result.password = entry.value;
+          break;
         case OptionNameEnum.sleepDelay:
           result.sleepDelay = SleepDelayEnum.getValue(entry.value);
           break;
@@ -186,6 +189,9 @@ class ConvertUtils {
           break;
         case OptionNameEnum.shutterVolume:
           result.shutterVolume = entry.value;
+          break;
+        case OptionNameEnum.username:
+          result.username = entry.value;
           break;
         case OptionNameEnum.whiteBalance:
           result.whiteBalance = WhiteBalanceEnum.getValue(entry.value);

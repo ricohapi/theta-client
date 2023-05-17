@@ -1300,6 +1300,40 @@ static convert_t GpsInfoCvt = {
 };
 
 /**
+ * Password converter
+ */
+static convert_t PasswordCvt = {
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    NSString* val = [rct objectForKey:@"password"];
+    if (val) {
+      opt.password = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    if (opt.password) {
+      [rct setObject:opt.password forKey:@"password"];
+    }
+  }
+};
+
+/**
+ * Username converter
+ */
+static convert_t UsernameCvt = {
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    NSString* val = [rct objectForKey:@"username"];
+    if (val) {
+      opt.username = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    if (opt.username) {
+      [rct setObject:opt.username forKey:@"username"];
+    }
+  }
+};
+
+/**
  * OptionNames converter
  */
 static NSDictionary *NameToOptionEnum = @{
@@ -1320,12 +1354,14 @@ static NSDictionary *NameToOptionEnum = @{
   @"Language": THETACThetaRepositoryOptionNameEnum.language,
   @"MaxRecordableTime": THETACThetaRepositoryOptionNameEnum.maxrecordabletime,
   @"OffDelay": THETACThetaRepositoryOptionNameEnum.offdelay,
+  @"Password": THETACThetaRepositoryOptionNameEnum.password,
   @"SleepDelay": THETACThetaRepositoryOptionNameEnum.sleepdelay,
   @"RemainingPictures": THETACThetaRepositoryOptionNameEnum.remainingpictures,
   @"RemainingVideoSeconds": THETACThetaRepositoryOptionNameEnum.remainingvideoseconds,
   @"RemainingSpace": THETACThetaRepositoryOptionNameEnum.remainingspace,
   @"TotalSpace": THETACThetaRepositoryOptionNameEnum.totalspace,
   @"ShutterVolume": THETACThetaRepositoryOptionNameEnum.shuttervolume,
+  @"Username": THETACThetaRepositoryOptionNameEnum.username,
   @"WhiteBalance": THETACThetaRepositoryOptionNameEnum.whitebalance,
   @"WhiteBalanceAutoStrength": THETACThetaRepositoryOptionNameEnum.whitebalanceautostrength
 };
@@ -1351,12 +1387,14 @@ static NSDictionary *OptionEnumToOption = @{
   @"Language": @"language",
   @"MaxRecordableTime": @"maxRecordableTime",
   @"OffDelay": @"offDelay",
+  @"Password": @"password",
   @"SleepDelay": @"sleepDelay",
   @"RemainingPictures": @"remainingPictures",
   @"RemainingVideoSeconds": @"remainingVideoSeconds",
   @"RemainingSpace": @"remainingSpace",
   @"TotalSpace": @"totalSpace",
   @"ShutterVolume": @"shutterVolume",
+  @"Username": @"username",
   @"WhiteBalance": @"whiteBalance",
   @"WhiteBalanceAutoStrength": @"whiteBalanceAutoStrength"
 };
@@ -1385,12 +1423,14 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"language": ^{return &LanguageEnum;},
   @"maxRecordableTime": ^{return &MaxRecordableTimeEnum;},
   @"offDelay": ^{return &OffDelayEnum;},
+  @"password": ^{return &PasswordCvt;},
   @"sleepDelay": ^{return &SleepDelayEnum;},
   @"remainingPictures": ^{return &RemainingPicturesCvt;},
   @"remainingVideoSeconds": ^{return &RemainingVideoSecondsCvt;},
   @"remainingSpace": ^{return &RemainingSpaceCvt;},
   @"totalSpace": ^{return &TotalSpaceCvt;},
   @"shutterVolume": ^{return &ShutterVolumeCvt;},
+  @"username": ^{return &UsernameCvt;},
   @"whiteBalance": ^{return &WhiteBalanceEnum;},
   @"_gpsTagRecording": ^{return &GpsTagRecordingEnum;},
   @"whiteBalanceAutoStrength": ^{return &WhiteBalanceAutoStrengthEnum;}

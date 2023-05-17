@@ -946,6 +946,9 @@ enum OptionNameEnum {
   /// Option name offDelay
   offDelay('OffDelay', OffDelayEnum),
 
+  /// Option name _password
+  password('Password', String),
+
   /// Option name sleepDelay
   sleepDelay('SleepDelay', SleepDelayEnum),
 
@@ -963,6 +966,9 @@ enum OptionNameEnum {
 
   /// Option name _shutterVolume
   shutterVolume('ShutterVolume', int),
+
+  /// Option name _username
+  username('Username', String),
 
   /// Option name whiteBalance
   whiteBalance('WhiteBalance', WhiteBalanceEnum),
@@ -2190,6 +2196,9 @@ class Options {
   /// Specify [OffDelayEnum]
   OffDelayEnum? offDelay;
 
+  /// Password used for digest authentication when _networkType is set to client mode.
+  String? password;
+
   /// Length of standby time before the camera enters the sleep mode.
   SleepDelayEnum? sleepDelay;
 
@@ -2211,6 +2220,9 @@ class Options {
   /// 0: Minimum volume (minShutterVolume)
   /// 100: Maximum volume (maxShutterVolume)
   int? shutterVolume;
+
+  /// User name used for digest authentication when _networkType is set to client mode.
+  String? username;
 
   /// White balance.
   /// 
@@ -2262,6 +2274,8 @@ class Options {
         return maxRecordableTime as T;
       case OptionNameEnum.offDelay:
         return offDelay as T;
+      case OptionNameEnum.password:
+        return password as T;
       case OptionNameEnum.sleepDelay:
         return sleepDelay as T;
       case OptionNameEnum.remainingPictures:
@@ -2274,6 +2288,8 @@ class Options {
         return totalSpace as T;
       case OptionNameEnum.shutterVolume:
         return shutterVolume as T;
+      case OptionNameEnum.username:
+        return username as T;
       case OptionNameEnum.whiteBalance:
         return whiteBalance as T;
       case OptionNameEnum.whiteBalanceAutoStrength:
@@ -2336,6 +2352,9 @@ class Options {
       case OptionNameEnum.offDelay:
         offDelay = value;
         break;
+      case OptionNameEnum.password:
+        password = value;
+        break;
       case OptionNameEnum.sleepDelay:
         sleepDelay = value;
         break;
@@ -2353,6 +2372,9 @@ class Options {
         break;
       case OptionNameEnum.shutterVolume:
         shutterVolume = value;
+        break;
+      case OptionNameEnum.username:
+        username = value;
         break;
       case OptionNameEnum.whiteBalance:
         whiteBalance = value;

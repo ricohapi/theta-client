@@ -476,6 +476,8 @@ export const OptionNameEnum = {
   MaxRecordableTime: 'MaxRecordableTime',
   /** offDelay */
   OffDelay: 'OffDelay',
+  /** password */
+  Password: 'Password',
   /** sleepDelay */
   SleepDelay: 'SleepDelay',
   /** remainingPictures */
@@ -488,6 +490,8 @@ export const OptionNameEnum = {
   TotalSpace: 'TotalSpace',
   /** shutterVolume */
   ShutterVolume: 'ShutterVolume',
+  /** username */
+  Username: 'Username',
   /** whiteBalance */
   WhiteBalance: 'WhiteBalance',
   /** _whiteBalanceAutoStrength */
@@ -533,6 +537,8 @@ export type Options = {
   maxRecordableTime?: MaxRecordableTimeEnum;
   /** Length of standby time before the camera automatically powers OFF. */
   offDelay?: OffDelayEnum;
+  /** Password used for digest authentication when _networkType is set to client mode. */
+  password?: String;
   /** Length of standby time before the camera enters the sleep mode. */
   sleepDelay?: SleepDelayEnum;
   /** The estimated remaining number of shots for the current shooting settings. */
@@ -545,6 +551,8 @@ export type Options = {
   totalSpace?: number;
   /** Shutter volume. */
   shutterVolume?: number;
+  /** User name used for digest authentication when _networkType is set to client mode. */
+  username?: String;
   /** White balance. */
   whiteBalance?: WhiteBalanceEnum;
   /** White balance auto strength. */
