@@ -369,18 +369,25 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * If [startPosition] is larger than the position of the last file, an empty list is returned.
      * @param[entryCount] Desired number of entries to return.
      * If [entryCount] is more than the number of remaining files, just return entries of actual remaining files.
+     * @param[storage] Desired storage. If omitted, return current storage. (RICOH THETA X Version 2.00.0 or later)
      * @return A list of file information and number of totalEntries.
      * see [camera.listFiles](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md).
      * @exception ThetaWebApiException If an error occurs in THETA.
      * @exception NotConnectedException
      */
     @Throws(Throwable::class)
-    suspend fun listFiles(fileType: FileTypeEnum, startPosition: Int = 0, entryCount: Int): ThetaFiles {
+    suspend fun listFiles(
+        fileType: FileTypeEnum,
+        startPosition: Int = 0,
+        entryCount: Int,
+        storage: StorageEnum? = null,
+    ): ThetaFiles {
         try {
             val params = ListFilesParams(
                 fileType = fileType.value,
                 startPosition = startPosition,
-                entryCount = entryCount
+                entryCount = entryCount,
+                _storage = storage?.value,
             )
             val listFilesResponse = ThetaApi.callListFilesCommand(endpoint, params)
             listFilesResponse.error?.let {
@@ -400,6 +407,28 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         } catch (e: Exception) {
             throw NotConnectedException(e.message ?: e.toString())
         }
+    }
+
+    /**
+     * Lists information of images and videos in Theta.
+     *
+     * @param[fileType] Type of the files to be listed.
+     * @param[startPosition] The position of the first file to be returned in the list. 0 represents the first file.
+     * If [startPosition] is larger than the position of the last file, an empty list is returned.
+     * @param[entryCount] Desired number of entries to return.
+     * If [entryCount] is more than the number of remaining files, just return entries of actual remaining files.
+     * @return A list of file information and number of totalEntries.
+     * see [camera.listFiles](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md).
+     * @exception ThetaWebApiException If an error occurs in THETA.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun listFiles(
+        fileType: FileTypeEnum,
+        startPosition: Int = 0,
+        entryCount: Int,
+    ): ThetaFiles {
+        return listFiles(fileType, startPosition, entryCount, null)
     }
 
     /**
@@ -2920,26 +2949,49 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Specifies the storage
+     */
+    enum class StorageEnum(val value: Storage) {
+        /**
+         * internal storage
+         */
+        IN(Storage.IN),
+
+        /**
+         * external storage (SD card)
+         */
+        SD(Storage.SD),
+
+        /**
+         * current storage
+         */
+        DEFAULT(Storage.DEFAULT),
+    }
+
+    /**
      * File information in Theta.
      * @property name File name.
      * @property size File size in bytes.
      * @property dateTime File creation time in the format "YYYY:MM:DD HH:MM:SS".
      * @property fileUrl You can get a file using HTTP GET to [fileUrl].
      * @property thumbnailUrl You can get a thumbnail image using HTTP GET to [thumbnailUrl].
+     * @property storageID Storage ID. (RICOH THETA X Version 2.00.0 or later)
      */
     data class FileInfo(
         val name: String,
         val size: Long,
         val dateTime: String,
         val fileUrl: String,
-        val thumbnailUrl: String
+        val thumbnailUrl: String,
+        val storageID: String?,
     ) {
         constructor(cameraFileInfo: CameraFileInfo) : this(
             cameraFileInfo.name,
             cameraFileInfo.size,
             cameraFileInfo.dateTimeZone!!.take(16), // Delete timezone
             cameraFileInfo.fileUrl,
-            thumbnailUrl = cameraFileInfo.getThumbnailUrl()
+            thumbnailUrl = cameraFileInfo.getThumbnailUrl(),
+            cameraFileInfo._storageID,
         )
     }
 

@@ -5,6 +5,7 @@ import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.FileType
 import com.ricoh360.thetaclient.transferred.ListFilesRequest
+import com.ricoh360.thetaclient.transferred.Storage
 import io.ktor.client.network.sockets.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -32,7 +33,7 @@ class ListFilesTest {
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    fun checkRequest(request: HttpRequestData, fileType: FileType, startPosition: Int, entryCount: Int) {
+    fun checkRequest(request: HttpRequestData, fileType: FileType, startPosition: Int, entryCount: Int, storage: Storage? = null) {
         val body = request.body as TextContent
         val js = Json {
             encodeDefaults = true // Encode properties with default value.
@@ -46,6 +47,7 @@ class ListFilesTest {
         assertEquals(listFilesRequest.parameters.fileType, fileType, "fileType")
         assertEquals(listFilesRequest.parameters.startPosition, startPosition, "startPosition")
         assertEquals(listFilesRequest.parameters.entryCount, entryCount, "entryCount")
+        assertEquals(listFilesRequest.parameters._storage, storage, "_storage")
     }
 
     /**
@@ -77,7 +79,7 @@ class ListFilesTest {
             assertEquals(it.thumbnailUrl, it.fileUrl + "?type=thumb", "FileInfo thumbnailUrl")
         }
         assertTrue(response.fileList.isNotEmpty(), "entryCount")
-        assertEquals(response.totalEntries, 54,"totalEntries")
+        assertEquals(response.totalEntries, 54, "totalEntries")
     }
 
     /**
@@ -109,7 +111,75 @@ class ListFilesTest {
             assertEquals(it.thumbnailUrl, it.fileUrl + "?type=thumb", "FileInfo thumbnailUrl")
         }
         assertTrue(response.fileList.isNotEmpty(), "entryCount")
-        assertEquals(response.totalEntries, 37,"totalEntries")
+        assertEquals(response.totalEntries, 37, "totalEntries")
+    }
+
+    /**
+     * call listFiles with storage.
+     */
+    @Test
+    fun listFilesStorageIDTest() = runTest {
+        val fileType = ThetaRepository.FileTypeEnum.IMAGE
+        val startPosition = 0
+        val entryCount = 5
+
+        MockApiClient.onRequest = { request ->
+            // check request
+            assertEquals(request.url.encodedPath, "/osc/commands/execute", "request path")
+            checkRequest(request, fileType.value, startPosition, entryCount)
+
+            ByteReadChannel(Resource("src/commonTest/resources/listFiles/listfiles_x_image_5.json").readText())
+        }
+
+        val thetaRepository = ThetaRepository(endpoint)
+        val response = thetaRepository.listFiles(fileType, startPosition, entryCount)
+        response.fileList.forEach {
+            assertTrue(it.name.endsWith(".JPG"), "FileInfo name")
+            assertTrue(!it.name.startsWith("http://"), "FileInfo name not url")
+            assertTrue(it.fileUrl.startsWith("http://"), "FileInfo fileUrl")
+            assertTrue(it.dateTime.indexOf("+", 0) < 0, "FileInfo dateTime timezone")
+            assertTrue(it.dateTime.length == 16, "FileInfo dateTime length")
+            assertTrue(it.size >= 0, "FileInfo size")
+            assertEquals(it.thumbnailUrl, it.fileUrl + "?type=thumb", "FileInfo thumbnailUrl")
+            assertNotNull(it.storageID)
+            val storageID = it.storageID ?: let { "" }
+            assertTrue(storageID.isNotEmpty(), "FileInfo storageID")
+        }
+        assertTrue(response.fileList.isNotEmpty(), "entryCount")
+        assertEquals(response.fileList.size, 5, "Entries")
+        assertEquals(response.totalEntries, 9, "totalEntries")
+    }
+
+    /**
+     * call listFiles with storage.
+     */
+    @Test
+    fun listFilesParamStorage() = runTest {
+        val fileType = ThetaRepository.FileTypeEnum.IMAGE
+        val startPosition = 0
+        val entryCount = 5
+
+        val storageArray = arrayOf(
+            Pair(ThetaRepository.StorageEnum.IN, Storage.IN),
+            Pair(ThetaRepository.StorageEnum.SD, Storage.SD),
+            Pair(ThetaRepository.StorageEnum.DEFAULT, Storage.DEFAULT),
+        )
+        assertEquals(storageArray.size, ThetaRepository.StorageEnum.values().size)
+
+        var counter = 0
+        MockApiClient.onRequest = { request ->
+            val index = counter++
+            // check request
+            assertEquals(request.url.encodedPath, "/osc/commands/execute", "request path")
+            checkRequest(request, fileType.value, startPosition, entryCount, storageArray[index].second)
+
+            ByteReadChannel(Resource("src/commonTest/resources/listFiles/listfiles_x_image_5.json").readText())
+        }
+
+        val thetaRepository = ThetaRepository(endpoint)
+        storageArray.forEach {
+            thetaRepository.listFiles(fileType, startPosition, entryCount, it.first)
+        }
     }
 
     /**
@@ -141,7 +211,7 @@ class ListFilesTest {
             assertEquals(it.thumbnailUrl, it.fileUrl + "?type=thumb", "FileInfo thumbnailUrl")
         }
         assertTrue(response.fileList.isNotEmpty(), "entryCount")
-        assertEquals(response.totalEntries, 17,"totalEntries")
+        assertEquals(response.totalEntries, 17, "totalEntries")
     }
 
     /**
@@ -164,7 +234,7 @@ class ListFilesTest {
         val thetaRepository = ThetaRepository(endpoint)
         val response = thetaRepository.listFiles(fileType, startPosition, entryCount)
         assertTrue(response.fileList.isEmpty(), "entryCount")
-        assertEquals(response.totalEntries, 36,"totalEntries")
+        assertEquals(response.totalEntries, 36, "totalEntries")
     }
 
     /**
@@ -188,7 +258,7 @@ class ListFilesTest {
             assertTrue(
                 e.message!!.indexOf("json", 0, true) >= 0 ||
                     e.message!!.indexOf("Illegal", 0, true) >= 0,
-                "error response"
+                "error response",
             )
         }
     }
