@@ -2955,7 +2955,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         /**
          * internal storage
          */
-        IN(Storage.IN),
+        INTERNAL(Storage.IN),
 
         /**
          * external storage (SD card)
@@ -2965,7 +2965,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         /**
          * current storage
          */
-        DEFAULT(Storage.DEFAULT),
+        CURRENT(Storage.DEFAULT),
     }
 
     /**

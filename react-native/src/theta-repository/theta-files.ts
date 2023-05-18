@@ -38,11 +38,11 @@ export type FileTypeEnum = (typeof FileTypeEnum)[keyof typeof FileTypeEnum];
 /** Specifies the storage. */
 export const StorageEnum = {
   /** internal storage */
-  IN: 'IN',
+  INTERNAL: 'INTERNAL',
   /** external storage (SD card) */
   SD: 'SD',
   /** current storage */
-  DEFAULT: 'DEFAULT',
+  CURRENT: 'CURRENT',
 } as const;
 
 /** type definition of StorageEnum */

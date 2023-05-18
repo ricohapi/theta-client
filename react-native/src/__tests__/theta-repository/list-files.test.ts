@@ -11,9 +11,9 @@ describe('listFiles', () => {
   const thetaClient = NativeModules.ThetaClientReactNative;
 
   const storageEnumArray: [StorageEnum, string][] = [
-    [StorageEnum.IN, 'IN'],
+    [StorageEnum.INTERNAL, 'INTERNAL'],
     [StorageEnum.SD, 'SD'],
-    [StorageEnum.DEFAULT, 'DEFAULT'],
+    [StorageEnum.CURRENT, 'CURRENT'],
   ];
 
   const fileTypeEnumArray: [FileTypeEnum, string][] = [
@@ -52,7 +52,7 @@ describe('listFiles', () => {
     const fileType = FileTypeEnum.IMAGE;
     const startPosition = 0;
     const entryCount = 1;
-    const storage = StorageEnum.IN;
+    const storage = StorageEnum.INTERNAL;
     jest.mocked(thetaClient.listFiles).mockImplementation(
       jest.fn(async (_fileTypeEnum, _startPosition, _entryCount, _storage) => {
         expect(_fileTypeEnum).toBe(fileType);
@@ -103,7 +103,7 @@ describe('listFiles', () => {
   test('Call listFiles FileTypeEnum', async () => {
     const startPosition = 0;
     const entryCount = 1;
-    const storage = StorageEnum.IN;
+    const storage = StorageEnum.INTERNAL;
 
     fileTypeEnumArray.forEach(async (item) => {
       const result = await listFiles(

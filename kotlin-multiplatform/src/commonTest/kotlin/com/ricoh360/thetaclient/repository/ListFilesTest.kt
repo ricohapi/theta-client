@@ -160,9 +160,9 @@ class ListFilesTest {
         val entryCount = 5
 
         val storageArray = arrayOf(
-            Pair(ThetaRepository.StorageEnum.IN, Storage.IN),
+            Pair(ThetaRepository.StorageEnum.INTERNAL, Storage.IN),
             Pair(ThetaRepository.StorageEnum.SD, Storage.SD),
-            Pair(ThetaRepository.StorageEnum.DEFAULT, Storage.DEFAULT),
+            Pair(ThetaRepository.StorageEnum.CURRENT, Storage.DEFAULT),
         )
         assertEquals(storageArray.size, ThetaRepository.StorageEnum.values().size)
 

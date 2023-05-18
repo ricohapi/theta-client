@@ -269,9 +269,9 @@ static convert_t FileTypeEnum = {
  */
 static convert_t StorageEnum = {
   .toTheta = @{
-    @"IN": THETACThetaRepositoryStorageEnum.in,
+    @"INTERNAL": THETACThetaRepositoryStorageEnum.internal,
     @"SD": THETACThetaRepositoryStorageEnum.sd,
-    @"DEFAULT": THETACThetaRepositoryStorageEnum.default_,
+    @"CURRENT": THETACThetaRepositoryStorageEnum.current,
   }
 };
 
