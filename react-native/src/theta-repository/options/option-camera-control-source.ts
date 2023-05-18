@@ -7,8 +7,8 @@
  */
 export const CameraControlSourceEnum = {
   /**
-   * Operation is possible with the smartphone application. Locks
-   * the UI on the shooting screen on the camera.
+   * Operation is possible with the camera. Locks the smartphone
+   * application UI (supported app only).
    */
   CAMERA: 'CAMERA',
 
