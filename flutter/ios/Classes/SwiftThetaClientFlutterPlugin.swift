@@ -265,7 +265,14 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         let fileType = getEnumValue(values: ThetaRepository.FileTypeEnum.values(), name: fileTypeName)!
         let startPosition: Int32 = arguments["startPosition"] as! Int32
         let entryCount: Int32 = arguments["entryCount"] as! Int32
-        thetaRepository!.listFiles(fileType: fileType, startPosition: startPosition, entryCount: entryCount) { files, error in
+        let storageName = arguments["storage"] as? String ?? ""
+        let storage = getEnumValue(values: ThetaRepository.StorageEnum.values(), name: storageName)
+        thetaRepository!.listFiles(
+            fileType: fileType,
+            startPosition: startPosition,
+            entryCount: entryCount,
+            storage: storage
+        ) { files, error in
             if let thetaError = error {
                 let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
                 result(flutterError)

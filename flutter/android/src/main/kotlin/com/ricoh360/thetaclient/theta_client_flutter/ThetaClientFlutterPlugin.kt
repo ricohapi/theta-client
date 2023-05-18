@@ -463,7 +463,12 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             }!!
             val startPosition = call.argument<Int>("startPosition")!!
             val entryCount = call.argument<Int>("entryCount")!!
-            val response = thetaRepository!!.listFiles(fileType, startPosition, entryCount)
+            val storage = call.argument<String>("storage")?.let { name ->
+                ThetaRepository.StorageEnum.values().find {
+                    it.name == name
+                }
+            }
+            val response = thetaRepository!!.listFiles(fileType, startPosition, entryCount, storage)
             val resultmap: Map<String, Any> = mapOf(
                 "fileList" to toResult(response!!.fileList),
                 "totalEntries" to response!!.totalEntries,

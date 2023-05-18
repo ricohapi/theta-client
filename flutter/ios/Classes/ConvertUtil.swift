@@ -18,13 +18,16 @@ func getEnumValue<T, E: KotlinEnum<T>>(values: KotlinArray<E>, name: String) -> 
 func convertResult(fileInfoList: [ThetaRepository.FileInfo]) -> [[String: Any]] {
     var resultList = [[String: Any]]()
     fileInfoList.forEach({ fileInfo in
-        let item = [
+        var item = [
             "name": fileInfo.name,
             "size": fileInfo.size,
             "dateTime": fileInfo.dateTime,
             "fileUrl": fileInfo.fileUrl,
             "thumbnailUrl": fileInfo.thumbnailUrl,
         ]
+        if let storageID = fileInfo.storageID {
+            item["storageID"] = storageID
+        }
         resultList.append(item)
     })
     return resultList

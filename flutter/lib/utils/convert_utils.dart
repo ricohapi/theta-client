@@ -10,7 +10,8 @@ class ConvertUtils {
         element['size'],
         element['dateTime'],
         element['fileUrl'],
-        element['thumbnailUrl']
+        element['thumbnailUrl'],
+        element['storageID']
       );
       fileList.add(info);
     }

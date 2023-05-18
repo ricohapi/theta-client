@@ -125,7 +125,7 @@ void enableEventReceiver() {
   }
 
   @override
-  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, int startPosition) async {
+  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, int startPosition, StorageEnum? storage) async {
     var completer = Completer<ThetaFiles>();
     try {
       debugPrint('call listFiles');
@@ -133,7 +133,11 @@ void enableEventReceiver() {
         'fileType': fileType.rawValue,
         'entryCount': entryCount,
         'startPosition': startPosition,
+        'storage': storage?.rawValue,
       };
+      if (storage != null) {
+        params['storage'] = storage.rawValue;
+      }
       var result = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('listFiles', params) as Map<dynamic, dynamic>;
       var thetaFiles = ConvertUtils.convertThetaFiles(result);
       completer.complete(thetaFiles);
