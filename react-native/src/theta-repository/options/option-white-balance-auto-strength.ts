@@ -16,4 +16,4 @@ export const WhiteBalanceAutoStrengthEnum = {
 
 /** type definition of WhiteBalanceAutoStrengthEnum */
 export type WhiteBalanceAutoStrengthEnum =
-  typeof WhiteBalanceAutoStrengthEnum[keyof typeof WhiteBalanceAutoStrengthEnum];
+  (typeof WhiteBalanceAutoStrengthEnum)[keyof typeof WhiteBalanceAutoStrengthEnum];

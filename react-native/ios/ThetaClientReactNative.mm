@@ -353,6 +353,36 @@ static convert_t BluetoothPowerEnum = {
 };
 
 /**
+ * CameraModeEnum converter
+ */
+static convert_t CameraModeEnum = {
+  .toTheta = @{
+      @"CAPTURE": THETACThetaRepositoryCameraModeEnum.capture,
+      @"PLAYBACK": THETACThetaRepositoryCameraModeEnum.playback,
+      @"SETTING": THETACThetaRepositoryCameraModeEnum.setting,
+      @"PLUGIN": THETACThetaRepositoryCameraModeEnum.plugin
+  },
+  .fromTheta = @{
+      THETACThetaRepositoryCameraModeEnum.capture: @"CAPTURE",
+      THETACThetaRepositoryCameraModeEnum.playback: @"PLAYBACK",
+      THETACThetaRepositoryCameraModeEnum.setting: @"SETTING",
+      THETACThetaRepositoryCameraModeEnum.plugin: @"PLUGIN"
+  },
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [CameraModeEnum.toTheta objectForKey:[rct objectForKey:@"cameraMode"]];
+    if (val) {
+      opt.cameraMode = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [CameraModeEnum.fromTheta objectForKey:opt.cameraMode];
+    if (val) {
+      [rct setObject:val forKey:@"cameraMode"];
+    }
+  }
+};
+
+/**
  * CaptureModeEnum converter
  */
 static convert_t CaptureModeEnum = {
@@ -1356,11 +1386,46 @@ static convert_t WlanFrequencyEnum = {
 };
 
 /**
+ * Password converter
+ */
+static convert_t PasswordCvt = {
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    NSString* val = [rct objectForKey:@"password"];
+    if (val) {
+      opt.password = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    if (opt.password) {
+      [rct setObject:opt.password forKey:@"password"];
+    }
+  }
+};
+
+/**
+ * Username converter
+ */
+static convert_t UsernameCvt = {
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    NSString* val = [rct objectForKey:@"username"];
+    if (val) {
+      opt.username = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    if (opt.username) {
+      [rct setObject:opt.username forKey:@"username"];
+    }
+  }
+};
+
+/**
  * OptionNames converter
  */
 static NSDictionary *NameToOptionEnum = @{
   @"Aperture": THETACThetaRepositoryOptionNameEnum.aperture,
   @"BluetoothPower": THETACThetaRepositoryOptionNameEnum.bluetoothpower,
+  @"CameraMode": THETACThetaRepositoryOptionNameEnum.cameramode,
   @"CaptureMode": THETACThetaRepositoryOptionNameEnum.capturemode,
   @"ColorTemperature": THETACThetaRepositoryOptionNameEnum.colortemperature,
   @"DateTimeZone": THETACThetaRepositoryOptionNameEnum.datetimezone,
@@ -1377,12 +1442,14 @@ static NSDictionary *NameToOptionEnum = @{
   @"MaxRecordableTime": THETACThetaRepositoryOptionNameEnum.maxrecordabletime,
   @"NetworkType": THETACThetaRepositoryOptionNameEnum.networktype,
   @"OffDelay": THETACThetaRepositoryOptionNameEnum.offdelay,
+  @"Password": THETACThetaRepositoryOptionNameEnum.password,
   @"SleepDelay": THETACThetaRepositoryOptionNameEnum.sleepdelay,
   @"RemainingPictures": THETACThetaRepositoryOptionNameEnum.remainingpictures,
   @"RemainingVideoSeconds": THETACThetaRepositoryOptionNameEnum.remainingvideoseconds,
   @"RemainingSpace": THETACThetaRepositoryOptionNameEnum.remainingspace,
   @"TotalSpace": THETACThetaRepositoryOptionNameEnum.totalspace,
   @"ShutterVolume": THETACThetaRepositoryOptionNameEnum.shuttervolume,
+  @"Username": THETACThetaRepositoryOptionNameEnum.username,
   @"WhiteBalance": THETACThetaRepositoryOptionNameEnum.whitebalance,
   @"WhiteBalanceAutoStrength": THETACThetaRepositoryOptionNameEnum.whitebalanceautostrength,
   @"WlanFrequency": THETACThetaRepositoryOptionNameEnum.wlanfrequency
@@ -1394,6 +1461,7 @@ static NSDictionary *NameToOptionEnum = @{
 static NSDictionary *OptionEnumToOption = @{
   @"Aperture": @"aperture",
   @"BluetoothPower": @"bluetoothPower",
+  @"CameraMode": @"cameraMode",
   @"CaptureMode": @"captureMode",
   @"ColorTemperature": @"colorTemperature",
   @"DateTimeZone": @"dateTimeZone",
@@ -1410,12 +1478,14 @@ static NSDictionary *OptionEnumToOption = @{
   @"MaxRecordableTime": @"maxRecordableTime",
   @"NetworkType": @"networkType",
   @"OffDelay": @"offDelay",
+  @"Password": @"password",
   @"SleepDelay": @"sleepDelay",
   @"RemainingPictures": @"remainingPictures",
   @"RemainingVideoSeconds": @"remainingVideoSeconds",
   @"RemainingSpace": @"remainingSpace",
   @"TotalSpace": @"totalSpace",
   @"ShutterVolume": @"shutterVolume",
+  @"Username": @"username",
   @"WhiteBalance": @"whiteBalance",
   @"WhiteBalanceAutoStrength": @"whiteBalanceAutoStrength",
   @"WlanFrequency": @"wlanFrequency"
@@ -1430,6 +1500,7 @@ typedef convert_t * (^OptionConverter)();
 static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"aperture": ^{return &ApertureEnum;},
   @"bluetoothPower": ^{return &BluetoothPowerEnum;},
+  @"cameraMode": ^{return &CameraModeEnum;},
   @"captureMode": ^{return &CaptureModeEnum;},
   @"colorTemperature": ^{return &ColorTemperatureCvt;},
   @"dateTimeZone": ^{return &DateTimeZoneCvt;},
@@ -1446,12 +1517,14 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"maxRecordableTime": ^{return &MaxRecordableTimeEnum;},
   @"networkType": ^{return &NetworkTypeEnum;},
   @"offDelay": ^{return &OffDelayEnum;},
+  @"password": ^{return &PasswordCvt;},
   @"sleepDelay": ^{return &SleepDelayEnum;},
   @"remainingPictures": ^{return &RemainingPicturesCvt;},
   @"remainingVideoSeconds": ^{return &RemainingVideoSecondsCvt;},
   @"remainingSpace": ^{return &RemainingSpaceCvt;},
   @"totalSpace": ^{return &TotalSpaceCvt;},
   @"shutterVolume": ^{return &ShutterVolumeCvt;},
+  @"username": ^{return &UsernameCvt;},
   @"whiteBalance": ^{return &WhiteBalanceEnum;},
   @"_gpsTagRecording": ^{return &GpsTagRecordingEnum;},
   @"whiteBalanceAutoStrength": ^{return &WhiteBalanceAutoStrengthEnum;},

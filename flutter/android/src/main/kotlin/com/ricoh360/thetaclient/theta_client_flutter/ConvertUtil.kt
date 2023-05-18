@@ -183,11 +183,13 @@ fun toResult(options: Options): Map<String, Any> {
         OptionNameEnum.ColorTemperature,
         OptionNameEnum.DateTimeZone,
         OptionNameEnum.IsGpsOn,
+        OptionNameEnum.Password,
         OptionNameEnum.RemainingPictures,
         OptionNameEnum.RemainingVideoSeconds,
         OptionNameEnum.RemainingSpace,
         OptionNameEnum.TotalSpace,
-        OptionNameEnum.ShutterVolume
+        OptionNameEnum.ShutterVolume,
+        OptionNameEnum.Username
     )
     OptionNameEnum.values().forEach { name ->
         if (name == OptionNameEnum.GpsInfo) {
@@ -230,11 +232,13 @@ fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
         OptionNameEnum.ColorTemperature,
         OptionNameEnum.DateTimeZone,
         OptionNameEnum.IsGpsOn,
+        OptionNameEnum.Password,
         OptionNameEnum.RemainingPictures,
         OptionNameEnum.RemainingVideoSeconds,
         OptionNameEnum.RemainingSpace,
         OptionNameEnum.TotalSpace,
-        OptionNameEnum.ShutterVolume
+        OptionNameEnum.ShutterVolume,
+        OptionNameEnum.Username
     )
     if (valueOptions.contains(name)) {
         var optionValue = value
@@ -255,6 +259,7 @@ fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
 fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
     return when (name) {
         OptionNameEnum.Aperture -> ApertureEnum.values().find { it.name == valueName }
+        OptionNameEnum.CameraMode -> CameraModeEnum.values().find { it.name == valueName }
         OptionNameEnum.CaptureMode -> CaptureModeEnum.values().find { it.name == valueName }
         OptionNameEnum.ExposureCompensation -> ExposureCompensationEnum.values().find { it.name == valueName }
         OptionNameEnum.ExposureDelay -> ExposureDelayEnum.values().find { it.name == valueName }

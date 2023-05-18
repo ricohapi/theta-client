@@ -124,6 +124,9 @@ class ConvertUtils {
         case OptionNameEnum.aperture:
           result.aperture = ApertureEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.cameraMode:
+          result.cameraMode = CameraModeEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.captureMode:
           result.captureMode = CaptureModeEnum.getValue(entry.value);
           break;
@@ -172,6 +175,9 @@ class ConvertUtils {
         case OptionNameEnum.offDelay:
           result.offDelay = OffDelayEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.password:
+          result.password = entry.value;
+          break;
         case OptionNameEnum.sleepDelay:
           result.sleepDelay = SleepDelayEnum.getValue(entry.value);
           break;
@@ -189,6 +195,9 @@ class ConvertUtils {
           break;
         case OptionNameEnum.shutterVolume:
           result.shutterVolume = entry.value;
+          break;
+        case OptionNameEnum.username:
+          result.username = entry.value;
           break;
         case OptionNameEnum.whiteBalance:
           result.whiteBalance = WhiteBalanceEnum.getValue(entry.value);
@@ -217,6 +226,8 @@ class ConvertUtils {
 
   static dynamic convertOptionValueToMapValue(dynamic value) {
     if (value is ApertureEnum) {
+      return value.rawValue;
+    } else if (value is CameraModeEnum) {
       return value.rawValue;
     } else if (value is CaptureModeEnum) {
       return value.rawValue;

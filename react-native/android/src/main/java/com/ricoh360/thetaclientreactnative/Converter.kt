@@ -65,6 +65,23 @@ class BluetoothPowerConverter : OptionConverter {
 }
 
 /**
+ * CameraModeConverter
+ */
+class CameraModeConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("cameraMode")?.let {
+      options.cameraMode = ThetaRepository.CameraModeEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.cameraMode?.let {
+      objects.putString("cameraMode", it.toString())
+    }
+  }
+}
+
+/**
  * CaptureModeConverter
  */
 class CaptureModeConverter : OptionConverter {
@@ -621,6 +638,40 @@ class GpsInfoConverter : OptionConverter {
       gpsInfo.putDouble("altitude", options.gpsInfo!!.altitude.toDouble())
       gpsInfo.putString("dateTimeZone", options.gpsInfo!!.dateTimeZone)
       objects.putMap("gpsInfo", gpsInfo)
+    }
+  }
+}
+
+/**
+ * UsernameConverter
+ */
+class UsernameConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("username")?.let {
+      options.username = it
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.username?.let {
+      objects.putString("username", it)
+    }
+  }
+}
+
+/**
+ * PasswordConverter
+ */
+class PasswordConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("password")?.let {
+      options.password = it
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.password?.let {
+      objects.putString("password", it)
     }
   }
 }
