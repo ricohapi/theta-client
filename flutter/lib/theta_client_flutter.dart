@@ -899,6 +899,9 @@ enum OptionNameEnum {
   /// Option name aperture
   aperture('Aperture', ApertureEnum),
 
+  /// Option name _cameraMode
+  cameraMode('CameraMode', CameraModeEnum),
+
   /// Option name captureMode
   captureMode('CaptureMode', CaptureModeEnum),
 
@@ -1030,6 +1033,35 @@ enum ApertureEnum {
 
   static ApertureEnum? getValue(String rawValue) {
     return ApertureEnum.values.cast<ApertureEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Camera mode.
+enum CameraModeEnum {
+  /// shooting screen
+  capture('CAPTURE'),
+
+  /// playback screen
+  playback('PLAYBACK'),
+
+  /// shooting setting screen
+  setting('SETTING'),
+
+  /// plugin selection screen
+  plugin('PLUGIN');
+
+  final String rawValue;
+
+  const CameraModeEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static CameraModeEnum? getValue(String rawValue) {
+    return CameraModeEnum.values.cast<CameraModeEnum?>().firstWhere((element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2104,6 +2136,12 @@ class Options {
   /// Aperture value.
   ApertureEnum? aperture;
 
+  /// Camera mode.
+  /// The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
+  ///
+  /// For RICOH THETA X
+  CameraModeEnum? cameraMode;
+
   /// Shooting mode.
   CaptureModeEnum? captureMode;
 
@@ -2244,6 +2282,8 @@ class Options {
     switch (name) {
       case OptionNameEnum.aperture:
         return aperture as T;
+      case OptionNameEnum.cameraMode:
+        return cameraMode as T;
       case OptionNameEnum.captureMode:
         return captureMode as T;
       case OptionNameEnum.colorTemperature:
@@ -2306,6 +2346,9 @@ class Options {
     switch (name) {
       case OptionNameEnum.aperture:
         aperture = value;
+        break;
+      case OptionNameEnum.cameraMode:
+        cameraMode = value;
         break;
       case OptionNameEnum.captureMode:
         captureMode = value;

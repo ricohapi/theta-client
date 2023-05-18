@@ -124,6 +124,9 @@ class ConvertUtils {
         case OptionNameEnum.aperture:
           result.aperture = ApertureEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.cameraMode:
+          result.cameraMode = CameraModeEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.captureMode:
           result.captureMode = CaptureModeEnum.getValue(entry.value);
           break;
@@ -217,6 +220,8 @@ class ConvertUtils {
 
   static dynamic convertOptionValueToMapValue(dynamic value) {
     if (value is ApertureEnum) {
+      return value.rawValue;
+    } else if (value is CameraModeEnum) {
       return value.rawValue;
     } else if (value is CaptureModeEnum) {
       return value.rawValue;

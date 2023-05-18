@@ -551,6 +551,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _cameraMode
+         */
+        CameraMode("_cameraMode", CameraModeEnum::class),
+
+        /**
+         * Option name
          * captureMode
          */
         CaptureMode("captureMode", CaptureModeEnum::class),
@@ -716,6 +722,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Bluetooth power.
          */
         var bluetoothPower: BluetoothPowerEnum? = null,
+
+        /**
+         * Camera mode.
+         * The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
+         */
+        var cameraMode: CameraModeEnum? = null,
 
         /**
          * Shooting mode.
@@ -907,6 +919,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         constructor() : this(
             aperture = null,
             bluetoothPower = null,
+            cameraMode = null,
             captureMode = null,
             colorTemperature = null,
             dateTimeZone = null,
@@ -937,6 +950,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         constructor(options: com.ricoh360.thetaclient.transferred.Options) : this(
             aperture = options.aperture?.let { ApertureEnum.get(it) },
             bluetoothPower = options._bluetoothPower?.let { BluetoothPowerEnum.get(it) },
+            cameraMode = options._cameraMode?.let { CameraModeEnum.get(it) },
             captureMode = options.captureMode?.let { CaptureModeEnum.get(it) },
             colorTemperature = options._colorTemperature,
             dateTimeZone = options.dateTimeZone,
@@ -976,6 +990,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             return Options(
                 aperture = aperture?.value,
                 _bluetoothPower = bluetoothPower?.value,
+                _cameraMode = cameraMode?.value,
                 captureMode = captureMode?.value,
                 _colorTemperature = colorTemperature,
                 dateTimeZone = dateTimeZone,
@@ -1018,6 +1033,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             return when (name) {
                 OptionNameEnum.Aperture -> aperture
                 OptionNameEnum.BluetoothPower -> bluetoothPower
+                OptionNameEnum.CameraMode -> cameraMode
                 OptionNameEnum.CaptureMode -> captureMode
                 OptionNameEnum.ColorTemperature -> colorTemperature
                 OptionNameEnum.DateTimeZone -> dateTimeZone
@@ -1061,6 +1077,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             when (name) {
                 OptionNameEnum.Aperture -> aperture = value as ApertureEnum
                 OptionNameEnum.BluetoothPower -> bluetoothPower = value as BluetoothPowerEnum
+                OptionNameEnum.CameraMode -> cameraMode = value as CameraModeEnum
                 OptionNameEnum.CaptureMode -> captureMode = value as CaptureModeEnum
                 OptionNameEnum.ColorTemperature -> colorTemperature = value as Int
                 OptionNameEnum.DateTimeZone -> dateTimeZone = value as String
@@ -1175,6 +1192,46 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @return BluetoothPowerEnum
              */
             fun get(value: BluetoothPower): BluetoothPowerEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Camera mode.
+     * The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
+     *
+     * For RICOH THETA X
+     */
+    enum class CameraModeEnum(val value: CameraMode) {
+        /**
+         * shooting screen
+         */
+        CAPTURE(CameraMode.CAPTURE),
+
+        /**
+         * playback screen
+         */
+        PLAYBACK(CameraMode.PLAYBACK),
+
+        /**
+         * shooting setting screen
+         */
+        SETTING(CameraMode.SETTING),
+
+        /**
+         * plugin selection screen
+         */
+        PLUGIN(CameraMode.PLUGIN);
+
+        companion object {
+            /**
+             * Convert CameraMode to CameraModeEnum
+             *
+             * @param value Camera mode.
+             * @return CameraModeEnum
+             */
+            fun get(value: CameraMode): CameraModeEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
