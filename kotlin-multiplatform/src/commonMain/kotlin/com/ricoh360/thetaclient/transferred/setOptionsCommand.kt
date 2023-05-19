@@ -609,6 +609,10 @@ enum class BluetoothPower {
 
 /**
  * camera control source
+ * Sets whether to lock/unlock the camera UI.
+ * The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
+ *
+ * For RICOH THETA X
  */
 @Serializable
 enum class CameraControlSource {
