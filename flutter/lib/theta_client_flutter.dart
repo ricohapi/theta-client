@@ -894,11 +894,17 @@ class AccessPoint {
 }
 
 /// Camera setting options name.
-/// 
+///
 /// [options name](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
 enum OptionNameEnum {
   /// Option name aperture
   aperture('Aperture', ApertureEnum),
+
+  /// Option name _cameraControlSource
+  cameraControlSource('CameraControlSource', CameraControlSourceEnum),
+
+  /// Option name _cameraMode
+  cameraMode('CameraMode', CameraModeEnum),
 
   /// Option name captureMode
   captureMode('CaptureMode', CaptureModeEnum),
@@ -947,6 +953,9 @@ enum OptionNameEnum {
   /// Option name offDelay
   offDelay('OffDelay', OffDelayEnum),
 
+  /// Option name _password
+  password('Password', String),
+
   /// Option name sleepDelay
   sleepDelay('SleepDelay', SleepDelayEnum),
 
@@ -964,6 +973,9 @@ enum OptionNameEnum {
 
   /// Option name _shutterVolume
   shutterVolume('ShutterVolume', int),
+
+  /// Option name _username
+  username('Username', String),
 
   /// Option name whiteBalance
   whiteBalance('WhiteBalance', WhiteBalanceEnum),
@@ -1025,6 +1037,59 @@ enum ApertureEnum {
 
   static ApertureEnum? getValue(String rawValue) {
     return ApertureEnum.values.cast<ApertureEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Camera control source.
+enum CameraControlSourceEnum {
+  /// Operation is possible with the camera. Locks the smartphone
+  /// application UI (supported app only).
+  camera('CAMERA'),
+
+  /// Operation is possible with the smartphone application. Locks
+  /// the UI on the shooting screen on the camera.
+  app('APP');
+
+  final String rawValue;
+
+  const CameraControlSourceEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static CameraControlSourceEnum? getValue(String rawValue) {
+    return CameraControlSourceEnum.values.cast<CameraControlSourceEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Camera mode.
+enum CameraModeEnum {
+  /// shooting screen
+  capture('CAPTURE'),
+
+  /// playback screen
+  playback('PLAYBACK'),
+
+  /// shooting setting screen
+  setting('SETTING'),
+
+  /// plugin selection screen
+  plugin('PLUGIN');
+
+  final String rawValue;
+
+  const CameraModeEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static CameraModeEnum? getValue(String rawValue) {
+    return CameraModeEnum.values.cast<CameraModeEnum?>().firstWhere((element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2087,17 +2152,30 @@ class GpsInfo {
 
   @override
   bool operator ==(Object other) => hashCode == other.hashCode;
-  
+
   @override
   int get hashCode => Object.hashAll([latitude, longitude, altitude, dateTimeZone]);
 }
 
 /// Camera setting options.
-/// 
+///
 /// Refer to the [options category](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
 class Options {
   /// Aperture value.
   ApertureEnum? aperture;
+
+  /// camera control source
+  /// Sets whether to lock/unlock the camera UI.
+  /// The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
+  ///
+  /// For RICOH THETA X
+  CameraControlSourceEnum? cameraControlSource;
+
+  /// Camera mode.
+  /// The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
+  ///
+  /// For RICOH THETA X
+  CameraModeEnum? cameraMode;
 
   /// Shooting mode.
   CaptureModeEnum? captureMode;
@@ -2191,6 +2269,9 @@ class Options {
   /// Specify [OffDelayEnum]
   OffDelayEnum? offDelay;
 
+  /// Password used for digest authentication when _networkType is set to client mode.
+  String? password;
+
   /// Length of standby time before the camera enters the sleep mode.
   SleepDelayEnum? sleepDelay;
 
@@ -2213,6 +2294,9 @@ class Options {
   /// 100: Maximum volume (maxShutterVolume)
   int? shutterVolume;
 
+  /// User name used for digest authentication when _networkType is set to client mode.
+  String? username;
+
   /// White balance.
   /// 
   /// It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
@@ -2233,6 +2317,10 @@ class Options {
     switch (name) {
       case OptionNameEnum.aperture:
         return aperture as T;
+      case OptionNameEnum.cameraControlSource:
+        return cameraControlSource as T;
+      case OptionNameEnum.cameraMode:
+        return cameraMode as T;
       case OptionNameEnum.captureMode:
         return captureMode as T;
       case OptionNameEnum.colorTemperature:
@@ -2263,6 +2351,8 @@ class Options {
         return maxRecordableTime as T;
       case OptionNameEnum.offDelay:
         return offDelay as T;
+      case OptionNameEnum.password:
+        return password as T;
       case OptionNameEnum.sleepDelay:
         return sleepDelay as T;
       case OptionNameEnum.remainingPictures:
@@ -2275,6 +2365,8 @@ class Options {
         return totalSpace as T;
       case OptionNameEnum.shutterVolume:
         return shutterVolume as T;
+      case OptionNameEnum.username:
+        return username as T;
       case OptionNameEnum.whiteBalance:
         return whiteBalance as T;
       case OptionNameEnum.whiteBalanceAutoStrength:
@@ -2291,6 +2383,12 @@ class Options {
     switch (name) {
       case OptionNameEnum.aperture:
         aperture = value;
+        break;
+      case OptionNameEnum.cameraControlSource:
+        cameraControlSource = value;
+        break;
+      case OptionNameEnum.cameraMode:
+        cameraMode = value;
         break;
       case OptionNameEnum.captureMode:
         captureMode = value;
@@ -2337,6 +2435,9 @@ class Options {
       case OptionNameEnum.offDelay:
         offDelay = value;
         break;
+      case OptionNameEnum.password:
+        password = value;
+        break;
       case OptionNameEnum.sleepDelay:
         sleepDelay = value;
         break;
@@ -2354,6 +2455,9 @@ class Options {
         break;
       case OptionNameEnum.shutterVolume:
         shutterVolume = value;
+        break;
+      case OptionNameEnum.username:
+        username = value;
         break;
       case OptionNameEnum.whiteBalance:
         whiteBalance = value;
@@ -2561,7 +2665,7 @@ class VideoCaptureBuilder extends CaptureBuilder<VideoCaptureBuilder> {
     try {
       await ThetaClientFlutterPlatform.instance.buildVideoCapture(_options);
       completer.complete(VideoCapture(_options));
-    } catch(e) {
+    } catch (e) {
       completer.completeError(e);
     }
     return completer.future;

@@ -1,3 +1,5 @@
+import type { CameraControlSourceEnum } from './option-camera-control-source';
+import type { CameraModeEnum } from './option-camera-mode';
 import type { WhiteBalanceAutoStrengthEnum } from './option-white-balance-auto-strength';
 
 /** Aperture value. */
@@ -438,7 +440,7 @@ export const WhiteBalanceEnum = {
 
 /** type definition of WhiteBalanceEnum */
 export type WhiteBalanceEnum =
-  typeof WhiteBalanceEnum[keyof typeof WhiteBalanceEnum];
+  (typeof WhiteBalanceEnum)[keyof typeof WhiteBalanceEnum];
 
 /** Camera setting options name. */
 export const OptionNameEnum = {
@@ -446,6 +448,10 @@ export const OptionNameEnum = {
   Aperture: 'Aperture',
   /** _bluetoothPower*/
   BluetoothPower: 'BluetoothPower',
+  /** _cameraControlSource */
+  CameraControlSource: 'CameraControlSource',
+  /** cameraMode */
+  CameraMode: 'CameraMode',
   /** captureMode */
   CaptureMode: 'CaptureMode',
   /** colorTemperature */
@@ -476,6 +482,8 @@ export const OptionNameEnum = {
   MaxRecordableTime: 'MaxRecordableTime',
   /** offDelay */
   OffDelay: 'OffDelay',
+  /** password */
+  Password: 'Password',
   /** sleepDelay */
   SleepDelay: 'SleepDelay',
   /** remainingPictures */
@@ -488,6 +496,8 @@ export const OptionNameEnum = {
   TotalSpace: 'TotalSpace',
   /** shutterVolume */
   ShutterVolume: 'ShutterVolume',
+  /** username */
+  Username: 'Username',
   /** whiteBalance */
   WhiteBalance: 'WhiteBalance',
   /** _whiteBalanceAutoStrength */
@@ -495,7 +505,8 @@ export const OptionNameEnum = {
 } as const;
 
 /** type definition of OptionNameEnum */
-export type OptionNameEnum = typeof OptionNameEnum[keyof typeof OptionNameEnum];
+export type OptionNameEnum =
+  (typeof OptionNameEnum)[keyof typeof OptionNameEnum];
 
 /** camera setting options */
 export type Options = {
@@ -503,6 +514,10 @@ export type Options = {
   aperture?: ApertureEnum;
   /** BluetoothPower */
   bluetoothPower?: BluetoothPowerEnum;
+  /** camera control source. */
+  cameraControlSource?: CameraControlSourceEnum;
+  /** Camera mode. */
+  cameraMode?: CameraModeEnum;
   /** Shooting mode. */
   captureMode?: CaptureModeEnum;
   /** Color temperature of the camera (Kelvin). */
@@ -533,6 +548,8 @@ export type Options = {
   maxRecordableTime?: MaxRecordableTimeEnum;
   /** Length of standby time before the camera automatically powers OFF. */
   offDelay?: OffDelayEnum;
+  /** Password used for digest authentication when _networkType is set to client mode. */
+  password?: String;
   /** Length of standby time before the camera enters the sleep mode. */
   sleepDelay?: SleepDelayEnum;
   /** The estimated remaining number of shots for the current shooting settings. */
@@ -545,6 +562,8 @@ export type Options = {
   totalSpace?: number;
   /** Shutter volume. */
   shutterVolume?: number;
+  /** User name used for digest authentication when _networkType is set to client mode. */
+  username?: String;
   /** White balance. */
   whiteBalance?: WhiteBalanceEnum;
   /** White balance auto strength. */

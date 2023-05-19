@@ -233,6 +233,12 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.aperture.name:
         options.aperture = getEnumValue(values: ThetaRepository.ApertureEnum.values(), name: value as! String)!
         break
+    case ThetaRepository.OptionNameEnum.cameracontrolsource.name:
+        options.cameraControlSource = getEnumValue(values: ThetaRepository.CameraControlSourceEnum.values(), name: value as! String)!
+        break
+    case ThetaRepository.OptionNameEnum.cameramode.name:
+        options.cameraMode = getEnumValue(values: ThetaRepository.CameraModeEnum.values(), name: value as! String)!
+        break
     case ThetaRepository.OptionNameEnum.capturemode.name:
         options.captureMode = getEnumValue(values: ThetaRepository.CaptureModeEnum.values(), name: value as! String)!
         break
@@ -277,6 +283,9 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.offdelay.name:
         options.offDelay = getEnumValue(values: ThetaRepository.OffDelayEnum.values(), name: value as! String)!
         break
+    case ThetaRepository.OptionNameEnum.password.name:
+        options.password = value as? String
+        break;
     case ThetaRepository.OptionNameEnum.sleepdelay.name:
         options.sleepDelay = getEnumValue(values: ThetaRepository.SleepDelayEnum.values(), name: value as! String)!
         break
@@ -295,6 +304,9 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.shuttervolume.name:
         options.shutterVolume = KotlinInt(integerLiteral: value as! Int)
         break
+    case ThetaRepository.OptionNameEnum.username.name:
+        options.username = value as? String
+        break;
     case ThetaRepository.OptionNameEnum.whitebalance.name:
         options.whiteBalance = getEnumValue(values: ThetaRepository.WhiteBalanceEnum.values(), name: value as! String)!
         break

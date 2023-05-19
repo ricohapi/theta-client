@@ -574,6 +574,18 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _cameraControlSource
+         */
+        CameraControlSource("_cameraControlSource", CameraControlSourceEnum::class),
+
+        /**
+         * Option name
+         * _cameraMode
+         */
+        CameraMode("_cameraMode", CameraModeEnum::class),
+
+        /**
+         * Option name
          * captureMode
          */
         CaptureMode("captureMode", CaptureModeEnum::class),
@@ -666,6 +678,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * Password
+         */
+        Password("_password", String::class),
+
+        /**
+         * Option name
          * sleepDelay
          */
         SleepDelay("sleepDelay", ThetaRepository.SleepDelay::class),
@@ -701,6 +719,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         ShutterVolume("_shutterVolume", Int::class),
 
         /**
+         *  Option name
+         *  _username
+         */
+        Username("_username", String::class),
+
+        /**
          * Option name
          * whiteBalance
          */
@@ -727,6 +751,19 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Bluetooth power.
          */
         var bluetoothPower: BluetoothPowerEnum? = null,
+
+        /**
+         * camera control source
+         * Sets whether to lock/unlock the camera UI.
+         * The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
+         */
+        var cameraControlSource: CameraControlSourceEnum? = null,
+
+        /**
+         * Camera mode.
+         * The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
+         */
+        var cameraMode: CameraModeEnum? = null,
 
         /**
          * Shooting mode.
@@ -851,6 +888,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var offDelay: OffDelay? = null,
 
         /**
+         * Password used for digest authentication when _networkType is set to client mode.
+         * Can be set by camera.setOptions during direct mode.
+         */
+        var password: String? = null,
+
+        /**
          * Length of standby time before the camera enters the sleep mode.
          */
         var sleepDelay: SleepDelay? = null,
@@ -885,6 +928,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var shutterVolume: Int? = null,
 
         /**
+         * User name used for digest authentication when _networkType is set to client mode.
+         * Can be set by camera.setOptions during direct mode.
+         */
+        var username: String? = null,
+
+        /**
          * White balance.
          *
          * It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
@@ -906,6 +955,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         constructor() : this(
             aperture = null,
             bluetoothPower = null,
+            cameraControlSource = null,
+            cameraMode = null,
             captureMode = null,
             colorTemperature = null,
             dateTimeZone = null,
@@ -921,12 +972,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             language = null,
             maxRecordableTime = null,
             offDelay = null,
+            password = null,
             sleepDelay = null,
             remainingPictures = null,
             remainingVideoSeconds = null,
             remainingSpace = null,
             totalSpace = null,
             shutterVolume = null,
+            username = null,
             whiteBalance = null,
             whiteBalanceAutoStrength = null
         )
@@ -934,6 +987,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         constructor(options: com.ricoh360.thetaclient.transferred.Options) : this(
             aperture = options.aperture?.let { ApertureEnum.get(it) },
             bluetoothPower = options._bluetoothPower?.let { BluetoothPowerEnum.get(it) },
+            cameraControlSource = options._cameraControlSource?.let { CameraControlSourceEnum.get(it) },
+            cameraMode = options._cameraMode?.let { CameraModeEnum.get(it) },
             captureMode = options.captureMode?.let { CaptureModeEnum.get(it) },
             colorTemperature = options._colorTemperature,
             dateTimeZone = options.dateTimeZone,
@@ -953,12 +1008,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             language = options._language?.let { LanguageEnum.get(it) },
             maxRecordableTime = options._maxRecordableTime?.let { MaxRecordableTimeEnum.get(it) },
             offDelay = options.offDelay?.let { OffDelayEnum.get(it) },
+            password = options._password,
             sleepDelay = options.sleepDelay?.let { SleepDelayEnum.get(it) },
             remainingPictures = options.remainingPictures,
             remainingVideoSeconds = options.remainingVideoSeconds,
             remainingSpace = options.remainingSpace,
             totalSpace = options.totalSpace,
             shutterVolume = options._shutterVolume,
+            username = options._username,
             whiteBalance = options.whiteBalance?.let { WhiteBalanceEnum.get(it) },
             whiteBalanceAutoStrength = options._whiteBalanceAutoStrength?.let { WhiteBalanceAutoStrengthEnum.get(it) }
         )
@@ -971,6 +1028,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             return Options(
                 aperture = aperture?.value,
                 _bluetoothPower = bluetoothPower?.value,
+                _cameraControlSource = cameraControlSource?.value,
+                _cameraMode = cameraMode?.value,
                 captureMode = captureMode?.value,
                 _colorTemperature = colorTemperature,
                 dateTimeZone = dateTimeZone,
@@ -986,12 +1045,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _language = language?.value,
                 _maxRecordableTime = maxRecordableTime?.sec,
                 offDelay = offDelay?.sec,
+                _password = password,
                 sleepDelay = sleepDelay?.sec,
                 remainingPictures = remainingPictures,
                 remainingVideoSeconds = remainingVideoSeconds,
                 remainingSpace = remainingSpace,
                 totalSpace = totalSpace,
                 _shutterVolume = shutterVolume,
+                _username = username,
                 whiteBalance = whiteBalance?.value,
                 _whiteBalanceAutoStrength = whiteBalanceAutoStrength?.value
             )
@@ -1011,6 +1072,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             return when (name) {
                 OptionNameEnum.Aperture -> aperture
                 OptionNameEnum.BluetoothPower -> bluetoothPower
+                OptionNameEnum.CameraControlSource -> cameraControlSource
+                OptionNameEnum.CameraMode -> cameraMode
                 OptionNameEnum.CaptureMode -> captureMode
                 OptionNameEnum.ColorTemperature -> colorTemperature
                 OptionNameEnum.DateTimeZone -> dateTimeZone
@@ -1026,12 +1089,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.Language -> language
                 OptionNameEnum.MaxRecordableTime -> maxRecordableTime
                 OptionNameEnum.OffDelay -> offDelay
+                OptionNameEnum.Password -> password
                 OptionNameEnum.SleepDelay -> sleepDelay
                 OptionNameEnum.RemainingPictures -> remainingPictures
                 OptionNameEnum.RemainingVideoSeconds -> remainingVideoSeconds
                 OptionNameEnum.RemainingSpace -> remainingSpace
                 OptionNameEnum.TotalSpace -> totalSpace
                 OptionNameEnum.ShutterVolume -> shutterVolume
+                OptionNameEnum.Username -> username
                 OptionNameEnum.WhiteBalance -> whiteBalance
                 OptionNameEnum.WhiteBalanceAutoStrength -> whiteBalanceAutoStrength
             } as T
@@ -1052,6 +1117,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             when (name) {
                 OptionNameEnum.Aperture -> aperture = value as ApertureEnum
                 OptionNameEnum.BluetoothPower -> bluetoothPower = value as BluetoothPowerEnum
+                OptionNameEnum.CameraControlSource -> cameraControlSource = value as CameraControlSourceEnum
+                OptionNameEnum.CameraMode -> cameraMode = value as CameraModeEnum
                 OptionNameEnum.CaptureMode -> captureMode = value as CaptureModeEnum
                 OptionNameEnum.ColorTemperature -> colorTemperature = value as Int
                 OptionNameEnum.DateTimeZone -> dateTimeZone = value as String
@@ -1067,12 +1134,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.Language -> language = value as LanguageEnum
                 OptionNameEnum.MaxRecordableTime -> maxRecordableTime = value as MaxRecordableTimeEnum
                 OptionNameEnum.OffDelay -> offDelay = value as OffDelay
+                OptionNameEnum.Password -> password = value as String
                 OptionNameEnum.SleepDelay -> sleepDelay = value as SleepDelay
                 OptionNameEnum.RemainingPictures -> remainingPictures = value as Int
                 OptionNameEnum.RemainingVideoSeconds -> remainingVideoSeconds = value as Int
                 OptionNameEnum.RemainingSpace -> remainingSpace = value as Long
                 OptionNameEnum.TotalSpace -> totalSpace = value as Long
                 OptionNameEnum.ShutterVolume -> shutterVolume = value as Int
+                OptionNameEnum.Username -> username = value as String
                 OptionNameEnum.WhiteBalance -> whiteBalance = value as WhiteBalanceEnum
                 OptionNameEnum.WhiteBalanceAutoStrength -> whiteBalanceAutoStrength = value as WhiteBalanceAutoStrengthEnum
             }
@@ -1164,6 +1233,79 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @return BluetoothPowerEnum
              */
             fun get(value: BluetoothPower): BluetoothPowerEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * camera control source
+     * Sets whether to lock/unlock the camera UI.
+     * The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
+     *
+     * For RICOH THETA X
+     */
+    enum class CameraControlSourceEnum(val value: CameraControlSource) {
+        /**
+         * Operation is possible with the camera. Locks the smartphone
+         * application UI (supported app only).
+         */
+        CAMERA(CameraControlSource.CAMERA),
+
+        /**
+         * Operation is possible with the smartphone application. Locks
+         * the UI on the shooting screen on the camera.
+         */
+        APP(CameraControlSource.APP);
+
+        companion object {
+            /**
+             * Convert CameraControlSource to CameraControlSourceEnum
+             *
+             * @param value camera control source
+             * @return CameraControlSourceEnum
+             */
+            fun get(value: CameraControlSource): CameraControlSourceEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Camera mode.
+     * The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
+     *
+     * For RICOH THETA X
+     */
+    enum class CameraModeEnum(val value: CameraMode) {
+        /**
+         * shooting screen
+         */
+        CAPTURE(CameraMode.CAPTURE),
+
+        /**
+         * playback screen
+         */
+        PLAYBACK(CameraMode.PLAYBACK),
+
+        /**
+         * shooting setting screen
+         */
+        SETTING(CameraMode.SETTING),
+
+        /**
+         * plugin selection screen
+         */
+        PLUGIN(CameraMode.PLUGIN);
+
+        companion object {
+            /**
+             * Convert CameraMode to CameraModeEnum
+             *
+             * @param value Camera mode.
+             * @return CameraModeEnum
+             */
+            fun get(value: CameraMode): CameraModeEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -2968,6 +3110,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     class NotConnectedException(message: String) : ThetaRepositoryException(message)
 
     /**
+     * Thrown if the argument wrong.
+     */
+    class ArgumentException(message: String) : ThetaRepositoryException(message)
+
+    /**
      * Thrown if an authentication　error occurs in client mode.
      */
     class ThetaUnauthorizedException(message: String) : ThetaRepositoryException(message)
@@ -4275,6 +4422,21 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     @Throws(Throwable::class)
     suspend fun setPluginOrders(plugins: List<String>) {
+        val plugins = plugins.toMutableList()
+        if (ThetaModel.get(cameraModel) == ThetaModel.THETA_Z1) {
+            when {
+                plugins.size > SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 -> {
+                    throw ArgumentException("Argument list must have $SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 or less elements for RICOH THETA Z1")
+                }
+                plugins.size < SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 -> {
+                    do { // autocomplete
+                        plugins += ""
+                    } while (plugins.size < SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1)
+                }
+                else -> {}
+            }
+        }
+
         try {
             val params = SetPluginOrdersParams(pluginOrders = plugins)
             val response = ThetaApi.callSetPluginOrdersCommand(endpoint, params)
@@ -4330,3 +4492,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
  * Check status interval for Command
  */
 const val CHECK_COMMAND_STATUS_INTERVAL = 1000L
+
+/**
+ * The size of setPluginOrders()'s argument list for Z1
+ */
+const val SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 = 3

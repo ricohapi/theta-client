@@ -20,6 +20,8 @@ class OptionsTest {
     fun optionsPrimaryConstructorTest() {
         val aperture = ThetaRepository.ApertureEnum.APERTURE_2_1
         val bluetoothPower = ThetaRepository.BluetoothPowerEnum.ON
+        val cameraControlSource = ThetaRepository.CameraControlSourceEnum.CAMERA
+        val cameraMode = ThetaRepository.CameraModeEnum.CAPTURE
         val captureMode = ThetaRepository.CaptureModeEnum.IMAGE
         val colorTemperature = 10
         val dateTimeZone = "2014:05:18 01:04:29+08:00"
@@ -35,18 +37,22 @@ class OptionsTest {
         val language = ThetaRepository.LanguageEnum.JA
         val maxRecordableTime = ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500
         val offDelay = ThetaRepository.OffDelayEnum.OFF_DELAY_10M
+        val password = "password"
         val sleepDelay = ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M
         val remainingPictures = 100
         val remainingVideoSeconds = 100
         val remainingSpace = 100L
         val totalSpace = 100L
         val shutterVolume = 100
+        val username = "username"
         val whiteBalance = ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT
         val whiteBalanceAutoStrength = ThetaRepository.WhiteBalanceAutoStrengthEnum.OFF
 
         val options = ThetaRepository.Options(
             aperture = aperture,
             bluetoothPower = bluetoothPower,
+            cameraControlSource = cameraControlSource,
+            cameraMode = cameraMode,
             captureMode = captureMode,
             colorTemperature = colorTemperature,
             dateTimeZone = dateTimeZone,
@@ -62,12 +68,14 @@ class OptionsTest {
             language = language,
             maxRecordableTime = maxRecordableTime,
             offDelay = offDelay,
+            password = password,
             sleepDelay = sleepDelay,
             remainingPictures = remainingPictures,
             remainingVideoSeconds = remainingVideoSeconds,
             remainingSpace = remainingSpace,
             totalSpace = totalSpace,
             shutterVolume = shutterVolume,
+            username = username,
             whiteBalance = whiteBalance,
             whiteBalanceAutoStrength = whiteBalanceAutoStrength
         )
@@ -78,6 +86,8 @@ class OptionsTest {
 
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Aperture), aperture, "aperture")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.BluetoothPower), bluetoothPower, "bluetoothPower")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CameraControlSource), cameraControlSource, "cameraControlSource")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CameraMode), cameraMode, "cameraMode")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CaptureMode), captureMode, "captureMode")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ColorTemperature), colorTemperature, "colorTemperature")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.DateTimeZone), dateTimeZone, "dateTimeZone")
@@ -93,12 +103,14 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Language), language, "language")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.MaxRecordableTime), maxRecordableTime, "maxRecordableTime")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.OffDelay), offDelay, "offDelay")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Password), password, "password")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.SleepDelay), sleepDelay, "sleepDelay")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.RemainingPictures), remainingPictures, "remainingPictures")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.RemainingVideoSeconds), remainingVideoSeconds, "remainingVideoSeconds")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.RemainingSpace), remainingSpace, "remainingSpace")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.TotalSpace), totalSpace, "totalSpace")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ShutterVolume), shutterVolume, "shutterVolume")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Username), username, "userName")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.WhiteBalance), whiteBalance, "whiteBalance")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.WhiteBalanceAutoStrength), whiteBalanceAutoStrength, "whiteBalanceAutoStrength")
     }
@@ -111,6 +123,8 @@ class OptionsTest {
         val values = listOf(
             Pair(ThetaRepository.OptionNameEnum.Aperture, ThetaRepository.ApertureEnum.APERTURE_2_1),
             Pair(ThetaRepository.OptionNameEnum.BluetoothPower, ThetaRepository.BluetoothPowerEnum.ON),
+            Pair(ThetaRepository.OptionNameEnum.CameraControlSource, ThetaRepository.CameraControlSourceEnum.CAMERA),
+            Pair(ThetaRepository.OptionNameEnum.CameraMode, ThetaRepository.CameraModeEnum.CAPTURE),
             Pair(ThetaRepository.OptionNameEnum.CaptureMode, ThetaRepository.CaptureModeEnum.IMAGE),
             Pair(ThetaRepository.OptionNameEnum.ColorTemperature, 10),
             Pair(ThetaRepository.OptionNameEnum.DateTimeZone, "2014:05:18 01:04:29+08:00"),
@@ -126,12 +140,14 @@ class OptionsTest {
             Pair(ThetaRepository.OptionNameEnum.Language, ThetaRepository.LanguageEnum.JA),
             Pair(ThetaRepository.OptionNameEnum.MaxRecordableTime, ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500),
             Pair(ThetaRepository.OptionNameEnum.OffDelay, ThetaRepository.OffDelayEnum.OFF_DELAY_10M),
+            Pair(ThetaRepository.OptionNameEnum.Password, "password"),
             Pair(ThetaRepository.OptionNameEnum.SleepDelay, ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M),
             Pair(ThetaRepository.OptionNameEnum.RemainingPictures, 101),
             Pair(ThetaRepository.OptionNameEnum.RemainingVideoSeconds, 102),
             Pair(ThetaRepository.OptionNameEnum.RemainingSpace, 103L),
             Pair(ThetaRepository.OptionNameEnum.TotalSpace, 104L),
             Pair(ThetaRepository.OptionNameEnum.ShutterVolume, 10),
+            Pair(ThetaRepository.OptionNameEnum.Username, "username"),
             Pair(ThetaRepository.OptionNameEnum.WhiteBalance, ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT),
             Pair(ThetaRepository.OptionNameEnum.WhiteBalanceAutoStrength, ThetaRepository.WhiteBalanceAutoStrengthEnum.ON)
         )
@@ -152,6 +168,8 @@ class OptionsTest {
     fun optionsSecondaryConstructorTest() {
         val aperture = Pair(2.1f, ThetaRepository.ApertureEnum.APERTURE_2_1)
         val bluetoothPower = Pair(BluetoothPower.ON, ThetaRepository.BluetoothPowerEnum.ON)
+        val cameraControlSource = Pair(CameraControlSource.CAMERA, ThetaRepository.CameraControlSourceEnum.CAMERA)
+        val cameraMode = Pair(CameraMode.CAPTURE, ThetaRepository.CameraModeEnum.CAPTURE)
         val captureMode = Pair(CaptureMode.IMAGE, ThetaRepository.CaptureModeEnum.IMAGE)
         val colorTemperature = Pair(10, 10)
         val dateTimeZone = Pair("2014:05:18 01:04:29+08:00", "2014:05:18 01:04:29+08:00")
@@ -170,18 +188,22 @@ class OptionsTest {
         val language = Pair(Language.JA, ThetaRepository.LanguageEnum.JA)
         val maxRecordableTime = Pair(1500, ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500)
         val offDelay = Pair(600, ThetaRepository.OffDelayEnum.OFF_DELAY_10M)
+        val password = Pair("password", "password")
         val sleepDelay = Pair(180, ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M)
         val remainingPictures = Pair(101, 101)
         val remainingVideoSeconds = Pair(102, 102)
         val remainingSpace = Pair(103L, 103L)
         val totalSpace = Pair(104L, 104L)
         val shutterVolume = Pair(10, 10)
+        val username = Pair("username", "username")
         val whiteBalance = Pair(WhiteBalance._WARM_WHITE_FLUORESCENT, ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT)
         val whiteBalanceAutoStrength = Pair(WhiteBalanceAutoStrength.OFF, ThetaRepository.WhiteBalanceAutoStrengthEnum.OFF)
 
         val orgOptions = Options(
             aperture = aperture.first,
             _bluetoothPower = bluetoothPower.first,
+            _cameraControlSource = cameraControlSource.first,
+            _cameraMode = cameraMode.first,
             captureMode = captureMode.first,
             _colorTemperature = colorTemperature.first,
             dateTimeZone = dateTimeZone.first,
@@ -197,12 +219,14 @@ class OptionsTest {
             _language = language.first,
             _maxRecordableTime = maxRecordableTime.first,
             offDelay = offDelay.first,
+            _password = password.first,
             sleepDelay = sleepDelay.first,
             remainingPictures = remainingPictures.first,
             remainingVideoSeconds = remainingVideoSeconds.first,
             remainingSpace = remainingSpace.first,
             totalSpace = totalSpace.first,
             _shutterVolume = shutterVolume.first,
+            _username = username.first,
             whiteBalance = whiteBalance.first,
             _whiteBalanceAutoStrength = whiteBalanceAutoStrength.first
         )
@@ -210,6 +234,8 @@ class OptionsTest {
 
         assertEquals(options.aperture, aperture.second, "aperture")
         assertEquals(options.bluetoothPower, bluetoothPower.second, "bluetoothPower")
+        assertEquals(options.cameraControlSource, cameraControlSource.second, "cameraControlSource")
+        assertEquals(options.cameraMode, cameraMode.second, "cameraMode")
         assertEquals(options.captureMode, captureMode.second, "captureMode")
         assertEquals(options.colorTemperature, colorTemperature.second, "colorTemperature")
         assertEquals(options.dateTimeZone, dateTimeZone.second, "dateTimeZone")
@@ -225,12 +251,14 @@ class OptionsTest {
         assertEquals(options.language, language.second, "language")
         assertEquals(options.maxRecordableTime, maxRecordableTime.second, "aperture")
         assertEquals(options.offDelay, offDelay.second, "offDelay")
+        assertEquals(options.password, password.second, "password")
         assertEquals(options.sleepDelay, sleepDelay.second, "sleepDelay")
         assertEquals(options.remainingPictures, remainingPictures.second, "remainingPictures")
         assertEquals(options.remainingVideoSeconds, remainingVideoSeconds.second, "remainingVideoSeconds")
         assertEquals(options.remainingSpace, remainingSpace.second, "remainingSpace")
         assertEquals(options.totalSpace, totalSpace.second, "totalSpace")
         assertEquals(options.shutterVolume, shutterVolume.second, "shutterVolume")
+        assertEquals(options.username, username.second, "username")
         assertEquals(options.whiteBalance, whiteBalance.second, "whiteBalance")
         assertEquals(options.whiteBalanceAutoStrength, whiteBalanceAutoStrength.second, "whiteBalanceAutoStrength")
     }
@@ -239,6 +267,8 @@ class OptionsTest {
     fun optionsConvertTest() {
         val aperture = Pair(2.1f, ThetaRepository.ApertureEnum.APERTURE_2_1)
         val bluetoothPower = Pair(BluetoothPower.ON, ThetaRepository.BluetoothPowerEnum.ON)
+        val cameraControlSource = Pair(CameraControlSource.CAMERA, ThetaRepository.CameraControlSourceEnum.CAMERA)
+        val cameraMode = Pair(CameraMode.CAPTURE, ThetaRepository.CameraModeEnum.CAPTURE)
         val captureMode = Pair(CaptureMode.IMAGE, ThetaRepository.CaptureModeEnum.IMAGE)
         val colorTemperature = Pair(10, 10)
         val dateTimeZone = Pair("2014:05:18 01:04:29+08:00", "2014:05:18 01:04:29+08:00")
@@ -260,18 +290,22 @@ class OptionsTest {
         val language = Pair(Language.JA, ThetaRepository.LanguageEnum.JA)
         val maxRecordableTime = Pair(1500, ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500)
         val offDelay = Pair(600, ThetaRepository.OffDelayEnum.OFF_DELAY_10M)
+        val password = Pair("password", "password")
         val sleepDelay = Pair(180, ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M)
         val remainingPictures = Pair(101, 101)
         val remainingVideoSeconds = Pair(102, 102)
         val remainingSpace = Pair(103L, 103L)
         val totalSpace = Pair(104L, 104L)
         val shutterVolume = Pair(10, 10)
+        val userName = Pair("username", "username")
         val whiteBalance = Pair(WhiteBalance._WARM_WHITE_FLUORESCENT, ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT)
         val whiteBalanceAutoStrength = Pair(WhiteBalanceAutoStrength.ON, ThetaRepository.WhiteBalanceAutoStrengthEnum.ON)
 
         val orgOptions = ThetaRepository.Options(
             aperture = aperture.second,
             bluetoothPower = bluetoothPower.second,
+            cameraControlSource = cameraControlSource.second,
+            cameraMode = cameraMode.second,
             captureMode = captureMode.second,
             colorTemperature = colorTemperature.second,
             dateTimeZone = dateTimeZone.second,
@@ -287,12 +321,14 @@ class OptionsTest {
             language = language.second,
             maxRecordableTime = maxRecordableTime.second,
             offDelay = offDelay.second,
+            password = password.second,
             sleepDelay = sleepDelay.second,
             remainingPictures = remainingPictures.second,
             remainingVideoSeconds = remainingVideoSeconds.second,
             remainingSpace = remainingSpace.second,
             totalSpace = totalSpace.second,
             shutterVolume = shutterVolume.second,
+            username = userName.second,
             whiteBalance = whiteBalance.second,
             whiteBalanceAutoStrength = whiteBalanceAutoStrength.second
         )
@@ -300,6 +336,8 @@ class OptionsTest {
 
         assertEquals(options.aperture, aperture.first, "aperture")
         assertEquals(options._bluetoothPower, bluetoothPower.first, "bluetoothPower")
+        assertEquals(options._cameraControlSource, cameraControlSource.first, "cameraControlSource")
+        assertEquals(options._cameraMode, cameraMode.first, "cameraMode")
         assertEquals(options.captureMode, captureMode.first, "captureMode")
         assertEquals(options._colorTemperature, colorTemperature.first, "colorTemperature")
         assertEquals(options.dateTimeZone, dateTimeZone.first, "dateTimeZone")
@@ -315,12 +353,14 @@ class OptionsTest {
         assertEquals(options._language, language.first, "language")
         assertEquals(options._maxRecordableTime, maxRecordableTime.first, "aperture")
         assertEquals(options.offDelay, offDelay.first, "offDelay")
+        assertEquals(options._password, password.first, "password")
         assertEquals(options.sleepDelay, sleepDelay.first, "sleepDelay")
         assertEquals(options.remainingPictures, remainingPictures.first, "remainingPictures")
         assertEquals(options.remainingVideoSeconds, remainingVideoSeconds.first, "remainingVideoSeconds")
         assertEquals(options.remainingSpace, remainingSpace.first, "remainingSpace")
         assertEquals(options.totalSpace, totalSpace.first, "totalSpace")
         assertEquals(options._shutterVolume, shutterVolume.first, "shutterVolume")
+        assertEquals(options._username, userName.first, "userName")
         assertEquals(options.whiteBalance, whiteBalance.first, "whiteBalance")
         assertEquals(options._whiteBalanceAutoStrength, whiteBalanceAutoStrength.first, "whiteBalanceAutoStrength")
     }
