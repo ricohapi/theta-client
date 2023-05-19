@@ -396,17 +396,18 @@ class PreviewClientImpl : PreviewClient {
         contentType: String,
     ): PreviewClient {
         val client = requestPreview(endpoint, method, path, body, contentType) as PreviewClientImpl
-        return if (client.status == HttpStatusCode.Unauthorized.value) {
-            val url = URL(endpoint)
-            ApiClient.digestAuth?.let { digestAuth ->
-                responseHeaders?.get(HttpHeaders.WWWAuthenticate.lowercase())?.let { header ->
-                    val authHeader = parseAuthorizationHeader(header) as HttpAuthHeader.Parameterized
-                    digestAuth.updateAuthHeaderInfo(authHeader)
-                    requestPreview(endpoint, method, path, body, contentType, digestAuth.makeDigestHeader(url.path, HttpMethod.Post.value))
-                }
-            } ?: client
-        } else {
-            client
+        return when (client.status) {
+            HttpStatusCode.Unauthorized.value -> {
+                val url = URL(endpoint)
+                ApiClient.digestAuth?.let { digestAuth ->
+                    responseHeaders?.get(HttpHeaders.WWWAuthenticate.lowercase())?.let { header ->
+                        val authHeader = parseAuthorizationHeader(header) as HttpAuthHeader.Parameterized
+                        digestAuth.updateAuthHeaderInfo(authHeader)
+                        requestPreview(endpoint, method, path, body, contentType, digestAuth.makeDigestHeader(url.path, HttpMethod.Post.value))
+                    }
+                } ?: client
+            }
+            else -> client
         }
     }
 
