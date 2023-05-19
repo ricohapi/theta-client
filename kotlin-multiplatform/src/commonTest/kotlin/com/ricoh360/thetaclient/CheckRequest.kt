@@ -43,6 +43,7 @@ class CheckRequest {
             maxRecordableTime: Int? = null,
             networkType: NetworkType? = null,
             offDelay: Int? = null,
+            shutterSpeed: Double? = null,
             sleepDelay: Int? = null,
             aperture: Float? = null,
             colorTemperature: Int? = null,
@@ -95,6 +96,9 @@ class CheckRequest {
             }
             offDelay?.let {
                 assertEquals(optionsRequest.parameters.options.offDelay, it, "setOptions offDelay")
+            }
+            shutterSpeed?.let {
+                assertEquals(optionsRequest.parameters.options.shutterSpeed, it, "setOptions shutterSpeed")
             }
             sleepDelay?.let {
                 assertEquals(optionsRequest.parameters.options.sleepDelay, it, "setOptions sleepDelay")

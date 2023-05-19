@@ -39,6 +39,7 @@ class OptionsTest {
         val networkType = ThetaRepository.NetworkTypeEnum.DIRECT
         val offDelay = ThetaRepository.OffDelayEnum.OFF_DELAY_10M
         val password = "password"
+        val shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_10
         val sleepDelay = ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M
         val remainingPictures = 100
         val remainingVideoSeconds = 100
@@ -72,6 +73,7 @@ class OptionsTest {
             networkType = networkType,
             offDelay = offDelay,
             password = password,
+            shutterSpeed = shutterSpeed,
             sleepDelay = sleepDelay,
             remainingPictures = remainingPictures,
             remainingVideoSeconds = remainingVideoSeconds,
@@ -109,6 +111,7 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.NetworkType), networkType, "networkType")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.OffDelay), offDelay, "offDelay")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Password), password, "password")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ShutterSpeed), shutterSpeed, "shutterSpeed")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.SleepDelay), sleepDelay, "sleepDelay")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.RemainingPictures), remainingPictures, "remainingPictures")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.RemainingVideoSeconds), remainingVideoSeconds, "remainingVideoSeconds")
@@ -148,6 +151,7 @@ class OptionsTest {
             Pair(ThetaRepository.OptionNameEnum.NetworkType, ThetaRepository.NetworkTypeEnum.ETHERNET),
             Pair(ThetaRepository.OptionNameEnum.OffDelay, ThetaRepository.OffDelayEnum.OFF_DELAY_10M),
             Pair(ThetaRepository.OptionNameEnum.Password, "password"),
+            Pair(ThetaRepository.OptionNameEnum.ShutterSpeed, ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_30),
             Pair(ThetaRepository.OptionNameEnum.SleepDelay, ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M),
             Pair(ThetaRepository.OptionNameEnum.RemainingPictures, 101),
             Pair(ThetaRepository.OptionNameEnum.RemainingVideoSeconds, 102),
@@ -197,6 +201,7 @@ class OptionsTest {
         val maxRecordableTime = Pair(1500, ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500)
         val offDelay = Pair(600, ThetaRepository.OffDelayEnum.OFF_DELAY_10M)
         val password = Pair("password", "password")
+        val shutterSpeed = Pair(10.0, ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_10)
         val sleepDelay = Pair(180, ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M)
         val remainingPictures = Pair(101, 101)
         val remainingVideoSeconds = Pair(102, 102)
@@ -228,6 +233,7 @@ class OptionsTest {
             _maxRecordableTime = maxRecordableTime.first,
             offDelay = offDelay.first,
             _password = password.first,
+            shutterSpeed = shutterSpeed.first,
             sleepDelay = sleepDelay.first,
             remainingPictures = remainingPictures.first,
             remainingVideoSeconds = remainingVideoSeconds.first,
@@ -260,6 +266,7 @@ class OptionsTest {
         assertEquals(options.maxRecordableTime, maxRecordableTime.second, "aperture")
         assertEquals(options.offDelay, offDelay.second, "offDelay")
         assertEquals(options.password, password.second, "password")
+        assertEquals(options.shutterSpeed, shutterSpeed.second, "shutterSpeed")
         assertEquals(options.sleepDelay, sleepDelay.second, "sleepDelay")
         assertEquals(options.remainingPictures, remainingPictures.second, "remainingPictures")
         assertEquals(options.remainingVideoSeconds, remainingVideoSeconds.second, "remainingVideoSeconds")
@@ -299,6 +306,7 @@ class OptionsTest {
         val maxRecordableTime = Pair(1500, ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500)
         val offDelay = Pair(600, ThetaRepository.OffDelayEnum.OFF_DELAY_10M)
         val password = Pair("password", "password")
+        val shutterSpeed = Pair(20.0, ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_20)
         val sleepDelay = Pair(180, ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M)
         val remainingPictures = Pair(101, 101)
         val remainingVideoSeconds = Pair(102, 102)
@@ -330,6 +338,7 @@ class OptionsTest {
             maxRecordableTime = maxRecordableTime.second,
             offDelay = offDelay.second,
             password = password.second,
+            shutterSpeed = shutterSpeed.second,
             sleepDelay = sleepDelay.second,
             remainingPictures = remainingPictures.second,
             remainingVideoSeconds = remainingVideoSeconds.second,
@@ -362,6 +371,7 @@ class OptionsTest {
         assertEquals(options._maxRecordableTime, maxRecordableTime.first, "aperture")
         assertEquals(options.offDelay, offDelay.first, "offDelay")
         assertEquals(options._password, password.first, "password")
+        assertEquals(options.shutterSpeed, shutterSpeed.first, "shutterSpeed")
         assertEquals(options.sleepDelay, sleepDelay.first, "sleepDelay")
         assertEquals(options.remainingPictures, remainingPictures.first, "remainingPictures")
         assertEquals(options.remainingVideoSeconds, remainingVideoSeconds.first, "remainingVideoSeconds")
