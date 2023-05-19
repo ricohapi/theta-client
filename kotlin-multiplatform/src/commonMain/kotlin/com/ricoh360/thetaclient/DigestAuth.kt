@@ -95,11 +95,11 @@ class DigestAuth(
      * @return digest authentication header string
      *
      */
-    fun makeDigest(
+    fun makeDigestHeader(
         uri: String,
         method: String,
     ): String {
-        return makeDigest(username, password, uri, method, realm, nonce, qop)
+        return makeDigestHeader(username, password, uri, method, realm, nonce, qop)
     }
 }
 
@@ -116,7 +116,7 @@ class DigestAuth(
  * @return digest authentication header string
  *
  */
-fun makeDigest(
+fun makeDigestHeader(
     username: String,
     password: String,
     uri: String,
@@ -162,7 +162,7 @@ internal fun setupDigestAuth(httpClient: HttpClient) {
                     originalCall.response.headers[HttpHeaders.WWWAuthenticate]?.let { wwwAuth ->
                         val authHeader = parseAuthorizationHeader(wwwAuth) as HttpAuthHeader.Parameterized
                         it.updateAuthHeaderInfo(authHeader)
-                        request.headers.append(HttpHeaders.Authorization, it.makeDigest(request.url.encodedPath, request.method.value))
+                        request.headers.append(HttpHeaders.Authorization, it.makeDigestHeader(request.url.encodedPath, request.method.value))
                         execute(request)
                     }
                 } ?: originalCall

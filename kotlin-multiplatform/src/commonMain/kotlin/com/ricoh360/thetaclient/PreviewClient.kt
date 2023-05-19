@@ -402,7 +402,7 @@ class PreviewClientImpl : PreviewClient {
                 responseHeaders?.get(HttpHeaders.WWWAuthenticate.lowercase())?.let { header ->
                     val authHeader = parseAuthorizationHeader(header) as HttpAuthHeader.Parameterized
                     digestAuth.updateAuthHeaderInfo(authHeader)
-                    requestPreview(endpoint, method, path, body, contentType, digestAuth.makeDigest(url.path, HttpMethod.Post.value))
+                    requestPreview(endpoint, method, path, body, contentType, digestAuth.makeDigestHeader(url.path, HttpMethod.Post.value))
                 }
             } ?: client
         } else {
