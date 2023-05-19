@@ -2668,7 +2668,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         companion object {
             /**
-             * Convert Language to LanguageEnum
+             * Convert NetworkType to NetworkTypeEnum
              *
              * @param value Language.
              * @return LanguageEnum
@@ -2982,8 +2982,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             /**
              * Convert WlanFrequency to WlanFrequencyEnum
              *
-             * @param value White balance auto strength
-             * @return WhiteBalanceAutoStrengthEnum
+             * @param value wlan frequency
+             * @return  WlanFrequencyEnum
              */
             fun get(value: WlanFrequency): WlanFrequencyEnum? {
                 return values().firstOrNull { it.value == value }

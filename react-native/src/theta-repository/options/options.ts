@@ -1,5 +1,7 @@
 import type { CameraModeEnum } from './option-camera-mode';
+import type { NetworkTypeEnum } from './option-network-type';
 import type { WhiteBalanceAutoStrengthEnum } from './option-white-balance-auto-strength';
+import type { WlanFrequencyEnum } from './option-wlan-frequency';
 
 /** Aperture value. */
 export const ApertureEnum = {
@@ -371,18 +373,6 @@ export const MaxRecordableTimeEnum = {
 export type MaxRecordableTimeEnum =
   typeof MaxRecordableTimeEnum[keyof typeof MaxRecordableTimeEnum];
 
-/** Network type of the camera */
-export const NetworkTypeEnum = {
-  DIRECT: 'DIRECT',
-  CLIENT: 'CLIENT',
-  ETHERNET: 'ETHERNET',
-  OFF: 'OFF',
-} as const;
-
-/** Type definition of NetworkTypeEnum */
-export type NetworkTypeEnum =
-  typeof NetworkTypeEnum[keyof typeof NetworkTypeEnum];
-
 /** Length of standby time before the camera automatically powers OFF. */
 export const OffDelayEnum = {
   /** Do not turn power off. */
@@ -452,16 +442,6 @@ export const WhiteBalanceEnum = {
 /** type definition of WhiteBalanceEnum */
 export type WhiteBalanceEnum =
   typeof WhiteBalanceEnum[keyof typeof WhiteBalanceEnum];
-
-/** WLAN frequency */
-export const WlanFrequencyEnum = {
-  GHZ_2_4: 'GHZ_2_4',
-  GHZ_5: 'GHZ_5'
-} as const;
-
-/** type definition of WlanFrequency */
-export type WlanFrequencyEnum =
-typeof WlanFrequencyEnum[keyof typeof WlanFrequencyEnum];
 
 /** Camera setting options name. */
 export const OptionNameEnum = {
