@@ -2609,7 +2609,7 @@ class ThetaConfig {
   /// Language used in camera OS
   LanguageEnum? language;
 
-  /// Length of standby time before the camera automatically powers OFF
+  /// Length of standby time before the camera automatically power OFF
   OffDelayEnum? offDelay;
 
   /// Length of standby time before the camera enters the sleep mode.

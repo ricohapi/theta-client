@@ -30,8 +30,8 @@ class DigestAuth(
     /**
      * Password
      *
-     * If omitted, the default password is used.
-     * Default password is "THETA" + "XX" after the beginning of the serial number.
+     * If omitted, the default password will be used.
+     * The default password is "THETA" + "XX" after the beginning of the serial number.
      */
     password: String? = null,
 ) {

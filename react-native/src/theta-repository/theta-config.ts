@@ -9,7 +9,7 @@ export type ThetaConfig = {
   dateTime?: string;
   /** Language used in camera OS */
   language?: LanguageEnum;
-  /** Length of standby time before the camera automatically powers OFF. */
+  /** Length of standby time before the camera automatically power OFF. */
   offDelay?: OffDelayEnum;
   /** Length of standby time before the camera enters the sleep mode. */
   sleepDelay?: SleepDelayEnum;
