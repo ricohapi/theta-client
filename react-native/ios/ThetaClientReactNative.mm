@@ -353,6 +353,32 @@ static convert_t BluetoothPowerEnum = {
 };
 
 /**
+ * CameraControlSourceEnum converter
+ */
+static convert_t CameraControlSourceEnum = {
+  .toTheta = @{
+      @"CAMERA": THETACThetaRepositoryCameraControlSourceEnum.camera,
+      @"APP": THETACThetaRepositoryCameraControlSourceEnum.app
+  },
+  .fromTheta = @{
+      THETACThetaRepositoryCameraControlSourceEnum.camera: @"CAMERA",
+      THETACThetaRepositoryCameraControlSourceEnum.app: @"APP"
+  },
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+      id val = [CameraControlSourceEnum.toTheta objectForKey:[rct objectForKey:@"cameraControlSource"]];
+      if (val) {
+          opt.cameraControlSource = val;
+      }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+      id val = [CameraControlSourceEnum.fromTheta objectForKey:opt.cameraControlSource];
+      if (val) {
+          [rct setObject:val forKey:@"cameraControlSource"];
+      }
+  }
+};
+
+/**
  * CameraModeEnum converter
  */
 static convert_t CameraModeEnum = {
@@ -1425,6 +1451,7 @@ static convert_t UsernameCvt = {
 static NSDictionary *NameToOptionEnum = @{
   @"Aperture": THETACThetaRepositoryOptionNameEnum.aperture,
   @"BluetoothPower": THETACThetaRepositoryOptionNameEnum.bluetoothpower,
+  @"CameraControlSource": THETACThetaRepositoryOptionNameEnum.cameracontrolsource,
   @"CameraMode": THETACThetaRepositoryOptionNameEnum.cameramode,
   @"CaptureMode": THETACThetaRepositoryOptionNameEnum.capturemode,
   @"ColorTemperature": THETACThetaRepositoryOptionNameEnum.colortemperature,
@@ -1461,6 +1488,7 @@ static NSDictionary *NameToOptionEnum = @{
 static NSDictionary *OptionEnumToOption = @{
   @"Aperture": @"aperture",
   @"BluetoothPower": @"bluetoothPower",
+  @"CameraControlSource": @"cameraControlSource",
   @"CameraMode": @"cameraMode",
   @"CaptureMode": @"captureMode",
   @"ColorTemperature": @"colorTemperature",
@@ -1500,6 +1528,7 @@ typedef convert_t * (^OptionConverter)();
 static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"aperture": ^{return &ApertureEnum;},
   @"bluetoothPower": ^{return &BluetoothPowerEnum;},
+  @"cameraControlSource": ^{return &CameraControlSourceEnum;},
   @"cameraMode": ^{return &CameraModeEnum;},
   @"captureMode": ^{return &CaptureModeEnum;},
   @"colorTemperature": ^{return &ColorTemperatureCvt;},

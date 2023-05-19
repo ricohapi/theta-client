@@ -1,3 +1,4 @@
+import type { CameraControlSourceEnum } from './option-camera-control-source';
 import type { CameraModeEnum } from './option-camera-mode';
 import type { NetworkTypeEnum } from './option-network-type';
 import type { WhiteBalanceAutoStrengthEnum } from './option-white-balance-auto-strength';
@@ -441,7 +442,7 @@ export const WhiteBalanceEnum = {
 
 /** type definition of WhiteBalanceEnum */
 export type WhiteBalanceEnum =
-  typeof WhiteBalanceEnum[keyof typeof WhiteBalanceEnum];
+  (typeof WhiteBalanceEnum)[keyof typeof WhiteBalanceEnum];
 
 /** Camera setting options name. */
 export const OptionNameEnum = {
@@ -449,6 +450,8 @@ export const OptionNameEnum = {
   Aperture: 'Aperture',
   /** _bluetoothPower*/
   BluetoothPower: 'BluetoothPower',
+  /** _cameraControlSource */
+  CameraControlSource: 'CameraControlSource',
   /** cameraMode */
   CameraMode: 'CameraMode',
   /** captureMode */
@@ -508,7 +511,8 @@ export const OptionNameEnum = {
 } as const;
 
 /** type definition of OptionNameEnum */
-export type OptionNameEnum = typeof OptionNameEnum[keyof typeof OptionNameEnum];
+export type OptionNameEnum =
+  (typeof OptionNameEnum)[keyof typeof OptionNameEnum];
 
 /** camera setting options */
 export type Options = {
@@ -516,6 +520,8 @@ export type Options = {
   aperture?: ApertureEnum;
   /** BluetoothPower */
   bluetoothPower?: BluetoothPowerEnum;
+  /** camera control source. */
+  cameraControlSource?: CameraControlSourceEnum;
   /** Camera mode. */
   cameraMode?: CameraModeEnum;
   /** Shooting mode. */

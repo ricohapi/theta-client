@@ -551,6 +551,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _cameraControlSource
+         */
+        CameraControlSource("_cameraControlSource", CameraControlSourceEnum::class),
+
+        /**
+         * Option name
          * _cameraMode
          */
         CameraMode("_cameraMode", CameraModeEnum::class),
@@ -734,6 +740,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Bluetooth power.
          */
         var bluetoothPower: BluetoothPowerEnum? = null,
+
+        /**
+         * camera control source
+         * Sets whether to lock/unlock the camera UI.
+         * The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
+         */
+        var cameraControlSource: CameraControlSourceEnum? = null,
 
         /**
          * Camera mode.
@@ -943,6 +956,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         constructor() : this(
             aperture = null,
             bluetoothPower = null,
+            cameraControlSource = null,
             cameraMode = null,
             captureMode = null,
             colorTemperature = null,
@@ -976,6 +990,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         constructor(options: com.ricoh360.thetaclient.transferred.Options) : this(
             aperture = options.aperture?.let { ApertureEnum.get(it) },
             bluetoothPower = options._bluetoothPower?.let { BluetoothPowerEnum.get(it) },
+            cameraControlSource = options._cameraControlSource?.let { CameraControlSourceEnum.get(it) },
             cameraMode = options._cameraMode?.let { CameraModeEnum.get(it) },
             captureMode = options.captureMode?.let { CaptureModeEnum.get(it) },
             colorTemperature = options._colorTemperature,
@@ -1018,6 +1033,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             return Options(
                 aperture = aperture?.value,
                 _bluetoothPower = bluetoothPower?.value,
+                _cameraControlSource = cameraControlSource?.value,
                 _cameraMode = cameraMode?.value,
                 captureMode = captureMode?.value,
                 _colorTemperature = colorTemperature,
@@ -1063,6 +1079,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             return when (name) {
                 OptionNameEnum.Aperture -> aperture
                 OptionNameEnum.BluetoothPower -> bluetoothPower
+                OptionNameEnum.CameraControlSource -> cameraControlSource
                 OptionNameEnum.CameraMode -> cameraMode
                 OptionNameEnum.CaptureMode -> captureMode
                 OptionNameEnum.ColorTemperature -> colorTemperature
@@ -1109,6 +1126,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             when (name) {
                 OptionNameEnum.Aperture -> aperture = value as ApertureEnum
                 OptionNameEnum.BluetoothPower -> bluetoothPower = value as BluetoothPowerEnum
+                OptionNameEnum.CameraControlSource -> cameraControlSource = value as CameraControlSourceEnum
                 OptionNameEnum.CameraMode -> cameraMode = value as CameraModeEnum
                 OptionNameEnum.CaptureMode -> captureMode = value as CaptureModeEnum
                 OptionNameEnum.ColorTemperature -> colorTemperature = value as Int
@@ -1226,6 +1244,39 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @return BluetoothPowerEnum
              */
             fun get(value: BluetoothPower): BluetoothPowerEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * camera control source
+     * Sets whether to lock/unlock the camera UI.
+     * The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
+     *
+     * For RICOH THETA X
+     */
+    enum class CameraControlSourceEnum(val value: CameraControlSource) {
+        /**
+         * Operation is possible with the camera. Locks the smartphone
+         * application UI (supported app only).
+         */
+        CAMERA(CameraControlSource.CAMERA),
+
+        /**
+         * Operation is possible with the smartphone application. Locks
+         * the UI on the shooting screen on the camera.
+         */
+        APP(CameraControlSource.APP);
+
+        companion object {
+            /**
+             * Convert CameraControlSource to CameraControlSourceEnum
+             *
+             * @param value camera control source
+             * @return CameraControlSourceEnum
+             */
+            fun get(value: CameraControlSource): CameraControlSourceEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
