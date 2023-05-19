@@ -2,6 +2,8 @@ import Flutter
 import UIKit
 import THETAClient
 
+let KEY_CLIENT_MODE = "clientMode"
+
 public class ConvertUtil: NSObject {
 }
 
@@ -326,7 +328,7 @@ func toConfig(params: [String : Any]) -> ThetaRepository.Config {
             config.sleepDelay = getEnumValue(values: ThetaRepository.SleepDelayEnum.values(), name: value as! String)!
         case ThetaRepository.OptionNameEnum.shuttervolume.name:
             config.shutterVolume = KotlinInt(integerLiteral: value as! Int)
-        case "clientMode":
+        case KEY_CLIENT_MODE:
             config.clientMode = toDigetAuth(params: value as? [String : String?])
         default:
             break
