@@ -304,12 +304,12 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
 }
 
 func toDigetAuth(params: [String : String?]?) -> DigestAuth? {
-    guard let params = params else { return nil }
-    if let username = params["username"] as? String {
-        let password = params["password"] as? String
-        return DigestAuth(username: username, password: password)
-    }
-    return nil
+    guard let params = params,
+          let username = params["username"] as? String
+    else { return nil }
+    
+    let password = params["password"] as? String
+    return DigestAuth(username: username, password: password)
 }
 
 func toConfig(params: [String : Any]) -> ThetaRepository.Config {
