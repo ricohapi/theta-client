@@ -1,6 +1,5 @@
 package com.ricoh360.thetaclient
 
-import com.soywiz.krypto.md5
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.plugin
@@ -12,7 +11,6 @@ import io.ktor.http.encodedPath
 import kotlinx.coroutines.runBlocking
 
 const val DEFAULT_AUTH_QOP = "auth"
-internal const val HEX_CHARACTERS = "0123456789abcdef"
 internal const val DEFAULT_AUTH_NC = "00000001"
 internal const val KEY_AUTH_REALM = "realm"
 internal const val KEY_AUTH_NONCE = "nonce"
@@ -134,23 +132,6 @@ fun makeDigestHeader(
     val response = md5("$a1:$nonce:$nc:$cnonce:$qop:$a2")
 
     return "Digest username=\"$username\", realm=\"$realm\", uri=\"$uri\", nonce=\"$nonce\", nc=$nc, qop=\"$qop\", cnonce=\"$cnonce\", response=\"$response\""
-}
-
-internal fun md5(data: String): String {
-    val byteArray = data.encodeToByteArray()
-    val hash = byteArray.md5()
-    return bytesToHex(hash.bytes)
-}
-
-internal fun bytesToHex(data: ByteArray): String {
-    val hexArray = HEX_CHARACTERS.toCharArray()
-    val hexChars = CharArray(data.size * 2)
-    for (i in data.indices) {
-        val v = data[i].toInt() and 0xFF
-        hexChars[i * 2] = hexArray[v ushr 4]
-        hexChars[i * 2 + 1] = hexArray[v and 0x0F]
-    }
-    return hexChars.concatToString()
 }
 
 internal fun setupDigestAuth(httpClient: HttpClient) {
