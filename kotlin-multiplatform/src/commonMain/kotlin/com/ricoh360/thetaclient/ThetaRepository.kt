@@ -362,14 +362,15 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
-     * Lists information of images and videos in Theta.
+     * Acquires a list of still image files and movie files.
      *
-     * @param[fileType] Type of the files to be listed.
-     * @param[startPosition] The position of the first file to be returned in the list. 0 represents the first file.
-     * If [startPosition] is larger than the position of the last file, an empty list is returned.
-     * @param[entryCount] Desired number of entries to return.
-     * If [entryCount] is more than the number of remaining files, just return entries of actual remaining files.
-     * @param[storage] Desired storage. If omitted, return current storage. (RICOH THETA X Version 2.00.0 or later)
+     * @param[fileType] File types to acquire.
+     * @param[startPosition] Position to start acquiring the file list.
+     * If a number larger than the number of existing files is specified, a null list is acquired.
+     * Default is the top of the list.
+     * @param[entryCount] Number of still image and movie files to acquire.
+     * If the number of existing files is smaller than the specified number of files, all available files are only acquired.
+     * @param[storage] Specifies the storage. If omitted, return current storage. (RICOH THETA X Version 2.00.0 or later)
      * @return A list of file information and number of totalEntries.
      * see [camera.listFiles](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md).
      * @exception ThetaWebApiException If an error occurs in THETA.
@@ -410,13 +411,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
-     * Lists information of images and videos in Theta.
+     * Acquires a list of still image files and movie files.
      *
-     * @param[fileType] Type of the files to be listed.
-     * @param[startPosition] The position of the first file to be returned in the list. 0 represents the first file.
-     * If [startPosition] is larger than the position of the last file, an empty list is returned.
-     * @param[entryCount] Desired number of entries to return.
-     * If [entryCount] is more than the number of remaining files, just return entries of actual remaining files.
+     * @param[fileType] File types to acquire.
+     * @param[startPosition] Position to start acquiring the file list.
+     * If a number larger than the number of existing files is specified, a null list is acquired.
+     * Default is the top of the list.
+     * @param[entryCount] Number of still image and movie files to acquire.
+     * If the number of existing files is smaller than the specified number of files, all available files are only acquired.
      * @return A list of file information and number of totalEntries.
      * see [camera.listFiles](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md).
      * @exception ThetaWebApiException If an error occurs in THETA.
