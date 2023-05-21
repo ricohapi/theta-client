@@ -2721,8 +2721,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             /**
              * Convert NetworkType to NetworkTypeEnum
              *
-             * @param value Language.
-             * @return LanguageEnum
+             * @param value Network type.
+             * @return NetworkTypeEnum
              */
             fun get(value: NetworkType): NetworkTypeEnum? {
                 return values().firstOrNull { it.value == value }
