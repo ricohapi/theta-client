@@ -1,6 +1,7 @@
 import type { CameraControlSourceEnum } from './option-camera-control-source';
 import type { CameraModeEnum } from './option-camera-mode';
 import type { NetworkTypeEnum } from './option-network-type';
+import type { ShutterSpeedEnum } from './option-shutter-speed';
 import type { WhiteBalanceAutoStrengthEnum } from './option-white-balance-auto-strength';
 import type { WlanFrequencyEnum } from './option-wlan-frequency';
 
@@ -488,6 +489,8 @@ export const OptionNameEnum = {
   OffDelay: 'OffDelay',
   /** password */
   Password: 'Password',
+  /** shutterSpeed */
+  ShutterSpeed: 'ShutterSpeed',
   /** sleepDelay */
   SleepDelay: 'SleepDelay',
   /** remainingPictures */
@@ -558,6 +561,13 @@ export type Options = {
   offDelay?: OffDelayEnum;
   /** Password used for digest authentication when _networkType is set to client mode. */
   password?: String;
+  /**
+   * Shutter speed (sec).
+   *
+   * It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
+   * Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
+   */
+  shutterSpeed?: ShutterSpeedEnum;
   /** Length of standby time before the camera enters the sleep mode. */
   sleepDelay?: SleepDelayEnum;
   /** The estimated remaining number of shots for the current shooting settings. */
