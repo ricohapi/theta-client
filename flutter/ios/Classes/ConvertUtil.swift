@@ -288,6 +288,9 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.password.name:
         options.password = value as? String
         break;
+    case ThetaRepository.OptionNameEnum.shutterspeed.name:
+        options.shutterSpeed = getEnumValue(values: ThetaRepository.ShutterSpeedEnum.values(), name: value as! String)!
+        break
     case ThetaRepository.OptionNameEnum.sleepdelay.name:
         options.sleepDelay = getEnumValue(values: ThetaRepository.SleepDelayEnum.values(), name: value as! String)!
         break

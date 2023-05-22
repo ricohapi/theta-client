@@ -181,6 +181,9 @@ class ConvertUtils {
         case OptionNameEnum.password:
           result.password = entry.value;
           break;
+        case OptionNameEnum.shutterSpeed:
+          result.shutterSpeed = ShutterSpeedEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.sleepDelay:
           result.sleepDelay = SleepDelayEnum.getValue(entry.value);
           break;
@@ -257,6 +260,8 @@ class ConvertUtils {
     } else if (value is NetworkTypeEnum) {
       return value.rawValue;
     } else if (value is OffDelayEnum) {
+      return value.rawValue;
+    } else if (value is ShutterSpeedEnum) {
       return value.rawValue;
     } else if (value is SleepDelayEnum) {
       return value.rawValue;
