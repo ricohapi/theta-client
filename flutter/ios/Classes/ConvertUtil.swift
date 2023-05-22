@@ -171,6 +171,16 @@ func toGpsInfo(params: [String : Any]) -> ThetaRepository.GpsInfo {
     )
 }
 
+func toProxy(params: [String : Any]) -> ThetaRepository.Proxy {
+    return ThetaRepository.Proxy(
+        use: toKotlinBoolean(value: params["use"]),
+        url: params["url"] as? String,
+        port: toKotlinInt(value: params["port"]),
+        userid: params["userid"] as? String,
+        password: params["password"] as? String
+    )
+}
+
 func convertGetOptionsParam(params: [String]) -> [ThetaRepository.OptionNameEnum] {
     var array: [ThetaRepository.OptionNameEnum] = []
     let values = ThetaRepository.OptionNameEnum.values()
@@ -186,6 +196,16 @@ func convertResult(gpsInfo: ThetaRepository.GpsInfo) -> [String: Any] {
         "longitude": gpsInfo.longitude,
         "altitude": gpsInfo.altitude,
         "dateTimeZone": gpsInfo.dateTimeZone,
+    ]
+}
+
+func convertResult(proxy: ThetaRepository.Proxy) -> [String: Any] {
+    return [
+        "use": convertKotlinBooleanToBool(value: proxy.use),
+        "url": proxy.url,
+        "port": proxy.port,
+        "userid": proxy.userid,
+        "password": proxy.password,
     ]
 }
 
@@ -205,6 +225,8 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
             } else if value is ThetaRepository.GpsInfo {
                 let gpsInfo = value as! ThetaRepository.GpsInfo
                 result[name.name] = convertResult(gpsInfo: gpsInfo)
+            } else if value is ThetaRepository.Proxy, let proxy = value as? ThetaRepository.Proxy {
+                result[name.name] = convertResult(proxy: proxy)
             }
         }
     }
@@ -216,6 +238,22 @@ func convertKotlinBooleanToBool(value: Any?) -> Bool? {
     guard value is KotlinBoolean, let numVal = value as? NSNumber else { return false }
 
     return numVal.boolValue
+}
+
+func toKotlinBoolean(value: Any?) -> KotlinBoolean? {
+    var result: KotlinBoolean? = nil
+    if let value = value as? Bool {
+        result = value ? true : false
+    }
+    return result
+}
+
+func toKotlinInt(value: Any?) -> KotlinInt? {
+    var result: KotlinInt? = nil
+    if let value = value as? Int {
+        result = KotlinInt(integerLiteral: value)
+    }
+    return result
 }
 
 func convertSetOptionsParam(params: [String: Any]) -> ThetaRepository.Options {
@@ -288,6 +326,11 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.password.name:
         options.password = value as? String
         break;
+    case ThetaRepository.OptionNameEnum.proxy.name:
+        if let params = value as? [String : Any] {
+            options.proxy = toProxy(params: params)
+        }
+        break
     case ThetaRepository.OptionNameEnum.sleepdelay.name:
         options.sleepDelay = getEnumValue(values: ThetaRepository.SleepDelayEnum.values(), name: value as! String)!
         break

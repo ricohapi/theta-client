@@ -343,6 +343,7 @@ void main() {
     Map<String, dynamic> gpsInfoMap = {
       'latitude': 1.0, 'longitude': 2.0, 'altitude': 3.0, 'dateTimeZone': '2022:01:01 00:01:00+09:00'
     };
+    Map<String, dynamic> proxyMap = {'use': false, 'url': '', 'port': 8081, 'userid': '', 'password': ''};
     List<List<dynamic>> data = [
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
       [OptionNameEnum.cameraControlSource, 'CameraControlSource', CameraControlSourceEnum.camera, 'CAMERA'],
@@ -364,6 +365,7 @@ void main() {
       [OptionNameEnum.networkType, 'NetworkType', NetworkTypeEnum.client, 'CLIENT'],
       [OptionNameEnum.offDelay, 'OffDelay', OffDelayEnum.offDelay_10m, 'OFF_DELAY_10M'],
       [OptionNameEnum.password, 'Password', 'password', 'password'],
+      [OptionNameEnum.proxy, 'Proxy', Proxy(false, '', 8081, '', ''), proxyMap],
       [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
       [OptionNameEnum.remainingPictures, 'RemainingPictures', 3, 3],
       [OptionNameEnum.remainingVideoSeconds, 'RemainingVideoSeconds', 4, 4],
@@ -407,6 +409,7 @@ void main() {
     Map<String, dynamic> gpsInfoMap = {
       'latitude': 1.0, 'longitude': 2.0, 'altitude': 3.0, 'dateTimeZone': '2022:01:01 00:01:00+09:00'
     };
+    Map<String, dynamic> proxyMap = {'use': false, 'url': '', 'port': 8081, 'userid': '', 'password': ''};
     List<List<dynamic>> data = [
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
       [OptionNameEnum.cameraMode, 'CameraMode', CameraModeEnum.capture, 'CAPTURE'],
@@ -427,6 +430,7 @@ void main() {
       [OptionNameEnum.networkType, 'NetworkType', NetworkTypeEnum.client, 'CLIENT'],
       [OptionNameEnum.offDelay, 'OffDelay', OffDelayEnum.offDelay_15m, 'OFF_DELAY_15M'],
       [OptionNameEnum.password, 'Password', 'password', 'password'],
+      [OptionNameEnum.proxy, 'Proxy', Proxy(false, '', 8081, '', ''), proxyMap],
       [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
       [OptionNameEnum.remainingPictures, 'RemainingPictures', 3, 3],
       [OptionNameEnum.remainingVideoSeconds, 'RemainingVideoSeconds', 4, 4],
