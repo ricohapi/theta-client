@@ -38,6 +38,7 @@ class OptionsTest {
         val maxRecordableTime = ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500
         val offDelay = ThetaRepository.OffDelayEnum.OFF_DELAY_10M
         val password = "password"
+        val proxy = ThetaRepository.Proxy(use = false, url = "", port = 8080)
         val sleepDelay = ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M
         val remainingPictures = 100
         val remainingVideoSeconds = 100
@@ -69,6 +70,7 @@ class OptionsTest {
             maxRecordableTime = maxRecordableTime,
             offDelay = offDelay,
             password = password,
+            proxy = proxy,
             sleepDelay = sleepDelay,
             remainingPictures = remainingPictures,
             remainingVideoSeconds = remainingVideoSeconds,
@@ -104,6 +106,7 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.MaxRecordableTime), maxRecordableTime, "maxRecordableTime")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.OffDelay), offDelay, "offDelay")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Password), password, "password")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Proxy), proxy, "proxy")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.SleepDelay), sleepDelay, "sleepDelay")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.RemainingPictures), remainingPictures, "remainingPictures")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.RemainingVideoSeconds), remainingVideoSeconds, "remainingVideoSeconds")
@@ -141,6 +144,7 @@ class OptionsTest {
             Pair(ThetaRepository.OptionNameEnum.MaxRecordableTime, ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500),
             Pair(ThetaRepository.OptionNameEnum.OffDelay, ThetaRepository.OffDelayEnum.OFF_DELAY_10M),
             Pair(ThetaRepository.OptionNameEnum.Password, "password"),
+            Pair(ThetaRepository.OptionNameEnum.Proxy, ThetaRepository.Proxy(use = false, url = "", port = 8080)),
             Pair(ThetaRepository.OptionNameEnum.SleepDelay, ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M),
             Pair(ThetaRepository.OptionNameEnum.RemainingPictures, 101),
             Pair(ThetaRepository.OptionNameEnum.RemainingVideoSeconds, 102),
@@ -189,6 +193,7 @@ class OptionsTest {
         val maxRecordableTime = Pair(1500, ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500)
         val offDelay = Pair(600, ThetaRepository.OffDelayEnum.OFF_DELAY_10M)
         val password = Pair("password", "password")
+        val proxy = Pair(Proxy(use = false, url = "", port = 8080), ThetaRepository.Proxy(use = false, url = "", port = 8080))
         val sleepDelay = Pair(180, ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M)
         val remainingPictures = Pair(101, 101)
         val remainingVideoSeconds = Pair(102, 102)
@@ -220,6 +225,7 @@ class OptionsTest {
             _maxRecordableTime = maxRecordableTime.first,
             offDelay = offDelay.first,
             _password = password.first,
+            _proxy = proxy.first,
             sleepDelay = sleepDelay.first,
             remainingPictures = remainingPictures.first,
             remainingVideoSeconds = remainingVideoSeconds.first,
@@ -252,6 +258,7 @@ class OptionsTest {
         assertEquals(options.maxRecordableTime, maxRecordableTime.second, "aperture")
         assertEquals(options.offDelay, offDelay.second, "offDelay")
         assertEquals(options.password, password.second, "password")
+        assertEquals(options.proxy, proxy.second, "proxy")
         assertEquals(options.sleepDelay, sleepDelay.second, "sleepDelay")
         assertEquals(options.remainingPictures, remainingPictures.second, "remainingPictures")
         assertEquals(options.remainingVideoSeconds, remainingVideoSeconds.second, "remainingVideoSeconds")
@@ -291,6 +298,7 @@ class OptionsTest {
         val maxRecordableTime = Pair(1500, ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500)
         val offDelay = Pair(600, ThetaRepository.OffDelayEnum.OFF_DELAY_10M)
         val password = Pair("password", "password")
+        val proxy = Pair(Proxy(use = false, url = "", port = 8080), ThetaRepository.Proxy(use = false, url = "", port = 8080))
         val sleepDelay = Pair(180, ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M)
         val remainingPictures = Pair(101, 101)
         val remainingVideoSeconds = Pair(102, 102)
@@ -322,6 +330,7 @@ class OptionsTest {
             maxRecordableTime = maxRecordableTime.second,
             offDelay = offDelay.second,
             password = password.second,
+            proxy = proxy.second,
             sleepDelay = sleepDelay.second,
             remainingPictures = remainingPictures.second,
             remainingVideoSeconds = remainingVideoSeconds.second,
@@ -354,6 +363,7 @@ class OptionsTest {
         assertEquals(options._maxRecordableTime, maxRecordableTime.first, "aperture")
         assertEquals(options.offDelay, offDelay.first, "offDelay")
         assertEquals(options._password, password.first, "password")
+        assertEquals(options._proxy, proxy.first, "proxy")
         assertEquals(options.sleepDelay, sleepDelay.first, "sleepDelay")
         assertEquals(options.remainingPictures, remainingPictures.first, "remainingPictures")
         assertEquals(options.remainingVideoSeconds, remainingVideoSeconds.first, "remainingVideoSeconds")
