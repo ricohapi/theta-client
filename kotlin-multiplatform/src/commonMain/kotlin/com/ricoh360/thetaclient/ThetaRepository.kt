@@ -649,6 +649,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _networkType
+         */
+        NetworkType("_networkType", NetworkTypeEnum::class),
+
+        /**
+         * Option name
          * offDelay
          */
         OffDelay("offDelay", ThetaRepository.OffDelay::class),
@@ -711,7 +717,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Option name
          * _whiteBalanceAutoStrength
          */
-        WhiteBalanceAutoStrength("_whiteBalanceAutoStrength", WhiteBalanceAutoStrengthEnum::class)
+        WhiteBalanceAutoStrength("_whiteBalanceAutoStrength", WhiteBalanceAutoStrengthEnum::class),
+
+        /**
+         * Option name
+         * _wlanFrequency
+         */
+        WlanFrequency("_wlanFrequency", WlanFrequencyEnum::class),
     }
 
     /**
@@ -858,6 +870,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var maxRecordableTime: MaxRecordableTimeEnum? = null,
 
         /**
+         * Network type of the camera.
+         */
+        var networkType: NetworkTypeEnum? = null,
+
+        /**
          * Length of standby time before the camera automatically powers OFF.
          *
          * Specify [OffDelayEnum] or [OffDelaySec]
@@ -927,7 +944,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          *
          * For RICOH THETA Z1 firmware v2.20.3 or later
          */
-        var whiteBalanceAutoStrength: WhiteBalanceAutoStrengthEnum? = null
+        var whiteBalanceAutoStrength: WhiteBalanceAutoStrengthEnum? = null,
+
+        /**
+         * Wireless LAN frequency of the camera
+         *
+         * For RICOH THETA X, Z1 and V.
+         */
+        var wlanFrequency: WlanFrequencyEnum? = null,
     ) {
         constructor() : this(
             aperture = null,
@@ -948,6 +972,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             isoAutoHighLimit = null,
             language = null,
             maxRecordableTime = null,
+            networkType = null,
             offDelay = null,
             password = null,
             sleepDelay = null,
@@ -958,7 +983,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             shutterVolume = null,
             username = null,
             whiteBalance = null,
-            whiteBalanceAutoStrength = null
+            whiteBalanceAutoStrength = null,
+            wlanFrequency = null,
         )
 
         constructor(options: com.ricoh360.thetaclient.transferred.Options) : this(
@@ -984,6 +1010,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             isoAutoHighLimit = options.isoAutoHighLimit?.let { IsoAutoHighLimitEnum.get(it) },
             language = options._language?.let { LanguageEnum.get(it) },
             maxRecordableTime = options._maxRecordableTime?.let { MaxRecordableTimeEnum.get(it) },
+            networkType = options._networkType?.let { NetworkTypeEnum.get(it) },
             offDelay = options.offDelay?.let { OffDelayEnum.get(it) },
             password = options._password,
             sleepDelay = options.sleepDelay?.let { SleepDelayEnum.get(it) },
@@ -994,7 +1021,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             shutterVolume = options._shutterVolume,
             username = options._username,
             whiteBalance = options.whiteBalance?.let { WhiteBalanceEnum.get(it) },
-            whiteBalanceAutoStrength = options._whiteBalanceAutoStrength?.let { WhiteBalanceAutoStrengthEnum.get(it) }
+            whiteBalanceAutoStrength = options._whiteBalanceAutoStrength?.let { WhiteBalanceAutoStrengthEnum.get(it) },
+            wlanFrequency = options._wlanFrequency?.let { WlanFrequencyEnum.get(it) },
         )
 
         /**
@@ -1021,6 +1049,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 isoAutoHighLimit = isoAutoHighLimit?.value,
                 _language = language?.value,
                 _maxRecordableTime = maxRecordableTime?.sec,
+                _networkType = networkType?.value,
                 offDelay = offDelay?.sec,
                 _password = password,
                 sleepDelay = sleepDelay?.sec,
@@ -1031,7 +1060,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _shutterVolume = shutterVolume,
                 _username = username,
                 whiteBalance = whiteBalance?.value,
-                _whiteBalanceAutoStrength = whiteBalanceAutoStrength?.value
+                _whiteBalanceAutoStrength = whiteBalanceAutoStrength?.value,
+                _wlanFrequency = wlanFrequency?.value,
             )
         }
 
@@ -1065,6 +1095,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.IsoAutoHighLimit -> isoAutoHighLimit
                 OptionNameEnum.Language -> language
                 OptionNameEnum.MaxRecordableTime -> maxRecordableTime
+                OptionNameEnum.NetworkType -> networkType
                 OptionNameEnum.OffDelay -> offDelay
                 OptionNameEnum.Password -> password
                 OptionNameEnum.SleepDelay -> sleepDelay
@@ -1076,6 +1107,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.Username -> username
                 OptionNameEnum.WhiteBalance -> whiteBalance
                 OptionNameEnum.WhiteBalanceAutoStrength -> whiteBalanceAutoStrength
+                OptionNameEnum.WlanFrequency -> wlanFrequency
             } as T
         }
 
@@ -1110,6 +1142,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.IsoAutoHighLimit -> isoAutoHighLimit = value as IsoAutoHighLimitEnum
                 OptionNameEnum.Language -> language = value as LanguageEnum
                 OptionNameEnum.MaxRecordableTime -> maxRecordableTime = value as MaxRecordableTimeEnum
+                OptionNameEnum.NetworkType -> networkType = value as NetworkTypeEnum
                 OptionNameEnum.OffDelay -> offDelay = value as OffDelay
                 OptionNameEnum.Password -> password = value as String
                 OptionNameEnum.SleepDelay -> sleepDelay = value as SleepDelay
@@ -1121,6 +1154,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.Username -> username = value as String
                 OptionNameEnum.WhiteBalance -> whiteBalance = value as WhiteBalanceEnum
                 OptionNameEnum.WhiteBalanceAutoStrength -> whiteBalanceAutoStrength = value as WhiteBalanceAutoStrengthEnum
+                OptionNameEnum.WlanFrequency -> wlanFrequency = value as WlanFrequencyEnum
             }
         }
     }
@@ -2660,6 +2694,43 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Network type supported by Theta V, Z1 and X.
+     */
+    enum class NetworkTypeEnum(val value: NetworkType) {
+        /**
+         * Direct mode
+         */
+        DIRECT(NetworkType.DIRECT),
+
+        /**
+         * Client mode via WLAN
+         */
+        CLIENT(NetworkType.CLIENT),
+
+        /**
+         * Client mode via Ethernet cable
+         */
+        ETHERNET(NetworkType.ETHERNET),
+
+        /**
+         * Network is off. This value can be gotten only by plugin
+         */
+        OFF(NetworkType.OFF);
+
+        companion object {
+            /**
+             * Convert NetworkType to NetworkTypeEnum
+             *
+             * @param value Network type.
+             * @return NetworkTypeEnum
+             */
+            fun get(value: NetworkType): NetworkTypeEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
      * Length of standby time before the camera automatically powers OFF.
      *
      * Use in [OffDelayEnum] or [OffDelaySec]
@@ -2942,6 +3013,34 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 return values().firstOrNull { it.value == value }
             }
         }
+    }
+
+    /**
+     * Wireless LAN frequency of the camera supported by Theta V, Z1 and X.
+     */
+    enum class WlanFrequencyEnum(val value: WlanFrequency) {
+        /**
+         * 2.4GHz
+         */
+        GHZ_2_4(WlanFrequency.GHZ_2_4),
+
+        /**
+         * 5GHz
+         */
+        GHZ_5(WlanFrequency.GHZ_5);
+
+        companion object {
+            /**
+             * Convert WlanFrequency to WlanFrequencyEnum
+             *
+             * @param value wlan frequency
+             * @return  WlanFrequencyEnum
+             */
+            fun get(value: WlanFrequency): WlanFrequencyEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+
     }
 
     /**

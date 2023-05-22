@@ -290,6 +290,7 @@ class ThetaClientReactNativeModule(
     "isoAutoHighLimit" to IsoAutoHighLimitConverter(),
     "language" to LanguageConverter(),
     "maxRecordableTime" to MaxRecordableTimeConverter(),
+    "networkType" to NetworkTypeConverter(),
     "offDelay" to OffDelayConverter(),
     "password" to PasswordConverter(),
     "sleepDelay" to SleepDelayConverter(),
@@ -301,6 +302,7 @@ class ThetaClientReactNativeModule(
     "username" to UsernameConverter(),
     "whiteBalance" to WhiteBalanceConverter(),
     "whiteBalanceAutoStrength" to WhiteBalanceAutoStrengthConverter(),
+    "wlanFrequency" to WlanFrequencyConverter(),
     "_gpsTagRecording" to GpsTagRecordingConverter(),
   )
 
@@ -324,6 +326,7 @@ class ThetaClientReactNativeModule(
     "IsoAutoHighLimit" to "isoAutoHighLimit",
     "Language" to "language",
     "MaxRecordableTime" to "maxRecordableTime",
+    "NetworkType" to "networkType",
     "OffDelay" to "offDelay",
     "Password" to "password",
     "SleepDelay" to "sleepDelay",
@@ -335,6 +338,7 @@ class ThetaClientReactNativeModule(
     "Username" to "username",
     "WhiteBalance" to "whiteBalance",
     "WhiteBalanceAutoStrength" to "whiteBalanceAutoStrength",
+    "WlanFrequency" to "wlanFrequency",
   )
 
   /**

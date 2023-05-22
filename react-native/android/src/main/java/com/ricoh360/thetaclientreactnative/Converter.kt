@@ -370,6 +370,23 @@ class MaxRecordableTimeConverter : OptionConverter {
 }
 
 /**
+ * NetworkTypeConverter
+ */
+ class NetworkTypeConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("networkType")?.let {
+      options.networkType = ThetaRepository.NetworkTypeEnum.valueOf(it)
+    }
+  }
+
+   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.networkType?.let {
+      objects.putString("networkType", it.toString())
+    }
+  }
+ }
+
+/**
  * OffDelayConverter
  */
 class OffDelayConverter : OptionConverter {
@@ -440,6 +457,24 @@ class WhiteBalanceAutoStrengthConverter : OptionConverter {
     }
   }
 }
+
+/**
+ * WlanFrequencyConverter
+ */
+class WlanFrequencyConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("wlanFrequency")?.let {
+      options.wlanFrequency = ThetaRepository.WlanFrequencyEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.wlanFrequency?.let {
+      objects.putString("wlanFrequency", it.toString())
+    }
+  }
+}
+
 
 /**
  * ColorTemperatureConverter
