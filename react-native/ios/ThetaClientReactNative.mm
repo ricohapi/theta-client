@@ -1356,6 +1356,62 @@ static convert_t GpsInfoCvt = {
 };
 
 /**
+ * NetworkType converter
+ */
+static convert_t NetworkTypeEnum = {
+  .toTheta = @{
+    @"DIRECT": THETACThetaRepositoryNetworkTypeEnum.direct,
+    @"CLIENT": THETACThetaRepositoryNetworkTypeEnum.client,
+    @"ETHERNET": THETACThetaRepositoryNetworkTypeEnum.ethernet,
+    @"OFF": THETACThetaRepositoryNetworkTypeEnum.off
+  },
+  .fromTheta = @{
+    THETACThetaRepositoryNetworkTypeEnum.direct: @"DIRECT",
+    THETACThetaRepositoryNetworkTypeEnum.client: @"CLIENT",
+    THETACThetaRepositoryNetworkTypeEnum.ethernet: @"ETHERNET",
+    THETACThetaRepositoryNetworkTypeEnum.off: @"OFF"
+  },
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [NetworkTypeEnum.toTheta objectForKey:[rct objectForKey:@"networkType"]];
+    if (val) {
+      opt.networkType = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [NetworkTypeEnum.fromTheta objectForKey:opt.networkType];
+    if (val) {
+      [rct setObject:val forKey:@"networkType"];
+    }
+  }
+};
+
+/**
+ * WlanFrequency converter
+ */
+static convert_t WlanFrequencyEnum = {
+  .toTheta = @{
+    @"GHZ_2_4": THETACThetaRepositoryWlanFrequencyEnum.ghz24,
+    @"GHZ_5": THETACThetaRepositoryWlanFrequencyEnum.ghz5
+  },
+  .fromTheta = @{
+    THETACThetaRepositoryWlanFrequencyEnum.ghz24: @"GHZ_2_4",
+    THETACThetaRepositoryWlanFrequencyEnum.ghz5: @"GHZ_5",
+  },
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [WlanFrequencyEnum.toTheta objectForKey:[rct objectForKey:@"wlanFrequency"]];
+    if (val) {
+      opt.wlanFrequency = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [WlanFrequencyEnum.fromTheta objectForKey:opt.wlanFrequency];
+    if (val) {
+      [rct setObject:val forKey:@"wlanFrequency"];
+    }
+  }
+};
+
+/**
  * Password converter
  */
 static convert_t PasswordCvt = {
@@ -1411,6 +1467,7 @@ static NSDictionary *NameToOptionEnum = @{
   @"IsoAutoHighLimit": THETACThetaRepositoryOptionNameEnum.isoautohighlimit,
   @"Language": THETACThetaRepositoryOptionNameEnum.language,
   @"MaxRecordableTime": THETACThetaRepositoryOptionNameEnum.maxrecordabletime,
+  @"NetworkType": THETACThetaRepositoryOptionNameEnum.networktype,
   @"OffDelay": THETACThetaRepositoryOptionNameEnum.offdelay,
   @"Password": THETACThetaRepositoryOptionNameEnum.password,
   @"SleepDelay": THETACThetaRepositoryOptionNameEnum.sleepdelay,
@@ -1421,7 +1478,8 @@ static NSDictionary *NameToOptionEnum = @{
   @"ShutterVolume": THETACThetaRepositoryOptionNameEnum.shuttervolume,
   @"Username": THETACThetaRepositoryOptionNameEnum.username,
   @"WhiteBalance": THETACThetaRepositoryOptionNameEnum.whitebalance,
-  @"WhiteBalanceAutoStrength": THETACThetaRepositoryOptionNameEnum.whitebalanceautostrength
+  @"WhiteBalanceAutoStrength": THETACThetaRepositoryOptionNameEnum.whitebalanceautostrength,
+  @"WlanFrequency": THETACThetaRepositoryOptionNameEnum.wlanfrequency
 };
 
 /**
@@ -1446,6 +1504,7 @@ static NSDictionary *OptionEnumToOption = @{
   @"IsoAutoHighLimit": @"isoAutoHighLimit",
   @"Language": @"language",
   @"MaxRecordableTime": @"maxRecordableTime",
+  @"NetworkType": @"networkType",
   @"OffDelay": @"offDelay",
   @"Password": @"password",
   @"SleepDelay": @"sleepDelay",
@@ -1456,7 +1515,8 @@ static NSDictionary *OptionEnumToOption = @{
   @"ShutterVolume": @"shutterVolume",
   @"Username": @"username",
   @"WhiteBalance": @"whiteBalance",
-  @"WhiteBalanceAutoStrength": @"whiteBalanceAutoStrength"
+  @"WhiteBalanceAutoStrength": @"whiteBalanceAutoStrength",
+  @"WlanFrequency": @"wlanFrequency"
 };
 
 /** Option converter builder */
@@ -1484,6 +1544,7 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"isoAutoHighLimit": ^{return &IsoAutoHighLimitEnum;},
   @"language": ^{return &LanguageEnum;},
   @"maxRecordableTime": ^{return &MaxRecordableTimeEnum;},
+  @"networkType": ^{return &NetworkTypeEnum;},
   @"offDelay": ^{return &OffDelayEnum;},
   @"password": ^{return &PasswordCvt;},
   @"sleepDelay": ^{return &SleepDelayEnum;},
@@ -1495,7 +1556,8 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"username": ^{return &UsernameCvt;},
   @"whiteBalance": ^{return &WhiteBalanceEnum;},
   @"_gpsTagRecording": ^{return &GpsTagRecordingEnum;},
-  @"whiteBalanceAutoStrength": ^{return &WhiteBalanceAutoStrengthEnum;}
+  @"whiteBalanceAutoStrength": ^{return &WhiteBalanceAutoStrengthEnum;},
+  @"wlanFrequency": ^{return &WlanFrequencyEnum;}
 };
 
 static NSString *EVENT_NAME = @"ThetaFrameEvent";

@@ -278,6 +278,10 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         break
     case ThetaRepository.OptionNameEnum.maxrecordabletime.name:
         options.maxRecordableTime = getEnumValue(values: ThetaRepository.MaxRecordableTimeEnum.values(), name: value as! String)!
+        break
+    case ThetaRepository.OptionNameEnum.networktype.name:
+        options.networkType = getEnumValue(values: ThetaRepository.NetworkTypeEnum.values(), name: value as! String)!
+        break
     case ThetaRepository.OptionNameEnum.offdelay.name:
         options.offDelay = getEnumValue(values: ThetaRepository.OffDelayEnum.values(), name: value as! String)!
         break
@@ -310,6 +314,9 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         break
     case ThetaRepository.OptionNameEnum.whitebalanceautostrength.name:
         options.whiteBalanceAutoStrength = getEnumValue(values: ThetaRepository.WhiteBalanceAutoStrengthEnum.values(), name: value as! String)!
+        break
+    case ThetaRepository.OptionNameEnum.wlanfrequency.name:
+        options.wlanFrequency = getEnumValue(values: ThetaRepository.WlanFrequencyEnum.values(), name: value as! String)!
         break
     default: break
     }

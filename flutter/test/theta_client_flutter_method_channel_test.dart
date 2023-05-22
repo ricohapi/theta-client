@@ -361,6 +361,7 @@ void main() {
       [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso200, 'ISO_200'],
       [OptionNameEnum.language, 'Language', LanguageEnum.de, 'DE'],
       [OptionNameEnum.maxRecordableTime, 'MaxRecordableTime', MaxRecordableTimeEnum.time_1500, 'RECORDABLE_TIME_1500'],
+      [OptionNameEnum.networkType, 'NetworkType', NetworkTypeEnum.client, 'CLIENT'],
       [OptionNameEnum.offDelay, 'OffDelay', OffDelayEnum.offDelay_10m, 'OFF_DELAY_10M'],
       [OptionNameEnum.password, 'Password', 'password', 'password'],
       [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
@@ -372,6 +373,7 @@ void main() {
       [OptionNameEnum.username, 'Username', 'username', 'username'],
       [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
       [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
+      [OptionNameEnum.wlanFrequency, 'WlanFrequency', WlanFrequencyEnum.ghz_2_4, 'GHZ_2_4'],
     ];
 
     Map<String, dynamic> optionMap = {};
@@ -422,6 +424,7 @@ void main() {
       [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso200, 'ISO_200'],
       [OptionNameEnum.language, 'Language', LanguageEnum.de, 'DE'],
       [OptionNameEnum.maxRecordableTime, 'MaxRecordableTime', MaxRecordableTimeEnum.time_1500, 'RECORDABLE_TIME_1500'],
+      [OptionNameEnum.networkType, 'NetworkType', NetworkTypeEnum.client, 'CLIENT'],
       [OptionNameEnum.offDelay, 'OffDelay', OffDelayEnum.offDelay_15m, 'OFF_DELAY_15M'],
       [OptionNameEnum.password, 'Password', 'password', 'password'],
       [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
@@ -433,6 +436,7 @@ void main() {
       [OptionNameEnum.username, 'Username', 'username', 'username'],
       [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
       [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.on, 'ON'],
+      [OptionNameEnum.wlanFrequency, 'WlanFrequency', WlanFrequencyEnum.ghz_2_4,'GHZ_2_4'],
     ];
 
     Map<String, dynamic> optionMap = {};

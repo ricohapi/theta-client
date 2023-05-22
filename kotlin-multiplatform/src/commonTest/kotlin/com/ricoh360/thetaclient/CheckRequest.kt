@@ -54,12 +54,14 @@ class CheckRequest {
             isoAutoHighLimit: Int? = null,
             language: Language? = null,
             maxRecordableTime: Int? = null,
+            networkType: NetworkType? = null,
             offDelay: Int? = null,
             proxy: Proxy? = null,
             shutterVolume: Int? = null,
             sleepDelay: Int? = null,
             whiteBalance: WhiteBalance? = null,
-            whiteBalanceAutoStrength: WhiteBalanceAutoStrength? = null
+            whiteBalanceAutoStrength: WhiteBalanceAutoStrength? = null,
+            wlanFrequency: WlanFrequency? = null,
         ) {
             assertEquals(request.url.encodedPath, "/osc/commands/execute", "command request path")
 
@@ -128,6 +130,9 @@ class CheckRequest {
             maxRecordableTime?.let {
                 assertEquals(optionsRequest.parameters.options._maxRecordableTime, it, "setOptions maxRecordableTime")
             }
+            networkType?.let {
+                assertEquals(optionsRequest.parameters.options._networkType, it, "setOptions networkType")
+            }
             offDelay?.let {
                 assertEquals(optionsRequest.parameters.options.offDelay, it, "setOptions offDelay")
             }
@@ -145,6 +150,9 @@ class CheckRequest {
             }
             whiteBalanceAutoStrength?.let {
                 assertEquals(optionsRequest.parameters.options._whiteBalanceAutoStrength, it, "setOptions whiteBalanceAutoStrength")
+            }
+            wlanFrequency?.let {
+                assertEquals(optionsRequest.parameters.options._wlanFrequency, it, "setOptions wlanFrequency")
             }
         }
 

@@ -36,6 +36,7 @@ class OptionsTest {
         val isoAutoHighLimit = ThetaRepository.IsoAutoHighLimitEnum.ISO_1000
         val language = ThetaRepository.LanguageEnum.JA
         val maxRecordableTime = ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500
+        val networkType = ThetaRepository.NetworkTypeEnum.DIRECT
         val offDelay = ThetaRepository.OffDelayEnum.OFF_DELAY_10M
         val password = "password"
         val proxy = ThetaRepository.Proxy(use = false, url = "", port = 8080)
@@ -48,6 +49,7 @@ class OptionsTest {
         val username = "username"
         val whiteBalance = ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT
         val whiteBalanceAutoStrength = ThetaRepository.WhiteBalanceAutoStrengthEnum.OFF
+        val wlanFrequency = ThetaRepository.WlanFrequencyEnum.GHZ_2_4
 
         val options = ThetaRepository.Options(
             aperture = aperture,
@@ -68,6 +70,7 @@ class OptionsTest {
             isoAutoHighLimit = isoAutoHighLimit,
             language = language,
             maxRecordableTime = maxRecordableTime,
+            networkType = networkType,
             offDelay = offDelay,
             password = password,
             proxy = proxy,
@@ -79,7 +82,8 @@ class OptionsTest {
             shutterVolume = shutterVolume,
             username = username,
             whiteBalance = whiteBalance,
-            whiteBalanceAutoStrength = whiteBalanceAutoStrength
+            whiteBalanceAutoStrength = whiteBalanceAutoStrength,
+            wlanFrequency = wlanFrequency,
         )
 
         ThetaRepository.OptionNameEnum.values().forEach {
@@ -104,6 +108,7 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.IsoAutoHighLimit), isoAutoHighLimit, "isoAutoHighLimit")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Language), language, "language")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.MaxRecordableTime), maxRecordableTime, "maxRecordableTime")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.NetworkType), networkType, "networkType")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.OffDelay), offDelay, "offDelay")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Password), password, "password")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Proxy), proxy, "proxy")
@@ -116,6 +121,7 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Username), username, "userName")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.WhiteBalance), whiteBalance, "whiteBalance")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.WhiteBalanceAutoStrength), whiteBalanceAutoStrength, "whiteBalanceAutoStrength")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.WlanFrequency), wlanFrequency, "wlanFrequency")
     }
 
     /**
@@ -142,6 +148,7 @@ class OptionsTest {
             Pair(ThetaRepository.OptionNameEnum.IsoAutoHighLimit, ThetaRepository.IsoAutoHighLimitEnum.ISO_1000),
             Pair(ThetaRepository.OptionNameEnum.Language, ThetaRepository.LanguageEnum.JA),
             Pair(ThetaRepository.OptionNameEnum.MaxRecordableTime, ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500),
+            Pair(ThetaRepository.OptionNameEnum.NetworkType, ThetaRepository.NetworkTypeEnum.ETHERNET),
             Pair(ThetaRepository.OptionNameEnum.OffDelay, ThetaRepository.OffDelayEnum.OFF_DELAY_10M),
             Pair(ThetaRepository.OptionNameEnum.Password, "password"),
             Pair(ThetaRepository.OptionNameEnum.Proxy, ThetaRepository.Proxy(use = false, url = "", port = 8080)),
@@ -153,7 +160,8 @@ class OptionsTest {
             Pair(ThetaRepository.OptionNameEnum.ShutterVolume, 10),
             Pair(ThetaRepository.OptionNameEnum.Username, "username"),
             Pair(ThetaRepository.OptionNameEnum.WhiteBalance, ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT),
-            Pair(ThetaRepository.OptionNameEnum.WhiteBalanceAutoStrength, ThetaRepository.WhiteBalanceAutoStrengthEnum.ON)
+            Pair(ThetaRepository.OptionNameEnum.WhiteBalanceAutoStrength, ThetaRepository.WhiteBalanceAutoStrengthEnum.ON),
+            Pair(ThetaRepository.OptionNameEnum.WlanFrequency, ThetaRepository.WlanFrequencyEnum.GHZ_5),
         )
         val options = ThetaRepository.Options()
         values.forEach {
