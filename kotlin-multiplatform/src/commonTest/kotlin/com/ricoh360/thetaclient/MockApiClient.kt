@@ -15,6 +15,7 @@ import kotlinx.serialization.json.Json
 object MockApiClient {
     var onRequest: ((HttpRequestData) -> ByteReadChannel)? = null
     var status: HttpStatusCode? = null
+    var responseHeaders: Headers? = null
     var useMock = true
     var onPreviewRequest: (
         (
@@ -39,7 +40,7 @@ object MockApiClient {
                 respond(
                     content = onRequest?.let { it(request) } ?: run { throw Exception("") },
                     status = status ?: HttpStatusCode.OK,
-                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                    headers = responseHeaders ?: headersOf(HttpHeaders.ContentType, "application/json")
                 )
             }
         }
@@ -86,32 +87,18 @@ object MockApiClient {
             onPreviewClose?.let { it() }
         }
     }
-    val mockHttpClientForPreview = HttpClient(MockEngine) {
-        expectSuccess = true
-        engine {
-            addHandler { request ->
-                if (onRequest == null) {
-                    throw Exception("")
-                }
-                respond(
-                    content = onRequest?.let { it(request) } ?: run { throw Exception("") },
-                    status = status ?: HttpStatusCode.OK,
-                    headers = headersOf(HttpHeaders.ContentType, "multipart/x-mixed-replace; boundary=\"---osclivepreview---\"")
-                )
-            }
-        }
-        install(ContentNegotiation) {
-            json(
-                Json {
-                    encodeDefaults = true // Encode properties with default value.
-                    explicitNulls = false // Don't encode properties with null value.
-                    ignoreUnknownKeys = true // Ignore unknown keys on decode.
-                }
-            )
-        }
-        install(Logging) {
-            logger = Logger.DEFAULT // DEFAULT, SIMPLE or EMPTY
-            level = LogLevel.ALL // ALL, HEADERS, BODY, INFO or NONE
-        }
+
+    init {
+        setupDigestAuth(mockHttpClient)
+    }
+
+    fun reset() {
+        onRequest = null
+        status = null
+        responseHeaders = null
+        onPreviewRequest = null
+        onPreviewClose = null
+        onPreviewHasNextPart = null
+        onPreviewNextPart = null
     }
 }

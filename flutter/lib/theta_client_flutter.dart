@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:theta_client_flutter/digest_auth.dart';
 import 'package:theta_client_flutter/utils/convert_utils.dart';
 
 import 'theta_client_flutter_platform_interface.dart';
@@ -2803,11 +2804,23 @@ class VideoCapture extends Capture {
 
 /// Configuration of THETA
 class ThetaConfig {
+  /// Location information acquisition time
   String? dateTime;
+
+  /// Language used in camera OS
   LanguageEnum? language;
+
+  /// Length of standby time before the camera automatically power OFF
   OffDelayEnum? offDelay;
+
+  /// Length of standby time before the camera enters the sleep mode.
   SleepDelayEnum? sleepDelay;
+
+  /// Shutter volume.
   int? shutterVolume;
+
+  /// Authentication information used for client mode connections
+  DigestAuth? clientMode;
 }
 
 /// Timeout of HTTP call.

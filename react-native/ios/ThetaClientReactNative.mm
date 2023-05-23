@@ -1573,6 +1573,70 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
 
 static NSString *EVENT_NAME = @"ThetaFrameEvent";
 
+THETACDigestAuth* digestAuthToTheta(NSDictionary* objects)
+{
+  if (!objects) {
+    return nil;
+  }
+  NSString* username = [objects objectForKey:@"username"];
+  if (!username) {
+    return nil;
+  }
+  NSString* password = [objects objectForKey:@"password"];
+  THETACDigestAuth* digestAuth = [[THETACDigestAuth alloc] initWithUsername:username password:password];
+  return digestAuth;
+}
+
+THETACThetaRepositoryConfig* configToTheta(NSDictionary* objects)
+{
+  if (!objects) {
+    return nil;
+  }
+  THETACThetaRepositoryConfig* config = [[THETACThetaRepositoryConfig alloc] init];
+  NSString* datetime = [objects objectForKey:@"dateTime"];
+  if (datetime) {
+    config.dateTime = datetime;
+  }
+  id language = [LanguageEnum.toTheta objectForKey:[objects objectForKey:@"language"]];
+  if (language) {
+    config.language = language;
+  }
+  id offDelay = [OffDelayEnum.toTheta objectForKey:[objects objectForKey:@"offDelay"]];
+  if (offDelay) {
+    config.offDelay = offDelay;
+  }
+  id sleepDelay = [SleepDelayEnum.toTheta objectForKey:[objects objectForKey:@"sleepDelay"]];
+  if (sleepDelay) {
+    config.sleepDelay = sleepDelay;
+  }
+  NSNumber* shutterVolume = [objects objectForKey:@"shutterVolume"];
+  if (shutterVolume) {
+    config.shutterVolume = [THETACInt numberWithInt:[shutterVolume intValue]];
+  }
+
+  config.clientMode = digestAuthToTheta([objects objectForKey:@"clientMode"]);
+
+  return config;
+}
+
+THETACThetaRepositoryTimeout* timeoutToTheta(NSDictionary* objects)
+{
+  if (!objects) {
+    return nil;
+  }
+  NSNumber* connectTimeout = [objects objectForKey:@"connectTimeout"];
+  NSNumber* requestTimeout = [objects objectForKey:@"requestTimeout"];
+  NSNumber* socketTimeout = [objects objectForKey:@"socketTimeout"];
+  if (!connectTimeout || !requestTimeout || !socketTimeout) {
+    return nil;
+  }
+  THETACThetaRepositoryTimeout* timeout = [[THETACThetaRepositoryTimeout alloc]
+                                            initWithConnectTimeout:[connectTimeout longValue]
+                                            requestTimeout:[requestTimeout longLongValue]
+                                            socketTimeout:[socketTimeout longLongValue]];
+  return timeout;
+}
+
 /**
  * ThetaClientReactNative implementation
  */
@@ -1632,11 +1696,15 @@ RCT_EXPORT_MODULE(ThetaClientReactNative)
 /**
  * initialize ThetaRepository
  * @param endPoint endpoint to connect theta
+ * @param config Configuration of initialize. If null, get from THETA
+ * @param timeout Timeout of HTTP call
  * @param resolve resolver for initilization
  * @param rejecter rejecter for initialization
  */
 RCT_REMAP_METHOD(initialize,
                  initializeWithEndpoint:(NSString *)endPoint
+                 withConfig:(NSDictionary*)config
+                 withTimeout:(NSDictionary*)timeout
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
@@ -1646,8 +1714,8 @@ RCT_REMAP_METHOD(initialize,
   NSError *error = nil;
   THETACThetaRepositoryCompanion *companion = THETACThetaRepository.companion;
   [companion doNewInstanceEndpoint:endPoint
-                            config:nil
-                           timeout:nil
+                            config:configToTheta(config)
+                           timeout:timeoutToTheta(timeout)
                  completionHandler:^(THETACThetaRepository *repo, NSError *error) {
       if (error) {
         reject(@"error", [error localizedDescription], error);

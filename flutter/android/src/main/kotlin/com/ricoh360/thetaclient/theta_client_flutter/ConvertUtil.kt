@@ -1,10 +1,13 @@
 package com.ricoh360.thetaclient.theta_client_flutter
 
+import com.ricoh360.thetaclient.DigestAuth
 import com.ricoh360.thetaclient.ThetaRepository.*
 import com.ricoh360.thetaclient.capture.Capture
 import com.ricoh360.thetaclient.capture.PhotoCapture
 import com.ricoh360.thetaclient.capture.VideoCapture
 import io.flutter.plugin.common.MethodCall
+
+const val KEY_CLIENT_MODE = "clientMode"
 
 fun toResult(thetaInfo: ThetaInfo): Map<String, Any?> {
     return mapOf<String, Any?>(
@@ -282,6 +285,14 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
     }
 }
 
+fun toDigestAuthParam(data: Map<*, *>): DigestAuth? {
+    val username = data["username"] as? String ?: run {
+        return null
+    }
+    val password = data["password"] as? String
+    return DigestAuth(username, password)
+}
+
 fun toConfigParam(data: Map<String, Any>): Config {
     val config = Config()
     data.forEach { (key, value) ->
@@ -294,6 +305,7 @@ fun toConfigParam(data: Map<String, Any>): Config {
             OptionNameEnum.SleepDelay.name -> config.sleepDelay =
                 getOptionValueEnum(OptionNameEnum.SleepDelay, value as String) as SleepDelayEnum?
             OptionNameEnum.ShutterVolume.name -> config.shutterVolume = value as Int
+            KEY_CLIENT_MODE -> config.clientMode = toDigestAuthParam(value as Map<*, *>)
         }
     }
     return config
