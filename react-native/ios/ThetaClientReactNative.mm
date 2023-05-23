@@ -265,6 +265,17 @@ static convert_t FileTypeEnum = {
 };
 
 /**
+ * StorageEnum converter
+ */
+static convert_t StorageEnum = {
+  .toTheta = @{
+    @"INTERNAL": THETACThetaRepositoryStorageEnum.internal,
+    @"SD": THETACThetaRepositoryStorageEnum.sd,
+    @"CURRENT": THETACThetaRepositoryStorageEnum.current,
+  }
+};
+
+/**
  * AuthModeEnum converter
  */
 static convert_t AuthModeEnum = {
@@ -1611,6 +1622,70 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
 
 static NSString *EVENT_NAME = @"ThetaFrameEvent";
 
+THETACDigestAuth* digestAuthToTheta(NSDictionary* objects)
+{
+  if (!objects) {
+    return nil;
+  }
+  NSString* username = [objects objectForKey:@"username"];
+  if (!username) {
+    return nil;
+  }
+  NSString* password = [objects objectForKey:@"password"];
+  THETACDigestAuth* digestAuth = [[THETACDigestAuth alloc] initWithUsername:username password:password];
+  return digestAuth;
+}
+
+THETACThetaRepositoryConfig* configToTheta(NSDictionary* objects)
+{
+  if (!objects) {
+    return nil;
+  }
+  THETACThetaRepositoryConfig* config = [[THETACThetaRepositoryConfig alloc] init];
+  NSString* datetime = [objects objectForKey:@"dateTime"];
+  if (datetime) {
+    config.dateTime = datetime;
+  }
+  id language = [LanguageEnum.toTheta objectForKey:[objects objectForKey:@"language"]];
+  if (language) {
+    config.language = language;
+  }
+  id offDelay = [OffDelayEnum.toTheta objectForKey:[objects objectForKey:@"offDelay"]];
+  if (offDelay) {
+    config.offDelay = offDelay;
+  }
+  id sleepDelay = [SleepDelayEnum.toTheta objectForKey:[objects objectForKey:@"sleepDelay"]];
+  if (sleepDelay) {
+    config.sleepDelay = sleepDelay;
+  }
+  NSNumber* shutterVolume = [objects objectForKey:@"shutterVolume"];
+  if (shutterVolume) {
+    config.shutterVolume = [THETACInt numberWithInt:[shutterVolume intValue]];
+  }
+
+  config.clientMode = digestAuthToTheta([objects objectForKey:@"clientMode"]);
+
+  return config;
+}
+
+THETACThetaRepositoryTimeout* timeoutToTheta(NSDictionary* objects)
+{
+  if (!objects) {
+    return nil;
+  }
+  NSNumber* connectTimeout = [objects objectForKey:@"connectTimeout"];
+  NSNumber* requestTimeout = [objects objectForKey:@"requestTimeout"];
+  NSNumber* socketTimeout = [objects objectForKey:@"socketTimeout"];
+  if (!connectTimeout || !requestTimeout || !socketTimeout) {
+    return nil;
+  }
+  THETACThetaRepositoryTimeout* timeout = [[THETACThetaRepositoryTimeout alloc]
+                                            initWithConnectTimeout:[connectTimeout longValue]
+                                            requestTimeout:[requestTimeout longLongValue]
+                                            socketTimeout:[socketTimeout longLongValue]];
+  return timeout;
+}
+
 /**
  * ThetaClientReactNative implementation
  */
@@ -1670,11 +1745,15 @@ RCT_EXPORT_MODULE(ThetaClientReactNative)
 /**
  * initialize ThetaRepository
  * @param endPoint endpoint to connect theta
+ * @param config Configuration of initialize. If null, get from THETA
+ * @param timeout Timeout of HTTP call
  * @param resolve resolver for initilization
  * @param rejecter rejecter for initialization
  */
 RCT_REMAP_METHOD(initialize,
                  initializeWithEndpoint:(NSString *)endPoint
+                 withConfig:(NSDictionary*)config
+                 withTimeout:(NSDictionary*)timeout
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
@@ -1684,8 +1763,8 @@ RCT_REMAP_METHOD(initialize,
   NSError *error = nil;
   THETACThetaRepositoryCompanion *companion = THETACThetaRepository.companion;
   [companion doNewInstanceEndpoint:endPoint
-                            config:nil
-                           timeout:nil
+                            config:configToTheta(config)
+                           timeout:timeoutToTheta(timeout)
                  completionHandler:^(THETACThetaRepository *repo, NSError *error) {
       if (error) {
         reject(@"error", [error localizedDescription], error);
@@ -1789,6 +1868,7 @@ RCT_REMAP_METHOD(getThetaState,
  * @param fileType file type to retrieve
  * @param startPosition start position to retrieve
  * @param entryCount count to retrieve
+ * @param storage Desired storage
  * @param resolve resolver for listFiles
  * @param rejecter rejecter for listFiles
  */
@@ -1796,12 +1876,14 @@ RCT_REMAP_METHOD(listFiles,
                  listFilesWithFileTypeEnum:(NSString*)fileType
                  withStartPosition:(int32_t)startPosition
                  withEntryCount:(int32_t)entryCount
+                 withStorage:(NSString*)storage
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
   [_theta listFilesFileType:[FileTypeEnum.toTheta objectForKey:fileType]
               startPosition:startPosition
                  entryCount:entryCount
+                    storage:[StorageEnum.toTheta objectForKey:storage]
           completionHandler:^(THETACThetaRepositoryThetaFiles *items,
                               NSError *error) {
       if (error) {
@@ -1810,16 +1892,20 @@ RCT_REMAP_METHOD(listFiles,
         NSMutableArray *ary = [[NSMutableArray alloc] init];
         for (int i = 0; i < items.fileList.count; i++) {
           THETACThetaRepositoryFileInfo *finfo = items.fileList[i];
-          [ary addObject: @{
-              @"name":finfo.name,
-                @"size":@(finfo.size),
-                @"dateTime":finfo.dateTime,
-                @"thumbnailUrl":finfo.thumbnailUrl,
-                @"fileUrl":finfo.fileUrl
-                }];
+          NSMutableDictionary *fileInfoObject = [[NSMutableDictionary alloc] initWithDictionary:@{
+            @"name":finfo.name,
+            @"size":@(finfo.size),
+            @"dateTime":finfo.dateTime,
+            @"thumbnailUrl":finfo.thumbnailUrl,
+            @"fileUrl":finfo.fileUrl
+          }];
+          if (finfo.storageID) {
+            [fileInfoObject setObject:finfo.storageID forKey:@"storageID"];
+          }
+          [ary addObject:fileInfoObject];
         }
-          resolve(@{@"fileList":ary,
-                @"totalEntries": @(items.totalEntries)});
+        resolve(@{@"fileList":ary,
+              @"totalEntries": @(items.totalEntries)});
       } else {
         reject(@"error", @"no items", nil);
       }

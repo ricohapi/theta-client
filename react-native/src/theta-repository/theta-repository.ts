@@ -1,5 +1,5 @@
 import { AccessPoint, AuthModeEnum } from './access-point';
-import type { FileTypeEnum, ThetaFiles } from './theta-files';
+import type { FileTypeEnum, StorageEnum, ThetaFiles } from './theta-files';
 import type { ThetaState } from './theta-state';
 import type { ThetaInfo } from './theta-info';
 import type { MetaInfo } from './theta-meta';
@@ -8,6 +8,8 @@ import type { PluginInfo } from './theta-plugin';
 import { NativeModules } from 'react-native';
 import type { OptionNameEnum, Options, CaptureModeEnum } from './options';
 import { PhotoCaptureBuilder, VideoCaptureBuilder } from '../capture';
+import type { ThetaConfig } from './theta-config';
+import type { ThetaTimeout } from './theta-timeout';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 /**
@@ -15,13 +17,16 @@ const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
  *
  * @function initialize
  * @param {string} endPoint optional endpoint of camera
+ * @param {ThetaConfig} config Configuration of initialize. If null, get from THETA.
+ * @param {ThetaTimeout} timeout Timeout of HTTP call.
  * @return promise of boolean result
  **/
-export function initialize(endPoint?: string): Promise<boolean> {
-  if (!endPoint) {
-    endPoint = 'http://192.168.1.1';
-  }
-  return ThetaClientReactNative.initialize(endPoint);
+export function initialize(
+  endPoint: string = 'http://192.168.1.1',
+  config?: ThetaConfig,
+  timeout?: ThetaTimeout
+): Promise<boolean> {
+  return ThetaClientReactNative.initialize(endPoint, config, timeout);
 }
 
 /**
@@ -186,18 +191,21 @@ export function getThetaState(): Promise<ThetaState> {
  * @param {number} entryCount Desired number of entries to return.  If
  *   entryCount is more than the number of remaining files, just
  *   return entries of actual remaining files.
+ * @param {StorageEnum} storage Desired storage. If omitted, return current storage. (RICOH THETA X Version 2.00.0 or later)
  * @return promise with a list of file information and number of totalEntries.
  *   see [camera.listFiles](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md).
  */
 export function listFiles(
   fileTypeEnum: FileTypeEnum,
   startPosition: number = 0,
-  entryCount: number
+  entryCount: number,
+  storage?: StorageEnum
 ): Promise<ThetaFiles> {
   return ThetaClientReactNative.listFiles(
     fileTypeEnum,
     startPosition,
-    entryCount
+    entryCount,
+    storage
   );
 }
 

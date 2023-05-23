@@ -41,6 +41,7 @@ kotlin {
         val coroutines_mtversion = "1.6.4-native-mt"
         val ktor_version = "2.1.2"
         val logback_version = "1.4.4"
+        val kryptoVersion = "3.4.0"
 
         val commonMain by getting {
             dependencies {
@@ -51,6 +52,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-cio:$ktor_version")
                 implementation("io.ktor:ktor-client-logging:$ktor_version")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+                implementation("com.soywiz.korlibs.krypto:krypto:$kryptoVersion")
             }
         }
         val commonTest by getting {

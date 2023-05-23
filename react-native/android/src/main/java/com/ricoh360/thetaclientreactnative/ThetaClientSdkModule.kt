@@ -64,10 +64,14 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set initialize result
    */
   @ReactMethod
-  fun initialize(endpoint: String, promise: Promise) {
+  fun initialize(endpoint: String, config: ReadableMap?, timeout: ReadableMap?, promise: Promise) {
     launch {
       try {
-        theta = ThetaRepository.newInstance(endpoint)
+        theta = ThetaRepository.newInstance(
+          endpoint,
+          config?.let { configToTheta(it) },
+          timeout?.let { timeoutToTheta(it) }
+        )
         promise.resolve(true)
       } catch (t: Throwable) {
         promise.reject(t)
@@ -170,16 +174,18 @@ class ThetaClientReactNativeModule(
    * @param fileType file type to retrieve
    * @param startPosition start position to retrieve
    * @param entryCount count to retrieve
+   * @param storage Desired storage
    * @param promise promise to set result
    */
   @ReactMethod
-  fun listFiles(fileType: String, startPosition: Int, entryCount: Int, promise: Promise) {
+  fun listFiles(fileType: String, startPosition: Int, entryCount: Int, storage: String?, promise: Promise) {
     launch {
       try {
         val (fileList, totalEntries) = theta.listFiles(
           ThetaRepository.FileTypeEnum.valueOf(fileType),
           startPosition,
-          entryCount
+          entryCount,
+          storage?.let { ThetaRepository.StorageEnum.valueOf(it) },
         )
         val resultlist = Arguments.createArray()
         fileList.forEach {
@@ -189,6 +195,9 @@ class ThetaClientReactNativeModule(
           result.putString("dateTime", it.dateTime)
           result.putString("thumbnailUrl", it.thumbnailUrl)
           result.putString("fileUrl", it.fileUrl)
+          it.storageID?.run {
+            result.putString("storageID", this)
+          }
           resultlist.pushMap(result)
         }
         val resultmap = Arguments.createMap()

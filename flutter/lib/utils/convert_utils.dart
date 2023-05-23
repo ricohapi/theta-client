@@ -1,3 +1,4 @@
+import 'package:theta_client_flutter/digest_auth.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
 class ConvertUtils {
@@ -10,7 +11,8 @@ class ConvertUtils {
         element['size'],
         element['dateTime'],
         element['fileUrl'],
-        element['thumbnailUrl']
+        element['thumbnailUrl'],
+        element['storageID']
       );
       fileList.add(info);
     }
@@ -300,6 +302,15 @@ class ConvertUtils {
     return null;
   }
 
+  static Map<String, dynamic> convertDigestAuthParam(DigestAuth digestAuth) {
+    Map<String, dynamic> result = {};
+    result["username"] = digestAuth.username;
+    if (digestAuth.password != null) {
+      result["password"] = digestAuth.password;
+    }
+    return result;
+  }
+
   static Map<String, dynamic> convertConfigParam(ThetaConfig config) {
     Map<String, dynamic> result = {};
     if (config.dateTime != null) {
@@ -316,6 +327,10 @@ class ConvertUtils {
     }
     if (config.shutterVolume != null) {
       result[OptionNameEnum.shutterVolume.rawValue] = config.shutterVolume;
+    }
+    final clientMode = config.clientMode;
+    if (clientMode != null) {
+      result["clientMode"] = convertDigestAuthParam(clientMode);
     }
     return result;
   }

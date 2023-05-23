@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:theta_client_flutter/digest_auth.dart';
 import 'package:theta_client_flutter/utils/convert_utils.dart';
 
 import 'theta_client_flutter_platform_interface.dart';
@@ -69,8 +70,8 @@ class ThetaClientFlutter {
   /// * @return A list of file information and number of totalEntries.
   /// see https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md
   /// * @throws If an error occurs in THETA.
-  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, [int startPosition = 0]) {
-    return ThetaClientFlutterPlatform.instance.listFiles(fileType, entryCount, startPosition);
+  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, [int startPosition = 0, StorageEnum? storage]) {
+    return ThetaClientFlutterPlatform.instance.listFiles(fileType, entryCount, startPosition, storage);
   }
 
   /// Delete files in Theta.
@@ -463,6 +464,26 @@ enum FileTypeEnum {
   }
 }
 
+/// Specifies the storage
+enum StorageEnum {
+  /// internal storage
+  internal('INTERNAL'),
+
+  /// external storage (SD card)
+  sd('SD'),
+
+  /// current storage
+  current('CURRENT');
+
+  final String rawValue;
+  const StorageEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+}
+
 /// File information in Theta.
 class FileInfo {
   /// File name.
@@ -480,7 +501,9 @@ class FileInfo {
   /// You can get a thumbnail image using HTTP GET to [thumbnailUrl].
   final String thumbnailUrl;
 
-  FileInfo(this.name, this.size, this.dateTime, this.fileUrl, this.thumbnailUrl);
+  final String? storageID;
+
+  FileInfo(this.name, this.size, this.dateTime, this.fileUrl, this.thumbnailUrl, [this.storageID]);
 }
 
 /// Data about files in Theta.
@@ -2825,11 +2848,23 @@ class VideoCapture extends Capture {
 
 /// Configuration of THETA
 class ThetaConfig {
+  /// Location information acquisition time
   String? dateTime;
+
+  /// Language used in camera OS
   LanguageEnum? language;
+
+  /// Length of standby time before the camera automatically power OFF
   OffDelayEnum? offDelay;
+
+  /// Length of standby time before the camera enters the sleep mode.
   SleepDelayEnum? sleepDelay;
+
+  /// Shutter volume.
   int? shutterVolume;
+
+  /// Authentication information used for client mode connections
+  DigestAuth? clientMode;
 }
 
 /// Timeout of HTTP call.

@@ -4,6 +4,7 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.ReadableType
 import com.facebook.react.bridge.WritableMap
+import com.ricoh360.thetaclient.DigestAuth
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.capture.PhotoCapture
 import com.ricoh360.thetaclient.capture.VideoCapture
@@ -724,4 +725,49 @@ class PasswordConverter : OptionConverter {
       objects.putString("password", it)
     }
   }
+}
+
+fun configToTheta(objects: ReadableMap): ThetaRepository.Config {
+  val config = ThetaRepository.Config()
+  config.dateTime = objects.getString("dateTime")
+
+  objects.getString("language")?.let {
+    config.language = ThetaRepository.LanguageEnum.valueOf(it)
+  }
+
+  objects.getString("offDelay")?.let {
+    config.offDelay = ThetaRepository.OffDelayEnum.valueOf(it)
+  }
+
+  objects.getString("sleepDelay")?.let {
+    config.sleepDelay = ThetaRepository.SleepDelayEnum.valueOf(it)
+  }
+
+  config.shutterVolume = if (objects.hasKey("shutterVolume")) {
+    objects.getInt("shutterVolume")
+  }  else { null }
+
+  config.clientMode = if (objects.hasKey("clientMode")) {
+    objects.getMap("clientMode")?.let {
+      digestAuthToTheta(it)
+    }
+  }  else { null }
+
+  return config
+}
+
+fun digestAuthToTheta(objects: ReadableMap): DigestAuth? {
+  val username = objects.getString("username") ?: run {
+    return null
+  }
+  val password = if (objects.hasKey("password")) { objects.getString("password") }  else { null }
+  return DigestAuth(username, password)
+}
+
+fun timeoutToTheta(objects: ReadableMap): ThetaRepository.Timeout {
+  return ThetaRepository.Timeout(
+    objects.getInt("connectTimeout").toLong(),
+    objects.getInt("requestTimeout").toLong(),
+    objects.getInt("socketTimeout").toLong(),
+  )
 }

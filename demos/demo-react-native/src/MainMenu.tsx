@@ -13,7 +13,14 @@ const MainMenu = ({navigation}) => {
   };
   React.useEffect(() => {
     async function init() {
-      await initialize();
+      const endpoint = 'http://192.168.1.1'
+      const config = {
+        // clientMode: { // Client mode authentication settings
+        //   username: 'THETAXX12345678',
+        //   password: '12345678',
+        // }
+      }
+      await initialize(endpoint, config);
     }
     init();
   }, []);

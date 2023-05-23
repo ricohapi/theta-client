@@ -2,6 +2,8 @@ import Flutter
 import UIKit
 import THETAClient
 
+let KEY_CLIENT_MODE = "clientMode"
+
 public class ConvertUtil: NSObject {
 }
 
@@ -18,13 +20,16 @@ func getEnumValue<T, E: KotlinEnum<T>>(values: KotlinArray<E>, name: String) -> 
 func convertResult(fileInfoList: [ThetaRepository.FileInfo]) -> [[String: Any]] {
     var resultList = [[String: Any]]()
     fileInfoList.forEach({ fileInfo in
-        let item = [
+        var item = [
             "name": fileInfo.name,
             "size": fileInfo.size,
             "dateTime": fileInfo.dateTime,
             "fileUrl": fileInfo.fileUrl,
             "thumbnailUrl": fileInfo.thumbnailUrl,
         ]
+        if let storageID = fileInfo.storageID {
+            item["storageID"] = storageID
+        }
         resultList.append(item)
     })
     return resultList
@@ -363,8 +368,17 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     }
 }
 
+func toDigetAuth(params: [String : String?]?) -> DigestAuth? {
+    guard let params = params,
+          let username = params["username"] as? String
+    else { return nil }
+    
+    let password = params["password"] as? String
+    return DigestAuth(username: username, password: password)
+}
+
 func toConfig(params: [String : Any]) -> ThetaRepository.Config {
-    let config = ThetaRepository.Config(dateTime: nil, language: nil, offDelay: nil, sleepDelay: nil, shutterVolume: nil)
+    let config = ThetaRepository.Config()
     params.forEach { key, value in
         switch (key) {
         case ThetaRepository.OptionNameEnum.datetimezone.name:
@@ -377,6 +391,8 @@ func toConfig(params: [String : Any]) -> ThetaRepository.Config {
             config.sleepDelay = getEnumValue(values: ThetaRepository.SleepDelayEnum.values(), name: value as! String)!
         case ThetaRepository.OptionNameEnum.shuttervolume.name:
             config.shutterVolume = KotlinInt(integerLiteral: value as! Int)
+        case KEY_CLIENT_MODE:
+            config.clientMode = toDigetAuth(params: value as? [String : String?])
         default:
             break
         }
