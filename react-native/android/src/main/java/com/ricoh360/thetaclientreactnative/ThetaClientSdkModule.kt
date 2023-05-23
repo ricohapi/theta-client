@@ -174,16 +174,18 @@ class ThetaClientReactNativeModule(
    * @param fileType file type to retrieve
    * @param startPosition start position to retrieve
    * @param entryCount count to retrieve
+   * @param storage Desired storage
    * @param promise promise to set result
    */
   @ReactMethod
-  fun listFiles(fileType: String, startPosition: Int, entryCount: Int, promise: Promise) {
+  fun listFiles(fileType: String, startPosition: Int, entryCount: Int, storage: String?, promise: Promise) {
     launch {
       try {
         val (fileList, totalEntries) = theta.listFiles(
           ThetaRepository.FileTypeEnum.valueOf(fileType),
           startPosition,
-          entryCount
+          entryCount,
+          storage?.let { ThetaRepository.StorageEnum.valueOf(it) },
         )
         val resultlist = Arguments.createArray()
         fileList.forEach {
@@ -193,6 +195,9 @@ class ThetaClientReactNativeModule(
           result.putString("dateTime", it.dateTime)
           result.putString("thumbnailUrl", it.thumbnailUrl)
           result.putString("fileUrl", it.fileUrl)
+          it.storageID?.run {
+            result.putString("storageID", this)
+          }
           resultlist.pushMap(result)
         }
         val resultmap = Arguments.createMap()
@@ -294,6 +299,7 @@ class ThetaClientReactNativeModule(
     "isoAutoHighLimit" to IsoAutoHighLimitConverter(),
     "language" to LanguageConverter(),
     "maxRecordableTime" to MaxRecordableTimeConverter(),
+    "networkType" to NetworkTypeConverter(),
     "offDelay" to OffDelayConverter(),
     "password" to PasswordConverter(),
     "sleepDelay" to SleepDelayConverter(),
@@ -305,6 +311,7 @@ class ThetaClientReactNativeModule(
     "username" to UsernameConverter(),
     "whiteBalance" to WhiteBalanceConverter(),
     "whiteBalanceAutoStrength" to WhiteBalanceAutoStrengthConverter(),
+    "wlanFrequency" to WlanFrequencyConverter(),
     "_gpsTagRecording" to GpsTagRecordingConverter(),
   )
 
@@ -328,6 +335,7 @@ class ThetaClientReactNativeModule(
     "IsoAutoHighLimit" to "isoAutoHighLimit",
     "Language" to "language",
     "MaxRecordableTime" to "maxRecordableTime",
+    "NetworkType" to "networkType",
     "OffDelay" to "offDelay",
     "Password" to "password",
     "SleepDelay" to "sleepDelay",
@@ -339,6 +347,7 @@ class ThetaClientReactNativeModule(
     "Username" to "username",
     "WhiteBalance" to "whiteBalance",
     "WhiteBalanceAutoStrength" to "whiteBalanceAutoStrength",
+    "WlanFrequency" to "wlanFrequency",
   )
 
   /**

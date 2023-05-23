@@ -1,6 +1,8 @@
 import type { CameraControlSourceEnum } from './option-camera-control-source';
 import type { CameraModeEnum } from './option-camera-mode';
+import type { NetworkTypeEnum } from './option-network-type';
 import type { WhiteBalanceAutoStrengthEnum } from './option-white-balance-auto-strength';
+import type { WlanFrequencyEnum } from './option-wlan-frequency';
 
 /** Aperture value. */
 export const ApertureEnum = {
@@ -480,6 +482,8 @@ export const OptionNameEnum = {
   Language: 'Language',
   /** maxRecordableTime */
   MaxRecordableTime: 'MaxRecordableTime',
+  /** networkType */
+  NetworkType: 'NetworkType',
   /** offDelay */
   OffDelay: 'OffDelay',
   /** password */
@@ -502,6 +506,8 @@ export const OptionNameEnum = {
   WhiteBalance: 'WhiteBalance',
   /** _whiteBalanceAutoStrength */
   WhiteBalanceAutoStrength: 'WhiteBalanceAutoStrength',
+  /** _wlanFrequency */
+  WlanFrequency: 'WlanFrequency',
 } as const;
 
 /** type definition of OptionNameEnum */
@@ -546,6 +552,8 @@ export type Options = {
   language?: LanguageEnum;
   /** Maximum recordable time (in seconds) of the camera. */
   maxRecordableTime?: MaxRecordableTimeEnum;
+  /** Network type of the camera */
+  networkType?: NetworkTypeEnum;
   /** Length of standby time before the camera automatically powers OFF. */
   offDelay?: OffDelayEnum;
   /** Password used for digest authentication when _networkType is set to client mode. */
@@ -568,6 +576,8 @@ export type Options = {
   whiteBalance?: WhiteBalanceEnum;
   /** White balance auto strength. */
   whiteBalanceAutoStrength?: WhiteBalanceAutoStrengthEnum;
+  /** WLAN frequency */
+  wlanFrequency?: WlanFrequencyEnum;
   /** GPS setting used in only capturing */
   _gpsTagRecording?: GpsTagRecordingEnum;
 };

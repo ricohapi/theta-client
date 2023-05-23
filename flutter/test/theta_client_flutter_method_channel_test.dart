@@ -242,7 +242,7 @@ void main() {
 
     for (int i = 0; i < fileTypes.length; i++) {
       index = i;
-      var thetaFiles = await platform.listFiles(fileTypes[i], entryCount, startPosition);
+      var thetaFiles = await platform.listFiles(fileTypes[i], entryCount, startPosition, StorageEnum.current);
       expect(thetaFiles.fileList.length, 2);
       var fileInfo = thetaFiles.fileList[0];
       expect(fileInfo.name, name);
@@ -250,6 +250,59 @@ void main() {
       expect(fileInfo.dateTime, dateTime);
       expect(fileInfo.fileUrl, fileUrl);
       expect(fileInfo.thumbnailUrl, thumbnailUrl);
+      expect(fileInfo.storageID, null);
+      expect(thetaFiles.totalEntries, 10);
+    }
+  });
+
+  test('listFiles StorageEnum', () async {
+    const storages = [StorageEnum.internal, StorageEnum.sd, StorageEnum.current];
+    const entryCount = 10;
+    const startPosition = 0;
+    const name = 'R0013336.JPG';
+    const size = 100;
+    const dateTime = '2022:11:15 14:00:15';
+    const fileUrl = 'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG';
+    const thumbnailUrl = 'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG?type=thumb';
+    const storageID = 'a0123456789';
+
+    int index = 0;
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      var arguments = methodCall.arguments as Map<dynamic, dynamic>;
+      expect(arguments['fileType'], FileTypeEnum.image.rawValue);
+      expect(arguments['entryCount'], entryCount);
+      expect(arguments['startPosition'], startPosition);
+      expect(arguments['storage'], storages[index].rawValue);
+
+      final List fileList = List<dynamic>.empty(growable: true);
+      final Map info = <String, dynamic> {
+        'name': name,
+        'size': size,
+        'dateTime': dateTime,
+        'fileUrl': fileUrl,
+        'thumbnailUrl': thumbnailUrl,
+        'storageID': storageID,
+      };
+      fileList.add(info);
+      fileList.add(info);
+      final Map thetaFiles = <String, dynamic> {
+        'fileList': fileList,
+        'totalEntries': 10,
+      };
+      return thetaFiles;
+    });
+
+    for (int i = 0; i < storages.length; i++) {
+      index = i;
+      var thetaFiles = await platform.listFiles(FileTypeEnum.image, entryCount, startPosition, storages[index]);
+      expect(thetaFiles.fileList.length, 2);
+      var fileInfo = thetaFiles.fileList[0];
+      expect(fileInfo.name, name);
+      expect(fileInfo.size, size);
+      expect(fileInfo.dateTime, dateTime);
+      expect(fileInfo.fileUrl, fileUrl);
+      expect(fileInfo.thumbnailUrl, thumbnailUrl);
+      expect(fileInfo.storageID, storageID);
       expect(thetaFiles.totalEntries, 10);
     }
   });
@@ -362,6 +415,7 @@ void main() {
       [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso200, 'ISO_200'],
       [OptionNameEnum.language, 'Language', LanguageEnum.de, 'DE'],
       [OptionNameEnum.maxRecordableTime, 'MaxRecordableTime', MaxRecordableTimeEnum.time_1500, 'RECORDABLE_TIME_1500'],
+      [OptionNameEnum.networkType, 'NetworkType', NetworkTypeEnum.client, 'CLIENT'],
       [OptionNameEnum.offDelay, 'OffDelay', OffDelayEnum.offDelay_10m, 'OFF_DELAY_10M'],
       [OptionNameEnum.password, 'Password', 'password', 'password'],
       [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
@@ -373,6 +427,7 @@ void main() {
       [OptionNameEnum.username, 'Username', 'username', 'username'],
       [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
       [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
+      [OptionNameEnum.wlanFrequency, 'WlanFrequency', WlanFrequencyEnum.ghz_2_4, 'GHZ_2_4'],
     ];
 
     Map<String, dynamic> optionMap = {};
@@ -423,6 +478,7 @@ void main() {
       [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso200, 'ISO_200'],
       [OptionNameEnum.language, 'Language', LanguageEnum.de, 'DE'],
       [OptionNameEnum.maxRecordableTime, 'MaxRecordableTime', MaxRecordableTimeEnum.time_1500, 'RECORDABLE_TIME_1500'],
+      [OptionNameEnum.networkType, 'NetworkType', NetworkTypeEnum.client, 'CLIENT'],
       [OptionNameEnum.offDelay, 'OffDelay', OffDelayEnum.offDelay_15m, 'OFF_DELAY_15M'],
       [OptionNameEnum.password, 'Password', 'password', 'password'],
       [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
@@ -434,6 +490,7 @@ void main() {
       [OptionNameEnum.username, 'Username', 'username', 'username'],
       [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
       [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.on, 'ON'],
+      [OptionNameEnum.wlanFrequency, 'WlanFrequency', WlanFrequencyEnum.ghz_2_4,'GHZ_2_4'],
     ];
 
     Map<String, dynamic> optionMap = {};

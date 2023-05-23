@@ -385,25 +385,33 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
-     * Lists information of images and videos in Theta.
+     * Acquires a list of still image files and movie files.
      *
-     * @param[fileType] Type of the files to be listed.
-     * @param[startPosition] The position of the first file to be returned in the list. 0 represents the first file.
-     * If [startPosition] is larger than the position of the last file, an empty list is returned.
-     * @param[entryCount] Desired number of entries to return.
-     * If [entryCount] is more than the number of remaining files, just return entries of actual remaining files.
+     * @param[fileType] File types to acquire.
+     * @param[startPosition] Position to start acquiring the file list.
+     * If a number larger than the number of existing files is specified, a null list is acquired.
+     * Default is the top of the list.
+     * @param[entryCount] Number of still image and movie files to acquire.
+     * If the number of existing files is smaller than the specified number of files, all available files are only acquired.
+     * @param[storage] Specifies the storage. If omitted, return current storage. (RICOH THETA X Version 2.00.0 or later)
      * @return A list of file information and number of totalEntries.
      * see [camera.listFiles](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md).
      * @exception ThetaWebApiException If an error occurs in THETA.
      * @exception NotConnectedException
      */
     @Throws(Throwable::class)
-    suspend fun listFiles(fileType: FileTypeEnum, startPosition: Int = 0, entryCount: Int): ThetaFiles {
+    suspend fun listFiles(
+        fileType: FileTypeEnum,
+        startPosition: Int = 0,
+        entryCount: Int,
+        storage: StorageEnum? = null,
+    ): ThetaFiles {
         try {
             val params = ListFilesParams(
                 fileType = fileType.value,
                 startPosition = startPosition,
-                entryCount = entryCount
+                entryCount = entryCount,
+                _storage = storage?.value,
             )
             val listFilesResponse = ThetaApi.callListFilesCommand(endpoint, params)
             listFilesResponse.error?.let {
@@ -423,6 +431,29 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         } catch (e: Exception) {
             throw NotConnectedException(e.message ?: e.toString())
         }
+    }
+
+    /**
+     * Acquires a list of still image files and movie files.
+     *
+     * @param[fileType] File types to acquire.
+     * @param[startPosition] Position to start acquiring the file list.
+     * If a number larger than the number of existing files is specified, a null list is acquired.
+     * Default is the top of the list.
+     * @param[entryCount] Number of still image and movie files to acquire.
+     * If the number of existing files is smaller than the specified number of files, all available files are only acquired.
+     * @return A list of file information and number of totalEntries.
+     * see [camera.listFiles](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md).
+     * @exception ThetaWebApiException If an error occurs in THETA.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun listFiles(
+        fileType: FileTypeEnum,
+        startPosition: Int = 0,
+        entryCount: Int,
+    ): ThetaFiles {
+        return listFiles(fileType, startPosition, entryCount, null)
     }
 
     /**
@@ -672,6 +703,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _networkType
+         */
+        NetworkType("_networkType", NetworkTypeEnum::class),
+
+        /**
+         * Option name
          * offDelay
          */
         OffDelay("offDelay", ThetaRepository.OffDelay::class),
@@ -734,7 +771,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Option name
          * _whiteBalanceAutoStrength
          */
-        WhiteBalanceAutoStrength("_whiteBalanceAutoStrength", WhiteBalanceAutoStrengthEnum::class)
+        WhiteBalanceAutoStrength("_whiteBalanceAutoStrength", WhiteBalanceAutoStrengthEnum::class),
+
+        /**
+         * Option name
+         * _wlanFrequency
+         */
+        WlanFrequency("_wlanFrequency", WlanFrequencyEnum::class),
     }
 
     /**
@@ -881,6 +924,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var maxRecordableTime: MaxRecordableTimeEnum? = null,
 
         /**
+         * Network type of the camera.
+         */
+        var networkType: NetworkTypeEnum? = null,
+
+        /**
          * Length of standby time before the camera automatically powers OFF.
          *
          * Specify [OffDelayEnum] or [OffDelaySec]
@@ -950,7 +998,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          *
          * For RICOH THETA Z1 firmware v2.20.3 or later
          */
-        var whiteBalanceAutoStrength: WhiteBalanceAutoStrengthEnum? = null
+        var whiteBalanceAutoStrength: WhiteBalanceAutoStrengthEnum? = null,
+
+        /**
+         * Wireless LAN frequency of the camera
+         *
+         * For RICOH THETA X, Z1 and V.
+         */
+        var wlanFrequency: WlanFrequencyEnum? = null,
     ) {
         constructor() : this(
             aperture = null,
@@ -971,6 +1026,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             isoAutoHighLimit = null,
             language = null,
             maxRecordableTime = null,
+            networkType = null,
             offDelay = null,
             password = null,
             sleepDelay = null,
@@ -981,7 +1037,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             shutterVolume = null,
             username = null,
             whiteBalance = null,
-            whiteBalanceAutoStrength = null
+            whiteBalanceAutoStrength = null,
+            wlanFrequency = null,
         )
 
         constructor(options: com.ricoh360.thetaclient.transferred.Options) : this(
@@ -1007,6 +1064,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             isoAutoHighLimit = options.isoAutoHighLimit?.let { IsoAutoHighLimitEnum.get(it) },
             language = options._language?.let { LanguageEnum.get(it) },
             maxRecordableTime = options._maxRecordableTime?.let { MaxRecordableTimeEnum.get(it) },
+            networkType = options._networkType?.let { NetworkTypeEnum.get(it) },
             offDelay = options.offDelay?.let { OffDelayEnum.get(it) },
             password = options._password,
             sleepDelay = options.sleepDelay?.let { SleepDelayEnum.get(it) },
@@ -1017,7 +1075,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             shutterVolume = options._shutterVolume,
             username = options._username,
             whiteBalance = options.whiteBalance?.let { WhiteBalanceEnum.get(it) },
-            whiteBalanceAutoStrength = options._whiteBalanceAutoStrength?.let { WhiteBalanceAutoStrengthEnum.get(it) }
+            whiteBalanceAutoStrength = options._whiteBalanceAutoStrength?.let { WhiteBalanceAutoStrengthEnum.get(it) },
+            wlanFrequency = options._wlanFrequency?.let { WlanFrequencyEnum.get(it) },
         )
 
         /**
@@ -1044,6 +1103,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 isoAutoHighLimit = isoAutoHighLimit?.value,
                 _language = language?.value,
                 _maxRecordableTime = maxRecordableTime?.sec,
+                _networkType = networkType?.value,
                 offDelay = offDelay?.sec,
                 _password = password,
                 sleepDelay = sleepDelay?.sec,
@@ -1054,7 +1114,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _shutterVolume = shutterVolume,
                 _username = username,
                 whiteBalance = whiteBalance?.value,
-                _whiteBalanceAutoStrength = whiteBalanceAutoStrength?.value
+                _whiteBalanceAutoStrength = whiteBalanceAutoStrength?.value,
+                _wlanFrequency = wlanFrequency?.value,
             )
         }
 
@@ -1088,6 +1149,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.IsoAutoHighLimit -> isoAutoHighLimit
                 OptionNameEnum.Language -> language
                 OptionNameEnum.MaxRecordableTime -> maxRecordableTime
+                OptionNameEnum.NetworkType -> networkType
                 OptionNameEnum.OffDelay -> offDelay
                 OptionNameEnum.Password -> password
                 OptionNameEnum.SleepDelay -> sleepDelay
@@ -1099,6 +1161,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.Username -> username
                 OptionNameEnum.WhiteBalance -> whiteBalance
                 OptionNameEnum.WhiteBalanceAutoStrength -> whiteBalanceAutoStrength
+                OptionNameEnum.WlanFrequency -> wlanFrequency
             } as T
         }
 
@@ -1133,6 +1196,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.IsoAutoHighLimit -> isoAutoHighLimit = value as IsoAutoHighLimitEnum
                 OptionNameEnum.Language -> language = value as LanguageEnum
                 OptionNameEnum.MaxRecordableTime -> maxRecordableTime = value as MaxRecordableTimeEnum
+                OptionNameEnum.NetworkType -> networkType = value as NetworkTypeEnum
                 OptionNameEnum.OffDelay -> offDelay = value as OffDelay
                 OptionNameEnum.Password -> password = value as String
                 OptionNameEnum.SleepDelay -> sleepDelay = value as SleepDelay
@@ -1144,6 +1208,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.Username -> username = value as String
                 OptionNameEnum.WhiteBalance -> whiteBalance = value as WhiteBalanceEnum
                 OptionNameEnum.WhiteBalanceAutoStrength -> whiteBalanceAutoStrength = value as WhiteBalanceAutoStrengthEnum
+                OptionNameEnum.WlanFrequency -> wlanFrequency = value as WlanFrequencyEnum
             }
         }
     }
@@ -2683,6 +2748,43 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Network type supported by Theta V, Z1 and X.
+     */
+    enum class NetworkTypeEnum(val value: NetworkType) {
+        /**
+         * Direct mode
+         */
+        DIRECT(NetworkType.DIRECT),
+
+        /**
+         * Client mode via WLAN
+         */
+        CLIENT(NetworkType.CLIENT),
+
+        /**
+         * Client mode via Ethernet cable
+         */
+        ETHERNET(NetworkType.ETHERNET),
+
+        /**
+         * Network is off. This value can be gotten only by plugin
+         */
+        OFF(NetworkType.OFF);
+
+        companion object {
+            /**
+             * Convert NetworkType to NetworkTypeEnum
+             *
+             * @param value Network type.
+             * @return NetworkTypeEnum
+             */
+            fun get(value: NetworkType): NetworkTypeEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
      * Length of standby time before the camera automatically powers OFF.
      *
      * Use in [OffDelayEnum] or [OffDelaySec]
@@ -2968,6 +3070,34 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Wireless LAN frequency of the camera supported by Theta V, Z1 and X.
+     */
+    enum class WlanFrequencyEnum(val value: WlanFrequency) {
+        /**
+         * 2.4GHz
+         */
+        GHZ_2_4(WlanFrequency.GHZ_2_4),
+
+        /**
+         * 5GHz
+         */
+        GHZ_5(WlanFrequency.GHZ_5);
+
+        companion object {
+            /**
+             * Convert WlanFrequency to WlanFrequencyEnum
+             *
+             * @param value wlan frequency
+             * @return  WlanFrequencyEnum
+             */
+            fun get(value: WlanFrequency): WlanFrequencyEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+
+    }
+
+    /**
      * File type in Theta.
      */
     enum class FileTypeEnum(val value: FileType) {
@@ -2994,26 +3124,49 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Specifies the storage
+     */
+    enum class StorageEnum(val value: Storage) {
+        /**
+         * internal storage
+         */
+        INTERNAL(Storage.IN),
+
+        /**
+         * external storage (SD card)
+         */
+        SD(Storage.SD),
+
+        /**
+         * current storage
+         */
+        CURRENT(Storage.DEFAULT),
+    }
+
+    /**
      * File information in Theta.
      * @property name File name.
      * @property size File size in bytes.
      * @property dateTime File creation time in the format "YYYY:MM:DD HH:MM:SS".
      * @property fileUrl You can get a file using HTTP GET to [fileUrl].
      * @property thumbnailUrl You can get a thumbnail image using HTTP GET to [thumbnailUrl].
+     * @property storageID Storage ID. (RICOH THETA X Version 2.00.0 or later)
      */
     data class FileInfo(
         val name: String,
         val size: Long,
         val dateTime: String,
         val fileUrl: String,
-        val thumbnailUrl: String
+        val thumbnailUrl: String,
+        val storageID: String?,
     ) {
         constructor(cameraFileInfo: CameraFileInfo) : this(
             cameraFileInfo.name,
             cameraFileInfo.size,
             cameraFileInfo.dateTimeZone!!.take(16), // Delete timezone
             cameraFileInfo.fileUrl,
-            thumbnailUrl = cameraFileInfo.getThumbnailUrl()
+            thumbnailUrl = cameraFileInfo.getThumbnailUrl(),
+            cameraFileInfo._storageID,
         )
     }
 

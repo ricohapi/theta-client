@@ -265,6 +265,17 @@ static convert_t FileTypeEnum = {
 };
 
 /**
+ * StorageEnum converter
+ */
+static convert_t StorageEnum = {
+  .toTheta = @{
+    @"INTERNAL": THETACThetaRepositoryStorageEnum.internal,
+    @"SD": THETACThetaRepositoryStorageEnum.sd,
+    @"CURRENT": THETACThetaRepositoryStorageEnum.current,
+  }
+};
+
+/**
  * AuthModeEnum converter
  */
 static convert_t AuthModeEnum = {
@@ -1356,6 +1367,62 @@ static convert_t GpsInfoCvt = {
 };
 
 /**
+ * NetworkType converter
+ */
+static convert_t NetworkTypeEnum = {
+  .toTheta = @{
+    @"DIRECT": THETACThetaRepositoryNetworkTypeEnum.direct,
+    @"CLIENT": THETACThetaRepositoryNetworkTypeEnum.client,
+    @"ETHERNET": THETACThetaRepositoryNetworkTypeEnum.ethernet,
+    @"OFF": THETACThetaRepositoryNetworkTypeEnum.off
+  },
+  .fromTheta = @{
+    THETACThetaRepositoryNetworkTypeEnum.direct: @"DIRECT",
+    THETACThetaRepositoryNetworkTypeEnum.client: @"CLIENT",
+    THETACThetaRepositoryNetworkTypeEnum.ethernet: @"ETHERNET",
+    THETACThetaRepositoryNetworkTypeEnum.off: @"OFF"
+  },
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [NetworkTypeEnum.toTheta objectForKey:[rct objectForKey:@"networkType"]];
+    if (val) {
+      opt.networkType = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [NetworkTypeEnum.fromTheta objectForKey:opt.networkType];
+    if (val) {
+      [rct setObject:val forKey:@"networkType"];
+    }
+  }
+};
+
+/**
+ * WlanFrequency converter
+ */
+static convert_t WlanFrequencyEnum = {
+  .toTheta = @{
+    @"GHZ_2_4": THETACThetaRepositoryWlanFrequencyEnum.ghz24,
+    @"GHZ_5": THETACThetaRepositoryWlanFrequencyEnum.ghz5
+  },
+  .fromTheta = @{
+    THETACThetaRepositoryWlanFrequencyEnum.ghz24: @"GHZ_2_4",
+    THETACThetaRepositoryWlanFrequencyEnum.ghz5: @"GHZ_5",
+  },
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [WlanFrequencyEnum.toTheta objectForKey:[rct objectForKey:@"wlanFrequency"]];
+    if (val) {
+      opt.wlanFrequency = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [WlanFrequencyEnum.fromTheta objectForKey:opt.wlanFrequency];
+    if (val) {
+      [rct setObject:val forKey:@"wlanFrequency"];
+    }
+  }
+};
+
+/**
  * Password converter
  */
 static convert_t PasswordCvt = {
@@ -1411,6 +1478,7 @@ static NSDictionary *NameToOptionEnum = @{
   @"IsoAutoHighLimit": THETACThetaRepositoryOptionNameEnum.isoautohighlimit,
   @"Language": THETACThetaRepositoryOptionNameEnum.language,
   @"MaxRecordableTime": THETACThetaRepositoryOptionNameEnum.maxrecordabletime,
+  @"NetworkType": THETACThetaRepositoryOptionNameEnum.networktype,
   @"OffDelay": THETACThetaRepositoryOptionNameEnum.offdelay,
   @"Password": THETACThetaRepositoryOptionNameEnum.password,
   @"SleepDelay": THETACThetaRepositoryOptionNameEnum.sleepdelay,
@@ -1421,7 +1489,8 @@ static NSDictionary *NameToOptionEnum = @{
   @"ShutterVolume": THETACThetaRepositoryOptionNameEnum.shuttervolume,
   @"Username": THETACThetaRepositoryOptionNameEnum.username,
   @"WhiteBalance": THETACThetaRepositoryOptionNameEnum.whitebalance,
-  @"WhiteBalanceAutoStrength": THETACThetaRepositoryOptionNameEnum.whitebalanceautostrength
+  @"WhiteBalanceAutoStrength": THETACThetaRepositoryOptionNameEnum.whitebalanceautostrength,
+  @"WlanFrequency": THETACThetaRepositoryOptionNameEnum.wlanfrequency
 };
 
 /**
@@ -1446,6 +1515,7 @@ static NSDictionary *OptionEnumToOption = @{
   @"IsoAutoHighLimit": @"isoAutoHighLimit",
   @"Language": @"language",
   @"MaxRecordableTime": @"maxRecordableTime",
+  @"NetworkType": @"networkType",
   @"OffDelay": @"offDelay",
   @"Password": @"password",
   @"SleepDelay": @"sleepDelay",
@@ -1456,7 +1526,8 @@ static NSDictionary *OptionEnumToOption = @{
   @"ShutterVolume": @"shutterVolume",
   @"Username": @"username",
   @"WhiteBalance": @"whiteBalance",
-  @"WhiteBalanceAutoStrength": @"whiteBalanceAutoStrength"
+  @"WhiteBalanceAutoStrength": @"whiteBalanceAutoStrength",
+  @"WlanFrequency": @"wlanFrequency"
 };
 
 /** Option converter builder */
@@ -1484,6 +1555,7 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"isoAutoHighLimit": ^{return &IsoAutoHighLimitEnum;},
   @"language": ^{return &LanguageEnum;},
   @"maxRecordableTime": ^{return &MaxRecordableTimeEnum;},
+  @"networkType": ^{return &NetworkTypeEnum;},
   @"offDelay": ^{return &OffDelayEnum;},
   @"password": ^{return &PasswordCvt;},
   @"sleepDelay": ^{return &SleepDelayEnum;},
@@ -1495,7 +1567,8 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"username": ^{return &UsernameCvt;},
   @"whiteBalance": ^{return &WhiteBalanceEnum;},
   @"_gpsTagRecording": ^{return &GpsTagRecordingEnum;},
-  @"whiteBalanceAutoStrength": ^{return &WhiteBalanceAutoStrengthEnum;}
+  @"whiteBalanceAutoStrength": ^{return &WhiteBalanceAutoStrengthEnum;},
+  @"wlanFrequency": ^{return &WlanFrequencyEnum;}
 };
 
 static NSString *EVENT_NAME = @"ThetaFrameEvent";
@@ -1746,6 +1819,7 @@ RCT_REMAP_METHOD(getThetaState,
  * @param fileType file type to retrieve
  * @param startPosition start position to retrieve
  * @param entryCount count to retrieve
+ * @param storage Desired storage
  * @param resolve resolver for listFiles
  * @param rejecter rejecter for listFiles
  */
@@ -1753,12 +1827,14 @@ RCT_REMAP_METHOD(listFiles,
                  listFilesWithFileTypeEnum:(NSString*)fileType
                  withStartPosition:(int32_t)startPosition
                  withEntryCount:(int32_t)entryCount
+                 withStorage:(NSString*)storage
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
   [_theta listFilesFileType:[FileTypeEnum.toTheta objectForKey:fileType]
               startPosition:startPosition
                  entryCount:entryCount
+                    storage:[StorageEnum.toTheta objectForKey:storage]
           completionHandler:^(THETACThetaRepositoryThetaFiles *items,
                               NSError *error) {
       if (error) {
@@ -1767,16 +1843,20 @@ RCT_REMAP_METHOD(listFiles,
         NSMutableArray *ary = [[NSMutableArray alloc] init];
         for (int i = 0; i < items.fileList.count; i++) {
           THETACThetaRepositoryFileInfo *finfo = items.fileList[i];
-          [ary addObject: @{
-              @"name":finfo.name,
-                @"size":@(finfo.size),
-                @"dateTime":finfo.dateTime,
-                @"thumbnailUrl":finfo.thumbnailUrl,
-                @"fileUrl":finfo.fileUrl
-                }];
+          NSMutableDictionary *fileInfoObject = [[NSMutableDictionary alloc] initWithDictionary:@{
+            @"name":finfo.name,
+            @"size":@(finfo.size),
+            @"dateTime":finfo.dateTime,
+            @"thumbnailUrl":finfo.thumbnailUrl,
+            @"fileUrl":finfo.fileUrl
+          }];
+          if (finfo.storageID) {
+            [fileInfoObject setObject:finfo.storageID forKey:@"storageID"];
+          }
+          [ary addObject:fileInfoObject];
         }
-          resolve(@{@"fileList":ary,
-                @"totalEntries": @(items.totalEntries)});
+        resolve(@{@"fileList":ary,
+              @"totalEntries": @(items.totalEntries)});
       } else {
         reject(@"error", @"no items", nil);
       }

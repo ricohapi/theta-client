@@ -70,8 +70,8 @@ class ThetaClientFlutter {
   /// * @return A list of file information and number of totalEntries.
   /// see https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md
   /// * @throws If an error occurs in THETA.
-  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, [int startPosition = 0]) {
-    return ThetaClientFlutterPlatform.instance.listFiles(fileType, entryCount, startPosition);
+  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, [int startPosition = 0, StorageEnum? storage]) {
+    return ThetaClientFlutterPlatform.instance.listFiles(fileType, entryCount, startPosition, storage);
   }
 
   /// Delete files in Theta.
@@ -464,6 +464,26 @@ enum FileTypeEnum {
   }
 }
 
+/// Specifies the storage
+enum StorageEnum {
+  /// internal storage
+  internal('INTERNAL'),
+
+  /// external storage (SD card)
+  sd('SD'),
+
+  /// current storage
+  current('CURRENT');
+
+  final String rawValue;
+  const StorageEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+}
+
 /// File information in Theta.
 class FileInfo {
   /// File name.
@@ -481,7 +501,9 @@ class FileInfo {
   /// You can get a thumbnail image using HTTP GET to [thumbnailUrl].
   final String thumbnailUrl;
 
-  FileInfo(this.name, this.size, this.dateTime, this.fileUrl, this.thumbnailUrl);
+  final String? storageID;
+
+  FileInfo(this.name, this.size, this.dateTime, this.fileUrl, this.thumbnailUrl, [this.storageID]);
 }
 
 /// Data about files in Theta.
@@ -950,6 +972,9 @@ enum OptionNameEnum {
   /// Option name _maxRecordableTime
   maxRecordableTime('MaxRecordableTime', MaxRecordableTimeEnum),
 
+  /// Option name _networkType
+  networkType('NetworkType', NetworkTypeEnum),
+
   /// Option name offDelay
   offDelay('OffDelay', OffDelayEnum),
 
@@ -981,7 +1006,10 @@ enum OptionNameEnum {
   whiteBalance('WhiteBalance', WhiteBalanceEnum),
 
   /// Option name WhiteBalanceAutoStrength
-  whiteBalanceAutoStrength('WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum);
+  whiteBalanceAutoStrength('WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum),
+
+  // Option name wlanfrequency
+  wlanFrequency('WlanFrequency', WlanFrequencyEnum);
 
   final String rawValue;
   final dynamic valueType;
@@ -1753,6 +1781,35 @@ enum MaxRecordableTimeEnum {
   }
 }
 
+/// Network type of the camera supported by Theta X, Z1 and V.
+enum NetworkTypeEnum {
+  // Direct mode
+  direct('DIRECT'),
+
+  // Client mode via WLAN
+  client('CLIENT'),
+
+  // Client mode via Ethernet cable supporte by Theta Z1 and V.
+  ethernet('ETHERNET'),
+
+  // Network is off. This value can be gotten only by plugin.
+  off('OFF');
+
+  final String rawValue;
+  const NetworkTypeEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static NetworkTypeEnum? getValue(String rawValue) {
+    return NetworkTypeEnum.values.cast<NetworkTypeEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
 /// Length of standby time before the camera automatically powers OFF.
 /// 
 /// For RICOH THETA V or later
@@ -1918,6 +1975,30 @@ enum WhiteBalanceAutoStrengthEnum {
     return WhiteBalanceAutoStrengthEnum.values
         .cast<WhiteBalanceAutoStrengthEnum?>()
         .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
+  }
+}
+
+/// Wireless LAN frequency of the camera supported by Theta X, Z1 and V.
+enum WlanFrequencyEnum {
+  /// 2.4GHz
+  ghz_2_4('GHZ_2_4'),
+
+  /// 5GHz
+  ghz_5('GHZ_5');
+
+  final String rawValue;
+
+  const WlanFrequencyEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static WlanFrequencyEnum? getValue(String rawValue) {
+    return WlanFrequencyEnum.values.cast<WlanFrequencyEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
         orElse: () => null);
   }
 }
@@ -2264,6 +2345,9 @@ class Options {
   /// Maximum recordable time (in seconds) of the camera.
   MaxRecordableTimeEnum? maxRecordableTime;
 
+  /// Network type of the camera supported by Theta X, Z1 and V.
+  NetworkTypeEnum? networkType;
+
   /// Length of standby time before the camera automatically powers OFF.
   /// 
   /// Specify [OffDelayEnum]
@@ -2312,6 +2396,9 @@ class Options {
   /// For RICOH THETA Z1 firmware v2.20.3 or later
   WhiteBalanceAutoStrengthEnum? whiteBalanceAutoStrength;
 
+  /// Wireless LAN frequency of the camera supported by Theta X, Z1 and V.
+  WlanFrequencyEnum? wlanFrequency;
+
   /// Get Option value.
   T? getValue<T>(OptionNameEnum name) {
     switch (name) {
@@ -2349,6 +2436,8 @@ class Options {
         return language as T;
       case OptionNameEnum.maxRecordableTime:
         return maxRecordableTime as T;
+      case OptionNameEnum.networkType:
+        return networkType as T;
       case OptionNameEnum.offDelay:
         return offDelay as T;
       case OptionNameEnum.password:
@@ -2371,6 +2460,8 @@ class Options {
         return whiteBalance as T;
       case OptionNameEnum.whiteBalanceAutoStrength:
         return whiteBalanceAutoStrength as T;
+      case OptionNameEnum.wlanFrequency:
+        return wlanFrequency as T;
     }
   }
 
@@ -2432,6 +2523,9 @@ class Options {
       case OptionNameEnum.maxRecordableTime:
         maxRecordableTime = value;
         break;
+      case OptionNameEnum.networkType:
+        networkType = value;
+        break;
       case OptionNameEnum.offDelay:
         offDelay = value;
         break;
@@ -2464,6 +2558,9 @@ class Options {
         break;
       case OptionNameEnum.whiteBalanceAutoStrength:
         whiteBalanceAutoStrength = value;
+        break;
+      case OptionNameEnum.wlanFrequency:
+        wlanFrequency = value;
         break;
     }
   }

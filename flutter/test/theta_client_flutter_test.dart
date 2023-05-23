@@ -40,7 +40,7 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
-  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, int startPosition) {
+  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, int startPosition, StorageEnum? storage) {
     return onCallListFiles();
   }
 
@@ -391,7 +391,8 @@ void main() {
         100,
         '2022:11:15 14:00:15',
         'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG',
-        'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG?type=thumb'
+        'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG?type=thumb',
+        '01234567890',
       )
     );
     var input = ThetaFiles(infoList, 10);
@@ -399,7 +400,7 @@ void main() {
       return Future.value(input);
     };
 
-    var result = await thetaClientPlugin.listFiles(FileTypeEnum.image, 10, 10);
+    var result = await thetaClientPlugin.listFiles(FileTypeEnum.image, 10, 10, StorageEnum.current);
     expect(result, input);
   });
 

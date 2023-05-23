@@ -20,13 +20,16 @@ func getEnumValue<T, E: KotlinEnum<T>>(values: KotlinArray<E>, name: String) -> 
 func convertResult(fileInfoList: [ThetaRepository.FileInfo]) -> [[String: Any]] {
     var resultList = [[String: Any]]()
     fileInfoList.forEach({ fileInfo in
-        let item = [
+        var item = [
             "name": fileInfo.name,
             "size": fileInfo.size,
             "dateTime": fileInfo.dateTime,
             "fileUrl": fileInfo.fileUrl,
             "thumbnailUrl": fileInfo.thumbnailUrl,
         ]
+        if let storageID = fileInfo.storageID {
+            item["storageID"] = storageID
+        }
         resultList.append(item)
     })
     return resultList
@@ -280,6 +283,10 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         break
     case ThetaRepository.OptionNameEnum.maxrecordabletime.name:
         options.maxRecordableTime = getEnumValue(values: ThetaRepository.MaxRecordableTimeEnum.values(), name: value as! String)!
+        break
+    case ThetaRepository.OptionNameEnum.networktype.name:
+        options.networkType = getEnumValue(values: ThetaRepository.NetworkTypeEnum.values(), name: value as! String)!
+        break
     case ThetaRepository.OptionNameEnum.offdelay.name:
         options.offDelay = getEnumValue(values: ThetaRepository.OffDelayEnum.values(), name: value as! String)!
         break
@@ -312,6 +319,9 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         break
     case ThetaRepository.OptionNameEnum.whitebalanceautostrength.name:
         options.whiteBalanceAutoStrength = getEnumValue(values: ThetaRepository.WhiteBalanceAutoStrengthEnum.values(), name: value as! String)!
+        break
+    case ThetaRepository.OptionNameEnum.wlanfrequency.name:
+        options.wlanFrequency = getEnumValue(values: ThetaRepository.WlanFrequencyEnum.values(), name: value as! String)!
         break
     default: break
     }

@@ -62,6 +62,17 @@ data class ListFilesParams(
      * Specifies the sort order: “newest” (default) or “oldest”
      */
     val _sort: SortOrder? = null,
+
+    /**
+     * Specifies the storage.
+     *
+     * "IN" : internal storage
+     * "SD" : external storage (SD card)
+     * "Default" : current storage
+     * Default is "Default".
+     * (RICOH THETA X Version 2.00.0 or later)
+     */
+    val _storage: Storage? = null,
 )
 
 /**
@@ -248,6 +259,14 @@ data class CameraFileInfo(
      * Image description.  (RICOH THETA X or later)
      */
     val _imageDescription: String?,
+
+    /**
+     * Storage ID.
+     *
+     * Can be acquired when "_detail" is "true".
+     * (RICOH THETA X Version 2.00.0 or later)
+     */
+    val _storageID: String?,
 ) {
     companion object {
         const val THUMBNAIL_QUERY = "?type=thumb"
@@ -316,4 +335,28 @@ enum class SortOrder {
      */
     @SerialName("oldest")
     OLDEST,
+}
+
+/**
+ * Specifies the storage
+ */
+@Serializable
+enum class Storage {
+    /**
+     * internal storage
+     */
+    @SerialName("IN")
+    IN,
+
+    /**
+     * external storage (SD card)
+     */
+    @SerialName("SD")
+    SD,
+
+    /**
+     * current storage
+     */
+    @SerialName("Default")
+    DEFAULT,
 }

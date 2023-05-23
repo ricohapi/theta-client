@@ -403,6 +403,19 @@ void main() {
     }
   });
 
+  test('NetworkTypeEnum', () async {
+    List<List<dynamic>> data = [
+      [NetworkTypeEnum.client, 'CLIENT'],
+      [NetworkTypeEnum.direct, 'DIRECT'],
+      [NetworkTypeEnum.ethernet, 'ETHERNET'],
+      [NetworkTypeEnum.off, 'OFF'],
+    ];
+    expect(data.length, NetworkTypeEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
   test('OffDelayEnum', () async {
     List<List<dynamic>> data = [
       [OffDelayEnum.disable, 'DISABLE'],
@@ -426,6 +439,18 @@ void main() {
       [SleepDelayEnum.disable, 'DISABLE'],
     ];
     expect(data.length, SleepDelayEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('StorageEnum', () async {
+    List<List<dynamic>> data = [
+      [StorageEnum.internal, 'INTERNAL'],
+      [StorageEnum.sd, 'SD'],
+      [StorageEnum.current, 'CURRENT'],
+    ];
+    expect(data.length, StorageEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -458,6 +483,17 @@ void main() {
       [WhiteBalanceAutoStrengthEnum.off, 'OFF'],
     ];
     expect(data.length, WhiteBalanceAutoStrengthEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('WlanFrequencyEnum', () async {
+    List<List<dynamic>> data = [
+      [WlanFrequencyEnum.ghz_2_4, 'GHZ_2_4'],
+      [WlanFrequencyEnum.ghz_5, 'GHZ_5'],
+    ];
+    expect(data.length, WlanFrequencyEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
