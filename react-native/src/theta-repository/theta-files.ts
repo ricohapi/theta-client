@@ -31,4 +31,4 @@ export const FileTypeEnum = {
 } as const;
 
 /** type definition of FileTypeEnum */
-export type FileTypeEnum = typeof FileTypeEnum[keyof typeof FileTypeEnum];
+export type FileTypeEnum = (typeof FileTypeEnum)[keyof typeof FileTypeEnum];

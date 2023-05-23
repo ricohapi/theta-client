@@ -1,6 +1,7 @@
 import type { CameraControlSourceEnum } from './option-camera-control-source';
 import type { CameraModeEnum } from './option-camera-mode';
 import type { NetworkTypeEnum } from './option-network-type';
+import type { Proxy } from './option-proxy';
 import type { WhiteBalanceAutoStrengthEnum } from './option-white-balance-auto-strength';
 import type { WlanFrequencyEnum } from './option-wlan-frequency';
 
@@ -488,6 +489,8 @@ export const OptionNameEnum = {
   OffDelay: 'OffDelay',
   /** password */
   Password: 'Password',
+  /** proxy */
+  Proxy: 'Proxy',
   /** sleepDelay */
   SleepDelay: 'SleepDelay',
   /** remainingPictures */
@@ -558,18 +561,20 @@ export type Options = {
   offDelay?: OffDelayEnum;
   /** Password used for digest authentication when _networkType is set to client mode. */
   password?: String;
-  /** Length of standby time before the camera enters the sleep mode. */
-  sleepDelay?: SleepDelayEnum;
+  /** Proxy information to be used when wired LAN is enabled. */
+  proxy?: Proxy;
   /** The estimated remaining number of shots for the current shooting settings. */
   remainingPictures?: number;
   /** The estimated remaining shooting time (sec.) for the current video shooting settings. */
   remainingVideoSeconds?: number;
   /** Remaining usable storage space (byte). */
   remainingSpace?: number;
-  /** Total storage space (byte). */
-  totalSpace?: number;
   /** Shutter volume. */
   shutterVolume?: number;
+  /** Length of standby time before the camera enters the sleep mode. */
+  sleepDelay?: SleepDelayEnum;
+  /** Total storage space (byte). */
+  totalSpace?: number;
   /** User name used for digest authentication when _networkType is set to client mode. */
   username?: String;
   /** White balance. */

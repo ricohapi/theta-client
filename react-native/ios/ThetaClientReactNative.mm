@@ -1429,6 +1429,52 @@ static convert_t PasswordCvt = {
 };
 
 /**
+ * Proxy converter
+ */
+static convert_t ProxyCvt = {
+    .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+        NSDictionary *proxyDic = [rct objectForKey:@"proxy"];
+        if (proxyDic) {
+            opt.proxy = [[THETACThetaRepositoryProxy alloc]
+                         initWithUse:[proxyDic objectForKey:@"use"] != [NSNull null] ? [THETACBoolean numberWithBool:(NSNumber*) [proxyDic objectForKey:@"use"]] : nil
+                         url:[proxyDic objectForKey:@"url"] != [NSNull null] ? [proxyDic objectForKey:@"url"] : nil
+                         port:[proxyDic objectForKey:@"port"] != [NSNull null] ? [THETACInt numberWithInt:((NSNumber*) [proxyDic objectForKey:@"port"]).intValue] : nil
+                         userid:[proxyDic objectForKey:@"userid"] != [NSNull null] ? [proxyDic objectForKey:@"userid"] : nil
+                         password:[proxyDic objectForKey:@"password"] != [NSNull null] ? [proxyDic objectForKey:@"password"] : nil];
+        }
+    },
+    
+    .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+        if (opt.proxy) {
+            NSMutableDictionary *proxy = [NSMutableDictionary dictionary];
+            
+            if (opt.proxy.use) {
+                BOOL value = opt.proxy.use;
+                [proxy setObject:@(value) forKey:@"use"];
+            }
+            
+            if (opt.proxy.url) {
+                [proxy setObject:opt.proxy.url forKey:@"url"];
+            }
+            
+            if (opt.proxy.port) {
+                [proxy setObject:@(opt.proxy.port.intValue) forKey:@"port"];
+            }
+            
+            if (opt.proxy.userid) {
+                [proxy setObject:opt.proxy.userid forKey:@"userid"];
+            }
+            
+            if (opt.proxy.password) {
+                [proxy setObject:opt.proxy.password forKey:@"password"];
+            }
+            
+            [rct setObject:proxy forKey:@"proxy"];
+        }
+    }
+};
+
+/**
  * Username converter
  */
 static convert_t UsernameCvt = {
@@ -1470,6 +1516,7 @@ static NSDictionary *NameToOptionEnum = @{
   @"NetworkType": THETACThetaRepositoryOptionNameEnum.networktype,
   @"OffDelay": THETACThetaRepositoryOptionNameEnum.offdelay,
   @"Password": THETACThetaRepositoryOptionNameEnum.password,
+  @"Proxy": THETACThetaRepositoryOptionNameEnum.proxy,
   @"SleepDelay": THETACThetaRepositoryOptionNameEnum.sleepdelay,
   @"RemainingPictures": THETACThetaRepositoryOptionNameEnum.remainingpictures,
   @"RemainingVideoSeconds": THETACThetaRepositoryOptionNameEnum.remainingvideoseconds,
@@ -1507,6 +1554,7 @@ static NSDictionary *OptionEnumToOption = @{
   @"NetworkType": @"networkType",
   @"OffDelay": @"offDelay",
   @"Password": @"password",
+  @"Proxy": @"proxy",
   @"SleepDelay": @"sleepDelay",
   @"RemainingPictures": @"remainingPictures",
   @"RemainingVideoSeconds": @"remainingVideoSeconds",
@@ -1547,6 +1595,7 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"networkType": ^{return &NetworkTypeEnum;},
   @"offDelay": ^{return &OffDelayEnum;},
   @"password": ^{return &PasswordCvt;},
+  @"proxy": ^{return &ProxyCvt;},
   @"sleepDelay": ^{return &SleepDelayEnum;},
   @"remainingPictures": ^{return &RemainingPicturesCvt;},
   @"remainingVideoSeconds": ^{return &RemainingVideoSecondsCvt;},

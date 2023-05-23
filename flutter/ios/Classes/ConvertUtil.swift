@@ -241,19 +241,17 @@ func convertKotlinBooleanToBool(value: Any?) -> Bool? {
 }
 
 func toKotlinBoolean(value: Any?) -> KotlinBoolean? {
-    var result: KotlinBoolean? = nil
-    if let value = value as? Bool {
-        result = value ? true : false
+    guard let value = value as? Bool else {
+        return nil
     }
-    return result
+    return value ? true : false
 }
 
 func toKotlinInt(value: Any?) -> KotlinInt? {
-    var result: KotlinInt? = nil
-    if let value = value as? Int {
-        result = KotlinInt(integerLiteral: value)
+    guard let value = value as? Int else {
+        return nil
     }
-    return result
+    return KotlinInt(integerLiteral: value)
 }
 
 func convertSetOptionsParam(params: [String: Any]) -> ThetaRepository.Options {
