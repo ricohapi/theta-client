@@ -66,13 +66,14 @@ fun toResult(thetaState: ThetaState): Map<String, Any?> {
 fun toResult(fileInfoList: List<FileInfo>): List<Map<String, Any>> {
     val result = mutableListOf<Map<String, Any>>()
     fileInfoList.forEach {
-        val map = mapOf<String, Any>(
+        val map = mutableMapOf<String, Any>(
             "name" to it.name,
             "size" to it.size,
             "dateTime" to it.dateTime,
             "fileUrl" to it.fileUrl,
-            "thumbnailUrl" to it.thumbnailUrl
+            "thumbnailUrl" to it.thumbnailUrl,
         )
+        it.storageID?.run { map.put("storageID", this) }
         result.add(map)
     }
     return result

@@ -69,8 +69,8 @@ class ThetaClientFlutter {
   /// * @return A list of file information and number of totalEntries.
   /// see https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md
   /// * @throws If an error occurs in THETA.
-  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, [int startPosition = 0]) {
-    return ThetaClientFlutterPlatform.instance.listFiles(fileType, entryCount, startPosition);
+  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, [int startPosition = 0, StorageEnum? storage]) {
+    return ThetaClientFlutterPlatform.instance.listFiles(fileType, entryCount, startPosition, storage);
   }
 
   /// Delete files in Theta.
@@ -463,6 +463,26 @@ enum FileTypeEnum {
   }
 }
 
+/// Specifies the storage
+enum StorageEnum {
+  /// internal storage
+  internal('INTERNAL'),
+
+  /// external storage (SD card)
+  sd('SD'),
+
+  /// current storage
+  current('CURRENT');
+
+  final String rawValue;
+  const StorageEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+}
+
 /// File information in Theta.
 class FileInfo {
   /// File name.
@@ -480,7 +500,9 @@ class FileInfo {
   /// You can get a thumbnail image using HTTP GET to [thumbnailUrl].
   final String thumbnailUrl;
 
-  FileInfo(this.name, this.size, this.dateTime, this.fileUrl, this.thumbnailUrl);
+  final String? storageID;
+
+  FileInfo(this.name, this.size, this.dateTime, this.fileUrl, this.thumbnailUrl, [this.storageID]);
 }
 
 /// Data about files in Theta.

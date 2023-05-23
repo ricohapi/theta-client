@@ -265,6 +265,17 @@ static convert_t FileTypeEnum = {
 };
 
 /**
+ * StorageEnum converter
+ */
+static convert_t StorageEnum = {
+  .toTheta = @{
+    @"INTERNAL": THETACThetaRepositoryStorageEnum.internal,
+    @"SD": THETACThetaRepositoryStorageEnum.sd,
+    @"CURRENT": THETACThetaRepositoryStorageEnum.current,
+  }
+};
+
+/**
  * AuthModeEnum converter
  */
 static convert_t AuthModeEnum = {
@@ -1740,6 +1751,7 @@ RCT_REMAP_METHOD(getThetaState,
  * @param fileType file type to retrieve
  * @param startPosition start position to retrieve
  * @param entryCount count to retrieve
+ * @param storage Desired storage
  * @param resolve resolver for listFiles
  * @param rejecter rejecter for listFiles
  */
@@ -1747,12 +1759,14 @@ RCT_REMAP_METHOD(listFiles,
                  listFilesWithFileTypeEnum:(NSString*)fileType
                  withStartPosition:(int32_t)startPosition
                  withEntryCount:(int32_t)entryCount
+                 withStorage:(NSString*)storage
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
   [_theta listFilesFileType:[FileTypeEnum.toTheta objectForKey:fileType]
               startPosition:startPosition
                  entryCount:entryCount
+                    storage:[StorageEnum.toTheta objectForKey:storage]
           completionHandler:^(THETACThetaRepositoryThetaFiles *items,
                               NSError *error) {
       if (error) {
@@ -1761,16 +1775,20 @@ RCT_REMAP_METHOD(listFiles,
         NSMutableArray *ary = [[NSMutableArray alloc] init];
         for (int i = 0; i < items.fileList.count; i++) {
           THETACThetaRepositoryFileInfo *finfo = items.fileList[i];
-          [ary addObject: @{
-              @"name":finfo.name,
-                @"size":@(finfo.size),
-                @"dateTime":finfo.dateTime,
-                @"thumbnailUrl":finfo.thumbnailUrl,
-                @"fileUrl":finfo.fileUrl
-                }];
+          NSMutableDictionary *fileInfoObject = [[NSMutableDictionary alloc] initWithDictionary:@{
+            @"name":finfo.name,
+            @"size":@(finfo.size),
+            @"dateTime":finfo.dateTime,
+            @"thumbnailUrl":finfo.thumbnailUrl,
+            @"fileUrl":finfo.fileUrl
+          }];
+          if (finfo.storageID) {
+            [fileInfoObject setObject:finfo.storageID forKey:@"storageID"];
+          }
+          [ary addObject:fileInfoObject];
         }
-          resolve(@{@"fileList":ary,
-                @"totalEntries": @(items.totalEntries)});
+        resolve(@{@"fileList":ary,
+              @"totalEntries": @(items.totalEntries)});
       } else {
         reject(@"error", @"no items", nil);
       }

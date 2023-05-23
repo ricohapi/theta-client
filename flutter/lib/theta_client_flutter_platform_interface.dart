@@ -53,7 +53,7 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('getLivePreview() has not been implemented.');
   }
 
-  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, int startPosition) {
+  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, int startPosition, StorageEnum? storage) {
     throw UnimplementedError('listFiles() has not been implemented.');
   }
 

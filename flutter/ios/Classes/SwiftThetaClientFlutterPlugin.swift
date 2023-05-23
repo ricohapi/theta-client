@@ -253,19 +253,32 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             }
         }
     }
-    
+
     func listFiles(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        if (thetaRepository == nil) {
+        guard let thetaRepository = thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return;
         }
-        let arguments = call.arguments as! [String : Any]
-        let fileTypeName = arguments["fileType"] as! String
-        let fileType = getEnumValue(values: ThetaRepository.FileTypeEnum.values(), name: fileTypeName)!
-        let startPosition: Int32 = arguments["startPosition"] as! Int32
-        let entryCount: Int32 = arguments["entryCount"] as! Int32
-        thetaRepository!.listFiles(fileType: fileType, startPosition: startPosition, entryCount: entryCount) { files, error in
+
+        guard let arguments = call.arguments as? [String : Any],
+              let fileTypeName = arguments["fileType"] as? String,
+              let fileType = getEnumValue(values: ThetaRepository.FileTypeEnum.values(), name: fileTypeName),
+              let startPosition: Int32 = arguments["startPosition"] as? Int32,
+              let entryCount: Int32 = arguments["entryCount"] as? Int32
+        else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoArgument, details: nil)
+            result(flutterError)
+            return
+        }
+        let storageName = arguments["storage"] as? String ?? ""
+        let storage = getEnumValue(values: ThetaRepository.StorageEnum.values(), name: storageName)
+        thetaRepository.listFiles(
+            fileType: fileType,
+            startPosition: startPosition,
+            entryCount: entryCount,
+            storage: storage
+        ) { files, error in
             if let thetaError = error {
                 let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
                 result(flutterError)

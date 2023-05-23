@@ -444,6 +444,18 @@ void main() {
     }
   });
 
+  test('StorageEnum', () async {
+    List<List<dynamic>> data = [
+      [StorageEnum.internal, 'INTERNAL'],
+      [StorageEnum.sd, 'SD'],
+      [StorageEnum.current, 'CURRENT'],
+    ];
+    expect(data.length, StorageEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
   test('WhiteBalanceEnum', () async {
     List<List<dynamic>> data = [
       [WhiteBalanceEnum.auto, 'AUTO'],
