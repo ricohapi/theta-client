@@ -117,6 +117,17 @@ data class AccessPoint(
      * "ipAddressAllocation" is "static
      */
     val defaultGateway: String?,
+
+    /**
+     * Proxy information to be used for the access point.
+     * Also refer to _proxy option spec to set each parameter.
+     *
+     * For
+     * THETA Z1 Version 2.20.3 or later
+     * THETA X Version 2.00.0 or later
+     */
+    @SerialName("_proxy")
+    val proxy: Proxy? = null,
 )
 
 /**
