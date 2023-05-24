@@ -10,7 +10,7 @@
  */
 export type Proxy = {
   /** true: use proxy false: do not use proxy */
-  use?: boolean;
+  use: boolean;
   /** Proxy server URL */
   url?: string;
   /** Proxy server port number: 0 to 65535 */

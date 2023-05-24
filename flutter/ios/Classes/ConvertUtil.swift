@@ -178,7 +178,7 @@ func toGpsInfo(params: [String : Any]) -> ThetaRepository.GpsInfo {
 
 func toProxy(params: [String : Any]) -> ThetaRepository.Proxy {
     return ThetaRepository.Proxy(
-        use: toKotlinBoolean(value: params["use"]),
+        use: params["use"] as? Bool ?? false,
         url: params["url"] as? String,
         port: toKotlinInt(value: params["port"]),
         userid: params["userid"] as? String,
@@ -206,7 +206,7 @@ func convertResult(gpsInfo: ThetaRepository.GpsInfo) -> [String: Any] {
 
 func convertResult(proxy: ThetaRepository.Proxy) -> [String: Any] {
     return [
-        "use": convertKotlinBooleanToBool(value: proxy.use),
+        "use": proxy.use,
         "url": proxy.url,
         "port": proxy.port,
         "userid": proxy.userid,
@@ -243,13 +243,6 @@ func convertKotlinBooleanToBool(value: Any?) -> Bool? {
     guard value is KotlinBoolean, let numVal = value as? NSNumber else { return false }
 
     return numVal.boolValue
-}
-
-func toKotlinBoolean(value: Any?) -> KotlinBoolean? {
-    guard let value = value as? Bool else {
-        return nil
-    }
-    return value ? true : false
 }
 
 func toKotlinInt(value: Any?) -> KotlinInt? {

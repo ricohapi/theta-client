@@ -1447,7 +1447,7 @@ static convert_t ProxyCvt = {
         NSDictionary *proxyDic = [rct objectForKey:@"proxy"];
         if (proxyDic) {
             opt.proxy = [[THETACThetaRepositoryProxy alloc]
-                         initWithUse:[proxyDic objectForKey:@"use"] != [NSNull null] ? [THETACBoolean numberWithBool:(NSNumber*) [proxyDic objectForKey:@"use"]] : nil
+                         initWithUse:[THETACBoolean numberWithBool:(NSNumber*) [proxyDic objectForKey:@"use"]]
                          url:[proxyDic objectForKey:@"url"] != [NSNull null] ? [proxyDic objectForKey:@"url"] : nil
                          port:[proxyDic objectForKey:@"port"] != [NSNull null] ? [THETACInt numberWithInt:((NSNumber*) [proxyDic objectForKey:@"port"]).intValue] : nil
                          userid:[proxyDic objectForKey:@"userid"] != [NSNull null] ? [proxyDic objectForKey:@"userid"] : nil
@@ -1458,12 +1458,9 @@ static convert_t ProxyCvt = {
     .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
         if (opt.proxy) {
             NSMutableDictionary *proxy = [NSMutableDictionary dictionary];
-            
-            if (opt.proxy.use) {
-                BOOL value = opt.proxy.use;
-                [proxy setObject:@(value) forKey:@"use"];
-            }
-            
+
+            [proxy setObject:@(opt.proxy.use) forKey:@"use"];
+
             if (opt.proxy.url) {
                 [proxy setObject:opt.proxy.url forKey:@"url"];
             }

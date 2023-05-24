@@ -882,7 +882,7 @@ data class Proxy(
     /**
      * true: use proxy false: do not use proxy
      */
-    val use: Boolean? = null,
+    val use: Boolean,
 
     /**
      * Proxy server URL

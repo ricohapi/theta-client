@@ -2251,7 +2251,7 @@ class GpsInfo {
 /// RICOH THETA X firmware v2.00.0 or later
 class Proxy {
   /// true: use proxy false: do not use proxy
-  bool? use;
+  bool use;
 
   /// Proxy server URL
   String? url;

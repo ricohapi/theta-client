@@ -93,7 +93,7 @@ fun toGpsInfo(map: Map<String, Any>): GpsInfo {
 
 fun toProxy(map: Map<String, Any>): Proxy {
     return Proxy(
-        use = map["use"] as? Boolean,
+        use = map["use"] as? Boolean ?: false,
         url = map["url"] as? String,
         port = map["port"] as? Int,
         userid = map["userid"] as? String,

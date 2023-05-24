@@ -2881,12 +2881,35 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * RICOH THETA X firmware v2.00.0 or later
      */
     data class Proxy(
-        val use: Boolean?,
-        val url: String?,
-        val port: Int?,
+        /**
+         * true: use proxy false: do not use proxy
+         */
+        val use: Boolean,
+        /**
+         * Proxy server URL
+         */
+        val url: String? = null,
+        /**
+         * Proxy server port number: 0 to 65535
+         */
+        val port: Int? = null,
+        /**
+         * User ID used for proxy authentication
+         */
         val userid: String? = null,
+        /**
+         * Password used for proxy authentication
+         */
         val password: String? = null,
     ) {
+        constructor(use: Boolean) : this(
+            use = use,
+            url = null,
+            port = null,
+            userid = null,
+            password = null
+        )
+
         constructor(info: com.ricoh360.thetaclient.transferred.Proxy) : this(
             use = info.use,
             url = info.url,

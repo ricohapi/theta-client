@@ -129,7 +129,7 @@ class ConvertUtils {
 
   static Proxy convertProxy(Map<dynamic, dynamic> data) {
     var proxy = Proxy(
-      data['use'],
+      data['use'] ?? false,
       data['url'],
       data['port'],
       data['userid'],

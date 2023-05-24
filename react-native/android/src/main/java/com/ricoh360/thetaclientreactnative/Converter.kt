@@ -420,7 +420,7 @@ class ProxyConverter : OptionConverter {
   override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
     objects.getMap("proxy")?.let {
       options.proxy = ThetaRepository.Proxy(
-        use = it.getBoolean("use"),
+        use = it.getBoolean("use") ?: false,
         url = it.getString("url"),
         port = it.getInt("port"),
         userid = it.getString("userid"),
@@ -432,9 +432,7 @@ class ProxyConverter : OptionConverter {
   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
     options.proxy?.let {
       val proxy = Arguments.createMap()
-      it.use?.let { use ->
-        proxy.putBoolean("use", use)
-      }
+      proxy.putBoolean("use", it.use)
       proxy.putString("url", it.url)
       it.port?.let { port ->
         proxy.putInt("port", port)
