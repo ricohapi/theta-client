@@ -422,7 +422,7 @@ class ProxyConverter : OptionConverter {
       options.proxy = ThetaRepository.Proxy(
         use = it.getBoolean("use") ?: false,
         url = it.getString("url"),
-        port = it.getInt("port"),
+        port = if (it.hasKey("port")) it.getInt("port") else null,
         userid = it.getString("userid"),
         password = it.getString("password")
       )
