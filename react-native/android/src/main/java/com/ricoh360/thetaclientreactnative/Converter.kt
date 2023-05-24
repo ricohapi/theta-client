@@ -433,12 +433,18 @@ class ProxyConverter : OptionConverter {
     options.proxy?.let {
       val proxy = Arguments.createMap()
       proxy.putBoolean("use", it.use)
-      proxy.putString("url", it.url)
+      it.url?.let { url ->
+        proxy.putString("url", url)
+      }
       it.port?.let { port ->
         proxy.putInt("port", port)
       }
-      proxy.putString("userid", it.userid)
-      proxy.putString("password", it.password)
+      it.userid?.let { userid ->
+        proxy.putString("userid", userid)
+      }
+      it.password?.let { password ->
+        proxy.putString("password", password)
+      }
       objects.putMap("proxy", proxy)
     }
   }
