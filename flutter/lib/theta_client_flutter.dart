@@ -2265,7 +2265,7 @@ class Proxy {
   /// Password used for proxy authentication
   String? password;
 
-  Proxy(this.use, this.url, this.port, this.userid, this.password);
+  Proxy(this.use, [this.url, this.port, this.userid, this.password]);
 
   @override
   bool operator ==(Object other) => hashCode == other.hashCode;
