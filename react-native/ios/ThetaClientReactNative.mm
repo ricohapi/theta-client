@@ -166,6 +166,13 @@ static CFTimeInterval FRAME_INTERVAL = (CFTimeInterval) (1.0/10.0);
 }
 @end
 
+/**
+ * check null for object
+ */
+static bool isNull(id obj) {
+    return (obj == nil || obj == [NSNull null]);
+}
+
 /** opiton converter from theta to react */
 typedef void (^SetFromTheta)(NSMutableDictionary *, THETACThetaRepositoryOptions *);
 /** option converter from react to theta */
@@ -1447,11 +1454,11 @@ static convert_t ProxyCvt = {
         NSDictionary *proxyDic = [rct objectForKey:@"proxy"];
         if (proxyDic) {
             opt.proxy = [[THETACThetaRepositoryProxy alloc]
-                         initWithUse:[THETACBoolean numberWithBool:(NSNumber*) [proxyDic objectForKey:@"use"]]
-                         url:[proxyDic objectForKey:@"url"] != [NSNull null] ? [proxyDic objectForKey:@"url"] : nil
-                         port:[proxyDic objectForKey:@"port"] != [NSNull null] ? [THETACInt numberWithInt:((NSNumber*) [proxyDic objectForKey:@"port"]).intValue] : nil
-                         userid:[proxyDic objectForKey:@"userid"] != [NSNull null] ? [proxyDic objectForKey:@"userid"] : nil
-                         password:[proxyDic objectForKey:@"password"] != [NSNull null] ? [proxyDic objectForKey:@"password"] : nil];
+                         initWithUse:!isNull([proxyDic objectForKey:@"use"]) ? ((NSNumber*) [proxyDic objectForKey:@"use"]).boolValue : false
+                         url:!isNull([proxyDic objectForKey:@"url"]) ? [proxyDic objectForKey:@"url"] : nil
+                         port:!isNull([proxyDic objectForKey:@"port"]) ? [THETACInt numberWithInt:((NSNumber*) [proxyDic objectForKey:@"port"]).intValue] : nil
+                         userid:!isNull([proxyDic objectForKey:@"userid"]) ? [proxyDic objectForKey:@"userid"] : nil
+                         password:!isNull([proxyDic objectForKey:@"password"]) ? [proxyDic objectForKey:@"password"] : nil];
         }
     },
     

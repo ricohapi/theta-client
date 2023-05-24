@@ -52,6 +52,8 @@ class ProxyTest {
         assertEquals(options.proxy?.use, false)
         assertEquals(options.proxy?.url, "")
         assertEquals(options.proxy?.port, 8080)
+        assertEquals(options.proxy?.userid, null)
+        assertEquals(options.proxy?.password, null)
     }
 
     /**
@@ -78,6 +80,8 @@ class ProxyTest {
         assertEquals(options.proxy?.use, false)
         assertEquals(options.proxy?.url, null)
         assertEquals(options.proxy?.port, null)
+        assertEquals(options.proxy?.userid, null)
+        assertEquals(options.proxy?.password, null)
     }
 
     /**
