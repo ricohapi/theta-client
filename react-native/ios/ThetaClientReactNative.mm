@@ -1454,7 +1454,7 @@ static convert_t ProxyCvt = {
         NSDictionary *proxyDic = [rct objectForKey:@"proxy"];
         if (proxyDic) {
             opt.proxy = [[THETACThetaRepositoryProxy alloc]
-                         initWithUse:!isNull([proxyDic objectForKey:@"use"]) ? ((NSNumber*) [proxyDic objectForKey:@"use"]).boolValue : false
+                         initWithUse:!isNull([proxyDic objectForKey:@"use"]) ? ((NSNumber*) [proxyDic objectForKey:@"use"]).boolValue : NO
                          url:!isNull([proxyDic objectForKey:@"url"]) ? [proxyDic objectForKey:@"url"] : nil
                          port:!isNull([proxyDic objectForKey:@"port"]) ? [THETACInt numberWithInt:((NSNumber*) [proxyDic objectForKey:@"port"]).intValue] : nil
                          userid:!isNull([proxyDic objectForKey:@"userid"]) ? [proxyDic objectForKey:@"userid"] : nil
