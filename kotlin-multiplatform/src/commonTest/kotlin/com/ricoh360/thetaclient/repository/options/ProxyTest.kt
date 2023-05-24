@@ -32,7 +32,7 @@ class ProxyTest {
      * Get option _proxy.
      */
     @Test
-    fun getOptionProxyTest() = runTest {
+    fun getOptionProxyXTest() = runTest {
         val optionNames = listOf(
             ThetaRepository.OptionNameEnum.Proxy
         )
@@ -44,7 +44,7 @@ class ProxyTest {
             // check request
             CheckRequest.checkGetOptions(request, stringOptionNames)
 
-            ByteReadChannel(Resource("src/commonTest/resources/options/option_proxy_not_use.json").readText())
+            ByteReadChannel(Resource("src/commonTest/resources/options/option_proxy_X.json").readText())
         }
 
         val thetaRepository = ThetaRepository(endpoint)
@@ -52,6 +52,32 @@ class ProxyTest {
         assertEquals(options.proxy?.use, false)
         assertEquals(options.proxy?.url, "")
         assertEquals(options.proxy?.port, 8080)
+    }
+
+    /**
+     * Get option _proxy.
+     */
+    @Test
+    fun getOptionProxyZ1Test() = runTest {
+        val optionNames = listOf(
+            ThetaRepository.OptionNameEnum.Proxy
+        )
+        val stringOptionNames = listOf(
+            "_proxy"
+        )
+
+        MockApiClient.onRequest = { request ->
+            // check request
+            CheckRequest.checkGetOptions(request, stringOptionNames)
+
+            ByteReadChannel(Resource("src/commonTest/resources/options/option_proxy_Z1.json").readText())
+        }
+
+        val thetaRepository = ThetaRepository(endpoint)
+        val options = thetaRepository.getOptions(optionNames)
+        assertEquals(options.proxy?.use, false)
+        assertEquals(options.proxy?.url, null)
+        assertEquals(options.proxy?.port, null)
     }
 
     /**
