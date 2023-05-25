@@ -996,12 +996,16 @@ static convert_t MaxRecordableTimeEnum = {
   .toTheta = @{
     @"RECORDABLE_TIME_180": THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime180,
     @"RECORDABLE_TIME_300": THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime300,
-    @"RECORDABLE_TIME_1500": THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime1500
+    @"RECORDABLE_TIME_1500": THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime1500,
+    @"RECORDABLE_TIME_7200": THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime7200,
+    @"DO_NOT_UPDATE_MY_SETTING_CONDITION": THETACThetaRepositoryMaxRecordableTimeEnum.doNotUpdateMySettingCondition
   },
   .fromTheta = @{
     THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime180: @"RECORDABLE_TIME_180",
     THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime300: @"RECORDABLE_TIME_300",
-    THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime1500: @"RECORDABLE_TIME_1500"
+    THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime1500: @"RECORDABLE_TIME_1500",
+    THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime7200: @"RECORDABLE_TIME_7200",
+    THETACThetaRepositoryMaxRecordableTimeEnum.doNotUpdateMySettingCondition: @"DO_NOT_UPDATE_MY_SETTING_CONDITION"
   },
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     id val = [MaxRecordableTimeEnum.toTheta
@@ -1213,6 +1217,44 @@ static convert_t IsGpsOnCvt = {
   .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
     if (opt.isGpsOn) {
       [rct setObject:@(((NSNumber *) opt.isGpsOn).boolValue) forKey:@"isGpsOn"];
+    }
+  }
+};
+
+/**
+ * ShutterSpeed converter
+ */
+static convert_t ShutterSpeedEnum = {
+  .toTheta = nil,
+  .fromTheta = nil,
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    if (!ShutterSpeedEnum.toTheta) {
+      NSMutableDictionary* dictionary = [[NSMutableDictionary alloc] init];
+      THETACKotlinArray* array = THETACThetaRepositoryShutterSpeedEnum.values;
+      for (int i = 0; i < array.size; i++) {
+        THETACThetaRepositorySleepDelayEnum* item = [array getIndex:i];
+        [dictionary setObject:item forKey:item.name];
+      }
+      ShutterSpeedEnum.toTheta = dictionary;
+    }
+    id val = [ShutterSpeedEnum.toTheta objectForKey:[rct objectForKey:@"shutterSpeed"]];
+    if (val) {
+        opt.shutterSpeed = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    if (!ShutterSpeedEnum.fromTheta) {
+      NSMutableDictionary* dictionary = [[NSMutableDictionary alloc] init];
+      THETACKotlinArray* array = THETACThetaRepositoryShutterSpeedEnum.values;
+      for (int i = 0; i < array.size; i++) {
+        THETACThetaRepositorySleepDelayEnum* item = [array getIndex:i];
+        [dictionary setObject:item.name forKey:item];
+      }
+      ShutterSpeedEnum.fromTheta = dictionary;
+    }
+    id val = [ShutterSpeedEnum.fromTheta objectForKey:opt.shutterSpeed];
+    if (val) {
+        [rct setObject:val forKey:@"shutterSpeed"];
     }
   }
 };
@@ -1532,6 +1574,7 @@ static NSDictionary *NameToOptionEnum = @{
   @"OffDelay": THETACThetaRepositoryOptionNameEnum.offdelay,
   @"Password": THETACThetaRepositoryOptionNameEnum.password,
   @"Proxy": THETACThetaRepositoryOptionNameEnum.proxy,
+  @"ShutterSpeed": THETACThetaRepositoryOptionNameEnum.shutterspeed,
   @"SleepDelay": THETACThetaRepositoryOptionNameEnum.sleepdelay,
   @"RemainingPictures": THETACThetaRepositoryOptionNameEnum.remainingpictures,
   @"RemainingVideoSeconds": THETACThetaRepositoryOptionNameEnum.remainingvideoseconds,
@@ -1570,6 +1613,7 @@ static NSDictionary *OptionEnumToOption = @{
   @"OffDelay": @"offDelay",
   @"Password": @"password",
   @"Proxy": @"proxy",
+  @"ShutterSpeed": @"shutterSpeed",
   @"SleepDelay": @"sleepDelay",
   @"RemainingPictures": @"remainingPictures",
   @"RemainingVideoSeconds": @"remainingVideoSeconds",
@@ -1611,6 +1655,7 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"offDelay": ^{return &OffDelayEnum;},
   @"password": ^{return &PasswordCvt;},
   @"proxy": ^{return &ProxyCvt;},
+  @"shutterSpeed": ^{return &ShutterSpeedEnum;},
   @"sleepDelay": ^{return &SleepDelayEnum;},
   @"remainingPictures": ^{return &RemainingPicturesCvt;},
   @"remainingVideoSeconds": ^{return &RemainingVideoSecondsCvt;},
