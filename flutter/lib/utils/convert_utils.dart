@@ -117,6 +117,27 @@ class ConvertUtils {
     return gpsInfo;
   }
 
+  static Map<String, dynamic> convertProxyParam(Proxy proxy) {
+    return {
+      'use': proxy.use,
+      'url': proxy.url,
+      'port': proxy.port,
+      'userid': proxy.userid,
+      'password': proxy.password,
+    };
+  }
+
+  static Proxy convertProxy(Map<dynamic, dynamic> data) {
+    var proxy = Proxy(
+      data['use'] ?? false,
+      data['url'],
+      data['port'],
+      data['userid'],
+      data['password'],
+    );
+    return proxy;
+  }
+
   static Options convertOptions(Map<dynamic, dynamic> data) {
     var result = Options();
     for (var entry in data.entries) {
@@ -182,6 +203,9 @@ class ConvertUtils {
           break;
         case OptionNameEnum.password:
           result.password = entry.value;
+          break;
+        case OptionNameEnum.proxy:
+          result.proxy = convertProxy(entry.value);
           break;
         case OptionNameEnum.sleepDelay:
           result.sleepDelay = SleepDelayEnum.getValue(entry.value);
@@ -272,6 +296,8 @@ class ConvertUtils {
       return value;
     } else if (value is GpsInfo) {
       return convertGpsInfoParam(value);
+    } else if (value is Proxy) {
+      return convertProxyParam(value);
     }
     return null;
   }

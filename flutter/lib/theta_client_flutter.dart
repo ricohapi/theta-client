@@ -981,6 +981,9 @@ enum OptionNameEnum {
   /// Option name _password
   password('Password', String),
 
+  /// Option name _proxy
+  proxy('Proxy', Proxy),
+
   /// Option name sleepDelay
   sleepDelay('SleepDelay', SleepDelayEnum),
 
@@ -2238,6 +2241,39 @@ class GpsInfo {
   int get hashCode => Object.hashAll([latitude, longitude, altitude, dateTimeZone]);
 }
 
+/// Proxy information to be used when wired LAN is enabled.
+///
+/// The current setting can be acquired by camera.getOptions,
+/// and it can be changed by camera.setOptions.
+///
+/// For
+/// RICOH THETA Z1 firmware v2.20.3 or later
+/// RICOH THETA X firmware v2.00.0 or later
+class Proxy {
+  /// true: use proxy false: do not use proxy
+  bool use;
+
+  /// Proxy server URL
+  String? url;
+
+  /// Proxy server port number: 0 to 65535
+  int? port;
+
+  /// User ID used for proxy authentication
+  String? userid;
+
+  /// Password used for proxy authentication
+  String? password;
+
+  Proxy(this.use, [this.url, this.port, this.userid, this.password]);
+
+  @override
+  bool operator ==(Object other) => hashCode == other.hashCode;
+
+  @override
+  int get hashCode => Object.hashAll([use, url, port, userid, password]);
+}
+
 /// Camera setting options.
 ///
 /// Refer to the [options category](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
@@ -2356,6 +2392,9 @@ class Options {
   /// Password used for digest authentication when _networkType is set to client mode.
   String? password;
 
+  /// see [Proxy]
+  Proxy? proxy;
+
   /// Length of standby time before the camera enters the sleep mode.
   SleepDelayEnum? sleepDelay;
 
@@ -2442,6 +2481,8 @@ class Options {
         return offDelay as T;
       case OptionNameEnum.password:
         return password as T;
+      case OptionNameEnum.proxy:
+        return proxy as T;
       case OptionNameEnum.sleepDelay:
         return sleepDelay as T;
       case OptionNameEnum.remainingPictures:
@@ -2531,6 +2572,9 @@ class Options {
         break;
       case OptionNameEnum.password:
         password = value;
+        break;
+      case OptionNameEnum.proxy:
+        proxy = value;
         break;
       case OptionNameEnum.sleepDelay:
         sleepDelay = value;

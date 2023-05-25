@@ -91,7 +91,17 @@ fun toGpsInfo(map: Map<String, Any>): GpsInfo {
     )
 }
 
-fun <T>setCaptureBuilderParams(call: MethodCall, builder: Capture.Builder<T>) {
+fun toProxy(map: Map<String, Any>): Proxy {
+    return Proxy(
+        use = map["use"] as? Boolean ?: false,
+        url = map["url"] as? String,
+        port = map["port"] as? Int,
+        userid = map["userid"] as? String,
+        password = map["password"] as? String
+    )
+}
+
+fun <T> setCaptureBuilderParams(call: MethodCall, builder: Capture.Builder<T>) {
     call.argument<String>(OptionNameEnum.Aperture.name)?.also { enumName ->
         ApertureEnum.values().find { it.name == enumName }?.let {
             builder.setAperture(it)
@@ -180,6 +190,16 @@ fun toResult(gpsInfo: GpsInfo): Map<String, Any> {
     )
 }
 
+fun toResult(proxy: Proxy): Map<String, Any?> {
+    return mapOf(
+        "use" to proxy.use,
+        "url" to proxy.url,
+        "port" to proxy.port,
+        "userid" to proxy.userid,
+        "password" to proxy.password
+    )
+}
+
 fun toResult(options: Options): Map<String, Any> {
     val result = mutableMapOf<String, Any>()
 
@@ -200,6 +220,10 @@ fun toResult(options: Options): Map<String, Any> {
             options.getValue<GpsInfo>(OptionNameEnum.GpsInfo)?.let { gpsInfo ->
                 result[OptionNameEnum.GpsInfo.name] = toResult(gpsInfo)
             }
+        } else if (name == OptionNameEnum.Proxy) {
+            options.getValue<Proxy>(OptionNameEnum.Proxy)?.let { proxy ->
+                result[OptionNameEnum.Proxy.name] = toResult(proxy)
+            }
         } else if (valueOptions.contains(name)) {
             addOptionsValueToMap<Any>(options, name, result)
         } else {
@@ -209,13 +233,13 @@ fun toResult(options: Options): Map<String, Any> {
     return result
 }
 
-fun <T : Enum<T>>addOptionsEnumToMap(options: Options, name: OptionNameEnum, map: MutableMap<String, Any>) {
+fun <T : Enum<T>> addOptionsEnumToMap(options: Options, name: OptionNameEnum, map: MutableMap<String, Any>) {
     options.getValue<T>(name)?.let {
         map[name.name] = it.name
     }
 }
 
-fun <T>addOptionsValueToMap(options: Options, name: OptionNameEnum, map: MutableMap<String, Any>) {
+fun <T> addOptionsValueToMap(options: Options, name: OptionNameEnum, map: MutableMap<String, Any>) {
     options.getValue<T>(name)?.let {
         map[name.name] = it
     }
@@ -253,6 +277,9 @@ fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
     } else if (name == OptionNameEnum.GpsInfo) {
         @Suppress("UNCHECKED_CAST")
         options.setValue(name, toGpsInfo(value as Map<String, Any>))
+    } else if (name == OptionNameEnum.Proxy) {
+        @Suppress("UNCHECKED_CAST")
+        options.setValue(name, toProxy(value as Map<String, Any>))
     } else {
         getOptionValueEnum(name, value as String)?.let {
             options.setValue(name, it)

@@ -414,6 +414,43 @@ class OffDelayConverter : OptionConverter {
 }
 
 /**
+ * ProxyConverter
+ */
+class ProxyConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getMap("proxy")?.let {
+      options.proxy = ThetaRepository.Proxy(
+        use = it.getBoolean("use") ?: false,
+        url = it.getString("url"),
+        port = if (it.hasKey("port")) it.getInt("port") else null,
+        userid = it.getString("userid"),
+        password = it.getString("password")
+      )
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.proxy?.let {
+      val proxy = Arguments.createMap()
+      proxy.putBoolean("use", it.use)
+      it.url?.let { url ->
+        proxy.putString("url", url)
+      }
+      it.port?.let { port ->
+        proxy.putInt("port", port)
+      }
+      it.userid?.let { userid ->
+        proxy.putString("userid", userid)
+      }
+      it.password?.let { password ->
+        proxy.putString("password", password)
+      }
+      objects.putMap("proxy", proxy)
+    }
+  }
+}
+
+/**
  * WhiteBalanceConverter
  */
 class WhiteBalanceConverter : OptionConverter {

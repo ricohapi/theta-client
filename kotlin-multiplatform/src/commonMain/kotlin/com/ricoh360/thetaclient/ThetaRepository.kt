@@ -721,9 +721,9 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
-         * sleepDelay
+         * _proxy
          */
-        SleepDelay("sleepDelay", ThetaRepository.SleepDelay::class),
+        Proxy("_proxy", ThetaRepository.Proxy::class),
 
         /**
          * Option name
@@ -742,6 +742,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * remainingSpace
          */
         RemainingSpace("remainingSpace", Long::class),
+
+        /**
+         * Option name
+         * sleepDelay
+         */
+        SleepDelay("sleepDelay", ThetaRepository.SleepDelay::class),
 
         /**
          * Option name
@@ -796,15 +802,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var bluetoothPower: BluetoothPowerEnum? = null,
 
         /**
-         * camera control source
-         * Sets whether to lock/unlock the camera UI.
-         * The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
+         * @see CameraControlSourceEnum
          */
         var cameraControlSource: CameraControlSourceEnum? = null,
 
         /**
-         * Camera mode.
-         * The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
+         * @see CameraModeEnum
          */
         var cameraMode: CameraModeEnum? = null,
 
@@ -942,9 +945,9 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var password: String? = null,
 
         /**
-         * Length of standby time before the camera enters the sleep mode.
+         * @see Proxy
          */
-        var sleepDelay: SleepDelay? = null,
+        var proxy: Proxy? = null,
 
         /**
          * The estimated remaining number of shots for the current shooting settings.
@@ -960,6 +963,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Remaining usable storage space (byte).
          */
         var remainingSpace: Long? = null,
+
+        /**
+         * Length of standby time before the camera enters the sleep mode.
+         */
+        var sleepDelay: SleepDelay? = null,
 
         /**
          * Total storage space (byte).
@@ -990,13 +998,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var whiteBalance: WhiteBalanceEnum? = null,
 
         /**
-         * White balance auto strength
-         *
-         * To set the strength of white balance auto for low color temperature scene.
-         * This option can be set for photo mode and video mode separately.
-         * Also this option will not be cleared by power-off.
-         *
-         * For RICOH THETA Z1 firmware v2.20.3 or later
+         * @see WhiteBalanceAutoStrengthEnum
          */
         var whiteBalanceAutoStrength: WhiteBalanceAutoStrengthEnum? = null,
 
@@ -1029,6 +1031,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             networkType = null,
             offDelay = null,
             password = null,
+            proxy = null,
             sleepDelay = null,
             remainingPictures = null,
             remainingVideoSeconds = null,
@@ -1067,6 +1070,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             networkType = options._networkType?.let { NetworkTypeEnum.get(it) },
             offDelay = options.offDelay?.let { OffDelayEnum.get(it) },
             password = options._password,
+            proxy = options._proxy?.let { Proxy(it) },
             sleepDelay = options.sleepDelay?.let { SleepDelayEnum.get(it) },
             remainingPictures = options.remainingPictures,
             remainingVideoSeconds = options.remainingVideoSeconds,
@@ -1106,6 +1110,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _networkType = networkType?.value,
                 offDelay = offDelay?.sec,
                 _password = password,
+                _proxy = proxy?.toTransferredProxy(),
                 sleepDelay = sleepDelay?.sec,
                 remainingPictures = remainingPictures,
                 remainingVideoSeconds = remainingVideoSeconds,
@@ -1152,6 +1157,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.NetworkType -> networkType
                 OptionNameEnum.OffDelay -> offDelay
                 OptionNameEnum.Password -> password
+                OptionNameEnum.Proxy -> proxy
                 OptionNameEnum.SleepDelay -> sleepDelay
                 OptionNameEnum.RemainingPictures -> remainingPictures
                 OptionNameEnum.RemainingVideoSeconds -> remainingVideoSeconds
@@ -1199,6 +1205,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.NetworkType -> networkType = value as NetworkTypeEnum
                 OptionNameEnum.OffDelay -> offDelay = value as OffDelay
                 OptionNameEnum.Password -> password = value as String
+                OptionNameEnum.Proxy -> proxy = value as Proxy
                 OptionNameEnum.SleepDelay -> sleepDelay = value as SleepDelay
                 OptionNameEnum.RemainingPictures -> remainingPictures = value as Int
                 OptionNameEnum.RemainingVideoSeconds -> remainingVideoSeconds = value as Int
@@ -2860,6 +2867,70 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             fun get(sec: Int): OffDelay {
                 return values().firstOrNull { it.sec == sec } ?: OffDelaySec(sec)
             }
+        }
+    }
+
+    /**
+     * Proxy information to be used when wired LAN is enabled.
+     *
+     * The current setting can be acquired by camera.getOptions,
+     * and it can be changed by camera.setOptions.
+     *
+     * For
+     * RICOH THETA Z1 firmware v2.20.3 or later
+     * RICOH THETA X firmware v2.00.0 or later
+     */
+    data class Proxy(
+        /**
+         * true: use proxy false: do not use proxy
+         */
+        val use: Boolean,
+        /**
+         * Proxy server URL
+         */
+        val url: String? = null,
+        /**
+         * Proxy server port number: 0 to 65535
+         */
+        val port: Int? = null,
+        /**
+         * User ID used for proxy authentication
+         */
+        val userid: String? = null,
+        /**
+         * Password used for proxy authentication
+         */
+        val password: String? = null,
+    ) {
+        constructor(use: Boolean) : this(
+            use = use,
+            url = null,
+            port = null,
+            userid = null,
+            password = null
+        )
+
+        constructor(info: com.ricoh360.thetaclient.transferred.Proxy) : this(
+            use = info.use,
+            url = info.url,
+            port = info.port,
+            userid = info.userid,
+            password = info.password
+        )
+
+        /**
+         * Convert Proxy to transferred.Proxy
+         *
+         * @return transferred.Proxy
+         */
+        fun toTransferredProxy(): com.ricoh360.thetaclient.transferred.Proxy {
+            return com.ricoh360.thetaclient.transferred.Proxy(
+                use = use,
+                url = url,
+                port = port,
+                userid = userid,
+                password = password
+            )
         }
     }
 

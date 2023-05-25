@@ -4,3 +4,4 @@ export * from './option-camera-mode';
 export * from './option-network-type';
 export * from './option-white-balance-auto-strength';
 export * from './option-wlan-frequency';
+export * from './option-proxy';

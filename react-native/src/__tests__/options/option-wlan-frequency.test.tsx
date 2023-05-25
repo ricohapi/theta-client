@@ -4,7 +4,6 @@ describe('WlanFrequencyEnum', () => {
   const data: string[][] = [
     [WlanFrequencyEnum.GHZ_2_4, 'GHZ_2_4'],
     [WlanFrequencyEnum.GHZ_5, 'GHZ_5'],
-
   ];
 
   test('length', () => {

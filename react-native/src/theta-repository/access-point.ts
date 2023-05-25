@@ -11,7 +11,7 @@ export const AuthModeEnum = {
 } as const;
 
 /** type definition of AuthModeEnum */
-export type AuthModeEnum = typeof AuthModeEnum[keyof typeof AuthModeEnum];
+export type AuthModeEnum = (typeof AuthModeEnum)[keyof typeof AuthModeEnum];
 
 /** Access point information. */
 export type AccessPoint = {
