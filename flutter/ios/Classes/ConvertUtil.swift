@@ -327,9 +327,6 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
             options.proxy = toProxy(params: params)
         }
         break
-    case ThetaRepository.OptionNameEnum.sleepdelay.name:
-        options.sleepDelay = getEnumValue(values: ThetaRepository.SleepDelayEnum.values(), name: value as! String)!
-        break
     case ThetaRepository.OptionNameEnum.remainingpictures.name:
         options.remainingPictures = KotlinInt(integerLiteral: value as! Int)
         break
@@ -339,11 +336,17 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.remainingspace.name:
         options.remainingSpace = KotlinLong(integerLiteral: value as! Int)
         break
-    case ThetaRepository.OptionNameEnum.totalspace.name:
-        options.totalSpace = KotlinLong(integerLiteral: value as! Int)
-        break
+    case ThetaRepository.OptionNameEnum.shutterspeed.name:
+        options.shutterSpeed = getEnumValue(values: ThetaRepository.ShutterSpeedEnum.values(), name: value as! String)!
+        break;
     case ThetaRepository.OptionNameEnum.shuttervolume.name:
         options.shutterVolume = KotlinInt(integerLiteral: value as! Int)
+        break
+    case ThetaRepository.OptionNameEnum.sleepdelay.name:
+        options.sleepDelay = getEnumValue(values: ThetaRepository.SleepDelayEnum.values(), name: value as! String)!
+        break
+    case ThetaRepository.OptionNameEnum.totalspace.name:
+        options.totalSpace = KotlinLong(integerLiteral: value as! Int)
         break
     case ThetaRepository.OptionNameEnum.username.name:
         options.username = value as? String

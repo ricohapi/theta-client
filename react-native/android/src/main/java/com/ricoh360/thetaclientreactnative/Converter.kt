@@ -570,6 +570,23 @@ class IsGpsOnConverter : OptionConverter {
 }
 
 /**
+ * ShutterSpeedConverter
+ */
+class ShutterSpeedConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("shutterSpeed")?.let {
+      options.shutterSpeed = ThetaRepository.ShutterSpeedEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.shutterSpeed?.let {
+      objects.putString("shutterSpeed", it.toString())
+    }
+  }
+}
+
+/**
  * SleepDelayConverter
  */
 class SleepDelayConverter : OptionConverter {

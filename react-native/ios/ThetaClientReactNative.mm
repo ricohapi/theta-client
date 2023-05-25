@@ -1222,6 +1222,44 @@ static convert_t IsGpsOnCvt = {
 };
 
 /**
+ * ShutterSpeed converter
+ */
+static convert_t ShutterSpeedEnum = {
+  .toTheta = nil,
+  .fromTheta = nil,
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    if (!ShutterSpeedEnum.toTheta) {
+      NSMutableDictionary* dictionary = [[NSMutableDictionary alloc] init];
+      THETACKotlinArray* array = THETACThetaRepositoryShutterSpeedEnum.values;
+      for (int i = 0; i < array.size; i++) {
+        THETACThetaRepositorySleepDelayEnum* item = [array getIndex:i];
+        [dictionary setObject:item forKey:item.name];
+      }
+      ShutterSpeedEnum.toTheta = dictionary;
+    }
+    id val = [ShutterSpeedEnum.toTheta objectForKey:[rct objectForKey:@"shutterSpeed"]];
+    if (val) {
+        opt.shutterSpeed = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    if (!ShutterSpeedEnum.fromTheta) {
+      NSMutableDictionary* dictionary = [[NSMutableDictionary alloc] init];
+      THETACKotlinArray* array = THETACThetaRepositoryShutterSpeedEnum.values;
+      for (int i = 0; i < array.size; i++) {
+        THETACThetaRepositorySleepDelayEnum* item = [array getIndex:i];
+        [dictionary setObject:item.name forKey:item];
+      }
+      ShutterSpeedEnum.fromTheta = dictionary;
+    }
+    id val = [ShutterSpeedEnum.fromTheta objectForKey:opt.shutterSpeed];
+    if (val) {
+        [rct setObject:val forKey:@"shutterSpeed"];
+    }
+  }
+};
+
+/**
  * SleepDelay converter
  */
 static convert_t SleepDelayEnum = {
@@ -1536,6 +1574,7 @@ static NSDictionary *NameToOptionEnum = @{
   @"OffDelay": THETACThetaRepositoryOptionNameEnum.offdelay,
   @"Password": THETACThetaRepositoryOptionNameEnum.password,
   @"Proxy": THETACThetaRepositoryOptionNameEnum.proxy,
+  @"ShutterSpeed": THETACThetaRepositoryOptionNameEnum.shutterspeed,
   @"SleepDelay": THETACThetaRepositoryOptionNameEnum.sleepdelay,
   @"RemainingPictures": THETACThetaRepositoryOptionNameEnum.remainingpictures,
   @"RemainingVideoSeconds": THETACThetaRepositoryOptionNameEnum.remainingvideoseconds,
@@ -1574,6 +1613,7 @@ static NSDictionary *OptionEnumToOption = @{
   @"OffDelay": @"offDelay",
   @"Password": @"password",
   @"Proxy": @"proxy",
+  @"ShutterSpeed": @"shutterSpeed",
   @"SleepDelay": @"sleepDelay",
   @"RemainingPictures": @"remainingPictures",
   @"RemainingVideoSeconds": @"remainingVideoSeconds",
@@ -1615,6 +1655,7 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"offDelay": ^{return &OffDelayEnum;},
   @"password": ^{return &PasswordCvt;},
   @"proxy": ^{return &ProxyCvt;},
+  @"shutterSpeed": ^{return &ShutterSpeedEnum;},
   @"sleepDelay": ^{return &SleepDelayEnum;},
   @"remainingPictures": ^{return &RemainingPicturesCvt;},
   @"remainingVideoSeconds": ^{return &RemainingVideoSecondsCvt;},

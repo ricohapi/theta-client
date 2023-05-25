@@ -207,9 +207,6 @@ class ConvertUtils {
         case OptionNameEnum.proxy:
           result.proxy = convertProxy(entry.value);
           break;
-        case OptionNameEnum.sleepDelay:
-          result.sleepDelay = SleepDelayEnum.getValue(entry.value);
-          break;
         case OptionNameEnum.remainingPictures:
           result.remainingPictures = entry.value;
           break;
@@ -219,11 +216,17 @@ class ConvertUtils {
         case OptionNameEnum.remainingSpace:
           result.remainingSpace = entry.value;
           break;
-        case OptionNameEnum.totalSpace:
-          result.totalSpace = entry.value;
+        case OptionNameEnum.shutterSpeed:
+          result.shutterSpeed = ShutterSpeedEnum.getValue(entry.value);
           break;
         case OptionNameEnum.shutterVolume:
           result.shutterVolume = entry.value;
+          break;
+        case OptionNameEnum.sleepDelay:
+          result.sleepDelay = SleepDelayEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.totalSpace:
+          result.totalSpace = entry.value;
           break;
         case OptionNameEnum.username:
           result.username = entry.value;
@@ -283,6 +286,8 @@ class ConvertUtils {
     } else if (value is NetworkTypeEnum) {
       return value.rawValue;
     } else if (value is OffDelayEnum) {
+      return value.rawValue;
+    } else if (value is ShutterSpeedEnum) {
       return value.rawValue;
     } else if (value is SleepDelayEnum) {
       return value.rawValue;

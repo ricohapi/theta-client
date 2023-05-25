@@ -57,6 +57,7 @@ class CheckRequest {
             networkType: NetworkType? = null,
             offDelay: Int? = null,
             proxy: Proxy? = null,
+            shutterSpeed: Double? = null,
             shutterVolume: Int? = null,
             sleepDelay: Int? = null,
             whiteBalance: WhiteBalance? = null,
@@ -138,6 +139,9 @@ class CheckRequest {
             }
             proxy?.let {
                 assertEquals(optionsRequest.parameters.options._proxy, it, "setOptions proxy")
+            }
+            shutterSpeed?.let {
+                assertEquals(optionsRequest.parameters.options.shutterSpeed, it, "setOptions shutterSpeed")
             }
             shutterVolume?.let {
                 assertEquals(optionsRequest.parameters.options._shutterVolume, it, "setOptions shutterVolume")
