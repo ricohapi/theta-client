@@ -996,12 +996,16 @@ static convert_t MaxRecordableTimeEnum = {
   .toTheta = @{
     @"RECORDABLE_TIME_180": THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime180,
     @"RECORDABLE_TIME_300": THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime300,
-    @"RECORDABLE_TIME_1500": THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime1500
+    @"RECORDABLE_TIME_1500": THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime1500,
+    @"RECORDABLE_TIME_7200": THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime7200,
+    @"DO_NOT_UPDATE_MY_SETTING_CONDITION": THETACThetaRepositoryMaxRecordableTimeEnum.doNotUpdateMySettingCondition
   },
   .fromTheta = @{
     THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime180: @"RECORDABLE_TIME_180",
     THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime300: @"RECORDABLE_TIME_300",
-    THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime1500: @"RECORDABLE_TIME_1500"
+    THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime1500: @"RECORDABLE_TIME_1500",
+    THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime7200: @"RECORDABLE_TIME_7200",
+    THETACThetaRepositoryMaxRecordableTimeEnum.doNotUpdateMySettingCondition: @"DO_NOT_UPDATE_MY_SETTING_CONDITION"
   },
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     id val = [MaxRecordableTimeEnum.toTheta

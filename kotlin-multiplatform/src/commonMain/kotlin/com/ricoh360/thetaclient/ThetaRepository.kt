@@ -2737,6 +2737,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         RECORDABLE_TIME_1500(1500),
 
         /**
+         * Maximum recordable time. 7200sec for Theta X version 2.00.0 or later,
+         * only for 5.7K 2/5/10fps and 8K 2/5/10fps.
+         * If you set 7200 seconds in 8K 10fps mode and then set back to 4K 30fps mode,
+         * the max recordable time will be overwritten to 1500 seconds automatically.
+         */
+        RECORDABLE_TIME_7200(7200),
+
+        /**
          * Just used by getMySetting/setMySetting command
          */
         DO_NOT_UPDATE_MY_SETTING_CONDITION(-1);

@@ -396,6 +396,8 @@ void main() {
       [MaxRecordableTimeEnum.time_180, 'RECORDABLE_TIME_180'],
       [MaxRecordableTimeEnum.time_300, 'RECORDABLE_TIME_300'],
       [MaxRecordableTimeEnum.time_1500, 'RECORDABLE_TIME_1500'],
+      [MaxRecordableTimeEnum.time_7200, 'RECORDABLE_TIME_7200'],
+      [MaxRecordableTimeEnum.doNotUpdateMySettingCondition, 'DO_NOT_UPDATE_MY_SETTING_CONDITION'],
     ];
     expect(data.length, MaxRecordableTimeEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {

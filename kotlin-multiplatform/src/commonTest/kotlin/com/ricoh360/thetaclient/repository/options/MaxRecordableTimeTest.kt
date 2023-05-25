@@ -80,6 +80,7 @@ class MaxRecordableTimeTest {
         val values = listOf(
             Pair(ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_300, 300),
             Pair(ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500, 1500),
+            Pair(ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_7200, 7200),
             Pair(ThetaRepository.MaxRecordableTimeEnum.DO_NOT_UPDATE_MY_SETTING_CONDITION, -1)
         )
 

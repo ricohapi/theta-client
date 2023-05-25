@@ -369,6 +369,10 @@ export const MaxRecordableTimeEnum = {
   RECORDABLE_TIME_300: 'RECORDABLE_TIME_300',
   /** 1500 seconds for other than SC2. */
   RECORDABLE_TIME_1500: 'RECORDABLE_TIME_1500',
+  /** 7200 seconds for Theta X only */
+  RECORDABLE_TIME_7200: 'RECORDABLE_TIME_7200',
+  /** Just used by getMySetting/setMySetting command */
+  DO_NOT_UPDATE_MY_SETTING_CONDITION: 'DO_NOT_UPDATE_MY_SETTING_CONDITION'
 } as const;
 
 /** type definition of MaxRecordableTimeEnum */
