@@ -5,3 +5,4 @@ export * from './option-network-type';
 export * from './option-shutter-speed';
 export * from './option-white-balance-auto-strength';
 export * from './option-wlan-frequency';
+export * from './option-proxy';

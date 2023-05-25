@@ -39,13 +39,14 @@ class OptionsTest {
         val networkType = ThetaRepository.NetworkTypeEnum.DIRECT
         val offDelay = ThetaRepository.OffDelayEnum.OFF_DELAY_10M
         val password = "password"
-        val shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_10
-        val sleepDelay = ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M
+        val proxy = ThetaRepository.Proxy(use = false, url = "", port = 8080)
         val remainingPictures = 100
         val remainingVideoSeconds = 100
         val remainingSpace = 100L
-        val totalSpace = 100L
+        val shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_10
         val shutterVolume = 100
+        val sleepDelay = ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M
+        val totalSpace = 100L
         val username = "username"
         val whiteBalance = ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT
         val whiteBalanceAutoStrength = ThetaRepository.WhiteBalanceAutoStrengthEnum.OFF
@@ -73,13 +74,14 @@ class OptionsTest {
             networkType = networkType,
             offDelay = offDelay,
             password = password,
-            shutterSpeed = shutterSpeed,
-            sleepDelay = sleepDelay,
+            proxy = proxy,
             remainingPictures = remainingPictures,
             remainingVideoSeconds = remainingVideoSeconds,
             remainingSpace = remainingSpace,
-            totalSpace = totalSpace,
+            shutterSpeed = shutterSpeed,
             shutterVolume = shutterVolume,
+            sleepDelay = sleepDelay,
+            totalSpace = totalSpace,
             username = username,
             whiteBalance = whiteBalance,
             whiteBalanceAutoStrength = whiteBalanceAutoStrength,
@@ -111,13 +113,14 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.NetworkType), networkType, "networkType")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.OffDelay), offDelay, "offDelay")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Password), password, "password")
-        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ShutterSpeed), shutterSpeed, "shutterSpeed")
-        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.SleepDelay), sleepDelay, "sleepDelay")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Proxy), proxy, "proxy")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.RemainingPictures), remainingPictures, "remainingPictures")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.RemainingVideoSeconds), remainingVideoSeconds, "remainingVideoSeconds")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.RemainingSpace), remainingSpace, "remainingSpace")
-        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.TotalSpace), totalSpace, "totalSpace")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ShutterSpeed), shutterSpeed, "shutterSpeed")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ShutterVolume), shutterVolume, "shutterVolume")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.SleepDelay), sleepDelay, "sleepDelay")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.TotalSpace), totalSpace, "totalSpace")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Username), username, "userName")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.WhiteBalance), whiteBalance, "whiteBalance")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.WhiteBalanceAutoStrength), whiteBalanceAutoStrength, "whiteBalanceAutoStrength")
@@ -151,13 +154,14 @@ class OptionsTest {
             Pair(ThetaRepository.OptionNameEnum.NetworkType, ThetaRepository.NetworkTypeEnum.ETHERNET),
             Pair(ThetaRepository.OptionNameEnum.OffDelay, ThetaRepository.OffDelayEnum.OFF_DELAY_10M),
             Pair(ThetaRepository.OptionNameEnum.Password, "password"),
-            Pair(ThetaRepository.OptionNameEnum.ShutterSpeed, ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_30),
-            Pair(ThetaRepository.OptionNameEnum.SleepDelay, ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M),
+            Pair(ThetaRepository.OptionNameEnum.Proxy, ThetaRepository.Proxy(use = false, url = "", port = 8080)),
             Pair(ThetaRepository.OptionNameEnum.RemainingPictures, 101),
             Pair(ThetaRepository.OptionNameEnum.RemainingVideoSeconds, 102),
             Pair(ThetaRepository.OptionNameEnum.RemainingSpace, 103L),
-            Pair(ThetaRepository.OptionNameEnum.TotalSpace, 104L),
+            Pair(ThetaRepository.OptionNameEnum.ShutterSpeed, ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_30),
             Pair(ThetaRepository.OptionNameEnum.ShutterVolume, 10),
+            Pair(ThetaRepository.OptionNameEnum.SleepDelay, ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M),
+            Pair(ThetaRepository.OptionNameEnum.TotalSpace, 104L),
             Pair(ThetaRepository.OptionNameEnum.Username, "username"),
             Pair(ThetaRepository.OptionNameEnum.WhiteBalance, ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT),
             Pair(ThetaRepository.OptionNameEnum.WhiteBalanceAutoStrength, ThetaRepository.WhiteBalanceAutoStrengthEnum.ON),
@@ -201,13 +205,14 @@ class OptionsTest {
         val maxRecordableTime = Pair(1500, ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500)
         val offDelay = Pair(600, ThetaRepository.OffDelayEnum.OFF_DELAY_10M)
         val password = Pair("password", "password")
-        val shutterSpeed = Pair(10.0, ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_10)
-        val sleepDelay = Pair(180, ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M)
+        val proxy = Pair(Proxy(use = false, url = "", port = 8080), ThetaRepository.Proxy(use = false, url = "", port = 8080))
         val remainingPictures = Pair(101, 101)
         val remainingVideoSeconds = Pair(102, 102)
         val remainingSpace = Pair(103L, 103L)
-        val totalSpace = Pair(104L, 104L)
+        val shutterSpeed = Pair(10.0, ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_10)
         val shutterVolume = Pair(10, 10)
+        val sleepDelay = Pair(180, ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M)
+        val totalSpace = Pair(104L, 104L)
         val username = Pair("username", "username")
         val whiteBalance = Pair(WhiteBalance._WARM_WHITE_FLUORESCENT, ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT)
         val whiteBalanceAutoStrength = Pair(WhiteBalanceAutoStrength.OFF, ThetaRepository.WhiteBalanceAutoStrengthEnum.OFF)
@@ -233,13 +238,14 @@ class OptionsTest {
             _maxRecordableTime = maxRecordableTime.first,
             offDelay = offDelay.first,
             _password = password.first,
-            shutterSpeed = shutterSpeed.first,
-            sleepDelay = sleepDelay.first,
+            _proxy = proxy.first,
             remainingPictures = remainingPictures.first,
             remainingVideoSeconds = remainingVideoSeconds.first,
             remainingSpace = remainingSpace.first,
-            totalSpace = totalSpace.first,
+            shutterSpeed = shutterSpeed.first,
             _shutterVolume = shutterVolume.first,
+            sleepDelay = sleepDelay.first,
+            totalSpace = totalSpace.first,
             _username = username.first,
             whiteBalance = whiteBalance.first,
             _whiteBalanceAutoStrength = whiteBalanceAutoStrength.first
@@ -266,13 +272,14 @@ class OptionsTest {
         assertEquals(options.maxRecordableTime, maxRecordableTime.second, "aperture")
         assertEquals(options.offDelay, offDelay.second, "offDelay")
         assertEquals(options.password, password.second, "password")
-        assertEquals(options.shutterSpeed, shutterSpeed.second, "shutterSpeed")
-        assertEquals(options.sleepDelay, sleepDelay.second, "sleepDelay")
+        assertEquals(options.proxy, proxy.second, "proxy")
         assertEquals(options.remainingPictures, remainingPictures.second, "remainingPictures")
         assertEquals(options.remainingVideoSeconds, remainingVideoSeconds.second, "remainingVideoSeconds")
         assertEquals(options.remainingSpace, remainingSpace.second, "remainingSpace")
-        assertEquals(options.totalSpace, totalSpace.second, "totalSpace")
+        assertEquals(options.shutterSpeed, shutterSpeed.second, "shutterSpeed")
         assertEquals(options.shutterVolume, shutterVolume.second, "shutterVolume")
+        assertEquals(options.sleepDelay, sleepDelay.second, "sleepDelay")
+        assertEquals(options.totalSpace, totalSpace.second, "totalSpace")
         assertEquals(options.username, username.second, "username")
         assertEquals(options.whiteBalance, whiteBalance.second, "whiteBalance")
         assertEquals(options.whiteBalanceAutoStrength, whiteBalanceAutoStrength.second, "whiteBalanceAutoStrength")
@@ -306,13 +313,14 @@ class OptionsTest {
         val maxRecordableTime = Pair(1500, ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500)
         val offDelay = Pair(600, ThetaRepository.OffDelayEnum.OFF_DELAY_10M)
         val password = Pair("password", "password")
-        val shutterSpeed = Pair(20.0, ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_20)
-        val sleepDelay = Pair(180, ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M)
+        val proxy = Pair(Proxy(use = false, url = "", port = 8080), ThetaRepository.Proxy(use = false, url = "", port = 8080))
         val remainingPictures = Pair(101, 101)
         val remainingVideoSeconds = Pair(102, 102)
         val remainingSpace = Pair(103L, 103L)
-        val totalSpace = Pair(104L, 104L)
+        val shutterSpeed = Pair(20.0, ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_20)
         val shutterVolume = Pair(10, 10)
+        val sleepDelay = Pair(180, ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M)
+        val totalSpace = Pair(104L, 104L)
         val userName = Pair("username", "username")
         val whiteBalance = Pair(WhiteBalance._WARM_WHITE_FLUORESCENT, ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT)
         val whiteBalanceAutoStrength = Pair(WhiteBalanceAutoStrength.ON, ThetaRepository.WhiteBalanceAutoStrengthEnum.ON)
@@ -338,13 +346,14 @@ class OptionsTest {
             maxRecordableTime = maxRecordableTime.second,
             offDelay = offDelay.second,
             password = password.second,
-            shutterSpeed = shutterSpeed.second,
-            sleepDelay = sleepDelay.second,
+            proxy = proxy.second,
             remainingPictures = remainingPictures.second,
             remainingVideoSeconds = remainingVideoSeconds.second,
             remainingSpace = remainingSpace.second,
-            totalSpace = totalSpace.second,
+            shutterSpeed = shutterSpeed.second,
             shutterVolume = shutterVolume.second,
+            sleepDelay = sleepDelay.second,
+            totalSpace = totalSpace.second,
             username = userName.second,
             whiteBalance = whiteBalance.second,
             whiteBalanceAutoStrength = whiteBalanceAutoStrength.second
@@ -371,13 +380,14 @@ class OptionsTest {
         assertEquals(options._maxRecordableTime, maxRecordableTime.first, "aperture")
         assertEquals(options.offDelay, offDelay.first, "offDelay")
         assertEquals(options._password, password.first, "password")
-        assertEquals(options.shutterSpeed, shutterSpeed.first, "shutterSpeed")
-        assertEquals(options.sleepDelay, sleepDelay.first, "sleepDelay")
+        assertEquals(options._proxy, proxy.first, "proxy")
         assertEquals(options.remainingPictures, remainingPictures.first, "remainingPictures")
         assertEquals(options.remainingVideoSeconds, remainingVideoSeconds.first, "remainingVideoSeconds")
         assertEquals(options.remainingSpace, remainingSpace.first, "remainingSpace")
-        assertEquals(options.totalSpace, totalSpace.first, "totalSpace")
+        assertEquals(options.shutterSpeed, shutterSpeed.first, "shutterSpeed")
         assertEquals(options._shutterVolume, shutterVolume.first, "shutterVolume")
+        assertEquals(options.sleepDelay, sleepDelay.first, "sleepDelay")
+        assertEquals(options.totalSpace, totalSpace.first, "totalSpace")
         assertEquals(options._username, userName.first, "userName")
         assertEquals(options.whiteBalance, whiteBalance.first, "whiteBalance")
         assertEquals(options._whiteBalanceAutoStrength, whiteBalanceAutoStrength.first, "whiteBalanceAutoStrength")

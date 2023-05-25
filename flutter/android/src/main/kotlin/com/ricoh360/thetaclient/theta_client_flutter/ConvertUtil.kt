@@ -1,10 +1,13 @@
 package com.ricoh360.thetaclient.theta_client_flutter
 
+import com.ricoh360.thetaclient.DigestAuth
 import com.ricoh360.thetaclient.ThetaRepository.*
 import com.ricoh360.thetaclient.capture.Capture
 import com.ricoh360.thetaclient.capture.PhotoCapture
 import com.ricoh360.thetaclient.capture.VideoCapture
 import io.flutter.plugin.common.MethodCall
+
+const val KEY_CLIENT_MODE = "clientMode"
 
 fun toResult(thetaInfo: ThetaInfo): Map<String, Any?> {
     return mapOf<String, Any?>(
@@ -66,13 +69,14 @@ fun toResult(thetaState: ThetaState): Map<String, Any?> {
 fun toResult(fileInfoList: List<FileInfo>): List<Map<String, Any>> {
     val result = mutableListOf<Map<String, Any>>()
     fileInfoList.forEach {
-        val map = mapOf<String, Any>(
+        val map = mutableMapOf<String, Any>(
             "name" to it.name,
             "size" to it.size,
             "dateTime" to it.dateTime,
             "fileUrl" to it.fileUrl,
-            "thumbnailUrl" to it.thumbnailUrl
+            "thumbnailUrl" to it.thumbnailUrl,
         )
+        it.storageID?.run { map.put("storageID", this) }
         result.add(map)
     }
     return result
@@ -87,7 +91,17 @@ fun toGpsInfo(map: Map<String, Any>): GpsInfo {
     )
 }
 
-fun <T>setCaptureBuilderParams(call: MethodCall, builder: Capture.Builder<T>) {
+fun toProxy(map: Map<String, Any>): Proxy {
+    return Proxy(
+        use = map["use"] as? Boolean ?: false,
+        url = map["url"] as? String,
+        port = map["port"] as? Int,
+        userid = map["userid"] as? String,
+        password = map["password"] as? String
+    )
+}
+
+fun <T> setCaptureBuilderParams(call: MethodCall, builder: Capture.Builder<T>) {
     call.argument<String>(OptionNameEnum.Aperture.name)?.also { enumName ->
         ApertureEnum.values().find { it.name == enumName }?.let {
             builder.setAperture(it)
@@ -176,6 +190,16 @@ fun toResult(gpsInfo: GpsInfo): Map<String, Any> {
     )
 }
 
+fun toResult(proxy: Proxy): Map<String, Any?> {
+    return mapOf(
+        "use" to proxy.use,
+        "url" to proxy.url,
+        "port" to proxy.port,
+        "userid" to proxy.userid,
+        "password" to proxy.password
+    )
+}
+
 fun toResult(options: Options): Map<String, Any> {
     val result = mutableMapOf<String, Any>()
 
@@ -196,6 +220,10 @@ fun toResult(options: Options): Map<String, Any> {
             options.getValue<GpsInfo>(OptionNameEnum.GpsInfo)?.let { gpsInfo ->
                 result[OptionNameEnum.GpsInfo.name] = toResult(gpsInfo)
             }
+        } else if (name == OptionNameEnum.Proxy) {
+            options.getValue<Proxy>(OptionNameEnum.Proxy)?.let { proxy ->
+                result[OptionNameEnum.Proxy.name] = toResult(proxy)
+            }
         } else if (valueOptions.contains(name)) {
             addOptionsValueToMap<Any>(options, name, result)
         } else {
@@ -205,13 +233,13 @@ fun toResult(options: Options): Map<String, Any> {
     return result
 }
 
-fun <T : Enum<T>>addOptionsEnumToMap(options: Options, name: OptionNameEnum, map: MutableMap<String, Any>) {
+fun <T : Enum<T>> addOptionsEnumToMap(options: Options, name: OptionNameEnum, map: MutableMap<String, Any>) {
     options.getValue<T>(name)?.let {
         map[name.name] = it.name
     }
 }
 
-fun <T>addOptionsValueToMap(options: Options, name: OptionNameEnum, map: MutableMap<String, Any>) {
+fun <T> addOptionsValueToMap(options: Options, name: OptionNameEnum, map: MutableMap<String, Any>) {
     options.getValue<T>(name)?.let {
         map[name.name] = it
     }
@@ -249,6 +277,9 @@ fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
     } else if (name == OptionNameEnum.GpsInfo) {
         @Suppress("UNCHECKED_CAST")
         options.setValue(name, toGpsInfo(value as Map<String, Any>))
+    } else if (name == OptionNameEnum.Proxy) {
+        @Suppress("UNCHECKED_CAST")
+        options.setValue(name, toProxy(value as Map<String, Any>))
     } else {
         getOptionValueEnum(name, value as String)?.let {
             options.setValue(name, it)
@@ -282,6 +313,14 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
     }
 }
 
+fun toDigestAuthParam(data: Map<*, *>): DigestAuth? {
+    val username = data["username"] as? String ?: run {
+        return null
+    }
+    val password = data["password"] as? String
+    return DigestAuth(username, password)
+}
+
 fun toConfigParam(data: Map<String, Any>): Config {
     val config = Config()
     data.forEach { (key, value) ->
@@ -294,6 +333,7 @@ fun toConfigParam(data: Map<String, Any>): Config {
             OptionNameEnum.SleepDelay.name -> config.sleepDelay =
                 getOptionValueEnum(OptionNameEnum.SleepDelay, value as String) as SleepDelayEnum?
             OptionNameEnum.ShutterVolume.name -> config.shutterVolume = value as Int
+            KEY_CLIENT_MODE -> config.clientMode = toDigestAuthParam(value as Map<*, *>)
         }
     }
     return config

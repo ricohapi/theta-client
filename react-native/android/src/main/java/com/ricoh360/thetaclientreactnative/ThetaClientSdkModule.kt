@@ -64,10 +64,14 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set initialize result
    */
   @ReactMethod
-  fun initialize(endpoint: String, promise: Promise) {
+  fun initialize(endpoint: String, config: ReadableMap?, timeout: ReadableMap?, promise: Promise) {
     launch {
       try {
-        theta = ThetaRepository.newInstance(endpoint)
+        theta = ThetaRepository.newInstance(
+          endpoint,
+          config?.let { configToTheta(it) },
+          timeout?.let { timeoutToTheta(it) }
+        )
         promise.resolve(true)
       } catch (t: Throwable) {
         promise.reject(t)
@@ -170,16 +174,18 @@ class ThetaClientReactNativeModule(
    * @param fileType file type to retrieve
    * @param startPosition start position to retrieve
    * @param entryCount count to retrieve
+   * @param storage Desired storage
    * @param promise promise to set result
    */
   @ReactMethod
-  fun listFiles(fileType: String, startPosition: Int, entryCount: Int, promise: Promise) {
+  fun listFiles(fileType: String, startPosition: Int, entryCount: Int, storage: String?, promise: Promise) {
     launch {
       try {
         val (fileList, totalEntries) = theta.listFiles(
           ThetaRepository.FileTypeEnum.valueOf(fileType),
           startPosition,
-          entryCount
+          entryCount,
+          storage?.let { ThetaRepository.StorageEnum.valueOf(it) },
         )
         val resultlist = Arguments.createArray()
         fileList.forEach {
@@ -189,6 +195,9 @@ class ThetaClientReactNativeModule(
           result.putString("dateTime", it.dateTime)
           result.putString("thumbnailUrl", it.thumbnailUrl)
           result.putString("fileUrl", it.fileUrl)
+          it.storageID?.run {
+            result.putString("storageID", this)
+          }
           resultlist.pushMap(result)
         }
         val resultmap = Arguments.createMap()
@@ -293,13 +302,14 @@ class ThetaClientReactNativeModule(
     "networkType" to NetworkTypeConverter(),
     "offDelay" to OffDelayConverter(),
     "password" to PasswordConverter(),
-    "shutterSpeed" to ShutterSpeedConverter(),
-    "sleepDelay" to SleepDelayConverter(),
+    "proxy" to ProxyConverter(),
     "remainingPictures" to RemainingPicturesConverter(),
     "remainingVideoSeconds" to RemainingVideoSecondsConverter(),
     "remainingSpace" to RemainingSpaceConverter(),
-    "totalSpace" to TotalSpaceConverter(),
+    "shutterSpeed" to ShutterSpeedConverter(),
     "shutterVolume" to ShutterVolumeConverter(),
+    "sleepDelay" to SleepDelayConverter(),
+    "totalSpace" to TotalSpaceConverter(),
     "username" to UsernameConverter(),
     "whiteBalance" to WhiteBalanceConverter(),
     "whiteBalanceAutoStrength" to WhiteBalanceAutoStrengthConverter(),
@@ -330,13 +340,14 @@ class ThetaClientReactNativeModule(
     "NetworkType" to "networkType",
     "OffDelay" to "offDelay",
     "Password" to "password",
-    "ShutterSpeed" to "shutterSpeed",
-    "SleepDelay" to "sleepDelay",
+    "Proxy" to "proxy",
     "RemainingPictures" to "remainingPictures",
     "RemainingVideoSeconds" to "remainingVideoSeconds",
     "RemainingSpace" to "remainingSpace",
-    "TotalSpace" to "totalSpace",
+    "ShutterSpeed" to "shutterSpeed",
     "ShutterVolume" to "shutterVolume",
+    "SleepDelay" to "sleepDelay",
+    "TotalSpace" to "totalSpace",
     "Username" to "username",
     "WhiteBalance" to "whiteBalance",
     "WhiteBalanceAutoStrength" to "whiteBalanceAutoStrength",

@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:theta_client_flutter/digest_auth.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 import 'package:theta_client_flutter/theta_client_flutter_method_channel.dart';
 
@@ -241,7 +242,7 @@ void main() {
 
     for (int i = 0; i < fileTypes.length; i++) {
       index = i;
-      var thetaFiles = await platform.listFiles(fileTypes[i], entryCount, startPosition);
+      var thetaFiles = await platform.listFiles(fileTypes[i], entryCount, startPosition, StorageEnum.current);
       expect(thetaFiles.fileList.length, 2);
       var fileInfo = thetaFiles.fileList[0];
       expect(fileInfo.name, name);
@@ -249,6 +250,59 @@ void main() {
       expect(fileInfo.dateTime, dateTime);
       expect(fileInfo.fileUrl, fileUrl);
       expect(fileInfo.thumbnailUrl, thumbnailUrl);
+      expect(fileInfo.storageID, null);
+      expect(thetaFiles.totalEntries, 10);
+    }
+  });
+
+  test('listFiles StorageEnum', () async {
+    const storages = [StorageEnum.internal, StorageEnum.sd, StorageEnum.current];
+    const entryCount = 10;
+    const startPosition = 0;
+    const name = 'R0013336.JPG';
+    const size = 100;
+    const dateTime = '2022:11:15 14:00:15';
+    const fileUrl = 'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG';
+    const thumbnailUrl = 'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG?type=thumb';
+    const storageID = 'a0123456789';
+
+    int index = 0;
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      var arguments = methodCall.arguments as Map<dynamic, dynamic>;
+      expect(arguments['fileType'], FileTypeEnum.image.rawValue);
+      expect(arguments['entryCount'], entryCount);
+      expect(arguments['startPosition'], startPosition);
+      expect(arguments['storage'], storages[index].rawValue);
+
+      final List fileList = List<dynamic>.empty(growable: true);
+      final Map info = <String, dynamic> {
+        'name': name,
+        'size': size,
+        'dateTime': dateTime,
+        'fileUrl': fileUrl,
+        'thumbnailUrl': thumbnailUrl,
+        'storageID': storageID,
+      };
+      fileList.add(info);
+      fileList.add(info);
+      final Map thetaFiles = <String, dynamic> {
+        'fileList': fileList,
+        'totalEntries': 10,
+      };
+      return thetaFiles;
+    });
+
+    for (int i = 0; i < storages.length; i++) {
+      index = i;
+      var thetaFiles = await platform.listFiles(FileTypeEnum.image, entryCount, startPosition, storages[index]);
+      expect(thetaFiles.fileList.length, 2);
+      var fileInfo = thetaFiles.fileList[0];
+      expect(fileInfo.name, name);
+      expect(fileInfo.size, size);
+      expect(fileInfo.dateTime, dateTime);
+      expect(fileInfo.fileUrl, fileUrl);
+      expect(fileInfo.thumbnailUrl, thumbnailUrl);
+      expect(fileInfo.storageID, storageID);
       expect(thetaFiles.totalEntries, 10);
     }
   });
@@ -343,6 +397,7 @@ void main() {
     Map<String, dynamic> gpsInfoMap = {
       'latitude': 1.0, 'longitude': 2.0, 'altitude': 3.0, 'dateTimeZone': '2022:01:01 00:01:00+09:00'
     };
+    Map<String, dynamic> proxyMap = {'use': false, 'url': '', 'port': 8081, 'userid': '', 'password': ''};
     List<List<dynamic>> data = [
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
       [OptionNameEnum.cameraControlSource, 'CameraControlSource', CameraControlSourceEnum.camera, 'CAMERA'],
@@ -364,13 +419,14 @@ void main() {
       [OptionNameEnum.networkType, 'NetworkType', NetworkTypeEnum.client, 'CLIENT'],
       [OptionNameEnum.offDelay, 'OffDelay', OffDelayEnum.offDelay_10m, 'OFF_DELAY_10M'],
       [OptionNameEnum.password, 'Password', 'password', 'password'],
-      [OptionNameEnum.shutterSpeed, 'ShutterSpeed', ShutterSpeedEnum.shutterSpeedOneOver_10, 'SHUTTER_SPEED_ONE_OVER_10'],
-      [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
+      [OptionNameEnum.proxy, 'Proxy', Proxy(false, '', 8081, '', ''), proxyMap],
       [OptionNameEnum.remainingPictures, 'RemainingPictures', 3, 3],
       [OptionNameEnum.remainingVideoSeconds, 'RemainingVideoSeconds', 4, 4],
       [OptionNameEnum.remainingSpace, 'RemainingSpace', 5, 5],
-      [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
+      [OptionNameEnum.shutterSpeed, 'ShutterSpeed', ShutterSpeedEnum.shutterSpeedOneOver_10, 'SHUTTER_SPEED_ONE_OVER_10'],
       [OptionNameEnum.shutterVolume, 'ShutterVolume', 7, 7],
+      [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
+      [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
       [OptionNameEnum.username, 'Username', 'username', 'username'],
       [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
       [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
@@ -408,6 +464,7 @@ void main() {
     Map<String, dynamic> gpsInfoMap = {
       'latitude': 1.0, 'longitude': 2.0, 'altitude': 3.0, 'dateTimeZone': '2022:01:01 00:01:00+09:00'
     };
+    Map<String, dynamic> proxyMap = {'use': false, 'url': '', 'port': 8081, 'userid': '', 'password': ''};
     List<List<dynamic>> data = [
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
       [OptionNameEnum.cameraMode, 'CameraMode', CameraModeEnum.capture, 'CAPTURE'],
@@ -428,13 +485,14 @@ void main() {
       [OptionNameEnum.networkType, 'NetworkType', NetworkTypeEnum.client, 'CLIENT'],
       [OptionNameEnum.offDelay, 'OffDelay', OffDelayEnum.offDelay_15m, 'OFF_DELAY_15M'],
       [OptionNameEnum.password, 'Password', 'password', 'password'],
-      [OptionNameEnum.shutterSpeed, 'ShutterSpeed', ShutterSpeedEnum.shutterSpeedOneOver_20, 'SHUTTER_SPEED_ONE_OVER_20'],
-      [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
+      [OptionNameEnum.proxy, 'Proxy', Proxy(false, '', 8081, '', ''), proxyMap],
       [OptionNameEnum.remainingPictures, 'RemainingPictures', 3, 3],
       [OptionNameEnum.remainingVideoSeconds, 'RemainingVideoSeconds', 4, 4],
       [OptionNameEnum.remainingSpace, 'RemainingSpace', 5, 5],
-      [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
+      [OptionNameEnum.shutterSpeed, 'ShutterSpeed', ShutterSpeedEnum.shutterSpeedOneOver_20, 'SHUTTER_SPEED_ONE_OVER_20'],
       [OptionNameEnum.shutterVolume, 'ShutterVolume', 7, 7],
+      [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
+      [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
       [OptionNameEnum.username, 'Username', 'username', 'username'],
       [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
       [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.on, 'ON'],
@@ -498,6 +556,60 @@ void main() {
       expect(configMap['OffDelay'], config.offDelay!.rawValue);
       expect(configMap['SleepDelay'], config.sleepDelay!.rawValue);
       expect(configMap['ShutterVolume'], config.shutterVolume);
+      expect(configMap['clientMode'], isNull);
+
+      return Future.value();
+    });
+    await platform.initialize(endpoint, config, null);
+  });
+
+  test('initialize clientMode', () async {
+    const endpoint = 'http://dummy/';
+    final config = ThetaConfig();
+    const username = "THETAXX1234567";
+    const password = "1234567";
+    config.clientMode = DigestAuth(username, password);
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      var arguments = methodCall.arguments as Map<dynamic, dynamic>;
+      expect(arguments['endpoint'], endpoint);
+      expect(arguments['timeout'], isNull);
+
+      Map<dynamic, dynamic> configMap = arguments['config'];
+      expect(configMap['DateTimeZone'], isNull);
+      expect(configMap['Language'], isNull);
+      expect(configMap['OffDelay'], isNull);
+      expect(configMap['SleepDelay'], isNull);
+      expect(configMap['ShutterVolume'], isNull);
+      final clientMode = configMap['clientMode'];
+      expect(clientMode['username'], username);
+      expect(clientMode['password'], password);
+
+      return Future.value();
+    });
+    await platform.initialize(endpoint, config, null);
+  });
+
+  test('initialize clientMode no password', () async {
+    const endpoint = 'http://dummy/';
+    final config = ThetaConfig();
+    const username = "THETAXX1234567";
+    config.clientMode = DigestAuth(username);
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      var arguments = methodCall.arguments as Map<dynamic, dynamic>;
+      expect(arguments['endpoint'], endpoint);
+      expect(arguments['timeout'], isNull);
+
+      Map<dynamic, dynamic> configMap = arguments['config'];
+      expect(configMap['DateTimeZone'], isNull);
+      expect(configMap['Language'], isNull);
+      expect(configMap['OffDelay'], isNull);
+      expect(configMap['SleepDelay'], isNull);
+      expect(configMap['ShutterVolume'], isNull);
+      final clientMode = configMap['clientMode'];
+      expect(clientMode['username'], username);
+      expect(clientMode['password'], isNull);
 
       return Future.value();
     });

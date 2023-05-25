@@ -428,11 +428,6 @@ data class Options(
     var offDelay: Int? = null,
 
     /**
-     * Password used for digest authentication when _networkType is set to client mode.
-     */
-    var _password: String? = null,
-
-    /**
      * Length of standby time before the camera automatically powers OFF.
      */
     @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
@@ -440,11 +435,9 @@ data class Options(
     var offDelaySupport: List<Int>? = null,
 
     /**
-     * The estimated remaining number of shots for the current
-     * shooting settings.
+     * Password used for digest authentication when _networkType is set to client mode.
      */
-    @Serializable(with = NumberAsIntSerializer::class)
-    var remainingPictures: Int? = null,
+    var _password: String? = null,
 
     /**
      * preview format
@@ -455,6 +448,18 @@ data class Options(
      * Supported preview format
      */
     var previewFormatSupport: List<PreviewFormat>? = null,
+
+    /**
+     * @see Proxy
+     */
+    var _proxy: Proxy? = null,
+
+    /**
+     * The estimated remaining number of shots for the current
+     * shooting settings.
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    var remainingPictures: Int? = null,
 
     /**
      * Remaining usable storage space (byte).
@@ -860,6 +865,45 @@ data class PreviewFormat(
      */
     @Serializable(with = NumberAsIntSerializer::class)
     val framerate: Int? = null,
+)
+
+/**
+ * Proxy information to be used when wired LAN is enabled.
+ *
+ * The current setting can be acquired by camera.getOptions,
+ * and it can be changed by camera.setOptions.
+ *
+ * For
+ * RICOH THETA Z1 firmware v2.20.3 or later
+ * RICOH THETA X firmware v2.00.0 or later
+ */
+@Serializable
+data class Proxy(
+    /**
+     * true: use proxy false: do not use proxy
+     */
+    val use: Boolean,
+
+    /**
+     * Proxy server URL
+     */
+    val url: String? = null,
+
+    /**
+     * Proxy server port number: 0 to 65535
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    val port: Int? = null,
+
+    /**
+     * User ID used for proxy authentication
+     */
+    val userid: String? = null,
+
+    /**
+     * Password used for proxy authentication
+     */
+    val password: String? = null,
 )
 
 /**

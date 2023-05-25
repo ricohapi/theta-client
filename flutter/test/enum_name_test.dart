@@ -396,6 +396,8 @@ void main() {
       [MaxRecordableTimeEnum.time_180, 'RECORDABLE_TIME_180'],
       [MaxRecordableTimeEnum.time_300, 'RECORDABLE_TIME_300'],
       [MaxRecordableTimeEnum.time_1500, 'RECORDABLE_TIME_1500'],
+      [MaxRecordableTimeEnum.time_7200, 'RECORDABLE_TIME_7200'],
+      [MaxRecordableTimeEnum.doNotUpdateMySettingCondition, 'DO_NOT_UPDATE_MY_SETTING_CONDITION'],
     ];
     expect(data.length, MaxRecordableTimeEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
@@ -439,6 +441,18 @@ void main() {
       [SleepDelayEnum.disable, 'DISABLE'],
     ];
     expect(data.length, SleepDelayEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('StorageEnum', () async {
+    List<List<dynamic>> data = [
+      [StorageEnum.internal, 'INTERNAL'],
+      [StorageEnum.sd, 'SD'],
+      [StorageEnum.current, 'CURRENT'],
+    ];
+    expect(data.length, StorageEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }

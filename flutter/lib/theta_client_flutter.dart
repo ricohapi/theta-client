@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:theta_client_flutter/digest_auth.dart';
 import 'package:theta_client_flutter/utils/convert_utils.dart';
 
 import 'theta_client_flutter_platform_interface.dart';
@@ -69,8 +70,8 @@ class ThetaClientFlutter {
   /// * @return A list of file information and number of totalEntries.
   /// see https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md
   /// * @throws If an error occurs in THETA.
-  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, [int startPosition = 0]) {
-    return ThetaClientFlutterPlatform.instance.listFiles(fileType, entryCount, startPosition);
+  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, [int startPosition = 0, StorageEnum? storage]) {
+    return ThetaClientFlutterPlatform.instance.listFiles(fileType, entryCount, startPosition, storage);
   }
 
   /// Delete files in Theta.
@@ -463,6 +464,26 @@ enum FileTypeEnum {
   }
 }
 
+/// Specifies the storage
+enum StorageEnum {
+  /// internal storage
+  internal('INTERNAL'),
+
+  /// external storage (SD card)
+  sd('SD'),
+
+  /// current storage
+  current('CURRENT');
+
+  final String rawValue;
+  const StorageEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+}
+
 /// File information in Theta.
 class FileInfo {
   /// File name.
@@ -480,7 +501,9 @@ class FileInfo {
   /// You can get a thumbnail image using HTTP GET to [thumbnailUrl].
   final String thumbnailUrl;
 
-  FileInfo(this.name, this.size, this.dateTime, this.fileUrl, this.thumbnailUrl);
+  final String? storageID;
+
+  FileInfo(this.name, this.size, this.dateTime, this.fileUrl, this.thumbnailUrl, [this.storageID]);
 }
 
 /// Data about files in Theta.
@@ -958,11 +981,8 @@ enum OptionNameEnum {
   /// Option name _password
   password('Password', String),
 
-  /// Shutter speed (sec).
-  shutterSpeed('ShutterSpeed', ShutterSpeedEnum),
-
-  /// Option name sleepDelay
-  sleepDelay('SleepDelay', SleepDelayEnum),
+  /// Option name _proxy
+  proxy('Proxy', Proxy),
 
   /// Option name remainingPictures
   remainingPictures('RemainingPictures', int),
@@ -973,11 +993,17 @@ enum OptionNameEnum {
   /// Option name remainingSpace
   remainingSpace('RemainingSpace', int),
 
-  /// Option name totalSpace
-  totalSpace('TotalSpace', int),
+  /// Shutter speed (sec).
+  shutterSpeed('ShutterSpeed', ShutterSpeedEnum),
 
   /// Option name _shutterVolume
   shutterVolume('ShutterVolume', int),
+
+  /// Option name sleepDelay
+  sleepDelay('SleepDelay', SleepDelayEnum),
+
+  /// Option name totalSpace
+  totalSpace('TotalSpace', int),
 
   /// Option name _username
   username('Username', String),
@@ -1746,7 +1772,16 @@ enum MaxRecordableTimeEnum {
   time_300('RECORDABLE_TIME_300'),
 
   /// Maximum recordable time. 1500sec for other than SC2.
-  time_1500('RECORDABLE_TIME_1500');
+  time_1500('RECORDABLE_TIME_1500'),
+
+  /// Maximum recordable time. 7200sec for Theta X version 2.00.0 or later,
+  /// only for 5.7K 2/5/10fps and 8K 2/5/10fps.
+  /// If you set 7200 seconds in 8K 10fps mode and then set back to 4K 30fps mode,
+  /// the max recordable time will be overwritten to 1500 seconds automatically.
+  time_7200('RECORDABLE_TIME_7200'),
+
+  /// Just used by getMySetting/setMySetting command
+  doNotUpdateMySettingCondition('DO_NOT_UPDATE_MY_SETTING_CONDITION');
 
   final String rawValue;
   const MaxRecordableTimeEnum(this.rawValue);
@@ -2459,6 +2494,39 @@ class GpsInfo {
   int get hashCode => Object.hashAll([latitude, longitude, altitude, dateTimeZone]);
 }
 
+/// Proxy information to be used when wired LAN is enabled.
+///
+/// The current setting can be acquired by camera.getOptions,
+/// and it can be changed by camera.setOptions.
+///
+/// For
+/// RICOH THETA Z1 firmware v2.20.3 or later
+/// RICOH THETA X firmware v2.00.0 or later
+class Proxy {
+  /// true: use proxy false: do not use proxy
+  bool use;
+
+  /// Proxy server URL
+  String? url;
+
+  /// Proxy server port number: 0 to 65535
+  int? port;
+
+  /// User ID used for proxy authentication
+  String? userid;
+
+  /// Password used for proxy authentication
+  String? password;
+
+  Proxy(this.use, [this.url, this.port, this.userid, this.password]);
+
+  @override
+  bool operator ==(Object other) => hashCode == other.hashCode;
+
+  @override
+  int get hashCode => Object.hashAll([use, url, port, userid, password]);
+}
+
 /// Camera setting options.
 ///
 /// Refer to the [options category](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
@@ -2577,14 +2645,8 @@ class Options {
   /// Password used for digest authentication when _networkType is set to client mode.
   String? password;
 
-  /// Shutter speed (sec).
-  /// 
-  /// It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
-  /// Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
-  ShutterSpeedEnum? shutterSpeed;
-
-  /// Length of standby time before the camera enters the sleep mode.
-  SleepDelayEnum? sleepDelay;
+  /// see [Proxy]
+  Proxy? proxy;
 
   /// The estimated remaining number of shots for the current shooting settings.
   int? remainingPictures;
@@ -2595,8 +2657,11 @@ class Options {
   /// Remaining usable storage space (byte).
   int? remainingSpace;
 
-  /// Total storage space (byte).
-  int? totalSpace;
+  /// Shutter speed (sec).
+  /// 
+  /// It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
+  /// Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
+  ShutterSpeedEnum? shutterSpeed;
 
   /// Shutter volume.
   /// 
@@ -2604,6 +2669,12 @@ class Options {
   /// 0: Minimum volume (minShutterVolume)
   /// 100: Maximum volume (maxShutterVolume)
   int? shutterVolume;
+
+  /// Length of standby time before the camera enters the sleep mode.
+  SleepDelayEnum? sleepDelay;
+
+  /// Total storage space (byte).
+  int? totalSpace;
 
   /// User name used for digest authentication when _networkType is set to client mode.
   String? username;
@@ -2669,20 +2740,22 @@ class Options {
         return offDelay as T;
       case OptionNameEnum.password:
         return password as T;
-      case OptionNameEnum.shutterSpeed:
-        return shutterSpeed as T;
-      case OptionNameEnum.sleepDelay:
-        return sleepDelay as T;
+      case OptionNameEnum.proxy:
+        return proxy as T;
       case OptionNameEnum.remainingPictures:
         return remainingPictures as T;
       case OptionNameEnum.remainingVideoSeconds:
         return remainingVideoSeconds as T;
       case OptionNameEnum.remainingSpace:
         return remainingSpace as T;
-      case OptionNameEnum.totalSpace:
-        return totalSpace as T;
+      case OptionNameEnum.shutterSpeed:
+        return shutterSpeed as T;
       case OptionNameEnum.shutterVolume:
         return shutterVolume as T;
+      case OptionNameEnum.sleepDelay:
+        return sleepDelay as T;
+      case OptionNameEnum.totalSpace:
+        return totalSpace as T;
       case OptionNameEnum.username:
         return username as T;
       case OptionNameEnum.whiteBalance:
@@ -2761,11 +2834,8 @@ class Options {
       case OptionNameEnum.password:
         password = value;
         break;
-      case OptionNameEnum.shutterSpeed:
-        shutterSpeed = value;
-        break;
-      case OptionNameEnum.sleepDelay:
-        sleepDelay = value;
+      case OptionNameEnum.proxy:
+        proxy = value;
         break;
       case OptionNameEnum.remainingPictures:
         remainingPictures = value;
@@ -2776,11 +2846,17 @@ class Options {
       case OptionNameEnum.remainingSpace:
         remainingSpace = value;
         break;
-      case OptionNameEnum.totalSpace:
-        totalSpace = value;
+      case OptionNameEnum.shutterSpeed:
+        shutterSpeed = value;
         break;
       case OptionNameEnum.shutterVolume:
         shutterVolume = value;
+        break;
+      case OptionNameEnum.sleepDelay:
+        sleepDelay = value;
+        break;
+      case OptionNameEnum.totalSpace:
+        totalSpace = value;
         break;
       case OptionNameEnum.username:
         username = value;
@@ -3036,11 +3112,23 @@ class VideoCapture extends Capture {
 
 /// Configuration of THETA
 class ThetaConfig {
+  /// Location information acquisition time
   String? dateTime;
+
+  /// Language used in camera OS
   LanguageEnum? language;
+
+  /// Length of standby time before the camera automatically power OFF
   OffDelayEnum? offDelay;
+
+  /// Length of standby time before the camera enters the sleep mode.
   SleepDelayEnum? sleepDelay;
+
+  /// Shutter volume.
   int? shutterVolume;
+
+  /// Authentication information used for client mode connections
+  DigestAuth? clientMode;
 }
 
 /// Timeout of HTTP call.

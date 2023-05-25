@@ -1,3 +1,4 @@
+import 'package:theta_client_flutter/digest_auth.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
 class ConvertUtils {
@@ -10,7 +11,8 @@ class ConvertUtils {
         element['size'],
         element['dateTime'],
         element['fileUrl'],
-        element['thumbnailUrl']
+        element['thumbnailUrl'],
+        element['storageID']
       );
       fileList.add(info);
     }
@@ -115,6 +117,27 @@ class ConvertUtils {
     return gpsInfo;
   }
 
+  static Map<String, dynamic> convertProxyParam(Proxy proxy) {
+    return {
+      'use': proxy.use,
+      'url': proxy.url,
+      'port': proxy.port,
+      'userid': proxy.userid,
+      'password': proxy.password,
+    };
+  }
+
+  static Proxy convertProxy(Map<dynamic, dynamic> data) {
+    var proxy = Proxy(
+      data['use'] ?? false,
+      data['url'],
+      data['port'],
+      data['userid'],
+      data['password'],
+    );
+    return proxy;
+  }
+
   static Options convertOptions(Map<dynamic, dynamic> data) {
     var result = Options();
     for (var entry in data.entries) {
@@ -181,11 +204,8 @@ class ConvertUtils {
         case OptionNameEnum.password:
           result.password = entry.value;
           break;
-        case OptionNameEnum.shutterSpeed:
-          result.shutterSpeed = ShutterSpeedEnum.getValue(entry.value);
-          break;
-        case OptionNameEnum.sleepDelay:
-          result.sleepDelay = SleepDelayEnum.getValue(entry.value);
+        case OptionNameEnum.proxy:
+          result.proxy = convertProxy(entry.value);
           break;
         case OptionNameEnum.remainingPictures:
           result.remainingPictures = entry.value;
@@ -196,11 +216,17 @@ class ConvertUtils {
         case OptionNameEnum.remainingSpace:
           result.remainingSpace = entry.value;
           break;
-        case OptionNameEnum.totalSpace:
-          result.totalSpace = entry.value;
+        case OptionNameEnum.shutterSpeed:
+          result.shutterSpeed = ShutterSpeedEnum.getValue(entry.value);
           break;
         case OptionNameEnum.shutterVolume:
           result.shutterVolume = entry.value;
+          break;
+        case OptionNameEnum.sleepDelay:
+          result.sleepDelay = SleepDelayEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.totalSpace:
+          result.totalSpace = entry.value;
           break;
         case OptionNameEnum.username:
           result.username = entry.value;
@@ -275,8 +301,19 @@ class ConvertUtils {
       return value;
     } else if (value is GpsInfo) {
       return convertGpsInfoParam(value);
+    } else if (value is Proxy) {
+      return convertProxyParam(value);
     }
     return null;
+  }
+
+  static Map<String, dynamic> convertDigestAuthParam(DigestAuth digestAuth) {
+    Map<String, dynamic> result = {};
+    result["username"] = digestAuth.username;
+    if (digestAuth.password != null) {
+      result["password"] = digestAuth.password;
+    }
+    return result;
   }
 
   static Map<String, dynamic> convertConfigParam(ThetaConfig config) {
@@ -295,6 +332,10 @@ class ConvertUtils {
     }
     if (config.shutterVolume != null) {
       result[OptionNameEnum.shutterVolume.rawValue] = config.shutterVolume;
+    }
+    final clientMode = config.clientMode;
+    if (clientMode != null) {
+      result["clientMode"] = convertDigestAuthParam(clientMode);
     }
     return result;
   }

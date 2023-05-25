@@ -1,6 +1,7 @@
 import type { CameraControlSourceEnum } from './option-camera-control-source';
 import type { CameraModeEnum } from './option-camera-mode';
 import type { NetworkTypeEnum } from './option-network-type';
+import type { Proxy } from './option-proxy';
 import type { ShutterSpeedEnum } from './option-shutter-speed';
 import type { WhiteBalanceAutoStrengthEnum } from './option-white-balance-auto-strength';
 import type { WlanFrequencyEnum } from './option-wlan-frequency';
@@ -369,6 +370,10 @@ export const MaxRecordableTimeEnum = {
   RECORDABLE_TIME_300: 'RECORDABLE_TIME_300',
   /** 1500 seconds for other than SC2. */
   RECORDABLE_TIME_1500: 'RECORDABLE_TIME_1500',
+  /** 7200 seconds for Theta X only */
+  RECORDABLE_TIME_7200: 'RECORDABLE_TIME_7200',
+  /** Just used by getMySetting/setMySetting command */
+  DO_NOT_UPDATE_MY_SETTING_CONDITION: 'DO_NOT_UPDATE_MY_SETTING_CONDITION'
 } as const;
 
 /** type definition of MaxRecordableTimeEnum */
@@ -489,6 +494,8 @@ export const OptionNameEnum = {
   OffDelay: 'OffDelay',
   /** password */
   Password: 'Password',
+  /** proxy */
+  Proxy: 'Proxy',
   /** shutterSpeed */
   ShutterSpeed: 'ShutterSpeed',
   /** sleepDelay */
@@ -561,6 +568,14 @@ export type Options = {
   offDelay?: OffDelayEnum;
   /** Password used for digest authentication when _networkType is set to client mode. */
   password?: String;
+  /** Proxy information to be used when wired LAN is enabled. */
+  proxy?: Proxy;
+  /** The estimated remaining number of shots for the current shooting settings. */
+  remainingPictures?: number;
+  /** The estimated remaining shooting time (sec.) for the current video shooting settings. */
+  remainingVideoSeconds?: number;
+  /** Remaining usable storage space (byte). */
+  remainingSpace?: number;
   /**
    * Shutter speed (sec).
    *
@@ -568,18 +583,12 @@ export type Options = {
    * Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
    */
   shutterSpeed?: ShutterSpeedEnum;
-  /** Length of standby time before the camera enters the sleep mode. */
-  sleepDelay?: SleepDelayEnum;
-  /** The estimated remaining number of shots for the current shooting settings. */
-  remainingPictures?: number;
-  /** The estimated remaining shooting time (sec.) for the current video shooting settings. */
-  remainingVideoSeconds?: number;
-  /** Remaining usable storage space (byte). */
-  remainingSpace?: number;
-  /** Total storage space (byte). */
-  totalSpace?: number;
   /** Shutter volume. */
   shutterVolume?: number;
+  /** Length of standby time before the camera enters the sleep mode. */
+  sleepDelay?: SleepDelayEnum;
+  /** Total storage space (byte). */
+  totalSpace?: number;
   /** User name used for digest authentication when _networkType is set to client mode. */
   username?: String;
   /** White balance. */

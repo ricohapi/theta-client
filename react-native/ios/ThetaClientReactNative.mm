@@ -166,6 +166,13 @@ static CFTimeInterval FRAME_INTERVAL = (CFTimeInterval) (1.0/10.0);
 }
 @end
 
+/**
+ * check null for object
+ */
+static bool isNull(id obj) {
+    return (obj == nil || obj == [NSNull null]);
+}
+
 /** opiton converter from theta to react */
 typedef void (^SetFromTheta)(NSMutableDictionary *, THETACThetaRepositoryOptions *);
 /** option converter from react to theta */
@@ -261,6 +268,17 @@ static convert_t FileTypeEnum = {
     @"IMAGE": THETACThetaRepositoryFileTypeEnum.image,
     @"VIDEO": THETACThetaRepositoryFileTypeEnum.video,
     @"ALL": THETACThetaRepositoryFileTypeEnum.all
+  }
+};
+
+/**
+ * StorageEnum converter
+ */
+static convert_t StorageEnum = {
+  .toTheta = @{
+    @"INTERNAL": THETACThetaRepositoryStorageEnum.internal,
+    @"SD": THETACThetaRepositoryStorageEnum.sd,
+    @"CURRENT": THETACThetaRepositoryStorageEnum.current,
   }
 };
 
@@ -978,12 +996,16 @@ static convert_t MaxRecordableTimeEnum = {
   .toTheta = @{
     @"RECORDABLE_TIME_180": THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime180,
     @"RECORDABLE_TIME_300": THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime300,
-    @"RECORDABLE_TIME_1500": THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime1500
+    @"RECORDABLE_TIME_1500": THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime1500,
+    @"RECORDABLE_TIME_7200": THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime7200,
+    @"DO_NOT_UPDATE_MY_SETTING_CONDITION": THETACThetaRepositoryMaxRecordableTimeEnum.doNotUpdateMySettingCondition
   },
   .fromTheta = @{
     THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime180: @"RECORDABLE_TIME_180",
     THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime300: @"RECORDABLE_TIME_300",
-    THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime1500: @"RECORDABLE_TIME_1500"
+    THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime1500: @"RECORDABLE_TIME_1500",
+    THETACThetaRepositoryMaxRecordableTimeEnum.recordableTime7200: @"RECORDABLE_TIME_7200",
+    THETACThetaRepositoryMaxRecordableTimeEnum.doNotUpdateMySettingCondition: @"DO_NOT_UPDATE_MY_SETTING_CONDITION"
   },
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     id val = [MaxRecordableTimeEnum.toTheta
@@ -1467,6 +1489,49 @@ static convert_t PasswordCvt = {
 };
 
 /**
+ * Proxy converter
+ */
+static convert_t ProxyCvt = {
+    .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+        NSDictionary *proxyDic = [rct objectForKey:@"proxy"];
+        if (proxyDic) {
+            opt.proxy = [[THETACThetaRepositoryProxy alloc]
+                         initWithUse:!isNull([proxyDic objectForKey:@"use"]) ? ((NSNumber*) [proxyDic objectForKey:@"use"]).boolValue : NO
+                         url:!isNull([proxyDic objectForKey:@"url"]) ? [proxyDic objectForKey:@"url"] : nil
+                         port:!isNull([proxyDic objectForKey:@"port"]) ? [THETACInt numberWithInt:((NSNumber*) [proxyDic objectForKey:@"port"]).intValue] : nil
+                         userid:!isNull([proxyDic objectForKey:@"userid"]) ? [proxyDic objectForKey:@"userid"] : nil
+                         password:!isNull([proxyDic objectForKey:@"password"]) ? [proxyDic objectForKey:@"password"] : nil];
+        }
+    },
+    
+    .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+        if (opt.proxy) {
+            NSMutableDictionary *proxy = [NSMutableDictionary dictionary];
+
+            [proxy setObject:@(opt.proxy.use) forKey:@"use"];
+
+            if (opt.proxy.url) {
+                [proxy setObject:opt.proxy.url forKey:@"url"];
+            }
+            
+            if (opt.proxy.port) {
+                [proxy setObject:@(opt.proxy.port.intValue) forKey:@"port"];
+            }
+            
+            if (opt.proxy.userid) {
+                [proxy setObject:opt.proxy.userid forKey:@"userid"];
+            }
+            
+            if (opt.proxy.password) {
+                [proxy setObject:opt.proxy.password forKey:@"password"];
+            }
+            
+            [rct setObject:proxy forKey:@"proxy"];
+        }
+    }
+};
+
+/**
  * Username converter
  */
 static convert_t UsernameCvt = {
@@ -1508,6 +1573,7 @@ static NSDictionary *NameToOptionEnum = @{
   @"NetworkType": THETACThetaRepositoryOptionNameEnum.networktype,
   @"OffDelay": THETACThetaRepositoryOptionNameEnum.offdelay,
   @"Password": THETACThetaRepositoryOptionNameEnum.password,
+  @"Proxy": THETACThetaRepositoryOptionNameEnum.proxy,
   @"ShutterSpeed": THETACThetaRepositoryOptionNameEnum.shutterspeed,
   @"SleepDelay": THETACThetaRepositoryOptionNameEnum.sleepdelay,
   @"RemainingPictures": THETACThetaRepositoryOptionNameEnum.remainingpictures,
@@ -1546,6 +1612,7 @@ static NSDictionary *OptionEnumToOption = @{
   @"NetworkType": @"networkType",
   @"OffDelay": @"offDelay",
   @"Password": @"password",
+  @"Proxy": @"proxy",
   @"ShutterSpeed": @"shutterSpeed",
   @"SleepDelay": @"sleepDelay",
   @"RemainingPictures": @"remainingPictures",
@@ -1587,6 +1654,7 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"networkType": ^{return &NetworkTypeEnum;},
   @"offDelay": ^{return &OffDelayEnum;},
   @"password": ^{return &PasswordCvt;},
+  @"proxy": ^{return &ProxyCvt;},
   @"shutterSpeed": ^{return &ShutterSpeedEnum;},
   @"sleepDelay": ^{return &SleepDelayEnum;},
   @"remainingPictures": ^{return &RemainingPicturesCvt;},
@@ -1602,6 +1670,70 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
 };
 
 static NSString *EVENT_NAME = @"ThetaFrameEvent";
+
+THETACDigestAuth* digestAuthToTheta(NSDictionary* objects)
+{
+  if (!objects) {
+    return nil;
+  }
+  NSString* username = [objects objectForKey:@"username"];
+  if (!username) {
+    return nil;
+  }
+  NSString* password = [objects objectForKey:@"password"];
+  THETACDigestAuth* digestAuth = [[THETACDigestAuth alloc] initWithUsername:username password:password];
+  return digestAuth;
+}
+
+THETACThetaRepositoryConfig* configToTheta(NSDictionary* objects)
+{
+  if (!objects) {
+    return nil;
+  }
+  THETACThetaRepositoryConfig* config = [[THETACThetaRepositoryConfig alloc] init];
+  NSString* datetime = [objects objectForKey:@"dateTime"];
+  if (datetime) {
+    config.dateTime = datetime;
+  }
+  id language = [LanguageEnum.toTheta objectForKey:[objects objectForKey:@"language"]];
+  if (language) {
+    config.language = language;
+  }
+  id offDelay = [OffDelayEnum.toTheta objectForKey:[objects objectForKey:@"offDelay"]];
+  if (offDelay) {
+    config.offDelay = offDelay;
+  }
+  id sleepDelay = [SleepDelayEnum.toTheta objectForKey:[objects objectForKey:@"sleepDelay"]];
+  if (sleepDelay) {
+    config.sleepDelay = sleepDelay;
+  }
+  NSNumber* shutterVolume = [objects objectForKey:@"shutterVolume"];
+  if (shutterVolume) {
+    config.shutterVolume = [THETACInt numberWithInt:[shutterVolume intValue]];
+  }
+
+  config.clientMode = digestAuthToTheta([objects objectForKey:@"clientMode"]);
+
+  return config;
+}
+
+THETACThetaRepositoryTimeout* timeoutToTheta(NSDictionary* objects)
+{
+  if (!objects) {
+    return nil;
+  }
+  NSNumber* connectTimeout = [objects objectForKey:@"connectTimeout"];
+  NSNumber* requestTimeout = [objects objectForKey:@"requestTimeout"];
+  NSNumber* socketTimeout = [objects objectForKey:@"socketTimeout"];
+  if (!connectTimeout || !requestTimeout || !socketTimeout) {
+    return nil;
+  }
+  THETACThetaRepositoryTimeout* timeout = [[THETACThetaRepositoryTimeout alloc]
+                                            initWithConnectTimeout:[connectTimeout longValue]
+                                            requestTimeout:[requestTimeout longLongValue]
+                                            socketTimeout:[socketTimeout longLongValue]];
+  return timeout;
+}
 
 /**
  * ThetaClientReactNative implementation
@@ -1662,11 +1794,15 @@ RCT_EXPORT_MODULE(ThetaClientReactNative)
 /**
  * initialize ThetaRepository
  * @param endPoint endpoint to connect theta
+ * @param config Configuration of initialize. If null, get from THETA
+ * @param timeout Timeout of HTTP call
  * @param resolve resolver for initilization
  * @param rejecter rejecter for initialization
  */
 RCT_REMAP_METHOD(initialize,
                  initializeWithEndpoint:(NSString *)endPoint
+                 withConfig:(NSDictionary*)config
+                 withTimeout:(NSDictionary*)timeout
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
@@ -1676,8 +1812,8 @@ RCT_REMAP_METHOD(initialize,
   NSError *error = nil;
   THETACThetaRepositoryCompanion *companion = THETACThetaRepository.companion;
   [companion doNewInstanceEndpoint:endPoint
-                            config:nil
-                           timeout:nil
+                            config:configToTheta(config)
+                           timeout:timeoutToTheta(timeout)
                  completionHandler:^(THETACThetaRepository *repo, NSError *error) {
       if (error) {
         reject(@"error", [error localizedDescription], error);
@@ -1781,6 +1917,7 @@ RCT_REMAP_METHOD(getThetaState,
  * @param fileType file type to retrieve
  * @param startPosition start position to retrieve
  * @param entryCount count to retrieve
+ * @param storage Desired storage
  * @param resolve resolver for listFiles
  * @param rejecter rejecter for listFiles
  */
@@ -1788,12 +1925,14 @@ RCT_REMAP_METHOD(listFiles,
                  listFilesWithFileTypeEnum:(NSString*)fileType
                  withStartPosition:(int32_t)startPosition
                  withEntryCount:(int32_t)entryCount
+                 withStorage:(NSString*)storage
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
   [_theta listFilesFileType:[FileTypeEnum.toTheta objectForKey:fileType]
               startPosition:startPosition
                  entryCount:entryCount
+                    storage:[StorageEnum.toTheta objectForKey:storage]
           completionHandler:^(THETACThetaRepositoryThetaFiles *items,
                               NSError *error) {
       if (error) {
@@ -1802,16 +1941,20 @@ RCT_REMAP_METHOD(listFiles,
         NSMutableArray *ary = [[NSMutableArray alloc] init];
         for (int i = 0; i < items.fileList.count; i++) {
           THETACThetaRepositoryFileInfo *finfo = items.fileList[i];
-          [ary addObject: @{
-              @"name":finfo.name,
-                @"size":@(finfo.size),
-                @"dateTime":finfo.dateTime,
-                @"thumbnailUrl":finfo.thumbnailUrl,
-                @"fileUrl":finfo.fileUrl
-                }];
+          NSMutableDictionary *fileInfoObject = [[NSMutableDictionary alloc] initWithDictionary:@{
+            @"name":finfo.name,
+            @"size":@(finfo.size),
+            @"dateTime":finfo.dateTime,
+            @"thumbnailUrl":finfo.thumbnailUrl,
+            @"fileUrl":finfo.fileUrl
+          }];
+          if (finfo.storageID) {
+            [fileInfoObject setObject:finfo.storageID forKey:@"storageID"];
+          }
+          [ary addObject:fileInfoObject];
         }
-          resolve(@{@"fileList":ary,
-                @"totalEntries": @(items.totalEntries)});
+        resolve(@{@"fileList":ary,
+              @"totalEntries": @(items.totalEntries)});
       } else {
         reject(@"error", @"no items", nil);
       }

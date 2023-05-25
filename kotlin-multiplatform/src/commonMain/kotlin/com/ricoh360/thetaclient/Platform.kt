@@ -19,3 +19,5 @@ expect class FrameSource
  * convert [packet] to platform dependent frame source data
  */
 expect fun frameFrom(packet: Pair<ByteArray, Int>): FrameSource
+
+expect fun randomUUID(): String
