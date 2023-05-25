@@ -143,7 +143,7 @@ class ConvertUtils {
     for (var entry in data.entries) {
       final name = OptionNameEnum.getValue(entry.key)!;
       switch (name) {
-        
+
         case OptionNameEnum.aperture:
           result.aperture = ApertureEnum.getValue(entry.value);
           break;
@@ -247,7 +247,7 @@ class ConvertUtils {
 
   static Map<String, dynamic> convertSetOptionsParam(Options options) {
     Map<String, dynamic> result = {};
-    for (var element in OptionNameEnum.values) { 
+    for (var element in OptionNameEnum.values) {
       var value = options.getValue(element);
       if (value != null) {
         result[element.rawValue] = convertOptionValueToMapValue(value);
@@ -390,16 +390,17 @@ class ConvertUtils {
   static List<AccessPoint> toAccessPointList(List<Map<dynamic, dynamic>> data) {
     var accessPointList = List<AccessPoint>.empty(growable: true);
     for (Map<dynamic, dynamic> element in data) {
+      var authModeValue = AuthModeEnum.getValue(element['authMode']);
       var accessPoint = AccessPoint(
-        element['ssid'],
-        element['ssidStealth'],
-        AuthModeEnum.getValue(element['authMode'])!,
-        element['connectionPriority'],
-        element['usingDhcp'],
-        element['ipAddress'],
-        element['subnetMask'],
-        element['defaultGateway']
-      );
+          element['ssid'],
+          element['ssidStealth'],
+          (authModeValue != null) ? authModeValue : AuthModeEnum.none,
+          element['connectionPriority'],
+          element['usingDhcp'],
+          element['ipAddress'],
+          element['subnetMask'],
+          element['defaultGateway'],
+          convertProxy(element['proxy']));
       accessPointList.add(accessPoint);
     }
     return accessPointList;

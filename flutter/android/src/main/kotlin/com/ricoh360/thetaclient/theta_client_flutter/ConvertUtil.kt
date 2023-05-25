@@ -401,6 +401,9 @@ fun toListAccessPointsResult(accessPointList: List<AccessPoint>): List<Map<Strin
         accessPoint.defaultGateway?.let {
             result["defaultGateway"] = it
         }
+        accessPoint.proxy?.let {
+            result["proxy"] = toResult(proxy = Proxy(it))
+        }
         resultList.add(result)
     }
     return resultList

@@ -458,6 +458,9 @@ func convertResult(accessPointList: [ThetaRepository.AccessPoint]) -> [[String: 
         if let defaultGateway = accessPoint.defaultGateway {
             result["defaultGateway"] = defaultGateway
         }
+        if let proxy = accessPoint.proxy {
+            result["proxy"] = convertResult(proxy: ThetaRepository.Proxy(info: proxy))
+        }
         resultList.append(result)
     })
     return resultList

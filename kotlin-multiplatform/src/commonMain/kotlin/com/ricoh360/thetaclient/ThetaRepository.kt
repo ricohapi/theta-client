@@ -4516,7 +4516,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         ipAddress: String? = null,
         subnetMask: String? = null,
         defaultGateway: String? = null,
-        proxy: com.ricoh360.thetaclient.transferred.Proxy? = null,
+        proxy: Proxy? = null,
     ) {
         val params = SetAccessPointParams(
             ssid = ssid,
@@ -4528,7 +4528,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             ipAddress = ipAddress,
             subnetMask = subnetMask,
             defaultGateway = defaultGateway,
-            proxy = proxy
+            proxy = proxy?.toTransferredProxy()
         )
         try {
             ThetaApi.callSetAccessPointCommand(endpoint, params).error?.let {
@@ -4564,7 +4564,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         authMode: AuthModeEnum = AuthModeEnum.NONE,
         password: String = "",
         connectionPriority: Int = 1,
-        proxy: com.ricoh360.thetaclient.transferred.Proxy? = null,
+        proxy: Proxy? = null,
     ) {
         setAccessPoint(
             ssid = ssid,
@@ -4602,7 +4602,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         ipAddress: String,
         subnetMask: String,
         defaultGateway: String,
-        proxy: com.ricoh360.thetaclient.transferred.Proxy? = null,
+        proxy: Proxy? = null,
     ) {
         setAccessPoint(
             ssid = ssid,
