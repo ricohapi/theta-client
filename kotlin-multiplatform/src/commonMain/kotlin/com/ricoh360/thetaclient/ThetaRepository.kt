@@ -385,6 +385,30 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Update firmware of Theta using non-public API.
+     *
+     * @param fileUrls List of URL from which firmware can be gotten.
+     * @param fileNames List of firmware file name.
+     * @exception ThetaWebApiException If an error occurs in THETA.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun updateFirmware(fileContents: List<ByteArray>, fileNames: List<String>) {
+        try {
+            val response = ThetaApi.callUpdateFirmwareApi(endpoint, fileContents, fileNames)
+            response.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
+    /**
      * Acquires a list of still image files and movie files.
      *
      * @param[fileType] File types to acquire.

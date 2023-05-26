@@ -11,7 +11,11 @@ import io.ktor.client.network.sockets.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
+import io.ktor.client.request.forms.formData
+import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.statement.*
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.core.*
@@ -94,6 +98,35 @@ object ThetaApi {
             setBody(request)
         }
         return decodeStatusApiResponse(response.bodyAsText())
+    }
+
+    /**
+     * Call update firmware API which is non-public.
+     */
+    @Throws(Throwable::class)
+    suspend fun callUpdateFirmwareApi(
+        endpoint: String,
+        fileContents: List<ByteArray>,
+        fileNames: List<String>,
+    ): UpdateFirmwareApiResponse {
+        if(fileContents.size == 0) {
+            throw kotlin.IllegalArgumentException("Empty fileContents")
+        } else if(fileContents.size != fileNames.size) {
+            throw kotlin.IllegalArgumentException("Different size of fileContents and fileNames")
+        }
+        return httpClient.submitFormWithBinaryData(
+            // Rewrite to get the API path from environment variable THETA_FU_API_PATH
+            url = getApiUrl(endpoint, "/_writeFile"),
+            formData = formData {
+                for(i in 0 until fileContents.size) {
+                    append(key = "\"firmware\"",value = fileContents[i], Headers.build {
+                        append(HttpHeaders.ContentDisposition, "filename=\"${fileNames[i]}\"")
+                        append(HttpHeaders.ContentType, "application/octet-stream")
+                    })
+                }
+
+            }
+        ).body()
     }
 
     /*
