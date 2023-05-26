@@ -6,7 +6,12 @@ import type { MetaInfo } from './theta-meta';
 import type { PluginInfo } from './theta-plugin';
 
 import { NativeModules } from 'react-native';
-import type { OptionNameEnum, Options, CaptureModeEnum } from './options';
+import type {
+  OptionNameEnum,
+  Options,
+  CaptureModeEnum,
+  Proxy,
+} from './options';
 import { PhotoCaptureBuilder, VideoCaptureBuilder } from '../capture';
 import type { ThetaConfig } from './theta-config';
 import type { ThetaTimeout } from './theta-timeout';
@@ -303,6 +308,7 @@ export function listAccessPoints(): Promise<AccessPoint[]> {
  * @param {AuthModeEnum} authMode Authentication mode.
  * @param {string} password Password. If authMode is "NONE", pass empty String.
  * @param {number} connectionPriority Connection priority 1 to 5.
+ * @param {Proxy} proxy Proxy information to be used for the access point.
  * @return promise of boolean result
  */
 export function setAccessPointDynamically(
@@ -310,14 +316,16 @@ export function setAccessPointDynamically(
   ssidStealth: boolean = false,
   authMode: AuthModeEnum = AuthModeEnum.NONE,
   password: string = '',
-  connectionPriority: number = 1
+  connectionPriority: number = 1,
+  proxy?: Proxy
 ): Promise<boolean> {
   return ThetaClientReactNative.setAccessPointDynamically(
     ssid,
     ssidStealth,
     authMode,
     password,
-    connectionPriority
+    connectionPriority,
+    proxy
   );
 }
 
@@ -333,6 +341,7 @@ export function setAccessPointDynamically(
  * @param {string} ipAddress IP address assigns to Theta.
  * @param {string} subnetMask Subnet mask.
  * @param {string} defaultGateway Default gateway.
+ * @param {Proxy} proxy Proxy information to be used for the access point.
  * @return promise of boolean result
  */
 export function setAccessPointStatically(
@@ -343,7 +352,8 @@ export function setAccessPointStatically(
   connectionPriority: number = 1,
   ipAddress: string,
   subnetMask: string,
-  defaultGateway: string
+  defaultGateway: string,
+  proxy?: Proxy
 ): Promise<boolean> {
   return ThetaClientReactNative.setAccessPointStatically(
     ssid,
@@ -353,7 +363,8 @@ export function setAccessPointStatically(
     connectionPriority,
     ipAddress,
     subnetMask,
-    defaultGateway
+    defaultGateway,
+    proxy
   );
 }
 
