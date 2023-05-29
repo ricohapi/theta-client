@@ -743,7 +743,7 @@ class ThetaClientReactNativeModule(
           apinfo.putString("defaultGateway", it.defaultGateway)
 
           it.proxy?.let { proxy ->
-            var options = ThetaRepository.Options(proxy = ThetaRepository.Proxy(info = proxy))
+            var options = ThetaRepository.Options(proxy = proxy)
             val optionsMap = Arguments.createMap()
             val cvt = converters["proxy"]
             cvt?.setFromTheta(options, optionsMap)

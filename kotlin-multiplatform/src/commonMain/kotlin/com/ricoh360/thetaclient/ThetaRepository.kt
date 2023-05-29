@@ -4666,7 +4666,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         val ipAddress: String?,
         val subnetMask: String?,
         val defaultGateway: String?,
-        val proxy: com.ricoh360.thetaclient.transferred.Proxy?,
+        val proxy: Proxy?,
     ) {
         constructor(accessPoint: com.ricoh360.thetaclient.transferred.AccessPoint) : this(
             ssid = accessPoint.ssid,
@@ -4677,7 +4677,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             ipAddress = accessPoint.ipAddress,
             subnetMask = accessPoint.subnetMask,
             defaultGateway = accessPoint.defaultGateway,
-            proxy = accessPoint.proxy,
+            proxy = accessPoint.proxy?.let { Proxy(info = it) },
         )
     }
 

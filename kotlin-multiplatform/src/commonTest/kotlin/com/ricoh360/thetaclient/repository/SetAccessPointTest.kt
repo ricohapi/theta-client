@@ -5,7 +5,6 @@ import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.AuthenticationMode
 import com.ricoh360.thetaclient.transferred.IpAddressAllocation
-import com.ricoh360.thetaclient.transferred.Proxy
 import com.ricoh360.thetaclient.transferred.SetAccessPointRequest
 import io.ktor.client.network.sockets.*
 import io.ktor.client.request.*
@@ -44,7 +43,7 @@ class SetAccessPointTest {
         ipAddress: String?,
         subnetMask: String?,
         defaultGateway: String?,
-        proxy: Proxy?
+        proxy: ThetaRepository.Proxy?
     ) {
         assertEquals(request.url.encodedPath, "/osc/commands/execute", "request path")
         val body = request.body as TextContent
@@ -67,7 +66,7 @@ class SetAccessPointTest {
             assertEquals(it.ipAddress, ipAddress, "ipAddress")
             assertEquals(it.subnetMask, subnetMask, "subnetMask")
             assertEquals(it.defaultGateway, defaultGateway, "defaultGateway")
-            assertEquals(it.proxy, proxy, "_proxy")
+            assertEquals(it.proxy, proxy?.toTransferredProxy(), "_proxy")
         }
     }
 
@@ -81,7 +80,7 @@ class SetAccessPointTest {
         val authMode = ThetaRepository.AuthModeEnum.WEP
         val password = "password_test"
         val connectionPriority = 2
-        val proxy = Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
+        val proxy = ThetaRepository.Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
 
         MockApiClient.onRequest = { request ->
             // check request
@@ -127,7 +126,7 @@ class SetAccessPointTest {
         val ipAddress = "192.168.1.2"
         val subnetMask = "255.255.255.0"
         val defaultGateway = "192.168.1.3"
-        val proxy = Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
+        val proxy = ThetaRepository.Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
 
         MockApiClient.onRequest = { request ->
             // check request
@@ -183,7 +182,7 @@ class SetAccessPointTest {
             val subnetMask = "255.255.255.0"
             val defaultGateway = "192.168.1.3"
             val ipAddressAllocation = IpAddressAllocation.STATIC
-            val proxy = Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
+            val proxy = ThetaRepository.Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
 
             thetaRepository.setAccessPoint(
                 ssid = ssid,
@@ -227,7 +226,7 @@ class SetAccessPointTest {
             val subnetMask = "255.255.255.0"
             val defaultGateway = "192.168.1.3"
             val ipAddressAllocation = IpAddressAllocation.STATIC
-            val proxy = Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
+            val proxy = ThetaRepository.Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
 
             thetaRepository.setAccessPoint(
                 ssid = ssid,
@@ -268,7 +267,7 @@ class SetAccessPointTest {
             val subnetMask = "255.255.255.0"
             val defaultGateway = "192.168.1.3"
             val ipAddressAllocation = IpAddressAllocation.STATIC
-            val proxy = Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
+            val proxy = ThetaRepository.Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
 
             thetaRepository.setAccessPoint(
                 ssid = ssid,
@@ -309,7 +308,7 @@ class SetAccessPointTest {
             val subnetMask = "255.255.255.0"
             val defaultGateway = "192.168.1.3"
             val ipAddressAllocation = IpAddressAllocation.STATIC
-            val proxy = Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
+            val proxy = ThetaRepository.Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
 
             thetaRepository.setAccessPoint(
                 ssid = ssid,
@@ -349,7 +348,7 @@ class SetAccessPointTest {
             val subnetMask = "255.255.255.0"
             val defaultGateway = "192.168.1.3"
             val ipAddressAllocation = IpAddressAllocation.STATIC
-            val proxy = Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
+            val proxy = ThetaRepository.Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
 
             thetaRepository.setAccessPoint(
                 ssid = ssid,

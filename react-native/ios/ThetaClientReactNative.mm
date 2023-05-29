@@ -2480,16 +2480,15 @@ RCT_REMAP_METHOD(listAccessPoints,
             NSMutableArray *ary = [[NSMutableArray alloc] init];
             for (int i = 0; i < accessPointList.count; i++) {
                 THETACThetaRepositoryAccessPoint *apinfo = accessPointList[i];
-                
+
                 NSMutableDictionary *optionsDic = [[NSMutableDictionary alloc] init];
-                convert_t *convert = [NameToConverter objectForKey:@"proxy"]();
+                convert_t *convert = &ProxyCvt;
                 if (convert && convert->setFromTheta) {
                     THETACThetaRepositoryOptions *options = [[THETACThetaRepositoryOptions alloc] init];
-                    THETACThetaRepositoryProxy *proxy = [[THETACThetaRepositoryProxy alloc] initWithInfo:apinfo.proxy];
-                    [options setProxy:proxy];
+                    [options setProxy:apinfo.proxy];
                     convert->setFromTheta(optionsDic, options);
                 }
-                
+
                 NSMutableDictionary *item = [[NSMutableDictionary alloc] init];
                 [item setObject:apinfo.ssid forKey:@"ssid"];
                 [item setObject:@(apinfo.ssidStealth) forKey:@"ssidStealth"];
@@ -2623,7 +2622,7 @@ RCT_REMAP_METHOD(deleteAccessPoint,
 /// @param proxyDic NSDictionary of proxy
 static THETACThetaRepositoryProxy* convertDictionaryToProxy(NSDictionary *proxyDic) {
     THETACThetaRepositoryOptions *options = [[THETACThetaRepositoryOptions alloc] init];
-    convert_t *convert = [NameToConverter objectForKey:@"proxy"]();
+    convert_t *convert = &ProxyCvt;
     if (convert && convert->setToTheta) {
         NSMutableDictionary *optionsDic = [[NSMutableDictionary alloc] init];
         [optionsDic setObject:proxyDic forKey:@"proxy"];
