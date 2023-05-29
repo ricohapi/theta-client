@@ -2483,7 +2483,7 @@ RCT_REMAP_METHOD(listAccessPoints,
 
                 NSMutableDictionary *optionsDic = [[NSMutableDictionary alloc] init];
                 convert_t *convert = &ProxyCvt;
-                if (convert && convert->setFromTheta) {
+                if (convert->setFromTheta) {
                     THETACThetaRepositoryOptions *options = [[THETACThetaRepositoryOptions alloc] init];
                     [options setProxy:apinfo.proxy];
                     convert->setFromTheta(optionsDic, options);
@@ -2623,7 +2623,7 @@ RCT_REMAP_METHOD(deleteAccessPoint,
 static THETACThetaRepositoryProxy* convertDictionaryToProxy(NSDictionary *proxyDic) {
     THETACThetaRepositoryOptions *options = [[THETACThetaRepositoryOptions alloc] init];
     convert_t *convert = &ProxyCvt;
-    if (convert && convert->setToTheta) {
+    if (convert->setToTheta) {
         NSMutableDictionary *optionsDic = [[NSMutableDictionary alloc] init];
         [optionsDic setObject:proxyDic forKey:@"proxy"];
         convert->setToTheta(optionsDic, options);
