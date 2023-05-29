@@ -29,3 +29,13 @@ actual fun frameFrom(packet: Pair<ByteArray, Int>): FrameSource {
 actual fun randomUUID(): String {
     return UUID.randomUUID().toString()
 }
+
+actual fun getEnvironmentVar(name: String): String? {
+    var value: String? = null
+    runCatching {
+        value = System.getenv(name)
+    }.onFailure {
+        return null
+    }
+    return value
+}

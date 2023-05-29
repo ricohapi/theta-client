@@ -41,3 +41,7 @@ actual fun frameFrom(packet: Pair<ByteArray, Int>): FrameSource {
 actual fun randomUUID(): String {
     return NSUUID.UUID().UUIDString
 }
+
+actual fun getEnvironmentVar(name: String): String? {
+    return null
+}

@@ -114,9 +114,13 @@ object ThetaApi {
         } else if(fileContents.size != fileNames.size) {
             throw kotlin.IllegalArgumentException("Different size of fileContents and fileNames")
         }
+        val apiPath: String? = getEnvironmentVar(FIRMWARE_UPDATE_API_ENV_NAME)
+        if(apiPath == null) {
+            throw kotlin.IllegalStateException("Environment variable ${FIRMWARE_UPDATE_API_ENV_NAME} is not set")
+        }
         return httpClient.submitFormWithBinaryData(
             // Rewrite to get the API path from environment variable THETA_FU_API_PATH
-            url = getApiUrl(endpoint, "/_writeFile"),
+            url = getApiUrl(endpoint, apiPath),
             formData = formData {
                 for(i in 0 until fileContents.size) {
                     append(key = "\"firmware\"",value = fileContents[i], Headers.build {
@@ -832,3 +836,5 @@ object ThetaApi {
         }
     }
 }
+
+const val FIRMWARE_UPDATE_API_ENV_NAME= "THETA_FU_API_PATH"
