@@ -14,6 +14,13 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlin.test.*
 
+/**
+ * This test uses a non-public API.
+ * To execute this test, you have to set following environment variables.
+ *    $ export THETA_FU_API_PATH=firmware_update_API_path
+ *    $ export THETA_FU_API_PATH_TEST=true
+ *
+ */
 @OptIn(ExperimentalSerializationApi::class, ExperimentalCoroutinesApi::class)
 class UpdateFirmwareTest {
     private val endpoint = "http://192.168.1.1:80/"
@@ -48,6 +55,7 @@ class UpdateFirmwareTest {
         if(apiPath == null) {
             assertTrue(false, "updateFirmware: ${FIRMWARE_UPDATE_API_ENV_NAME} is not set")
         }
+        println("apiPath: ${apiPath}")
         MockApiClient.onRequest = { request ->
             // check request
             assertEquals(request.url.encodedPath, apiPath, "request path")
