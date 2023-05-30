@@ -386,8 +386,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
     /**
      * Update firmware of Theta using non-public API.
-     * To execute this function, you have to set following environment variable.
-     *    $ export THETA_FU_API_PATH=firmware_update_API_path
+     * To execute this function, you have to set environment variable THETA_FU_API_PATH
+     * to the path of firmware update API.
      *
      * @param fileContents List of firmware binary.
      * @param fileNames List of firmware file name.

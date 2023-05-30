@@ -40,22 +40,22 @@ class UpdateFirmwareTest {
         // Check the setting to execute this test
         getEnvironmentVar(FIRMWARE_UPDATE_API_TEST_ENV_NAME)?.also {
             if(it != "true") {
-                println("environment variable ${FIRMWARE_UPDATE_API_TEST_ENV_NAME}: ${it}")
+                println("environment variable ${FIRMWARE_UPDATE_API_TEST_ENV_NAME}: $it")
                 println("So skip updateFirmwareTest()")
-                println("To execute this test set ${FIRMWARE_UPDATE_API_TEST_ENV_NAME} to \"true\"")
+                println("To execute this test set $FIRMWARE_UPDATE_API_TEST_ENV_NAME to \"true\"")
                 return@runTest
             }
         } ?: run {
-            println("No environment variable ${FIRMWARE_UPDATE_API_TEST_ENV_NAME}")
+            println("No environment variable $FIRMWARE_UPDATE_API_TEST_ENV_NAME")
             println("So skip updateFirmwareTest()")
-            println("To execute this test set ${FIRMWARE_UPDATE_API_TEST_ENV_NAME} to \"true\"")
+            println("To execute this test set $FIRMWARE_UPDATE_API_TEST_ENV_NAME to \"true\"")
             return@runTest
         }
         val apiPath: String? = getEnvironmentVar(FIRMWARE_UPDATE_API_ENV_NAME)
         if(apiPath == null) {
-            assertTrue(false, "updateFirmware: ${FIRMWARE_UPDATE_API_ENV_NAME} is not set")
+            assertTrue(false, "updateFirmware: $FIRMWARE_UPDATE_API_ENV_NAME is not set")
         }
-        println("apiPath: ${apiPath}")
+        println("apiPath: $apiPath")
         MockApiClient.onRequest = { request ->
             // check request
             assertEquals(request.url.encodedPath, apiPath, "request path")

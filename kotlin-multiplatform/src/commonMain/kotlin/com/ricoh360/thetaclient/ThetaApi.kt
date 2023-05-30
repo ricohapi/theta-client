@@ -102,6 +102,8 @@ object ThetaApi {
 
     /**
      * Call update firmware API which is non-public.
+     * To execute this function, you have to set environment variable THETA_FU_API_PATH
+     * to the path of firmware update API.
      */
     @Throws(Throwable::class)
     suspend fun callUpdateFirmwareApi(
@@ -109,20 +111,17 @@ object ThetaApi {
         fileContents: List<ByteArray>,
         fileNames: List<String>,
     ): UpdateFirmwareApiResponse {
-        if(fileContents.size == 0) {
-            throw kotlin.IllegalArgumentException("Empty fileContents")
+        if(fileContents.isEmpty()) {
+            throw IllegalArgumentException("Empty fileContents")
         } else if(fileContents.size != fileNames.size) {
-            throw kotlin.IllegalArgumentException("Different size of fileContents and fileNames")
+            throw IllegalArgumentException("Different size of fileContents and fileNames")
         }
         val apiPath: String? = getEnvironmentVar(FIRMWARE_UPDATE_API_ENV_NAME)
-        if(apiPath == null) {
-            throw kotlin.IllegalStateException("Environment variable ${FIRMWARE_UPDATE_API_ENV_NAME} is not set")
-        }
+        apiPath ?: throw IllegalStateException("Environment variable $FIRMWARE_UPDATE_API_ENV_NAME is not set")
         return httpClient.submitFormWithBinaryData(
-            // Rewrite to get the API path from environment variable THETA_FU_API_PATH
             url = getApiUrl(endpoint, apiPath),
             formData = formData {
-                for(i in 0 until fileContents.size) {
+                for(i in fileContents.indices) {
                     append(key = "\"firmware\"",value = fileContents[i], Headers.build {
                         append(HttpHeaders.ContentDisposition, "filename=\"${fileNames[i]}\"")
                         append(HttpHeaders.ContentType, "application/octet-stream")
