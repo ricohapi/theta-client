@@ -81,6 +81,9 @@ class PhotoCaptureTest {
                 deferred.complete(Unit)
             }
 
+            override fun onProgress(completion: Float) {
+            }
+
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(false, "error take picture")
                 deferred.complete(Unit)
@@ -158,6 +161,9 @@ class PhotoCaptureTest {
             override fun onSuccess(fileUrl: String) {
                 file = fileUrl
                 deferred.complete(Unit)
+            }
+
+            override fun onProgress(completion: Float) {
             }
 
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
@@ -880,7 +886,7 @@ class PhotoCaptureTest {
         } catch (e: ThetaRepository.ThetaWebApiException) {
             assertTrue(
                 e.message!!.indexOf("json", 0, true) >= 0 ||
-                    e.message!!.indexOf("Illegal", 0, true) >= 0,
+                        e.message!!.indexOf("Illegal", 0, true) >= 0,
                 "setOptions option not json error response"
             )
             exceptionNotJson = true
@@ -982,6 +988,9 @@ class PhotoCaptureTest {
                 deferred.complete(Unit)
             }
 
+            override fun onProgress(completion: Float) {
+            }
+
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(exception.message!!.indexOf("UnitTest", 0, true) >= 0, "take picture error response")
                 deferred.complete(Unit)
@@ -1001,6 +1010,9 @@ class PhotoCaptureTest {
                 deferred.complete(Unit)
             }
 
+            override fun onProgress(completion: Float) {
+            }
+
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(exception.message!!.indexOf("UnitTest", 0, true) >= 0, "take picture progress error response")
                 deferred.complete(Unit)
@@ -1018,6 +1030,9 @@ class PhotoCaptureTest {
             override fun onSuccess(fileUrl: String) {
                 assertTrue(false, "take picture")
                 deferred.complete(Unit)
+            }
+
+            override fun onProgress(completion: Float) {
             }
 
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
@@ -1070,6 +1085,9 @@ class PhotoCaptureTest {
                 deferred.complete(Unit)
             }
 
+            override fun onProgress(completion: Float) {
+            }
+
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(exception.message!!.indexOf("UnitTest", 0, true) >= 0, "status error and json response")
                 deferred.complete(Unit)
@@ -1089,6 +1107,9 @@ class PhotoCaptureTest {
                 deferred.complete(Unit)
             }
 
+            override fun onProgress(completion: Float) {
+            }
+
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(exception.message!!.indexOf("503", 0, true) >= 0, "status error")
                 deferred.complete(Unit)
@@ -1106,6 +1127,9 @@ class PhotoCaptureTest {
             override fun onSuccess(fileUrl: String) {
                 assertTrue(false, "take picture")
                 deferred.complete(Unit)
+            }
+
+            override fun onProgress(completion: Float) {
             }
 
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
