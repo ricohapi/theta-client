@@ -127,7 +127,11 @@ class ConvertUtils {
     };
   }
 
-  static Proxy convertProxy(Map<dynamic, dynamic> data) {
+  static Proxy? convertProxy(Map<dynamic, dynamic>? data) {
+    if (data == null) {
+      return null;
+    }
+
     var proxy = Proxy(
       data['use'] ?? false,
       data['url'],
