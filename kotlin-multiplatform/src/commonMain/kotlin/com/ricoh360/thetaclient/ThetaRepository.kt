@@ -405,6 +405,10 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             throw ThetaWebApiException(e.message ?: e.toString())
         } catch (e: ResponseException) {
             throw ThetaWebApiException(e.message ?: e.toString())
+        } catch(e: IllegalArgumentException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch(e: IllegalStateException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
         } catch (e: Exception) {
             throw NotConnectedException(e.message ?: e.toString())
         }
