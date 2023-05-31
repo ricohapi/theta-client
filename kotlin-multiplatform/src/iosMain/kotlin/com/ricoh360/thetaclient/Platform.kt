@@ -49,5 +49,5 @@ actual fun randomUUID(): String {
  * @return
  */
 actual fun getEnvironmentVar(name: String): String? {
-    return null
+    return NSBundle.mainBundle.infoDictionary?.get(name) as? String
 }
