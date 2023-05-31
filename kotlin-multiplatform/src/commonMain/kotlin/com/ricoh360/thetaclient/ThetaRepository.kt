@@ -721,6 +721,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _powerSaving
+         */
+        PowerSaving("_powerSaving", PowerSavingEnum::class),
+
+        /**
+         * Option name
          * _proxy
          */
         Proxy("_proxy", ThetaRepository.Proxy::class),
@@ -951,6 +957,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var password: String? = null,
 
         /**
+         * Power saving mode.
+         * Only for Theta X.
+         */
+        var powerSaving: PowerSavingEnum? = null,
+
+        /**
          * @see Proxy
          */
         var proxy: Proxy? = null,
@@ -1045,6 +1057,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             networkType = null,
             offDelay = null,
             password = null,
+            powerSaving = null,
             proxy = null,
             shutterSpeed = null,
             sleepDelay = null,
@@ -1085,6 +1098,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             networkType = options._networkType?.let { NetworkTypeEnum.get(it) },
             offDelay = options.offDelay?.let { OffDelayEnum.get(it) },
             password = options._password,
+            powerSaving = options._powerSaving?.let { PowerSavingEnum.get(it) },
             proxy = options._proxy?.let { Proxy(it) },
             shutterSpeed = options.shutterSpeed?.let { ShutterSpeedEnum.get(it) },
             sleepDelay = options.sleepDelay?.let { SleepDelayEnum.get(it) },
@@ -1126,6 +1140,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _networkType = networkType?.value,
                 offDelay = offDelay?.sec,
                 _password = password,
+                _powerSaving = powerSaving?.value,
                 _proxy = proxy?.toTransferredProxy(),
                 sleepDelay = sleepDelay?.sec,
                 remainingPictures = remainingPictures,
@@ -1174,6 +1189,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.NetworkType -> networkType
                 OptionNameEnum.OffDelay -> offDelay
                 OptionNameEnum.Password -> password
+                OptionNameEnum.PowerSaving -> powerSaving
                 OptionNameEnum.Proxy -> proxy
                 OptionNameEnum.SleepDelay -> sleepDelay
                 OptionNameEnum.RemainingPictures -> remainingPictures
@@ -1223,6 +1239,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.NetworkType -> networkType = value as NetworkTypeEnum
                 OptionNameEnum.OffDelay -> offDelay = value as OffDelay
                 OptionNameEnum.Password -> password = value as String
+                OptionNameEnum.PowerSaving -> powerSaving = value as PowerSavingEnum
                 OptionNameEnum.Proxy -> proxy = value as Proxy
                 OptionNameEnum.ShutterSpeed -> shutterSpeed = value as ShutterSpeedEnum
                 OptionNameEnum.SleepDelay -> sleepDelay = value as SleepDelay
@@ -2896,6 +2913,34 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             }
         }
     }
+
+    /**
+     *
+     */
+    enum class PowerSavingEnum(val value: PowerSaving) {
+        /**
+         *
+         */
+        ON(PowerSaving.ON),
+
+        /**
+         *
+         */
+        OFF(PowerSaving.OFF);
+
+        companion object {
+            /**
+             * Convert PowerSaving to PowerSavingEnum
+             *
+             * @param value
+             * @return PowerSavingEnum
+             */
+            fun get(value: PowerSaving): PowerSavingEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
 
     /**
      * Proxy information to be used when wired LAN is enabled.

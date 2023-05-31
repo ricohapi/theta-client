@@ -56,6 +56,7 @@ class CheckRequest {
             maxRecordableTime: Int? = null,
             networkType: NetworkType? = null,
             offDelay: Int? = null,
+            powerSaving: PowerSaving? = null,
             proxy: Proxy? = null,
             shutterSpeed: Double? = null,
             shutterVolume: Int? = null,
@@ -136,6 +137,9 @@ class CheckRequest {
             }
             offDelay?.let {
                 assertEquals(optionsRequest.parameters.options.offDelay, it, "setOptions offDelay")
+            }
+            powerSaving?.let {
+                assertEquals(optionsRequest.parameters.options._powerSaving, it, "setOptions powerSaving")
             }
             proxy?.let {
                 assertEquals(optionsRequest.parameters.options._proxy, it, "setOptions proxy")

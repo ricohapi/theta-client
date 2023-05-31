@@ -440,6 +440,16 @@ data class Options(
     var _password: String? = null,
 
     /**
+     * Power saving mode
+     */
+    var _powerSaving: PowerSaving? = null,
+
+    /**
+     * Supported PowerSaving.
+     */
+    var _powerSavingSupport: List<PowerSaving>? = null,
+
+    /**
      * preview format
      */
     var previewFormat: PreviewFormat? = null,
@@ -777,6 +787,22 @@ enum class NetworkType {
      * Network is off. This value can be gotten only by plugin.
      */
     @SerialName("OFF")
+    OFF,
+}
+
+/**
+ * Power saving mode
+ */
+@Serializable
+enum class PowerSaving {
+    /**
+     * Power saving mode ON
+     */
+    ON,
+
+    /**
+     * Power saving mode OFF
+     */
     OFF,
 }
 
