@@ -44,8 +44,9 @@ actual fun randomUUID(): String {
 
 /**
  * Get the value of the specified environment variable
+ * In iOS, get the value of the specified property from Info.plist
  *
- * @param name environment variable name to get its value
+ * @param name property name to get its value
  * @return
  */
 actual fun getEnvironmentVar(name: String): String? {
