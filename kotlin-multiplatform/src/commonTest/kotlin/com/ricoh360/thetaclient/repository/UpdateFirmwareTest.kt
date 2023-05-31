@@ -16,9 +16,10 @@ import kotlin.test.*
 
 /**
  * This test uses a non-public API.
- * To execute this test, you have to set following environment variables.
+ * To execute this test, you have to set following environment variable.
  *    $ export THETA_FU_API_PATH=firmware_update_API_path
- *    $ export THETA_FU_API_PATH_TEST=true
+ * On iOS, set to Info.plist.
+ * If the variable is not set, this test is skipped.
  *
  */
 @OptIn(ExperimentalSerializationApi::class, ExperimentalCoroutinesApi::class)
@@ -37,23 +38,10 @@ class UpdateFirmwareTest {
 
     @Test
     fun updateFirmwareTest() = runTest {
-        // Check the setting to execute this test
-        getEnvironmentVar(FIRMWARE_UPDATE_API_TEST_ENV_NAME)?.also {
-            if(it != "true") {
-                println("environment variable ${FIRMWARE_UPDATE_API_TEST_ENV_NAME}: $it")
-                println("So skip updateFirmwareTest()")
-                println("To execute this test set $FIRMWARE_UPDATE_API_TEST_ENV_NAME to \"true\"")
-                return@runTest
-            }
-        } ?: run {
-            println("No environment variable $FIRMWARE_UPDATE_API_TEST_ENV_NAME")
-            println("So skip updateFirmwareTest()")
-            println("To execute this test set $FIRMWARE_UPDATE_API_TEST_ENV_NAME to \"true\"")
-            return@runTest
-        }
         val apiPath: String? = getEnvironmentVar(FIRMWARE_UPDATE_API_ENV_NAME)
-        if(apiPath == null) {
-            assertTrue(false, "updateFirmware: $FIRMWARE_UPDATE_API_ENV_NAME is not set")
+        apiPath ?: let {
+            println("$FIRMWARE_UPDATE_API_ENV_NAME is not set so updateFirmwareTest() is skipped")
+            return@runTest
         }
         println("apiPath: $apiPath")
         MockApiClient.onRequest = { request ->
@@ -67,20 +55,12 @@ class UpdateFirmwareTest {
         val fileNames = listOf("firm file 1", "firm file 2")
 
         kotlin.runCatching {
-            thetaRepository.updateFirmware(fileContents, fileNames)
+            thetaRepository.updateFirmware(apiPath, fileContents, fileNames)
         }.onSuccess {
             assertTrue(true, "updateFirmware")
         }.onFailure {
             println("updateThetaFirmware: ${it.toString()}")
             assertTrue(false, "updateFirmware")
         }
-    }
-
-    companion object {
-        /**
-         * Environment variable name to determine to execute this test or not.
-         * Only if its value is "true" this test is executed.
-         */
-        const val FIRMWARE_UPDATE_API_TEST_ENV_NAME="THETA_FU_API_PATH_TEST"
     }
 }

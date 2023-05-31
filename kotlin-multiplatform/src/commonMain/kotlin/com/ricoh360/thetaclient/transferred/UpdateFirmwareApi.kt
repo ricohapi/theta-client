@@ -4,8 +4,7 @@ import io.ktor.http.HttpMethod
 import kotlinx.serialization.Serializable
 
 /**
- * Firmware update API request
- * API path is non-public. Set API path to environment variable "THETA_FU_API_PATH".
+ * Firmware update API request.
  */
 object UpdateFirmwareApi {
     val method = HttpMethod.Post

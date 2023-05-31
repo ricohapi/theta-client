@@ -385,19 +385,18 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
-     * Update firmware of Theta using non-public API.
-     * To execute this function, you have to set environment variable THETA_FU_API_PATH
-     * to the path of firmware update API.
+     * Update the firmware of Theta using non-public API.
      *
+     * @param apiPath The path of firmware update API which is non-public.
      * @param fileContents List of firmware binary.
      * @param fileNames List of firmware file name.
      * @exception ThetaWebApiException If an error occurs in THETA.
      * @exception NotConnectedException
      */
     @Throws(Throwable::class)
-    suspend fun updateFirmware(fileContents: List<ByteArray>, fileNames: List<String>) {
+    suspend fun updateFirmware(apiPath: String, fileContents: List<ByteArray>, fileNames: List<String>) {
         try {
-            val response = ThetaApi.callUpdateFirmwareApi(endpoint, fileContents, fileNames)
+            val response = ThetaApi.callUpdateFirmwareApi(endpoint, apiPath, fileContents, fileNames)
             response.error?.let {
                 throw ThetaWebApiException(it.message)
             }
@@ -406,8 +405,6 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         } catch (e: ResponseException) {
             throw ThetaWebApiException(e.message ?: e.toString())
         } catch(e: IllegalArgumentException) {
-            throw ThetaWebApiException(e.message ?: e.toString())
-        } catch(e: IllegalStateException) {
             throw ThetaWebApiException(e.message ?: e.toString())
         } catch (e: Exception) {
             throw NotConnectedException(e.message ?: e.toString())

@@ -105,12 +105,12 @@ object ThetaApi {
      * To execute this function, you have to set environment variable THETA_FU_API_PATH
      * to the path of firmware update API.
      * @param endpoint Endpoint of Theta web API
+     * @param apiPath The path of firmware update API which is non-public.
      * @param fileContents List of firmware binary
      * @param fileNames List of firmware file name
      * @return response of update firmware API
      *
      * @exception IllegalArgumentException The method has been passed an illegal or inappropriate argument
-     * @exception IllegalStateException Needed environment variable is not set
      * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
      * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
      * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
@@ -119,6 +119,7 @@ object ThetaApi {
     @Throws(Throwable::class)
     suspend fun callUpdateFirmwareApi(
         endpoint: String,
+        apiPath: String,
         fileContents: List<ByteArray>,
         fileNames: List<String>,
     ): UpdateFirmwareApiResponse {
@@ -127,8 +128,6 @@ object ThetaApi {
         } else if(fileContents.size != fileNames.size) {
             throw IllegalArgumentException("Different size of fileContents and fileNames")
         }
-        val apiPath: String? = getEnvironmentVar(FIRMWARE_UPDATE_API_ENV_NAME)
-        apiPath ?: throw IllegalStateException("Environment variable $FIRMWARE_UPDATE_API_ENV_NAME is not set")
         return httpClient.submitFormWithBinaryData(
             url = getApiUrl(endpoint, apiPath),
             formData = formData {
