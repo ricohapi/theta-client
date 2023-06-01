@@ -204,6 +204,9 @@ class ConvertUtils {
         case OptionNameEnum.password:
           result.password = entry.value;
           break;
+        case OptionNameEnum.powerSaving:
+          result.powerSaving = PowerSavingEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.proxy:
           result.proxy = convertProxy(entry.value);
           break;
@@ -286,6 +289,8 @@ class ConvertUtils {
     } else if (value is NetworkTypeEnum) {
       return value.rawValue;
     } else if (value is OffDelayEnum) {
+      return value.rawValue;
+    } else if (value is PowerSavingEnum) {
       return value.rawValue;
     } else if (value is ShutterSpeedEnum) {
       return value.rawValue;

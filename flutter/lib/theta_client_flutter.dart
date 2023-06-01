@@ -981,6 +981,9 @@ enum OptionNameEnum {
   /// Option name _password
   password('Password', String),
 
+  /// Option name powerSaving
+  powerSaving('PowerSaving', PowerSavingEnum),
+
   /// Option name _proxy
   proxy('Proxy', Proxy),
 
@@ -1860,6 +1863,27 @@ enum OffDelayEnum {
   }
 }
 
+/// PowerSaving
+///
+/// For Theta X only
+enum PowerSavingEnum {
+  on('ON'),
+  off('OFF');
+
+  final String rawValue;
+  const PowerSavingEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static PowerSavingEnum? getValue(String rawValue) {
+    return PowerSavingEnum.values.cast<PowerSavingEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
 
 /// Shutter speed (sec).
 /// 
@@ -2645,6 +2669,9 @@ class Options {
   /// Password used for digest authentication when _networkType is set to client mode.
   String? password;
 
+  /// PowerSaving
+  PowerSavingEnum? powerSaving;
+
   /// see [Proxy]
   Proxy? proxy;
 
@@ -2740,6 +2767,8 @@ class Options {
         return offDelay as T;
       case OptionNameEnum.password:
         return password as T;
+      case OptionNameEnum.powerSaving:
+        return powerSaving as T;
       case OptionNameEnum.proxy:
         return proxy as T;
       case OptionNameEnum.remainingPictures:
@@ -2833,6 +2862,9 @@ class Options {
         break;
       case OptionNameEnum.password:
         password = value;
+        break;
+      case OptionNameEnum.powerSaving:
+        powerSaving = value;
         break;
       case OptionNameEnum.proxy:
         proxy = value;

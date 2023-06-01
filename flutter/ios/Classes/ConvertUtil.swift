@@ -322,6 +322,9 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.password.name:
         options.password = value as? String
         break;
+    case ThetaRepository.OptionNameEnum.powersaving.name:
+        options.powerSaving = getEnumValue(values: ThetaRepository.PowerSavingEnum.values(), name: value as! String)!
+        break;
     case ThetaRepository.OptionNameEnum.proxy.name:
         if let params = value as? [String : Any] {
             options.proxy = toProxy(params: params)

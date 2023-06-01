@@ -432,6 +432,17 @@ void main() {
     }
   });
 
+  test('PowerSavingEnum', () async {
+    List<List<dynamic>> data = [
+      [PowerSavingEnum.on, 'ON'],
+      [PowerSavingEnum.off, 'OFF'],
+    ];
+    expect(data.length, PowerSavingEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
   test('SleepDelayEnum', () async {
     List<List<dynamic>> data = [
       [SleepDelayEnum.sleepDelay_3m, 'SLEEP_DELAY_3M'],

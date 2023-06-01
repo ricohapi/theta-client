@@ -419,6 +419,7 @@ void main() {
       [OptionNameEnum.networkType, 'NetworkType', NetworkTypeEnum.client, 'CLIENT'],
       [OptionNameEnum.offDelay, 'OffDelay', OffDelayEnum.offDelay_10m, 'OFF_DELAY_10M'],
       [OptionNameEnum.password, 'Password', 'password', 'password'],
+      [OptionNameEnum.powerSaving, 'PowerSaving', PowerSavingEnum.on, 'ON'],
       [OptionNameEnum.proxy, 'Proxy', Proxy(false, '', 8081, '', ''), proxyMap],
       [OptionNameEnum.remainingPictures, 'RemainingPictures', 3, 3],
       [OptionNameEnum.remainingVideoSeconds, 'RemainingVideoSeconds', 4, 4],
