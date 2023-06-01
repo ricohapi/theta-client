@@ -26,22 +26,8 @@ class TimeShiftCapture private constructor(
 
     private val scope = CoroutineScope(Dispatchers.Default)
 
-    /**
-     * Get image processing filter.
-     *
-     * @return Image processing filter
-     */
-    fun getFilter() = options._filter?.let { ThetaRepository.FilterEnum.get(it) }
-
-    /**
-     * Get photo file format.
-     *
-     * @return Photo file format
-     */
-    fun getFileFormat() = options.fileFormat?.let { it ->
-        ThetaRepository.FileFormatEnum.get(it)?.let {
-            ThetaRepository.PhotoFileFormatEnum.get(it)
-        }
+    fun getCheckStatusCommandInterval(): Long {
+        return checkStatusCommandInterval
     }
 
     // TODO: Add get photo option property
@@ -63,6 +49,23 @@ class TimeShiftCapture private constructor(
          * @param completion Progress rate of command executed
          */
         fun onProgress(completion: Float)
+
+        /**
+         * Called when error occurs.
+         *
+         * @param exception Exception of error occurs
+         */
+        fun onError(exception: ThetaRepository.ThetaRepositoryException)
+    }
+
+    /**
+     * Callback of stopCapture
+     */
+    interface StopCaptureCallback {
+        /**
+         * Called when successful.
+         */
+        fun onSuccess()
 
         /**
          * Called when error occurs.
@@ -103,11 +106,43 @@ class TimeShiftCapture private constructor(
             }
 
             if (startCaptureResponse.state == CommandState.DONE) {
-                callback.onSuccess(fileUrl = startCaptureResponse.results?.fileUrls?.get(0) ?: "")
+                var fileUrl = ""
+                if ((startCaptureResponse.results?.fileUrls?.size ?: 0) > 0) {
+                    fileUrl = startCaptureResponse.results?.fileUrls?.get(0) as String
+                }
+                callback.onSuccess(fileUrl = fileUrl)
                 return@launch
             }
 
             callback.onError(exception = ThetaRepository.ThetaWebApiException(message = startCaptureResponse.error?.message ?: startCaptureResponse.error.toString()))
+        }
+    }
+
+    /**
+     * Stops time-shift capture.
+     * When call stopCapture() then call property callback.
+     */
+    fun stopCapture(callback: StopCaptureCallback) {
+        scope.launch {
+            lateinit var response: StopCaptureResponse
+            try {
+                response = ThetaApi.callStopCaptureCommand(endpoint = endpoint)
+                response.error?.let {
+                    callback.onError(exception = ThetaRepository.ThetaWebApiException(message = it.message))
+                    return@launch
+                }
+            } catch (e: JsonConvertException) {
+                callback.onError(exception = ThetaRepository.ThetaWebApiException(message = e.message ?: e.toString()))
+                return@launch
+            } catch (e: ResponseException) {
+                callback.onError(exception = ThetaRepository.ThetaWebApiException.create(exception = e))
+                return@launch
+            } catch (e: Exception) {
+                callback.onError(exception = ThetaRepository.NotConnectedException(message = e.message ?: e.toString()))
+                return@launch
+            }
+
+            callback.onSuccess()
         }
     }
 
@@ -117,6 +152,7 @@ class TimeShiftCapture private constructor(
      * @property endpoint URL of Theta web API endpoint
      */
     class Builder internal constructor(private val endpoint: String) : Capture.Builder<Builder>() {
+        var interval: Long? = null
 
         /**
          * Builds an instance of a VideoCapture that has all the combined parameters of the Options that have been added to the Builder.
@@ -149,28 +185,15 @@ class TimeShiftCapture private constructor(
             } catch (e: Exception) {
                 throw ThetaRepository.NotConnectedException(message = e.message ?: e.toString())
             }
-            return TimeShiftCapture(endpoint = endpoint, options = options)
+            return interval?.let {
+                TimeShiftCapture(endpoint = endpoint, options = options, checkStatusCommandInterval = it)
+            } ?: kotlin.run {
+                TimeShiftCapture(endpoint = endpoint, options = options)
+            }
         }
 
-        /**
-         * Set image processing filter.
-         *
-         * @param filter Image processing filter
-         * @return Builder
-         */
-        fun setFilter(filter: ThetaRepository.FilterEnum): TimeShiftCapture.Builder {
-            options._filter = filter.filter
-            return this
-        }
-
-        /**
-         * Set photo file format.
-         *
-         * @param fileFormat Photo file format
-         * @return Builder
-         */
-        fun setFileFormat(fileFormat: ThetaRepository.PhotoFileFormatEnum): TimeShiftCapture.Builder {
-            options.fileFormat = fileFormat.fileFormat.toMediaFileFormat()
+        fun setCheckStatusCommandInterval(timeMillis: Long): TimeShiftCapture.Builder {
+            this.interval = timeMillis
             return this
         }
 

@@ -54,7 +54,7 @@ class PhotoCapture private constructor(private val endpoint: String, options: Op
          *
          * @param completion Progress rate of command executed
          */
-        fun onProgress(completion: Float)
+        fun onProgress(completion: Float) {}
 
         /**
          * Called when error occurs.
