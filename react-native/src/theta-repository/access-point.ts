@@ -1,3 +1,5 @@
+import type { Proxy } from './options';
+
 /**
  * Enum for authentication mode.
  */
@@ -31,4 +33,6 @@ export type AccessPoint = {
   subnetMask?: string;
   /** Default Gateway. */
   defaultGateway?: string;
+  /** Proxy information to be used when wired LAN is enabled. */
+  proxy?: Proxy;
 };

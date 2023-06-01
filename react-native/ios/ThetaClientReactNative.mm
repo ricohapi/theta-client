@@ -2473,28 +2473,46 @@ RCT_REMAP_METHOD(listAccessPoints,
                  listAccessPointsWithResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
-  [_theta listAccessPointsWithCompletionHandler:^(NSArray *accessPointList, NSError *error) {
-      if (error) {
-        reject(@"error", [error localizedDescription], error);
-      } else if (accessPointList) {
-        NSMutableArray *ary = [[NSMutableArray alloc] init];
-          for (int i = 0; i < accessPointList.count; i++) {
-              THETACThetaRepositoryAccessPoint *apinfo = accessPointList[i];
-              [ary addObject: @{
-                  @"ssid": apinfo.ssid,
-                    @"ssidStealth": @(apinfo.ssidStealth),
-                    @"authMode": [AuthModeEnum.fromTheta objectForKey:apinfo.authMode],
-                    @"connectionPriority": @(apinfo.connectionPriority),
-                    @"usingDhcp": @(apinfo.usingDhcp),
-                    @"ipAddress": apinfo.ipAddress,
-                    @"subnetMask": apinfo.subnetMask,
-                    @"defaultGateway": apinfo.defaultGateway
-                    }];
-          }
-          resolve(ary);
-      } else {
-        reject(@"error", @"no access point", nil);
-      }
+    [_theta listAccessPointsWithCompletionHandler:^(NSArray *accessPointList, NSError *error) {
+        if (error) {
+            reject(@"error", [error localizedDescription], error);
+        } else if (accessPointList) {
+            NSMutableArray *ary = [[NSMutableArray alloc] init];
+            for (int i = 0; i < accessPointList.count; i++) {
+                THETACThetaRepositoryAccessPoint *apinfo = accessPointList[i];
+
+                NSMutableDictionary *optionsDic = [[NSMutableDictionary alloc] init];
+                convert_t *convert = &ProxyCvt;
+                if (convert->setFromTheta) {
+                    THETACThetaRepositoryOptions *options = [[THETACThetaRepositoryOptions alloc] init];
+                    [options setProxy:apinfo.proxy];
+                    convert->setFromTheta(optionsDic, options);
+                }
+
+                NSMutableDictionary *item = [[NSMutableDictionary alloc] init];
+                [item setObject:apinfo.ssid forKey:@"ssid"];
+                [item setObject:@(apinfo.ssidStealth) forKey:@"ssidStealth"];
+                [item setObject:[AuthModeEnum.fromTheta objectForKey:apinfo.authMode]forKey:@"authMode"];
+                [item setObject:@(apinfo.connectionPriority) forKey:@"connectionPriority"];
+                [item setObject:@(apinfo.usingDhcp) forKey:@"usingDhcp"];
+                if (apinfo.ipAddress) {
+                    [item setObject:apinfo.ipAddress forKey:@"ipAddress"];
+                }
+                if (apinfo.subnetMask) {
+                    [item setObject:apinfo.subnetMask forKey:@"subnetMask"];
+                }
+                if (apinfo.defaultGateway) {
+                    [item setObject:apinfo.defaultGateway forKey:@"defaultGateway"];
+                }
+                if ([optionsDic objectForKey:@"proxy"]) {
+                    [item setObject:[optionsDic objectForKey:@"proxy"] forKey:@"proxy"];
+                }
+                [ary addObject:item];
+            }
+            resolve(ary);
+        } else {
+            reject(@"error", @"no access point", nil);
+        }
     }];
 }
 
@@ -2505,6 +2523,7 @@ RCT_REMAP_METHOD(listAccessPoints,
  * @param authMode auth mode to connect
  * @param password password to connect with auth
  * @param connectionPriority connection priority
+ * @param proxy Proxy information to be used for the access point.
  * @param resolve resolver for setAccessPointDynamically
  * @param rejecter rejecter for setAccessPointDynamically
  */
@@ -2514,20 +2533,22 @@ RCT_REMAP_METHOD(setAccessPointDynamically,
                  withAuthMode:(NSString *)authMode
                  withPassword:(NSString *)password
                  withConnectionPrioryty:(int32_t)connectionPriority
+                 withProxy:(NSDictionary *)proxy
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
-  [_theta setAccessPointDynamicallySsid:ssid
-                            ssidStealth:ssidStealth
-                               authMode:[AuthModeEnum.toTheta objectForKey:authMode]
-                               password:password
-                     connectionPriority:connectionPriority
-                      completionHandler:^(NSError *error) {
-      if (error) {
-        reject(@"error", [error localizedDescription], error);
-      } else {
-        resolve(@(YES));
-      }
+    [_theta setAccessPointDynamicallySsid:ssid
+                              ssidStealth:ssidStealth
+                                 authMode:[AuthModeEnum.toTheta objectForKey:authMode]
+                                 password:password
+                       connectionPriority:connectionPriority
+                                    proxy:convertDictionaryToProxy(proxy)
+                        completionHandler:^(NSError *error) {
+        if (error) {
+            reject(@"error", [error localizedDescription], error);
+        } else {
+            resolve(@(YES));
+        }
     }];
 }
 
@@ -2541,6 +2562,7 @@ RCT_REMAP_METHOD(setAccessPointDynamically,
  * @param ipAddress static ipaddress to connect
  * @param subnetMask subnet mask for ip address
  * @param defaultGateway default gateway address
+ * @param proxy Proxy information to be used for the access point.
  * @param resolve resolver for setAccessPointStatically
  * @param rejecter rejecter for setAccessPointStatically
  */
@@ -2553,23 +2575,25 @@ RCT_REMAP_METHOD(setAccessPointStatically,
                  withIpAddress:(NSString *)ipAddress
                  withSubnetMask:(NSString *)subnetMask
                  withDefaultGateway:(NSString *)defaultGateway
+                 withProxy:(NSDictionary *)proxy
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
-  [_theta setAccessPointStaticallySsid:ssid
-                           ssidStealth:ssidStealth
-                              authMode:[AuthModeEnum.toTheta objectForKey:authMode]
-                              password:password
-                    connectionPriority:connectionPriority
-                             ipAddress:ipAddress
-                            subnetMask:subnetMask
-                        defaultGateway:defaultGateway
-                     completionHandler:^(NSError *error) {
-      if (error) {
-        reject(@"error", [error localizedDescription], error);
-      } else {
-        resolve(@(YES));
-      }
+    [_theta setAccessPointStaticallySsid:ssid
+                             ssidStealth:ssidStealth
+                                authMode:[AuthModeEnum.toTheta objectForKey:authMode]
+                                password:password
+                      connectionPriority:connectionPriority
+                               ipAddress:ipAddress
+                              subnetMask:subnetMask
+                          defaultGateway:defaultGateway
+                                   proxy:convertDictionaryToProxy(proxy)
+                       completionHandler:^(NSError *error) {
+        if (error) {
+            reject(@"error", [error localizedDescription], error);
+        } else {
+            resolve(@(YES));
+        }
     }];
 }
 
@@ -2584,14 +2608,27 @@ RCT_REMAP_METHOD(deleteAccessPoint,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
-  [_theta deleteAccessPointSsid:ssid
-              completionHandler:^(NSError *error) {
-      if (error) {
-        reject(@"error", [error localizedDescription], error);
-      } else {
-        resolve(@(YES));
-      }
+    [_theta deleteAccessPointSsid:ssid
+                completionHandler:^(NSError *error) {
+        if (error) {
+            reject(@"error", [error localizedDescription], error);
+        } else {
+            resolve(@(YES));
+        }
     }];
+}
+
+/// convert NSDictionary to THETACThetaRepositoryProxy
+/// @param proxyDic NSDictionary of proxy
+static THETACThetaRepositoryProxy* convertDictionaryToProxy(NSDictionary *proxyDic) {
+    THETACThetaRepositoryOptions *options = [[THETACThetaRepositoryOptions alloc] init];
+    convert_t *convert = &ProxyCvt;
+    if (convert->setToTheta) {
+        NSMutableDictionary *optionsDic = [[NSMutableDictionary alloc] init];
+        [optionsDic setObject:proxyDic forKey:@"proxy"];
+        convert->setToTheta(optionsDic, options);
+    }
+    return options.proxy;
 }
 
 /**

@@ -42,7 +42,8 @@ class SetAccessPointTest {
         ipAddressAllocation: IpAddressAllocation,
         ipAddress: String?,
         subnetMask: String?,
-        defaultGateway: String?
+        defaultGateway: String?,
+        proxy: ThetaRepository.Proxy?
     ) {
         assertEquals(request.url.encodedPath, "/osc/commands/execute", "request path")
         val body = request.body as TextContent
@@ -65,6 +66,7 @@ class SetAccessPointTest {
             assertEquals(it.ipAddress, ipAddress, "ipAddress")
             assertEquals(it.subnetMask, subnetMask, "subnetMask")
             assertEquals(it.defaultGateway, defaultGateway, "defaultGateway")
+            assertEquals(it.proxy, proxy?.toTransferredProxy(), "_proxy")
         }
     }
 
@@ -78,6 +80,7 @@ class SetAccessPointTest {
         val authMode = ThetaRepository.AuthModeEnum.WEP
         val password = "password_test"
         val connectionPriority = 2
+        val proxy = ThetaRepository.Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
 
         MockApiClient.onRequest = { request ->
             // check request
@@ -91,7 +94,8 @@ class SetAccessPointTest {
                 IpAddressAllocation.DYNAMIC,
                 null,
                 null,
-                null
+                null,
+                proxy = proxy
             )
 
             ByteReadChannel(Resource("src/commonTest/resources/setAccessPoint/set_access_point_done.json").readText())
@@ -103,7 +107,8 @@ class SetAccessPointTest {
             ssidStealth = ssidStealth,
             authMode = authMode,
             password = password,
-            connectionPriority = connectionPriority
+            connectionPriority = connectionPriority,
+            proxy = proxy
         )
         assertTrue(true, "response is normal.")
     }
@@ -121,6 +126,7 @@ class SetAccessPointTest {
         val ipAddress = "192.168.1.2"
         val subnetMask = "255.255.255.0"
         val defaultGateway = "192.168.1.3"
+        val proxy = ThetaRepository.Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
 
         MockApiClient.onRequest = { request ->
             // check request
@@ -134,7 +140,8 @@ class SetAccessPointTest {
                 IpAddressAllocation.STATIC,
                 ipAddress,
                 subnetMask,
-                defaultGateway
+                defaultGateway,
+                proxy
             )
 
             ByteReadChannel(Resource("src/commonTest/resources/setAccessPoint/set_access_point_done.json").readText())
@@ -149,7 +156,8 @@ class SetAccessPointTest {
             connectionPriority = connectionPriority,
             ipAddress = ipAddress,
             subnetMask = subnetMask,
-            defaultGateway = defaultGateway
+            defaultGateway = defaultGateway,
+            proxy = proxy
         )
         assertTrue(true, "response is normal.")
     }
@@ -174,6 +182,7 @@ class SetAccessPointTest {
             val subnetMask = "255.255.255.0"
             val defaultGateway = "192.168.1.3"
             val ipAddressAllocation = IpAddressAllocation.STATIC
+            val proxy = ThetaRepository.Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
 
             thetaRepository.setAccessPoint(
                 ssid = ssid,
@@ -184,13 +193,14 @@ class SetAccessPointTest {
                 ipAddress = ipAddress,
                 subnetMask = subnetMask,
                 defaultGateway = defaultGateway,
-                ipAddressAllocation = ipAddressAllocation
+                ipAddressAllocation = ipAddressAllocation,
+                proxy = proxy
             )
             assertTrue(false, "response is normal.")
         } catch (e: ThetaRepository.ThetaWebApiException) {
             assertTrue(
                 e.message!!.indexOf("json", 0, true) >= 0 ||
-                    e.message!!.indexOf("Illegal", 0, true) >= 0,
+                        e.message!!.indexOf("Illegal", 0, true) >= 0,
                 "error response"
             )
         }
@@ -216,6 +226,7 @@ class SetAccessPointTest {
             val subnetMask = "255.255.255.0"
             val defaultGateway = "192.168.1.3"
             val ipAddressAllocation = IpAddressAllocation.STATIC
+            val proxy = ThetaRepository.Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
 
             thetaRepository.setAccessPoint(
                 ssid = ssid,
@@ -226,7 +237,8 @@ class SetAccessPointTest {
                 ipAddress = ipAddress,
                 subnetMask = subnetMask,
                 defaultGateway = defaultGateway,
-                ipAddressAllocation = ipAddressAllocation
+                ipAddressAllocation = ipAddressAllocation,
+                proxy = proxy
             )
             assertTrue(false, "response is normal.")
         } catch (e: ThetaRepository.ThetaWebApiException) {
@@ -255,6 +267,7 @@ class SetAccessPointTest {
             val subnetMask = "255.255.255.0"
             val defaultGateway = "192.168.1.3"
             val ipAddressAllocation = IpAddressAllocation.STATIC
+            val proxy = ThetaRepository.Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
 
             thetaRepository.setAccessPoint(
                 ssid = ssid,
@@ -265,7 +278,8 @@ class SetAccessPointTest {
                 ipAddress = ipAddress,
                 subnetMask = subnetMask,
                 defaultGateway = defaultGateway,
-                ipAddressAllocation = ipAddressAllocation
+                ipAddressAllocation = ipAddressAllocation,
+                proxy = proxy
             )
             assertTrue(false, "response is normal.")
         } catch (e: ThetaRepository.ThetaWebApiException) {
@@ -294,6 +308,7 @@ class SetAccessPointTest {
             val subnetMask = "255.255.255.0"
             val defaultGateway = "192.168.1.3"
             val ipAddressAllocation = IpAddressAllocation.STATIC
+            val proxy = ThetaRepository.Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
 
             thetaRepository.setAccessPoint(
                 ssid = ssid,
@@ -304,7 +319,8 @@ class SetAccessPointTest {
                 ipAddress = ipAddress,
                 subnetMask = subnetMask,
                 defaultGateway = defaultGateway,
-                ipAddressAllocation = ipAddressAllocation
+                ipAddressAllocation = ipAddressAllocation,
+                proxy = proxy
             )
             assertTrue(false, "response is normal.")
         } catch (e: ThetaRepository.ThetaWebApiException) {
@@ -332,6 +348,7 @@ class SetAccessPointTest {
             val subnetMask = "255.255.255.0"
             val defaultGateway = "192.168.1.3"
             val ipAddressAllocation = IpAddressAllocation.STATIC
+            val proxy = ThetaRepository.Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
 
             thetaRepository.setAccessPoint(
                 ssid = ssid,
@@ -342,7 +359,8 @@ class SetAccessPointTest {
                 ipAddress = ipAddress,
                 subnetMask = subnetMask,
                 defaultGateway = defaultGateway,
-                ipAddressAllocation = ipAddressAllocation
+                ipAddressAllocation = ipAddressAllocation,
+                proxy = proxy
             )
             assertTrue(false, "response is normal.")
         } catch (e: ThetaRepository.NotConnectedException) {

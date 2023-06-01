@@ -4501,6 +4501,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @param ipAddress IP address assigns to Theta. If DYNAMIC ip is null.
      * @param subnetMask Subnet mask. If DYNAMIC ip is null.
      * @param defaultGateway Default gateway. If DYNAMIC ip is null.
+     * @param proxy Proxy information to be used for the access point.
      * @exception ThetaWebApiException If an error occurs in THETA.
      * @exception NotConnectedException
      */
@@ -4514,7 +4515,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         ipAddressAllocation: IpAddressAllocation,
         ipAddress: String? = null,
         subnetMask: String? = null,
-        defaultGateway: String? = null
+        defaultGateway: String? = null,
+        proxy: Proxy? = null,
     ) {
         val params = SetAccessPointParams(
             ssid = ssid,
@@ -4525,7 +4527,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             ipAddressAllocation = ipAddressAllocation,
             ipAddress = ipAddress,
             subnetMask = subnetMask,
-            defaultGateway = defaultGateway
+            defaultGateway = defaultGateway,
+            proxy = proxy?.toTransferredProxy()
         )
         try {
             ThetaApi.callSetAccessPointCommand(endpoint, params).error?.let {
@@ -4550,6 +4553,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @param authMode Authentication mode.
      * @param password Password. If [authMode] is "NONE", pass empty String.
      * @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
+     * @param proxy Proxy information to be used for the access point.
      * @exception ThetaWebApiException If an error occurs in THETA.
      * @exception NotConnectedException
      */
@@ -4559,7 +4563,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         ssidStealth: Boolean = false,
         authMode: AuthModeEnum = AuthModeEnum.NONE,
         password: String = "",
-        connectionPriority: Int = 1
+        connectionPriority: Int = 1,
+        proxy: Proxy? = null,
     ) {
         setAccessPoint(
             ssid = ssid,
@@ -4567,7 +4572,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             authMode = authMode,
             password = password,
             connectionPriority = connectionPriority,
-            ipAddressAllocation = IpAddressAllocation.DYNAMIC
+            ipAddressAllocation = IpAddressAllocation.DYNAMIC,
+            proxy = proxy
         )
     }
 
@@ -4582,6 +4588,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @param ipAddress IP address assigns to Theta.
      * @param subnetMask Subnet mask.
      * @param defaultGateway Default gateway.
+     * @param proxy Proxy information to be used for the access point.
      * @exception ThetaWebApiException If an error occurs in THETA.
      * @exception NotConnectedException
      */
@@ -4594,7 +4601,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         connectionPriority: Int = 1,
         ipAddress: String,
         subnetMask: String,
-        defaultGateway: String
+        defaultGateway: String,
+        proxy: Proxy? = null,
     ) {
         setAccessPoint(
             ssid = ssid,
@@ -4605,7 +4613,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             ipAddressAllocation = IpAddressAllocation.STATIC,
             ipAddress = ipAddress,
             subnetMask = subnetMask,
-            defaultGateway = defaultGateway
+            defaultGateway = defaultGateway,
+            proxy = proxy
         )
     }
 
@@ -4646,6 +4655,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @property ipAddress IP address assigned to camera. This setting can be acquired when “usingDhcp” is false.
      * @property subnetMask Subnet Mask. This setting can be acquired when “usingDhcp” is false.
      * @property defaultGateway Default Gateway. This setting can be acquired when “usingDhcp” is false.
+     * @property proxy Proxy information to be used for the access point.
      */
     data class AccessPoint(
         val ssid: String,
@@ -4655,7 +4665,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         val usingDhcp: Boolean,
         val ipAddress: String?,
         val subnetMask: String?,
-        val defaultGateway: String?
+        val defaultGateway: String?,
+        val proxy: Proxy?,
     ) {
         constructor(accessPoint: com.ricoh360.thetaclient.transferred.AccessPoint) : this(
             ssid = accessPoint.ssid,
@@ -4665,7 +4676,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             usingDhcp = accessPoint.ipAddressAllocation == IpAddressAllocation.DYNAMIC,
             ipAddress = accessPoint.ipAddress,
             subnetMask = accessPoint.subnetMask,
-            defaultGateway = accessPoint.defaultGateway
+            defaultGateway = accessPoint.defaultGateway,
+            proxy = accessPoint.proxy?.let { Proxy(info = it) },
         )
     }
 

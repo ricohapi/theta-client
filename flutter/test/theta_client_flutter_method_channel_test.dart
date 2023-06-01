@@ -781,6 +781,12 @@ void main() {
         'authMode': 'NONE',
         'connectionPriority': 1,
         'usingDhcp': true,
+        'proxy': {
+          'use': true,
+          'url': 'xxx',
+          'port': 8081,
+          'userid': 'abc'
+        },
       },
       {
         'ssid': 'ssid_test2',
@@ -791,6 +797,12 @@ void main() {
         'ipAddress': '192.168.1.2',
         'subnetMask': '255.255.255.0',
         'defaultGateway': '192.168.1.100',
+        'proxy': {
+          'use': false,
+          'url': '',
+          'port': 0,
+          'userid': ''
+        },
       },
       {
         'ssid': 'ssid_test3',
@@ -801,6 +813,12 @@ void main() {
         'ipAddress': '192.168.1.3',
         'subnetMask': '255.255.255.0',
         'defaultGateway': '192.168.1.101',
+        'proxy': {
+          'use': true,
+          'url': 'xxx',
+          'port': 8081,
+          'userid': 'abc'
+        },
       },
     ];
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
@@ -817,6 +835,10 @@ void main() {
       expect(resultList[i].ipAddress, data[i]['ipAddress']);
       expect(resultList[i].subnetMask, data[i]['subnetMask']);
       expect(resultList[i].defaultGateway, data[i]['defaultGateway']);
+      expect(resultList[i].proxy?.use, (data[i]['proxy'] as Map<String, dynamic>)['use']);
+      expect(resultList[i].proxy?.url, (data[i]['proxy'] as Map<String, dynamic>)['url']);
+      expect(resultList[i].proxy?.port, (data[i]['proxy'] as Map<String, dynamic>)['port']);
+      expect(resultList[i].proxy?.userid, (data[i]['proxy'] as Map<String, dynamic>)['userid']);
     }
   });
 
@@ -826,6 +848,7 @@ void main() {
     const authMode = AuthModeEnum.wep;
     const password = 'password1';
     const connectionPriority = 2;
+    var proxy = Proxy(true, 'https://xxx', 8081, 'abc', 'pwpwpwp111');
 
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       expect(methodCall.method, 'setAccessPointDynamically');
@@ -836,9 +859,14 @@ void main() {
       expect(arguments['authMode'], authMode.rawValue);
       expect(arguments['password'], password);
       expect(arguments['connectionPriority'], connectionPriority);
+      expect(arguments['proxy']['use'], proxy.use);
+      expect(arguments['proxy']['url'], proxy.url);
+      expect(arguments['proxy']['port'], proxy.port);
+      expect(arguments['proxy']['userid'], proxy.userid);
+      expect(arguments['proxy']['password'], proxy.password);
       return Future.value();
     });
-    await platform.setAccessPointDynamically(ssid, ssidStealth, authMode, password, connectionPriority);
+    await platform.setAccessPointDynamically(ssid, ssidStealth, authMode, password, connectionPriority, proxy);
   });
 
   test('setAccessPointStatically', () async {
@@ -850,6 +878,7 @@ void main() {
     const ipAddress = '192.168.1.2';
     const subnetMask = '255.255.255.0';
     const defaultGateway = '192.168.1.3';
+    var proxy = Proxy(true, 'https://xxx', 8081, 'abc', 'pwpwpwp111');
 
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       expect(methodCall.method, 'setAccessPointStatically');
@@ -863,9 +892,14 @@ void main() {
       expect(arguments['ipAddress'], ipAddress);
       expect(arguments['subnetMask'], subnetMask);
       expect(arguments['defaultGateway'], defaultGateway);
+      expect(arguments['proxy']['use'], proxy.use);
+      expect(arguments['proxy']['url'], proxy.url);
+      expect(arguments['proxy']['port'], proxy.port);
+      expect(arguments['proxy']['userid'], proxy.userid);
+      expect(arguments['proxy']['password'], proxy.password);
       return Future.value();
     });
-    await platform.setAccessPointStatically(ssid, ssidStealth, authMode, password, connectionPriority, ipAddress, subnetMask, defaultGateway);
+    await platform.setAccessPointStatically(ssid, ssidStealth, authMode, password, connectionPriority, ipAddress, subnetMask, defaultGateway, proxy);
   });
 
   test('deleteAccessPoint', () async {

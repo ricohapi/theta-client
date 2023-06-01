@@ -741,6 +741,15 @@ class ThetaClientReactNativeModule(
           apinfo.putString("ipAddress", it.ipAddress)
           apinfo.putString("subnetMask", it.subnetMask)
           apinfo.putString("defaultGateway", it.defaultGateway)
+
+          it.proxy?.let { proxy ->
+            var options = ThetaRepository.Options(proxy = proxy)
+            val optionsMap = Arguments.createMap()
+            val cvt = converters["proxy"]
+            cvt?.setFromTheta(options, optionsMap)
+            apinfo.putMap("proxy", optionsMap.getMap("proxy"))
+          }
+
           result.pushMap(apinfo)
         }
         promise.resolve(result)
@@ -757,6 +766,7 @@ class ThetaClientReactNativeModule(
    * @param authMode auth mode to connect
    * @param password password to connect with auth
    * @param connectionPriority connection priority
+   * @param proxy Proxy information to be used for the access point.
    * @param promise promise to set result
    */
   @ReactMethod
@@ -766,6 +776,7 @@ class ThetaClientReactNativeModule(
     authMode: String,
     password: String,
     connectionPriority: Int,
+    proxy: ReadableMap?,
     promise: Promise
   ) {
     launch {
@@ -775,7 +786,8 @@ class ThetaClientReactNativeModule(
           ssidStealth,
           ThetaRepository.AuthModeEnum.valueOf(authMode),
           password,
-          connectionPriority
+          connectionPriority,
+          convertMapToProxy(proxyMap = proxy)
         )
         promise.resolve(true)
       } catch (t: Throwable) {
@@ -795,6 +807,7 @@ class ThetaClientReactNativeModule(
    * @param subnetMask subnet mask for ip address
    * @param defaultGateway default gateway address
    * @param promise promise to set result
+   * @param proxy Proxy information to be used for the access point.
    */
   @ReactMethod
   fun setAccessPointStatically(
@@ -806,6 +819,7 @@ class ThetaClientReactNativeModule(
     ipAddress: String,
     subnetMask: String,
     defaultGateway: String,
+    proxy: ReadableMap?,
     promise: Promise
   ) {
     launch {
@@ -819,6 +833,7 @@ class ThetaClientReactNativeModule(
           ipAddress,
           subnetMask,
           defaultGateway,
+          convertMapToProxy(proxyMap = proxy)
         )
         promise.resolve(true)
       } catch (t: Throwable) {
@@ -845,6 +860,20 @@ class ThetaClientReactNativeModule(
   }
 
   /**
+   * convert ReadableMap to ThetaRepository.Proxy
+   */
+  private fun convertMapToProxy(proxyMap: ReadableMap?): ThetaRepository.Proxy? {
+    return proxyMap?.let {
+      var options = ThetaRepository.Options()
+      val optionsMap = Arguments.createMap()
+      optionsMap.putMap("proxy", it)
+      val cvt = converters["proxy"]
+      cvt?.setToTheta(options, optionsMap)
+      options.proxy
+    } ?: null
+  }
+
+  /**
    * setBluetoothDevice  -  register uuid of a BLE device
    * @param uuid uuid to set
    * @param promise promise to set result
@@ -866,7 +895,7 @@ class ThetaClientReactNativeModule(
    * Just for Theta V and later
    * @param captureMode The target shooting mode
    * @param promise promise to set result
-  */
+   */
   @ReactMethod
   fun getMySetting(captureMode: String, promise: Promise) {
     launch {
