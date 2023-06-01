@@ -3,6 +3,7 @@
  */
 package com.ricoh360.thetaclient.transferred
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 
@@ -74,6 +75,17 @@ data class SetAccessPointParams(
      * ipAddressAllocation is "static"
      */
     val defaultGateway: String? = null,
+
+    /**
+     * Proxy information to be used for the access point.
+     * Also refer to _proxy option spec to set each parameter.
+     *
+     * For
+     * THETA Z1 Version 2.20.3 or later
+     * THETA X Version 2.00.0 or later
+     */
+    @SerialName("_proxy")
+    val proxy: Proxy? = null,
 )
 
 /**

@@ -192,67 +192,65 @@ class ThetaClientFlutter {
   }
 
   /// Acquires the access point list used in client mode.
-  /// 
+  ///
   /// For RICOH THETA X, only the access points registered with [setAccessPoint] can be acquired.
   /// (The access points automatically detected with the camera UI cannot be acquired with this API.)
-  /// 
-  /// * @return Lists the access points stored on the camera and the access points detected by the camera.
-  /// * @throws If an error occurs in THETA.
+  ///
+  /// @return Lists the access points stored on the camera and the access points detected by the camera.
+  /// @throws If an error occurs in THETA.
   Future<List<AccessPoint>> listAccessPoints() {
     return ThetaClientFlutterPlatform.instance.listAccessPoints();
   }
 
   /// Set access point. IP address is set dynamically.
-  /// 
-  /// * @param ssid SSID of the access point.
-  /// * @param ssidStealth True if SSID stealth is enabled.
-  /// * @param authMode Authentication mode.
-  /// * @param password Password. If [authMode] is "[none]", pass empty String.
-  /// * @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
-  /// * @throws If an error occurs in THETA.
-  Future<void> setAccessPointDynamically(
-    String ssid,
-    {
-      bool ssidStealth = false,
+  ///
+  /// @param ssid SSID of the access point.
+  /// @param ssidStealth True if SSID stealth is enabled.
+  /// @param authMode Authentication mode.
+  /// @param password Password. If [authMode] is "[none]", pass empty String.
+  /// @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
+  /// @param proxy Proxy information to be used for the access point.
+  /// @throws If an error occurs in THETA.
+  Future<void> setAccessPointDynamically(String ssid,
+      {bool ssidStealth = false,
       AuthModeEnum authMode = AuthModeEnum.none,
       String password = '',
-      int connectionPriority = 1
-    }
-  ) {
-    return ThetaClientFlutterPlatform.instance.setAccessPointDynamically(ssid, ssidStealth, authMode, password, connectionPriority);
+      int connectionPriority = 1,
+      Proxy? proxy}) {
+    return ThetaClientFlutterPlatform.instance.setAccessPointDynamically(
+        ssid, ssidStealth, authMode, password, connectionPriority, proxy);
   }
 
   /// Set access point. IP address is set statically.
-  /// 
-  /// * @param ssid SSID of the access point.
-  /// * @param ssidStealth True if SSID stealth is enabled.
-  /// * @param authMode Authentication mode.
-  /// * @param password Password. If [authMode] is "[none]", pass empty String.
-  /// * @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
-  /// * @param ipAddress IP address assigns to Theta.
-  /// * @param subnetMask Subnet mask.
-  /// * @param defaultGateway Default gateway.
-  /// * @throws If an error occurs in THETA.
-  Future<void> setAccessPointStatically(
-    String ssid,
-    {
-      bool ssidStealth = false,
+  ///
+  /// @param ssid SSID of the access point.
+  /// @param ssidStealth True if SSID stealth is enabled.
+  /// @param authMode Authentication mode.
+  /// @param password Password. If [authMode] is "[none]", pass empty String.
+  /// @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
+  /// @param ipAddress IP address assigns to Theta.
+  /// @param subnetMask Subnet mask.
+  /// @param defaultGateway Default gateway.
+  /// @param proxy Proxy information to be used for the access point.
+  /// @throws If an error occurs in THETA.
+  Future<void> setAccessPointStatically(String ssid,
+      {bool ssidStealth = false,
       AuthModeEnum authMode = AuthModeEnum.none,
       String password = '',
       int connectionPriority = 1,
       required String ipAddress,
       required String subnetMask,
-      required String defaultGateway
-    }
-  ) {
-    return ThetaClientFlutterPlatform.instance.setAccessPointStatically(ssid, ssidStealth, authMode, password, connectionPriority, ipAddress, subnetMask, defaultGateway);
+      required String defaultGateway,
+      Proxy? proxy}) {
+    return ThetaClientFlutterPlatform.instance.setAccessPointStatically(ssid, ssidStealth, authMode,
+        password, connectionPriority, ipAddress, subnetMask, defaultGateway, proxy);
   }
 
   /// Deletes access point information used in client mode.
   /// Only the access points registered with [setAccessPoint] can be deleted.
-  /// 
-  /// * @param ssid SSID of the access point.
-  /// * @throws If an error occurs in THETA.
+  ///
+  /// @param ssid SSID of the access point.
+  /// @throws If an error occurs in THETA.
   Future<void> deleteAccessPoint(String ssid) {
     return ThetaClientFlutterPlatform.instance.deleteAccessPoint(ssid);
   }
@@ -912,7 +910,11 @@ class AccessPoint {
   /// Default Gateway. This setting can be acquired when “usingDhcp” is false.
   String? defaultGateway;
 
-  AccessPoint(this.ssid, this.ssidStealth, this.authMode, this.connectionPriority, this.usingDhcp, this.ipAddress, this.subnetMask, this.defaultGateway);
+  /// Proxy information to be used for the access point.
+  Proxy? proxy;
+
+  AccessPoint(this.ssid, this.ssidStealth, this.authMode, this.connectionPriority, this.usingDhcp,
+      this.ipAddress, this.subnetMask, this.defaultGateway, this.proxy);
 }
 
 /// Camera setting options name.

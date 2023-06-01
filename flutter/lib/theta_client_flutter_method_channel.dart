@@ -290,35 +290,31 @@ void enableEventReceiver() {
   }
 
   @override
-  Future<void> setAccessPointDynamically(
-    String ssid,
-    bool ssidStealth,
-    AuthModeEnum authMode,
-    String password,
-    int connectionPriority
-  ) async {
-    final Map params = <String, dynamic> {
+  Future<void> setAccessPointDynamically(String ssid, bool ssidStealth, AuthModeEnum authMode,
+      String password, int connectionPriority, Proxy? proxy) async {
+    final Map params = <String, dynamic>{
       'ssid': ssid,
       'ssidStealth': ssidStealth,
       'authMode': authMode.rawValue,
       'password': password,
       'connectionPriority': connectionPriority,
+      'proxy': proxy != null ? ConvertUtils.convertProxyParam(proxy) : null
     };
     return methodChannel.invokeMethod<void>('setAccessPointDynamically', params);
   }
 
   @override
   Future<void> setAccessPointStatically(
-    String ssid,
-    bool ssidStealth,
-    AuthModeEnum authMode,
-    String password,
-    int connectionPriority,
-    String ipAddress,
-    String subnetMask,
-    String defaultGateway    
-  ) async {
-    final Map params = <String, dynamic> {
+      String ssid,
+      bool ssidStealth,
+      AuthModeEnum authMode,
+      String password,
+      int connectionPriority,
+      String ipAddress,
+      String subnetMask,
+      String defaultGateway,
+      Proxy? proxy) async {
+    final Map params = <String, dynamic>{
       'ssid': ssid,
       'ssidStealth': ssidStealth,
       'authMode': authMode.rawValue,
@@ -327,6 +323,7 @@ void enableEventReceiver() {
       'ipAddress': ipAddress,
       'subnetMask': subnetMask,
       'defaultGateway': defaultGateway,
+      'proxy': proxy != null ? ConvertUtils.convertProxyParam(proxy) : null
     };
     return methodChannel.invokeMethod<void>('setAccessPointStatically', params);
   }
