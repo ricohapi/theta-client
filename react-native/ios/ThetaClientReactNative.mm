@@ -1072,6 +1072,32 @@ static convert_t OffDelayEnum = {
 };
 
 /**
+ * PowerSaving convertor
+ */
+static convert_t PowerSavingEnum = {
+  .toTheta = @{
+    @"ON": THETACThetaRepositoryPowerSavingEnum.ON,
+    @"OFF": THETACThetaRepositoryPowerSavingEnum.OFF
+},
+  .fromTheta = @{
+    THETACThetaRepositoryPowerSavingEnum.ON: @"ON",
+    THETACThetaRepositoryPowerSavingEnum.OFF: @"OFF"
+  }
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [PowerSavingEnum.toTheta objectForKey:[rct objectForKey:@"powerSaving"]];
+    if (val) {
+      opt.powerSaving = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [PowerSavingEnum.fromTheta objectForKey:opt.powerSaving];
+    if (val) {
+      [rct setObject:val forKey:@"powerSaving"];
+    }
+  }
+};
+
+/**
  * WhiteBalanceEnum converter
  */
 static convert_t WhiteBalanceEnum = {
@@ -1573,6 +1599,7 @@ static NSDictionary *NameToOptionEnum = @{
   @"NetworkType": THETACThetaRepositoryOptionNameEnum.networktype,
   @"OffDelay": THETACThetaRepositoryOptionNameEnum.offdelay,
   @"Password": THETACThetaRepositoryOptionNameEnum.password,
+  @"PowerSaving": THETACThetaRepositoryOptionNameEnum.powerSaving,
   @"Proxy": THETACThetaRepositoryOptionNameEnum.proxy,
   @"ShutterSpeed": THETACThetaRepositoryOptionNameEnum.shutterspeed,
   @"SleepDelay": THETACThetaRepositoryOptionNameEnum.sleepdelay,
@@ -1612,6 +1639,7 @@ static NSDictionary *OptionEnumToOption = @{
   @"NetworkType": @"networkType",
   @"OffDelay": @"offDelay",
   @"Password": @"password",
+  @"PowerSaving": @"powerSaving",
   @"Proxy": @"proxy",
   @"ShutterSpeed": @"shutterSpeed",
   @"SleepDelay": @"sleepDelay",
@@ -1654,6 +1682,7 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"networkType": ^{return &NetworkTypeEnum;},
   @"offDelay": ^{return &OffDelayEnum;},
   @"password": ^{return &PasswordCvt;},
+  @"powerSaving": ^{return &PowerSavingEnum;},
   @"proxy": ^{return &ProxyCvt;},
   @"shutterSpeed": ^{return &ShutterSpeedEnum;},
   @"sleepDelay": ^{return &SleepDelayEnum;},

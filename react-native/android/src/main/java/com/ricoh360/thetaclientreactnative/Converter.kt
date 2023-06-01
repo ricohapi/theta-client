@@ -414,6 +414,24 @@ class OffDelayConverter : OptionConverter {
 }
 
 /**
+ * PowerSavingConverter
+ */
+class PowerSavingConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("powerSaving")?.let {
+      options.powerSaving = ThetaRepository.PowerSavingEnum.valueOf(it)
+    }
+  }
+
+   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.powerSaving?.let {
+      objects.putString("powerSaving", it.toString())
+    }
+  }
+ }
+
+
+/**
  * ProxyConverter
  */
 class ProxyConverter : OptionConverter {
