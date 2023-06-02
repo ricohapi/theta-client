@@ -984,6 +984,9 @@ enum OptionNameEnum {
   /// Option name powerSaving
   powerSaving('PowerSaving', PowerSavingEnum),
 
+  /// Option name previewFormat
+  previewFormat('PreviewFormat', PreviewFormatEnum),
+
   /// Option name _proxy
   proxy('Proxy', Proxy),
 
@@ -1885,6 +1888,30 @@ enum PowerSavingEnum {
   }
 }
 
+enum PreviewFormatEnum {
+  w1024_h512_f30('W1024_H512_F30'),
+  w512_h512_f30('W512_H512_F30'),
+  w1920_h960_f8('W1920_H960_F8'),
+  w1024_h512_f8('W1024_H512_F8'),
+  w640_h320_f30('W640_H320_F30'),
+  w640_h320_f8('W640_H320_F8'),
+  w640_h320_f10('W640_H320_F10');
+
+  final String rawValue;
+  const PreviewFormatEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static PreviewFormatEnum? getValue(String rawValue) {
+    return PreviewFormatEnum.values.cast<PreviewFormatEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
 /// Shutter speed (sec).
 /// 
 ///  It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
@@ -2672,6 +2699,9 @@ class Options {
   /// PowerSaving
   PowerSavingEnum? powerSaving;
 
+  /// PreviewFormat
+  PreviewFormatEnum? previewFormat;
+
   /// see [Proxy]
   Proxy? proxy;
 
@@ -2769,6 +2799,8 @@ class Options {
         return password as T;
       case OptionNameEnum.powerSaving:
         return powerSaving as T;
+      case OptionNameEnum.previewFormat:
+        return previewFormat as T;
       case OptionNameEnum.proxy:
         return proxy as T;
       case OptionNameEnum.remainingPictures:
@@ -2865,6 +2897,9 @@ class Options {
         break;
       case OptionNameEnum.powerSaving:
         powerSaving = value;
+        break;
+      case OptionNameEnum.previewFormat:
+        previewFormat = value;
         break;
       case OptionNameEnum.proxy:
         proxy = value;

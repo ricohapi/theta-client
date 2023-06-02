@@ -443,6 +443,22 @@ void main() {
     }
   });
 
+  test('PreviewFormatEnum', () async {
+    List<List<dynamic>> data = [
+      [PreviewFormatEnum.w1024_h512_f30, 'W1024_H512_F30'],
+      [PreviewFormatEnum.w512_h512_f30, 'W512_H512_F30'],
+      [PreviewFormatEnum.w1920_h960_f8, 'W1920_H960_F8'],
+      [PreviewFormatEnum.w1024_h512_f8, 'W1024_H512_F8'],
+      [PreviewFormatEnum.w640_h320_f30, 'W640_H320_F30'],
+      [PreviewFormatEnum.w640_h320_f8, 'W640_H320_F8'],
+      [PreviewFormatEnum.w640_h320_f10, 'W640_H320_F10'],
+    ];
+    expect(data.length, PreviewFormatEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
   test('SleepDelayEnum', () async {
     List<List<dynamic>> data = [
       [SleepDelayEnum.sleepDelay_3m, 'SLEEP_DELAY_3M'],

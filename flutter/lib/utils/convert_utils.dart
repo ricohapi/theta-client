@@ -207,6 +207,9 @@ class ConvertUtils {
         case OptionNameEnum.powerSaving:
           result.powerSaving = PowerSavingEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.previewFormat:
+          result.previewFormat = PreviewFormatEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.proxy:
           result.proxy = convertProxy(entry.value);
           break;
@@ -291,6 +294,8 @@ class ConvertUtils {
     } else if (value is OffDelayEnum) {
       return value.rawValue;
     } else if (value is PowerSavingEnum) {
+      return value.rawValue;
+    } else if (value is PreviewFormatEnum) {
       return value.rawValue;
     } else if (value is ShutterSpeedEnum) {
       return value.rawValue;
