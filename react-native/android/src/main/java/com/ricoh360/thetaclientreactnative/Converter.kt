@@ -430,6 +430,22 @@ class PowerSavingConverter : OptionConverter {
   }
  }
 
+/**
+ * PreviewFormatConverter
+ */
+class PreviewFormatConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("previewFormat")?.let {
+      options.previewFormat = ThetaRepository.PreviewFormatEnum.valueOf(it)
+    }
+  }
+
+   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.previewFormat?.let {
+      objects.putString("previewFormat", it.toString())
+    }
+  }
+ }
 
 /**
  * ProxyConverter

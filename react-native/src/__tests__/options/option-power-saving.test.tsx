@@ -1,4 +1,4 @@
-import { PowerSavingEnum } from '../../theta-repository/options/option-powerSaving';
+import { PowerSavingEnum } from '../../theta-repository/options/option-power-saving';
 
 describe('PowerSavingEnum', () => {
   const data: string[][] = [
