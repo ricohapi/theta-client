@@ -39,13 +39,13 @@ class TimeShiftCaptureTest {
         // setup
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
-            Resource("src/commonTest/resources/TimeShiftCapture/start_capture_done.json").readText(),
-            Resource("src/commonTest/resources/TimeShiftCapture/stop_capture_done.json").readText()
+            Resource("src/commonTest/resources/TimeShiftCapture/start_capture_progress.json").readText(),
+            Resource("src/commonTest/resources/TimeShiftCapture/start_capture_done.json").readText()
         )
         val requestPathArray = arrayOf(
             "/osc/commands/execute",
             "/osc/commands/execute",
-            "/osc/commands/execute"
+            "/osc/commands/status"
         )
         var counter = 0
         MockApiClient.onRequest = { request ->
@@ -60,9 +60,6 @@ class TimeShiftCaptureTest {
                 1 -> {
                     CheckRequest.checkCommandName(request, "camera.startCapture")
                 }
-                2 -> {
-                    CheckRequest.checkCommandName(request, "camera.stopCapture")
-                }
             }
 
             ByteReadChannel(responseArray[index])
@@ -71,8 +68,7 @@ class TimeShiftCaptureTest {
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
-        val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder()
-            .build()
+        val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder().build()
 
         var file: String? = null
         timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
@@ -82,21 +78,23 @@ class TimeShiftCaptureTest {
             }
 
             override fun onProgress(completion: Float) {
+                assertEquals(completion, 0f, "onProgress")
             }
 
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue(false, "error take picture")
+                assertTrue(false, "error start time-shift video")
                 deferred.complete(Unit)
             }
         })
+
         runBlocking {
-            withTimeout(5000) {
+            withTimeout(2000) {
                 deferred.await()
             }
         }
 
         // check result
-        assertTrue(file?.startsWith("http://") ?: false, "take picture")
+        assertTrue(file?.startsWith("http://") ?: false, "start time-shift video")
     }
 
     /**
