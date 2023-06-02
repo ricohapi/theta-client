@@ -727,6 +727,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * previewFormat
+         */
+        PreviewFormat("previewFormat", PreviewFormatEnum::class),
+
+        /**
+         * Option name
          * _proxy
          */
         Proxy("_proxy", ThetaRepository.Proxy::class),
@@ -963,6 +969,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var powerSaving: PowerSavingEnum? = null,
 
         /**
+         * Format of live view.
+         */
+        var previewFormat: PreviewFormatEnum? = null,
+
+        /**
          * @see Proxy
          */
         var proxy: Proxy? = null,
@@ -1058,6 +1069,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             offDelay = null,
             password = null,
             powerSaving = null,
+            previewFormat = null,
             proxy = null,
             shutterSpeed = null,
             sleepDelay = null,
@@ -1099,6 +1111,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             offDelay = options.offDelay?.let { OffDelayEnum.get(it) },
             password = options._password,
             powerSaving = options._powerSaving?.let { PowerSavingEnum.get(it) },
+            previewFormat = options.previewFormat?.let { PreviewFormatEnum.get(it) },
             proxy = options._proxy?.let { Proxy(it) },
             shutterSpeed = options.shutterSpeed?.let { ShutterSpeedEnum.get(it) },
             sleepDelay = options.sleepDelay?.let { SleepDelayEnum.get(it) },
@@ -1141,6 +1154,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 offDelay = offDelay?.sec,
                 _password = password,
                 _powerSaving = powerSaving?.value,
+                previewFormat = previewFormat?.toPreviewFormat(),
                 _proxy = proxy?.toTransferredProxy(),
                 sleepDelay = sleepDelay?.sec,
                 remainingPictures = remainingPictures,
@@ -1190,6 +1204,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.OffDelay -> offDelay
                 OptionNameEnum.Password -> password
                 OptionNameEnum.PowerSaving -> powerSaving
+                OptionNameEnum.PreviewFormat -> previewFormat
                 OptionNameEnum.Proxy -> proxy
                 OptionNameEnum.SleepDelay -> sleepDelay
                 OptionNameEnum.RemainingPictures -> remainingPictures
@@ -1240,6 +1255,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.OffDelay -> offDelay = value as OffDelay
                 OptionNameEnum.Password -> password = value as String
                 OptionNameEnum.PowerSaving -> powerSaving = value as PowerSavingEnum
+                OptionNameEnum.PreviewFormat -> previewFormat = value as PreviewFormatEnum
                 OptionNameEnum.Proxy -> proxy = value as Proxy
                 OptionNameEnum.ShutterSpeed -> shutterSpeed = value as ShutterSpeedEnum
                 OptionNameEnum.SleepDelay -> sleepDelay = value as SleepDelay
@@ -2915,16 +2931,18 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Power saving mode
      *
+     * For Theta X only.
      */
     enum class PowerSavingEnum(val value: PowerSaving) {
         /**
-         *
+         * Power saving mode ON
          */
         ON(PowerSaving.ON),
 
         /**
-         *
+         * Power saving mode OFF
          */
         OFF(PowerSaving.OFF);
 
@@ -2941,6 +2959,38 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         }
     }
 
+    /**
+     * Format of live view
+     */
+    enum class PreviewFormatEnum(val width: Int, val height: Int, val framerate: Int) {
+        W1024_H512_F30(1024, 512, 30), // For Theta X, Z1, V and SC2
+        W512_H512_F30(512, 512, 30), // For Theta X
+        W1920_H960_F8(1920, 960, 8), // For Theta Z1 and V
+        W1024_H512_F8(1024, 512, 8), // For Theta Z1 and V
+        W640_H320_F30(640, 320, 30), // For Theta Z1 and V
+        W640_H320_F8(640, 320, 8), // For Theta Z1 and V
+        W640_H320_F10(640, 320, 10); // For Theta S and SC
+
+        /**
+         * Convert PreviewFormatEnum to PreviewFormat.
+         */
+        fun toPreviewFormat(): PreviewFormat {
+            return PreviewFormat(width, height, framerate)
+        }
+
+        companion object {
+            /**
+             * Convert PreviewFormat to PreviewFormatEnum
+             */
+            fun get(value: PreviewFormat): PreviewFormatEnum? {
+                return PreviewFormatEnum.values().firstOrNull {
+                    it.height == value.height &&
+                            it.width == value.width &&
+                            it.framerate == value.framerate
+                }
+            }
+        }
+    }
 
     /**
      * Proxy information to be used when wired LAN is enabled.

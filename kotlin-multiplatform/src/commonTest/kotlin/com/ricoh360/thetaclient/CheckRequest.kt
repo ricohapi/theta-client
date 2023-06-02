@@ -57,6 +57,7 @@ class CheckRequest {
             networkType: NetworkType? = null,
             offDelay: Int? = null,
             powerSaving: PowerSaving? = null,
+            previewFormat: PreviewFormat? = null,
             proxy: Proxy? = null,
             shutterSpeed: Double? = null,
             shutterVolume: Int? = null,
@@ -140,6 +141,9 @@ class CheckRequest {
             }
             powerSaving?.let {
                 assertEquals(optionsRequest.parameters.options._powerSaving, it, "setOptions powerSaving")
+            }
+            previewFormat?.let {
+                assertEquals(optionsRequest.parameters.options.previewFormat, it, "setOptions previewFormat")
             }
             proxy?.let {
                 assertEquals(optionsRequest.parameters.options._proxy, it, "setOptions proxy")
