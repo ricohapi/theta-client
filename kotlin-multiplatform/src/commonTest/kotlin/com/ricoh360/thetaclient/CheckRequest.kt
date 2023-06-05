@@ -59,6 +59,7 @@ class CheckRequest {
             powerSaving: PowerSaving? = null,
             previewFormat: PreviewFormat? = null,
             proxy: Proxy? = null,
+            shootingMethod: ShootingMethod? = null,
             shutterSpeed: Double? = null,
             shutterVolume: Int? = null,
             sleepDelay: Int? = null,
@@ -147,6 +148,9 @@ class CheckRequest {
             }
             proxy?.let {
                 assertEquals(optionsRequest.parameters.options._proxy, it, "setOptions proxy")
+            }
+            shootingMethod?.let {
+                assertEquals(optionsRequest.parameters.options._shootingMethod, it, "setOptions shootingMethod")
             }
             shutterSpeed?.let {
                 assertEquals(optionsRequest.parameters.options.shutterSpeed, it, "setOptions shutterSpeed")

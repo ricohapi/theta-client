@@ -46,7 +46,7 @@ class PreviewFormatTest {
             // check request
             CheckRequest.checkGetOptions(request, stringOptionNames)
 
-            ByteReadChannel(Resource("src/commonTest/resources/options/option_previewformat_1024_512_30.json").readText())
+            ByteReadChannel(Resource("src/commonTest/resources/options/option_preview_format_1024_512_30.json").readText())
         }
 
         val thetaRepository = ThetaRepository(endpoint)

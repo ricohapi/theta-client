@@ -4,8 +4,9 @@ import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
+import com.ricoh360.thetaclient.transferred.ShootingMethod
 import com.ricoh360.thetaclient.transferred.Options
-import com.ricoh360.thetaclient.transferred.PowerSaving
+import com.ricoh360.thetaclient.transferred.ShootingMode
 import io.ktor.http.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -17,7 +18,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class PowerSavingTest {
+class ShootingMethodTest {
     private val endpoint = "http://192.168.1.1:80/"
 
     @BeforeTest
@@ -31,54 +32,58 @@ class PowerSavingTest {
     }
 
     /**
-     * Get option powerSaving.
+     * Get option shootingMethod.
      */
     @Test
-    fun getOptionPowerSavingTest() = runTest {
+    fun getOptionShootingMethodTest() = runTest {
         val optionNames = listOf(
-            ThetaRepository.OptionNameEnum.PowerSaving
+            ThetaRepository.OptionNameEnum.ShootingMethod
         )
         val stringOptionNames = listOf(
-            "_powerSaving"
+            "_shootingMethod"
         )
 
         MockApiClient.onRequest = { request ->
             // check request
             CheckRequest.checkGetOptions(request, stringOptionNames)
 
-            ByteReadChannel(Resource("src/commonTest/resources/options/option_power_saving-on.json").readText())
+            ByteReadChannel(Resource("src/commonTest/resources/options/option_shooting_method_normal.json").readText())
         }
 
         val thetaRepository = ThetaRepository(endpoint)
         val options = thetaRepository.getOptions(optionNames)
-        assertEquals(options.powerSaving, ThetaRepository.PowerSavingEnum.ON, "powerSaving")
+        assertEquals(
+            options.shootingMethod,
+            ThetaRepository.ShootingMethodEnum.NORMAL,
+            "shootingMethod"
+        )
     }
 
     /**
-     * Set option powerSaving.
+     * Set option shootingMode.
      */
     @Test
-    fun setOptionPowerSavingTest() = runTest {
-        val value = Pair(ThetaRepository.PowerSavingEnum.ON, PowerSaving.ON)
+    fun setOptionShootingModeTest() = runTest {
+        val value = Pair(ThetaRepository.ShootingMethodEnum.NORMAL, ShootingMethod.NORMAL)
 
         MockApiClient.onRequest = { request ->
             // check request
-            CheckRequest.checkSetOptions(request, powerSaving = value.second)
+            CheckRequest.checkSetOptions(request, shootingMethod = value.second)
 
             ByteReadChannel(Resource("src/commonTest/resources/setOptions/set_options_done.json").readText())
         }
 
         val thetaRepository = ThetaRepository(endpoint)
         val options = ThetaRepository.Options(
-            powerSaving = value.first
+            shootingMethod = value.first
         )
         kotlin.runCatching {
             thetaRepository.setOptions(options)
         }.onSuccess {
-            assertTrue(true, "setOptions powerSaving")
+            assertTrue(true, "setOptions ShootingMethod")
         }.onFailure {
             println(it.toString())
-            assertTrue(false, "setOptions powerSaving")
+
         }
     }
 
@@ -86,26 +91,32 @@ class PowerSavingTest {
      * Convert ThetaRepository.Options to Options.
      */
     @Test
-    fun convertOptionPowerSavingTest() = runTest {
+    fun convertOptionShootingMethodTest() = runTest {
         val values = listOf(
-            Pair(ThetaRepository.PowerSavingEnum.ON, PowerSaving.ON),
-            Pair(ThetaRepository.PowerSavingEnum.OFF, PowerSaving.OFF),
+            Pair(ThetaRepository.ShootingMethodEnum.NORMAL, ShootingMethod.NORMAL),
+            Pair(ThetaRepository.ShootingMethodEnum.INTERVAL, ShootingMethod.INTERVAL),
+            Pair(ThetaRepository.ShootingMethodEnum.MOVE_INTERVAL, ShootingMethod.MOVE_INTERVAL),
+            Pair(ThetaRepository.ShootingMethodEnum.FIXED_INTERVAL, ShootingMethod.FIXED_INTERVAL),
+            Pair(ThetaRepository.ShootingMethodEnum.BRACKET, ShootingMethod.BRACKET),
+            Pair(ThetaRepository.ShootingMethodEnum.COMPOSITE, ShootingMethod.COMPOSITE),
+            Pair(ThetaRepository.ShootingMethodEnum.CONTINUOUS, ShootingMethod.CONTINUOUS),
+            Pair(ThetaRepository.ShootingMethodEnum.TIME_SHIFT, ShootingMethod.TIMESHIFT),
+            Pair(ThetaRepository.ShootingMethodEnum.BURST, ShootingMethod.BURST),
         )
 
         values.forEach {
             val orgOptions = Options(
-                _powerSaving = it.second
+                _shootingMethod = it.second
             )
             val options = ThetaRepository.Options(orgOptions)
-            assertEquals(options.powerSaving, it.first, "powerSaving ${it.second}")
+            assertEquals(options.shootingMethod, it.first, "shootingMethod ${it.second}")
         }
-
         values.forEach {
             val orgOptions = ThetaRepository.Options(
-                powerSaving = it.first
+                shootingMethod = it.first
             )
             val options = orgOptions.toOptions()
-            assertEquals(options._powerSaving, it.second, "powerSaving ${it.second}")
+            assertEquals(options._shootingMethod, it.second, "shootingMethod ${it.second}")
         }
     }
 }

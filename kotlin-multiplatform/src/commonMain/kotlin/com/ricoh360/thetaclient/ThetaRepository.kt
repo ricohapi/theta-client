@@ -769,6 +769,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _shootingMethod
+         */
+        ShootingMethod("_shootingMethod", ShootingMethodEnum::class),
+
+        /**
+         * Option name
          * shutterSpeed
          */
         ShutterSpeed("shutterSpeed", ShutterSpeedEnum::class),
@@ -994,6 +1000,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var remainingSpace: Long? = null,
 
         /**
+         * Shooting method for My Settings mode. In RICOH THETA X, it is used outside of MySetting.
+         * Can be acquired and set only when in the Still image shooting mode and _function is the My Settings shooting function.
+         * Changing _function initializes the setting details to Normal shooting.
+         */
+        var shootingMethod: ShootingMethodEnum? = null,
+
+        /**
          * Shutter speed (sec).
          *
          * It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
@@ -1071,6 +1084,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             powerSaving = null,
             previewFormat = null,
             proxy = null,
+            shootingMethod = null,
             shutterSpeed = null,
             sleepDelay = null,
             remainingPictures = null,
@@ -1113,6 +1127,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             powerSaving = options._powerSaving?.let { PowerSavingEnum.get(it) },
             previewFormat = options.previewFormat?.let { PreviewFormatEnum.get(it) },
             proxy = options._proxy?.let { Proxy(it) },
+            shootingMethod = options._shootingMethod?.let { ShootingMethodEnum.get(it) },
             shutterSpeed = options.shutterSpeed?.let { ShutterSpeedEnum.get(it) },
             sleepDelay = options.sleepDelay?.let { SleepDelayEnum.get(it) },
             remainingPictures = options.remainingPictures,
@@ -1161,6 +1176,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 remainingVideoSeconds = remainingVideoSeconds,
                 remainingSpace = remainingSpace,
                 totalSpace = totalSpace,
+                _shootingMethod = shootingMethod?.value,
                 shutterSpeed = shutterSpeed?.value,
                 _shutterVolume = shutterVolume,
                 _username = username,
@@ -1211,6 +1227,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.RemainingVideoSeconds -> remainingVideoSeconds
                 OptionNameEnum.RemainingSpace -> remainingSpace
                 OptionNameEnum.TotalSpace -> totalSpace
+                OptionNameEnum.ShootingMethod -> shootingMethod
                 OptionNameEnum.ShutterSpeed -> shutterSpeed
                 OptionNameEnum.ShutterVolume -> shutterVolume
                 OptionNameEnum.Username -> username
@@ -1257,6 +1274,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.PowerSaving -> powerSaving = value as PowerSavingEnum
                 OptionNameEnum.PreviewFormat -> previewFormat = value as PreviewFormatEnum
                 OptionNameEnum.Proxy -> proxy = value as Proxy
+                OptionNameEnum.ShootingMethod -> shootingMethod = value as ShootingMethodEnum
                 OptionNameEnum.ShutterSpeed -> shutterSpeed = value as ShutterSpeedEnum
                 OptionNameEnum.SleepDelay -> sleepDelay = value as SleepDelay
                 OptionNameEnum.RemainingPictures -> remainingPictures = value as Int
@@ -3053,6 +3071,74 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 userid = userid,
                 password = password
             )
+        }
+    }
+
+    /**
+     * Shooting method
+     *
+     * Shooting method for My Settings mode. In RICOH THETA X, it is used outside of MySetting.
+     * Can be acquired and set only when in the Still image shooting mode and _function is the My Settings shooting function.
+     * Changing _function initializes the setting details to Normal shooting.
+     *
+     * For Theta X and Z1 only.
+     */
+    enum class ShootingMethodEnum(val value: ShootingMethod) {
+        /**
+         * Normal shooting
+         */
+        NORMAL(ShootingMethod.NORMAL),
+
+        /**
+         * Interval shooting
+         */
+        INTERVAL(ShootingMethod.INTERVAL),
+
+        /**
+         * Move interval shooting (RICOH THETA Z1 firmware v1.50.1 or later, RICOH THETA X is not supported)
+         */
+        MOVE_INTERVAL(ShootingMethod.MOVE_INTERVAL),
+
+        /**
+         * Fixed interval shooting (RICOH THETA Z1 firmware v1.50.1 or later, RICOH THETA X is not supported)
+         */
+        FIXED_INTERVAL(ShootingMethod.FIXED_INTERVAL),
+
+        /**
+         * Multi bracket shooting
+         */
+        BRACKET(ShootingMethod.BRACKET),
+
+        /**
+         * Interval composite shooting (RICOH THETA X is not supported)
+         */
+        COMPOSITE(ShootingMethod.COMPOSITE),
+
+        /**
+         * Continuous shooting (RICOH THETA X or later)
+         */
+        CONTINUOUS(ShootingMethod.CONTINUOUS),
+
+        /**
+         * Time shift shooting (RICOH THETA X or later)
+         */
+        TIME_SHIFT(ShootingMethod.TIMESHIFT),
+
+        /**
+         * Burst shooting (RICOH THETA Z1 v2.10.1 or later, RICOH THETA X is not supported)
+         */
+        BURST(ShootingMethod.BURST);
+
+        companion object {
+            /**
+             * Convert ShootingMethod to ShootingMethodEnum
+             *
+             * @param value
+             * @return ShootingMethodEnum
+             */
+            fun get(value: ShootingMethod): ShootingMethodEnum? {
+                return values().firstOrNull { it.value == value }
+            }
         }
     }
 
