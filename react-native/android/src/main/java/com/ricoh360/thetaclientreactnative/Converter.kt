@@ -485,6 +485,23 @@ class ProxyConverter : OptionConverter {
 }
 
 /**
+ * ShootingMethodConverter
+ */
+class ShootingMethodConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("shootingMethod")?.let {
+      options.shootingMethod = ThetaRepository.ShootingMethodEnum.valueOf(it)
+    }
+  }
+
+   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.shootingMethod?.let {
+      objects.putString("shootingMethod", it.toString())
+    }
+  }
+ }
+
+/**
  * WhiteBalanceConverter
  */
 class WhiteBalanceConverter : OptionConverter {

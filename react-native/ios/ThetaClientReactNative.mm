@@ -1595,6 +1595,52 @@ static convert_t ProxyCvt = {
 };
 
 /**
+ * ShootingMethod convertor
+ */
+static convert_t ShootingMethodEnum = {
+  .toTheta = @{
+    @"NORMAL": THETACThetaRepositoryShootingMethodEnum.normal,
+    @"INTERVAL": THETACThetaRepositoryShootingMethodEnum.interval,
+    @"MOVE_INTERVAL": THETACThetaRepositoryShootingMethodEnum.moveInterval,
+    @"FIXED_INTERVAL": THETACThetaRepositoryShootingMethodEnum.fixedInterval,
+    @"BRACKET": THETACThetaRepositoryShootingMethodEnum.bracket,
+    @"COMPOSITE": THETACThetaRepositoryShootingMethodEnum.composite,
+    @"CONTINUOUS": THETACThetaRepositoryShootingMethodEnum.continuous,
+    @"TIME_SHIFT": THETACThetaRepositoryShootingMethodEnum.timeShift,
+    @"BURST": THETACThetaRepositoryShootingMethodEnum.burst,
+},
+  .fromTheta = @{
+    THETACThetaRepositoryShootingMethodEnum.normal: @"NORMAL",
+    THETACThetaRepositoryShootingMethodEnum.interval: @"INTERVAL",
+    THETACThetaRepositoryShootingMethodEnum.moveInterval: @"MOVE_INTERVAL",
+    THETACThetaRepositoryShootingMethodEnum.fixedInterval: @"FIXED_INTERVAL",
+    THETACThetaRepositoryShootingMethodEnum.bracket: @"BRACKET",
+    THETACThetaRepositoryShootingMethodEnum.composite: @"COMPOSITE",
+    THETACThetaRepositoryShootingMethodEnum.continuous: @"CONTINUOUS",
+    THETACThetaRepositoryShootingMethodEnum.timeShift: @"TIME_SHIFT",
+    THETACThetaRepositoryShootingMethodEnum.burst: @"BURST",
+  }
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [ShootingMethodEnum.toTheta objectForKey:[rct objectForKey:@"shootingMethod"]];
+    if (val) {
+      opt.shootingMethod = val;
+    }
+  },
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [ShootingMethodEnum.toTheta objectForKey:[rct objectForKey:@"shootingMethod"]];
+    if (val) {
+      opt.shootingMethod = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [ShootingMethodEnum.fromTheta objectForKey:opt.shootingMethod];
+    if (val) {
+      [rct setObject:val forKey:@"shootingMethod"];
+    }
+  }
+};
+
+/**
  * Username converter
  */
 static convert_t UsernameCvt = {
@@ -1639,6 +1685,7 @@ static NSDictionary *NameToOptionEnum = @{
   @"PowerSaving": THETACThetaRepositoryOptionNameEnum.powerSaving,
   @"PreviewFormat": THETACThetaRepositoryOptionNameEnum.previewFormat,
   @"Proxy": THETACThetaRepositoryOptionNameEnum.proxy,
+  @"ShootingMethod": THETACThetaRepositoryOptionNameEnum.shootingMethod,
   @"ShutterSpeed": THETACThetaRepositoryOptionNameEnum.shutterspeed,
   @"SleepDelay": THETACThetaRepositoryOptionNameEnum.sleepdelay,
   @"RemainingPictures": THETACThetaRepositoryOptionNameEnum.remainingpictures,
@@ -1680,6 +1727,7 @@ static NSDictionary *OptionEnumToOption = @{
   @"PowerSaving": @"powerSaving",
   @"PreviewFormat": @"previewFormat",
   @"Proxy": @"proxy",
+  @"ShootingMethod": @"shootingMethod",
   @"ShutterSpeed": @"shutterSpeed",
   @"SleepDelay": @"sleepDelay",
   @"RemainingPictures": @"remainingPictures",
@@ -1724,6 +1772,7 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"powerSaving": ^{return &PowerSavingEnum;},
   @"previewFormat": ^{return &PreviewFormatEnum;},
   @"proxy": ^{return &ProxyCvt;},
+  @"shootingMethod": ^{return &ShootingMethodEnum;},
   @"shutterSpeed": ^{return &ShutterSpeedEnum;},
   @"sleepDelay": ^{return &SleepDelayEnum;},
   @"remainingPictures": ^{return &RemainingPicturesCvt;},
