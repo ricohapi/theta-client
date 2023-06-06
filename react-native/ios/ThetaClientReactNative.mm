@@ -1078,11 +1078,11 @@ static convert_t PowerSavingEnum = {
   .toTheta = @{
     @"ON": THETACThetaRepositoryPowerSavingEnum.on,
     @"OFF": THETACThetaRepositoryPowerSavingEnum.off
-},
+  },
   .fromTheta = @{
     THETACThetaRepositoryPowerSavingEnum.on: @"ON",
     THETACThetaRepositoryPowerSavingEnum.off: @"OFF"
-  }
+  },
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     id val = [PowerSavingEnum.toTheta objectForKey:[rct objectForKey:@"powerSaving"]];
     if (val) {
@@ -1102,25 +1102,25 @@ static convert_t PowerSavingEnum = {
  */
 static convert_t PreviewFormatEnum = {
   .toTheta = @{
-    @"W1024_H512_F30": THETACThetaRepositoryPreviewFormatEnum.w1024_h512_f30,
-    @"W1024_H512_F15": THETACThetaRepositoryPreviewFormatEnum.w1024_h512_f15,
-    @"W512_H512_F30": THETACThetaRepositoryPreviewFormatEnum.w512_h512_f30,
-    @"W1920_H960_F8": THETACThetaRepositoryPreviewFormatEnum.w1920_h960_f8,
-    @"W1024_H512_F8": THETACThetaRepositoryPreviewFormatEnum.w1024_h512_f8,
-    @"W640_H320_F30": THETACThetaRepositoryPreviewFormatEnum.w640_h320_f30,
-    @"W640_H320_F8": THETACThetaRepositoryPreviewFormatEnum.w640_h320_f8,
-    @"W640_H320_F10": THETACThetaRepositoryPreviewFormatEnum.w640_h320_f10
-},
+    @"W1024_H512_F30": THETACThetaRepositoryPreviewFormatEnum.w1024H512F30,
+    @"W1024_H512_F15": THETACThetaRepositoryPreviewFormatEnum.w1024H512F15,
+    @"W512_H512_F30": THETACThetaRepositoryPreviewFormatEnum.w512H512F30,
+    @"W1920_H960_F8": THETACThetaRepositoryPreviewFormatEnum.w1920H960F8,
+    @"W1024_H512_F8": THETACThetaRepositoryPreviewFormatEnum.w1024H512F8,
+    @"W640_H320_F30": THETACThetaRepositoryPreviewFormatEnum.w640H320F30,
+    @"W640_H320_F8": THETACThetaRepositoryPreviewFormatEnum.w640H320F8,
+    @"W640_H320_F10": THETACThetaRepositoryPreviewFormatEnum.w640H320F10
+  },
   .fromTheta = @{
-    THETACThetaRepositoryPreviewFormatEnum.w1024_h512_f30: @"W1024_H512_F30",
-    THETACThetaRepositoryPreviewFormatEnum.w1024_h512_f15: @"W1024_H512_F15",
-    THETACThetaRepositoryPreviewFormatEnum.w512_h512_f30: @"W512_H512_F30",
-    THETACThetaRepositoryPreviewFormatEnum.w1920_h960_f8: @"W1920_H960_F8",
-    THETACThetaRepositoryPreviewFormatEnum.w1024_h512_f8: @"W1024_H512_F8",
-    THETACThetaRepositoryPreviewFormatEnum.w640_h320_f30: @"W640_H320_F30",
-    THETACThetaRepositoryPreviewFormatEnum.w640_h320_f8: @"W640_H320_F8",
-    THETACThetaRepositoryPreviewFormatEnum.w640_h320_f10: @"W640_H320_F10",
-  }
+    THETACThetaRepositoryPreviewFormatEnum.w1024H512F30: @"W1024_H512_F30",
+    THETACThetaRepositoryPreviewFormatEnum.w1024H512F15: @"W1024_H512_F15",
+    THETACThetaRepositoryPreviewFormatEnum.w512H512F30: @"W512_H512_F30",
+    THETACThetaRepositoryPreviewFormatEnum.w1920H960F8: @"W1920_H960_F8",
+    THETACThetaRepositoryPreviewFormatEnum.w1024H512F8: @"W1024_H512_F8",
+    THETACThetaRepositoryPreviewFormatEnum.w640H320F30: @"W640_H320_F30",
+    THETACThetaRepositoryPreviewFormatEnum.w640H320F8: @"W640_H320_F8",
+    THETACThetaRepositoryPreviewFormatEnum.w640H320F10: @"W640_H320_F10",
+  },
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     id val = [PreviewFormatEnum.toTheta objectForKey:[rct objectForKey:@"previewFormat"]];
     if (val) {
@@ -1610,7 +1610,7 @@ static convert_t ShootingMethodEnum = {
     @"CONTINUOUS": THETACThetaRepositoryShootingMethodEnum.continuous,
     @"TIME_SHIFT": THETACThetaRepositoryShootingMethodEnum.timeShift,
     @"BURST": THETACThetaRepositoryShootingMethodEnum.burst,
-},
+  },
   .fromTheta = @{
     THETACThetaRepositoryShootingMethodEnum.normal: @"NORMAL",
     THETACThetaRepositoryShootingMethodEnum.interval: @"INTERVAL",
@@ -1621,7 +1621,7 @@ static convert_t ShootingMethodEnum = {
     THETACThetaRepositoryShootingMethodEnum.continuous: @"CONTINUOUS",
     THETACThetaRepositoryShootingMethodEnum.timeShift: @"TIME_SHIFT",
     THETACThetaRepositoryShootingMethodEnum.burst: @"BURST",
-  }
+  },
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     id val = [ShootingMethodEnum.toTheta objectForKey:[rct objectForKey:@"shootingMethod"]];
     if (val) {
@@ -1684,10 +1684,10 @@ static NSDictionary *NameToOptionEnum = @{
   @"NetworkType": THETACThetaRepositoryOptionNameEnum.networktype,
   @"OffDelay": THETACThetaRepositoryOptionNameEnum.offdelay,
   @"Password": THETACThetaRepositoryOptionNameEnum.password,
-  @"PowerSaving": THETACThetaRepositoryOptionNameEnum.powerSaving,
-  @"PreviewFormat": THETACThetaRepositoryOptionNameEnum.previewFormat,
+  @"PowerSaving": THETACThetaRepositoryOptionNameEnum.powersaving,
+  @"PreviewFormat": THETACThetaRepositoryOptionNameEnum.previewformat,
   @"Proxy": THETACThetaRepositoryOptionNameEnum.proxy,
-  @"ShootingMethod": THETACThetaRepositoryOptionNameEnum.shootingMethod,
+  @"ShootingMethod": THETACThetaRepositoryOptionNameEnum.shootingmethod,
   @"ShutterSpeed": THETACThetaRepositoryOptionNameEnum.shutterspeed,
   @"SleepDelay": THETACThetaRepositoryOptionNameEnum.sleepdelay,
   @"RemainingPictures": THETACThetaRepositoryOptionNameEnum.remainingpictures,
