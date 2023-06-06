@@ -2982,6 +2982,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     enum class PreviewFormatEnum(val width: Int, val height: Int, val framerate: Int) {
         W1024_H512_F30(1024, 512, 30), // For Theta X, Z1, V and SC2
+        W1024_H512_F15(1024, 512, 15), // For Theta X. This value can't set.
         W512_H512_F30(512, 512, 30), // For Theta X
         W1920_H960_F8(1920, 960, 8), // For Theta Z1 and V
         W1024_H512_F8(1024, 512, 8), // For Theta Z1 and V

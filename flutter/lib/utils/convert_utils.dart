@@ -222,6 +222,9 @@ class ConvertUtils {
         case OptionNameEnum.remainingSpace:
           result.remainingSpace = entry.value;
           break;
+        case OptionNameEnum.shootingMethod:
+          result.shootingMethod = ShootingMethodEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.shutterSpeed:
           result.shutterSpeed = ShutterSpeedEnum.getValue(entry.value);
           break;
@@ -296,6 +299,8 @@ class ConvertUtils {
     } else if (value is PowerSavingEnum) {
       return value.rawValue;
     } else if (value is PreviewFormatEnum) {
+      return value.rawValue;
+    } else if (value is ShootingMethodEnum) {
       return value.rawValue;
     } else if (value is ShutterSpeedEnum) {
       return value.rawValue;

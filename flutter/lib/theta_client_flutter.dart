@@ -999,6 +999,9 @@ enum OptionNameEnum {
   /// Option name remainingSpace
   remainingSpace('RemainingSpace', int),
 
+  /// Option name shootingMethod
+  shootingMethod('ShootingMethod', ShootingMethodEnum),
+
   /// Shutter speed (sec).
   shutterSpeed('ShutterSpeed', ShutterSpeedEnum),
 
@@ -1870,7 +1873,9 @@ enum OffDelayEnum {
 ///
 /// For Theta X only
 enum PowerSavingEnum {
+  /// Power saving mode ON
   on('ON'),
+  /// Power saving mode OFF
   off('OFF');
 
   final String rawValue;
@@ -1888,13 +1893,24 @@ enum PowerSavingEnum {
   }
 }
 
+/// Format of live view
 enum PreviewFormatEnum {
+  /// width_height_framerate
+  /// For Theta X, Z1, V and SC2
   w1024_h512_f30('W1024_H512_F30'),
+  /// For Theta X. This value can't set.
+  w1024_h512_f15('W1024_H512_F15'),
+  /// For Theta X
   w512_h512_f30('W512_H512_F30'),
+  /// For Theta Z1 and V
   w1920_h960_f8('W1920_H960_F8'),
+  /// For Theta Z1 and V
   w1024_h512_f8('W1024_H512_F8'),
+  /// For Theta Z1 and V
   w640_h320_f30('W640_H320_F30'),
+  /// For Theta Z1 and V
   w640_h320_f8('W640_H320_F8'),
+  /// For Theta S and SC
   w640_h320_f10('W640_H320_F10');
 
   final String rawValue;
@@ -1907,6 +1923,46 @@ enum PreviewFormatEnum {
 
   static PreviewFormatEnum? getValue(String rawValue) {
     return PreviewFormatEnum.values.cast<PreviewFormatEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
+/// Shooting method
+///
+/// Shooting method for My Settings mode. In RICOH THETA X, it is used outside of MySetting.
+/// Can be acquired and set only when in the Still image shooting mode and _function is the My Settings shooting function.
+/// Changing _function initializes the setting details to Normal shooting.
+enum ShootingMethodEnum {
+  /// Normal shooting
+  normal('NORMAL'),
+  /// Interval shooting
+  interval('INTERVAL'),
+  /// Move interval shooting (RICOH THETA Z1 firmware v1.50.1 or later, RICOH THETA X is not supported)
+  moveInterval('MOVE_INTERVAL'),
+  /// Fixed interval shooting (RICOH THETA Z1 firmware v1.50.1 or later, RICOH THETA X is not supported)
+  fixedInterval('FIXED_INTERVAL'),
+  /// Multi bracket shooting
+  bracket('BRACKET'),
+  /// Interval composite shooting (RICOH THETA X is not supported)
+  composite('COMPOSITE'),
+  /// Continuous shooting (RICOH THETA X or later)
+  continuous('CONTINUOUS'),
+  /// Time shift shooting (RICOH THETA X or later)
+  timeShift('TIME_SHIFT'),
+  /// Burst shooting (RICOH THETA Z1 v2.10.1 or later, RICOH THETA X is not supported)
+  burst('BURST');
+
+  final String rawValue;
+  const ShootingMethodEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static ShootingMethodEnum? getValue(String rawValue) {
+    return ShootingMethodEnum.values.cast<ShootingMethodEnum?>().firstWhere(
         (element) => element?.rawValue == rawValue,
         orElse: () => null);
   }
@@ -2714,6 +2770,9 @@ class Options {
   /// Remaining usable storage space (byte).
   int? remainingSpace;
 
+  /// ShootingMethod
+  ShootingMethodEnum? shootingMethod;
+
   /// Shutter speed (sec).
   /// 
   /// It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
@@ -2809,6 +2868,8 @@ class Options {
         return remainingVideoSeconds as T;
       case OptionNameEnum.remainingSpace:
         return remainingSpace as T;
+      case OptionNameEnum.shootingMethod:
+        return shootingMethod as T;
       case OptionNameEnum.shutterSpeed:
         return shutterSpeed as T;
       case OptionNameEnum.shutterVolume:
@@ -2912,6 +2973,9 @@ class Options {
         break;
       case OptionNameEnum.remainingSpace:
         remainingSpace = value;
+        break;
+      case OptionNameEnum.shootingMethod:
+        shootingMethod = value;
         break;
       case OptionNameEnum.shutterSpeed:
         shutterSpeed = value;

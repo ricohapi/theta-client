@@ -342,6 +342,9 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.remainingspace.name:
         options.remainingSpace = KotlinLong(integerLiteral: value as! Int)
         break
+    case ThetaRepository.OptionNameEnum.shootingmethod.name:
+        options.shootingMethod = getEnumValue(values: ThetaRepository.ShootingMethodEnum.values(), name: value as! String)!
+        break;
     case ThetaRepository.OptionNameEnum.shutterspeed.name:
         options.shutterSpeed = getEnumValue(values: ThetaRepository.ShutterSpeedEnum.values(), name: value as! String)!
         break;

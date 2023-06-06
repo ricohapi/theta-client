@@ -1103,6 +1103,7 @@ static convert_t PowerSavingEnum = {
 static convert_t PreviewFormatEnum = {
   .toTheta = @{
     @"W1024_H512_F30": THETACThetaRepositoryPreviewFormatEnum.w1024_h512_f30,
+    @"W1024_H512_F15": THETACThetaRepositoryPreviewFormatEnum.w1024_h512_f15,
     @"W512_H512_F30": THETACThetaRepositoryPreviewFormatEnum.w512_h512_f30,
     @"W1920_H960_F8": THETACThetaRepositoryPreviewFormatEnum.w1920_h960_f8,
     @"W1024_H512_F8": THETACThetaRepositoryPreviewFormatEnum.w1024_h512_f8,
@@ -1112,6 +1113,7 @@ static convert_t PreviewFormatEnum = {
 },
   .fromTheta = @{
     THETACThetaRepositoryPreviewFormatEnum.w1024_h512_f30: @"W1024_H512_F30",
+    THETACThetaRepositoryPreviewFormatEnum.w1024_h512_f15: @"W1024_H512_F15",
     THETACThetaRepositoryPreviewFormatEnum.w512_h512_f30: @"W512_H512_F30",
     THETACThetaRepositoryPreviewFormatEnum.w1920_h960_f8: @"W1920_H960_F8",
     THETACThetaRepositoryPreviewFormatEnum.w1024_h512_f8: @"W1024_H512_F8",

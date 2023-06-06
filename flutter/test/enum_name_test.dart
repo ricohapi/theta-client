@@ -446,6 +446,7 @@ void main() {
   test('PreviewFormatEnum', () async {
     List<List<dynamic>> data = [
       [PreviewFormatEnum.w1024_h512_f30, 'W1024_H512_F30'],
+      [PreviewFormatEnum.w1024_h512_f15, 'W1024_H512_F15'],
       [PreviewFormatEnum.w512_h512_f30, 'W512_H512_F30'],
       [PreviewFormatEnum.w1920_h960_f8, 'W1920_H960_F8'],
       [PreviewFormatEnum.w1024_h512_f8, 'W1024_H512_F8'],
@@ -454,6 +455,24 @@ void main() {
       [PreviewFormatEnum.w640_h320_f10, 'W640_H320_F10'],
     ];
     expect(data.length, PreviewFormatEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('ShootingMethodEnum', () async {
+    List<List<dynamic>> data = [
+      [ShootingMethodEnum.normal, 'NORMAL'],
+      [ShootingMethodEnum.interval, 'INTERVAL'],
+      [ShootingMethodEnum.moveInterval, 'MOVE_INTERVAL'],
+      [ShootingMethodEnum.fixedInterval, 'FIXED_INTERVAL'],
+      [ShootingMethodEnum.bracket, 'BRACKET'],
+      [ShootingMethodEnum.composite, 'COMPOSITE'],
+      [ShootingMethodEnum.continuous, 'CONTINUOUS'],
+      [ShootingMethodEnum.timeShift, 'TIME_SHIFT'],
+      [ShootingMethodEnum.burst, 'BURST'],
+    ];
+    expect(data.length, ShootingMethodEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
