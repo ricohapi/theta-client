@@ -275,6 +275,14 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     suspend fun initialize(call: MethodCall, result: Result) {
+        thetaRepository = null
+        previewing = false
+        photoCaptureBuilder = null
+        photoCapture = null
+        videoCaptureBuilder = null
+        videoCapture = null
+        videoCapturing = null
+
         try {
             endpoint = call.argument<String>("endpoint")!!
             val config = call.argument<Map<String, Any>>("config")?.let {
