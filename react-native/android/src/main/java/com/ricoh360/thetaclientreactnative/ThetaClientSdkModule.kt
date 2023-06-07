@@ -4,6 +4,7 @@ import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.capture.PhotoCapture
+import com.ricoh360.thetaclient.capture.TimeShiftCapture
 import com.ricoh360.thetaclient.capture.VideoCapture
 import com.ricoh360.thetaclient.capture.VideoCapturing
 import io.ktor.utils.io.core.*
@@ -26,6 +27,8 @@ class ThetaClientReactNativeModule(
   var previewing: Boolean = false
   var photoCaptureBuilder: PhotoCapture.Builder? = null
   var photoCapture: PhotoCapture? = null
+  var timeShiftCaptureBuilder: TimeShiftCapture.Builder? = null
+  var timeShiftCapture: TimeShiftCapture? = null
   var videoCaptureBuilder: VideoCapture.Builder? = null
   var videoCapture: VideoCapture? = null
   var videoCapturing: VideoCapturing? = null
@@ -50,6 +53,12 @@ class ThetaClientReactNativeModule(
   fun removeListeners(count: Int) {
     // Remove upstream listeners, stop unnecessary background tasks
     listenerCount -= count
+  }
+
+  fun sendNotifyEvent(param: WritableMap) {
+    reactApplicationContext
+      .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+      .emit(EVENT_NOTIFY, param)
   }
 
   /**
@@ -513,6 +522,103 @@ class ThetaClientReactNativeModule(
   }
 
   /**
+   * getTimeShiftCaptureBuilder  -  get time-shift builder from repository
+   */
+  @ReactMethod
+  fun getTimeShiftCaptureBuilder() {
+    timeShiftCaptureBuilder = theta.getTimeShiftCaptureBuilder()
+  }
+
+  /**
+   * buildTimeShiftCapture  -  build time-shift
+   * @param options option to execute time-shift
+   * @param interval interval of checking time-shift status
+   * @param promise Promise for buildTimeShiftCapture
+   */
+  @ReactMethod
+  fun buildTimeShiftCapture(options: ReadableMap, interval: Int?, promise: Promise) {
+    timeShiftCaptureBuilder?.let { builder ->
+      launch {
+        try {
+          val iterator = options.keySetIterator()
+          while (iterator.hasNextKey()) {
+            val key = iterator.nextKey()
+            val cvt = converters[key]
+            cvt?.setTimeShiftOption(options, builder)
+          }
+
+          interval?.let {
+            builder.setCheckStatusCommandInterval(it.toLong())
+          }
+
+          timeShiftCapture = builder.build()
+          promise.resolve(true)
+          timeShiftCaptureBuilder = null
+        } catch (t: Throwable) {
+          promise.reject(t)
+          timeShiftCaptureBuilder = null
+        }
+      }
+    } ?: run {
+      promise.reject(Exception("no timeShiftCaptureBuilder"))
+    }
+  }
+
+  /**
+   * startTimeShiftCapture  -  start time-shift
+   * @param promise promise for startTimeShiftCapture
+   */
+  @ReactMethod
+  fun startTimeShiftCapture(promise: Promise) {
+    timeShiftCapture?.let { capture ->
+      class StartCaptureCallback : TimeShiftCapture.StartCaptureCallback {
+        override fun onSuccess(fileUrl: String) {
+          promise.resolve(fileUrl)
+          timeShiftCapture = null
+        }
+
+        override fun onProgress(completion: Float) {
+          sendNotifyEvent(
+            toNotify("TIME-SHIFT-PROGRESS", toCaptureProgressNotifyParam(value = completion))
+          )
+        }
+
+        override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
+          promise.reject(exception)
+          timeShiftCapture = null
+        }
+      }
+      capture.startCapture(StartCaptureCallback())
+    } ?: run {
+      promise.reject(Exception("no timeShiftCapture"))
+    }
+  }
+
+  /**
+   * stopTimeShiftCapture  -  stop time-shift
+   * @param promise promise for stopTimeShiftCapture
+   */
+  @ReactMethod
+  fun stopTimeShiftCapture(promise: Promise) {
+    timeShiftCapture?.let { capture ->
+      class StopCaptureCallback : TimeShiftCapture.StopCaptureCallback {
+        override fun onSuccess() {
+          promise.resolve(true)
+          timeShiftCapture = null
+        }
+
+        override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
+          promise.reject(exception)
+          timeShiftCapture = null
+        }
+      }
+      capture.stopCapture(StopCaptureCallback())
+    } ?: run {
+      promise.reject(Exception("no timeShiftCapture"))
+    }
+  }
+
+  /**
    * getVideoCaptureBuilder  -  get video capture builder
    */
   @ReactMethod
@@ -919,8 +1025,8 @@ class ThetaClientReactNativeModule(
    * @param optionNames The target shooting mode
    * @param promise promise to set result
    */
-   @ReactMethod
-   fun getMySettingFromOldModel(optionNames: ReadableArray, promise: Promise) {
+  @ReactMethod
+  fun getMySettingFromOldModel(optionNames: ReadableArray, promise: Promise) {
     launch {
       try {
         val optionNameList = mutableListOf<ThetaRepository.OptionNameEnum>()
@@ -988,8 +1094,8 @@ class ThetaClientReactNativeModule(
    * listPlugins - acquires a list of installed plugins
    * @param promise promise to set result
    */
-   @ReactMethod
-   fun listPlugins(promise: Promise) {
+  @ReactMethod
+  fun listPlugins(promise: Promise) {
     launch {
       try {
         val result = Arguments.createArray()
@@ -1120,11 +1226,12 @@ class ThetaClientReactNativeModule(
       } catch (t: Throwable) {
         promise.reject(t)
       }
-     }
     }
+  }
 
   companion object {
     const val NAME = "ThetaClientReactNative"
     const val EVENT_NAME = "ThetaFrameEvent"
+    const val EVENT_NOTIFY = "ThetaNotify"
   }
 }

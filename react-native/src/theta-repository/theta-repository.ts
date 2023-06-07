@@ -12,7 +12,7 @@ import type {
   CaptureModeEnum,
   Proxy,
 } from './options';
-import { PhotoCaptureBuilder, VideoCaptureBuilder } from '../capture';
+import { PhotoCaptureBuilder, VideoCaptureBuilder, TimeShiftCaptureBuilder } from '../capture';
 import type { ThetaConfig } from './theta-config';
 import type { ThetaTimeout } from './theta-timeout';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
@@ -54,6 +54,17 @@ export function reset(): Promise<boolean> {
 export function getPhotoCaptureBuilder(): PhotoCaptureBuilder {
   ThetaClientReactNative.getPhotoCaptureBuilder();
   return new PhotoCaptureBuilder();
+}
+
+/**
+ * Get TimeShiftCaptureBuilder for time-shift.
+ *
+ * @function getTimeShiftCaptureBuilder
+ * @return created TimeShiftCaptureBuilder
+ */
+export function getTimeShiftCaptureBuilder(): TimeShiftCaptureBuilder {
+  ThetaClientReactNative.getTimeShiftCaptureBuilder();
+  return new TimeShiftCaptureBuilder();
 }
 
 /**

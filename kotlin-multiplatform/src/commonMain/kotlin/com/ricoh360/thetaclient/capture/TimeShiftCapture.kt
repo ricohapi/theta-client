@@ -97,6 +97,16 @@ class TimeShiftCapture private constructor(
                     ) as StartCaptureResponse
                     callback.onProgress(completion = startCaptureResponse.progress?.completion ?: 0f)
                 }
+
+                if (startCaptureResponse.state == CommandState.DONE) {
+                    var fileUrl = ""
+                    if ((startCaptureResponse.results?.fileUrls?.size ?: 0) > 0) {
+                        fileUrl = startCaptureResponse.results?.fileUrls?.get(0) as String
+                    }
+                    callback.onSuccess(fileUrl = fileUrl)
+                    return@launch
+                }
+                callback.onError(exception = ThetaRepository.ThetaWebApiException(message = startCaptureResponse.error?.message ?: startCaptureResponse.error.toString()))
             } catch (e: JsonConvertException) {
                 callback.onError(exception = ThetaRepository.ThetaWebApiException(message = e.message ?: e.toString()))
             } catch (e: ResponseException) {
@@ -104,17 +114,6 @@ class TimeShiftCapture private constructor(
             } catch (e: Exception) {
                 callback.onError(exception = ThetaRepository.NotConnectedException(message = e.message ?: e.toString()))
             }
-
-            if (startCaptureResponse.state == CommandState.DONE) {
-                var fileUrl = ""
-                if ((startCaptureResponse.results?.fileUrls?.size ?: 0) > 0) {
-                    fileUrl = startCaptureResponse.results?.fileUrls?.get(0) as String
-                }
-                callback.onSuccess(fileUrl = fileUrl)
-                return@launch
-            }
-
-            callback.onError(exception = ThetaRepository.ThetaWebApiException(message = startCaptureResponse.error?.message ?: startCaptureResponse.error.toString()))
         }
     }
 
@@ -192,7 +191,7 @@ class TimeShiftCapture private constructor(
             }
         }
 
-        fun setCheckStatusCommandInterval(timeMillis: Long): TimeShiftCapture.Builder {
+        fun setCheckStatusCommandInterval(timeMillis: Long): Builder {
             this.interval = timeMillis
             return this
         }
