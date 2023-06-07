@@ -164,7 +164,7 @@ class TimeShiftCapture private constructor(
             try {
                 ThetaApi.callSetOptionsCommand(
                     endpoint = endpoint,
-                    params = SetOptionsParams(options = Options(captureMode = CaptureMode.IMAGE))
+                    params = SetOptionsParams(options = Options(captureMode = CaptureMode.IMAGE, _shootingMethod = ShootingMethod.TIMESHIFT))
                 ).error?.let {
                     throw ThetaRepository.ThetaWebApiException(message = it.message)
                 }
