@@ -3709,7 +3709,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @return TimeShiftCapture.Builder
      */
     fun getTimeShiftCaptureBuilder(): TimeShiftCapture.Builder {
-        return TimeShiftCapture.Builder(endpoint)
+        return TimeShiftCapture.Builder(endpoint, cameraModel)
     }
 
     /**
