@@ -35,7 +35,12 @@ class UpdateFirmwareTest {
 
     @Test
     fun updateFirmwareTest() = runTest {
-        val apiPath: String? = System.getenv(FIRMWARE_UPDATE_API_ENV_NAME)
+        var apiPath: String? = null
+        kotlin.runCatching {
+            apiPath = System.getenv(FIRMWARE_UPDATE_API_ENV_NAME)
+        }.onFailure {
+            println("$FIRMWARE_UPDATE_API_ENV_NAME can not be accessed so updateFirmwareTest() is skipped")
+        }
         apiPath ?: let {
             println("$FIRMWARE_UPDATE_API_ENV_NAME is not set so updateFirmwareTest() is skipped")
             return@runTest
@@ -52,7 +57,7 @@ class UpdateFirmwareTest {
         val fileNames = listOf("firm file 1", "firm file 2")
 
         kotlin.runCatching {
-            thetaRepository.updateFirmware(apiPath, fileContents, fileNames)
+            thetaRepository.updateFirmware(apiPath!!, fileContents, fileNames)
         }.onSuccess {
             assertTrue(true, "updateFirmware")
         }.onFailure {
@@ -62,7 +67,7 @@ class UpdateFirmwareTest {
     }
 
     companion object {
-        // The path of Theta firmware update API.
+        // Environment variable name that holds the path of Theta firmware update API.
         const val FIRMWARE_UPDATE_API_ENV_NAME= "THETA_FU_API_PATH"
     }
 }
