@@ -21,11 +21,3 @@ expect class FrameSource
 expect fun frameFrom(packet: Pair<ByteArray, Int>): FrameSource
 
 expect fun randomUUID(): String
-
-/**
- * Get the value of the specified environment variable
- *
- * @param name environment variable name to get its value
- * @return
- */
-expect fun getEnvironmentVar(name: String): String?

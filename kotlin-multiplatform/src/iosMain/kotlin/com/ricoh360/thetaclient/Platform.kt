@@ -41,14 +41,3 @@ actual fun frameFrom(packet: Pair<ByteArray, Int>): FrameSource {
 actual fun randomUUID(): String {
     return NSUUID.UUID().UUIDString
 }
-
-/**
- * Get the value of the specified environment variable
- * In iOS, get the value of the specified property from Info.plist
- *
- * @param name property name to get its value
- * @return
- */
-actual fun getEnvironmentVar(name: String): String? {
-    return NSBundle.mainBundle.infoDictionary?.get(name) as? String
-}

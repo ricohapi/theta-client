@@ -845,5 +845,3 @@ object ThetaApi {
         }
     }
 }
-
-const val FIRMWARE_UPDATE_API_ENV_NAME= "THETA_FU_API_PATH"

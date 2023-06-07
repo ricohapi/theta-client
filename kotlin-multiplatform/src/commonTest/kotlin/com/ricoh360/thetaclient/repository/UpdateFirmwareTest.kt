@@ -1,15 +1,12 @@
 package com.ricoh360.thetaclient.repository
 
 import com.goncalossilva.resources.Resource
-import com.ricoh360.thetaclient.FIRMWARE_UPDATE_API_ENV_NAME
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
-import com.ricoh360.thetaclient.getEnvironmentVar
 import io.ktor.http.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.core.toByteArray
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlin.test.*
@@ -38,7 +35,7 @@ class UpdateFirmwareTest {
 
     @Test
     fun updateFirmwareTest() = runTest {
-        val apiPath: String? = getEnvironmentVar(FIRMWARE_UPDATE_API_ENV_NAME)
+        val apiPath: String? = System.getenv(FIRMWARE_UPDATE_API_ENV_NAME)
         apiPath ?: let {
             println("$FIRMWARE_UPDATE_API_ENV_NAME is not set so updateFirmwareTest() is skipped")
             return@runTest
@@ -62,5 +59,10 @@ class UpdateFirmwareTest {
             println("updateThetaFirmware: ${it.toString()}")
             assertTrue(false, "updateFirmware")
         }
+    }
+
+    companion object {
+        // The path of Theta firmware update API.
+        const val FIRMWARE_UPDATE_API_ENV_NAME= "THETA_FU_API_PATH"
     }
 }
