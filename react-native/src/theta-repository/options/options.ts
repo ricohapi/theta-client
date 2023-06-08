@@ -3,6 +3,7 @@ import type { CameraModeEnum } from './option-camera-mode';
 import type { NetworkTypeEnum } from './option-network-type';
 import type { Proxy } from './option-proxy';
 import type { ShutterSpeedEnum } from './option-shutter-speed';
+import type { TimeShift } from './option-time-shift';
 import type { WhiteBalanceAutoStrengthEnum } from './option-white-balance-auto-strength';
 import type { WlanFrequencyEnum } from './option-wlan-frequency';
 
@@ -506,6 +507,8 @@ export const OptionNameEnum = {
   RemainingVideoSeconds: 'RemainingVideoSeconds',
   /** remainingSpace */
   RemainingSpace: 'RemainingSpace',
+  /** timeShift */
+  TimeShift: 'TimeShift',
   /** totalSpace */
   TotalSpace: 'TotalSpace',
   /** shutterVolume */
@@ -587,6 +590,8 @@ export type Options = {
   shutterVolume?: number;
   /** Length of standby time before the camera enters the sleep mode. */
   sleepDelay?: SleepDelayEnum;
+  /** Time shift shooting */
+  timeShift?: TimeShift;
   /** Total storage space (byte). */
   totalSpace?: number;
   /** User name used for digest authentication when _networkType is set to client mode. */
