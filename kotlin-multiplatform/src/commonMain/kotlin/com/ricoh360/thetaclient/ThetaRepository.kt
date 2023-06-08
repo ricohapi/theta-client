@@ -3431,27 +3431,32 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Shooting order.
          * if true, first shoot the front side (side with Theta logo) then shoot the rear side (side with monitor).
          * if false, first shoot the rear side then shoot the front side.
+         * default is front first.
          */
         val isFrontFirst: Boolean? = null,
 
         /**
-         * Time (sec) before 1st lens shooting.
-         * 0 to 10.  For V or Z1, default is 5. For X, default is 2.
+         * Time before 1st lens shooting.
+         * For V or Z1, default is 5 seconds. For X, default is 2 seconds.
          */
-        val firstInterval: Int? = null,
+        val firstInterval: TimeShiftIntervalEnum? = null,
 
         /**
-         * Time (sec) from 1st lens shooting until start of 2nd lens shooting.
-         * 0 to 10.  Default is 5.
+         * Time from 1st lens shooting until start of 2nd lens shooting.
+         * Default is 5 seconds.
          */
-        val secondInterval: Int? = null,
+        val secondInterval: TimeShiftIntervalEnum? = null,
     ) {
         constructor(timeShift: com.ricoh360.thetaclient.transferred.TimeShift) : this(
             isFrontFirst = timeShift.firstShooting?.let {
                 it == FirstShootingEnum.FRONT
             },
-            firstInterval = timeShift.firstInterval,
-            secondInterval = timeShift.secondInterval,
+            firstInterval = timeShift.firstInterval?.let {
+                TimeShiftIntervalEnum.get(it)
+            },
+            secondInterval = timeShift.secondInterval?.let {
+                TimeShiftIntervalEnum.get(it)
+            },
         )
 
 
@@ -3465,9 +3470,51 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 firstShooting = isFrontFirst?.let {
                     if(it) FirstShootingEnum.FRONT else FirstShootingEnum.REAR
                 },
-                firstInterval = firstInterval,
-                secondInterval = secondInterval,
+                firstInterval = firstInterval?.sec,
+                secondInterval = secondInterval?.sec,
             )
+        }
+    }
+
+    /**
+     * Time shift interval
+     *
+     * @property sec duration of interval in seconds.
+     */
+    enum class TimeShiftIntervalEnum(val sec: Int) {
+        /** 0 second */
+        INTERVAL_0(0),
+        /** 1 second */
+        INTERVAL_1(1),
+        /** 2 seconds */
+        INTERVAL_2(2),
+        /** 3 seconds */
+        INTERVAL_3(3),
+        /** 4 seconds */
+        INTERVAL_4(4),
+        /** 5 seconds */
+        INTERVAL_5(5),
+        /** 6 seconds */
+        INTERVAL_6(6),
+        /** 7 seconds */
+        INTERVAL_7(7),
+        /** 8 seconds */
+        INTERVAL_8(8),
+        /** 9 seconds */
+        INTERVAL_9(9),
+        /** 10 seconds */
+        INTERVAL_10(10);
+
+        companion object {
+            /**
+             * Convert seconds to IntervalEnum
+             *
+             * @param sec Interval duration in seconds
+             * @return IntervalEnum
+             */
+            fun get(sec: Int): TimeShiftIntervalEnum? {
+                return TimeShiftIntervalEnum.values().firstOrNull { it.sec == sec }
+            }
         }
     }
 
