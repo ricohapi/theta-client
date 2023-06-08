@@ -1897,20 +1897,28 @@ enum PowerSavingEnum {
 enum PreviewFormatEnum {
   /// width_height_framerate
   /// For Theta X, Z1, V and SC2
+  // ignore: constant_identifier_names
   w1024_h512_f30('W1024_H512_F30'),
   /// For Theta X. This value can't set.
+  // ignore: constant_identifier_names
   w1024_h512_f15('W1024_H512_F15'),
   /// For Theta X
+  // ignore: constant_identifier_names
   w512_h512_f30('W512_H512_F30'),
   /// For Theta Z1 and V
+  // ignore: constant_identifier_names
   w1920_h960_f8('W1920_H960_F8'),
   /// For Theta Z1 and V
+  // ignore: constant_identifier_names
   w1024_h512_f8('W1024_H512_F8'),
   /// For Theta Z1 and V
+  // ignore: constant_identifier_names
   w640_h320_f30('W640_H320_F30'),
   /// For Theta Z1 and V
+  // ignore: constant_identifier_names
   w640_h320_f8('W640_H320_F8'),
   /// For Theta S and SC
+  // ignore: constant_identifier_names
   w640_h320_f10('W640_H320_F10');
 
   final String rawValue;
