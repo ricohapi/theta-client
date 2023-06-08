@@ -8,14 +8,13 @@ const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
  * TimeShiftCapture class
  */
 export class TimeShiftCapture {
-
   eventListener: EmitterSubscription;
   notifyList = new Map<string, ((notify: BaseNotify) => void) | undefined>();
 
   constructor() {
     this.eventListener = addNotifyListener((notify: BaseNotify) => {
       this.notifyList.get(notify.name)?.(notify as BaseNotify);
-    })
+    });
   }
 
   /**
@@ -23,11 +22,18 @@ export class TimeShiftCapture {
    * @param onProgress the block for time-shift onProgress
    * @return promise of captured file url
    */
-  async startCapture(onProgress?: (completion?: number) => void): Promise<string> {
+  async startCapture(
+    onProgress?: (completion?: number) => void
+  ): Promise<string> {
     const promise = await ThetaClientReactNative.startTimeShiftCapture();
-    this.notifyList.set('TIME-SHIFT-PROGRESS', onProgress ? (event: CaptureProgressNotify) => {
-      onProgress(event.params?.completion);
-    } : undefined);
+    this.notifyList.set(
+      'TIME-SHIFT-PROGRESS',
+      onProgress
+        ? (event: CaptureProgressNotify) => {
+            onProgress(event.params?.completion);
+          }
+        : undefined
+    );
     return promise;
   }
 
@@ -73,8 +79,9 @@ export class TimeShiftCaptureBuilder extends CaptureBuilder<TimeShiftCaptureBuil
    * @return promise of TimeShiftCapture instance
    */
   build(): Promise<TimeShiftCapture> {
-    return ThetaClientReactNative.buildTimeShiftCapture(this.options, this.interval).then(
-      () => new TimeShiftCapture()
-    );
+    return ThetaClientReactNative.buildTimeShiftCapture(
+      this.options,
+      this.interval
+    ).then(() => new TimeShiftCapture());
   }
 }

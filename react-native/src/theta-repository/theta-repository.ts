@@ -12,7 +12,11 @@ import type {
   CaptureModeEnum,
   Proxy,
 } from './options';
-import { PhotoCaptureBuilder, VideoCaptureBuilder, TimeShiftCaptureBuilder } from '../capture';
+import {
+  PhotoCaptureBuilder,
+  VideoCaptureBuilder,
+  TimeShiftCaptureBuilder,
+} from '../capture';
 import type { ThetaConfig } from './theta-config';
 import type { ThetaTimeout } from './theta-timeout';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
