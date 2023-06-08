@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 class TimeShiftCapture private constructor(
     private val endpoint: String,
     options: Options,
-    private val checkStatusCommandInterval: Long = CHECK_COMMAND_STATUS_INTERVAL
+    private val checkStatusCommandInterval: Long
 ) : Capture(options) {
 
     private val scope = CoroutineScope(Dispatchers.Default)
@@ -107,8 +107,8 @@ class TimeShiftCapture private constructor(
 
             if (startCaptureResponse.state == CommandState.DONE) {
                 var fileUrl = ""
-                if ((startCaptureResponse.results?.fileUrls?.size ?: 0) > 0) {
-                    fileUrl = startCaptureResponse.results?.fileUrls?.get(0) as String
+                if (startCaptureResponse.results?.fileUrls?.isEmpty() == false) {
+                    fileUrl = startCaptureResponse.results?.fileUrls?.first() ?: ""
                 }
                 callback.onSuccess(fileUrl = fileUrl)
                 return@launch
@@ -152,7 +152,7 @@ class TimeShiftCapture private constructor(
      * @property endpoint URL of Theta web API endpoint
      */
     class Builder internal constructor(private val endpoint: String, private val cameraModel: String? = null) : Capture.Builder<Builder>() {
-        var interval: Long? = null
+        private var interval: Long? = null
 
         /**
          * Builds an instance of a VideoCapture that has all the combined parameters of the Options that have been added to the Builder.
@@ -190,14 +190,14 @@ class TimeShiftCapture private constructor(
             } catch (e: Exception) {
                 throw ThetaRepository.NotConnectedException(message = e.message ?: e.toString())
             }
-            return interval?.let {
-                TimeShiftCapture(endpoint = endpoint, options = options, checkStatusCommandInterval = it)
-            } ?: kotlin.run {
-                TimeShiftCapture(endpoint = endpoint, options = options)
-            }
+            return TimeShiftCapture(
+                endpoint = endpoint,
+                options = options,
+                checkStatusCommandInterval = interval ?: CHECK_COMMAND_STATUS_INTERVAL
+            )
         }
 
-        fun setCheckStatusCommandInterval(timeMillis: Long): TimeShiftCapture.Builder {
+        fun setCheckStatusCommandInterval(timeMillis: Long): Builder {
             this.interval = timeMillis
             return this
         }
