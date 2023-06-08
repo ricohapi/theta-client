@@ -768,6 +768,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         ShutterVolume("_shutterVolume", Int::class),
 
         /**
+         * Option name
+         * _timeShift
+         */
+        TimeShift("_timeShift", TimeShiftSetting::class),
+
+        /**
          *  Option name
          *  _username
          */
@@ -984,6 +990,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var sleepDelay: SleepDelay? = null,
 
         /**
+         * Time shift shooting
+         */
+        var timeShift: TimeShiftSetting? = null,
+
+        /**
          * Total storage space (byte).
          */
         var totalSpace: Long? = null,
@@ -1047,12 +1058,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             password = null,
             proxy = null,
             shutterSpeed = null,
+            shutterVolume = null,
             sleepDelay = null,
             remainingPictures = null,
             remainingVideoSeconds = null,
             remainingSpace = null,
             totalSpace = null,
-            shutterVolume = null,
+            timeShift = null,
             username = null,
             whiteBalance = null,
             whiteBalanceAutoStrength = null,
@@ -1091,6 +1103,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             remainingPictures = options.remainingPictures,
             remainingVideoSeconds = options.remainingVideoSeconds,
             remainingSpace = options.remainingSpace,
+            timeShift = options._timeShift?.let { TimeShiftSetting(it) },
             totalSpace = options.totalSpace,
             shutterVolume = options._shutterVolume,
             username = options._username,
@@ -1131,6 +1144,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 remainingPictures = remainingPictures,
                 remainingVideoSeconds = remainingVideoSeconds,
                 remainingSpace = remainingSpace,
+                _timeShift = timeShift?.toTransferredTimeShift(),
                 totalSpace = totalSpace,
                 shutterSpeed = shutterSpeed?.value,
                 _shutterVolume = shutterVolume,
@@ -1175,13 +1189,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.OffDelay -> offDelay
                 OptionNameEnum.Password -> password
                 OptionNameEnum.Proxy -> proxy
-                OptionNameEnum.SleepDelay -> sleepDelay
                 OptionNameEnum.RemainingPictures -> remainingPictures
                 OptionNameEnum.RemainingVideoSeconds -> remainingVideoSeconds
                 OptionNameEnum.RemainingSpace -> remainingSpace
-                OptionNameEnum.TotalSpace -> totalSpace
                 OptionNameEnum.ShutterSpeed -> shutterSpeed
                 OptionNameEnum.ShutterVolume -> shutterVolume
+                OptionNameEnum.SleepDelay -> sleepDelay
+                OptionNameEnum.TimeShift -> timeShift
+                OptionNameEnum.TotalSpace -> totalSpace
                 OptionNameEnum.Username -> username
                 OptionNameEnum.WhiteBalance -> whiteBalance
                 OptionNameEnum.WhiteBalanceAutoStrength -> whiteBalanceAutoStrength
@@ -1225,12 +1240,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.Password -> password = value as String
                 OptionNameEnum.Proxy -> proxy = value as Proxy
                 OptionNameEnum.ShutterSpeed -> shutterSpeed = value as ShutterSpeedEnum
+                OptionNameEnum.ShutterVolume -> shutterVolume = value as Int
                 OptionNameEnum.SleepDelay -> sleepDelay = value as SleepDelay
                 OptionNameEnum.RemainingPictures -> remainingPictures = value as Int
                 OptionNameEnum.RemainingVideoSeconds -> remainingVideoSeconds = value as Int
                 OptionNameEnum.RemainingSpace -> remainingSpace = value as Long
+                OptionNameEnum.TimeShift -> timeShift = value as TimeShiftSetting
                 OptionNameEnum.TotalSpace -> totalSpace = value as Long
-                OptionNameEnum.ShutterVolume -> shutterVolume = value as Int
                 OptionNameEnum.Username -> username = value as String
                 OptionNameEnum.WhiteBalance -> whiteBalance = value as WhiteBalanceEnum
                 OptionNameEnum.WhiteBalanceAutoStrength -> whiteBalanceAutoStrength = value as WhiteBalanceAutoStrengthEnum
@@ -3406,6 +3422,55 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             }
         }
     }
+
+    /**
+     * Time shift shooting
+     */
+    data class TimeShiftSetting(
+        /**
+         * Shooting order.
+         * if true, first shoot the front side (side with Theta logo) then shoot the rear side (side with monitor).
+         * if false, first shoot the rear side then shoot the front side.
+         */
+        val isFrontFirst: Boolean? = null,
+
+        /**
+         * Time (sec) before 1st lens shooting.
+         * 0 to 10.  For V or Z1, default is 5. For X, default is 2.
+         */
+        val firstInterval: Int? = null,
+
+        /**
+         * Time (sec) from 1st lens shooting until start of 2nd lens shooting.
+         * 0 to 10.  Default is 5.
+         */
+        val secondInterval: Int? = null,
+    ) {
+        constructor(timeShift: com.ricoh360.thetaclient.transferred.TimeShift) : this(
+            isFrontFirst = timeShift.firstShooting?.let {
+                it == FirstShootingEnum.FRONT
+            },
+            firstInterval = timeShift.firstInterval,
+            secondInterval = timeShift.secondInterval,
+        )
+
+
+        /**
+         * Convert TimeShiftSetting to transferred.TimeShift. for ThetaApi.
+         *
+         * @return transferred.TimeShift
+         */
+        fun toTransferredTimeShift(): com.ricoh360.thetaclient.transferred.TimeShift {
+            return TimeShift(
+                firstShooting = isFrontFirst?.let {
+                    if(it) FirstShootingEnum.FRONT else FirstShootingEnum.REAR
+                },
+                firstInterval = firstInterval,
+                secondInterval = secondInterval,
+            )
+        }
+    }
+
 
     /**
      * White balance.

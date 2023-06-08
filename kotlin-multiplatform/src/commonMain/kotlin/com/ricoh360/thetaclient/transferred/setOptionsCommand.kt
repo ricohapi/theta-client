@@ -537,6 +537,16 @@ data class Options(
     var sleepDelaySupport: List<Int>? = null,
 
     /**
+     * Time shift shooting.
+     */
+    var _timeShift: TimeShift? = null,
+
+    /**
+     * Supported TimeShift.
+     */
+    var _timeShiftSupport: List<TimeShift>? = null,
+
+    /**
      * top bottom correction
      *
      * Sets the top/bottom correction.  For RICOH THETA V and RICOH
@@ -905,6 +915,51 @@ data class Proxy(
      */
     val password: String? = null,
 )
+
+/**
+ * Time shift shooting.
+ *
+ * For Theta X, Z1 and V.
+ */
+@Serializable
+data class TimeShift(
+    /**
+     * Shooting order.
+     * "front": first shoot the front side (side with Theta logo) then shoot the rear side (side with monitor).
+     * "rear" first shoot the rear side then shoot the front side.
+     */
+    val firstShooting: FirstShootingEnum? = null,
+
+    /**
+     * Time (sec) before 1st lens shooting.
+     * 0 to 10.  For V or Z1, default is 5. For X, default is 2.
+     */
+    val firstInterval: Int? = null,
+
+    /**
+     * Time (sec) from 1st lens shooting until start of 2nd lens shooting.
+     * 0 to 10.  Default is 5.
+     */
+    val secondInterval: Int? = null,
+)
+
+/**
+ * On time shift shooting, specify which side is shot first.
+ */
+@Serializable
+enum class FirstShootingEnum {
+    /**
+     * first shoot the front side
+     */
+    @SerialName("front")
+    FRONT,
+
+    /**
+     * first shoot the rear side
+     */
+    @SerialName("rear")
+    REAR,
+}
 
 /**
  * White balance setting
