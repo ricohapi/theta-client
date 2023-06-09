@@ -118,14 +118,14 @@ class PhotoCapture private constructor(private val endpoint: String, options: Op
         @Throws(Throwable::class)
         suspend fun build(): PhotoCapture {
             try {
-                val options = when (ThetaRepository.ThetaModel.get(cameraModel)) {
+                val modeOptions = when (ThetaRepository.ThetaModel.get(cameraModel)) {
                     ThetaRepository.ThetaModel.THETA_X -> Options(captureMode = CaptureMode.IMAGE, _shootingMethod = ShootingMethod.NORMAL)
                     else -> Options(captureMode = CaptureMode.IMAGE)
                 }
 
                 ThetaApi.callSetOptionsCommand(
                     endpoint,
-                    SetOptionsParams(options)
+                    SetOptionsParams(modeOptions)
                 ).error?.let {
                     throw ThetaRepository.ThetaWebApiException(it.message)
                 }
