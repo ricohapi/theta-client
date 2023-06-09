@@ -134,7 +134,7 @@ typedef void (^ TimeShiftOnProgressBlock)(float);
  */
 - (void)onSuccessFileUrl_:(NSString * _Nullable)fileUrl {
     if (_sdk.timeShiftCapture == nil || _sdk.timeShiftCapturing == nil) return;
-    _resolve(fileUrl !=nil ? fileUrl : @"");
+    _resolve(fileUrl != nil ? fileUrl : [NSNull null]);
     _sdk.timeShiftCapture = nil;
     _sdk.timeShiftCapturing = nil;
 }
