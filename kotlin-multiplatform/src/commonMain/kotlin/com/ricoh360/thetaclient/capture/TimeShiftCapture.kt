@@ -6,10 +6,7 @@ import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.*
 import io.ktor.client.plugins.*
 import io.ktor.serialization.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 /*
  * TimeShiftCapture
@@ -41,7 +38,7 @@ class TimeShiftCapture private constructor(
          *
          * @param fileUrl URL of the video capture
          */
-        fun onSuccess(fileUrl: String)
+        fun onSuccess(fileUrl: String?)
 
         /**
          * Called when state "inProgress".
@@ -59,28 +56,12 @@ class TimeShiftCapture private constructor(
     }
 
     /**
-     * Callback of stopCapture
-     */
-    interface StopCaptureCallback {
-        /**
-         * Called when successful.
-         */
-        fun onSuccess()
-
-        /**
-         * Called when error occurs.
-         *
-         * @param exception Exception of error occurs
-         */
-        fun onError(exception: ThetaRepository.ThetaRepositoryException)
-    }
-
-    /**
      * Starts time-shift capture.
      *
      * @param callback Success or failure of the call
+     * @return TimeShiftCapturing instance
      */
-    fun startCapture(callback: StartCaptureCallback) {
+    fun startCapture(callback: StartCaptureCallback): TimeShiftCapturing {
         scope.launch {
             lateinit var startCaptureResponse: StartCaptureResponse
             try {
@@ -88,26 +69,28 @@ class TimeShiftCapture private constructor(
                     endpoint = endpoint,
                     params = StartCaptureParams(_mode = ShootingMode.TIME_SHIFT_SHOOTING)
                 )
-                val id = startCaptureResponse.id
-                while (startCaptureResponse.state == CommandState.IN_PROGRESS) {
-                    delay(timeMillis = checkStatusCommandInterval)
-                    startCaptureResponse = ThetaApi.callStatusApi(
-                        endpoint = endpoint,
-                        params = StatusApiParams(id = id)
-                    ) as StartCaptureResponse
-                    callback.onProgress(completion = startCaptureResponse.progress?.completion ?: 0f)
-                }
 
-                if (startCaptureResponse.state == CommandState.DONE) {
-                    var fileUrl = ""
-                    if (startCaptureResponse.results?.fileUrls?.isEmpty() == false) {
-                        fileUrl = startCaptureResponse.results?.fileUrls?.first() ?: ""
+                runBlocking {
+                    val id = startCaptureResponse.id
+                    while (startCaptureResponse.state == CommandState.IN_PROGRESS) {
+                        delay(timeMillis = checkStatusCommandInterval)
+                        startCaptureResponse = ThetaApi.callStatusApi(
+                            endpoint = endpoint,
+                            params = StatusApiParams(id = id)
+                        ) as StartCaptureResponse
+                        callback.onProgress(completion = startCaptureResponse.progress?.completion ?: 0f)
                     }
-                    callback.onSuccess(fileUrl = fileUrl)
-                    return@launch
-                }
 
-                callback.onError(exception = ThetaRepository.ThetaWebApiException(message = startCaptureResponse.error?.message ?: startCaptureResponse.error.toString()))
+                    if (startCaptureResponse.state == CommandState.DONE) {
+                        var fileUrl = ""
+                        if (startCaptureResponse.results?.fileUrls?.isEmpty() == false) {
+                            fileUrl = startCaptureResponse.results?.fileUrls?.first() ?: ""
+                        }
+                        callback.onSuccess(fileUrl = fileUrl)
+                        return@runBlocking
+                    }
+                    callback.onError(exception = ThetaRepository.ThetaWebApiException(message = startCaptureResponse.error?.message ?: startCaptureResponse.error.toString()))
+                }
             } catch (e: JsonConvertException) {
                 callback.onError(exception = ThetaRepository.ThetaWebApiException(message = e.message ?: e.toString()))
             } catch (e: ResponseException) {
@@ -116,34 +99,8 @@ class TimeShiftCapture private constructor(
                 callback.onError(exception = ThetaRepository.NotConnectedException(message = e.message ?: e.toString()))
             }
         }
-    }
 
-    /**
-     * Stops time-shift capture.
-     * When call stopCapture() then call property callback.
-     */
-    fun stopCapture(callback: StopCaptureCallback) {
-        scope.launch {
-            lateinit var response: StopCaptureResponse
-            try {
-                response = ThetaApi.callStopCaptureCommand(endpoint = endpoint)
-                response.error?.let {
-                    callback.onError(exception = ThetaRepository.ThetaWebApiException(message = it.message))
-                    return@launch
-                }
-            } catch (e: JsonConvertException) {
-                callback.onError(exception = ThetaRepository.ThetaWebApiException(message = e.message ?: e.toString()))
-                return@launch
-            } catch (e: ResponseException) {
-                callback.onError(exception = ThetaRepository.ThetaWebApiException.create(exception = e))
-                return@launch
-            } catch (e: Exception) {
-                callback.onError(exception = ThetaRepository.NotConnectedException(message = e.message ?: e.toString()))
-                return@launch
-            }
-
-            callback.onSuccess()
-        }
+        return TimeShiftCapturing(endpoint = endpoint, callback = callback)
     }
 
     /*
