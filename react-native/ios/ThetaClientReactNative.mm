@@ -1532,6 +1532,66 @@ static convert_t ProxyCvt = {
 };
 
 /**
+ * TimeShift converter
+ */
+static convert_t TimeShiftCvt = {
+  .toTheta = @{
+    @"INTERVAL_0": THETACThetaRepositoryTimeShiftIntervalEnum.interval0,
+    @"INTERVAL_1": THETACThetaRepositoryTimeShiftIntervalEnum.interval1,
+    @"INTERVAL_2": THETACThetaRepositoryTimeShiftIntervalEnum.interval2,
+    @"INTERVAL_3": THETACThetaRepositoryTimeShiftIntervalEnum.interval3,
+    @"INTERVAL_4": THETACThetaRepositoryTimeShiftIntervalEnum.interval4,
+    @"INTERVAL_5": THETACThetaRepositoryTimeShiftIntervalEnum.interval5,
+    @"INTERVAL_6": THETACThetaRepositoryTimeShiftIntervalEnum.interval6,
+    @"INTERVAL_7": THETACThetaRepositoryTimeShiftIntervalEnum.interval7,
+    @"INTERVAL_8": THETACThetaRepositoryTimeShiftIntervalEnum.interval8,
+    @"INTERVAL_9": THETACThetaRepositoryTimeShiftIntervalEnum.interval9,
+    @"INTERVAL_10": THETACThetaRepositoryTimeShiftIntervalEnum.interval10
+  },
+  .fromTheta = @{
+    THETACThetaRepositoryTimeShiftIntervalEnum.interval0: @"INTERVAL_0",
+    THETACThetaRepositoryTimeShiftIntervalEnum.interval1: @"INTERVAL_1",
+    THETACThetaRepositoryTimeShiftIntervalEnum.interval2: @"INTERVAL_2",
+    THETACThetaRepositoryTimeShiftIntervalEnum.interval3: @"INTERVAL_3",
+    THETACThetaRepositoryTimeShiftIntervalEnum.interval4: @"INTERVAL_4",
+    THETACThetaRepositoryTimeShiftIntervalEnum.interval5: @"INTERVAL_5",
+    THETACThetaRepositoryTimeShiftIntervalEnum.interval6: @"INTERVAL_6",
+    THETACThetaRepositoryTimeShiftIntervalEnum.interval7: @"INTERVAL_7",
+    THETACThetaRepositoryTimeShiftIntervalEnum.interval8: @"INTERVAL_8",
+    THETACThetaRepositoryTimeShiftIntervalEnum.interval9: @"INTERVAL_9",
+    THETACThetaRepositoryTimeShiftIntervalEnum.interval10: @"INTERVAL_10"
+  },
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    NSDictionary *timeshiftDic = [rct objectForKey:@"timeShift"];
+    if (timeshiftDic) {
+      opt.timeShift = [[THETACThetaRepositoryTimeShiftSetting alloc]
+                       initWithIsFrontFirst:!isNull([timeshiftDic objectForKey:@"isFrontFirst"]) ? [THETACBoolean numberWithBool:((NSNumber*) [timeshiftDic objectForKey:@"isFrontFirst"]).boolValue] : nil
+                       firstInterval:!isNull([timeshiftDic objectForKey:@"firstInterval"]) ? [TimeShiftCvt.toTheta objectForKey:[timeshiftDic objectForKey:@"firstInterval"]] : nil
+                       secondInterval:!isNull([timeshiftDic objectForKey:@"secondInterval"]) ? [TimeShiftCvt.toTheta objectForKey:[timeshiftDic objectForKey:@"secondInterval"]] : nil];
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    if (opt.timeShift) {
+      NSMutableDictionary *timeshift = [NSMutableDictionary dictionary];
+      
+      if (opt.timeShift.isFrontFirst) {
+        [timeshift setObject:@(((NSNumber *) opt.timeShift.isFrontFirst).boolValue) forKey:@"isFrontFirst"];
+      }
+      
+      if (opt.timeShift.firstInterval) {
+        [timeshift setObject:[TimeShiftCvt.fromTheta objectForKey:opt.timeShift.firstInterval] forKey:@"firstInterval"];
+      }
+      
+      if (opt.timeShift.secondInterval) {
+        [timeshift setObject:[TimeShiftCvt.fromTheta objectForKey:opt.timeShift.secondInterval] forKey:@"secondInterval"];
+      }
+      
+      [rct setObject:timeshift forKey:@"timeShift"];
+    }
+  }
+};
+
+/**
  * Username converter
  */
 static convert_t UsernameCvt = {
@@ -1579,6 +1639,7 @@ static NSDictionary *NameToOptionEnum = @{
   @"RemainingPictures": THETACThetaRepositoryOptionNameEnum.remainingpictures,
   @"RemainingVideoSeconds": THETACThetaRepositoryOptionNameEnum.remainingvideoseconds,
   @"RemainingSpace": THETACThetaRepositoryOptionNameEnum.remainingspace,
+  @"TimeShift": THETACThetaRepositoryOptionNameEnum.timeshift,
   @"TotalSpace": THETACThetaRepositoryOptionNameEnum.totalspace,
   @"ShutterVolume": THETACThetaRepositoryOptionNameEnum.shuttervolume,
   @"Username": THETACThetaRepositoryOptionNameEnum.username,
@@ -1618,6 +1679,7 @@ static NSDictionary *OptionEnumToOption = @{
   @"RemainingPictures": @"remainingPictures",
   @"RemainingVideoSeconds": @"remainingVideoSeconds",
   @"RemainingSpace": @"remainingSpace",
+  @"TimeShift": @"timeShift",
   @"TotalSpace": @"totalSpace",
   @"ShutterVolume": @"shutterVolume",
   @"Username": @"username",
@@ -1660,6 +1722,7 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"remainingPictures": ^{return &RemainingPicturesCvt;},
   @"remainingVideoSeconds": ^{return &RemainingVideoSecondsCvt;},
   @"remainingSpace": ^{return &RemainingSpaceCvt;},
+  @"timeShift": ^{return &TimeShiftCvt;},
   @"totalSpace": ^{return &TotalSpaceCvt;},
   @"shutterVolume": ^{return &ShutterVolumeCvt;},
   @"username": ^{return &UsernameCvt;},
