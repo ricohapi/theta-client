@@ -425,6 +425,12 @@ class TimeShiftCaptureTest {
             }
         })
 
+        runBlocking {
+            withTimeout(1000) {
+                deferred.await()
+            }
+        }
+
         // execute status error and not json response
         deferred = CompletableDeferred<Unit>()
         capture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
@@ -514,6 +520,12 @@ class TimeShiftCaptureTest {
                 deferred.complete(Unit)
             }
         })
+
+        runBlocking {
+            withTimeout(1000) {
+                deferred.await()
+            }
+        }
     }
 
     /**
@@ -557,6 +569,12 @@ class TimeShiftCaptureTest {
             }
         })
 
+        runBlocking {
+            withTimeout(1000) {
+                deferred.await()
+            }
+        }
+
         // execute status error and not json response
         deferred = CompletableDeferred()
         capture.stopCapture(object : TimeShiftCapture.StopCaptureCallback {
@@ -571,6 +589,12 @@ class TimeShiftCaptureTest {
             }
         })
 
+        runBlocking {
+            withTimeout(1000) {
+                deferred.await()
+            }
+        }
+
         // execute timeout exception
         deferred = CompletableDeferred()
         capture.stopCapture(object : TimeShiftCapture.StopCaptureCallback {
@@ -584,5 +608,11 @@ class TimeShiftCaptureTest {
                 deferred.complete(Unit)
             }
         })
+
+        runBlocking {
+            withTimeout(1000) {
+                deferred.await()
+            }
+        }
     }
 }
