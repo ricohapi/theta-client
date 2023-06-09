@@ -37,13 +37,16 @@ class TimeShiftCaptureTest {
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
             Resource("src/commonTest/resources/TimeShiftCapture/start_capture_progress.json").readText(),
+            Resource("src/commonTest/resources/TimeShiftCapture/start_capture_progress.json").readText(),
+            Resource("src/commonTest/resources/TimeShiftCapture/start_capture_progress.json").readText(),
             Resource("src/commonTest/resources/TimeShiftCapture/start_capture_done.json").readText(),
-            Resource("src/commonTest/resources/TimeShiftCapture/stop_capture_done.json").readText(),
         )
         val requestPathArray = arrayOf(
             "/osc/commands/execute",
             "/osc/commands/execute",
-            "/osc/commands/execute",
+            "/osc/commands/status",
+            "/osc/commands/status",
+            "/osc/commands/status",
             "/osc/commands/execute",
         )
         var counter = 0
@@ -57,13 +60,7 @@ class TimeShiftCaptureTest {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
                 }
                 1 -> {
-                    CheckRequest.checkCommandName(request, "camera.setOptions")
-                }
-                2 -> {
                     CheckRequest.checkCommandName(request, "camera.startCapture")
-                }
-                3 -> {
-                    CheckRequest.checkCommandName(request, "camera.stopCapture")
                 }
             }
 
@@ -76,7 +73,7 @@ class TimeShiftCaptureTest {
         val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder().build()
 
         var file: String? = null
-        val capturing = timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
+        timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
             override fun onSuccess(fileUrl: String?) {
                 file = fileUrl
                 deferred.complete(Unit)
@@ -93,58 +90,38 @@ class TimeShiftCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(7000) {
                 deferred.await()
             }
         }
-
-        capturing.cancelCapture()
 
         // check result
         assertTrue(file?.startsWith("http://") ?: false, "start time-shift")
     }
 
     /**
-     * call startCapture when result is empty
+     * call cancelCapture test
      */
     @Test
-    fun startCaptureEmptyTest() = runTest {
+    fun cancelCaptureTest() = runTest {
         // setup
-        val responseArray = arrayOf(
-            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
-            Resource("src/commonTest/resources/TimeShiftCapture/start_capture_progress.json").readText(),
-            Resource("src/commonTest/resources/TimeShiftCapture/start_capture_done_empty.json").readText(),
-            Resource("src/commonTest/resources/TimeShiftCapture/stop_capture_done.json").readText(),
-        )
-        val requestPathArray = arrayOf(
-            "/osc/commands/execute",
-            "/osc/commands/execute",
-            "/osc/commands/execute",
-            "/osc/commands/execute",
-        )
-        var counter = 0
+        var isStop = false
         MockApiClient.onRequest = { request ->
-            val index = counter++
-
-            // check request
-            assertEquals(request.url.encodedPath, requestPathArray[index], "start capture request")
-            when (index) {
-                0 -> {
-                    CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
-                }
-                1 -> {
-                    CheckRequest.checkCommandName(request, "camera.setOptions")
-                }
-                2 -> {
-                    CheckRequest.checkCommandName(request, "camera.startCapture")
-                }
-                3 -> {
-                    CheckRequest.checkCommandName(request, "camera.stopCapture")
-                }
+            val path = if (request.body.toString().contains("camera.stopCapture")) {
+                isStop = true
+                "src/commonTest/resources/TimeShiftCapture/stop_capture_done.json"
+            } else if (request.body.toString().contains("camera.setOptions")) {
+                "src/commonTest/resources/setOptions/set_options_done.json"
+            } else {
+                if (isStop)
+                    "src/commonTest/resources/TimeShiftCapture/start_capture_done_empty.json"
+                else
+                    "src/commonTest/resources/TimeShiftCapture/start_capture_progress.json"
             }
 
-            ByteReadChannel(responseArray[index])
+            ByteReadChannel(Resource(path).readText())
         }
+
         val deferred = CompletableDeferred<Unit>()
 
         // execute
@@ -169,15 +146,19 @@ class TimeShiftCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
-                deferred.await()
-            }
+            delay(1000)
         }
 
         capturing.cancelCapture()
 
+        runBlocking {
+            withTimeout(7000) {
+                deferred.await()
+            }
+        }
+
         // check result
-        assertTrue(file?.isEmpty() ?: false, "start time-shift but empty")
+        assertTrue(file == null, "cancel time-shift")
     }
 
     /**
@@ -298,7 +279,6 @@ class TimeShiftCaptureTest {
         // setup
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
-            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
             Resource("src/commonTest/resources/TimeShiftCapture/start_capture_error.json").readText(), // startCapture error
             "Not json" // json error
         )
@@ -363,7 +343,6 @@ class TimeShiftCaptureTest {
     fun startCaptureExceptionTest() = runTest {
         // setup
         val responseArray = arrayOf(
-            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
             Resource("src/commonTest/resources/TimeShiftCapture/start_capture_error.json").readText(), // startCapture error
             "Status error UnitTest", // status error not json

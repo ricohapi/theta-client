@@ -49,8 +49,6 @@ class TimeShiftCapturing internal constructor(
                 callback.onError(exception = ThetaRepository.NotConnectedException(message = e.message ?: e.toString()))
                 return@launch
             }
-
-            callback.onSuccess(null)
         }
     }
 }
