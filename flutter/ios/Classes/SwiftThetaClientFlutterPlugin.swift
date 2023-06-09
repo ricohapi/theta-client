@@ -135,6 +135,14 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     }
     
     func initialize(call: FlutterMethodCall, result: @escaping FlutterResult) async throws {
+        thetaRepository = nil
+        photoCaptureBuilder = nil
+        photoCapture = nil
+        videoCaptureBuilder = nil
+        videoCapture = nil
+        videoCapturing = nil
+        previewing = false
+
         thetaRepository = try await withCheckedThrowingContinuation {continuation in
             let arguments = call.arguments as! [String : Any]
             Self.endPoint = arguments["endpoint"] as! String
