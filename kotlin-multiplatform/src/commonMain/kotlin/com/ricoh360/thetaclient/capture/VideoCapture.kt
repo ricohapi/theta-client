@@ -87,6 +87,7 @@ class VideoCapture private constructor(private val endpoint: String, options: Op
      * Builder of VideoCapture
      *
      * @property endpoint URL of Theta web API endpoint
+     * @property cameraModel Camera model info.
      */
     class Builder internal constructor(private val endpoint: String, private val cameraModel: String? = null) : Capture.Builder<Builder>() {
 

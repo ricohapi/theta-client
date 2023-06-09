@@ -56,7 +56,7 @@ class TimeShiftCapture private constructor(
     }
 
     /**
-     * Starts time-shift capture.
+     * Starts time-shift.
      *
      * @param callback Success or failure of the call
      * @return TimeShiftCapturing instance
@@ -82,11 +82,12 @@ class TimeShiftCapture private constructor(
                     }
 
                     if (startCaptureResponse.state == CommandState.DONE) {
-                        var fileUrl = ""
-                        if (startCaptureResponse.results?.fileUrls?.isEmpty() == false) {
-                            fileUrl = startCaptureResponse.results?.fileUrls?.first() ?: ""
-                        }
-                        callback.onSuccess(fileUrl = fileUrl)
+                        callback.onSuccess(
+                            fileUrl = when (startCaptureResponse.results?.fileUrls?.isEmpty() == false) {
+                                true -> startCaptureResponse.results?.fileUrls?.first()
+                                false -> null
+                            }
+                        )
                         return@runBlocking
                     }
                     callback.onError(exception = ThetaRepository.ThetaWebApiException(message = startCaptureResponse.error?.message ?: startCaptureResponse.error.toString()))
@@ -107,12 +108,13 @@ class TimeShiftCapture private constructor(
      * Builder of TimeShiftCapture
      *
      * @property endpoint URL of Theta web API endpoint
+     * @property cameraModel Camera model info.
      */
     class Builder internal constructor(private val endpoint: String, private val cameraModel: String? = null) : Capture.Builder<Builder>() {
         private var interval: Long? = null
 
         /**
-         * Builds an instance of a VideoCapture that has all the combined parameters of the Options that have been added to the Builder.
+         * Builds an instance of a TimeShiftCapture that has all the combined parameters of the Options that have been added to the Builder.
          *
          * @return VideoCapture
          */
