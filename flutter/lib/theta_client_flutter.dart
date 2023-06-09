@@ -1004,6 +1004,9 @@ enum OptionNameEnum {
   /// Option name sleepDelay
   sleepDelay('SleepDelay', SleepDelayEnum),
 
+  /// Option name timeShift
+  timeShift('TimeShift', TimeShift),
+
   /// Option name totalSpace
   totalSpace('TotalSpace', int),
 
@@ -2136,6 +2139,8 @@ enum SleepDelayEnum {
   }
 }
 
+
+
 /// White balance.
 /// 
 /// It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
@@ -2204,6 +2209,73 @@ enum WhiteBalanceEnum {
   static WhiteBalanceEnum? getValue(String rawValue) {
     return WhiteBalanceEnum.values.cast<WhiteBalanceEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
   }
+}
+
+/// Time shift shooting option
+class TimeShift {
+  /// Shooting order.
+  /// true: first shoot the front side (side with Theta logo) then shoot the rear side (side with monitor).
+  /// false: first shoot the rear side then shoot the front side.
+  /// default is front first.
+  bool? isFrontFirst;
+
+  /// Time before 1st lens shooting.
+  /// For V or Z1, default is 5 seconds. For X, default is 2 seconds.
+  TimeShiftIntervalEnum? firstInterval;
+
+  /// Time from 1st lens shooting until start of 2nd lens shooting.
+  /// Default is 5 seconds.
+  TimeShiftIntervalEnum? secondInterval;
+
+  TimeShift({this.isFrontFirst, this.firstInterval, this.secondInterval});
+
+  @override
+  bool operator ==(Object other) => hashCode == other.hashCode;
+
+  @override
+  int get hashCode => Object.hashAll([isFrontFirst, firstInterval, secondInterval]);
+}
+
+/// Interval of TimeShit
+enum TimeShiftIntervalEnum {
+  /// 0 second
+  interval_0('INTERVAL_0'),
+  /// 1second
+  interval_1('INTERVAL_1'),
+  /// 2 seconds
+  interval_2('INTERVAL_2'),
+  /// 3 seconds
+  interval_3('INTERVAL_3'),
+  /// 4 seconds
+  interval_4('INTERVAL_4'),
+  /// 5 seconds
+  interval_5('INTERVAL_5'),
+  /// 6 seconds
+  interval_6('INTERVAL_6'),
+  /// 7 seconds
+  interval_7('INTERVAL_7'),
+  /// 8 seconds
+  interval_8('INTERVAL_8'),
+  /// 9 seconds
+  interval_9('INTERVAL_9'),
+  /// 10 seconds
+  interval_10('INTERVAL_10');
+
+  final String rawValue;
+  const TimeShiftIntervalEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static TimeShiftIntervalEnum? getValue(String rawValue) {
+    return TimeShiftIntervalEnum.values
+      .cast<TimeShiftIntervalEnum?>()
+      .firstWhere((element) => element?.rawValue == rawValue,
+          orElse: () => null);
+  }
+
 }
 
 /// White balance auto strength.
@@ -2675,6 +2747,9 @@ class Options {
   /// Length of standby time before the camera enters the sleep mode.
   SleepDelayEnum? sleepDelay;
 
+  /// TimeShift
+  TimeShift? timeShift;
+
   /// Total storage space (byte).
   int? totalSpace;
 
@@ -2756,6 +2831,8 @@ class Options {
         return shutterVolume as T;
       case OptionNameEnum.sleepDelay:
         return sleepDelay as T;
+      case OptionNameEnum.timeShift:
+        return timeShift as T;
       case OptionNameEnum.totalSpace:
         return totalSpace as T;
       case OptionNameEnum.username:
@@ -2856,6 +2933,9 @@ class Options {
         break;
       case OptionNameEnum.sleepDelay:
         sleepDelay = value;
+        break;
+      case OptionNameEnum.timeShift:
+        timeShift = value;
         break;
       case OptionNameEnum.totalSpace:
         totalSpace = value;
