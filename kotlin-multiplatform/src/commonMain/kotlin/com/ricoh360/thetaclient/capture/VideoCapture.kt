@@ -2,10 +2,7 @@ package com.ricoh360.thetaclient.capture
 
 import com.ricoh360.thetaclient.ThetaApi
 import com.ricoh360.thetaclient.ThetaRepository
-import com.ricoh360.thetaclient.transferred.CaptureMode
-import com.ricoh360.thetaclient.transferred.Options
-import com.ricoh360.thetaclient.transferred.SetOptionsParams
-import com.ricoh360.thetaclient.transferred.StartCaptureParams
+import com.ricoh360.thetaclient.transferred.*
 import io.ktor.client.plugins.*
 import io.ktor.serialization.*
 import kotlinx.coroutines.CoroutineScope
@@ -91,7 +88,7 @@ class VideoCapture private constructor(private val endpoint: String, options: Op
      *
      * @property endpoint URL of Theta web API endpoint
      */
-    class Builder internal constructor(private val endpoint: String) : Capture.Builder<Builder>() {
+    class Builder internal constructor(private val endpoint: String, private val cameraModel: String? = null) : Capture.Builder<Builder>() {
 
         /**
          * Builds an instance of a VideoCapture that has all the combined parameters of the Options that have been added to the Builder.
@@ -101,9 +98,14 @@ class VideoCapture private constructor(private val endpoint: String, options: Op
         @Throws(Throwable::class)
         suspend fun build(): VideoCapture {
             try {
+                val options = when (ThetaRepository.ThetaModel.get(cameraModel)) {
+                    ThetaRepository.ThetaModel.THETA_X -> Options(captureMode = CaptureMode.VIDEO, _shootingMethod = ShootingMethod.NORMAL)
+                    else -> Options(captureMode = CaptureMode.VIDEO)
+                }
+
                 ThetaApi.callSetOptionsCommand(
                     endpoint,
-                    SetOptionsParams(Options(captureMode = CaptureMode.VIDEO))
+                    SetOptionsParams(options = options)
                 ).error?.let {
                     throw ThetaRepository.ThetaWebApiException(it.message)
                 }
