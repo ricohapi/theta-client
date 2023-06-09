@@ -3433,19 +3433,19 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * if false, first shoot the rear side then shoot the front side.
          * default is front first.
          */
-        val isFrontFirst: Boolean? = null,
+        var isFrontFirst: Boolean? = null,
 
         /**
          * Time before 1st lens shooting.
          * For V or Z1, default is 5 seconds. For X, default is 2 seconds.
          */
-        val firstInterval: TimeShiftIntervalEnum? = null,
+        var firstInterval: TimeShiftIntervalEnum? = null,
 
         /**
          * Time from 1st lens shooting until start of 2nd lens shooting.
          * Default is 5 seconds.
          */
-        val secondInterval: TimeShiftIntervalEnum? = null,
+        var secondInterval: TimeShiftIntervalEnum? = null,
     ) {
         constructor(timeShift: com.ricoh360.thetaclient.transferred.TimeShift) : this(
             isFrontFirst = timeShift.firstShooting?.let {
