@@ -76,6 +76,10 @@ RCT_NUMBER_CONVERTER(int32_t, intValue)
   _resolve(fileUrl);
   _sdk.photoCapture = nil;
 }
+
+- (void)onProgressCompletion:(float)completion {
+}
+
 @end
 
 /**
@@ -117,82 +121,31 @@ typedef void (^ TimeShiftOnProgressBlock)(float);
  * call when error detect
  * @param exception exception object
  */
--(void)onErrorException:(THETACThetaRepositoryThetaRepositoryException *)exception
-{
+-(void)onErrorException:(THETACThetaRepositoryThetaRepositoryException *)exception {
+    if (_sdk.timeShiftCapture == nil || _sdk.timeShiftCapturing == nil) return;
     _reject(@"error", exception.message, nil);
     _sdk.timeShiftCapture = nil;
+    _sdk.timeShiftCapturing = nil;
 }
 
 /**
  * call when successfully time-shift captured
  * @param fileUrl captured video file url
  */
--(void)onSuccessFileUrl:(NSString *)fileUrl
-{
-    _resolve(fileUrl);
+- (void)onSuccessFileUrl_:(NSString * _Nullable)fileUrl {
+    if (_sdk.timeShiftCapture == nil || _sdk.timeShiftCapturing == nil) return;
+    _resolve(fileUrl !=nil ? fileUrl : @"");
     _sdk.timeShiftCapture = nil;
+    _sdk.timeShiftCapturing = nil;
 }
 
 /**
  * call when check time-shift progress
  * @param completion captured video file url
  */
--(void)onProgressCompletion:(float)completion
-{
+- (void)onProgressCompletion:(float)completion {
+    if (_sdk.timeShiftCapture == nil || _sdk.timeShiftCapturing == nil) return;
     _onProgress(completion);
-}
-@end
-
-/**
- * time-shift stopCapture callback holder
- */
-@interface TimeShiftStopCallback: NSObject <THETACTimeShiftCaptureStopCaptureCallback>
-@end
-@implementation TimeShiftStopCallback {
-    RCTPromiseResolveBlock _resolve; ///< stop capture resolver
-    RCTPromiseRejectBlock _reject; ///< stop capture rejecter
-    ThetaClientReactNative *_sdk; ///< theta client sdk instance
-}
-
-/**
- * initialize TimeShiftStopCallback
- * @param sdk theta client sdk instance
- * @param resolve resolver for promise
- * @param reject rejecter for promise
- * @return initialized callback instance
- */
--(id)initWith:(ThetaClientReactNative *)sdk
- withResolver:(RCTPromiseResolveBlock)resolve
- withRejecter:(RCTPromiseRejectBlock)reject
-{
-    self = [super init];
-    if (self) {
-        _sdk = sdk;
-        _resolve = resolve;
-        _reject = reject;
-    }
-    return self;
-}
-
-/**
- * call when error detect
- * @param exception exception object
- */
--(void)onErrorException:(THETACThetaRepositoryThetaRepositoryException *)exception
-{
-    _reject(@"error", exception.message, nil);
-    _sdk.videoCapture = nil;
-    _sdk.videoCapturing = nil;
-}
-
-/**
- * call when successfully stop time-shift captured
- */
--(void)onSuccess
-{
-    _resolve(@(YES));
-    _sdk.videoCapture = nil;
-    _sdk.videoCapturing = nil;
 }
 @end
 
@@ -1991,6 +1944,9 @@ RCT_REMAP_METHOD(initialize,
   self.theta = nil;
   self.photoCaptureBuilder = nil;
   self.photoCapture = nil;
+  self.timeShiftCaptureBuilder = nil;
+  self.timeShiftCapture = nil;
+  self.timeShiftCapturing = nil;
   self.videoCaptureBuilder = nil;
   self.videoCapture = nil;
   self.videoCapturing = nil;
@@ -2484,6 +2440,10 @@ RCT_REMAP_METHOD(takePicture,
 RCT_REMAP_METHOD(getTimeShiftCaptureBuilder,
                  getTimeShiftCaptureBuilder)
 {
+    if (!_theta) {
+        [NSException raise:ERROR_CODE_ERROR format:MESSAGE_NOT_INIT];
+        return;
+    }
     self.timeShiftCaptureBuilder = [_theta getTimeShiftCaptureBuilder];
 }
 
@@ -2500,6 +2460,10 @@ RCT_REMAP_METHOD(buildTimeShiftCapture,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+    if (!_theta) {
+        reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+        return;
+    }
     if (!self.timeShiftCaptureBuilder) {
         reject(@"error", @"no time-shift capture pbuilder", nil);
         return;
@@ -2540,6 +2504,10 @@ RCT_REMAP_METHOD(startTimeShiftCapture,
                  startTimeShiftCaptureWithResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+    if (!_theta) {
+        reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+        return;
+    }
     if (!self.timeShiftCapture) {
         reject(@"error", @"no timeShiftCapture", nil);
         return;
@@ -2552,27 +2520,28 @@ RCT_REMAP_METHOD(startTimeShiftCapture,
     }
                                                                    withResolver:resolve
                                                                    withRejecter:reject];
-    [self.timeShiftCapture startCaptureCallback:callback];
+    self.timeShiftCapturing = [self.timeShiftCapture startCaptureCallback:callback];
 }
 
 /**
- * stopTimeShiftCapture  -  stop time-shift
+ * cancelTimeShiftCapture  -  stop time-shift
  * @param resolve resolver for stopTimeShiftCapture
  * @param rejecter rejecter for stopTimeShiftCapture
  */
-RCT_REMAP_METHOD(stopTimeShiftCapture,
-                 stopTimeShiftCaptureWithResolver:(RCTPromiseResolveBlock)resolve
-                 withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_REMAP_METHOD(cancelTimeShiftCapture,
+                 cancelTimeShiftCaptureWithResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
 {
-    if (!self.timeShiftCapture) {
-        reject(@"error", @"no timeShiftCapture", nil);
+    if (!_theta) {
+        [NSException raise:ERROR_CODE_ERROR format:MESSAGE_NOT_INIT];
         return;
     }
     
-    TimeShiftStopCallback *callback = [[TimeShiftStopCallback alloc] initWith:self
-                                                                 withResolver:resolve
-                                                                 withRejecter:reject];
-    [self.timeShiftCapture stopCaptureCallback:callback];
+    if (!self.timeShiftCapturing) {
+        reject(@"error", @"no timeShiftCapturing", nil);
+        return;
+    }
+    
+    [self.timeShiftCapturing cancelCapture];
 }
 
 /**

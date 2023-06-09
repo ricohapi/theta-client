@@ -8,14 +8,8 @@ const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
  * TimeShiftCapture class
  */
 export class TimeShiftCapture {
-  eventListener: EmitterSubscription;
+  eventListener?: EmitterSubscription = undefined;
   notifyList = new Map<string, ((notify: BaseNotify) => void) | undefined>();
-
-  constructor() {
-    this.eventListener = addNotifyListener((notify: BaseNotify) => {
-      this.notifyList.get(notify.name)?.(notify as BaseNotify);
-    });
-  }
 
   /**
    * start time-shift
@@ -25,7 +19,7 @@ export class TimeShiftCapture {
   async startCapture(
     onProgress?: (completion?: number) => void
   ): Promise<string> {
-    const promise = await ThetaClientReactNative.startTimeShiftCapture();
+    await this.initNotify();
     this.notifyList.set(
       'TIME-SHIFT-PROGRESS',
       onProgress
@@ -34,18 +28,36 @@ export class TimeShiftCapture {
           }
         : undefined
     );
-    return promise;
+
+    return new Promise<string>(async (resolve, reject) => {
+      await ThetaClientReactNative.startTimeShiftCapture()
+        .then((result: string) => {
+          resolve(result);
+        })
+        .catch((error: any) => {
+          reject(error);
+        })
+        .finally(() => {
+          this.releaseNotify();
+        });
+    });
   }
 
   /**
-   * stop time-shift
+   * cancel time-shift
    */
-  async stopCapture(): Promise<any> {
-    return await ThetaClientReactNative.stopTimeShiftCapture();
+  async cancelCapture(): Promise<any> {
+    return await ThetaClientReactNative.cancelTimeShiftCapture();
   }
 
-  release() {
-    this.eventListener.remove();
+  async initNotify() {
+    this.eventListener = addNotifyListener((notify: BaseNotify) => {
+      this.notifyList.get(notify.name)?.(notify as BaseNotify);
+    });
+  }
+
+  releaseNotify() {
+    this.eventListener?.remove();
   }
 }
 

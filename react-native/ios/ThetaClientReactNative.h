@@ -21,6 +21,8 @@
 @property(nonatomic, strong) THETACTimeShiftCaptureBuilder *timeShiftCaptureBuilder;
 /** timeShiftCapture instance */
 @property(nonatomic, strong) THETACTimeShiftCapture *timeShiftCapture;
+/** timeShiftCapturing instance */
+@property(nonatomic, strong) THETACTimeShiftCapturing *timeShiftCapturing;
 /** videoCapture builder instance */
 @property(nonatomic, strong) THETACVideoCaptureBuilder *videoCaptureBuilder;
 /** videoCapture instance */
