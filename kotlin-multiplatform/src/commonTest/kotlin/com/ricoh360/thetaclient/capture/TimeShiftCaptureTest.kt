@@ -309,7 +309,9 @@ class TimeShiftCaptureTest {
         })
 
         runBlocking {
-            delay(100)
+            withTimeout(500) {
+                deferred.await()
+            }
         }
 
         // execute json error response
@@ -402,6 +404,12 @@ class TimeShiftCaptureTest {
                 deferred.complete(Unit)
             }
         })
+
+        runBlocking {
+            withTimeout(1000) {
+                deferred.await()
+            }
+        }
 
         // execute timeout exception
         deferred = CompletableDeferred<Unit>()
@@ -545,10 +553,6 @@ class TimeShiftCaptureTest {
             }
         })
 
-        runBlocking {
-            delay(100)
-        }
-
         capturing.cancelCapture()
 
         runBlocking {
@@ -573,10 +577,6 @@ class TimeShiftCaptureTest {
             }
         })
 
-        runBlocking {
-            delay(100)
-        }
-
         capturing.cancelCapture()
 
         runBlocking {
@@ -600,10 +600,6 @@ class TimeShiftCaptureTest {
                 deferred.complete(Unit)
             }
         })
-
-        runBlocking {
-            delay(100)
-        }
 
         capturing.cancelCapture()
 
