@@ -139,7 +139,7 @@ class ConvertUtils {
     var timeShift = TimeShift();
     if(data['isFrontFirst'] != null) timeShift.isFrontFirst = data['isFrontFirst'];
     if(data['firstInterval'] != null) timeShift.firstInterval = TimeShiftIntervalEnum.getValue(data['firstInterval']);
-    if(data['secondInterval'] != null) timeShift.firstInterval = TimeShiftIntervalEnum.getValue(data['secondInterval']);
+    if(data['secondInterval'] != null) timeShift.secondInterval = TimeShiftIntervalEnum.getValue(data['secondInterval']);
     return timeShift;
   }
 

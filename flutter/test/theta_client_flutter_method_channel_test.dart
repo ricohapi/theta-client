@@ -429,7 +429,7 @@ void main() {
       [OptionNameEnum.shutterSpeed, 'ShutterSpeed', ShutterSpeedEnum.shutterSpeedOneOver_10, 'SHUTTER_SPEED_ONE_OVER_10'],
       [OptionNameEnum.shutterVolume, 'ShutterVolume', 7, 7],
       [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
-      //[OptionNameEnum.timeShift, 'TimeShift', TimeShift(isFrontFirst: true, firstInterval: TimeShiftIntervalEnum.interval_5, secondInterval: TimeShiftIntervalEnum.interval_10), timeShiftMap],
+      [OptionNameEnum.timeShift, 'TimeShift', TimeShift(isFrontFirst: true, firstInterval: TimeShiftIntervalEnum.interval_5, secondInterval: TimeShiftIntervalEnum.interval_10), timeShiftMap],
       [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
       [OptionNameEnum.username, 'Username', 'username', 'username'],
       [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],

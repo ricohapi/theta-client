@@ -2234,6 +2234,11 @@ class TimeShift {
 
   @override
   int get hashCode => Object.hashAll([isFrontFirst, firstInterval, secondInterval]);
+
+  @override
+  String toString() {
+    return '${isFrontFirst.toString()}, ${firstInterval?.toString()}, ${secondInterval?.toString()}';
+  }
 }
 
 /// Interval of TimeShit
