@@ -3468,7 +3468,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         fun toTransferredTimeShift(): com.ricoh360.thetaclient.transferred.TimeShift {
             return TimeShift(
                 firstShooting = isFrontFirst?.let {
-                    if(it) FirstShootingEnum.FRONT else FirstShootingEnum.REAR
+                    if (it) FirstShootingEnum.FRONT else FirstShootingEnum.REAR
                 },
                 firstInterval = firstInterval?.sec,
                 secondInterval = secondInterval?.sec,
