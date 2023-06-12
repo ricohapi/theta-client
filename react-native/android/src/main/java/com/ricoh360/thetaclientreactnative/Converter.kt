@@ -414,6 +414,40 @@ class OffDelayConverter : OptionConverter {
 }
 
 /**
+ * PowerSavingConverter
+ */
+class PowerSavingConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("powerSaving")?.let {
+      options.powerSaving = ThetaRepository.PowerSavingEnum.valueOf(it)
+    }
+  }
+
+   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.powerSaving?.let {
+      objects.putString("powerSaving", it.toString())
+    }
+  }
+ }
+
+/**
+ * PreviewFormatConverter
+ */
+class PreviewFormatConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("previewFormat")?.let {
+      options.previewFormat = ThetaRepository.PreviewFormatEnum.valueOf(it)
+    }
+  }
+
+   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.previewFormat?.let {
+      objects.putString("previewFormat", it.toString())
+    }
+  }
+ }
+
+/**
  * ProxyConverter
  */
 class ProxyConverter : OptionConverter {
@@ -449,6 +483,23 @@ class ProxyConverter : OptionConverter {
     }
   }
 }
+
+/**
+ * ShootingMethodConverter
+ */
+class ShootingMethodConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("shootingMethod")?.let {
+      options.shootingMethod = ThetaRepository.ShootingMethodEnum.valueOf(it)
+    }
+  }
+
+   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.shootingMethod?.let {
+      objects.putString("shootingMethod", it.toString())
+    }
+  }
+ }
 
 /**
  * WhiteBalanceConverter

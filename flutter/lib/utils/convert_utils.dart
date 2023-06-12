@@ -208,6 +208,12 @@ class ConvertUtils {
         case OptionNameEnum.password:
           result.password = entry.value;
           break;
+        case OptionNameEnum.powerSaving:
+          result.powerSaving = PowerSavingEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.previewFormat:
+          result.previewFormat = PreviewFormatEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.proxy:
           result.proxy = convertProxy(entry.value);
           break;
@@ -219,6 +225,9 @@ class ConvertUtils {
           break;
         case OptionNameEnum.remainingSpace:
           result.remainingSpace = entry.value;
+          break;
+        case OptionNameEnum.shootingMethod:
+          result.shootingMethod = ShootingMethodEnum.getValue(entry.value);
           break;
         case OptionNameEnum.shutterSpeed:
           result.shutterSpeed = ShutterSpeedEnum.getValue(entry.value);
@@ -290,6 +299,12 @@ class ConvertUtils {
     } else if (value is NetworkTypeEnum) {
       return value.rawValue;
     } else if (value is OffDelayEnum) {
+      return value.rawValue;
+    } else if (value is PowerSavingEnum) {
+      return value.rawValue;
+    } else if (value is PreviewFormatEnum) {
+      return value.rawValue;
+    } else if (value is ShootingMethodEnum) {
       return value.rawValue;
     } else if (value is ShutterSpeedEnum) {
       return value.rawValue;
