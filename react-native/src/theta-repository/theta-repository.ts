@@ -35,6 +35,16 @@ export function initialize(
 }
 
 /**
+ * Returns whether it is initialized or not.
+ *
+ * @function isInitialized
+ * @return promise of boolean result
+ **/
+export function isInitialized(): Promise<boolean> {
+  return ThetaClientReactNative.isInitialized();
+}
+
+/**
  * Reset all device settings and capture settings.
  * After reset, the camera will be restarted.
  *

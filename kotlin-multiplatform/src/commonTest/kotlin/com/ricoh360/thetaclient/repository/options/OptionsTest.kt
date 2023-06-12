@@ -39,10 +39,13 @@ class OptionsTest {
         val networkType = ThetaRepository.NetworkTypeEnum.DIRECT
         val offDelay = ThetaRepository.OffDelayEnum.OFF_DELAY_10M
         val password = "password"
+        val powerSaving = ThetaRepository.PowerSavingEnum.ON
+        val previewFormat = ThetaRepository.PreviewFormatEnum.W1024_H512_F30
         val proxy = ThetaRepository.Proxy(use = false, url = "", port = 8080)
         val remainingPictures = 100
         val remainingVideoSeconds = 100
         val remainingSpace = 100L
+        val shootingMethod = ThetaRepository.ShootingMethodEnum.NORMAL
         val shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_10
         val shutterVolume = 100
         val sleepDelay = ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M
@@ -79,10 +82,13 @@ class OptionsTest {
             networkType = networkType,
             offDelay = offDelay,
             password = password,
+            powerSaving = powerSaving,
+            previewFormat = previewFormat,
             proxy = proxy,
             remainingPictures = remainingPictures,
             remainingVideoSeconds = remainingVideoSeconds,
             remainingSpace = remainingSpace,
+            shootingMethod = shootingMethod,
             shutterSpeed = shutterSpeed,
             shutterVolume = shutterVolume,
             sleepDelay = sleepDelay,
@@ -119,10 +125,13 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.NetworkType), networkType, "networkType")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.OffDelay), offDelay, "offDelay")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Password), password, "password")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.PowerSaving), powerSaving, "powerSaving")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.PreviewFormat), previewFormat, "previewFormat")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Proxy), proxy, "proxy")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.RemainingPictures), remainingPictures, "remainingPictures")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.RemainingVideoSeconds), remainingVideoSeconds, "remainingVideoSeconds")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.RemainingSpace), remainingSpace, "remainingSpace")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ShootingMethod), shootingMethod, "shootingMethod")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ShutterSpeed), shutterSpeed, "shutterSpeed")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ShutterVolume), shutterVolume, "shutterVolume")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.SleepDelay), sleepDelay, "sleepDelay")
@@ -161,10 +170,13 @@ class OptionsTest {
             Pair(ThetaRepository.OptionNameEnum.NetworkType, ThetaRepository.NetworkTypeEnum.ETHERNET),
             Pair(ThetaRepository.OptionNameEnum.OffDelay, ThetaRepository.OffDelayEnum.OFF_DELAY_10M),
             Pair(ThetaRepository.OptionNameEnum.Password, "password"),
+            Pair(ThetaRepository.OptionNameEnum.PowerSaving, ThetaRepository.PowerSavingEnum.OFF),
+            Pair(ThetaRepository.OptionNameEnum.PreviewFormat, ThetaRepository.PreviewFormatEnum.W1024_H512_F30),
             Pair(ThetaRepository.OptionNameEnum.Proxy, ThetaRepository.Proxy(use = false, url = "", port = 8080)),
             Pair(ThetaRepository.OptionNameEnum.RemainingPictures, 101),
             Pair(ThetaRepository.OptionNameEnum.RemainingVideoSeconds, 102),
             Pair(ThetaRepository.OptionNameEnum.RemainingSpace, 103L),
+            Pair(ThetaRepository.OptionNameEnum.ShootingMethod, ThetaRepository.ShootingMethodEnum.NORMAL),
             Pair(ThetaRepository.OptionNameEnum.ShutterSpeed, ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_30),
             Pair(ThetaRepository.OptionNameEnum.ShutterVolume, 10),
             Pair(ThetaRepository.OptionNameEnum.SleepDelay, ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M),
@@ -214,12 +226,16 @@ class OptionsTest {
         val isoAutoHighLimit = Pair(1000, ThetaRepository.IsoAutoHighLimitEnum.ISO_1000)
         val language = Pair(Language.JA, ThetaRepository.LanguageEnum.JA)
         val maxRecordableTime = Pair(1500, ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500)
+        val networkType = Pair(NetworkType.DIRECT, ThetaRepository.NetworkTypeEnum.DIRECT)
         val offDelay = Pair(600, ThetaRepository.OffDelayEnum.OFF_DELAY_10M)
         val password = Pair("password", "password")
+        val powerSaving = Pair(PowerSaving.OFF, ThetaRepository.PowerSavingEnum.OFF)
+        val previewFormat = Pair(PreviewFormat(1024, 512, 30), ThetaRepository.PreviewFormatEnum.W1024_H512_F30)
         val proxy = Pair(Proxy(use = false, url = "", port = 8080), ThetaRepository.Proxy(use = false, url = "", port = 8080))
         val remainingPictures = Pair(101, 101)
         val remainingVideoSeconds = Pair(102, 102)
         val remainingSpace = Pair(103L, 103L)
+        val shootingMethod = Pair(ShootingMethod.NORMAL, ThetaRepository.ShootingMethodEnum.NORMAL)
         val shutterSpeed = Pair(10.0, ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_10)
         val shutterVolume = Pair(10, 10)
         val sleepDelay = Pair(180, ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M)
@@ -251,12 +267,16 @@ class OptionsTest {
             isoAutoHighLimit = isoAutoHighLimit.first,
             _language = language.first,
             _maxRecordableTime = maxRecordableTime.first,
+            _networkType = networkType.first,
             offDelay = offDelay.first,
             _password = password.first,
+            _powerSaving = powerSaving.first,
+            previewFormat = previewFormat.first,
             _proxy = proxy.first,
             remainingPictures = remainingPictures.first,
             remainingVideoSeconds = remainingVideoSeconds.first,
             remainingSpace = remainingSpace.first,
+            _shootingMethod = shootingMethod.first,
             shutterSpeed = shutterSpeed.first,
             _shutterVolume = shutterVolume.first,
             sleepDelay = sleepDelay.first,
@@ -286,12 +306,16 @@ class OptionsTest {
         assertEquals(options.isoAutoHighLimit, isoAutoHighLimit.second, "isoAutoHighLimit")
         assertEquals(options.language, language.second, "language")
         assertEquals(options.maxRecordableTime, maxRecordableTime.second, "aperture")
+        assertEquals(options.networkType, networkType.second, "networkType")
         assertEquals(options.offDelay, offDelay.second, "offDelay")
         assertEquals(options.password, password.second, "password")
+        assertEquals(options.powerSaving, powerSaving.second, "powerSaving")
+        assertEquals(options.previewFormat, previewFormat.second, "previewFormat")
         assertEquals(options.proxy, proxy.second, "proxy")
         assertEquals(options.remainingPictures, remainingPictures.second, "remainingPictures")
         assertEquals(options.remainingVideoSeconds, remainingVideoSeconds.second, "remainingVideoSeconds")
         assertEquals(options.remainingSpace, remainingSpace.second, "remainingSpace")
+        assertEquals(options.shootingMethod, shootingMethod.second, "shootingMethod")
         assertEquals(options.shutterSpeed, shutterSpeed.second, "shutterSpeed")
         assertEquals(options.shutterVolume, shutterVolume.second, "shutterVolume")
         assertEquals(options.sleepDelay, sleepDelay.second, "sleepDelay")
@@ -328,12 +352,16 @@ class OptionsTest {
         val isoAutoHighLimit = Pair(1000, ThetaRepository.IsoAutoHighLimitEnum.ISO_1000)
         val language = Pair(Language.JA, ThetaRepository.LanguageEnum.JA)
         val maxRecordableTime = Pair(1500, ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500)
+        val networkType = Pair(NetworkType.ETHERNET, ThetaRepository.NetworkTypeEnum.ETHERNET)
         val offDelay = Pair(600, ThetaRepository.OffDelayEnum.OFF_DELAY_10M)
         val password = Pair("password", "password")
+        val powerSaving = Pair(PowerSaving.OFF, ThetaRepository.PowerSavingEnum.OFF)
+        val previewFormat = Pair(PreviewFormat(640, 320, 30), ThetaRepository.PreviewFormatEnum.W640_H320_F30)
         val proxy = Pair(Proxy(use = false, url = "", port = 8080), ThetaRepository.Proxy(use = false, url = "", port = 8080))
         val remainingPictures = Pair(101, 101)
         val remainingVideoSeconds = Pair(102, 102)
         val remainingSpace = Pair(103L, 103L)
+        val shootingMethod = Pair(ShootingMethod.TIMESHIFT, ThetaRepository.ShootingMethodEnum.TIME_SHIFT)
         val shutterSpeed = Pair(20.0, ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_20)
         val shutterVolume = Pair(10, 10)
         val sleepDelay = Pair(180, ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M)
@@ -365,12 +393,16 @@ class OptionsTest {
             isoAutoHighLimit = isoAutoHighLimit.second,
             language = language.second,
             maxRecordableTime = maxRecordableTime.second,
+            networkType = networkType.second,
             offDelay = offDelay.second,
             password = password.second,
+            powerSaving = powerSaving.second,
+            previewFormat = previewFormat.second,
             proxy = proxy.second,
             remainingPictures = remainingPictures.second,
             remainingVideoSeconds = remainingVideoSeconds.second,
             remainingSpace = remainingSpace.second,
+            shootingMethod = shootingMethod.second,
             shutterSpeed = shutterSpeed.second,
             shutterVolume = shutterVolume.second,
             sleepDelay = sleepDelay.second,
@@ -400,12 +432,16 @@ class OptionsTest {
         assertEquals(options.isoAutoHighLimit, isoAutoHighLimit.first, "isoAutoHighLimit")
         assertEquals(options._language, language.first, "language")
         assertEquals(options._maxRecordableTime, maxRecordableTime.first, "aperture")
+        assertEquals(options._networkType, networkType.first, "networkType")
         assertEquals(options.offDelay, offDelay.first, "offDelay")
         assertEquals(options._password, password.first, "password")
+        assertEquals(options._powerSaving, powerSaving.first, "powerSaving")
+        assertEquals(options.previewFormat, previewFormat.first, "previewFormat")
         assertEquals(options._proxy, proxy.first, "proxy")
         assertEquals(options.remainingPictures, remainingPictures.first, "remainingPictures")
         assertEquals(options.remainingVideoSeconds, remainingVideoSeconds.first, "remainingVideoSeconds")
         assertEquals(options.remainingSpace, remainingSpace.first, "remainingSpace")
+        assertEquals(options._shootingMethod, shootingMethod.first, "shootingMethod")
         assertEquals(options.shutterSpeed, shutterSpeed.first, "shutterSpeed")
         assertEquals(options._shutterVolume, shutterVolume.first, "shutterVolume")
         assertEquals(options.sleepDelay, sleepDelay.first, "sleepDelay")

@@ -2,6 +2,9 @@
 #import "ThetaClientReactNative.h"
 #import "RCTConvert.h"
 
+#define MESSAGE_NOT_INIT @"Not initialized."
+#define ERROR_CODE_ERROR @"error"
+
 /**
  * converter for int32_t
  */
@@ -45,7 +48,7 @@ RCT_NUMBER_CONVERTER(int32_t, intValue)
  */
 -(void)onErrorException:(THETACThetaRepositoryThetaRepositoryException *)exception
 {
-  _reject(@"error", exception.message, nil);
+  _reject(ERROR_CODE_ERROR, exception.message, nil);
   _sdk.photoCapture = nil;
 }
 
@@ -97,7 +100,7 @@ RCT_NUMBER_CONVERTER(int32_t, intValue)
  */
 -(void)onErrorException:(THETACThetaRepositoryThetaRepositoryException *)exception
 {
-  _reject(@"error", exception.message, nil);
+  _reject(ERROR_CODE_ERROR, exception.message, nil);
   _sdk.videoCapture = nil;
   _sdk.videoCapturing = nil;
 }
@@ -1072,6 +1075,71 @@ static convert_t OffDelayEnum = {
 };
 
 /**
+ * PowerSaving convertor
+ */
+static convert_t PowerSavingEnum = {
+  .toTheta = @{
+    @"ON": THETACThetaRepositoryPowerSavingEnum.on,
+    @"OFF": THETACThetaRepositoryPowerSavingEnum.off
+  },
+  .fromTheta = @{
+    THETACThetaRepositoryPowerSavingEnum.on: @"ON",
+    THETACThetaRepositoryPowerSavingEnum.off: @"OFF"
+  },
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [PowerSavingEnum.toTheta objectForKey:[rct objectForKey:@"powerSaving"]];
+    if (val) {
+      opt.powerSaving = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [PowerSavingEnum.fromTheta objectForKey:opt.powerSaving];
+    if (val) {
+      [rct setObject:val forKey:@"powerSaving"];
+    }
+  }
+};
+
+/**
+ * PreviewFormat convertor
+ */
+static convert_t PreviewFormatEnum = {
+  .toTheta = @{
+    @"W1024_H512_F30": THETACThetaRepositoryPreviewFormatEnum.w1024H512F30,
+    @"W1024_H512_F15": THETACThetaRepositoryPreviewFormatEnum.w1024H512F15,
+    @"W512_H512_F30": THETACThetaRepositoryPreviewFormatEnum.w512H512F30,
+    @"W1920_H960_F8": THETACThetaRepositoryPreviewFormatEnum.w1920H960F8,
+    @"W1024_H512_F8": THETACThetaRepositoryPreviewFormatEnum.w1024H512F8,
+    @"W640_H320_F30": THETACThetaRepositoryPreviewFormatEnum.w640H320F30,
+    @"W640_H320_F8": THETACThetaRepositoryPreviewFormatEnum.w640H320F8,
+    @"W640_H320_F10": THETACThetaRepositoryPreviewFormatEnum.w640H320F10
+  },
+  .fromTheta = @{
+    THETACThetaRepositoryPreviewFormatEnum.w1024H512F30: @"W1024_H512_F30",
+    THETACThetaRepositoryPreviewFormatEnum.w1024H512F15: @"W1024_H512_F15",
+    THETACThetaRepositoryPreviewFormatEnum.w512H512F30: @"W512_H512_F30",
+    THETACThetaRepositoryPreviewFormatEnum.w1920H960F8: @"W1920_H960_F8",
+    THETACThetaRepositoryPreviewFormatEnum.w1024H512F8: @"W1024_H512_F8",
+    THETACThetaRepositoryPreviewFormatEnum.w640H320F30: @"W640_H320_F30",
+    THETACThetaRepositoryPreviewFormatEnum.w640H320F8: @"W640_H320_F8",
+    THETACThetaRepositoryPreviewFormatEnum.w640H320F10: @"W640_H320_F10",
+  },
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [PreviewFormatEnum.toTheta objectForKey:[rct objectForKey:@"previewFormat"]];
+    if (val) {
+      opt.previewFormat = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [PreviewFormatEnum.fromTheta objectForKey:opt.previewFormat];
+    if (val) {
+      [rct setObject:val forKey:@"previewFormat"];
+    }
+  }
+};
+
+
+/**
  * WhiteBalanceEnum converter
  */
 static convert_t WhiteBalanceEnum = {
@@ -1592,6 +1660,52 @@ static convert_t TimeShiftCvt = {
 };
 
 /**
+ * ShootingMethod convertor
+ */
+static convert_t ShootingMethodEnum = {
+  .toTheta = @{
+    @"NORMAL": THETACThetaRepositoryShootingMethodEnum.normal,
+    @"INTERVAL": THETACThetaRepositoryShootingMethodEnum.interval,
+    @"MOVE_INTERVAL": THETACThetaRepositoryShootingMethodEnum.moveInterval,
+    @"FIXED_INTERVAL": THETACThetaRepositoryShootingMethodEnum.fixedInterval,
+    @"BRACKET": THETACThetaRepositoryShootingMethodEnum.bracket,
+    @"COMPOSITE": THETACThetaRepositoryShootingMethodEnum.composite,
+    @"CONTINUOUS": THETACThetaRepositoryShootingMethodEnum.continuous,
+    @"TIME_SHIFT": THETACThetaRepositoryShootingMethodEnum.timeShift,
+    @"BURST": THETACThetaRepositoryShootingMethodEnum.burst,
+  },
+  .fromTheta = @{
+    THETACThetaRepositoryShootingMethodEnum.normal: @"NORMAL",
+    THETACThetaRepositoryShootingMethodEnum.interval: @"INTERVAL",
+    THETACThetaRepositoryShootingMethodEnum.moveInterval: @"MOVE_INTERVAL",
+    THETACThetaRepositoryShootingMethodEnum.fixedInterval: @"FIXED_INTERVAL",
+    THETACThetaRepositoryShootingMethodEnum.bracket: @"BRACKET",
+    THETACThetaRepositoryShootingMethodEnum.composite: @"COMPOSITE",
+    THETACThetaRepositoryShootingMethodEnum.continuous: @"CONTINUOUS",
+    THETACThetaRepositoryShootingMethodEnum.timeShift: @"TIME_SHIFT",
+    THETACThetaRepositoryShootingMethodEnum.burst: @"BURST",
+  },
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [ShootingMethodEnum.toTheta objectForKey:[rct objectForKey:@"shootingMethod"]];
+    if (val) {
+      opt.shootingMethod = val;
+    }
+  },
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [ShootingMethodEnum.toTheta objectForKey:[rct objectForKey:@"shootingMethod"]];
+    if (val) {
+      opt.shootingMethod = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [ShootingMethodEnum.fromTheta objectForKey:opt.shootingMethod];
+    if (val) {
+      [rct setObject:val forKey:@"shootingMethod"];
+    }
+  }
+};
+
+/**
  * Username converter
  */
 static convert_t UsernameCvt = {
@@ -1633,7 +1747,10 @@ static NSDictionary *NameToOptionEnum = @{
   @"NetworkType": THETACThetaRepositoryOptionNameEnum.networktype,
   @"OffDelay": THETACThetaRepositoryOptionNameEnum.offdelay,
   @"Password": THETACThetaRepositoryOptionNameEnum.password,
+  @"PowerSaving": THETACThetaRepositoryOptionNameEnum.powersaving,
+  @"PreviewFormat": THETACThetaRepositoryOptionNameEnum.previewformat,
   @"Proxy": THETACThetaRepositoryOptionNameEnum.proxy,
+  @"ShootingMethod": THETACThetaRepositoryOptionNameEnum.shootingmethod,
   @"ShutterSpeed": THETACThetaRepositoryOptionNameEnum.shutterspeed,
   @"SleepDelay": THETACThetaRepositoryOptionNameEnum.sleepdelay,
   @"RemainingPictures": THETACThetaRepositoryOptionNameEnum.remainingpictures,
@@ -1673,7 +1790,10 @@ static NSDictionary *OptionEnumToOption = @{
   @"NetworkType": @"networkType",
   @"OffDelay": @"offDelay",
   @"Password": @"password",
+  @"PowerSaving": @"powerSaving",
+  @"PreviewFormat": @"previewFormat",
   @"Proxy": @"proxy",
+  @"ShootingMethod": @"shootingMethod",
   @"ShutterSpeed": @"shutterSpeed",
   @"SleepDelay": @"sleepDelay",
   @"RemainingPictures": @"remainingPictures",
@@ -1716,7 +1836,10 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"networkType": ^{return &NetworkTypeEnum;},
   @"offDelay": ^{return &OffDelayEnum;},
   @"password": ^{return &PasswordCvt;},
+  @"powerSaving": ^{return &PowerSavingEnum;},
+  @"previewFormat": ^{return &PreviewFormatEnum;},
   @"proxy": ^{return &ProxyCvt;},
+  @"shootingMethod": ^{return &ShootingMethodEnum;},
   @"shutterSpeed": ^{return &ShutterSpeedEnum;},
   @"sleepDelay": ^{return &SleepDelayEnum;},
   @"remainingPictures": ^{return &RemainingPicturesCvt;},
@@ -1869,6 +1992,14 @@ RCT_REMAP_METHOD(initialize,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  self.theta = nil;
+  self.photoCaptureBuilder = nil;
+  self.photoCapture = nil;
+  self.videoCaptureBuilder = nil;
+  self.videoCapture = nil;
+  self.videoCapturing = nil;
+  self.previewing = NO;
+
   if (!endPoint) {
     endPoint = @"http://192.168.1.1";
   }
@@ -1879,14 +2010,26 @@ RCT_REMAP_METHOD(initialize,
                            timeout:timeoutToTheta(timeout)
                  completionHandler:^(THETACThetaRepository *repo, NSError *error) {
       if (error) {
-        reject(@"error", [error localizedDescription], error);
+        reject(ERROR_CODE_ERROR, [error localizedDescription], error);
       } else if (repo) {
         self.theta = repo;
         resolve(@(YES));
       } else {
-        reject(@"error", @"can not create repository", nil);
+        reject(ERROR_CODE_ERROR, @"can not create repository", nil);
       }
     }];
+}
+
+/**
+ * isInitialized  -  Returns whether it is initialized or not.
+ * @param resolve is initialized
+ * @param rejecter
+ */
+RCT_REMAP_METHOD(isInitialized,
+                 isInitializedWithResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+{
+  resolve(_theta != nil ? @(YES) : @(NO));
 }
 
 /**
@@ -1898,10 +2041,14 @@ RCT_REMAP_METHOD(getThetaInfo,
                  getThetaInfoWithResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta getThetaInfoWithCompletionHandler:^(THETACThetaRepositoryThetaInfo *info,
                                               NSError *error) {
     if (error) {
-      reject(@"error", [error localizedDescription], error);
+      reject(ERROR_CODE_ERROR, [error localizedDescription], error);
     } else if (info) {
       NSMutableArray *apiLevelList = [[NSMutableArray alloc] init];
       for (THETACInt *element in info.apiLevel) {
@@ -1924,7 +2071,7 @@ RCT_REMAP_METHOD(getThetaInfo,
                 },
                 @"apiLevel": apiLevelList});
     } else {
-      reject(@"error", @"no info", nil);
+      reject(ERROR_CODE_ERROR, @"no info", nil);
     }
   }];
 }
@@ -1938,10 +2085,14 @@ RCT_REMAP_METHOD(getThetaState,
                  getThetaStateWithResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta getThetaStateWithCompletionHandler:^(THETACThetaRepositoryThetaState *state,
                                                NSError *error) {
       if (error) {
-        reject(@"error", [error localizedDescription], error);
+        reject(ERROR_CODE_ERROR, [error localizedDescription], error);
       } else if (state) {
         NSMutableArray *cameraErrorList = [[NSMutableArray alloc] init];
         if (state.cameraError != nil) {
@@ -1970,7 +2121,7 @@ RCT_REMAP_METHOD(getThetaState,
               @"cameraError": state.cameraError != nil ? cameraErrorList : [NSNull null],
               @"isBatteryInsert": state.isBatteryInsert != nil ? @([state.isBatteryInsert boolValue]) : [NSNull null]});
       } else {
-        reject(@"error", @"no state", nil);
+        reject(ERROR_CODE_ERROR, @"no state", nil);
       }
     }];
 }
@@ -1992,6 +2143,10 @@ RCT_REMAP_METHOD(listFiles,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta listFilesFileType:[FileTypeEnum.toTheta objectForKey:fileType]
               startPosition:startPosition
                  entryCount:entryCount
@@ -1999,7 +2154,7 @@ RCT_REMAP_METHOD(listFiles,
           completionHandler:^(THETACThetaRepositoryThetaFiles *items,
                               NSError *error) {
       if (error) {
-        reject(@"error", [error localizedDescription], error);
+        reject(ERROR_CODE_ERROR, [error localizedDescription], error);
       } else if (items) {
         NSMutableArray *ary = [[NSMutableArray alloc] init];
         for (int i = 0; i < items.fileList.count; i++) {
@@ -2019,7 +2174,7 @@ RCT_REMAP_METHOD(listFiles,
         resolve(@{@"fileList":ary,
               @"totalEntries": @(items.totalEntries)});
       } else {
-        reject(@"error", @"no items", nil);
+        reject(ERROR_CODE_ERROR, @"no items", nil);
       }
     }];
 }
@@ -2035,9 +2190,13 @@ RCT_REMAP_METHOD(deleteFiles,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta deleteFilesFileUrls:fileUrls completionHandler:^(NSError *error) {
       if (error) {
-        reject(@"error", [error localizedDescription], error);
+        reject(ERROR_CODE_ERROR, [error localizedDescription], error);
       } else {
         resolve(@(YES));
       }
@@ -2053,9 +2212,13 @@ RCT_REMAP_METHOD(deleteAllFiles,
                  deleteAllFilesWithResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta deleteAllFilesWithCompletionHandler:^(NSError *error) {
       if (error) {
-        reject(@"error", [error localizedDescription], error);
+        reject(ERROR_CODE_ERROR, [error localizedDescription], error);
       } else {
         resolve(@(YES));
       }
@@ -2071,9 +2234,13 @@ RCT_REMAP_METHOD(deleteAllImageFiles,
                  deleteAllImageFilesWithResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta deleteAllImageFilesWithCompletionHandler:^(NSError *error) {
       if (error) {
-        reject(@"error", [error localizedDescription], error);
+        reject(ERROR_CODE_ERROR, [error localizedDescription], error);
         return;
       }
       resolve(@(YES));
@@ -2089,9 +2256,13 @@ RCT_REMAP_METHOD(deleteAllVideoFiles,
                  deleteAllVideoFilesWithResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta deleteAllVideoFilesWithCompletionHandler:^(NSError *error) {
       if (error) {
-        reject(@"error", [error localizedDescription], error);
+        reject(ERROR_CODE_ERROR, [error localizedDescription], error);
       } else {
         resolve(@(YES));
       }
@@ -2109,6 +2280,10 @@ RCT_REMAP_METHOD(getOptions,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   NSMutableArray *optionNameList = [[NSMutableArray alloc] init];
   for (id name in optionNames) {
     [optionNameList addObject:[NameToOptionEnum objectForKey:name]];
@@ -2116,7 +2291,7 @@ RCT_REMAP_METHOD(getOptions,
   [_theta getOptionsOptionNames:optionNameList
               completionHandler:^(THETACThetaRepositoryOptions *options, NSError *error) {
       if (error) {
-        reject(@"error", [error localizedDescription], error);
+        reject(ERROR_CODE_ERROR, [error localizedDescription], error);
       } else if (options) {
         NSMutableDictionary *results = [[NSMutableDictionary alloc] init];
         for (id name in optionNames) {
@@ -2128,7 +2303,7 @@ RCT_REMAP_METHOD(getOptions,
         }
         resolve(results);
       } else {
-        reject(@"error", @"no options", nil);
+        reject(ERROR_CODE_ERROR, @"no options", nil);
       }
     }];
 }
@@ -2144,6 +2319,10 @@ RCT_REMAP_METHOD(setOptions,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   THETACThetaRepositoryOptions *newoptions = [[THETACThetaRepositoryOptions alloc] init];
   for (id option in [options allKeys]) {
     OptionConverter converter = [NameToConverter objectForKey:option];
@@ -2156,7 +2335,7 @@ RCT_REMAP_METHOD(setOptions,
   }
   [_theta setOptionsOptions:newoptions completionHandler:^(NSError *error) {
     if (error) {
-      reject(@"error", [error localizedDescription], error);
+      reject(ERROR_CODE_ERROR, [error localizedDescription], error);
     } else {
       resolve(@(YES));
     }
@@ -2194,6 +2373,10 @@ RCT_REMAP_METHOD(getLivePreview,
                  getLivePreviewWithResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   FrameHandler *_frameHandler =
     [[FrameHandler alloc] initWith:self withEvent:^(NSData *data) {
         if (self->hasListeners) {
@@ -2206,7 +2389,7 @@ RCT_REMAP_METHOD(getLivePreview,
   self.previewing = YES;
   [_theta getLivePreviewFrameHandler:_frameHandler completionHandler:^(NSError *error) {
       if (error) {
-        reject(@"error", [error localizedDescription], error);
+        reject(ERROR_CODE_ERROR, [error localizedDescription], error);
       } else {
         resolve(@(YES));
       }
@@ -2228,6 +2411,10 @@ RCT_REMAP_METHOD(stopLivePreview,
 RCT_REMAP_METHOD(getPhotoCaptureBuilder,
                  getPhotoCaptureBuilder)
 {
+  if (!_theta) {
+    [NSException raise:ERROR_CODE_ERROR format:MESSAGE_NOT_INIT];
+    return;
+  }
   self.photoCaptureBuilder = [_theta getPhotoCaptureBuilder];
 }
 
@@ -2242,8 +2429,12 @@ RCT_REMAP_METHOD(buildPhotoCapture,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   if (!self.photoCaptureBuilder) {
-    reject(@"error", @"no photo capture pbuilder", nil);
+    reject(ERROR_CODE_ERROR, @"no photo capture pbuilder", nil);
     return;
   }
   for (id photoOption in [options allKeys]) {
@@ -2255,7 +2446,7 @@ RCT_REMAP_METHOD(buildPhotoCapture,
   [self.photoCaptureBuilder
       buildWithCompletionHandler:^(THETACPhotoCapture *photoCapture, NSError *error) {
       if (error) {
-        reject(@"error", [error localizedDescription], error);
+        reject(ERROR_CODE_ERROR, [error localizedDescription], error);
         return;
       }
       if (photoCapture) {
@@ -2263,7 +2454,7 @@ RCT_REMAP_METHOD(buildPhotoCapture,
         self.photoCaptureBuilder = nil;
         resolve(@(YES));
       } else {
-        reject(@"error", @"no photoCapture", nil);
+        reject(ERROR_CODE_ERROR, @"no photoCapture", nil);
       }
     }];
 }
@@ -2277,8 +2468,12 @@ RCT_REMAP_METHOD(takePicture,
                  takePictureWithResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   if (!self.photoCapture) {
-    reject(@"error", @"no photoCapture", nil);
+    reject(ERROR_CODE_ERROR, @"no photoCapture", nil);
     return;
   }
   PhotoCallback *callback = [[PhotoCallback alloc] initWith:self
@@ -2293,6 +2488,10 @@ RCT_REMAP_METHOD(takePicture,
 RCT_REMAP_METHOD(getVideoCaptureBuilder,
                  getVideoCaptureBuilder)
 {
+  if (!_theta) {
+    [NSException raise:ERROR_CODE_ERROR format:MESSAGE_NOT_INIT];
+    return;
+  }
   self.videoCaptureBuilder = [_theta getVideoCaptureBuilder];
 }
 
@@ -2307,8 +2506,12 @@ RCT_REMAP_METHOD(buildVideoCapture,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   if (!self.videoCaptureBuilder) {
-    reject(@"error", @"no video capture builder", nil);
+    reject(ERROR_CODE_ERROR, @"no video capture builder", nil);
     return;
   }
   for (id videoOption in [options allKeys]) {
@@ -2320,7 +2523,7 @@ RCT_REMAP_METHOD(buildVideoCapture,
   [self.videoCaptureBuilder
       buildWithCompletionHandler:^(THETACVideoCapture *videoCapture, NSError *error) {
       if (error) {
-        reject(@"error", @"videoCapture build failed", error);
+        reject(ERROR_CODE_ERROR, @"videoCapture build failed", error);
         return;
       }
       if (videoCapture) {
@@ -2328,7 +2531,7 @@ RCT_REMAP_METHOD(buildVideoCapture,
         self.videoCaptureBuilder = nil;
         resolve(@(YES));
       } else {
-        reject(@"error", @"no videoCapture", nil);
+        reject(ERROR_CODE_ERROR, @"no videoCapture", nil);
       }
     }];
 }
@@ -2342,8 +2545,12 @@ RCT_REMAP_METHOD(startCapture,
                  startCaptureWithResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   if (!self.videoCapture) {
-    reject(@"error", @"no videoCapture", nil);
+    reject(ERROR_CODE_ERROR, @"no videoCapture", nil);
     return;
   }
   VideoCallback *callback = [[VideoCallback alloc] initWith:self
@@ -2358,6 +2565,10 @@ RCT_REMAP_METHOD(startCapture,
 RCT_REMAP_METHOD(stopCapture,
                  stopCapture)
 {
+  if (!_theta) {
+    [NSException raise:ERROR_CODE_ERROR format:MESSAGE_NOT_INIT];
+    return;
+  }
   if (!self.videoCapturing) {
     // todo warning
     return;
@@ -2375,12 +2586,16 @@ RCT_REMAP_METHOD(getMetadata,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta getMetadataFileUrl:fileUrl
            completionHandler:^(THETACKotlinPair<THETACThetaRepositoryExif *,
                                THETACThetaRepositoryXmp *> *metaData,
                                NSError *error) {
       if (error) {
-        reject(@"error", [error localizedDescription], error);
+        reject(ERROR_CODE_ERROR, [error localizedDescription], error);
       } else if (metaData) {
         NSDictionary* exif = nil;
         NSDictionary* xmp = nil;
@@ -2403,7 +2618,7 @@ RCT_REMAP_METHOD(getMetadata,
         }
         resolve(@{@"exif": exif, @"xmp": xmp});
       } else {
-        reject(@"error", @"no metaData", nil);
+        reject(ERROR_CODE_ERROR, @"no metaData", nil);
       }
     }];
 }
@@ -2417,9 +2632,13 @@ RCT_REMAP_METHOD(reset,
                  resetWithResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta resetWithCompletionHandler:^(NSError *error) {
       if (error) {
-        reject(@"error", [error localizedDescription], error);
+        reject(ERROR_CODE_ERROR, [error localizedDescription], error);
       } else {
         resolve(@(YES));
       }
@@ -2435,9 +2654,13 @@ RCT_REMAP_METHOD(restoreSettings,
                  restoreSettingsWithResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta restoreSettingsWithCompletionHandler:^(NSError *error) {
       if (error) {
-        reject(@"error", [error localizedDescription], error);
+        reject(ERROR_CODE_ERROR, [error localizedDescription], error);
       } else {
         resolve(@(YES));
       }
@@ -2453,9 +2676,13 @@ RCT_REMAP_METHOD(stopSelfTimer,
                  stopSelfTimerWithResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta stopSelfTimerWithCompletionHandler:^(NSError *error) {
       if (error) {
-        reject(@"error", [error localizedDescription], error);
+        reject(ERROR_CODE_ERROR, [error localizedDescription], error);
       } else {
         resolve(@(YES));
       }
@@ -2477,16 +2704,20 @@ RCT_REMAP_METHOD(convertVideoFormats,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta convertVideoFormatsFileUrl:fileUrl
                    toLowResolution:toLowResolution
             applyTopBottomCorrection:applyTopBottomCorrection
                    completionHandler:^(NSString *convertedUrl, NSError *error) {
       if (error) {
-        reject(@"error", [error localizedDescription], error);
+        reject(ERROR_CODE_ERROR, [error localizedDescription], error);
       } else if (convertedUrl) {
         resolve(convertedUrl);
       } else {
-        reject(@"error", @"no convertVideo", nil);
+        reject(ERROR_CODE_ERROR, @"no convertVideo", nil);
       }
     }];
 }
@@ -2500,9 +2731,13 @@ RCT_REMAP_METHOD(cancelVideoConvert,
                  cancelVideoConvertWithResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta cancelVideoConvertWithCompletionHandler:^(NSError *error) {
       if (error) {
-        reject(@"error", [error localizedDescription], error);
+        reject(ERROR_CODE_ERROR, [error localizedDescription], error);
       } else {
         resolve(@(YES));
       }
@@ -2518,9 +2753,13 @@ RCT_REMAP_METHOD(finishWlan,
                  finishWlanWithResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta finishWlanWithCompletionHandler:^(NSError *error) {
       if (error) {
-        reject(@"error", [error localizedDescription], error);
+        reject(ERROR_CODE_ERROR, [error localizedDescription], error);
       } else {
         resolve(@(YES));
       }
@@ -2536,9 +2775,13 @@ RCT_REMAP_METHOD(listAccessPoints,
                  listAccessPointsWithResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+    if (!_theta) {
+        reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+        return;
+    }
     [_theta listAccessPointsWithCompletionHandler:^(NSArray *accessPointList, NSError *error) {
         if (error) {
-            reject(@"error", [error localizedDescription], error);
+            reject(ERROR_CODE_ERROR, [error localizedDescription], error);
         } else if (accessPointList) {
             NSMutableArray *ary = [[NSMutableArray alloc] init];
             for (int i = 0; i < accessPointList.count; i++) {
@@ -2574,7 +2817,7 @@ RCT_REMAP_METHOD(listAccessPoints,
             }
             resolve(ary);
         } else {
-            reject(@"error", @"no access point", nil);
+            reject(ERROR_CODE_ERROR, @"no access point", nil);
         }
     }];
 }
@@ -2600,6 +2843,10 @@ RCT_REMAP_METHOD(setAccessPointDynamically,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+    if (!_theta) {
+        reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+        return;
+    }
     [_theta setAccessPointDynamicallySsid:ssid
                               ssidStealth:ssidStealth
                                  authMode:[AuthModeEnum.toTheta objectForKey:authMode]
@@ -2608,7 +2855,7 @@ RCT_REMAP_METHOD(setAccessPointDynamically,
                                     proxy:convertDictionaryToProxy(proxy)
                         completionHandler:^(NSError *error) {
         if (error) {
-            reject(@"error", [error localizedDescription], error);
+            reject(ERROR_CODE_ERROR, [error localizedDescription], error);
         } else {
             resolve(@(YES));
         }
@@ -2642,6 +2889,10 @@ RCT_REMAP_METHOD(setAccessPointStatically,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+    if (!_theta) {
+        reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+        return;
+    }
     [_theta setAccessPointStaticallySsid:ssid
                              ssidStealth:ssidStealth
                                 authMode:[AuthModeEnum.toTheta objectForKey:authMode]
@@ -2653,7 +2904,7 @@ RCT_REMAP_METHOD(setAccessPointStatically,
                                    proxy:convertDictionaryToProxy(proxy)
                        completionHandler:^(NSError *error) {
         if (error) {
-            reject(@"error", [error localizedDescription], error);
+            reject(ERROR_CODE_ERROR, [error localizedDescription], error);
         } else {
             resolve(@(YES));
         }
@@ -2671,10 +2922,14 @@ RCT_REMAP_METHOD(deleteAccessPoint,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+    if (!_theta) {
+        reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+        return;
+    }
     [_theta deleteAccessPointSsid:ssid
                 completionHandler:^(NSError *error) {
         if (error) {
-            reject(@"error", [error localizedDescription], error);
+            reject(ERROR_CODE_ERROR, [error localizedDescription], error);
         } else {
             resolve(@(YES));
         }
@@ -2732,19 +2987,23 @@ RCT_REMAP_METHOD(getMySetting,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta getMySettingCaptureMode:[CaptureModeEnum.toTheta       objectForKey:captureMode]
                 completionHandler:^(THETACThetaRepositoryOptions *options, NSError *error) {
     if (error) {
-      reject(@"error", [error localizedDescription], error);
+      reject(ERROR_CODE_ERROR, [error localizedDescription], error);
     } else if (options) {
       NSMutableDictionary *results = [[NSMutableDictionary alloc] init];
       NSError *convertError = convertOptionsFromTheta(results, options);
       if (convertError) {
-        reject(@"error", [error localizedDescription], convertError);
+        reject(ERROR_CODE_ERROR, [error localizedDescription], convertError);
       }
       resolve(results);
     } else {
-      reject(@"error", @"no options", nil);
+      reject(ERROR_CODE_ERROR, @"no options", nil);
     }
   }];
 }
@@ -2760,6 +3019,10 @@ RCT_REMAP_METHOD(getMySettingFromOldModel,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   NSMutableArray *optionNameList = [[NSMutableArray alloc] init];
   for (id name in optionNames) {
     [optionNameList addObject:[NameToOptionEnum objectForKey:name]];
@@ -2767,7 +3030,7 @@ RCT_REMAP_METHOD(getMySettingFromOldModel,
   [_theta getMySettingOptionNames:optionNameList
                 completionHandler:^(THETACThetaRepositoryOptions *options, NSError *error) {
     if (error) {
-      reject(@"error", [error localizedDescription], error);
+      reject(ERROR_CODE_ERROR, [error localizedDescription], error);
     } else if (options) {
       NSMutableDictionary *results = [[NSMutableDictionary alloc] init];
       for (id name in optionNames) {
@@ -2782,7 +3045,7 @@ RCT_REMAP_METHOD(getMySettingFromOldModel,
       }
       resolve(results);
     } else {
-      reject(@"error", @"no options", nil);
+      reject(ERROR_CODE_ERROR, @"no options", nil);
     }
   }];
 }
@@ -2800,6 +3063,10 @@ RCT_REMAP_METHOD(setMySetting,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   THETACThetaRepositoryOptions *newoptions = [[THETACThetaRepositoryOptions alloc] init];
   for (id option in [options allKeys]) {
     OptionConverter converter = [NameToConverter objectForKey:option];
@@ -2814,7 +3081,7 @@ RCT_REMAP_METHOD(setMySetting,
                           options:newoptions
                 completionHandler:^(NSError *error) {
     if (error) {
-      reject(@"error", [error localizedDescription], error);
+      reject(ERROR_CODE_ERROR, [error localizedDescription], error);
     } else {
       resolve(@(YES));
     }
@@ -2832,10 +3099,14 @@ RCT_REMAP_METHOD(deleteMySetting,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta deleteMySettingCaptureMode:[CaptureModeEnum.toTheta objectForKey:captureMode]
                    completionHandler:^(NSError *error) {
     if (error) {
-      reject(@"error", [error localizedDescription], error);
+      reject(ERROR_CODE_ERROR, [error localizedDescription], error);
     } else {
       resolve(@(YES));
     }
@@ -2851,9 +3122,13 @@ RCT_REMAP_METHOD(listPlugins,
                  listPluginsWithResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta listPluginsWithCompletionHandler:^(NSArray *pluginList, NSError *error) {
     if (error) {
-      reject(@"error", [error localizedDescription], error);
+      reject(ERROR_CODE_ERROR, [error localizedDescription], error);
     } else if (pluginList) {
       NSMutableArray *ary = [[NSMutableArray alloc] init];
       for (int i = 0; i < pluginList.count; i++) {
@@ -2873,7 +3148,7 @@ RCT_REMAP_METHOD(listPlugins,
       }
       resolve(ary);
     } else {
-      reject(@"error", @"no plugin", nil);
+      reject(ERROR_CODE_ERROR, @"no plugin", nil);
     }
   }];
 }
@@ -2889,10 +3164,14 @@ RCT_REMAP_METHOD(setPlugin,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta setPluginPackageName:packageName
              completionHandler:^(NSError *error) {
     if (error) {
-      reject(@"error", [error localizedDescription], error);
+      reject(ERROR_CODE_ERROR, [error localizedDescription], error);
     } else {
       resolve(@(YES));
     }
@@ -2910,10 +3189,14 @@ RCT_REMAP_METHOD(startPlugin,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta startPluginPackageName:packageName
                completionHandler:^(NSError *error) {
     if (error) {
-      reject(@"error", [error localizedDescription], error);
+      reject(ERROR_CODE_ERROR, [error localizedDescription], error);
       
     } else {
       resolve(@(YES));
@@ -2930,9 +3213,13 @@ RCT_REMAP_METHOD(stopPlugin,
                  stopPluginWithResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta stopPluginWithCompletionHandler:^(NSError *error) {
     if (error) {
-      reject(@"error", [error localizedDescription], error);
+      reject(ERROR_CODE_ERROR, [error localizedDescription], error);
       
     } else {
       resolve(@(YES));
@@ -2951,15 +3238,19 @@ RCT_REMAP_METHOD(getPluginLicense,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta getPluginLicensePackageName:packageName
                     completionHandler:^(NSString *pluginLicense, NSError *error) {
     if (error) {
-      reject(@"error", [error localizedDescription], error);
+      reject(ERROR_CODE_ERROR, [error localizedDescription], error);
       
     } else if (pluginLicense) {
       resolve(pluginLicense);
     } else {
-      reject(@"error", @"no plugin lincense", nil);
+      reject(ERROR_CODE_ERROR, @"no plugin lincense", nil);
     }
   }];
 }
@@ -2973,13 +3264,17 @@ RCT_REMAP_METHOD(getPluginOrders,
                  getPluginOrdersWithResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta getPluginOrdersWithCompletionHandler:^(NSArray *pluginOrders, NSError *error) {
     if (error) {
-      reject(@"error", [error localizedDescription], error);
+      reject(ERROR_CODE_ERROR, [error localizedDescription], error);
     } else if (pluginOrders) {
       resolve(pluginOrders);
     } else {
-      reject(@"error", @"no plugin orders", nil);
+      reject(ERROR_CODE_ERROR, @"no plugin orders", nil);
     }
   }];
 }
@@ -2995,10 +3290,14 @@ RCT_REMAP_METHOD(setPluginOrders,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta setPluginOrdersPlugins:plugins
                completionHandler:^(NSError *error) {
     if (error) {
-      reject(@"error", [error localizedDescription], error);
+      reject(ERROR_CODE_ERROR, [error localizedDescription], error);
     } else {
       resolve(@(YES));
     }
@@ -3016,10 +3315,14 @@ RCT_REMAP_METHOD(setBluetoothDevice,
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
   [_theta setBluetoothDeviceUuid:uuid
               completionHandler:^(NSString *deviceName, NSError *error) {
       if (error) {
-        reject(@"error", [error localizedDescription], error);
+        reject(ERROR_CODE_ERROR, [error localizedDescription], error);
       } else {
         resolve(deviceName);
       }

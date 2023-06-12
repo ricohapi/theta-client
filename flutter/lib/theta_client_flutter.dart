@@ -983,6 +983,12 @@ enum OptionNameEnum {
   /// Option name _password
   password('Password', String),
 
+  /// Option name powerSaving
+  powerSaving('PowerSaving', PowerSavingEnum),
+
+  /// Option name previewFormat
+  previewFormat('PreviewFormat', PreviewFormatEnum),
+
   /// Option name _proxy
   proxy('Proxy', Proxy),
 
@@ -994,6 +1000,9 @@ enum OptionNameEnum {
 
   /// Option name remainingSpace
   remainingSpace('RemainingSpace', int),
+
+  /// Option name shootingMethod
+  shootingMethod('ShootingMethod', ShootingMethodEnum),
 
   /// Shutter speed (sec).
   shutterSpeed('ShutterSpeed', ShutterSpeedEnum),
@@ -1865,6 +1874,112 @@ enum OffDelayEnum {
   }
 }
 
+/// PowerSaving
+///
+/// For Theta X only
+enum PowerSavingEnum {
+  /// Power saving mode ON
+  on('ON'),
+  /// Power saving mode OFF
+  off('OFF');
+
+  final String rawValue;
+  const PowerSavingEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static PowerSavingEnum? getValue(String rawValue) {
+    return PowerSavingEnum.values.cast<PowerSavingEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
+/// Format of live view
+enum PreviewFormatEnum {
+  /// width_height_framerate
+  /// For Theta X, Z1, V and SC2
+  // ignore: constant_identifier_names
+  w1024_h512_f30('W1024_H512_F30'),
+  /// For Theta X. This value can't set.
+  // ignore: constant_identifier_names
+  w1024_h512_f15('W1024_H512_F15'),
+  /// For Theta X
+  // ignore: constant_identifier_names
+  w512_h512_f30('W512_H512_F30'),
+  /// For Theta Z1 and V
+  // ignore: constant_identifier_names
+  w1920_h960_f8('W1920_H960_F8'),
+  /// For Theta Z1 and V
+  // ignore: constant_identifier_names
+  w1024_h512_f8('W1024_H512_F8'),
+  /// For Theta Z1 and V
+  // ignore: constant_identifier_names
+  w640_h320_f30('W640_H320_F30'),
+  /// For Theta Z1 and V
+  // ignore: constant_identifier_names
+  w640_h320_f8('W640_H320_F8'),
+  /// For Theta S and SC
+  // ignore: constant_identifier_names
+  w640_h320_f10('W640_H320_F10');
+
+  final String rawValue;
+  const PreviewFormatEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static PreviewFormatEnum? getValue(String rawValue) {
+    return PreviewFormatEnum.values.cast<PreviewFormatEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
+/// Shooting method
+///
+/// Shooting method for My Settings mode. In RICOH THETA X, it is used outside of MySetting.
+/// Can be acquired and set only when in the Still image shooting mode and _function is the My Settings shooting function.
+/// Changing _function initializes the setting details to Normal shooting.
+enum ShootingMethodEnum {
+  /// Normal shooting
+  normal('NORMAL'),
+  /// Interval shooting
+  interval('INTERVAL'),
+  /// Move interval shooting (RICOH THETA Z1 firmware v1.50.1 or later, RICOH THETA X is not supported)
+  moveInterval('MOVE_INTERVAL'),
+  /// Fixed interval shooting (RICOH THETA Z1 firmware v1.50.1 or later, RICOH THETA X is not supported)
+  fixedInterval('FIXED_INTERVAL'),
+  /// Multi bracket shooting
+  bracket('BRACKET'),
+  /// Interval composite shooting (RICOH THETA X is not supported)
+  composite('COMPOSITE'),
+  /// Continuous shooting (RICOH THETA X or later)
+  continuous('CONTINUOUS'),
+  /// Time shift shooting (RICOH THETA X or later)
+  timeShift('TIME_SHIFT'),
+  /// Burst shooting (RICOH THETA Z1 v2.10.1 or later, RICOH THETA X is not supported)
+  burst('BURST');
+
+  final String rawValue;
+  const ShootingMethodEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static ShootingMethodEnum? getValue(String rawValue) {
+    return ShootingMethodEnum.values.cast<ShootingMethodEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
 
 /// Shutter speed (sec).
 /// 
@@ -2724,6 +2839,12 @@ class Options {
   /// Password used for digest authentication when _networkType is set to client mode.
   String? password;
 
+  /// PowerSaving
+  PowerSavingEnum? powerSaving;
+
+  /// PreviewFormat
+  PreviewFormatEnum? previewFormat;
+
   /// see [Proxy]
   Proxy? proxy;
 
@@ -2735,6 +2856,9 @@ class Options {
 
   /// Remaining usable storage space (byte).
   int? remainingSpace;
+
+  /// ShootingMethod
+  ShootingMethodEnum? shootingMethod;
 
   /// Shutter speed (sec).
   /// 
@@ -2822,6 +2946,10 @@ class Options {
         return offDelay as T;
       case OptionNameEnum.password:
         return password as T;
+      case OptionNameEnum.powerSaving:
+        return powerSaving as T;
+      case OptionNameEnum.previewFormat:
+        return previewFormat as T;
       case OptionNameEnum.proxy:
         return proxy as T;
       case OptionNameEnum.remainingPictures:
@@ -2830,6 +2958,8 @@ class Options {
         return remainingVideoSeconds as T;
       case OptionNameEnum.remainingSpace:
         return remainingSpace as T;
+      case OptionNameEnum.shootingMethod:
+        return shootingMethod as T;
       case OptionNameEnum.shutterSpeed:
         return shutterSpeed as T;
       case OptionNameEnum.shutterVolume:
@@ -2918,6 +3048,12 @@ class Options {
       case OptionNameEnum.password:
         password = value;
         break;
+      case OptionNameEnum.powerSaving:
+        powerSaving = value;
+        break;
+      case OptionNameEnum.previewFormat:
+        previewFormat = value;
+        break;
       case OptionNameEnum.proxy:
         proxy = value;
         break;
@@ -2929,6 +3065,9 @@ class Options {
         break;
       case OptionNameEnum.remainingSpace:
         remainingSpace = value;
+        break;
+      case OptionNameEnum.shootingMethod:
+        shootingMethod = value;
         break;
       case OptionNameEnum.shutterSpeed:
         shutterSpeed = value;

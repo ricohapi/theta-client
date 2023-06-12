@@ -1,7 +1,10 @@
 import type { CameraControlSourceEnum } from './option-camera-control-source';
 import type { CameraModeEnum } from './option-camera-mode';
 import type { NetworkTypeEnum } from './option-network-type';
+import type { PowerSavingEnum } from './option-power-saving';
+import type { PreviewFormatEnum } from './option-preview-format';
 import type { Proxy } from './option-proxy';
+import type { ShootingMethodEnum } from './option-shooting-method';
 import type { ShutterSpeedEnum } from './option-shutter-speed';
 import type { TimeShift } from './option-time-shift';
 import type { WhiteBalanceAutoStrengthEnum } from './option-white-balance-auto-strength';
@@ -495,8 +498,14 @@ export const OptionNameEnum = {
   OffDelay: 'OffDelay',
   /** password */
   Password: 'Password',
+  /** powerSaving */
+  PowerSaving: 'PowerSaving',
+  /** previewFormat */
+  PreviewFormat: 'PreviewFormat',
   /** proxy */
   Proxy: 'Proxy',
+  /** shootingMethod */
+  ShootingMethod: 'ShootingMethod',
   /** shutterSpeed */
   ShutterSpeed: 'ShutterSpeed',
   /** sleepDelay */
@@ -571,6 +580,10 @@ export type Options = {
   offDelay?: OffDelayEnum;
   /** Password used for digest authentication when _networkType is set to client mode. */
   password?: String;
+  /** Power saving mode */
+  powerSaving?: PowerSavingEnum;
+  /** Format of live view  */
+  previewFormat?: PreviewFormatEnum;
   /** Proxy information to be used when wired LAN is enabled. */
   proxy?: Proxy;
   /** The estimated remaining number of shots for the current shooting settings. */
@@ -579,6 +592,8 @@ export type Options = {
   remainingVideoSeconds?: number;
   /** Remaining usable storage space (byte). */
   remainingSpace?: number;
+  /** Shooting method for My Settings mode. In RICOH THETA X, it is used outside of MySetting.  */
+  shootingMethod?: ShootingMethodEnum;
   /**
    * Shutter speed (sec).
    *
