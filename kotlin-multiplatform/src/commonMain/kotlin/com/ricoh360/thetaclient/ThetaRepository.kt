@@ -3700,7 +3700,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @return PhotoCapture.Builder
      */
     fun getVideoCaptureBuilder(): VideoCapture.Builder {
-        return VideoCapture.Builder(endpoint, cameraModel)
+        return VideoCapture.Builder(endpoint)
     }
 
     /**
