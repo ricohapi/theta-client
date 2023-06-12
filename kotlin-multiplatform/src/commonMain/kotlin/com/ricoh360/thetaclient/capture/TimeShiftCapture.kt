@@ -92,16 +92,6 @@ class TimeShiftCapture private constructor(
                     }
                     callback.onError(exception = ThetaRepository.ThetaWebApiException(message = startCaptureResponse.error?.message ?: startCaptureResponse.error.toString()))
                 }
-
-                if (startCaptureResponse.state == CommandState.DONE) {
-                    var fileUrl = ""
-                    if ((startCaptureResponse.results?.fileUrls?.size ?: 0) > 0) {
-                        fileUrl = startCaptureResponse.results?.fileUrls?.get(0) as String
-                    }
-                    callback.onSuccess(fileUrl = fileUrl)
-                    return@launch
-                }
-                callback.onError(exception = ThetaRepository.ThetaWebApiException(message = startCaptureResponse.error?.message ?: startCaptureResponse.error.toString()))
             } catch (e: JsonConvertException) {
                 callback.onError(exception = ThetaRepository.ThetaWebApiException(message = e.message ?: e.toString()))
             } catch (e: ResponseException) {

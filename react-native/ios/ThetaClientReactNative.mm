@@ -122,7 +122,6 @@ typedef void (^ TimeShiftOnProgressBlock)(float);
  * @param exception exception object
  */
 -(void)onErrorException:(THETACThetaRepositoryThetaRepositoryException *)exception {
-    if (_sdk.timeShiftCapture == nil || _sdk.timeShiftCapturing == nil) return;
     _reject(@"error", exception.message, nil);
     _sdk.timeShiftCapture = nil;
     _sdk.timeShiftCapturing = nil;
@@ -133,7 +132,6 @@ typedef void (^ TimeShiftOnProgressBlock)(float);
  * @param fileUrl captured video file url
  */
 - (void)onSuccessFileUrl_:(NSString * _Nullable)fileUrl {
-    if (_sdk.timeShiftCapture == nil || _sdk.timeShiftCapturing == nil) return;
     _resolve(fileUrl != nil ? fileUrl : [NSNull null]);
     _sdk.timeShiftCapture = nil;
     _sdk.timeShiftCapturing = nil;
@@ -144,7 +142,6 @@ typedef void (^ TimeShiftOnProgressBlock)(float);
  * @param completion captured video file url
  */
 - (void)onProgressCompletion:(float)completion {
-    if (_sdk.timeShiftCapture == nil || _sdk.timeShiftCapturing == nil) return;
     _onProgress(completion);
 }
 @end
