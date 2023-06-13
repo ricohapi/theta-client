@@ -36,7 +36,7 @@ class TimeShiftCapture private constructor(
         /**
          * Called when successful.
          *
-         * @param fileUrl URL of the video capture
+         * @param fileUrl URL of the time-shift. When the time-shift is canceled, this URL will be null.
          */
         fun onSuccess(fileUrl: String?)
 

@@ -722,6 +722,18 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _powerSaving
+         */
+        PowerSaving("_powerSaving", PowerSavingEnum::class),
+
+        /**
+         * Option name
+         * previewFormat
+         */
+        PreviewFormat("previewFormat", PreviewFormatEnum::class),
+
+        /**
+         * Option name
          * _proxy
          */
         Proxy("_proxy", ThetaRepository.Proxy::class),
@@ -755,6 +767,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * totalSpace
          */
         TotalSpace("totalSpace", Long::class),
+
+        /**
+         * Option name
+         * _shootingMethod
+         */
+        ShootingMethod("_shootingMethod", ShootingMethodEnum::class),
 
         /**
          * Option name
@@ -952,6 +970,17 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var password: String? = null,
 
         /**
+         * Power saving mode.
+         * Only for Theta X.
+         */
+        var powerSaving: PowerSavingEnum? = null,
+
+        /**
+         * Format of live view.
+         */
+        var previewFormat: PreviewFormatEnum? = null,
+
+        /**
          * @see Proxy
          */
         var proxy: Proxy? = null,
@@ -970,6 +999,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Remaining usable storage space (byte).
          */
         var remainingSpace: Long? = null,
+
+        /**
+         * Shooting method for My Settings mode. In RICOH THETA X, it is used outside of MySetting.
+         * Can be acquired and set only when in the Still image shooting mode and _function is the My Settings shooting function.
+         * Changing _function initializes the setting details to Normal shooting.
+         */
+        var shootingMethod: ShootingMethodEnum? = null,
 
         /**
          * Shutter speed (sec).
@@ -1046,7 +1082,10 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             networkType = null,
             offDelay = null,
             password = null,
+            powerSaving = null,
+            previewFormat = null,
             proxy = null,
+            shootingMethod = null,
             shutterSpeed = null,
             sleepDelay = null,
             remainingPictures = null,
@@ -1086,7 +1125,10 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             networkType = options._networkType?.let { NetworkTypeEnum.get(it) },
             offDelay = options.offDelay?.let { OffDelayEnum.get(it) },
             password = options._password,
+            powerSaving = options._powerSaving?.let { PowerSavingEnum.get(it) },
+            previewFormat = options.previewFormat?.let { PreviewFormatEnum.get(it) },
             proxy = options._proxy?.let { Proxy(it) },
+            shootingMethod = options._shootingMethod?.let { ShootingMethodEnum.get(it) },
             shutterSpeed = options.shutterSpeed?.let { ShutterSpeedEnum.get(it) },
             sleepDelay = options.sleepDelay?.let { SleepDelayEnum.get(it) },
             remainingPictures = options.remainingPictures,
@@ -1127,12 +1169,15 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _networkType = networkType?.value,
                 offDelay = offDelay?.sec,
                 _password = password,
+                _powerSaving = powerSaving?.value,
+                previewFormat = previewFormat?.toPreviewFormat(),
                 _proxy = proxy?.toTransferredProxy(),
                 sleepDelay = sleepDelay?.sec,
                 remainingPictures = remainingPictures,
                 remainingVideoSeconds = remainingVideoSeconds,
                 remainingSpace = remainingSpace,
                 totalSpace = totalSpace,
+                _shootingMethod = shootingMethod?.value,
                 shutterSpeed = shutterSpeed?.value,
                 _shutterVolume = shutterVolume,
                 _username = username,
@@ -1175,12 +1220,15 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.NetworkType -> networkType
                 OptionNameEnum.OffDelay -> offDelay
                 OptionNameEnum.Password -> password
+                OptionNameEnum.PowerSaving -> powerSaving
+                OptionNameEnum.PreviewFormat -> previewFormat
                 OptionNameEnum.Proxy -> proxy
                 OptionNameEnum.SleepDelay -> sleepDelay
                 OptionNameEnum.RemainingPictures -> remainingPictures
                 OptionNameEnum.RemainingVideoSeconds -> remainingVideoSeconds
                 OptionNameEnum.RemainingSpace -> remainingSpace
                 OptionNameEnum.TotalSpace -> totalSpace
+                OptionNameEnum.ShootingMethod -> shootingMethod
                 OptionNameEnum.ShutterSpeed -> shutterSpeed
                 OptionNameEnum.ShutterVolume -> shutterVolume
                 OptionNameEnum.Username -> username
@@ -1224,7 +1272,10 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.NetworkType -> networkType = value as NetworkTypeEnum
                 OptionNameEnum.OffDelay -> offDelay = value as OffDelay
                 OptionNameEnum.Password -> password = value as String
+                OptionNameEnum.PowerSaving -> powerSaving = value as PowerSavingEnum
+                OptionNameEnum.PreviewFormat -> previewFormat = value as PreviewFormatEnum
                 OptionNameEnum.Proxy -> proxy = value as Proxy
+                OptionNameEnum.ShootingMethod -> shootingMethod = value as ShootingMethodEnum
                 OptionNameEnum.ShutterSpeed -> shutterSpeed = value as ShutterSpeedEnum
                 OptionNameEnum.SleepDelay -> sleepDelay = value as SleepDelay
                 OptionNameEnum.RemainingPictures -> remainingPictures = value as Int
@@ -2899,6 +2950,69 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Power saving mode
+     *
+     * For Theta X only.
+     */
+    enum class PowerSavingEnum(val value: PowerSaving) {
+        /**
+         * Power saving mode ON
+         */
+        ON(PowerSaving.ON),
+
+        /**
+         * Power saving mode OFF
+         */
+        OFF(PowerSaving.OFF);
+
+        companion object {
+            /**
+             * Convert PowerSaving to PowerSavingEnum
+             *
+             * @param value
+             * @return PowerSavingEnum
+             */
+            fun get(value: PowerSaving): PowerSavingEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Format of live view
+     */
+    enum class PreviewFormatEnum(val width: Int, val height: Int, val framerate: Int) {
+        W1024_H512_F30(1024, 512, 30), // For Theta X, Z1, V and SC2
+        W1024_H512_F15(1024, 512, 15), // For Theta X. This value can't set.
+        W512_H512_F30(512, 512, 30), // For Theta X
+        W1920_H960_F8(1920, 960, 8), // For Theta Z1 and V
+        W1024_H512_F8(1024, 512, 8), // For Theta Z1 and V
+        W640_H320_F30(640, 320, 30), // For Theta Z1 and V
+        W640_H320_F8(640, 320, 8), // For Theta Z1 and V
+        W640_H320_F10(640, 320, 10); // For Theta S and SC
+
+        /**
+         * Convert PreviewFormatEnum to PreviewFormat.
+         */
+        fun toPreviewFormat(): PreviewFormat {
+            return PreviewFormat(width, height, framerate)
+        }
+
+        companion object {
+            /**
+             * Convert PreviewFormat to PreviewFormatEnum
+             */
+            fun get(value: PreviewFormat): PreviewFormatEnum? {
+                return PreviewFormatEnum.values().firstOrNull {
+                    it.height == value.height &&
+                            it.width == value.width &&
+                            it.framerate == value.framerate
+                }
+            }
+        }
+    }
+
+    /**
      * Proxy information to be used when wired LAN is enabled.
      *
      * The current setting can be acquired by camera.getOptions,
@@ -2959,6 +3073,74 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 userid = userid,
                 password = password
             )
+        }
+    }
+
+    /**
+     * Shooting method
+     *
+     * Shooting method for My Settings mode. In RICOH THETA X, it is used outside of MySetting.
+     * Can be acquired and set only when in the Still image shooting mode and _function is the My Settings shooting function.
+     * Changing _function initializes the setting details to Normal shooting.
+     *
+     * For Theta X and Z1 only.
+     */
+    enum class ShootingMethodEnum(val value: ShootingMethod) {
+        /**
+         * Normal shooting
+         */
+        NORMAL(ShootingMethod.NORMAL),
+
+        /**
+         * Interval shooting
+         */
+        INTERVAL(ShootingMethod.INTERVAL),
+
+        /**
+         * Move interval shooting (RICOH THETA Z1 firmware v1.50.1 or later, RICOH THETA X is not supported)
+         */
+        MOVE_INTERVAL(ShootingMethod.MOVE_INTERVAL),
+
+        /**
+         * Fixed interval shooting (RICOH THETA Z1 firmware v1.50.1 or later, RICOH THETA X is not supported)
+         */
+        FIXED_INTERVAL(ShootingMethod.FIXED_INTERVAL),
+
+        /**
+         * Multi bracket shooting
+         */
+        BRACKET(ShootingMethod.BRACKET),
+
+        /**
+         * Interval composite shooting (RICOH THETA X is not supported)
+         */
+        COMPOSITE(ShootingMethod.COMPOSITE),
+
+        /**
+         * Continuous shooting (RICOH THETA X or later)
+         */
+        CONTINUOUS(ShootingMethod.CONTINUOUS),
+
+        /**
+         * Time shift shooting (RICOH THETA X or later)
+         */
+        TIME_SHIFT(ShootingMethod.TIMESHIFT),
+
+        /**
+         * Burst shooting (RICOH THETA Z1 v2.10.1 or later, RICOH THETA X is not supported)
+         */
+        BURST(ShootingMethod.BURST);
+
+        companion object {
+            /**
+             * Convert ShootingMethod to ShootingMethodEnum
+             *
+             * @param value
+             * @return ShootingMethodEnum
+             */
+            fun get(value: ShootingMethod): ShootingMethodEnum? {
+                return values().firstOrNull { it.value == value }
+            }
         }
     }
 
@@ -3700,7 +3882,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @return PhotoCapture.Builder
      */
     fun getVideoCaptureBuilder(): VideoCapture.Builder {
-        return VideoCapture.Builder(endpoint, cameraModel)
+        return VideoCapture.Builder(endpoint)
     }
 
     /**
