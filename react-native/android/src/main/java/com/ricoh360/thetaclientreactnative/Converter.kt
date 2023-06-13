@@ -505,15 +505,15 @@ class TimeShiftConverter : OptionConverter {
   }
 
   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
-    options.timeShift?.let {
+    options.timeShift?.let { timeShiftMap ->
       val timeShift = Arguments.createMap()
-      it.isFrontFirst?.let {
+      timeShiftMap.isFrontFirst?.let {
         timeShift.putBoolean("isFrontFirst", it)
       }
-      it.firstInterval?.let {
+      timeShiftMap.firstInterval?.let {
         timeShift.putString("firstInterval", it.toString())
       }
-      it.secondInterval?.let {
+      timeShiftMap.secondInterval?.let {
         timeShift.putString("secondInterval", it.toString())
       }
       objects.putMap("timeShift", timeShift)
