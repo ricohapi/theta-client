@@ -49,6 +49,11 @@ class OptionsTest {
         val shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_10
         val shutterVolume = 100
         val sleepDelay = ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M
+        val timeShift = ThetaRepository.TimeShiftSetting(
+            true,
+            ThetaRepository.TimeShiftIntervalEnum.INTERVAL_0,
+            ThetaRepository.TimeShiftIntervalEnum.INTERVAL_1
+        )
         val totalSpace = 100L
         val username = "username"
         val whiteBalance = ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT
@@ -87,6 +92,7 @@ class OptionsTest {
             shutterSpeed = shutterSpeed,
             shutterVolume = shutterVolume,
             sleepDelay = sleepDelay,
+            timeShift = timeShift,
             totalSpace = totalSpace,
             username = username,
             whiteBalance = whiteBalance,
@@ -129,6 +135,7 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ShutterSpeed), shutterSpeed, "shutterSpeed")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ShutterVolume), shutterVolume, "shutterVolume")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.SleepDelay), sleepDelay, "sleepDelay")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.TimeShift), timeShift, "timeShift")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.TotalSpace), totalSpace, "totalSpace")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Username), username, "userName")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.WhiteBalance), whiteBalance, "whiteBalance")
@@ -173,6 +180,10 @@ class OptionsTest {
             Pair(ThetaRepository.OptionNameEnum.ShutterSpeed, ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_30),
             Pair(ThetaRepository.OptionNameEnum.ShutterVolume, 10),
             Pair(ThetaRepository.OptionNameEnum.SleepDelay, ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M),
+            Pair(
+                ThetaRepository.OptionNameEnum.TimeShift,
+                ThetaRepository.TimeShiftSetting(true, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_2, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_3)
+            ),
             Pair(ThetaRepository.OptionNameEnum.TotalSpace, 104L),
             Pair(ThetaRepository.OptionNameEnum.Username, "username"),
             Pair(ThetaRepository.OptionNameEnum.WhiteBalance, ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT),
@@ -228,6 +239,10 @@ class OptionsTest {
         val shutterSpeed = Pair(10.0, ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_10)
         val shutterVolume = Pair(10, 10)
         val sleepDelay = Pair(180, ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M)
+        val timeShift = Pair(
+            TimeShift(FirstShootingEnum.FRONT, 4, 5),
+            ThetaRepository.TimeShiftSetting(true, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_4, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_5)
+        )
         val totalSpace = Pair(104L, 104L)
         val username = Pair("username", "username")
         val whiteBalance = Pair(WhiteBalance._WARM_WHITE_FLUORESCENT, ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT)
@@ -265,6 +280,7 @@ class OptionsTest {
             shutterSpeed = shutterSpeed.first,
             _shutterVolume = shutterVolume.first,
             sleepDelay = sleepDelay.first,
+            _timeShift = timeShift.first,
             totalSpace = totalSpace.first,
             _username = username.first,
             whiteBalance = whiteBalance.first,
@@ -303,6 +319,7 @@ class OptionsTest {
         assertEquals(options.shutterSpeed, shutterSpeed.second, "shutterSpeed")
         assertEquals(options.shutterVolume, shutterVolume.second, "shutterVolume")
         assertEquals(options.sleepDelay, sleepDelay.second, "sleepDelay")
+        assertEquals(options.timeShift, timeShift.second, "timeShift")
         assertEquals(options.totalSpace, totalSpace.second, "totalSpace")
         assertEquals(options.username, username.second, "username")
         assertEquals(options.whiteBalance, whiteBalance.second, "whiteBalance")
@@ -348,6 +365,10 @@ class OptionsTest {
         val shutterSpeed = Pair(20.0, ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_20)
         val shutterVolume = Pair(10, 10)
         val sleepDelay = Pair(180, ThetaRepository.SleepDelayEnum.SLEEP_DELAY_3M)
+        val timeShift = Pair(
+            TimeShift(FirstShootingEnum.REAR, 6, 7),
+            ThetaRepository.TimeShiftSetting(false, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_6, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_7)
+        )
         val totalSpace = Pair(104L, 104L)
         val userName = Pair("username", "username")
         val whiteBalance = Pair(WhiteBalance._WARM_WHITE_FLUORESCENT, ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT)
@@ -385,6 +406,7 @@ class OptionsTest {
             shutterSpeed = shutterSpeed.second,
             shutterVolume = shutterVolume.second,
             sleepDelay = sleepDelay.second,
+            timeShift = timeShift.second,
             totalSpace = totalSpace.second,
             username = userName.second,
             whiteBalance = whiteBalance.second,
@@ -423,6 +445,7 @@ class OptionsTest {
         assertEquals(options.shutterSpeed, shutterSpeed.first, "shutterSpeed")
         assertEquals(options._shutterVolume, shutterVolume.first, "shutterVolume")
         assertEquals(options.sleepDelay, sleepDelay.first, "sleepDelay")
+        assertEquals(options._timeShift, timeShift.first, "timeShift")
         assertEquals(options.totalSpace, totalSpace.first, "totalSpace")
         assertEquals(options._username, userName.first, "userName")
         assertEquals(options.whiteBalance, whiteBalance.first, "whiteBalance")

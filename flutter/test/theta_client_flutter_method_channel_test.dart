@@ -398,6 +398,9 @@ void main() {
       'latitude': 1.0, 'longitude': 2.0, 'altitude': 3.0, 'dateTimeZone': '2022:01:01 00:01:00+09:00'
     };
     Map<String, dynamic> proxyMap = {'use': false, 'url': '', 'port': 8081, 'userid': '', 'password': ''};
+    Map<String, dynamic> timeShiftMap = {
+      'isFrontFirst': true, 'firstInterval': TimeShiftIntervalEnum.interval_5.toString(), 'secondInterval': TimeShiftIntervalEnum.interval_10.toString()
+    };
     List<List<dynamic>> data = [
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
       [OptionNameEnum.cameraControlSource, 'CameraControlSource', CameraControlSourceEnum.camera, 'CAMERA'],
@@ -429,6 +432,7 @@ void main() {
       [OptionNameEnum.shutterSpeed, 'ShutterSpeed', ShutterSpeedEnum.shutterSpeedOneOver_10, 'SHUTTER_SPEED_ONE_OVER_10'],
       [OptionNameEnum.shutterVolume, 'ShutterVolume', 7, 7],
       [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
+      [OptionNameEnum.timeShift, 'TimeShift', TimeShift(isFrontFirst: true, firstInterval: TimeShiftIntervalEnum.interval_5, secondInterval: TimeShiftIntervalEnum.interval_10), timeShiftMap],
       [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
       [OptionNameEnum.username, 'Username', 'username', 'username'],
       [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
@@ -468,6 +472,9 @@ void main() {
       'latitude': 1.0, 'longitude': 2.0, 'altitude': 3.0, 'dateTimeZone': '2022:01:01 00:01:00+09:00'
     };
     Map<String, dynamic> proxyMap = {'use': false, 'url': '', 'port': 8081, 'userid': '', 'password': ''};
+    Map<String, dynamic> timeShiftMap = {
+      'isFrontFirst': true, 'firstInterval': TimeShiftIntervalEnum.interval_5.toString(), 'secondInterval': TimeShiftIntervalEnum.interval_10.toString()
+    };
     List<List<dynamic>> data = [
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
       [OptionNameEnum.cameraMode, 'CameraMode', CameraModeEnum.capture, 'CAPTURE'],
@@ -498,6 +505,7 @@ void main() {
       [OptionNameEnum.shutterSpeed, 'ShutterSpeed', ShutterSpeedEnum.shutterSpeedOneOver_20, 'SHUTTER_SPEED_ONE_OVER_20'],
       [OptionNameEnum.shutterVolume, 'ShutterVolume', 7, 7],
       [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
+      [OptionNameEnum.timeShift, 'TimeShift', TimeShift(isFrontFirst: true, firstInterval: TimeShiftIntervalEnum.interval_5, secondInterval: TimeShiftIntervalEnum.interval_10), timeShiftMap],
       [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
       [OptionNameEnum.username, 'Username', 'username', 'username'],
       [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],

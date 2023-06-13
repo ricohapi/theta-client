@@ -101,6 +101,20 @@ fun toProxy(map: Map<String, Any>): Proxy {
     )
 }
 
+fun toTimeShift(map: Map<String, Any>): TimeShiftSetting {
+    var timeShift = TimeShiftSetting()
+    map["isFrontFirst"]?.let {
+        timeShift.isFrontFirst = it as Boolean
+    }
+    map["firstInterval"]?.let {
+        timeShift.firstInterval = TimeShiftIntervalEnum.valueOf(it as String)
+    }
+    map["secondInterval"]?.let {
+        timeShift.secondInterval = TimeShiftIntervalEnum.valueOf(it as String)
+    }
+    return timeShift
+}
+
 fun <T> setCaptureBuilderParams(call: MethodCall, builder: Capture.Builder<T>) {
     call.argument<String>(OptionNameEnum.Aperture.name)?.also { enumName ->
         ApertureEnum.values().find { it.name == enumName }?.let {
@@ -200,6 +214,20 @@ fun toResult(proxy: Proxy): Map<String, Any?> {
     )
 }
 
+fun toResult(timeShift: TimeShiftSetting): Map<String, Any> {
+    val result = mutableMapOf<String, Any>()
+    timeShift.isFrontFirst?.let { value ->
+        result["isFrontFirst"] = value
+    }
+    timeShift.firstInterval?.let { value ->
+        result["firstInterval"] = value.toString()
+    }
+    timeShift.secondInterval?.let { value ->
+        result["secondInterval"] = value.toString()
+    }
+    return result
+}
+
 fun toResult(options: Options): Map<String, Any> {
     val result = mutableMapOf<String, Any>()
 
@@ -223,6 +251,10 @@ fun toResult(options: Options): Map<String, Any> {
         } else if (name == OptionNameEnum.Proxy) {
             options.getValue<Proxy>(OptionNameEnum.Proxy)?.let { proxy ->
                 result[OptionNameEnum.Proxy.name] = toResult(proxy)
+            }
+        } else if (name == OptionNameEnum.TimeShift) {
+            options.getValue<TimeShiftSetting>(OptionNameEnum.TimeShift)?.let { timeShift ->
+                result[OptionNameEnum.TimeShift.name] = toResult(timeShift)
             }
         } else if (valueOptions.contains(name)) {
             addOptionsValueToMap<Any>(options, name, result)
@@ -280,6 +312,9 @@ fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
     } else if (name == OptionNameEnum.Proxy) {
         @Suppress("UNCHECKED_CAST")
         options.setValue(name, toProxy(value as Map<String, Any>))
+    } else if (name == OptionNameEnum.TimeShift) {
+        @Suppress("UNCHECKED_CAST")
+        options.setValue(name, toTimeShift(value as Map<String, Any>))
     } else {
         getOptionValueEnum(name, value as String)?.let {
             options.setValue(name, it)
