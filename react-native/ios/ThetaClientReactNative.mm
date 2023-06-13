@@ -2573,7 +2573,7 @@ RCT_REMAP_METHOD(getTimeShiftCaptureBuilder,
  */
 RCT_REMAP_METHOD(buildTimeShiftCapture,
                  buildTimeShiftCaptureWithOptions:(NSDictionary*)options
-                 withInterval:(NSArray *)interval
+                 withInterval:(int)interval
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
@@ -2593,10 +2593,10 @@ RCT_REMAP_METHOD(buildTimeShiftCapture,
         }
     }
 
-    if ([interval count] > 0) {
-        [self.timeShiftCaptureBuilder setCheckStatusCommandIntervalTimeMillis: (int64_t)[interval objectAtIndex:0]];
+    if (interval != -1) {
+        [self.timeShiftCaptureBuilder setCheckStatusCommandIntervalTimeMillis: (int64_t)interval];
     }
-    
+
     [self.timeShiftCaptureBuilder buildWithCompletionHandler:^(THETACTimeShiftCapture *timeShiftCapture, NSError *error) {
         if (error) {
             reject(@"error", [error localizedDescription], error);
