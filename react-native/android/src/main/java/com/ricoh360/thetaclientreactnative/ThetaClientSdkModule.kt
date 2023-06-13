@@ -79,6 +79,9 @@ class ThetaClientReactNativeModule(
         previewing = false
         photoCaptureBuilder = null
         photoCapture = null
+        timeShiftCaptureBuilder = null
+        timeShiftCapture = null
+        timeShiftCapturing = null
         videoCaptureBuilder = null
         videoCapture = null
         videoCapturing = null
@@ -636,7 +639,7 @@ class ThetaClientReactNativeModule(
             cvt?.setTimeShiftOption(options, builder)
           }
 
-          if (interval != -1) {
+          if (interval >= 0) {
             builder.setCheckStatusCommandInterval(interval.toLong())
           }
 

@@ -79,7 +79,7 @@ export class TimeShiftCaptureBuilder extends CaptureBuilder<TimeShiftCaptureBuil
    * @param timeMillis interval
    * @returns TimeShiftCaptureBuilder
    */
-  setCheckStatusCommandInterval(timeMillis?: number): TimeShiftCaptureBuilder {
+  setCheckStatusCommandInterval(timeMillis: number): TimeShiftCaptureBuilder {
     this.interval = timeMillis;
     return this;
   }
@@ -93,7 +93,7 @@ export class TimeShiftCaptureBuilder extends CaptureBuilder<TimeShiftCaptureBuil
   build(): Promise<TimeShiftCapture> {
     return ThetaClientReactNative.buildTimeShiftCapture(
       this.options,
-      this.interval != null ? this.interval : -1
+      this.interval ?? -1
     ).then(() => new TimeShiftCapture());
   }
 }

@@ -2593,7 +2593,7 @@ RCT_REMAP_METHOD(buildTimeShiftCapture,
         }
     }
 
-    if (interval != -1) {
+    if (interval >= 0) {
         [self.timeShiftCaptureBuilder setCheckStatusCommandIntervalTimeMillis: (int64_t)interval];
     }
 
@@ -2649,15 +2649,15 @@ RCT_REMAP_METHOD(cancelTimeShiftCapture,
                  cancelTimeShiftCaptureWithResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
 {
     if (!_theta) {
-        [NSException raise:ERROR_CODE_ERROR format:MESSAGE_NOT_INIT];
+        reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
         return;
     }
-    
+
     if (!self.timeShiftCapturing) {
         reject(@"error", @"no timeShiftCapturing", nil);
         return;
     }
-    
+
     [self.timeShiftCapturing cancelCapture];
 }
 
