@@ -4,6 +4,7 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.ReadableType
 import com.facebook.react.bridge.WritableMap
+import com.ricoh360.thetaclient.DigestAuth
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.capture.PhotoCapture
 import com.ricoh360.thetaclient.capture.VideoCapture
@@ -60,6 +61,40 @@ class BluetoothPowerConverter : OptionConverter {
   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
     options.bluetoothPower?.let {
       objects.putString("bluetoothPower", it.toString())
+    }
+  }
+}
+
+/**
+ * CameraControlSourceConverter
+ */
+class CameraControlSourceConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("cameraControlSource")?.let {
+      options.cameraControlSource = ThetaRepository.CameraControlSourceEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.cameraControlSource?.let {
+      objects.putString("cameraControlSource", it.toString())
+    }
+  }
+}
+
+/**
+ * CameraModeConverter
+ */
+class CameraModeConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("cameraMode")?.let {
+      options.cameraMode = ThetaRepository.CameraModeEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.cameraMode?.let {
+      objects.putString("cameraMode", it.toString())
     }
   }
 }
@@ -336,6 +371,23 @@ class MaxRecordableTimeConverter : OptionConverter {
 }
 
 /**
+ * NetworkTypeConverter
+ */
+ class NetworkTypeConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("networkType")?.let {
+      options.networkType = ThetaRepository.NetworkTypeEnum.valueOf(it)
+    }
+  }
+
+   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.networkType?.let {
+      objects.putString("networkType", it.toString())
+    }
+  }
+ }
+
+/**
  * OffDelayConverter
  */
 class OffDelayConverter : OptionConverter {
@@ -360,6 +412,94 @@ class OffDelayConverter : OptionConverter {
     }
   }
 }
+
+/**
+ * PowerSavingConverter
+ */
+class PowerSavingConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("powerSaving")?.let {
+      options.powerSaving = ThetaRepository.PowerSavingEnum.valueOf(it)
+    }
+  }
+
+   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.powerSaving?.let {
+      objects.putString("powerSaving", it.toString())
+    }
+  }
+ }
+
+/**
+ * PreviewFormatConverter
+ */
+class PreviewFormatConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("previewFormat")?.let {
+      options.previewFormat = ThetaRepository.PreviewFormatEnum.valueOf(it)
+    }
+  }
+
+   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.previewFormat?.let {
+      objects.putString("previewFormat", it.toString())
+    }
+  }
+ }
+
+/**
+ * ProxyConverter
+ */
+class ProxyConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getMap("proxy")?.let {
+      options.proxy = ThetaRepository.Proxy(
+        use = it.getBoolean("use") ?: false,
+        url = it.getString("url"),
+        port = if (it.hasKey("port")) it.getInt("port") else null,
+        userid = it.getString("userid"),
+        password = it.getString("password")
+      )
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.proxy?.let {
+      val proxy = Arguments.createMap()
+      proxy.putBoolean("use", it.use)
+      it.url?.let { url ->
+        proxy.putString("url", url)
+      }
+      it.port?.let { port ->
+        proxy.putInt("port", port)
+      }
+      it.userid?.let { userid ->
+        proxy.putString("userid", userid)
+      }
+      it.password?.let { password ->
+        proxy.putString("password", password)
+      }
+      objects.putMap("proxy", proxy)
+    }
+  }
+}
+
+/**
+ * ShootingMethodConverter
+ */
+class ShootingMethodConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("shootingMethod")?.let {
+      options.shootingMethod = ThetaRepository.ShootingMethodEnum.valueOf(it)
+    }
+  }
+
+   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.shootingMethod?.let {
+      objects.putString("shootingMethod", it.toString())
+    }
+  }
+ }
 
 /**
  * WhiteBalanceConverter
@@ -406,6 +546,24 @@ class WhiteBalanceAutoStrengthConverter : OptionConverter {
     }
   }
 }
+
+/**
+ * WlanFrequencyConverter
+ */
+class WlanFrequencyConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("wlanFrequency")?.let {
+      options.wlanFrequency = ThetaRepository.WlanFrequencyEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.wlanFrequency?.let {
+      objects.putString("wlanFrequency", it.toString())
+    }
+  }
+}
+
 
 /**
  * ColorTemperatureConverter
@@ -458,6 +616,23 @@ class IsGpsOnConverter : OptionConverter {
   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
     options.isGpsOn?.let {
       objects.putBoolean("isGpsOn", it)
+    }
+  }
+}
+
+/**
+ * ShutterSpeedConverter
+ */
+class ShutterSpeedConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("shutterSpeed")?.let {
+      options.shutterSpeed = ThetaRepository.ShutterSpeedEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.shutterSpeed?.let {
+      objects.putString("shutterSpeed", it.toString())
     }
   }
 }
@@ -588,4 +763,83 @@ class GpsInfoConverter : OptionConverter {
       objects.putMap("gpsInfo", gpsInfo)
     }
   }
+}
+
+/**
+ * UsernameConverter
+ */
+class UsernameConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("username")?.let {
+      options.username = it
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.username?.let {
+      objects.putString("username", it)
+    }
+  }
+}
+
+/**
+ * PasswordConverter
+ */
+class PasswordConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("password")?.let {
+      options.password = it
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.password?.let {
+      objects.putString("password", it)
+    }
+  }
+}
+
+fun configToTheta(objects: ReadableMap): ThetaRepository.Config {
+  val config = ThetaRepository.Config()
+  config.dateTime = objects.getString("dateTime")
+
+  objects.getString("language")?.let {
+    config.language = ThetaRepository.LanguageEnum.valueOf(it)
+  }
+
+  objects.getString("offDelay")?.let {
+    config.offDelay = ThetaRepository.OffDelayEnum.valueOf(it)
+  }
+
+  objects.getString("sleepDelay")?.let {
+    config.sleepDelay = ThetaRepository.SleepDelayEnum.valueOf(it)
+  }
+
+  config.shutterVolume = if (objects.hasKey("shutterVolume")) {
+    objects.getInt("shutterVolume")
+  }  else { null }
+
+  config.clientMode = if (objects.hasKey("clientMode")) {
+    objects.getMap("clientMode")?.let {
+      digestAuthToTheta(it)
+    }
+  }  else { null }
+
+  return config
+}
+
+fun digestAuthToTheta(objects: ReadableMap): DigestAuth? {
+  val username = objects.getString("username") ?: run {
+    return null
+  }
+  val password = if (objects.hasKey("password")) { objects.getString("password") }  else { null }
+  return DigestAuth(username, password)
+}
+
+fun timeoutToTheta(objects: ReadableMap): ThetaRepository.Timeout {
+  return ThetaRepository.Timeout(
+    objects.getInt("connectTimeout").toLong(),
+    objects.getInt("requestTimeout").toLong(),
+    objects.getInt("socketTimeout").toLong(),
+  )
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:theta_client_flutter/digest_auth.dart';
 import 'package:theta_client_flutter/utils/convert_utils.dart';
 
 import 'theta_client_flutter_platform_interface.dart';
@@ -69,8 +70,8 @@ class ThetaClientFlutter {
   /// * @return A list of file information and number of totalEntries.
   /// see https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md
   /// * @throws If an error occurs in THETA.
-  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, [int startPosition = 0]) {
-    return ThetaClientFlutterPlatform.instance.listFiles(fileType, entryCount, startPosition);
+  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, [int startPosition = 0, StorageEnum? storage]) {
+    return ThetaClientFlutterPlatform.instance.listFiles(fileType, entryCount, startPosition, storage);
   }
 
   /// Delete files in Theta.
@@ -191,69 +192,196 @@ class ThetaClientFlutter {
   }
 
   /// Acquires the access point list used in client mode.
-  /// 
+  ///
   /// For RICOH THETA X, only the access points registered with [setAccessPoint] can be acquired.
   /// (The access points automatically detected with the camera UI cannot be acquired with this API.)
-  /// 
-  /// * @return Lists the access points stored on the camera and the access points detected by the camera.
-  /// * @throws If an error occurs in THETA.
+  ///
+  /// @return Lists the access points stored on the camera and the access points detected by the camera.
+  /// @throws If an error occurs in THETA.
   Future<List<AccessPoint>> listAccessPoints() {
     return ThetaClientFlutterPlatform.instance.listAccessPoints();
   }
 
   /// Set access point. IP address is set dynamically.
-  /// 
-  /// * @param ssid SSID of the access point.
-  /// * @param ssidStealth True if SSID stealth is enabled.
-  /// * @param authMode Authentication mode.
-  /// * @param password Password. If [authMode] is "[none]", pass empty String.
-  /// * @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
-  /// * @throws If an error occurs in THETA.
-  Future<void> setAccessPointDynamically(
-    String ssid,
-    {
-      bool ssidStealth = false,
+  ///
+  /// @param ssid SSID of the access point.
+  /// @param ssidStealth True if SSID stealth is enabled.
+  /// @param authMode Authentication mode.
+  /// @param password Password. If [authMode] is "[none]", pass empty String.
+  /// @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
+  /// @param proxy Proxy information to be used for the access point.
+  /// @throws If an error occurs in THETA.
+  Future<void> setAccessPointDynamically(String ssid,
+      {bool ssidStealth = false,
       AuthModeEnum authMode = AuthModeEnum.none,
       String password = '',
-      int connectionPriority = 1
-    }
-  ) {
-    return ThetaClientFlutterPlatform.instance.setAccessPointDynamically(ssid, ssidStealth, authMode, password, connectionPriority);
+      int connectionPriority = 1,
+      Proxy? proxy}) {
+    return ThetaClientFlutterPlatform.instance.setAccessPointDynamically(
+        ssid, ssidStealth, authMode, password, connectionPriority, proxy);
   }
 
   /// Set access point. IP address is set statically.
-  /// 
-  /// * @param ssid SSID of the access point.
-  /// * @param ssidStealth True if SSID stealth is enabled.
-  /// * @param authMode Authentication mode.
-  /// * @param password Password. If [authMode] is "[none]", pass empty String.
-  /// * @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
-  /// * @param ipAddress IP address assigns to Theta.
-  /// * @param subnetMask Subnet mask.
-  /// * @param defaultGateway Default gateway.
-  /// * @throws If an error occurs in THETA.
-  Future<void> setAccessPointStatically(
-    String ssid,
-    {
-      bool ssidStealth = false,
+  ///
+  /// @param ssid SSID of the access point.
+  /// @param ssidStealth True if SSID stealth is enabled.
+  /// @param authMode Authentication mode.
+  /// @param password Password. If [authMode] is "[none]", pass empty String.
+  /// @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
+  /// @param ipAddress IP address assigns to Theta.
+  /// @param subnetMask Subnet mask.
+  /// @param defaultGateway Default gateway.
+  /// @param proxy Proxy information to be used for the access point.
+  /// @throws If an error occurs in THETA.
+  Future<void> setAccessPointStatically(String ssid,
+      {bool ssidStealth = false,
       AuthModeEnum authMode = AuthModeEnum.none,
       String password = '',
       int connectionPriority = 1,
       required String ipAddress,
       required String subnetMask,
-      required String defaultGateway
-    }
-  ) {
-    return ThetaClientFlutterPlatform.instance.setAccessPointStatically(ssid, ssidStealth, authMode, password, connectionPriority, ipAddress, subnetMask, defaultGateway);
+      required String defaultGateway,
+      Proxy? proxy}) {
+    return ThetaClientFlutterPlatform.instance.setAccessPointStatically(ssid, ssidStealth, authMode,
+        password, connectionPriority, ipAddress, subnetMask, defaultGateway, proxy);
   }
 
   /// Deletes access point information used in client mode.
   /// Only the access points registered with [setAccessPoint] can be deleted.
-  /// 
-  /// * @param ssid SSID of the access point.
-  /// * @throws If an error occurs in THETA.
+  ///
+  /// @param ssid SSID of the access point.
+  /// @throws If an error occurs in THETA.
   Future<void> deleteAccessPoint(String ssid) {
     return ThetaClientFlutterPlatform.instance.deleteAccessPoint(ssid);
+  }
+
+  /// Acquires the shooting properties set by the camera._setMySetting command.
+  /// Just for Theta V and later.
+  ///
+  /// Refer to the [options Overview](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
+  /// of API v2.1 reference  for properties available for acquisition.
+  ///
+  /// @param captureMode The target shooting mode.
+  /// @return Options of my setting
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<Options> getMySetting(CaptureModeEnum captureMode) {
+    return ThetaClientFlutterPlatform.instance.getMySetting(captureMode);
+  }
+
+  /// Acquires the shooting properties set by the camera._setMySetting command.
+  /// Just for Theta S and SC.
+  ///
+  /// Refer to the [options Overview](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
+  /// of API v2.1 reference  for properties available for acquisition.
+  ///
+  /// @param optionNames List of option names to acquire.
+  /// @return Options of my setting
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<Options> getMySettingFromOldModel(List<OptionNameEnum> optionNames) {
+    return ThetaClientFlutterPlatform.instance.getMySettingFromOldModel(optionNames);
+  }
+
+  /// Registers shooting conditions in My Settings.
+  ///
+  /// @param captureMode The target shooting mode.  RICOH THETA S and SC do not support My Settings in video capture mode.
+  /// @param options registered to My Settings.
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<void> setMySetting(CaptureModeEnum captureMode, Options options) {
+    return ThetaClientFlutterPlatform.instance.setMySetting(captureMode, options);
+  }
+
+  /// Delete shooting conditions in My Settings. Supported just by Theta X and Z1.
+  ///
+  /// @param captureMode The target shooting mode.
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<void> deleteMySetting(CaptureModeEnum captureMode) {
+    return ThetaClientFlutterPlatform.instance.deleteMySetting(captureMode);
+  }
+
+  /// Acquires a list of installed plugins. Supported just by Theta X, Z1 and V.
+  /// @return a list of installed plugin information
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<List<PluginInfo>> listPlugins() {
+    return ThetaClientFlutterPlatform.instance.listPlugins();
+  }
+
+  /// Sets the installed plugin for boot. Supported just by Theta V.
+  ///
+  /// @param packageName package name of the plugin
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<void> setPlugin(String packageName) {
+    return ThetaClientFlutterPlatform.instance.setPlugin(packageName);
+  }
+
+  /// Start the plugin specified by the [packageName].
+  /// If [packageName] is not specified, plugin 1 will start.
+  /// Supported just by Theta X, Z1 and V.
+  ///
+  /// @param packageName package name of the plugin.  Theta V does not support this parameter.
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<void> startPlugin([String? packageName]) {
+    return ThetaClientFlutterPlatform.instance.startPlugin(packageName);
+  }
+
+  /// Stop the running plugin.
+  /// Supported just by Theta X, Z1 and V.
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<void> stopPlugin() {
+    return ThetaClientFlutterPlatform.instance.stopPlugin();
+  }
+
+  /// Acquires the license for the installed plugin
+  ///
+  /// @param packageName package name of the target plugin
+  /// @return HTML string of the license
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<String> getPluginLicense(String packageName) {
+    return ThetaClientFlutterPlatform.instance.getPluginLicense(packageName);
+  }
+
+  /// Return the plugin orders.  Supported just by Theta X and Z1.
+  ///
+  /// @return list of package names of plugins
+  /// For Z1, list of three package names for the start-up plugin. No restrictions for the number of package names for X.
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<List<String>> getPluginOrders() {
+    return ThetaClientFlutterPlatform.instance.getPluginOrders();
+  }
+
+  /// Sets the plugin orders.  Supported just by Theta X and Z1.
+  ///
+  /// @param plugins list of package names of plugins
+  /// For Z1, list size must be three. No restrictions for the size for X.
+  /// When not specifying, set an empty string.
+  /// If an empty string is placed mid-way, it will be moved to the front.
+  /// Specifying zero package name will result in an error.
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<void> setPluginOrders(List<String> plugins) {
+    return ThetaClientFlutterPlatform.instance.setPluginOrders(plugins);
+  }
+
+  /// Registers identification information (UUID) of a BLE device (Smartphone application) connected to the camera.
+  /// UUID can be set while the wireless LAN function of the camera is placed in the direct mode.
+  ///
+  /// @param uuid Format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  /// Alphabetic letters are not case-sensitive.
+  /// @return Device name generated from the serial number (S/N) of the camera.
+  /// Eg. "00101234" or "THETAXS00101234" when the serial number (S/N) is "XS00101234"
+  /// @exception ThetaWebApiException When an invalid option is specified.
+  /// @exception NotConnectedException
+  Future<String> setBluetoothDevice(String uuid) {
+    return ThetaClientFlutterPlatform.instance.setBluetoothDevice(uuid);
   }
 }
 
@@ -334,6 +462,26 @@ enum FileTypeEnum {
   }
 }
 
+/// Specifies the storage
+enum StorageEnum {
+  /// internal storage
+  internal('INTERNAL'),
+
+  /// external storage (SD card)
+  sd('SD'),
+
+  /// current storage
+  current('CURRENT');
+
+  final String rawValue;
+  const StorageEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+}
+
 /// File information in Theta.
 class FileInfo {
   /// File name.
@@ -351,7 +499,9 @@ class FileInfo {
   /// You can get a thumbnail image using HTTP GET to [thumbnailUrl].
   final String thumbnailUrl;
 
-  FileInfo(this.name, this.size, this.dateTime, this.fileUrl, this.thumbnailUrl);
+  final String? storageID;
+
+  FileInfo(this.name, this.size, this.dateTime, this.fileUrl, this.thumbnailUrl, [this.storageID]);
 }
 
 /// Data about files in Theta.
@@ -389,7 +539,7 @@ enum CaptureStatusEnum {
   continuousShooting('CONTINUOUS_SHOOTING'),
 
   /// Capture status. Waiting for retrospective video...
-  retrospectiveImageRecordinG('RETROSPECTIVE_IMAGE_RECORDING');
+  retrospectiveImageRecording('RETROSPECTIVE_IMAGE_RECORDING');
 
   final String rawValue;
   const CaptureStatusEnum(this.rawValue);
@@ -760,15 +910,25 @@ class AccessPoint {
   /// Default Gateway. This setting can be acquired when “usingDhcp” is false.
   String? defaultGateway;
 
-  AccessPoint(this.ssid, this.ssidStealth, this.authMode, this.connectionPriority, this.usingDhcp, this.ipAddress, this.subnetMask, this.defaultGateway);
+  /// Proxy information to be used for the access point.
+  Proxy? proxy;
+
+  AccessPoint(this.ssid, this.ssidStealth, this.authMode, this.connectionPriority, this.usingDhcp,
+      this.ipAddress, this.subnetMask, this.defaultGateway, this.proxy);
 }
 
 /// Camera setting options name.
-/// 
+///
 /// [options name](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
 enum OptionNameEnum {
   /// Option name aperture
   aperture('Aperture', ApertureEnum),
+
+  /// Option name _cameraControlSource
+  cameraControlSource('CameraControlSource', CameraControlSourceEnum),
+
+  /// Option name _cameraMode
+  cameraMode('CameraMode', CameraModeEnum),
 
   /// Option name captureMode
   captureMode('CaptureMode', CaptureModeEnum),
@@ -814,11 +974,23 @@ enum OptionNameEnum {
   /// Option name _maxRecordableTime
   maxRecordableTime('MaxRecordableTime', MaxRecordableTimeEnum),
 
+  /// Option name _networkType
+  networkType('NetworkType', NetworkTypeEnum),
+
   /// Option name offDelay
   offDelay('OffDelay', OffDelayEnum),
 
-  /// Option name sleepDelay
-  sleepDelay('SleepDelay', SleepDelayEnum),
+  /// Option name _password
+  password('Password', String),
+
+  /// Option name powerSaving
+  powerSaving('PowerSaving', PowerSavingEnum),
+
+  /// Option name previewFormat
+  previewFormat('PreviewFormat', PreviewFormatEnum),
+
+  /// Option name _proxy
+  proxy('Proxy', Proxy),
 
   /// Option name remainingPictures
   remainingPictures('RemainingPictures', int),
@@ -829,17 +1001,32 @@ enum OptionNameEnum {
   /// Option name remainingSpace
   remainingSpace('RemainingSpace', int),
 
-  /// Option name totalSpace
-  totalSpace('TotalSpace', int),
+  /// Option name shootingMethod
+  shootingMethod('ShootingMethod', ShootingMethodEnum),
+
+  /// Shutter speed (sec).
+  shutterSpeed('ShutterSpeed', ShutterSpeedEnum),
 
   /// Option name _shutterVolume
   shutterVolume('ShutterVolume', int),
+
+  /// Option name sleepDelay
+  sleepDelay('SleepDelay', SleepDelayEnum),
+
+  /// Option name totalSpace
+  totalSpace('TotalSpace', int),
+
+  /// Option name _username
+  username('Username', String),
 
   /// Option name whiteBalance
   whiteBalance('WhiteBalance', WhiteBalanceEnum),
 
   /// Option name WhiteBalanceAutoStrength
-  whiteBalanceAutoStrength('WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum);
+  whiteBalanceAutoStrength('WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum),
+
+  // Option name wlanfrequency
+  wlanFrequency('WlanFrequency', WlanFrequencyEnum);
 
   final String rawValue;
   final dynamic valueType;
@@ -895,6 +1082,59 @@ enum ApertureEnum {
 
   static ApertureEnum? getValue(String rawValue) {
     return ApertureEnum.values.cast<ApertureEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Camera control source.
+enum CameraControlSourceEnum {
+  /// Operation is possible with the camera. Locks the smartphone
+  /// application UI (supported app only).
+  camera('CAMERA'),
+
+  /// Operation is possible with the smartphone application. Locks
+  /// the UI on the shooting screen on the camera.
+  app('APP');
+
+  final String rawValue;
+
+  const CameraControlSourceEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static CameraControlSourceEnum? getValue(String rawValue) {
+    return CameraControlSourceEnum.values.cast<CameraControlSourceEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Camera mode.
+enum CameraModeEnum {
+  /// shooting screen
+  capture('CAPTURE'),
+
+  /// playback screen
+  playback('PLAYBACK'),
+
+  /// shooting setting screen
+  setting('SETTING'),
+
+  /// plugin selection screen
+  plugin('PLUGIN');
+
+  final String rawValue;
+
+  const CameraModeEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static CameraModeEnum? getValue(String rawValue) {
+    return CameraModeEnum.values.cast<CameraModeEnum?>().firstWhere((element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1543,7 +1783,16 @@ enum MaxRecordableTimeEnum {
   time_300('RECORDABLE_TIME_300'),
 
   /// Maximum recordable time. 1500sec for other than SC2.
-  time_1500('RECORDABLE_TIME_1500');
+  time_1500('RECORDABLE_TIME_1500'),
+
+  /// Maximum recordable time. 7200sec for Theta X version 2.00.0 or later,
+  /// only for 5.7K 2/5/10fps and 8K 2/5/10fps.
+  /// If you set 7200 seconds in 8K 10fps mode and then set back to 4K 30fps mode,
+  /// the max recordable time will be overwritten to 1500 seconds automatically.
+  time_7200('RECORDABLE_TIME_7200'),
+
+  /// Just used by getMySetting/setMySetting command
+  doNotUpdateMySettingCondition('DO_NOT_UPDATE_MY_SETTING_CONDITION');
 
   final String rawValue;
   const MaxRecordableTimeEnum(this.rawValue);
@@ -1555,6 +1804,35 @@ enum MaxRecordableTimeEnum {
 
   static MaxRecordableTimeEnum? getValue(String rawValue) {
     return MaxRecordableTimeEnum.values.cast<MaxRecordableTimeEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Network type of the camera supported by Theta X, Z1 and V.
+enum NetworkTypeEnum {
+  // Direct mode
+  direct('DIRECT'),
+
+  // Client mode via WLAN
+  client('CLIENT'),
+
+  // Client mode via Ethernet cable supporte by Theta Z1 and V.
+  ethernet('ETHERNET'),
+
+  // Network is off. This value can be gotten only by plugin.
+  off('OFF');
+
+  final String rawValue;
+  const NetworkTypeEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static NetworkTypeEnum? getValue(String rawValue) {
+    return NetworkTypeEnum.values.cast<NetworkTypeEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1590,6 +1868,353 @@ enum OffDelayEnum {
 
   static OffDelayEnum? getValue(String rawValue) {
     return OffDelayEnum.values.cast<OffDelayEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// PowerSaving
+///
+/// For Theta X only
+enum PowerSavingEnum {
+  /// Power saving mode ON
+  on('ON'),
+  /// Power saving mode OFF
+  off('OFF');
+
+  final String rawValue;
+  const PowerSavingEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static PowerSavingEnum? getValue(String rawValue) {
+    return PowerSavingEnum.values.cast<PowerSavingEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
+/// Format of live view
+enum PreviewFormatEnum {
+  /// width_height_framerate
+  /// For Theta X, Z1, V and SC2
+  // ignore: constant_identifier_names
+  w1024_h512_f30('W1024_H512_F30'),
+  /// For Theta X. This value can't set.
+  // ignore: constant_identifier_names
+  w1024_h512_f15('W1024_H512_F15'),
+  /// For Theta X
+  // ignore: constant_identifier_names
+  w512_h512_f30('W512_H512_F30'),
+  /// For Theta Z1 and V
+  // ignore: constant_identifier_names
+  w1920_h960_f8('W1920_H960_F8'),
+  /// For Theta Z1 and V
+  // ignore: constant_identifier_names
+  w1024_h512_f8('W1024_H512_F8'),
+  /// For Theta Z1 and V
+  // ignore: constant_identifier_names
+  w640_h320_f30('W640_H320_F30'),
+  /// For Theta Z1 and V
+  // ignore: constant_identifier_names
+  w640_h320_f8('W640_H320_F8'),
+  /// For Theta S and SC
+  // ignore: constant_identifier_names
+  w640_h320_f10('W640_H320_F10');
+
+  final String rawValue;
+  const PreviewFormatEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static PreviewFormatEnum? getValue(String rawValue) {
+    return PreviewFormatEnum.values.cast<PreviewFormatEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
+/// Shooting method
+///
+/// Shooting method for My Settings mode. In RICOH THETA X, it is used outside of MySetting.
+/// Can be acquired and set only when in the Still image shooting mode and _function is the My Settings shooting function.
+/// Changing _function initializes the setting details to Normal shooting.
+enum ShootingMethodEnum {
+  /// Normal shooting
+  normal('NORMAL'),
+  /// Interval shooting
+  interval('INTERVAL'),
+  /// Move interval shooting (RICOH THETA Z1 firmware v1.50.1 or later, RICOH THETA X is not supported)
+  moveInterval('MOVE_INTERVAL'),
+  /// Fixed interval shooting (RICOH THETA Z1 firmware v1.50.1 or later, RICOH THETA X is not supported)
+  fixedInterval('FIXED_INTERVAL'),
+  /// Multi bracket shooting
+  bracket('BRACKET'),
+  /// Interval composite shooting (RICOH THETA X is not supported)
+  composite('COMPOSITE'),
+  /// Continuous shooting (RICOH THETA X or later)
+  continuous('CONTINUOUS'),
+  /// Time shift shooting (RICOH THETA X or later)
+  timeShift('TIME_SHIFT'),
+  /// Burst shooting (RICOH THETA Z1 v2.10.1 or later, RICOH THETA X is not supported)
+  burst('BURST');
+
+  final String rawValue;
+  const ShootingMethodEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static ShootingMethodEnum? getValue(String rawValue) {
+    return ShootingMethodEnum.values.cast<ShootingMethodEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
+/// Shutter speed (sec).
+/// 
+///  It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
+///  Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
+/// 
+///  ### Support value
+///  The choice is listed below. There are certain range difference between each models and settings.
+/// 
+///  | captureMode | exposureProgram | X or later | V or Z1 | SC | S |
+///  | --- | --- | --- | --- | --- | --- |
+///  | Still image shooting mode | Manual | 0.0000625 (1/16000) to 60 | 0.00004 (1/25000) to 60 | 0.000125 (1/8000) to 60 | 0.00015625 (1/6400) to 60 |
+///  |                           | Shutter priority  | 0.0000625 (1/16000) to 15 | 0.00004 (1/25000) to 0.125 (1/8) | 0.00004 (1/25000) to 15 `*2`  |  |  |
+///  | Video shooting mode `*1`    | Manual or Shutter priority | 0.0000625 (1/16000) to 0.03333333 (1/30) | 0.00004 (1/25000) to 0.03333333 (1/30) |  |  |
+///  | Otherwise  |  | 0 (AUTO)  | 0 (AUTO)  | 0 (AUTO)  | 0 (AUTO)  |
+/// 
+///  `*1` RICOH THETA Z1 and RICOH THETA V firmware v3.00.1 or later
+/// 
+///  `*2` RICOH THETA Z1 firmware v1.50.1 or later and RICOH THETA V firmware v3.40.1 or later
+enum ShutterSpeedEnum {
+  /// Shutter speed. auto
+  shutterSpeedAuto('SHUTTER_SPEED_AUTO'),
+
+  /// Shutter speed. 60 sec
+  shutterSpeed_60('SHUTTER_SPEED_60'),
+
+  /// Shutter speed. 50 sec
+  ///
+  /// RICOH THETA Z1 firmware v2.10.1 or later and RICOH THETA V firmware v3.80.1 or later.
+  /// For RICOH THETA X, all versions are supported.
+  shutterSpeed_50('SHUTTER_SPEED_50'),
+
+  /// Shutter speed. 40 sec
+  ///
+  /// RICOH THETA Z1 firmware v2.10.1 or later and RICOH THETA V firmware v3.80.1 or later.
+  /// For RICOH THETA X, all versions are supported.
+  shutterSpeed_40('SHUTTER_SPEED_40'),
+
+  /// Shutter speed. 30 sec
+  shutterSpeed_30('SHUTTER_SPEED_30'),
+
+  /// Shutter speed. 25 sec
+  shutterSpeed_25('SHUTTER_SPEED_25'),
+
+  /// Shutter speed. 20 sec
+  shutterSpeed_20('SHUTTER_SPEED_20'),
+
+  /// Shutter speed. 15 sec
+  shutterSpeed_15('SHUTTER_SPEED_15'),
+
+  /// Shutter speed. 13 sec
+  shutterSpeed_13('SHUTTER_SPEED_13'),
+
+  /// Shutter speed. 10 sec
+  shutterSpeed_10('SHUTTER_SPEED_10'),
+
+  /// Shutter speed. 8 sec
+  shutterSpeed_8('SHUTTER_SPEED_8'),
+
+  /// Shutter speed. 6 sec
+  shutterSpeed_6('SHUTTER_SPEED_6'),
+
+  /// Shutter speed. 5 sec
+  shutterSpeed_5('SHUTTER_SPEED_5'),
+
+  /// Shutter speed. 4 sec
+  shutterSpeed_4('SHUTTER_SPEED_4'),
+
+  /// Shutter speed. 3.2 sec
+  shutterSpeed_3_2('SHUTTER_SPEED_3_2'),
+
+  /// Shutter speed. 2.5 sec
+  shutterSpeed_2_5('SHUTTER_SPEED_2_5'),
+
+  /// Shutter speed. 2 sec
+  shutterSpeed_2('SHUTTER_SPEED_2'),
+
+  /// Shutter speed. 1.6 sec
+  shutterSpeed_1_6('SHUTTER_SPEED_1_6'),
+
+  /// Shutter speed. 1.3 sec
+  shutterSpeed_1_3('SHUTTER_SPEED_1_3'),
+
+  /// Shutter speed. 1 sec
+  shutterSpeed_1('SHUTTER_SPEED_1'),
+
+  /// Shutter speed. 1/3 sec(0.76923076)
+  shutterSpeedOneOver_1_3('SHUTTER_SPEED_ONE_OVER_1_3'),
+
+  /// Shutter speed. 1/6 sec(0.625)
+  shutterSpeedOneOver_1_6('SHUTTER_SPEED_ONE_OVER_1_6'),
+
+  /// Shutter speed. 1/2 sec(0.5)
+  shutterSpeedOneOver_2('SHUTTER_SPEED_ONE_OVER_2'),
+
+  /// Shutter speed. 1/2.5 sec(0.4)
+  shutterSpeedOneOver_2_5('SHUTTER_SPEED_ONE_OVER_2_5'),
+
+  /// Shutter speed. 1/3 sec(0.33333333)
+  shutterSpeedOneOver_3('SHUTTER_SPEED_ONE_OVER_3'),
+
+  /// Shutter speed. 1/4 sec(0.25)
+  shutterSpeedOneOver_4('SHUTTER_SPEED_ONE_OVER_4'),
+
+  /// Shutter speed. 1/5 sec(0.2)
+  shutterSpeedOneOver_5('SHUTTER_SPEED_ONE_OVER_5'),
+
+  /// Shutter speed. 1/6 sec(0.16666666)
+  shutterSpeedOneOver_6('SHUTTER_SPEED_ONE_OVER_6'),
+
+  /// Shutter speed. 1/8 sec(0.125)
+  shutterSpeedOneOver_8('SHUTTER_SPEED_ONE_OVER_8'),
+
+  /// Shutter speed. 1/10 sec(0.1)
+  shutterSpeedOneOver_10('SHUTTER_SPEED_ONE_OVER_10'),
+
+  /// Shutter speed. 1/13 sec(0.07692307)
+  shutterSpeedOneOver_13('SHUTTER_SPEED_ONE_OVER_13'),
+
+  /// Shutter speed. 1/15 sec(0.06666666)
+  shutterSpeedOneOver_15('SHUTTER_SPEED_ONE_OVER_15'),
+
+  /// Shutter speed. 1/20 sec(0.05)
+  shutterSpeedOneOver_20('SHUTTER_SPEED_ONE_OVER_20'),
+
+  /// Shutter speed. 1/25 sec(0.04)
+  shutterSpeedOneOver_25('SHUTTER_SPEED_ONE_OVER_25'),
+
+  /// Shutter speed. 1/30 sec(0.03333333)
+  shutterSpeedOneOver_30('SHUTTER_SPEED_ONE_OVER_30'),
+
+  /// Shutter speed. 1/40 sec(0.025)
+  shutterSpeedOneOver_40('SHUTTER_SPEED_ONE_OVER_40'),
+
+  /// Shutter speed. 1/50 sec(0.02)
+  shutterSpeedOneOver_50('SHUTTER_SPEED_ONE_OVER_50'),
+
+  /// Shutter speed. 1/60 sec(0.01666666)
+  shutterSpeedOneOver_60('SHUTTER_SPEED_ONE_OVER_60'),
+
+  /// Shutter speed. 1/80 sec(0.0125)
+  shutterSpeedOneOver_80('SHUTTER_SPEED_ONE_OVER_80'),
+
+  /// Shutter speed. 1/100 sec(0.01)
+  shutterSpeedOneOver_100('SHUTTER_SPEED_ONE_OVER_100'),
+
+  /// Shutter speed. 1/125 sec(0.008)
+  shutterSpeedOneOver_125('SHUTTER_SPEED_ONE_OVER_125'),
+
+  /// Shutter speed. 1/160 sec(0.00625)
+  shutterSpeedOneOver_160('SHUTTER_SPEED_ONE_OVER_160'),
+
+  /// Shutter speed. 1/200 sec(0.005)
+  shutterSpeedOneOver_200('SHUTTER_SPEED_ONE_OVER_200'),
+
+  /// Shutter speed. 1/250 sec(0.004)
+  shutterSpeedOneOver_250('SHUTTER_SPEED_ONE_OVER_250'),
+
+  /// Shutter speed. 1/320 sec(0.003125)
+  shutterSpeedOneOver_320('SHUTTER_SPEED_ONE_OVER_320'),
+
+  /// Shutter speed. 1/400 sec(0.0025)
+  shutterSpeedOneOver_400('SHUTTER_SPEED_ONE_OVER_400'),
+
+  /// Shutter speed. 1/500 sec(0.002)
+  shutterSpeedOneOver_500('SHUTTER_SPEED_ONE_OVER_500'),
+
+  /// Shutter speed. 1/640 sec(0.0015625)
+  shutterSpeedOneOver_640('SHUTTER_SPEED_ONE_OVER_640'),
+
+  /// Shutter speed. 1/800 sec(0.00125)
+  shutterSpeedOneOver_800('SHUTTER_SPEED_ONE_OVER_800'),
+
+  /// Shutter speed. 1/1000 sec(0.001)
+  shutterSpeedOneOver_1000('SHUTTER_SPEED_ONE_OVER_1000'),
+
+  /// Shutter speed. 1/1250 sec(0.0008)
+  shutterSpeedOneOver_1250('SHUTTER_SPEED_ONE_OVER_1250'),
+
+  /// Shutter speed. 1/1600 sec(0.000625)
+  shutterSpeedOneOver_1600('SHUTTER_SPEED_ONE_OVER_1600'),
+
+  /// Shutter speed. 1/2000 sec(0.0005)
+  shutterSpeedOneOver_2000('SHUTTER_SPEED_ONE_OVER_2000'),
+
+  /// Shutter speed. 1/2500 sec(0.0004)
+  shutterSpeedOneOver_2500('SHUTTER_SPEED_ONE_OVER_2500'),
+
+  /// Shutter speed. 1/3200 sec(0.0003125)
+  shutterSpeedOneOver_3200('SHUTTER_SPEED_ONE_OVER_3200'),
+
+  /// Shutter speed. 1/4000 sec(0.00025)
+  shutterSpeedOneOver_4000('SHUTTER_SPEED_ONE_OVER_4000'),
+
+  /// Shutter speed. 1/5000 sec(0.0002)
+  shutterSpeedOneOver_5000('SHUTTER_SPEED_ONE_OVER_5000'),
+
+  /// Shutter speed. 1/6400 sec(0.00015625)
+  shutterSpeedOneOver_6400('SHUTTER_SPEED_ONE_OVER_6400'),
+
+  /// Shutter speed. 1/8000 sec(0.000125)
+  shutterSpeedOneOver_8000('SHUTTER_SPEED_ONE_OVER_8000'),
+
+  /// Shutter speed. 1/10000 sec(0.0001)
+  shutterSpeedOneOver_10000('SHUTTER_SPEED_ONE_OVER_10000'),
+
+  /// Shutter speed. 1/12500 sec(0.00008)
+  ///
+  /// No support for RICOH THETA X.
+  shutterSpeedOneOver_12500('SHUTTER_SPEED_ONE_OVER_12500'),
+
+  /// Shutter speed. 1/12800 sec(0.00007812)
+  ///
+  /// Enabled only for RICOH THETA X.
+  shutterSpeedOneOver_12800('SHUTTER_SPEED_ONE_OVER_12800'),
+
+  /// Shutter speed. 1/16000 sec(0.0000625)
+  shutterSpeedOneOver_16000('SHUTTER_SPEED_ONE_OVER_16000'),
+
+  /// Shutter speed. 1/20000 sec(0.00005)
+  shutterSpeedOneOver_20000('SHUTTER_SPEED_ONE_OVER_20000'),
+
+  /// Shutter speed. 1/25000 sec(0.00004)
+  shutterSpeedOneOver_25000('SHUTTER_SPEED_ONE_OVER_25000'),
+  ;
+
+  final String rawValue;
+
+  const ShutterSpeedEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static ShutterSpeedEnum? getValue(String rawValue) {
+    return ShutterSpeedEnum.values.cast<ShutterSpeedEnum?>().firstWhere((element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1723,6 +2348,30 @@ enum WhiteBalanceAutoStrengthEnum {
     return WhiteBalanceAutoStrengthEnum.values
         .cast<WhiteBalanceAutoStrengthEnum?>()
         .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
+  }
+}
+
+/// Wireless LAN frequency of the camera supported by Theta X, Z1 and V.
+enum WlanFrequencyEnum {
+  /// 2.4GHz
+  ghz_2_4('GHZ_2_4'),
+
+  /// 5GHz
+  ghz_5('GHZ_5');
+
+  final String rawValue;
+
+  const WlanFrequencyEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static WlanFrequencyEnum? getValue(String rawValue) {
+    return WlanFrequencyEnum.values.cast<WlanFrequencyEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
         orElse: () => null);
   }
 }
@@ -1957,17 +2606,63 @@ class GpsInfo {
 
   @override
   bool operator ==(Object other) => hashCode == other.hashCode;
-  
+
   @override
   int get hashCode => Object.hashAll([latitude, longitude, altitude, dateTimeZone]);
 }
 
+/// Proxy information to be used when wired LAN is enabled.
+///
+/// The current setting can be acquired by camera.getOptions,
+/// and it can be changed by camera.setOptions.
+///
+/// For
+/// RICOH THETA Z1 firmware v2.20.3 or later
+/// RICOH THETA X firmware v2.00.0 or later
+class Proxy {
+  /// true: use proxy false: do not use proxy
+  bool use;
+
+  /// Proxy server URL
+  String? url;
+
+  /// Proxy server port number: 0 to 65535
+  int? port;
+
+  /// User ID used for proxy authentication
+  String? userid;
+
+  /// Password used for proxy authentication
+  String? password;
+
+  Proxy(this.use, [this.url, this.port, this.userid, this.password]);
+
+  @override
+  bool operator ==(Object other) => hashCode == other.hashCode;
+
+  @override
+  int get hashCode => Object.hashAll([use, url, port, userid, password]);
+}
+
 /// Camera setting options.
-/// 
+///
 /// Refer to the [options category](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
 class Options {
   /// Aperture value.
   ApertureEnum? aperture;
+
+  /// camera control source
+  /// Sets whether to lock/unlock the camera UI.
+  /// The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
+  ///
+  /// For RICOH THETA X
+  CameraControlSourceEnum? cameraControlSource;
+
+  /// Camera mode.
+  /// The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
+  ///
+  /// For RICOH THETA X
+  CameraModeEnum? cameraMode;
 
   /// Shooting mode.
   CaptureModeEnum? captureMode;
@@ -2056,13 +2751,25 @@ class Options {
   /// Maximum recordable time (in seconds) of the camera.
   MaxRecordableTimeEnum? maxRecordableTime;
 
+  /// Network type of the camera supported by Theta X, Z1 and V.
+  NetworkTypeEnum? networkType;
+
   /// Length of standby time before the camera automatically powers OFF.
   /// 
   /// Specify [OffDelayEnum]
   OffDelayEnum? offDelay;
 
-  /// Length of standby time before the camera enters the sleep mode.
-  SleepDelayEnum? sleepDelay;
+  /// Password used for digest authentication when _networkType is set to client mode.
+  String? password;
+
+  /// PowerSaving
+  PowerSavingEnum? powerSaving;
+
+  /// PreviewFormat
+  PreviewFormatEnum? previewFormat;
+
+  /// see [Proxy]
+  Proxy? proxy;
 
   /// The estimated remaining number of shots for the current shooting settings.
   int? remainingPictures;
@@ -2073,8 +2780,14 @@ class Options {
   /// Remaining usable storage space (byte).
   int? remainingSpace;
 
-  /// Total storage space (byte).
-  int? totalSpace;
+  /// ShootingMethod
+  ShootingMethodEnum? shootingMethod;
+
+  /// Shutter speed (sec).
+  /// 
+  /// It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
+  /// Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
+  ShutterSpeedEnum? shutterSpeed;
 
   /// Shutter volume.
   /// 
@@ -2082,6 +2795,15 @@ class Options {
   /// 0: Minimum volume (minShutterVolume)
   /// 100: Maximum volume (maxShutterVolume)
   int? shutterVolume;
+
+  /// Length of standby time before the camera enters the sleep mode.
+  SleepDelayEnum? sleepDelay;
+
+  /// Total storage space (byte).
+  int? totalSpace;
+
+  /// User name used for digest authentication when _networkType is set to client mode.
+  String? username;
 
   /// White balance.
   /// 
@@ -2098,11 +2820,18 @@ class Options {
   /// For RICOH THETA Z1 firmware v2.20.3 or later
   WhiteBalanceAutoStrengthEnum? whiteBalanceAutoStrength;
 
+  /// Wireless LAN frequency of the camera supported by Theta X, Z1 and V.
+  WlanFrequencyEnum? wlanFrequency;
+
   /// Get Option value.
   T? getValue<T>(OptionNameEnum name) {
     switch (name) {
       case OptionNameEnum.aperture:
         return aperture as T;
+      case OptionNameEnum.cameraControlSource:
+        return cameraControlSource as T;
+      case OptionNameEnum.cameraMode:
+        return cameraMode as T;
       case OptionNameEnum.captureMode:
         return captureMode as T;
       case OptionNameEnum.colorTemperature:
@@ -2131,24 +2860,42 @@ class Options {
         return language as T;
       case OptionNameEnum.maxRecordableTime:
         return maxRecordableTime as T;
+      case OptionNameEnum.networkType:
+        return networkType as T;
       case OptionNameEnum.offDelay:
         return offDelay as T;
-      case OptionNameEnum.sleepDelay:
-        return sleepDelay as T;
+      case OptionNameEnum.password:
+        return password as T;
+      case OptionNameEnum.powerSaving:
+        return powerSaving as T;
+      case OptionNameEnum.previewFormat:
+        return previewFormat as T;
+      case OptionNameEnum.proxy:
+        return proxy as T;
       case OptionNameEnum.remainingPictures:
         return remainingPictures as T;
       case OptionNameEnum.remainingVideoSeconds:
         return remainingVideoSeconds as T;
       case OptionNameEnum.remainingSpace:
         return remainingSpace as T;
-      case OptionNameEnum.totalSpace:
-        return totalSpace as T;
+      case OptionNameEnum.shootingMethod:
+        return shootingMethod as T;
+      case OptionNameEnum.shutterSpeed:
+        return shutterSpeed as T;
       case OptionNameEnum.shutterVolume:
         return shutterVolume as T;
+      case OptionNameEnum.sleepDelay:
+        return sleepDelay as T;
+      case OptionNameEnum.totalSpace:
+        return totalSpace as T;
+      case OptionNameEnum.username:
+        return username as T;
       case OptionNameEnum.whiteBalance:
         return whiteBalance as T;
       case OptionNameEnum.whiteBalanceAutoStrength:
         return whiteBalanceAutoStrength as T;
+      case OptionNameEnum.wlanFrequency:
+        return wlanFrequency as T;
     }
   }
 
@@ -2161,6 +2908,12 @@ class Options {
     switch (name) {
       case OptionNameEnum.aperture:
         aperture = value;
+        break;
+      case OptionNameEnum.cameraControlSource:
+        cameraControlSource = value;
+        break;
+      case OptionNameEnum.cameraMode:
+        cameraMode = value;
         break;
       case OptionNameEnum.captureMode:
         captureMode = value;
@@ -2204,11 +2957,23 @@ class Options {
       case OptionNameEnum.maxRecordableTime:
         maxRecordableTime = value;
         break;
+      case OptionNameEnum.networkType:
+        networkType = value;
+        break;
       case OptionNameEnum.offDelay:
         offDelay = value;
         break;
-      case OptionNameEnum.sleepDelay:
-        sleepDelay = value;
+      case OptionNameEnum.password:
+        password = value;
+        break;
+      case OptionNameEnum.powerSaving:
+        powerSaving = value;
+        break;
+      case OptionNameEnum.previewFormat:
+        previewFormat = value;
+        break;
+      case OptionNameEnum.proxy:
+        proxy = value;
         break;
       case OptionNameEnum.remainingPictures:
         remainingPictures = value;
@@ -2219,17 +2984,32 @@ class Options {
       case OptionNameEnum.remainingSpace:
         remainingSpace = value;
         break;
-      case OptionNameEnum.totalSpace:
-        totalSpace = value;
+      case OptionNameEnum.shootingMethod:
+        shootingMethod = value;
+        break;
+      case OptionNameEnum.shutterSpeed:
+        shutterSpeed = value;
         break;
       case OptionNameEnum.shutterVolume:
         shutterVolume = value;
+        break;
+      case OptionNameEnum.sleepDelay:
+        sleepDelay = value;
+        break;
+      case OptionNameEnum.totalSpace:
+        totalSpace = value;
+        break;
+      case OptionNameEnum.username:
+        username = value;
         break;
       case OptionNameEnum.whiteBalance:
         whiteBalance = value;
         break;
       case OptionNameEnum.whiteBalanceAutoStrength:
         whiteBalanceAutoStrength = value;
+        break;
+      case OptionNameEnum.wlanFrequency:
+        wlanFrequency = value;
         break;
     }
   }
@@ -2431,7 +3211,7 @@ class VideoCaptureBuilder extends CaptureBuilder<VideoCaptureBuilder> {
     try {
       await ThetaClientFlutterPlatform.instance.buildVideoCapture(_options);
       completer.complete(VideoCapture(_options));
-    } catch(e) {
+    } catch (e) {
       completer.completeError(e);
     }
     return completer.future;
@@ -2473,11 +3253,23 @@ class VideoCapture extends Capture {
 
 /// Configuration of THETA
 class ThetaConfig {
+  /// Location information acquisition time
   String? dateTime;
+
+  /// Language used in camera OS
   LanguageEnum? language;
+
+  /// Length of standby time before the camera automatically power OFF
   OffDelayEnum? offDelay;
+
+  /// Length of standby time before the camera enters the sleep mode.
   SleepDelayEnum? sleepDelay;
+
+  /// Shutter volume.
   int? shutterVolume;
+
+  /// Authentication information used for client mode connections
+  DigestAuth? clientMode;
 }
 
 /// Timeout of HTTP call.
@@ -2494,4 +3286,40 @@ class ThetaTimeout {
   /// Specifies a maximum time (in milliseconds) of inactivity between two data packets
   /// when exchanging data with a server.
   int socketTimeout = 20000;
+}
+
+/// Plugin information
+class PluginInfo {
+  /// Plugin name
+  String name;
+
+  /// Package name
+  String packageName;
+
+  /// Plugin version
+  String version;
+
+  /// Pre-installed plugin or not
+  bool isPreInstalled;
+
+  /// Plugin power status
+  bool isRunning;
+
+  /// Process status
+  bool isForeground;
+
+  /// To be started on boot or not
+  bool isBoot;
+
+  /// Has Web UI or not
+  bool hasWebServer;
+
+  /// Exit status
+  String exitStatus;
+
+  /// Message
+  String message;
+
+  PluginInfo(this.name, this.packageName, this.version, this.isPreInstalled, this.isRunning, this.isForeground,
+      this.isBoot, this.hasWebServer, this.exitStatus, this.message);
 }

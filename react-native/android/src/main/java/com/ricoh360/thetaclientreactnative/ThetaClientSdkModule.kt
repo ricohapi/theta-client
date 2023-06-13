@@ -8,9 +8,8 @@ import com.ricoh360.thetaclient.capture.VideoCapture
 import com.ricoh360.thetaclient.capture.VideoCapturing
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.*
-import java.io.ByteArrayOutputStream
-import kotlin.coroutines.*
 import java.util.*
+import kotlin.coroutines.*
 import kotlin.text.String
 
 class ThetaClientReactNativeModule(
@@ -29,8 +28,10 @@ class ThetaClientReactNativeModule(
   var videoCaptureBuilder: VideoCapture.Builder? = null
   var videoCapture: VideoCapture? = null
   var videoCapturing: VideoCapturing? = null
-  lateinit var theta: ThetaRepository
+  var theta: ThetaRepository? = null
   var listenerCount: Int = 0
+
+  val messageNotInit: String = "Not initialized."
 
   /**
    * add event listener for [eventName]
@@ -64,10 +65,22 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set initialize result
    */
   @ReactMethod
-  fun initialize(endpoint: String, promise: Promise) {
+  fun initialize(endpoint: String, config: ReadableMap?, timeout: ReadableMap?, promise: Promise) {
     launch {
       try {
-        theta = ThetaRepository.newInstance(endpoint)
+        theta = null
+        previewing = false
+        photoCaptureBuilder = null
+        photoCapture = null
+        videoCaptureBuilder = null
+        videoCapture = null
+        videoCapturing = null
+
+        theta = ThetaRepository.newInstance(
+          endpoint,
+          config?.let { configToTheta(it) },
+          timeout?.let { timeoutToTheta(it) }
+        )
         promise.resolve(true)
       } catch (t: Throwable) {
         promise.reject(t)
@@ -76,11 +89,25 @@ class ThetaClientReactNativeModule(
   }
 
   /**
+   * Returns whether it is initialized or not.
+   * @param promise promise to set result
+   */
+  @ReactMethod
+  fun isInitialized(promise: Promise) {
+    promise.resolve(theta != null)
+  }
+
+  /**
    * getThetaInfo  -  retrieve ThetaInfo from THETA via repository
    * @param promise promise to set result
    */
   @ReactMethod
   fun getThetaInfo(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     launch {
       try {
         val info = theta.getThetaInfo()
@@ -118,6 +145,11 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun getThetaState(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     launch {
       try {
         val state = theta.getThetaState()
@@ -170,16 +202,23 @@ class ThetaClientReactNativeModule(
    * @param fileType file type to retrieve
    * @param startPosition start position to retrieve
    * @param entryCount count to retrieve
+   * @param storage Desired storage
    * @param promise promise to set result
    */
   @ReactMethod
-  fun listFiles(fileType: String, startPosition: Int, entryCount: Int, promise: Promise) {
+  fun listFiles(fileType: String, startPosition: Int, entryCount: Int, storage: String?, promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     launch {
       try {
         val (fileList, totalEntries) = theta.listFiles(
           ThetaRepository.FileTypeEnum.valueOf(fileType),
           startPosition,
-          entryCount
+          entryCount,
+          storage?.let { ThetaRepository.StorageEnum.valueOf(it) },
         )
         val resultlist = Arguments.createArray()
         fileList.forEach {
@@ -189,6 +228,9 @@ class ThetaClientReactNativeModule(
           result.putString("dateTime", it.dateTime)
           result.putString("thumbnailUrl", it.thumbnailUrl)
           result.putString("fileUrl", it.fileUrl)
+          it.storageID?.run {
+            result.putString("storageID", this)
+          }
           resultlist.pushMap(result)
         }
         val resultmap = Arguments.createMap()
@@ -208,6 +250,11 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun deleteFiles(fileUrls: ReadableArray, promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     val fileList = mutableListOf<String>()
     for (index in 0..(fileUrls.size() - 1)) {
       fileList.add(fileUrls.getString(index))
@@ -228,6 +275,11 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun deleteAllFiles(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     launch {
       try {
         theta.deleteAllFiles()
@@ -244,6 +296,11 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun deleteAllImageFiles(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     launch {
       try {
         theta.deleteAllImageFiles()
@@ -260,6 +317,11 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun deleteAllVideoFiles(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     launch {
       try {
         theta.deleteAllVideoFiles()
@@ -274,6 +336,8 @@ class ThetaClientReactNativeModule(
   private val converters = mapOf(
     "aperture" to ApertureConverter(),
     "bluetoothPower" to BluetoothPowerConverter(),
+    "cameraControlSource" to CameraControlSourceConverter(),
+    "cameraMode" to CameraModeConverter(),
     "captureMode" to CaptureModeConverter(),
     "colorTemperature" to ColorTemperatureConverter(),
     "dateTimeZone" to DateTimeZoneConverter(),
@@ -288,15 +352,24 @@ class ThetaClientReactNativeModule(
     "isoAutoHighLimit" to IsoAutoHighLimitConverter(),
     "language" to LanguageConverter(),
     "maxRecordableTime" to MaxRecordableTimeConverter(),
+    "networkType" to NetworkTypeConverter(),
     "offDelay" to OffDelayConverter(),
-    "sleepDelay" to SleepDelayConverter(),
+    "password" to PasswordConverter(),
+    "powerSaving" to PowerSavingConverter(),
+    "previewFormat" to PreviewFormatConverter(),
+    "proxy" to ProxyConverter(),
     "remainingPictures" to RemainingPicturesConverter(),
     "remainingVideoSeconds" to RemainingVideoSecondsConverter(),
     "remainingSpace" to RemainingSpaceConverter(),
-    "totalSpace" to TotalSpaceConverter(),
+    "shootingMethod" to ShootingMethodConverter(),
+    "shutterSpeed" to ShutterSpeedConverter(),
     "shutterVolume" to ShutterVolumeConverter(),
+    "sleepDelay" to SleepDelayConverter(),
+    "totalSpace" to TotalSpaceConverter(),
+    "username" to UsernameConverter(),
     "whiteBalance" to WhiteBalanceConverter(),
     "whiteBalanceAutoStrength" to WhiteBalanceAutoStrengthConverter(),
+    "wlanFrequency" to WlanFrequencyConverter(),
     "_gpsTagRecording" to GpsTagRecordingConverter(),
   )
 
@@ -304,6 +377,8 @@ class ThetaClientReactNativeModule(
   private val optionEnumToOption = mapOf(
     "Aperture" to "aperture",
     "BluetoothPower" to "bluetoothPower",
+    "CameraControlSource" to "cameraControlSource",
+    "CameraMode" to "cameraMode",
     "CaptureMode" to "captureMode",
     "ColorTemperature" to "colorTemperature",
     "DateTimeZone" to "dateTimeZone",
@@ -318,15 +393,24 @@ class ThetaClientReactNativeModule(
     "IsoAutoHighLimit" to "isoAutoHighLimit",
     "Language" to "language",
     "MaxRecordableTime" to "maxRecordableTime",
+    "NetworkType" to "networkType",
     "OffDelay" to "offDelay",
-    "SleepDelay" to "sleepDelay",
+    "Password" to "password",
+    "PowerSaving" to "powerSaving",
+    "PreviewFormat" to "previewFormat",
+    "Proxy" to "proxy",
     "RemainingPictures" to "remainingPictures",
     "RemainingVideoSeconds" to "remainingVideoSeconds",
     "RemainingSpace" to "remainingSpace",
-    "TotalSpace" to "totalSpace",
+    "ShootingMethod" to "shootingMethod",
+    "ShutterSpeed" to "shutterSpeed",
     "ShutterVolume" to "shutterVolume",
+    "SleepDelay" to "sleepDelay",
+    "TotalSpace" to "totalSpace",
+    "Username" to "username",
     "WhiteBalance" to "whiteBalance",
     "WhiteBalanceAutoStrength" to "whiteBalanceAutoStrength",
+    "WlanFrequency" to "wlanFrequency",
   )
 
   /**
@@ -336,6 +420,11 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun getOptions(optionNames: ReadableArray, promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     launch {
       try {
         val optionNameList = mutableListOf<ThetaRepository.OptionNameEnum>()
@@ -365,6 +454,11 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun setOptions(options: ReadableMap, promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     launch {
       try {
         val thetaOptions = ThetaRepository.Options()
@@ -388,6 +482,11 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun getLivePreview(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     fun ByteArray.toBase64(): String = String(Base64.getEncoder().encode(this))
     suspend fun callFrameHandler(packet: Pair<ByteArray, Int>): Boolean {
       if (listenerCount == 0) {
@@ -420,6 +519,9 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun stopLivePreview() {
+    if (theta == null) {
+      throw Exception(messageNotInit)
+    }
     previewing = false
   }
 
@@ -428,6 +530,7 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun getPhotoCaptureBuilder() {
+    val theta = theta ?: throw Exception(messageNotInit)
     photoCaptureBuilder = theta.getPhotoCaptureBuilder()
   }
 
@@ -439,6 +542,9 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun buildPhotoCapture(options: ReadableMap, promise: Promise) {
+    if (theta == null) {
+      throw Exception(messageNotInit)
+    }
     if (photoCaptureBuilder == null) {
       promise.reject(Exception("no photoCaptureBuilder"))
       return
@@ -467,6 +573,10 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun takePicture(promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     if (photoCapture == null) {
       promise.reject(Exception("no photoCapture"))
       return
@@ -492,6 +602,7 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun getVideoCaptureBuilder() {
+    val theta = theta ?: throw Exception(messageNotInit)
     videoCaptureBuilder = theta.getVideoCaptureBuilder()
   }
 
@@ -502,6 +613,10 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun buildVideoCapture(options: ReadableMap, promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     if (videoCaptureBuilder == null) {
       promise.reject(Exception("no videoCaptureBuilder"))
       return
@@ -530,6 +645,10 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun startCapture(promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     if (videoCapture == null) {
       promise.reject(Exception("no videoCapture"))
       return
@@ -555,6 +674,9 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun stopCapture() {
+    if (theta == null) {
+      throw Exception(messageNotInit)
+    }
     videoCapturing?.stopCapture()
   }
 
@@ -564,6 +686,11 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun getMetadata(fileUrl: String, promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     launch {
       try {
         val metaData = theta.getMetadata(fileUrl)
@@ -598,6 +725,11 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun reset(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     launch {
       try {
         theta.reset()
@@ -614,6 +746,11 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun restoreSettings(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     launch {
       try {
         theta.restoreSettings()
@@ -630,6 +767,11 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun stopSelfTimer(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     launch {
       try {
         theta.stopSelfTimer()
@@ -654,6 +796,11 @@ class ThetaClientReactNativeModule(
     applyTopBottomCorrection: Boolean,
     promise: Promise,
   ) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     launch {
       try {
         val convertedUrl = theta.convertVideoFormats(fileUrl, is4k, applyTopBottomCorrection)
@@ -671,6 +818,11 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun cancelVideoConvert(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     launch {
       try {
         theta.cancelVideoConvert()
@@ -687,6 +839,11 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun finishWlan(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     launch {
       try {
         theta.finishWlan()
@@ -703,6 +860,11 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun listAccessPoints(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     launch {
       try {
         val result = Arguments.createArray()
@@ -716,6 +878,15 @@ class ThetaClientReactNativeModule(
           apinfo.putString("ipAddress", it.ipAddress)
           apinfo.putString("subnetMask", it.subnetMask)
           apinfo.putString("defaultGateway", it.defaultGateway)
+
+          it.proxy?.let { proxy ->
+            var options = ThetaRepository.Options(proxy = proxy)
+            val optionsMap = Arguments.createMap()
+            val cvt = converters["proxy"]
+            cvt?.setFromTheta(options, optionsMap)
+            apinfo.putMap("proxy", optionsMap.getMap("proxy"))
+          }
+
           result.pushMap(apinfo)
         }
         promise.resolve(result)
@@ -732,6 +903,7 @@ class ThetaClientReactNativeModule(
    * @param authMode auth mode to connect
    * @param password password to connect with auth
    * @param connectionPriority connection priority
+   * @param proxy Proxy information to be used for the access point.
    * @param promise promise to set result
    */
   @ReactMethod
@@ -741,8 +913,14 @@ class ThetaClientReactNativeModule(
     authMode: String,
     password: String,
     connectionPriority: Int,
+    proxy: ReadableMap?,
     promise: Promise
   ) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     launch {
       try {
         theta.setAccessPointDynamically(
@@ -750,7 +928,8 @@ class ThetaClientReactNativeModule(
           ssidStealth,
           ThetaRepository.AuthModeEnum.valueOf(authMode),
           password,
-          connectionPriority
+          connectionPriority,
+          convertMapToProxy(proxyMap = proxy)
         )
         promise.resolve(true)
       } catch (t: Throwable) {
@@ -770,6 +949,7 @@ class ThetaClientReactNativeModule(
    * @param subnetMask subnet mask for ip address
    * @param defaultGateway default gateway address
    * @param promise promise to set result
+   * @param proxy Proxy information to be used for the access point.
    */
   @ReactMethod
   fun setAccessPointStatically(
@@ -781,8 +961,14 @@ class ThetaClientReactNativeModule(
     ipAddress: String,
     subnetMask: String,
     defaultGateway: String,
+    proxy: ReadableMap?,
     promise: Promise
   ) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     launch {
       try {
         theta.setAccessPointStatically(
@@ -794,6 +980,7 @@ class ThetaClientReactNativeModule(
           ipAddress,
           subnetMask,
           defaultGateway,
+          convertMapToProxy(proxyMap = proxy)
         )
         promise.resolve(true)
       } catch (t: Throwable) {
@@ -809,6 +996,11 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun deleteAccessPoint(ssid: String, promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     launch {
       try {
         theta.deleteAccessPoint(ssid)
@@ -820,12 +1012,31 @@ class ThetaClientReactNativeModule(
   }
 
   /**
+   * convert ReadableMap to ThetaRepository.Proxy
+   */
+  private fun convertMapToProxy(proxyMap: ReadableMap?): ThetaRepository.Proxy? {
+    return proxyMap?.let {
+      var options = ThetaRepository.Options()
+      val optionsMap = Arguments.createMap()
+      optionsMap.putMap("proxy", it)
+      val cvt = converters["proxy"]
+      cvt?.setToTheta(options, optionsMap)
+      options.proxy
+    } ?: null
+  }
+
+  /**
    * setBluetoothDevice  -  register uuid of a BLE device
    * @param uuid uuid to set
    * @param promise promise to set result
    */
   @ReactMethod
   fun setBluetoothDevice(uuid: String, promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
     launch {
       try {
         val deviceName = theta.setBluetoothDevice(uuid)
@@ -835,6 +1046,294 @@ class ThetaClientReactNativeModule(
       }
     }
   }
+
+  /**
+   * getMySetting - Acquires the shooting properties set by the camera._setMySetting command.
+   * Just for Theta V and later
+   * @param captureMode The target shooting mode
+   * @param promise promise to set result
+   */
+  @ReactMethod
+  fun getMySetting(captureMode: String, promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    launch {
+      try {
+        val options = theta.getMySetting(ThetaRepository.CaptureModeEnum.valueOf(captureMode))
+        val result = Arguments.createMap()
+        converters.forEach {
+          val cvt = it.value
+          cvt?.setFromTheta(options, result)
+        }
+        promise.resolve(result)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+    }
+  }
+
+  /**
+   * getMySettingFromOldModel - Acquires the shooting properties set by the camera._setMySetting command.
+   * Just for Theta S and SC.
+   * @param optionNames The target shooting mode
+   * @param promise promise to set result
+   */
+   @ReactMethod
+   fun getMySettingFromOldModel(optionNames: ReadableArray, promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    launch {
+      try {
+        val optionNameList = mutableListOf<ThetaRepository.OptionNameEnum>()
+        for (index in 0..(optionNames.size() - 1)) {
+          val option = optionNames.getString(index)
+          optionNameList.add(ThetaRepository.OptionNameEnum.valueOf(option))
+        }
+        val options = theta.getMySetting(optionNameList)
+        val result = Arguments.createMap()
+        for (index in 0..(optionNames.size() - 1)) {
+          val option = optionEnumToOption[optionNames.getString(index)]
+          val cvt = converters[option]
+          cvt?.setFromTheta(options, result)
+        }
+        promise.resolve(result)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+    }
+  }
+
+  /**
+   * setMySetting - Registers shooting conditions in My Settings
+   * @param captureMode The target shooting mode.  RICOH THETA S and SC do not support My Settings in video capture mode.
+   * @param options registered to My Settings
+   * @param Promise of bolean result, always true
+   */
+  @ReactMethod
+  fun setMySetting(captureMode: String, options: ReadableMap, promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    launch {
+      try {
+        val thetaOptions = ThetaRepository.Options()
+        val iterator = options.keySetIterator()
+        while (iterator.hasNextKey()) {
+          val key = iterator.nextKey()
+          val cvt = converters[key]
+          cvt?.setToTheta(thetaOptions, options)
+        }
+        theta.setMySetting(ThetaRepository.CaptureModeEnum.valueOf(captureMode), thetaOptions)
+        promise.resolve(true)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+    }
+  }
+
+  /**
+   * deleteMySetting - Delete shooting conditions in My Settings. Supported just by Theta X and Z1.
+   * @param captureMode The target shooting mode
+   * @param promise promise to set result, always true
+   */
+  @ReactMethod
+  fun deleteMySetting(captureMode: String, promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    launch {
+      try {
+        theta.deleteMySetting(ThetaRepository.CaptureModeEnum.valueOf(captureMode))
+        promise.resolve(true)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+    }
+  }
+
+  /**
+   * listPlugins - acquires a list of installed plugins
+   * @param promise promise to set result
+   */
+   @ReactMethod
+   fun listPlugins(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    launch {
+      try {
+        val result = Arguments.createArray()
+        theta.listPlugins().forEach {
+          val pinfo = Arguments.createMap()
+          pinfo.putString("name", it.name)
+          pinfo.putString("packageName", it.packageName)
+          pinfo.putString("version", it.version)
+          pinfo.putBoolean("isPreInstalled", it.isPreInstalled)
+          pinfo.putBoolean("isRunning", it.isRunning)
+          pinfo.putBoolean("isForeground", it.isForeground)
+          pinfo.putBoolean("isBoot", it.isBoot)
+          pinfo.putBoolean("hasWebServer", it.hasWebServer)
+          pinfo.putString("exitStatus", it.exitStatus)
+          pinfo.putString("message", it.message)
+          result.pushMap(pinfo)
+        }
+        promise.resolve(result)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+    }
+   }
+
+   /**
+    * setPlugin - sets the installed plugin for boot. Supported just by Theta V.
+    * @param packageName Package name of the target plugin.
+    * @param promise promise to set result
+    */
+    @ReactMethod
+    fun setPlugin(packageName: String, promise: Promise) {
+     val theta = theta
+     if (theta == null) {
+       promise.reject(Exception(messageNotInit))
+       return
+     }
+     launch {
+      try {
+        theta.setPlugin(packageName)
+        promise.resolve(true)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+     }
+    }
+
+   /**
+    * startPlugin - start the plugin specified by the [packageName].
+    * @param packageName Package name of the target plugin.
+    * @param promise promise to set result
+    */
+    @ReactMethod
+    fun startPlugin(packageName: String, promise: Promise) {
+     val theta = theta
+     if (theta == null) {
+       promise.reject(Exception(messageNotInit))
+       return
+     }
+     launch {
+      try {
+        theta.startPlugin(packageName)
+        promise.resolve(true)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+     }
+    }
+
+  /**
+    * stopPlugin - Stop the running plugin.
+    * @param promise promise to set result
+    */
+    @ReactMethod
+    fun stopPlugin(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+     launch {
+      try {
+        theta.stopPlugin()
+        promise.resolve(true)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+     }
+    }
+
+  /**
+    * getPluginLicense - acquires the license for the installed plugin.
+    * @param packageName Package name of the target plugin.
+    * @param promise promise to set result
+    */
+    @ReactMethod
+    fun getPluginLicense(packageName: String, promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+     launch {
+      try {
+        val result = theta.getPluginLicense(packageName)
+        promise.resolve(result)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+     }
+    }
+
+  /**
+    * getPluginOrders - Return the plugin orders.  Supported just by Theta X and Z1..
+    * @param promise promise to set result, list of package names of plugins.
+    */
+    @ReactMethod
+    fun getPluginOrders(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+     launch {
+      try {
+        val result = theta.getPluginOrders()
+        promise.resolve(Arguments.fromList(result))
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+     }
+    }
+
+  /**
+    * setPluginOrders - Return the plugin orders.  Supported just by Theta X and Z1.
+    * @param plugins list of package names of plugins
+    * For Z1, list size must be three. No restrictions for the size for X.
+    * When not specifying, set an empty string.
+    * If an empty string is placed mid-way, it will be moved to the front.
+    * Specifying zero package name will result in an error.
+    * @param promise promise to set result
+    */
+    @ReactMethod
+    fun setPluginOrders(plugins: ReadableArray, promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+     launch {
+      try {
+        val pluginList = mutableListOf<String>()
+        for (index in 0..(plugins.size() - 1)) {
+          val plugin = plugins.getString(index)
+          pluginList.add(plugin)
+        }
+        theta.setPluginOrders(pluginList)
+        promise.resolve(true)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+     }
+    }
 
   companion object {
     const val NAME = "ThetaClientReactNative"

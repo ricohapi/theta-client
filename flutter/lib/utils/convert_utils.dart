@@ -1,3 +1,4 @@
+import 'package:theta_client_flutter/digest_auth.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
 class ConvertUtils {
@@ -10,7 +11,8 @@ class ConvertUtils {
         element['size'],
         element['dateTime'],
         element['fileUrl'],
-        element['thumbnailUrl']
+        element['thumbnailUrl'],
+        element['storageID']
       );
       fileList.add(info);
     }
@@ -115,14 +117,45 @@ class ConvertUtils {
     return gpsInfo;
   }
 
+  static Map<String, dynamic> convertProxyParam(Proxy proxy) {
+    return {
+      'use': proxy.use,
+      'url': proxy.url,
+      'port': proxy.port,
+      'userid': proxy.userid,
+      'password': proxy.password,
+    };
+  }
+
+  static Proxy? convertProxy(Map<dynamic, dynamic>? data) {
+    if (data == null) {
+      return null;
+    }
+
+    var proxy = Proxy(
+      data['use'] ?? false,
+      data['url'],
+      data['port'],
+      data['userid'],
+      data['password'],
+    );
+    return proxy;
+  }
+
   static Options convertOptions(Map<dynamic, dynamic> data) {
     var result = Options();
     for (var entry in data.entries) {
       final name = OptionNameEnum.getValue(entry.key)!;
       switch (name) {
-        
+
         case OptionNameEnum.aperture:
           result.aperture = ApertureEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.cameraControlSource:
+          result.cameraControlSource = CameraControlSourceEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.cameraMode:
+          result.cameraMode = CameraModeEnum.getValue(entry.value);
           break;
         case OptionNameEnum.captureMode:
           result.captureMode = CaptureModeEnum.getValue(entry.value);
@@ -166,11 +199,23 @@ class ConvertUtils {
         case OptionNameEnum.maxRecordableTime:
           result.maxRecordableTime = MaxRecordableTimeEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.networkType:
+          result.networkType = NetworkTypeEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.offDelay:
           result.offDelay = OffDelayEnum.getValue(entry.value);
           break;
-        case OptionNameEnum.sleepDelay:
-          result.sleepDelay = SleepDelayEnum.getValue(entry.value);
+        case OptionNameEnum.password:
+          result.password = entry.value;
+          break;
+        case OptionNameEnum.powerSaving:
+          result.powerSaving = PowerSavingEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.previewFormat:
+          result.previewFormat = PreviewFormatEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.proxy:
+          result.proxy = convertProxy(entry.value);
           break;
         case OptionNameEnum.remainingPictures:
           result.remainingPictures = entry.value;
@@ -181,17 +226,32 @@ class ConvertUtils {
         case OptionNameEnum.remainingSpace:
           result.remainingSpace = entry.value;
           break;
-        case OptionNameEnum.totalSpace:
-          result.totalSpace = entry.value;
+        case OptionNameEnum.shootingMethod:
+          result.shootingMethod = ShootingMethodEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.shutterSpeed:
+          result.shutterSpeed = ShutterSpeedEnum.getValue(entry.value);
           break;
         case OptionNameEnum.shutterVolume:
           result.shutterVolume = entry.value;
+          break;
+        case OptionNameEnum.sleepDelay:
+          result.sleepDelay = SleepDelayEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.totalSpace:
+          result.totalSpace = entry.value;
+          break;
+        case OptionNameEnum.username:
+          result.username = entry.value;
           break;
         case OptionNameEnum.whiteBalance:
           result.whiteBalance = WhiteBalanceEnum.getValue(entry.value);
           break;
         case OptionNameEnum.whiteBalanceAutoStrength:
           result.whiteBalanceAutoStrength = WhiteBalanceAutoStrengthEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.wlanFrequency:
+          result.wlanFrequency = WlanFrequencyEnum.getValue(entry.value);
           break;
       }
     }
@@ -200,7 +260,7 @@ class ConvertUtils {
 
   static Map<String, dynamic> convertSetOptionsParam(Options options) {
     Map<String, dynamic> result = {};
-    for (var element in OptionNameEnum.values) { 
+    for (var element in OptionNameEnum.values) {
       var value = options.getValue(element);
       if (value != null) {
         result[element.rawValue] = convertOptionValueToMapValue(value);
@@ -211,6 +271,10 @@ class ConvertUtils {
 
   static dynamic convertOptionValueToMapValue(dynamic value) {
     if (value is ApertureEnum) {
+      return value.rawValue;
+    } else if (value is CameraControlSourceEnum) {
+      return value.rawValue;
+    } else if (value is CameraModeEnum) {
       return value.rawValue;
     } else if (value is CaptureModeEnum) {
       return value.rawValue;
@@ -232,7 +296,17 @@ class ConvertUtils {
       return value.rawValue;
     } else if (value is MaxRecordableTimeEnum) {
       return value.rawValue;
+    } else if (value is NetworkTypeEnum) {
+      return value.rawValue;
     } else if (value is OffDelayEnum) {
+      return value.rawValue;
+    } else if (value is PowerSavingEnum) {
+      return value.rawValue;
+    } else if (value is PreviewFormatEnum) {
+      return value.rawValue;
+    } else if (value is ShootingMethodEnum) {
+      return value.rawValue;
+    } else if (value is ShutterSpeedEnum) {
       return value.rawValue;
     } else if (value is SleepDelayEnum) {
       return value.rawValue;
@@ -240,12 +314,25 @@ class ConvertUtils {
       return value.rawValue;
     } else if (value is WhiteBalanceAutoStrengthEnum) {
       return value.rawValue;
+    } else if (value is WlanFrequencyEnum) {
+      return value.rawValue;
     } else if (value is int || value is double || value is String || value is bool) {
       return value;
     } else if (value is GpsInfo) {
       return convertGpsInfoParam(value);
+    } else if (value is Proxy) {
+      return convertProxyParam(value);
     }
     return null;
+  }
+
+  static Map<String, dynamic> convertDigestAuthParam(DigestAuth digestAuth) {
+    Map<String, dynamic> result = {};
+    result["username"] = digestAuth.username;
+    if (digestAuth.password != null) {
+      result["password"] = digestAuth.password;
+    }
+    return result;
   }
 
   static Map<String, dynamic> convertConfigParam(ThetaConfig config) {
@@ -264,6 +351,10 @@ class ConvertUtils {
     }
     if (config.shutterVolume != null) {
       result[OptionNameEnum.shutterVolume.rawValue] = config.shutterVolume;
+    }
+    final clientMode = config.clientMode;
+    if (clientMode != null) {
+      result["clientMode"] = convertDigestAuthParam(clientMode);
     }
     return result;
   }
@@ -305,19 +396,30 @@ class ConvertUtils {
     return metadata;
   }
 
+  static List<String> convertStringList(List<dynamic> data) {
+    var nameList = List<String>.empty(growable: true);
+    for (var element in data) {
+      if (element is String) {
+        nameList.add(element);
+      }
+    }
+    return nameList;
+  }
+
   static List<AccessPoint> toAccessPointList(List<Map<dynamic, dynamic>> data) {
     var accessPointList = List<AccessPoint>.empty(growable: true);
     for (Map<dynamic, dynamic> element in data) {
+      var authModeValue = AuthModeEnum.getValue(element['authMode']);
       var accessPoint = AccessPoint(
-        element['ssid'],
-        element['ssidStealth'],
-        AuthModeEnum.getValue(element['authMode'])!,
-        element['connectionPriority'],
-        element['usingDhcp'],
-        element['ipAddress'],
-        element['subnetMask'],
-        element['defaultGateway']
-      );
+          element['ssid'],
+          element['ssidStealth'],
+          (authModeValue != null) ? authModeValue : AuthModeEnum.none,
+          element['connectionPriority'],
+          element['usingDhcp'],
+          element['ipAddress'],
+          element['subnetMask'],
+          element['defaultGateway'],
+          convertProxy(element['proxy']));
       accessPointList.add(accessPoint);
     }
     return accessPointList;
@@ -333,6 +435,29 @@ class ConvertUtils {
       cameraErrorList.add(cameraError);
     }
     return cameraErrorList;
+  }
+
+  static List<PluginInfo>? toPluginInfoList(List<Map<dynamic, dynamic>>? data) {
+    if (data == null) {
+      return null;
+    }
+
+    var pluginInfoList = List<PluginInfo>.empty(growable: true);
+    for (Map<dynamic, dynamic> element in data) {
+      var pluginInfo = PluginInfo(
+          element['name'],
+          element['packageName'],
+          element['version'],
+          element['isPreInstalled'],
+          element['isRunning'],
+          element['isForeground'],
+          element['isBoot'],
+          element['hasWebServer'],
+          element['exitStatus'],
+          element['message']);
+      pluginInfoList.add(pluginInfo);
+    }
+    return pluginInfoList;
   }
 }
 

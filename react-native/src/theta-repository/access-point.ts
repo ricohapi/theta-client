@@ -1,3 +1,5 @@
+import type { Proxy } from './options';
+
 /**
  * Enum for authentication mode.
  */
@@ -11,7 +13,7 @@ export const AuthModeEnum = {
 } as const;
 
 /** type definition of AuthModeEnum */
-export type AuthModeEnum = typeof AuthModeEnum[keyof typeof AuthModeEnum];
+export type AuthModeEnum = (typeof AuthModeEnum)[keyof typeof AuthModeEnum];
 
 /** Access point information. */
 export type AccessPoint = {
@@ -31,4 +33,6 @@ export type AccessPoint = {
   subnetMask?: string;
   /** Default Gateway. */
   defaultGateway?: string;
+  /** Proxy information to be used when wired LAN is enabled. */
+  proxy?: Proxy;
 };

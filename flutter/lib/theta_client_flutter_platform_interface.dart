@@ -53,7 +53,7 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('getLivePreview() has not been implemented.');
   }
 
-  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, int startPosition) {
+  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, int startPosition, StorageEnum? storage) {
     throw UnimplementedError('listFiles() has not been implemented.');
   }
 
@@ -141,29 +141,77 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
   }
 
   Future<void> setAccessPointDynamically(
-    String ssid,
-    bool ssidStealth,
-    AuthModeEnum authMode,
-    String password,
-    int connectionPriority
-  ) {
+      String ssid,
+      bool ssidStealth,
+      AuthModeEnum authMode,
+      String password,
+      int connectionPriority,
+      Proxy? proxy) {
     throw UnimplementedError('setAccessPointDynamically() has not been implemented.');
   }
 
   Future<void> setAccessPointStatically(
-    String ssid,
-    bool ssidStealth,
-    AuthModeEnum authMode,
-    String password,
-    int connectionPriority,
-    String ipAddress,
-    String subnetMask,
-    String defaultGateway    
-  ) {
+      String ssid,
+      bool ssidStealth,
+      AuthModeEnum authMode,
+      String password,
+      int connectionPriority,
+      String ipAddress,
+      String subnetMask,
+      String defaultGateway,
+      Proxy? proxy) {
     throw UnimplementedError('setAccessPointStatically() has not been implemented.');
   }
 
   Future<void> deleteAccessPoint(String ssid) {
     throw UnimplementedError('deleteAccessPoint() has not been implemented.');
+  }
+
+  Future<Options> getMySetting(CaptureModeEnum captureMode) {
+    throw UnimplementedError('getMySetting() has not been implemented.');
+  }
+
+  Future<Options> getMySettingFromOldModel(List<OptionNameEnum> optionNames) {
+    throw UnimplementedError('getMySetting() has not been implemented.');
+  }
+
+  Future<void> setMySetting(CaptureModeEnum captureMode, Options options) {
+    throw UnimplementedError('setMySetting() has not been implemented.');
+  }
+
+  Future<void> deleteMySetting(CaptureModeEnum captureMode) {
+    throw UnimplementedError('deleteMySetting() has not been implemented.');
+  }
+
+  Future<List<PluginInfo>> listPlugins() {
+    throw UnimplementedError('listPlugins() has not been implemented.');
+  }
+
+  Future<void> setPlugin(String packageName) {
+    throw UnimplementedError('setPlugin() has not been implemented.');
+  }
+
+  Future<void> startPlugin(String? packageName) {
+    throw UnimplementedError('startPlugin() has not been implemented.');
+  }
+
+  Future<void> stopPlugin() {
+    throw UnimplementedError('stopPlugin() has not been implemented.');
+  }
+
+  Future<String> getPluginLicense(String packageName) {
+    throw UnimplementedError('getPluginLicense() has not been implemented.');
+  }
+
+  Future<List<String>> getPluginOrders() {
+    throw UnimplementedError('getPluginOrders() has not been implemented.');
+  }
+
+  Future<void> setPluginOrders(List<String> plugins) {
+    throw UnimplementedError('setPluginOrders() has not been implemented.');
+  }
+
+  Future<String> setBluetoothDevice(String uuid) {
+    throw UnimplementedError('setBluetoothDevice() has not been implemented.');
   }
 }

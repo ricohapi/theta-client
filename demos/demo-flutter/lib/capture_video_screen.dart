@@ -80,15 +80,24 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingO
               Container(
                 color: Colors.black,
                 child: Center(
-                  child: Image.memory(
-                    frameData,
-                    errorBuilder: (a, b, c) {
-                      return Container(
-                        color: Colors.black,
-                      );
-                    },
-                    gaplessPlayback: true,
-                  ),
+                  child:
+                    shooting ? const Text(
+                        'Capturing...',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
+                    ):
+                    Image.memory(
+                      frameData,
+                      errorBuilder: (a, b, c) {
+                        return Container(
+                          color: Colors.black,
+                        );
+                      },
+                      gaplessPlayback: true,
+                    )
+                  ,
                 )
               ),
               Container(
@@ -182,14 +191,17 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingO
     setState(() {
       shooting = true;
     });
-    videoCapturing = videoCapture!.startCapture((fileUrl) { 
+
+    // Stops while shooting is in progress
+    stopLivePreview();
+
+    videoCapturing = videoCapture!.startCapture((fileUrl) {
       setState(() {
         shooting = false;
       });
       debugPrint('capture video: $fileUrl');
       if (!mounted) return;
 
-      stopLivePreview();
       final uri = Uri.parse(fileUrl);
       Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => VideoScreen(
@@ -202,6 +214,7 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingO
       setState(() {
         shooting = false;
       });
+      startLivePreview();
       debugPrint(exception.toString());
     });
   }

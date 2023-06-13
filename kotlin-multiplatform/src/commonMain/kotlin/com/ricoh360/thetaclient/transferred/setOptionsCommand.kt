@@ -3,8 +3,14 @@
  */
 package com.ricoh360.thetaclient.transferred
 
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 /**
  * set options request
@@ -131,6 +137,13 @@ data class Options(
      * @see CameraControlSource
      */
     var _cameraControlSourceSupport: List<CameraControlSource>? = null,
+
+    /**
+     * Camera mode.
+     *
+     * @see CameraMode
+     */
+    var _cameraMode: CameraMode? = null,
 
     /**
      * Shooting mode.
@@ -422,11 +435,19 @@ data class Options(
     var offDelaySupport: List<Int>? = null,
 
     /**
-     * The estimated remaining number of shots for the current
-     * shooting settings.
+     * Password used for digest authentication when _networkType is set to client mode.
      */
-    @Serializable(with = NumberAsIntSerializer::class)
-    var remainingPictures: Int? = null,
+    var _password: String? = null,
+
+    /**
+     * Power saving mode
+     */
+    var _powerSaving: PowerSaving? = null,
+
+    /**
+     * Supported PowerSaving.
+     */
+    var _powerSavingSupport: List<PowerSaving>? = null,
 
     /**
      * preview format
@@ -437,6 +458,18 @@ data class Options(
      * Supported preview format
      */
     var previewFormatSupport: List<PreviewFormat>? = null,
+
+    /**
+     * @see Proxy
+     */
+    var _proxy: Proxy? = null,
+
+    /**
+     * The estimated remaining number of shots for the current
+     * shooting settings.
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    var remainingPictures: Int? = null,
 
     /**
      * Remaining usable storage space (byte).
@@ -535,6 +568,11 @@ data class Options(
     var totalSpace: Long? = null,
 
     /**
+     * User name used for digest authentication when _networkType is set to client mode.
+     */
+    var _username: String? = null,
+
+    /**
      * Video stitching during shooting.
      */
     var videoStitching: VideoStitching? = null,
@@ -565,13 +603,26 @@ data class Options(
     var whiteBalanceSupport: List<WhiteBalance>? = null,
 
     /**
-     * To set the strength of white balance auto for low color temperature scene.
-     * This option can be set for photo mode and video mode separately.
-     * Also this option will not be cleared by power-off.
+     * White Balance Auto Strength
      *
-     * For RICOH THETA Z1 firmware v2.20.3 or later
+     * @see WhiteBalanceAutoStrength
      */
     var _whiteBalanceAutoStrength: WhiteBalanceAutoStrength? = null,
+
+    /**
+     * Supported WhiteBalanceAutoStrength
+     */
+    var _whiteBalanceAutoStrengthSupport: List<WhiteBalanceAutoStrength>? = null,
+
+    /**
+     * Wireless LAN frequency of the camera supported by Theta V, Z1 and X.
+     */
+    var _wlanFrequency: WlanFrequency? = null,
+
+    /**
+     * Supported WlanFrequency
+     */
+    var _wlanFrequencySupport: List<WlanFrequency>? = null,
 )
 
 /**
@@ -594,6 +645,10 @@ enum class BluetoothPower {
 
 /**
  * camera control source
+ * Sets whether to lock/unlock the camera UI.
+ * The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
+ *
+ * For RICOH THETA X
  */
 @Serializable
 enum class CameraControlSource {
@@ -610,6 +665,39 @@ enum class CameraControlSource {
      */
     @SerialName("app")
     APP,
+}
+
+/**
+ * Camera mode.
+ * The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
+ *
+ * For RICOH THETA X
+ */
+@Serializable
+enum class CameraMode {
+    /**
+     * shooting screen
+     */
+    @SerialName("capture")
+    CAPTURE,
+
+    /**
+     * playback screen
+     */
+    @SerialName("playback")
+    PLAYBACK,
+
+    /**
+     * shooting setting screen
+     */
+    @SerialName("setting")
+    SETTING,
+
+    /**
+     * plugin selection screen
+     */
+    @SerialName("plugin")
+    PLUGIN,
 }
 
 /**
@@ -673,7 +761,7 @@ enum class MicrophoneChannel {
 }
 
 /**
- * Network type setting
+ * Network type setting supported by Theta V, Z1, and X.
  */
 @Serializable
 enum class NetworkType {
@@ -688,6 +776,34 @@ enum class NetworkType {
      */
     @SerialName("CL")
     CLIENT,
+
+    /**
+     * Client mode via Ethernet cable, supported only by Theta V and Z1.
+     */
+    @SerialName("ETHERNET")
+    ETHERNET,
+
+    /**
+     * Network is off. This value can be gotten only by plugin.
+     */
+    @SerialName("OFF")
+    OFF,
+}
+
+/**
+ * Power saving mode
+ */
+@Serializable
+enum class PowerSaving {
+    /**
+     * Power saving mode ON
+     */
+    ON,
+
+    /**
+     * Power saving mode OFF
+     */
+    OFF,
 }
 
 /**
@@ -775,6 +891,45 @@ data class PreviewFormat(
      */
     @Serializable(with = NumberAsIntSerializer::class)
     val framerate: Int? = null,
+)
+
+/**
+ * Proxy information to be used when wired LAN is enabled.
+ *
+ * The current setting can be acquired by camera.getOptions,
+ * and it can be changed by camera.setOptions.
+ *
+ * For
+ * RICOH THETA Z1 firmware v2.20.3 or later
+ * RICOH THETA X firmware v2.00.0 or later
+ */
+@Serializable
+data class Proxy(
+    /**
+     * true: use proxy false: do not use proxy
+     */
+    val use: Boolean,
+
+    /**
+     * Proxy server URL
+     */
+    val url: String? = null,
+
+    /**
+     * Proxy server port number: 0 to 65535
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    val port: Int? = null,
+
+    /**
+     * User ID used for proxy authentication
+     */
+    val userid: String? = null,
+
+    /**
+     * Password used for proxy authentication
+     */
+    val password: String? = null,
 )
 
 /**
@@ -877,6 +1032,40 @@ enum class WhiteBalanceAutoStrength {
      */
     @SerialName("OFF")
     OFF,
+}
+
+/**
+ * Wireless LAN frequency of the camera supported by Theta V, Z1 and X.
+ */
+@Serializable(with = WlanFrequencySerializer::class)
+enum class WlanFrequency(val frequency: Double) {
+    /**
+     * 2.4GHz
+     */
+    GHZ_2_4(2.4),
+
+    /**
+     * 5GHz
+     */
+    GHZ_5(5.0),
+}
+
+/**
+ * [Custom serializer](https://github.com/Kotlin/kotlinx.serialization/blob/master/docs/serializers.md#custom-serializers)
+ * for [WlanFrequency]
+ */
+object WlanFrequencySerializer : KSerializer<WlanFrequency> {
+    override val descriptor: SerialDescriptor
+        get() = PrimitiveSerialDescriptor("_wlanFrequency", PrimitiveKind.DOUBLE)
+
+    override fun serialize(encoder: Encoder, value: WlanFrequency) {
+        encoder.encodeDouble(value.frequency)
+    }
+
+    override fun deserialize(decoder: Decoder): WlanFrequency {
+        val frequency = decoder.decodeDouble()
+        return if(frequency < 5) WlanFrequency.GHZ_2_4 else WlanFrequency.GHZ_5
+    }
 }
 
 /**

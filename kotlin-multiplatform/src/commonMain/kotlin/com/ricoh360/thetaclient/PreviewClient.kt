@@ -3,6 +3,11 @@
  */
 package com.ricoh360.thetaclient
 
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.auth.HttpAuthHeader
+import io.ktor.http.auth.parseAuthorizationHeader
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.utils.io.*
@@ -125,6 +130,7 @@ class PreviewClientImpl : PreviewClient {
     private var status: Int = 0
     /** http response status message */
     private var statusMessage: String? = null
+    private var responseHeaders: Map<String, String>? = null
 
     /**
      * reset all variables
@@ -326,7 +332,7 @@ class PreviewClientImpl : PreviewClient {
         match?.groups?.get(2)?.value?.let {
             statusMessage = it
         }
-        if ((status / 100) != 2) {
+        if ((status / 100) != 2 && status != HttpStatusCode.Unauthorized.value) {
             throw PreviewClientException(statusMessage ?: "unknown error")
         }
         return this
@@ -338,6 +344,7 @@ class PreviewClientImpl : PreviewClient {
     private suspend fun responseHeaders(): PreviewClientImpl {
         var headerChunked = false
         var headerContentLength: Int? = null
+        val headers = mutableMapOf<String, String>()
         while (true) {
             val line = readUtf8Line() ?: break
             if (line.isEmpty()) {
@@ -347,30 +354,32 @@ class PreviewClientImpl : PreviewClient {
                 throw PreviewClientException("obsoleted header: [$line]")
             }
             val match = Regex("([^:]+):(.*)").find(line)
-            var name: String? = null
-            var value: String? = null
+            var matchName: String? = null
+            var matchValue: String? = null
             match?.groups?.get(1)?.value?.let {
-                name = it.trim().lowercase()
+                matchName = it.trim().lowercase()
             }
             match?.groups?.get(2)?.value?.let {
-                value = it.trim()
+                matchValue = it.trim()
             }
-            if (name == null || value == null) {
-                throw PreviewClientException("malformed header: $line")
-            }
+            val name = matchName ?: throw PreviewClientException("malformed header: $line")
+            val value = matchValue ?: throw PreviewClientException("malformed header: $line")
+
             if (name == "transfer-encoding") {
-                if (value?.lowercase() == "chunked") {
+                if (value.lowercase() == "chunked") {
                     headerChunked = true
                 }
             } else if (name == "content-length") {
-                headerContentLength = value!!.toInt()
+                headerContentLength = value.toInt()
             } else if (name == "content-type") {
                 // RFC1341 7.2
                 val match0 = Regex("boundary=\"?([0-9a-zA-Z'()+_,-./:=? ]+)\"?")
-                  .find(value!!)
+                  .find(value)
                 boundary = match0?.groups?.get(1)?.value
             }
+            headers[name] = value
         }
+        responseHeaders = headers
         contentLength = headerContentLength
         chunked = headerChunked
         return this
@@ -386,6 +395,30 @@ class PreviewClientImpl : PreviewClient {
         body: String,
         contentType: String,
     ): PreviewClient {
+        val client = requestPreview(endpoint, method, path, body, contentType) as PreviewClientImpl
+        return when (client.status) {
+            HttpStatusCode.Unauthorized.value -> {
+                val url = URL(endpoint)
+                ApiClient.digestAuth?.let { digestAuth ->
+                    responseHeaders?.get(HttpHeaders.WWWAuthenticate.lowercase())?.let { header ->
+                        val authHeader = parseAuthorizationHeader(header) as HttpAuthHeader.Parameterized
+                        digestAuth.updateAuthHeaderInfo(authHeader)
+                        requestPreview(endpoint, method, path, body, contentType, digestAuth.makeDigestHeader(url.path, HttpMethod.Post.value))
+                    }
+                } ?: client
+            }
+            else -> client
+        }
+    }
+
+    internal suspend fun requestPreview(
+        endpoint: String,
+        method: String,
+        path: String,
+        body: String,
+        contentType: String,
+        digest: String? = null,
+    ): PreviewClient {
         connect(endpoint)
         write("$method $path HTTP/1.1\r\n")
         write("Host: ${this.endpoint?.host}\r\n")
@@ -394,6 +427,7 @@ class PreviewClientImpl : PreviewClient {
         if (bodies.isNotEmpty()) {
             write("Content-Type: $contentType\r\n")
             write("Content-Length: ${bodies.size}\r\n")
+            digest?.run { write("Authorization: $digest\r\n") }
             write("\r\n")
             write(bodies)
         } else {

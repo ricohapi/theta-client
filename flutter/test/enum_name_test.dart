@@ -18,7 +18,7 @@ void main() {
       [CaptureStatusEnum.converting, 'CONVERTING'],
       [CaptureStatusEnum.timeShiftShooting, 'TIME_SHIFT_SHOOTING'],
       [CaptureStatusEnum.continuousShooting, 'CONTINUOUS_SHOOTING'],
-      [CaptureStatusEnum.retrospectiveImageRecordinG, 'RETROSPECTIVE_IMAGE_RECORDING'],
+      [CaptureStatusEnum.retrospectiveImageRecording, 'RETROSPECTIVE_IMAGE_RECORDING'],
     ];
     expect(data.length, CaptureStatusEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
@@ -115,6 +115,30 @@ void main() {
       [ApertureEnum.aperture_5_6, 'APERTURE_5_6'],
     ];
     expect(data.length, ApertureEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('CameraControlSourceEnum', () async {
+    List<List<dynamic>> data = [
+      [CameraControlSourceEnum.camera, 'CAMERA'],
+      [CameraControlSourceEnum.app, 'APP'],
+    ];
+    expect(data.length, CameraControlSourceEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('CameraModeEnum', () async {
+    List<List<dynamic>> data = [
+      [CameraModeEnum.capture, 'CAPTURE'],
+      [CameraModeEnum.playback, 'PLAYBACK'],
+      [CameraModeEnum.setting, 'SETTING'],
+      [CameraModeEnum.plugin, 'PLUGIN'],
+    ];
+    expect(data.length, CameraModeEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -372,8 +396,23 @@ void main() {
       [MaxRecordableTimeEnum.time_180, 'RECORDABLE_TIME_180'],
       [MaxRecordableTimeEnum.time_300, 'RECORDABLE_TIME_300'],
       [MaxRecordableTimeEnum.time_1500, 'RECORDABLE_TIME_1500'],
+      [MaxRecordableTimeEnum.time_7200, 'RECORDABLE_TIME_7200'],
+      [MaxRecordableTimeEnum.doNotUpdateMySettingCondition, 'DO_NOT_UPDATE_MY_SETTING_CONDITION'],
     ];
     expect(data.length, MaxRecordableTimeEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('NetworkTypeEnum', () async {
+    List<List<dynamic>> data = [
+      [NetworkTypeEnum.client, 'CLIENT'],
+      [NetworkTypeEnum.direct, 'DIRECT'],
+      [NetworkTypeEnum.ethernet, 'ETHERNET'],
+      [NetworkTypeEnum.off, 'OFF'],
+    ];
+    expect(data.length, NetworkTypeEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -393,6 +432,52 @@ void main() {
     }
   });
 
+  test('PowerSavingEnum', () async {
+    List<List<dynamic>> data = [
+      [PowerSavingEnum.on, 'ON'],
+      [PowerSavingEnum.off, 'OFF'],
+    ];
+    expect(data.length, PowerSavingEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('PreviewFormatEnum', () async {
+    List<List<dynamic>> data = [
+      [PreviewFormatEnum.w1024_h512_f30, 'W1024_H512_F30'],
+      [PreviewFormatEnum.w1024_h512_f15, 'W1024_H512_F15'],
+      [PreviewFormatEnum.w512_h512_f30, 'W512_H512_F30'],
+      [PreviewFormatEnum.w1920_h960_f8, 'W1920_H960_F8'],
+      [PreviewFormatEnum.w1024_h512_f8, 'W1024_H512_F8'],
+      [PreviewFormatEnum.w640_h320_f30, 'W640_H320_F30'],
+      [PreviewFormatEnum.w640_h320_f8, 'W640_H320_F8'],
+      [PreviewFormatEnum.w640_h320_f10, 'W640_H320_F10'],
+    ];
+    expect(data.length, PreviewFormatEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('ShootingMethodEnum', () async {
+    List<List<dynamic>> data = [
+      [ShootingMethodEnum.normal, 'NORMAL'],
+      [ShootingMethodEnum.interval, 'INTERVAL'],
+      [ShootingMethodEnum.moveInterval, 'MOVE_INTERVAL'],
+      [ShootingMethodEnum.fixedInterval, 'FIXED_INTERVAL'],
+      [ShootingMethodEnum.bracket, 'BRACKET'],
+      [ShootingMethodEnum.composite, 'COMPOSITE'],
+      [ShootingMethodEnum.continuous, 'CONTINUOUS'],
+      [ShootingMethodEnum.timeShift, 'TIME_SHIFT'],
+      [ShootingMethodEnum.burst, 'BURST'],
+    ];
+    expect(data.length, ShootingMethodEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
   test('SleepDelayEnum', () async {
     List<List<dynamic>> data = [
       [SleepDelayEnum.sleepDelay_3m, 'SLEEP_DELAY_3M'],
@@ -402,6 +487,18 @@ void main() {
       [SleepDelayEnum.disable, 'DISABLE'],
     ];
     expect(data.length, SleepDelayEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('StorageEnum', () async {
+    List<List<dynamic>> data = [
+      [StorageEnum.internal, 'INTERNAL'],
+      [StorageEnum.sd, 'SD'],
+      [StorageEnum.current, 'CURRENT'],
+    ];
+    expect(data.length, StorageEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -434,6 +531,17 @@ void main() {
       [WhiteBalanceAutoStrengthEnum.off, 'OFF'],
     ];
     expect(data.length, WhiteBalanceAutoStrengthEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('WlanFrequencyEnum', () async {
+    List<List<dynamic>> data = [
+      [WlanFrequencyEnum.ghz_2_4, 'GHZ_2_4'],
+      [WlanFrequencyEnum.ghz_5, 'GHZ_5'],
+    ];
+    expect(data.length, WlanFrequencyEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }

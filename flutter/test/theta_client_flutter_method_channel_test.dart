@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:theta_client_flutter/digest_auth.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 import 'package:theta_client_flutter/theta_client_flutter_method_channel.dart';
 
@@ -241,7 +242,7 @@ void main() {
 
     for (int i = 0; i < fileTypes.length; i++) {
       index = i;
-      var thetaFiles = await platform.listFiles(fileTypes[i], entryCount, startPosition);
+      var thetaFiles = await platform.listFiles(fileTypes[i], entryCount, startPosition, StorageEnum.current);
       expect(thetaFiles.fileList.length, 2);
       var fileInfo = thetaFiles.fileList[0];
       expect(fileInfo.name, name);
@@ -249,6 +250,59 @@ void main() {
       expect(fileInfo.dateTime, dateTime);
       expect(fileInfo.fileUrl, fileUrl);
       expect(fileInfo.thumbnailUrl, thumbnailUrl);
+      expect(fileInfo.storageID, null);
+      expect(thetaFiles.totalEntries, 10);
+    }
+  });
+
+  test('listFiles StorageEnum', () async {
+    const storages = [StorageEnum.internal, StorageEnum.sd, StorageEnum.current];
+    const entryCount = 10;
+    const startPosition = 0;
+    const name = 'R0013336.JPG';
+    const size = 100;
+    const dateTime = '2022:11:15 14:00:15';
+    const fileUrl = 'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG';
+    const thumbnailUrl = 'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG?type=thumb';
+    const storageID = 'a0123456789';
+
+    int index = 0;
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      var arguments = methodCall.arguments as Map<dynamic, dynamic>;
+      expect(arguments['fileType'], FileTypeEnum.image.rawValue);
+      expect(arguments['entryCount'], entryCount);
+      expect(arguments['startPosition'], startPosition);
+      expect(arguments['storage'], storages[index].rawValue);
+
+      final List fileList = List<dynamic>.empty(growable: true);
+      final Map info = <String, dynamic> {
+        'name': name,
+        'size': size,
+        'dateTime': dateTime,
+        'fileUrl': fileUrl,
+        'thumbnailUrl': thumbnailUrl,
+        'storageID': storageID,
+      };
+      fileList.add(info);
+      fileList.add(info);
+      final Map thetaFiles = <String, dynamic> {
+        'fileList': fileList,
+        'totalEntries': 10,
+      };
+      return thetaFiles;
+    });
+
+    for (int i = 0; i < storages.length; i++) {
+      index = i;
+      var thetaFiles = await platform.listFiles(FileTypeEnum.image, entryCount, startPosition, storages[index]);
+      expect(thetaFiles.fileList.length, 2);
+      var fileInfo = thetaFiles.fileList[0];
+      expect(fileInfo.name, name);
+      expect(fileInfo.size, size);
+      expect(fileInfo.dateTime, dateTime);
+      expect(fileInfo.fileUrl, fileUrl);
+      expect(fileInfo.thumbnailUrl, thumbnailUrl);
+      expect(fileInfo.storageID, storageID);
       expect(thetaFiles.totalEntries, 10);
     }
   });
@@ -343,8 +397,11 @@ void main() {
     Map<String, dynamic> gpsInfoMap = {
       'latitude': 1.0, 'longitude': 2.0, 'altitude': 3.0, 'dateTimeZone': '2022:01:01 00:01:00+09:00'
     };
+    Map<String, dynamic> proxyMap = {'use': false, 'url': '', 'port': 8081, 'userid': '', 'password': ''};
     List<List<dynamic>> data = [
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
+      [OptionNameEnum.cameraControlSource, 'CameraControlSource', CameraControlSourceEnum.camera, 'CAMERA'],
+      [OptionNameEnum.cameraMode, 'CameraMode', CameraModeEnum.capture, 'CAPTURE'],
       [OptionNameEnum.captureMode, 'CaptureMode', CaptureModeEnum.image, 'IMAGE'],
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 2, 2],
       [OptionNameEnum.dateTimeZone, 'DateTimeZone', '2022:01:01 00:01:00+09:00', '2022:01:01 00:01:00+09:00'],
@@ -359,15 +416,24 @@ void main() {
       [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso200, 'ISO_200'],
       [OptionNameEnum.language, 'Language', LanguageEnum.de, 'DE'],
       [OptionNameEnum.maxRecordableTime, 'MaxRecordableTime', MaxRecordableTimeEnum.time_1500, 'RECORDABLE_TIME_1500'],
+      [OptionNameEnum.networkType, 'NetworkType', NetworkTypeEnum.client, 'CLIENT'],
       [OptionNameEnum.offDelay, 'OffDelay', OffDelayEnum.offDelay_10m, 'OFF_DELAY_10M'],
-      [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
+      [OptionNameEnum.password, 'Password', 'password', 'password'],
+      [OptionNameEnum.powerSaving, 'PowerSaving', PowerSavingEnum.on, 'ON'],
+      [OptionNameEnum.previewFormat, 'PreviewFormat', PreviewFormatEnum.w1024_h512_f30, 'W1024_H512_F30'],
+      [OptionNameEnum.proxy, 'Proxy', Proxy(false, '', 8081, '', ''), proxyMap],
       [OptionNameEnum.remainingPictures, 'RemainingPictures', 3, 3],
       [OptionNameEnum.remainingVideoSeconds, 'RemainingVideoSeconds', 4, 4],
       [OptionNameEnum.remainingSpace, 'RemainingSpace', 5, 5],
-      [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
+      [OptionNameEnum.shootingMethod, 'ShootingMethod', ShootingMethodEnum.normal, 'NORMAL'],
+      [OptionNameEnum.shutterSpeed, 'ShutterSpeed', ShutterSpeedEnum.shutterSpeedOneOver_10, 'SHUTTER_SPEED_ONE_OVER_10'],
       [OptionNameEnum.shutterVolume, 'ShutterVolume', 7, 7],
+      [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
+      [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
+      [OptionNameEnum.username, 'Username', 'username', 'username'],
       [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
       [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
+      [OptionNameEnum.wlanFrequency, 'WlanFrequency', WlanFrequencyEnum.ghz_2_4, 'GHZ_2_4'],
     ];
 
     Map<String, dynamic> optionMap = {};
@@ -389,7 +455,9 @@ void main() {
 
     expect(options, isNotNull);
     expect(options.aperture, data[0][2]);
-    expect(options.captureMode, data[1][2]);
+    expect(options.cameraControlSource, data[1][2]);
+    expect(options.cameraMode, data[2][2]);
+    expect(options.captureMode, data[3][2]);
     for (int i = 0; i < data.length; i++) {
       expect(options.getValue(data[i][0]), data[i][2], reason: data[i][1]);
     }
@@ -399,8 +467,10 @@ void main() {
     Map<String, dynamic> gpsInfoMap = {
       'latitude': 1.0, 'longitude': 2.0, 'altitude': 3.0, 'dateTimeZone': '2022:01:01 00:01:00+09:00'
     };
+    Map<String, dynamic> proxyMap = {'use': false, 'url': '', 'port': 8081, 'userid': '', 'password': ''};
     List<List<dynamic>> data = [
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
+      [OptionNameEnum.cameraMode, 'CameraMode', CameraModeEnum.capture, 'CAPTURE'],
       [OptionNameEnum.captureMode, 'CaptureMode', CaptureModeEnum.image, 'IMAGE'],
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 2, 2],
       [OptionNameEnum.dateTimeZone, 'DateTimeZone', '2022:01:01 00:01:00+09:00', '2022:01:01 00:01:00+09:00'],
@@ -415,15 +485,24 @@ void main() {
       [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso200, 'ISO_200'],
       [OptionNameEnum.language, 'Language', LanguageEnum.de, 'DE'],
       [OptionNameEnum.maxRecordableTime, 'MaxRecordableTime', MaxRecordableTimeEnum.time_1500, 'RECORDABLE_TIME_1500'],
+      [OptionNameEnum.networkType, 'NetworkType', NetworkTypeEnum.client, 'CLIENT'],
       [OptionNameEnum.offDelay, 'OffDelay', OffDelayEnum.offDelay_15m, 'OFF_DELAY_15M'],
-      [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
+      [OptionNameEnum.password, 'Password', 'password', 'password'],
+      [OptionNameEnum.powerSaving, 'PowerSaving', PowerSavingEnum.on, 'ON'],
+      [OptionNameEnum.previewFormat, 'PreviewFormat', PreviewFormatEnum.w1024_h512_f30, 'W1024_H512_F30'],
+      [OptionNameEnum.proxy, 'Proxy', Proxy(false, '', 8081, '', ''), proxyMap],
       [OptionNameEnum.remainingPictures, 'RemainingPictures', 3, 3],
       [OptionNameEnum.remainingVideoSeconds, 'RemainingVideoSeconds', 4, 4],
       [OptionNameEnum.remainingSpace, 'RemainingSpace', 5, 5],
-      [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
+      [OptionNameEnum.shootingMethod, 'ShootingMethod', ShootingMethodEnum.normal, 'NORMAL'],
+      [OptionNameEnum.shutterSpeed, 'ShutterSpeed', ShutterSpeedEnum.shutterSpeedOneOver_20, 'SHUTTER_SPEED_ONE_OVER_20'],
       [OptionNameEnum.shutterVolume, 'ShutterVolume', 7, 7],
+      [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
+      [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
+      [OptionNameEnum.username, 'Username', 'username', 'username'],
       [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
       [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.on, 'ON'],
+      [OptionNameEnum.wlanFrequency, 'WlanFrequency', WlanFrequencyEnum.ghz_2_4,'GHZ_2_4'],
     ];
 
     Map<String, dynamic> optionMap = {};
@@ -483,6 +562,60 @@ void main() {
       expect(configMap['OffDelay'], config.offDelay!.rawValue);
       expect(configMap['SleepDelay'], config.sleepDelay!.rawValue);
       expect(configMap['ShutterVolume'], config.shutterVolume);
+      expect(configMap['clientMode'], isNull);
+
+      return Future.value();
+    });
+    await platform.initialize(endpoint, config, null);
+  });
+
+  test('initialize clientMode', () async {
+    const endpoint = 'http://dummy/';
+    final config = ThetaConfig();
+    const username = "THETAXX1234567";
+    const password = "1234567";
+    config.clientMode = DigestAuth(username, password);
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      var arguments = methodCall.arguments as Map<dynamic, dynamic>;
+      expect(arguments['endpoint'], endpoint);
+      expect(arguments['timeout'], isNull);
+
+      Map<dynamic, dynamic> configMap = arguments['config'];
+      expect(configMap['DateTimeZone'], isNull);
+      expect(configMap['Language'], isNull);
+      expect(configMap['OffDelay'], isNull);
+      expect(configMap['SleepDelay'], isNull);
+      expect(configMap['ShutterVolume'], isNull);
+      final clientMode = configMap['clientMode'];
+      expect(clientMode['username'], username);
+      expect(clientMode['password'], password);
+
+      return Future.value();
+    });
+    await platform.initialize(endpoint, config, null);
+  });
+
+  test('initialize clientMode no password', () async {
+    const endpoint = 'http://dummy/';
+    final config = ThetaConfig();
+    const username = "THETAXX1234567";
+    config.clientMode = DigestAuth(username);
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      var arguments = methodCall.arguments as Map<dynamic, dynamic>;
+      expect(arguments['endpoint'], endpoint);
+      expect(arguments['timeout'], isNull);
+
+      Map<dynamic, dynamic> configMap = arguments['config'];
+      expect(configMap['DateTimeZone'], isNull);
+      expect(configMap['Language'], isNull);
+      expect(configMap['OffDelay'], isNull);
+      expect(configMap['SleepDelay'], isNull);
+      expect(configMap['ShutterVolume'], isNull);
+      final clientMode = configMap['clientMode'];
+      expect(clientMode['username'], username);
+      expect(clientMode['password'], isNull);
 
       return Future.value();
     });
@@ -654,6 +787,12 @@ void main() {
         'authMode': 'NONE',
         'connectionPriority': 1,
         'usingDhcp': true,
+        'proxy': {
+          'use': true,
+          'url': 'xxx',
+          'port': 8081,
+          'userid': 'abc'
+        },
       },
       {
         'ssid': 'ssid_test2',
@@ -664,6 +803,12 @@ void main() {
         'ipAddress': '192.168.1.2',
         'subnetMask': '255.255.255.0',
         'defaultGateway': '192.168.1.100',
+        'proxy': {
+          'use': false,
+          'url': '',
+          'port': 0,
+          'userid': ''
+        },
       },
       {
         'ssid': 'ssid_test3',
@@ -674,6 +819,12 @@ void main() {
         'ipAddress': '192.168.1.3',
         'subnetMask': '255.255.255.0',
         'defaultGateway': '192.168.1.101',
+        'proxy': {
+          'use': true,
+          'url': 'xxx',
+          'port': 8081,
+          'userid': 'abc'
+        },
       },
     ];
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
@@ -690,6 +841,10 @@ void main() {
       expect(resultList[i].ipAddress, data[i]['ipAddress']);
       expect(resultList[i].subnetMask, data[i]['subnetMask']);
       expect(resultList[i].defaultGateway, data[i]['defaultGateway']);
+      expect(resultList[i].proxy?.use, (data[i]['proxy'] as Map<String, dynamic>)['use']);
+      expect(resultList[i].proxy?.url, (data[i]['proxy'] as Map<String, dynamic>)['url']);
+      expect(resultList[i].proxy?.port, (data[i]['proxy'] as Map<String, dynamic>)['port']);
+      expect(resultList[i].proxy?.userid, (data[i]['proxy'] as Map<String, dynamic>)['userid']);
     }
   });
 
@@ -699,6 +854,7 @@ void main() {
     const authMode = AuthModeEnum.wep;
     const password = 'password1';
     const connectionPriority = 2;
+    var proxy = Proxy(true, 'https://xxx', 8081, 'abc', 'pwpwpwp111');
 
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       expect(methodCall.method, 'setAccessPointDynamically');
@@ -709,9 +865,14 @@ void main() {
       expect(arguments['authMode'], authMode.rawValue);
       expect(arguments['password'], password);
       expect(arguments['connectionPriority'], connectionPriority);
+      expect(arguments['proxy']['use'], proxy.use);
+      expect(arguments['proxy']['url'], proxy.url);
+      expect(arguments['proxy']['port'], proxy.port);
+      expect(arguments['proxy']['userid'], proxy.userid);
+      expect(arguments['proxy']['password'], proxy.password);
       return Future.value();
     });
-    await platform.setAccessPointDynamically(ssid, ssidStealth, authMode, password, connectionPriority);
+    await platform.setAccessPointDynamically(ssid, ssidStealth, authMode, password, connectionPriority, proxy);
   });
 
   test('setAccessPointStatically', () async {
@@ -723,6 +884,7 @@ void main() {
     const ipAddress = '192.168.1.2';
     const subnetMask = '255.255.255.0';
     const defaultGateway = '192.168.1.3';
+    var proxy = Proxy(true, 'https://xxx', 8081, 'abc', 'pwpwpwp111');
 
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       expect(methodCall.method, 'setAccessPointStatically');
@@ -736,9 +898,14 @@ void main() {
       expect(arguments['ipAddress'], ipAddress);
       expect(arguments['subnetMask'], subnetMask);
       expect(arguments['defaultGateway'], defaultGateway);
+      expect(arguments['proxy']['use'], proxy.use);
+      expect(arguments['proxy']['url'], proxy.url);
+      expect(arguments['proxy']['port'], proxy.port);
+      expect(arguments['proxy']['userid'], proxy.userid);
+      expect(arguments['proxy']['password'], proxy.password);
       return Future.value();
     });
-    await platform.setAccessPointStatically(ssid, ssidStealth, authMode, password, connectionPriority, ipAddress, subnetMask, defaultGateway);
+    await platform.setAccessPointStatically(ssid, ssidStealth, authMode, password, connectionPriority, ipAddress, subnetMask, defaultGateway, proxy);
   });
 
   test('deleteAccessPoint', () async {
@@ -749,5 +916,294 @@ void main() {
       return Future.value();
     });
     await platform.deleteAccessPoint(ssid);
+  });
+
+  test('getMySetting', () async {
+    List<List<dynamic>> data = [
+      [OptionNameEnum.aperture, 'Aperture', ApertureEnum.apertureAuto, 'APERTURE_AUTO'],
+      [OptionNameEnum.colorTemperature, 'ColorTemperature', 5000, 5000],
+      [OptionNameEnum.exposureCompensation, 'ExposureCompensation', ExposureCompensationEnum.zero, 'ZERO'],
+      [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delayOff, 'DELAY_OFF'],
+      [OptionNameEnum.exposureProgram, 'ExposureProgram', ExposureProgramEnum.normalProgram, 'NORMAL_PROGRAM'],
+      [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_6_7K, 'IMAGE_6_7K'],
+      [OptionNameEnum.filter, 'Filter', FilterEnum.off, 'OFF'],
+      [OptionNameEnum.iso, 'Iso', IsoEnum.isoAuto, 'ISO_AUTO'],
+      [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso6400, 'ISO_6400'],
+      [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.auto, 'AUTO'],
+      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
+    ];
+
+    Map<String, dynamic> optionMap = {};
+    var optionNames = List<OptionNameEnum>.empty(growable: true);
+
+    for (int i = 0; i < data.length; i++) {
+      optionMap[data[i][1]] = data[i][3];
+      optionNames.add(data[i][0]);
+    }
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      var arguments = methodCall.arguments as Map<dynamic, dynamic>;
+      expect(arguments['captureMode'], CaptureModeEnum.image.rawValue);
+      return Future.value(optionMap);
+    });
+    Options options = await platform.getMySetting(CaptureModeEnum.image);
+
+    expect(options, isNotNull);
+    expect(options.aperture, data[0][2]);
+    expect(options.colorTemperature, data[1][2]);
+    for (int i = 0; i < data.length; i++) {
+      expect(options.getValue(data[i][0]), data[i][2], reason: data[i][1]);
+    }
+  });
+
+  test('getMySettingFromOldModel', () async {
+    List<List<dynamic>> data = [
+      [OptionNameEnum.aperture, 'Aperture', ApertureEnum.apertureAuto, 'APERTURE_AUTO'],
+      [OptionNameEnum.colorTemperature, 'ColorTemperature', 5000, 5000],
+      [OptionNameEnum.exposureCompensation, 'ExposureCompensation', ExposureCompensationEnum.zero, 'ZERO'],
+      [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delayOff, 'DELAY_OFF'],
+      [OptionNameEnum.exposureProgram, 'ExposureProgram', ExposureProgramEnum.normalProgram, 'NORMAL_PROGRAM'],
+      [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_6_7K, 'IMAGE_6_7K'],
+      [OptionNameEnum.filter, 'Filter', FilterEnum.off, 'OFF'],
+      [OptionNameEnum.iso, 'Iso', IsoEnum.isoAuto, 'ISO_AUTO'],
+      [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso6400, 'ISO_6400'],
+      [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.auto, 'AUTO'],
+      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
+    ];
+
+    Map<String, dynamic> optionMap = {};
+    var optionNames = List<OptionNameEnum>.empty(growable: true);
+
+    for (int i = 0; i < data.length; i++) {
+      optionMap[data[i][1]] = data[i][3];
+      optionNames.add(data[i][0]);
+    }
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      var arguments = methodCall.arguments['optionNames'] as List<dynamic>;
+      for (int i = 0; i < data.length; i++) {
+        expect(arguments[i], data[i][1], reason: data[i][1]);
+      }
+      return Future.value(optionMap);
+    });
+    Options options = await platform.getMySettingFromOldModel(optionNames);
+
+    expect(options, isNotNull);
+    expect(options.aperture, data[0][2]);
+    expect(options.colorTemperature, data[1][2]);
+    for (int i = 0; i < data.length; i++) {
+      expect(options.getValue(data[i][0]), data[i][2], reason: data[i][1]);
+    }
+  });
+
+  test('setMySetting', () async {
+    List<List<dynamic>> data = [
+      [OptionNameEnum.aperture, 'Aperture', ApertureEnum.apertureAuto, 'APERTURE_AUTO'],
+      [OptionNameEnum.colorTemperature, 'ColorTemperature', 100, 100],
+      [OptionNameEnum.exposureCompensation, 'ExposureCompensation', ExposureCompensationEnum.p0_3, 'P0_3'],
+      [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delay2, 'DELAY_2'],
+      [OptionNameEnum.exposureProgram, 'ExposureProgram', ExposureProgramEnum.shutterPriority, 'SHUTTER_PRIORITY'],
+      [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_2K, 'IMAGE_2K'],
+      [OptionNameEnum.filter, 'Filter', FilterEnum.hdr, 'HDR'],
+      [OptionNameEnum.iso, 'Iso', IsoEnum.iso100, 'ISO_100'],
+      [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso1250, 'ISO_1250'],
+      [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.auto, 'AUTO'],
+      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
+    ];
+
+    Map<String, dynamic> optionMap = {};
+    var optionNames = List<OptionNameEnum>.empty(growable: true);
+
+    for (int i = 0; i < data.length; i++) {
+      optionMap[data[i][1]] = data[i][3];
+      optionNames.add(data[i][0]);
+    }
+    final options = Options();
+    for (int i = 0; i < data.length; i++) {
+      options.setValue(data[i][0], data[i][2]);
+    }
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      var arguments = methodCall.arguments as Map<dynamic, dynamic>;
+      expect(arguments['captureMode'], CaptureModeEnum.image.rawValue);
+
+      var options = methodCall.arguments['options'] as Map<dynamic, dynamic>;
+      for (int i = 0; i < data.length; i++) {
+        expect(options[data[i][1]], data[i][3], reason: data[i][1]);
+      }
+      return Future.value();
+    });
+    await platform.setMySetting(CaptureModeEnum.image, options);
+
+    expect(true, isTrue);
+  });
+
+  test('deleteMySetting', () async {
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'deleteMySetting');
+      expect(methodCall.arguments['captureMode'], CaptureModeEnum.image.rawValue);
+      return Future.value();
+    });
+    await platform.deleteMySetting(CaptureModeEnum.image);
+  });
+
+  test('listPlugins', () async {
+    const data = [
+      {
+        "isBoot": false,
+        "exitStatus": "success",
+        "isPreInstalled": false,
+        "isForeground": false,
+        "message": "",
+        "packageName": "android.example.com.tflitecamerademo",
+        "name": "TfLite Camera Demo",
+        "isRunning": false,
+        "type": "user",
+        "version": "1.0",
+        "hasWebServer": false
+      },
+      {
+        "isBoot": false,
+        "exitStatus": "success",
+        "isPreInstalled": false,
+        "isForeground": false,
+        "message": "",
+        "packageName": "com.awesomeproject",
+        "name": "AwesomeProject",
+        "isRunning": false,
+        "type": "user",
+        "version": "1.0",
+        "hasWebServer": false
+      },
+      {
+        "isBoot": true,
+        "exitStatus": "success",
+        "isPreInstalled": false,
+        "isForeground": false,
+        "message": "",
+        "packageName": "com.theta.remoteplayback",
+        "name": "Remote Playback",
+        "isRunning": false,
+        "type": "system",
+        "version": "2.10.3",
+        "hasWebServer": false
+      }
+    ];
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'listPlugins');
+      return Future.value(data);
+    });
+    var resultList = await platform.listPlugins();
+    for (int i = 0; i < resultList.length; i++) {
+      expect(resultList[i].name, data[i]['name']);
+      expect(resultList[i].packageName, data[i]['packageName']);
+      expect(resultList[i].version, data[i]['version']);
+      expect(resultList[i].isPreInstalled, data[i]['isPreInstalled']);
+      expect(resultList[i].isRunning, data[i]['isRunning']);
+      expect(resultList[i].isForeground, data[i]['isForeground']);
+      expect(resultList[i].isBoot, data[i]['isBoot']);
+      expect(resultList[i].hasWebServer, data[i]['hasWebServer']);
+      expect(resultList[i].exitStatus, data[i]['exitStatus']);
+      expect(resultList[i].message, data[i]['message']);
+    }
+  });
+
+  test('setPlugin', () async {
+    const packageName = 'android.example.com.tflitecamerademo';
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'setPlugin');
+
+      var arguments = methodCall.arguments as String;
+      expect(arguments, packageName);
+      return Future.value();
+    });
+    await platform.setPlugin(packageName);
+  });
+
+  test('startPlugin', () async {
+    const packageName = 'android.example.com.tflitecamerademo';
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'startPlugin');
+
+      var arguments = methodCall.arguments as String;
+      expect(arguments, packageName);
+      return Future.value();
+    });
+    await platform.startPlugin(packageName);
+  });
+
+  test('stopPlugin', () async {
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'stopPlugin');
+      return Future.value();
+    });
+    await platform.stopPlugin();
+  });
+
+  test('getPluginLicense', () async {
+    const packageName = 'android.example.com.tflitecamerademo';
+    const license = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8"/>
+      <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+      <title>RICOH THETA - Underside cover</title>
+    </head>
+    <body>
+    </body>
+    </html>
+    """;
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'getPluginLicense');
+
+      var arguments = methodCall.arguments as String;
+      expect(arguments, packageName);
+      return Future.value(license);
+    });
+    var result = await platform.getPluginLicense(packageName);
+    expect(result, license);
+  });
+
+  test('getPluginOrders', () async {
+    const plugins = ["com.theta360.usbstorage", "com.theta.remoteplayback", "com.theta360.undersidecover"];
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'getPluginOrders');
+      return Future.value(plugins);
+    });
+    var result = await platform.getPluginOrders();
+    expect(result, plugins);
+  });
+
+  test('setPluginOrders', () async {
+    const packageNames = ['android.example.com.tflitecamerademo'];
+
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'setPluginOrders');
+
+      var arguments = methodCall.arguments as List<dynamic>;
+      for (int i = 0; i < packageNames.length; i++) {
+        expect(arguments[i], packageNames[i]);
+      }
+      return Future.value();
+    });
+    await platform.setPluginOrders(packageNames);
+  });
+
+  test('setBluetoothDevice', () async {
+    const name = '10107709';
+    const uuid = '00000000-1111-2222-3333-555555555555';
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      expect(methodCall.method, 'setBluetoothDevice');
+
+      var arguments = methodCall.arguments as String;
+      expect(arguments, uuid);
+      return Future.value(name);
+    });
+    var result = await platform.setBluetoothDevice(uuid);
+    expect(result, name);
   });
 }

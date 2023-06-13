@@ -39,6 +39,8 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
 
     val errorCode: String = "Error"
     val messageNotInit: String = "Not initialized."
+    val messageNoResult: String = "Result is Null."
+    val messageNoArgument: String = "No Argument."
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "theta_client_flutter")
@@ -202,6 +204,66 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     deleteAccessPoint(call, result)
                 }
             }
+            "getMySetting" -> {
+                scope.launch {
+                    getMySetting(call, result)
+                }
+            }
+            "getMySettingFromOldModel" -> {
+                scope.launch {
+                    getMySettingFromOldModel(call, result)
+                }
+            }
+            "setMySetting" -> {
+                scope.launch {
+                    setMySetting(call, result)
+                }
+            }
+            "deleteMySetting" -> {
+                scope.launch {
+                    deleteMySetting(call, result)
+                }
+            }
+            "listPlugins" -> {
+                scope.launch {
+                    listPlugins(call, result)
+                }
+            }
+            "setPlugin" -> {
+                scope.launch {
+                    setPlugin(call, result)
+                }
+            }
+            "startPlugin" -> {
+                scope.launch {
+                    startPlugin(call, result)
+                }
+            }
+            "stopPlugin" -> {
+                scope.launch {
+                    stopPlugin(call, result)
+                }
+            }
+            "getPluginLicense" -> {
+                scope.launch {
+                    getPluginLicense(call, result)
+                }
+            }
+            "getPluginOrders" -> {
+                scope.launch {
+                    getPluginOrders(call, result)
+                }
+            }
+            "setPluginOrders" -> {
+                scope.launch {
+                    setPluginOrders(call, result)
+                }
+            }
+            "setBluetoothDevice" -> {
+                scope.launch {
+                    setBluetoothDevice(call, result)
+                }
+            }
             else -> {
                 result.notImplemented()
             }
@@ -213,6 +275,14 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     suspend fun initialize(call: MethodCall, result: Result) {
+        thetaRepository = null
+        previewing = false
+        photoCaptureBuilder = null
+        photoCapture = null
+        videoCaptureBuilder = null
+        videoCapture = null
+        videoCapturing = null
+
         try {
             endpoint = call.argument<String>("endpoint")!!
             val config = call.argument<Map<String, Any>>("config")?.let {
@@ -401,7 +471,12 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             }!!
             val startPosition = call.argument<Int>("startPosition")!!
             val entryCount = call.argument<Int>("entryCount")!!
-            val response = thetaRepository!!.listFiles(fileType, startPosition, entryCount)
+            val storage = call.argument<String>("storage")?.let { name ->
+                ThetaRepository.StorageEnum.values().find {
+                    it.name == name
+                }
+            }
+            val response = thetaRepository!!.listFiles(fileType, startPosition, entryCount, storage)
             val resultmap: Map<String, Any> = mapOf(
                 "fileList" to toResult(response!!.fileList),
                 "totalEntries" to response!!.totalEntries,
@@ -585,8 +660,12 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             return
         }
         try {
-            val response = thetaRepository!!.listAccessPoints()
-            result.success(toListAccessPointsResult(response))
+            val response = thetaRepository?.listAccessPoints()
+            response?.let {
+                result.success(toListAccessPointsResult(response))
+            } ?: run {
+                result.error(errorCode, messageNoResult, null)
+            }
         } catch (e: Exception) {
             result.error(e.javaClass.simpleName, e.message, null)
         }
@@ -606,7 +685,12 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             }!!
             val password = call.argument<String>("password")!!
             val connectionPriority = call.argument<Int>("connectionPriority")!!
-            thetaRepository!!.setAccessPointDynamically(ssid, ssidStealth, authMode, password, connectionPriority)
+
+            var proxy: ThetaRepository.Proxy? = null
+            (call.argument<Any>("proxy") as? Map<String, Any>)?.let {
+                proxy = toProxy(map = it)
+            }
+            thetaRepository?.setAccessPointDynamically(ssid, ssidStealth, authMode, password, connectionPriority, proxy)
             result.success(null)
         } catch (e: Exception) {
             result.error(e.javaClass.simpleName, e.message, null)
@@ -630,7 +714,12 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             val ipAddress = call.argument<String>("ipAddress")!!
             val subnetMask = call.argument<String>("subnetMask")!!
             val defaultGateway = call.argument<String>("defaultGateway")!!
-            thetaRepository!!.setAccessPointStatically(ssid, ssidStealth, authMode, password, connectionPriority, ipAddress, subnetMask, defaultGateway)
+
+            var proxy: ThetaRepository.Proxy? = null
+            (call.argument<Any>("proxy") as? Map<String, Any>)?.let {
+                proxy = toProxy(map = it)
+            }
+            thetaRepository?.setAccessPointStatically(ssid, ssidStealth, authMode, password, connectionPriority, ipAddress, subnetMask, defaultGateway, proxy)
             result.success(null)
         } catch (e: Exception) {
             result.error(e.javaClass.simpleName, e.message, null)
@@ -644,8 +733,252 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         }
         try {
             val params = call.arguments as String
-            thetaRepository!!.deleteAccessPoint(params)
+            thetaRepository?.deleteAccessPoint(params)
             result.success(null)
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun getMySetting(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+
+        try {
+            val captureModeName = call.argument<String>("captureMode")
+            val captureMode = ThetaRepository.CaptureModeEnum.values().find {
+                it.name == captureModeName
+            }
+
+            var response: ThetaRepository.Options? = null
+            captureMode?.let {
+                response = thetaRepository?.getMySetting(captureMode = it)
+            } ?: run {
+                result.error(errorCode, messageNoArgument, null)
+            }
+
+            response?.let {
+                result.success(toResult(options = it))
+            } ?: run {
+                result.error(errorCode, messageNoResult, null)
+            }
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun getMySettingFromOldModel(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+
+        try {
+            val names = call.argument<Any>("optionNames") as? List<String>
+            names?.let { names ->
+                val optionNames = toGetOptionsParam(data = names)
+                val response = thetaRepository?.getMySetting(optionNames = optionNames)
+                response?.let {
+                    result.success(toResult(options = it))
+                } ?: run {
+                    result.error(errorCode, messageNoResult, null)
+                }
+            } ?: run {
+                result.error(errorCode, messageNoArgument, null)
+                return
+            }
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun setMySetting(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        try {
+            val captureModeName = call.argument<String>("captureMode")
+            val captureMode = ThetaRepository.CaptureModeEnum.values().find {
+                it.name == captureModeName
+            }
+            val options = toSetOptionsParam(call.argument<Any>("options") as Map<String, Any>)
+
+            captureMode?.let {
+                thetaRepository?.setMySetting(captureMode = it, options = options)
+                result.success(null)
+            } ?: run {
+                result.error(errorCode, messageNoArgument, null)
+            }
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun deleteMySetting(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        try {
+            val captureModeName = call.argument<String>("captureMode")
+            val captureMode = ThetaRepository.CaptureModeEnum.values().find {
+                it.name == captureModeName
+            }
+
+            captureMode?.let {
+                thetaRepository?.deleteMySetting(captureMode = it)
+                result.success(null)
+            } ?: run {
+                result.error(errorCode, messageNoArgument, null)
+            }
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun listPlugins(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        try {
+            val response = thetaRepository?.listPlugins()
+            response?.let {
+                result.success(toPluginInfosResult(pluginInfoList = response))
+            } ?: run {
+                result.error(errorCode, messageNoResult, null)
+            }
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun setPlugin(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        try {
+            val params = call.arguments as? String
+            params?.let {
+                thetaRepository?.setPlugin(packageName = params)
+                result.success(null)
+            } ?: run {
+                result.error(errorCode, messageNoArgument, null)
+            }
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun startPlugin(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        try {
+            val params = call.arguments as? String
+            thetaRepository?.startPlugin(packageName = params)
+            result.success(null)
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun stopPlugin(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        try {
+            thetaRepository?.stopPlugin()
+            result.success(null)
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun getPluginLicense(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        try {
+            val params = call.arguments as? String
+            params?.let { params ->
+                val response = thetaRepository?.getPluginLicense(packageName = params)
+                response?.let {
+                    result.success(it)
+                } ?: run {
+                    result.error(errorCode, messageNoResult, null)
+                }
+            } ?: run {
+                result.error(errorCode, messageNoArgument, null)
+                return
+            }
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun getPluginOrders(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        try {
+            val response = thetaRepository?.getPluginOrders()
+            response?.let {
+                result.success(response)
+            } ?: run {
+                result.error(errorCode, messageNoResult, null)
+            }
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun setPluginOrders(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+
+        try {
+            val params = call.arguments as? List<String>
+            params?.let { params ->
+                thetaRepository?.setPluginOrders(plugins = params)
+                result.success(null)
+            } ?: run {
+                result.error(errorCode, messageNoArgument, null)
+                return
+            }
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun setBluetoothDevice(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        try {
+            val params = call.arguments as? String
+            params?.let { params ->
+                val response = thetaRepository?.setBluetoothDevice(uuid = params)
+                response?.let {
+                    result.success(it)
+                } ?: run {
+                    result.error(errorCode, messageNoResult, null)
+                }
+            } ?: run {
+                result.error(errorCode, messageNoArgument, null)
+                return
+            }
         } catch (e: Exception) {
             result.error(e.javaClass.simpleName, e.message, null)
         }
