@@ -489,15 +489,15 @@ class ProxyConverter : OptionConverter {
  */
 class TimeShiftConverter : OptionConverter {
   override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
-    objects.getMap("timeShift")?.let {
+    objects.getMap("timeShift")?.let { timeShiftMap ->
       val timeShift = ThetaRepository.TimeShiftSetting()
-      it.getBoolean("isFrontFirst")?.let {
-        timeShift.isFrontFirst = it
+      if (timeShiftMap.hasKey("isFrontFirst")) {
+        timeShift.isFrontFirst = timeShiftMap.getBoolean("isFrontFirst")
       }
-      it.getString("firstInterval")?.let {
+      timeShiftMap.getString("firstInterval")?.let {
         timeShift.firstInterval = ThetaRepository.TimeShiftIntervalEnum.valueOf(it)
       }
-      it.getString("secondInterval")?.let {
+      timeShiftMap.getString("secondInterval")?.let {
         timeShift.secondInterval = ThetaRepository.TimeShiftIntervalEnum.valueOf(it)
       }
       options.timeShift = timeShift
