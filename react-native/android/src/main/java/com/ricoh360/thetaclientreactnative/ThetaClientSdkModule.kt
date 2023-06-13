@@ -620,11 +620,12 @@ class ThetaClientReactNativeModule(
    * @param promise Promise for buildTimeShiftCapture
    */
   @ReactMethod
-  fun buildTimeShiftCapture(options: ReadableMap, interval: Int?, promise: Promise) {
+  fun buildTimeShiftCapture(options: ReadableMap, interval: ReadableArray, promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
     }
+    
     timeShiftCaptureBuilder?.let { builder ->
       launch {
         try {
@@ -635,7 +636,8 @@ class ThetaClientReactNativeModule(
             cvt?.setTimeShiftOption(options, builder)
           }
 
-          interval?.let {
+          val _interval = if (interval.size() > 0) interval.getInt(0) else null
+          _interval?.let {
             builder.setCheckStatusCommandInterval(it.toLong())
           }
 
