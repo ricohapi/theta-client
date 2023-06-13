@@ -1,6 +1,7 @@
 package com.ricoh360.thetaclient
 
 import com.ricoh360.thetaclient.capture.PhotoCapture
+import com.ricoh360.thetaclient.capture.TimeShiftCapture
 import com.ricoh360.thetaclient.capture.VideoCapture
 import com.ricoh360.thetaclient.transferred.*
 import io.ktor.client.call.*
@@ -3872,7 +3873,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @return PhotoCapture.Builder
      */
     fun getPhotoCaptureBuilder(): PhotoCapture.Builder {
-        return PhotoCapture.Builder(endpoint)
+        return PhotoCapture.Builder(endpoint, cameraModel)
     }
 
     /**
@@ -3882,6 +3883,15 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     fun getVideoCaptureBuilder(): VideoCapture.Builder {
         return VideoCapture.Builder(endpoint)
+    }
+
+    /**
+     * Get TimeShiftCapture.Builder for time-shift.
+     *
+     * @return TimeShiftCapture.Builder
+     */
+    fun getTimeShiftCaptureBuilder(): TimeShiftCapture.Builder {
+        return TimeShiftCapture.Builder(endpoint, cameraModel)
     }
 
     /**
