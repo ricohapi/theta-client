@@ -53,5 +53,5 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.1.2")
     implementation("com.soywiz.korlibs.krypto:krypto:3.4.0")
 
-    implementation("com.ricoh360.thetaclient:theta-client:1.1.0")
+    implementation("com.ricoh360.thetaclient:theta-client:1.2.0")
 }
