@@ -408,6 +408,8 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             func onSuccess(fileUrl: String) {
                 callback(fileUrl, nil)
             }
+            func onProgress(completion: Float) {
+            }
             func onError(exception: ThetaRepository.ThetaRepositoryException) {
                 callback(nil, exception as? Error)
             }
