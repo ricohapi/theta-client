@@ -26,10 +26,16 @@ class Theta {
         if (thetaRepository != nil) {
             return;
         }
+        var config: ThetaRepository.Config?
+
+        // Client mode authentication settings
+//        config = ThetaRepository.Config()
+//        config.clientMode = DigestAuth(username: "THETAXX12345678", password: "12345678")
+
         thetaRepository = try await withCheckedThrowingContinuation {continuation in
             ThetaRepository.Companion.shared.doNewInstance(
               endpoint:Self.endPoint,
-              config:nil,
+              config:config,
               timeout:nil
             ) {resp, error in
                 if let response = resp {
@@ -136,6 +142,8 @@ class Theta {
             }
             func onSuccess(fileUrl: String) {
                 callback(fileUrl, nil)
+            }
+            func onProgress(completion: Float) {
             }
             func onError(exception: ThetaException) {
                 callback(nil, exception as? Error)

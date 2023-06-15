@@ -125,7 +125,7 @@ void enableEventReceiver() {
   }
 
   @override
-  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, int startPosition) async {
+  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, int startPosition, StorageEnum? storage) async {
     var completer = Completer<ThetaFiles>();
     try {
       debugPrint('call listFiles');
@@ -133,7 +133,11 @@ void enableEventReceiver() {
         'fileType': fileType.rawValue,
         'entryCount': entryCount,
         'startPosition': startPosition,
+        'storage': storage?.rawValue,
       };
+      if (storage != null) {
+        params['storage'] = storage.rawValue;
+      }
       var result = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('listFiles', params) as Map<dynamic, dynamic>;
       var thetaFiles = ConvertUtils.convertThetaFiles(result);
       completer.complete(thetaFiles);
@@ -286,35 +290,31 @@ void enableEventReceiver() {
   }
 
   @override
-  Future<void> setAccessPointDynamically(
-    String ssid,
-    bool ssidStealth,
-    AuthModeEnum authMode,
-    String password,
-    int connectionPriority
-  ) async {
-    final Map params = <String, dynamic> {
+  Future<void> setAccessPointDynamically(String ssid, bool ssidStealth, AuthModeEnum authMode,
+      String password, int connectionPriority, Proxy? proxy) async {
+    final Map params = <String, dynamic>{
       'ssid': ssid,
       'ssidStealth': ssidStealth,
       'authMode': authMode.rawValue,
       'password': password,
       'connectionPriority': connectionPriority,
+      'proxy': proxy != null ? ConvertUtils.convertProxyParam(proxy) : null
     };
     return methodChannel.invokeMethod<void>('setAccessPointDynamically', params);
   }
 
   @override
   Future<void> setAccessPointStatically(
-    String ssid,
-    bool ssidStealth,
-    AuthModeEnum authMode,
-    String password,
-    int connectionPriority,
-    String ipAddress,
-    String subnetMask,
-    String defaultGateway    
-  ) async {
-    final Map params = <String, dynamic> {
+      String ssid,
+      bool ssidStealth,
+      AuthModeEnum authMode,
+      String password,
+      int connectionPriority,
+      String ipAddress,
+      String subnetMask,
+      String defaultGateway,
+      Proxy? proxy) async {
+    final Map params = <String, dynamic>{
       'ssid': ssid,
       'ssidStealth': ssidStealth,
       'authMode': authMode.rawValue,
@@ -323,6 +323,7 @@ void enableEventReceiver() {
       'ipAddress': ipAddress,
       'subnetMask': subnetMask,
       'defaultGateway': defaultGateway,
+      'proxy': proxy != null ? ConvertUtils.convertProxyParam(proxy) : null
     };
     return methodChannel.invokeMethod<void>('setAccessPointStatically', params);
   }

@@ -1,13 +1,24 @@
 import { AccessPoint, AuthModeEnum } from './access-point';
-import type { FileTypeEnum, ThetaFiles } from './theta-files';
+import type { FileTypeEnum, StorageEnum, ThetaFiles } from './theta-files';
 import type { ThetaState } from './theta-state';
 import type { ThetaInfo } from './theta-info';
 import type { MetaInfo } from './theta-meta';
 import type { PluginInfo } from './theta-plugin';
 
 import { NativeModules } from 'react-native';
-import type { OptionNameEnum, Options, CaptureModeEnum } from './options';
-import { PhotoCaptureBuilder, VideoCaptureBuilder } from '../capture';
+import type {
+  OptionNameEnum,
+  Options,
+  CaptureModeEnum,
+  Proxy,
+} from './options';
+import {
+  PhotoCaptureBuilder,
+  VideoCaptureBuilder,
+  TimeShiftCaptureBuilder,
+} from '../capture';
+import type { ThetaConfig } from './theta-config';
+import type { ThetaTimeout } from './theta-timeout';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 /**
@@ -15,13 +26,26 @@ const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
  *
  * @function initialize
  * @param {string} endPoint optional endpoint of camera
+ * @param {ThetaConfig} config Configuration of initialize. If null, get from THETA.
+ * @param {ThetaTimeout} timeout Timeout of HTTP call.
  * @return promise of boolean result
  **/
-export function initialize(endPoint?: string): Promise<boolean> {
-  if (!endPoint) {
-    endPoint = 'http://192.168.1.1';
-  }
-  return ThetaClientReactNative.initialize(endPoint);
+export function initialize(
+  endPoint: string = 'http://192.168.1.1',
+  config?: ThetaConfig,
+  timeout?: ThetaTimeout
+): Promise<boolean> {
+  return ThetaClientReactNative.initialize(endPoint, config, timeout);
+}
+
+/**
+ * Returns whether it is initialized or not.
+ *
+ * @function isInitialized
+ * @return promise of boolean result
+ **/
+export function isInitialized(): Promise<boolean> {
+  return ThetaClientReactNative.isInitialized();
 }
 
 /**
@@ -44,6 +68,17 @@ export function reset(): Promise<boolean> {
 export function getPhotoCaptureBuilder(): PhotoCaptureBuilder {
   ThetaClientReactNative.getPhotoCaptureBuilder();
   return new PhotoCaptureBuilder();
+}
+
+/**
+ * Get TimeShiftCaptureBuilder for time-shift.
+ *
+ * @function getTimeShiftCaptureBuilder
+ * @return created TimeShiftCaptureBuilder
+ */
+export function getTimeShiftCaptureBuilder(): TimeShiftCaptureBuilder {
+  ThetaClientReactNative.getTimeShiftCaptureBuilder();
+  return new TimeShiftCaptureBuilder();
 }
 
 /**
@@ -186,18 +221,21 @@ export function getThetaState(): Promise<ThetaState> {
  * @param {number} entryCount Desired number of entries to return.  If
  *   entryCount is more than the number of remaining files, just
  *   return entries of actual remaining files.
+ * @param {StorageEnum} storage Desired storage. If omitted, return current storage. (RICOH THETA X Version 2.00.0 or later)
  * @return promise with a list of file information and number of totalEntries.
  *   see [camera.listFiles](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md).
  */
 export function listFiles(
   fileTypeEnum: FileTypeEnum,
   startPosition: number = 0,
-  entryCount: number
+  entryCount: number,
+  storage?: StorageEnum
 ): Promise<ThetaFiles> {
   return ThetaClientReactNative.listFiles(
     fileTypeEnum,
     startPosition,
-    entryCount
+    entryCount,
+    storage
   );
 }
 
@@ -295,6 +333,7 @@ export function listAccessPoints(): Promise<AccessPoint[]> {
  * @param {AuthModeEnum} authMode Authentication mode.
  * @param {string} password Password. If authMode is "NONE", pass empty String.
  * @param {number} connectionPriority Connection priority 1 to 5.
+ * @param {Proxy} proxy Proxy information to be used for the access point.
  * @return promise of boolean result
  */
 export function setAccessPointDynamically(
@@ -302,14 +341,16 @@ export function setAccessPointDynamically(
   ssidStealth: boolean = false,
   authMode: AuthModeEnum = AuthModeEnum.NONE,
   password: string = '',
-  connectionPriority: number = 1
+  connectionPriority: number = 1,
+  proxy?: Proxy
 ): Promise<boolean> {
   return ThetaClientReactNative.setAccessPointDynamically(
     ssid,
     ssidStealth,
     authMode,
     password,
-    connectionPriority
+    connectionPriority,
+    proxy
   );
 }
 
@@ -325,6 +366,7 @@ export function setAccessPointDynamically(
  * @param {string} ipAddress IP address assigns to Theta.
  * @param {string} subnetMask Subnet mask.
  * @param {string} defaultGateway Default gateway.
+ * @param {Proxy} proxy Proxy information to be used for the access point.
  * @return promise of boolean result
  */
 export function setAccessPointStatically(
@@ -335,7 +377,8 @@ export function setAccessPointStatically(
   connectionPriority: number = 1,
   ipAddress: string,
   subnetMask: string,
-  defaultGateway: string
+  defaultGateway: string,
+  proxy?: Proxy
 ): Promise<boolean> {
   return ThetaClientReactNative.setAccessPointStatically(
     ssid,
@@ -345,7 +388,8 @@ export function setAccessPointStatically(
     connectionPriority,
     ipAddress,
     subnetMask,
-    defaultGateway
+    defaultGateway,
+    proxy
   );
 }
 
@@ -380,7 +424,9 @@ export function getMySetting(captureMode: CaptureModeEnum): Promise<Options> {
  * @param optionNames List of option names to acquire
  * @returns Options of my setting
  */
-export function getMySettingFromOldModel(optionNames: OptionNameEnum[]): Promise<Options> {
+export function getMySettingFromOldModel(
+  optionNames: OptionNameEnum[]
+): Promise<Options> {
   return ThetaClientReactNative.getMySettingFromOldModel(optionNames);
 }
 
@@ -391,7 +437,10 @@ export function getMySettingFromOldModel(optionNames: OptionNameEnum[]): Promise
  * @param options registered to My Settings
  * @returns Promise of boolean result, always true
  */
-export function setMySetting(captureMode: CaptureModeEnum, options: Options): Promise<boolean> {
+export function setMySetting(
+  captureMode: CaptureModeEnum,
+  options: Options
+): Promise<boolean> {
   return ThetaClientReactNative.setMySetting(captureMode, options);
 }
 
@@ -400,7 +449,9 @@ export function setMySetting(captureMode: CaptureModeEnum, options: Options): Pr
  * @param captureMode The target shooting mode
  * @returns Promise of boolean result, always true
  */
-export function deleteMySetting(captureMode: CaptureModeEnum): Promise<boolean> {
+export function deleteMySetting(
+  captureMode: CaptureModeEnum
+): Promise<boolean> {
   return ThetaClientReactNative.deleteMySetting(captureMode);
 }
 

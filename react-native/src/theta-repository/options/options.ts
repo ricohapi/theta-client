@@ -1,4 +1,14 @@
+import type { CameraControlSourceEnum } from './option-camera-control-source';
+import type { CameraModeEnum } from './option-camera-mode';
+import type { NetworkTypeEnum } from './option-network-type';
+import type { PowerSavingEnum } from './option-power-saving';
+import type { PreviewFormatEnum } from './option-preview-format';
+import type { Proxy } from './option-proxy';
+import type { ShootingMethodEnum } from './option-shooting-method';
+import type { ShutterSpeedEnum } from './option-shutter-speed';
+import type { TimeShift } from './option-time-shift';
 import type { WhiteBalanceAutoStrengthEnum } from './option-white-balance-auto-strength';
+import type { WlanFrequencyEnum } from './option-wlan-frequency';
 
 /** Aperture value. */
 export const ApertureEnum = {
@@ -364,6 +374,10 @@ export const MaxRecordableTimeEnum = {
   RECORDABLE_TIME_300: 'RECORDABLE_TIME_300',
   /** 1500 seconds for other than SC2. */
   RECORDABLE_TIME_1500: 'RECORDABLE_TIME_1500',
+  /** 7200 seconds for Theta X only */
+  RECORDABLE_TIME_7200: 'RECORDABLE_TIME_7200',
+  /** Just used by getMySetting/setMySetting command */
+  DO_NOT_UPDATE_MY_SETTING_CONDITION: 'DO_NOT_UPDATE_MY_SETTING_CONDITION'
 } as const;
 
 /** type definition of MaxRecordableTimeEnum */
@@ -438,7 +452,7 @@ export const WhiteBalanceEnum = {
 
 /** type definition of WhiteBalanceEnum */
 export type WhiteBalanceEnum =
-  typeof WhiteBalanceEnum[keyof typeof WhiteBalanceEnum];
+  (typeof WhiteBalanceEnum)[keyof typeof WhiteBalanceEnum];
 
 /** Camera setting options name. */
 export const OptionNameEnum = {
@@ -446,6 +460,10 @@ export const OptionNameEnum = {
   Aperture: 'Aperture',
   /** _bluetoothPower*/
   BluetoothPower: 'BluetoothPower',
+  /** _cameraControlSource */
+  CameraControlSource: 'CameraControlSource',
+  /** cameraMode */
+  CameraMode: 'CameraMode',
   /** captureMode */
   CaptureMode: 'CaptureMode',
   /** colorTemperature */
@@ -474,8 +492,22 @@ export const OptionNameEnum = {
   Language: 'Language',
   /** maxRecordableTime */
   MaxRecordableTime: 'MaxRecordableTime',
+  /** networkType */
+  NetworkType: 'NetworkType',
   /** offDelay */
   OffDelay: 'OffDelay',
+  /** password */
+  Password: 'Password',
+  /** powerSaving */
+  PowerSaving: 'PowerSaving',
+  /** previewFormat */
+  PreviewFormat: 'PreviewFormat',
+  /** proxy */
+  Proxy: 'Proxy',
+  /** shootingMethod */
+  ShootingMethod: 'ShootingMethod',
+  /** shutterSpeed */
+  ShutterSpeed: 'ShutterSpeed',
   /** sleepDelay */
   SleepDelay: 'SleepDelay',
   /** remainingPictures */
@@ -484,18 +516,25 @@ export const OptionNameEnum = {
   RemainingVideoSeconds: 'RemainingVideoSeconds',
   /** remainingSpace */
   RemainingSpace: 'RemainingSpace',
+  /** timeShift */
+  TimeShift: 'TimeShift',
   /** totalSpace */
   TotalSpace: 'TotalSpace',
   /** shutterVolume */
   ShutterVolume: 'ShutterVolume',
+  /** username */
+  Username: 'Username',
   /** whiteBalance */
   WhiteBalance: 'WhiteBalance',
   /** _whiteBalanceAutoStrength */
   WhiteBalanceAutoStrength: 'WhiteBalanceAutoStrength',
+  /** _wlanFrequency */
+  WlanFrequency: 'WlanFrequency',
 } as const;
 
 /** type definition of OptionNameEnum */
-export type OptionNameEnum = typeof OptionNameEnum[keyof typeof OptionNameEnum];
+export type OptionNameEnum =
+  (typeof OptionNameEnum)[keyof typeof OptionNameEnum];
 
 /** camera setting options */
 export type Options = {
@@ -503,6 +542,10 @@ export type Options = {
   aperture?: ApertureEnum;
   /** BluetoothPower */
   bluetoothPower?: BluetoothPowerEnum;
+  /** camera control source. */
+  cameraControlSource?: CameraControlSourceEnum;
+  /** Camera mode. */
+  cameraMode?: CameraModeEnum;
   /** Shooting mode. */
   captureMode?: CaptureModeEnum;
   /** Color temperature of the camera (Kelvin). */
@@ -531,24 +574,49 @@ export type Options = {
   language?: LanguageEnum;
   /** Maximum recordable time (in seconds) of the camera. */
   maxRecordableTime?: MaxRecordableTimeEnum;
+  /** Network type of the camera */
+  networkType?: NetworkTypeEnum;
   /** Length of standby time before the camera automatically powers OFF. */
   offDelay?: OffDelayEnum;
-  /** Length of standby time before the camera enters the sleep mode. */
-  sleepDelay?: SleepDelayEnum;
+  /** Password used for digest authentication when _networkType is set to client mode. */
+  password?: String;
+  /** Power saving mode */
+  powerSaving?: PowerSavingEnum;
+  /** Format of live view  */
+  previewFormat?: PreviewFormatEnum;
+  /** Proxy information to be used when wired LAN is enabled. */
+  proxy?: Proxy;
   /** The estimated remaining number of shots for the current shooting settings. */
   remainingPictures?: number;
   /** The estimated remaining shooting time (sec.) for the current video shooting settings. */
   remainingVideoSeconds?: number;
   /** Remaining usable storage space (byte). */
   remainingSpace?: number;
-  /** Total storage space (byte). */
-  totalSpace?: number;
+  /** Shooting method for My Settings mode. In RICOH THETA X, it is used outside of MySetting.  */
+  shootingMethod?: ShootingMethodEnum;
+  /**
+   * Shutter speed (sec).
+   *
+   * It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
+   * Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
+   */
+  shutterSpeed?: ShutterSpeedEnum;
   /** Shutter volume. */
   shutterVolume?: number;
+  /** Length of standby time before the camera enters the sleep mode. */
+  sleepDelay?: SleepDelayEnum;
+  /** Time shift shooting */
+  timeShift?: TimeShift;
+  /** Total storage space (byte). */
+  totalSpace?: number;
+  /** User name used for digest authentication when _networkType is set to client mode. */
+  username?: String;
   /** White balance. */
   whiteBalance?: WhiteBalanceEnum;
   /** White balance auto strength. */
   whiteBalanceAutoStrength?: WhiteBalanceAutoStrengthEnum;
+  /** WLAN frequency */
+  wlanFrequency?: WlanFrequencyEnum;
   /** GPS setting used in only capturing */
   _gpsTagRecording?: GpsTagRecordingEnum;
 };

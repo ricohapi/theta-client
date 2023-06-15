@@ -56,7 +56,7 @@ class WhiteBalanceAutoStrengthTest {
      * Set option _whiteBalanceAutoStrength.
      */
     @Test
-    fun setOptionAiAutoThumbnailTest() = runTest {
+    fun setOptionWhiteBalanceAutoStrengthTest() = runTest {
         val value = Pair(ThetaRepository.WhiteBalanceAutoStrengthEnum.ON, WhiteBalanceAutoStrength.ON)
 
         MockApiClient.onRequest = { request ->
@@ -77,7 +77,7 @@ class WhiteBalanceAutoStrengthTest {
      * Convert ThetaRepository.Options to Options.
      */
     @Test
-    fun convertOptionAiAutoThumbnailTest() = runTest {
+    fun convertOptionWhiteBalanceAutoStrengthTest() = runTest {
         val values = listOf(
             Pair(ThetaRepository.WhiteBalanceAutoStrengthEnum.ON, WhiteBalanceAutoStrength.ON),
             Pair(ThetaRepository.WhiteBalanceAutoStrengthEnum.OFF, WhiteBalanceAutoStrength.OFF),

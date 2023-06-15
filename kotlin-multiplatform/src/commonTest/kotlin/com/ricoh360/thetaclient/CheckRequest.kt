@@ -35,28 +35,38 @@ class CheckRequest {
 
         fun checkSetOptions(
             request: HttpRequestData,
-            captureMode: CaptureMode? = null,
-            filter: ImageFilter? = null,
-            fileFormat: MediaFileFormat? = null,
-            maxRecordableTime: Int? = null,
-            offDelay: Int? = null,
-            sleepDelay: Int? = null,
             aperture: Float? = null,
+            bluetoothPower: BluetoothPower? = null,
+            cameraControlSource: CameraControlSource? = null,
+            cameraMode: CameraMode? = null,
+            captureMode: CaptureMode? = null,
+            clientVersion: Int? = null,
             colorTemperature: Int? = null,
+            dateTimeZone: String? = null,
             exposureCompensation: Float? = null,
             exposureDelay: Int? = null,
             exposureProgram: Int? = null,
+            filter: ImageFilter? = null,
+            fileFormat: MediaFileFormat? = null,
             gpsInfo: GpsInfo? = null,
             gpsTagRecording: GpsTagRecording? = null,
             iso: Int? = null,
             isoAutoHighLimit: Int? = null,
             language: Language? = null,
-            whiteBalance: WhiteBalance? = null,
-            clientVersion: Int? = null,
+            maxRecordableTime: Int? = null,
+            networkType: NetworkType? = null,
+            offDelay: Int? = null,
+            powerSaving: PowerSaving? = null,
+            previewFormat: PreviewFormat? = null,
+            proxy: Proxy? = null,
+            shootingMethod: ShootingMethod? = null,
+            shutterSpeed: Double? = null,
             shutterVolume: Int? = null,
-            dateTimeZone: String? = null,
-            bluetoothPower: BluetoothPower? = null,
-            whiteBalanceAutoStrength: WhiteBalanceAutoStrength? = null
+            sleepDelay: Int? = null,
+            timeShift: TimeShift? = null,
+            whiteBalance: WhiteBalance? = null,
+            whiteBalanceAutoStrength: WhiteBalanceAutoStrength? = null,
+            wlanFrequency: WlanFrequency? = null,
         ) {
             assertEquals(request.url.encodedPath, "/osc/commands/execute", "command request path")
 
@@ -68,29 +78,29 @@ class CheckRequest {
             }
             val optionsRequest = js.decodeFromString<SetOptionsRequest>(body.text)
 
-            captureMode?.let {
-                assertEquals(optionsRequest.parameters.options.captureMode, it, "setOptions captureMode")
-            }
-            filter?.let {
-                assertEquals(optionsRequest.parameters.options._filter, it, "setOptions _filter ${optionsRequest.parameters.options._filter} $it")
-            }
-            fileFormat?.let {
-                assertEquals(optionsRequest.parameters.options.fileFormat, it, "setOptions fileFormat")
-            }
-            maxRecordableTime?.let {
-                assertEquals(optionsRequest.parameters.options._maxRecordableTime, it, "setOptions maxRecordableTime")
-            }
-            offDelay?.let {
-                assertEquals(optionsRequest.parameters.options.offDelay, it, "setOptions offDelay")
-            }
-            sleepDelay?.let {
-                assertEquals(optionsRequest.parameters.options.sleepDelay, it, "setOptions sleepDelay")
-            }
             aperture?.let {
                 assertEquals(optionsRequest.parameters.options.aperture, it, "setOptions aperture")
             }
+            bluetoothPower?.let {
+                assertEquals(optionsRequest.parameters.options._bluetoothPower, it, "setOptions bluetoothPower")
+            }
+            cameraControlSource?.let {
+                assertEquals(optionsRequest.parameters.options._cameraControlSource, it, "setOptions cameraControlSource")
+            }
+            cameraMode?.let {
+                assertEquals(optionsRequest.parameters.options._cameraMode, it, "setOptions cameraMode")
+            }
+            captureMode?.let {
+                assertEquals(optionsRequest.parameters.options.captureMode, it, "setOptions captureMode")
+            }
+            clientVersion?.let {
+                assertEquals(optionsRequest.parameters.options.clientVersion, it, "setOptions clientVersion")
+            }
             colorTemperature?.let {
                 assertEquals(optionsRequest.parameters.options._colorTemperature, it, "setOptions colorTemperature")
+            }
+            dateTimeZone?.let {
+                assertEquals(optionsRequest.parameters.options.dateTimeZone, it, "setOptions dateTimeZone")
             }
             exposureCompensation?.let {
                 assertEquals(optionsRequest.parameters.options.exposureCompensation, it, "setOptions exposureCompensation")
@@ -100,6 +110,12 @@ class CheckRequest {
             }
             exposureProgram?.let {
                 assertEquals(optionsRequest.parameters.options.exposureProgram, it, "setOptions exposureProgram")
+            }
+            filter?.let {
+                assertEquals(optionsRequest.parameters.options._filter, it, "setOptions _filter ${optionsRequest.parameters.options._filter} $it")
+            }
+            fileFormat?.let {
+                assertEquals(optionsRequest.parameters.options.fileFormat, it, "setOptions fileFormat")
             }
             gpsInfo?.let {
                 assertEquals(optionsRequest.parameters.options.gpsInfo, it, "setOptions gpsInfo")
@@ -116,23 +132,47 @@ class CheckRequest {
             language?.let {
                 assertEquals(optionsRequest.parameters.options._language, it, "setOptions language")
             }
-            whiteBalance?.let {
-                assertEquals(optionsRequest.parameters.options.whiteBalance, it, "setOptions whiteBalance")
+            maxRecordableTime?.let {
+                assertEquals(optionsRequest.parameters.options._maxRecordableTime, it, "setOptions maxRecordableTime")
             }
-            clientVersion?.let {
-                assertEquals(optionsRequest.parameters.options.clientVersion, it, "setOptions clientVersion")
+            networkType?.let {
+                assertEquals(optionsRequest.parameters.options._networkType, it, "setOptions networkType")
+            }
+            offDelay?.let {
+                assertEquals(optionsRequest.parameters.options.offDelay, it, "setOptions offDelay")
+            }
+            powerSaving?.let {
+                assertEquals(optionsRequest.parameters.options._powerSaving, it, "setOptions powerSaving")
+            }
+            previewFormat?.let {
+                assertEquals(optionsRequest.parameters.options.previewFormat, it, "setOptions previewFormat")
+            }
+            proxy?.let {
+                assertEquals(optionsRequest.parameters.options._proxy, it, "setOptions proxy")
+            }
+            shootingMethod?.let {
+                assertEquals(optionsRequest.parameters.options._shootingMethod, it, "setOptions shootingMethod")
+            }
+            shutterSpeed?.let {
+                assertEquals(optionsRequest.parameters.options.shutterSpeed, it, "setOptions shutterSpeed")
             }
             shutterVolume?.let {
                 assertEquals(optionsRequest.parameters.options._shutterVolume, it, "setOptions shutterVolume")
             }
-            dateTimeZone?.let {
-                assertEquals(optionsRequest.parameters.options.dateTimeZone, it, "setOptions dateTimeZone")
+            sleepDelay?.let {
+                assertEquals(optionsRequest.parameters.options.sleepDelay, it, "setOptions sleepDelay")
             }
-            bluetoothPower?.let {
-                assertEquals(optionsRequest.parameters.options._bluetoothPower, it, "setOptions bluetoothPower")
+            timeShift?.let {
+                assertEquals(optionsRequest.parameters.options._timeShift, it, "setOptions timeShift")
+            }
+            whiteBalance?.let {
+                assertEquals(optionsRequest.parameters.options.whiteBalance, it, "setOptions whiteBalance")
             }
             whiteBalanceAutoStrength?.let {
                 assertEquals(optionsRequest.parameters.options._whiteBalanceAutoStrength, it, "setOptions whiteBalanceAutoStrength")
+            }
+            wlanFrequency?.let {
+                assertEquals(optionsRequest.parameters.options._wlanFrequency, it, "setOptions wlanFrequency")
             }
         }
 

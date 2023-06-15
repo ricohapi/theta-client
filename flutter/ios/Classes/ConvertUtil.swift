@@ -2,6 +2,8 @@ import Flutter
 import UIKit
 import THETAClient
 
+let KEY_CLIENT_MODE = "clientMode"
+
 public class ConvertUtil: NSObject {
 }
 
@@ -18,13 +20,16 @@ func getEnumValue<T, E: KotlinEnum<T>>(values: KotlinArray<E>, name: String) -> 
 func convertResult(fileInfoList: [ThetaRepository.FileInfo]) -> [[String: Any]] {
     var resultList = [[String: Any]]()
     fileInfoList.forEach({ fileInfo in
-        let item = [
+        var item = [
             "name": fileInfo.name,
             "size": fileInfo.size,
             "dateTime": fileInfo.dateTime,
             "fileUrl": fileInfo.fileUrl,
             "thumbnailUrl": fileInfo.thumbnailUrl,
         ]
+        if let storageID = fileInfo.storageID {
+            item["storageID"] = storageID
+        }
         resultList.append(item)
     })
     return resultList
@@ -171,6 +176,34 @@ func toGpsInfo(params: [String : Any]) -> ThetaRepository.GpsInfo {
     )
 }
 
+func toProxy(params: [String : Any]) -> ThetaRepository.Proxy {
+    return ThetaRepository.Proxy(
+        use: params["use"] as? Bool ?? false,
+        url: params["url"] as? String,
+        port: toKotlinInt(value: params["port"]),
+        userid: params["userid"] as? String,
+        password: params["password"] as? String
+    )
+}
+
+func toTimeShift(params: [String : Any]) -> ThetaRepository.TimeShiftSetting {
+    var firstInterval: ThetaRepository.TimeShiftIntervalEnum? = nil;
+    if let name = params["firstInterval"] as? String {
+        firstInterval = getEnumValue(values: ThetaRepository.TimeShiftIntervalEnum.values(), name: name)
+    }
+
+    var secondInterval: ThetaRepository.TimeShiftIntervalEnum? = nil;
+    if let name = params["secondInterval"] as? String {
+        secondInterval = getEnumValue(values: ThetaRepository.TimeShiftIntervalEnum.values(), name: name)
+    }
+
+    return ThetaRepository.TimeShiftSetting(
+        isFrontFirst: toKotlinBoolean(value: params["isFrontFirst"]),
+        firstInterval: firstInterval,
+        secondInterval: secondInterval
+    )
+}
+
 func convertGetOptionsParam(params: [String]) -> [ThetaRepository.OptionNameEnum] {
     var array: [ThetaRepository.OptionNameEnum] = []
     let values = ThetaRepository.OptionNameEnum.values()
@@ -186,6 +219,24 @@ func convertResult(gpsInfo: ThetaRepository.GpsInfo) -> [String: Any] {
         "longitude": gpsInfo.longitude,
         "altitude": gpsInfo.altitude,
         "dateTimeZone": gpsInfo.dateTimeZone,
+    ]
+}
+
+func convertResult(proxy: ThetaRepository.Proxy) -> [String: Any] {
+    return [
+        "use": proxy.use,
+        "url": proxy.url,
+        "port": proxy.port,
+        "userid": proxy.userid,
+        "password": proxy.password,
+    ]
+}
+
+func convertResult(timeshift: ThetaRepository.TimeShiftSetting) -> [String: Any] {
+    return [
+        "isFrontFirst": convertKotlinBooleanToBool(value: timeshift.isFrontFirst),
+        "firstInterval": timeshift.firstInterval?.name,
+        "secondInterval": timeshift.secondInterval?.name,
     ]
 }
 
@@ -205,6 +256,10 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
             } else if value is ThetaRepository.GpsInfo {
                 let gpsInfo = value as! ThetaRepository.GpsInfo
                 result[name.name] = convertResult(gpsInfo: gpsInfo)
+            } else if value is ThetaRepository.Proxy, let proxy = value as? ThetaRepository.Proxy {
+                result[name.name] = convertResult(proxy: proxy)
+            } else if value is ThetaRepository.TimeShiftSetting, let timeshift = value as? ThetaRepository.TimeShiftSetting {
+                result[name.name] = convertResult(timeshift: timeshift)
             }
         }
     }
@@ -216,6 +271,20 @@ func convertKotlinBooleanToBool(value: Any?) -> Bool? {
     guard value is KotlinBoolean, let numVal = value as? NSNumber else { return false }
 
     return numVal.boolValue
+}
+
+func toKotlinInt(value: Any?) -> KotlinInt? {
+    guard let value = value as? Int else {
+        return nil
+    }
+    return KotlinInt(integerLiteral: value)
+}
+
+func toKotlinBoolean(value: Any?) -> KotlinBoolean? {
+    guard let value = value as? Bool else {
+        return nil
+    }
+    return KotlinBoolean(booleanLiteral: value)
 }
 
 func convertSetOptionsParam(params: [String: Any]) -> ThetaRepository.Options {
@@ -230,6 +299,12 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     switch (name) {
     case ThetaRepository.OptionNameEnum.aperture.name:
         options.aperture = getEnumValue(values: ThetaRepository.ApertureEnum.values(), name: value as! String)!
+        break
+    case ThetaRepository.OptionNameEnum.cameracontrolsource.name:
+        options.cameraControlSource = getEnumValue(values: ThetaRepository.CameraControlSourceEnum.values(), name: value as! String)!
+        break
+    case ThetaRepository.OptionNameEnum.cameramode.name:
+        options.cameraMode = getEnumValue(values: ThetaRepository.CameraModeEnum.values(), name: value as! String)!
         break
     case ThetaRepository.OptionNameEnum.capturemode.name:
         options.captureMode = getEnumValue(values: ThetaRepository.CaptureModeEnum.values(), name: value as! String)!
@@ -272,11 +347,26 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         break
     case ThetaRepository.OptionNameEnum.maxrecordabletime.name:
         options.maxRecordableTime = getEnumValue(values: ThetaRepository.MaxRecordableTimeEnum.values(), name: value as! String)!
+        break
+    case ThetaRepository.OptionNameEnum.networktype.name:
+        options.networkType = getEnumValue(values: ThetaRepository.NetworkTypeEnum.values(), name: value as! String)!
+        break
     case ThetaRepository.OptionNameEnum.offdelay.name:
         options.offDelay = getEnumValue(values: ThetaRepository.OffDelayEnum.values(), name: value as! String)!
         break
-    case ThetaRepository.OptionNameEnum.sleepdelay.name:
-        options.sleepDelay = getEnumValue(values: ThetaRepository.SleepDelayEnum.values(), name: value as! String)!
+    case ThetaRepository.OptionNameEnum.password.name:
+        options.password = value as? String
+        break;
+    case ThetaRepository.OptionNameEnum.powersaving.name:
+        options.powerSaving = getEnumValue(values: ThetaRepository.PowerSavingEnum.values(), name: value as! String)!
+        break;
+    case ThetaRepository.OptionNameEnum.previewformat.name:
+        options.previewFormat = getEnumValue(values: ThetaRepository.PreviewFormatEnum.values(), name: value as! String)!
+        break;
+    case ThetaRepository.OptionNameEnum.proxy.name:
+        if let params = value as? [String : Any] {
+            options.proxy = toProxy(params: params)
+        }
         break
     case ThetaRepository.OptionNameEnum.remainingpictures.name:
         options.remainingPictures = KotlinInt(integerLiteral: value as! Int)
@@ -287,24 +377,53 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.remainingspace.name:
         options.remainingSpace = KotlinLong(integerLiteral: value as! Int)
         break
-    case ThetaRepository.OptionNameEnum.totalspace.name:
-        options.totalSpace = KotlinLong(integerLiteral: value as! Int)
-        break
+    case ThetaRepository.OptionNameEnum.shootingmethod.name:
+        options.shootingMethod = getEnumValue(values: ThetaRepository.ShootingMethodEnum.values(), name: value as! String)!
+        break;
+    case ThetaRepository.OptionNameEnum.shutterspeed.name:
+        options.shutterSpeed = getEnumValue(values: ThetaRepository.ShutterSpeedEnum.values(), name: value as! String)!
+        break;
     case ThetaRepository.OptionNameEnum.shuttervolume.name:
         options.shutterVolume = KotlinInt(integerLiteral: value as! Int)
         break
+    case ThetaRepository.OptionNameEnum.sleepdelay.name:
+        options.sleepDelay = getEnumValue(values: ThetaRepository.SleepDelayEnum.values(), name: value as! String)!
+        break
+    case ThetaRepository.OptionNameEnum.timeshift.name:
+        if let params = value as? [String : Any] {
+            options.timeShift = toTimeShift(params: params)
+        }
+        break
+    case ThetaRepository.OptionNameEnum.totalspace.name:
+        options.totalSpace = KotlinLong(integerLiteral: value as! Int)
+        break
+    case ThetaRepository.OptionNameEnum.username.name:
+        options.username = value as? String
+        break;
     case ThetaRepository.OptionNameEnum.whitebalance.name:
         options.whiteBalance = getEnumValue(values: ThetaRepository.WhiteBalanceEnum.values(), name: value as! String)!
         break
     case ThetaRepository.OptionNameEnum.whitebalanceautostrength.name:
         options.whiteBalanceAutoStrength = getEnumValue(values: ThetaRepository.WhiteBalanceAutoStrengthEnum.values(), name: value as! String)!
         break
+    case ThetaRepository.OptionNameEnum.wlanfrequency.name:
+        options.wlanFrequency = getEnumValue(values: ThetaRepository.WlanFrequencyEnum.values(), name: value as! String)!
+        break
     default: break
     }
 }
 
+func toDigetAuth(params: [String : String?]?) -> DigestAuth? {
+    guard let params = params,
+          let username = params["username"] as? String
+    else { return nil }
+    
+    let password = params["password"] as? String
+    return DigestAuth(username: username, password: password)
+}
+
 func toConfig(params: [String : Any]) -> ThetaRepository.Config {
-    let config = ThetaRepository.Config(dateTime: nil, language: nil, offDelay: nil, sleepDelay: nil, shutterVolume: nil)
+    let config = ThetaRepository.Config()
     params.forEach { key, value in
         switch (key) {
         case ThetaRepository.OptionNameEnum.datetimezone.name:
@@ -317,6 +436,8 @@ func toConfig(params: [String : Any]) -> ThetaRepository.Config {
             config.sleepDelay = getEnumValue(values: ThetaRepository.SleepDelayEnum.values(), name: value as! String)!
         case ThetaRepository.OptionNameEnum.shuttervolume.name:
             config.shutterVolume = KotlinInt(integerLiteral: value as! Int)
+        case KEY_CLIENT_MODE:
+            config.clientMode = toDigetAuth(params: value as? [String : String?])
         default:
             break
         }
@@ -385,6 +506,9 @@ func convertResult(accessPointList: [ThetaRepository.AccessPoint]) -> [[String: 
         }
         if let defaultGateway = accessPoint.defaultGateway {
             result["defaultGateway"] = defaultGateway
+        }
+        if let proxy = accessPoint.proxy {
+            result["proxy"] = convertResult(proxy: proxy)
         }
         resultList.append(result)
     })

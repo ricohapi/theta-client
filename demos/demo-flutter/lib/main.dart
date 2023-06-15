@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:theta_client_flutter/digest_auth.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
 void main() {
@@ -61,6 +62,12 @@ class _MyAppState extends State<MyApp> {
         _initializing = true;
         debugPrint('start initialize');
         await _thetaClientFlutter.initialize(endpoint);
+
+        // // Client mode authentication settings
+        // final config = ThetaConfig();
+        // config.clientMode = DigestAuth('THETAXX12345678', '12345678');
+        // await _thetaClientFlutter.initialize(endpoint, config);
+
         isInitTheta = true;
       }
     } on PlatformException {
