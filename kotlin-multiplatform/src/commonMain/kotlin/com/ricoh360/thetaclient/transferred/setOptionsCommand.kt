@@ -460,6 +460,16 @@ data class Options(
     var previewFormatSupport: List<PreviewFormat>? = null,
 
     /**
+     * Preset mode for Theta SC2
+     */
+    var _preset: Preset? = null,
+
+    /**
+     * Supported Preset.
+     */
+    var _presetSupport: List<Preset>? = null,
+
+    /**
      * @see Proxy
      */
     var _proxy: Proxy? = null,
@@ -731,7 +741,19 @@ enum class CaptureMode {
      * Live streaming mode
      */
     @SerialName("_liveStreaming")
-    LIVESTREAMING,
+    LIVE_STREAMING,
+
+    /**
+     * Interval mode of Theta SC2.
+     */
+    @SerialName("interval")
+    INTERVAL,
+
+    /**
+     * Preset mode of Theta SC2.
+     */
+    @SerialName("_preset")
+    PRESET,
 }
 
 /**
@@ -877,6 +899,52 @@ enum class ShootingMethod {
      */
     @SerialName("burst")
     BURST,
+}
+
+/**
+ * Preset mode for Theta SC2 and Theta SC2 for business.
+ */
+@Serializable
+enum class Preset {
+    /**
+     * Preset "Face" mode suitable for portrait shooting just for Theta SC2.
+     *
+     * A person’s face is detected and its position is adjusted to the center of the image
+     * to obtain a clear image of the person.
+     */
+    @SerialName("face")
+    FACE,
+
+    /**
+     * Preset "Night View" mode just for Theta SC2.
+     *
+     * The dynamic range of bright areas is expanded to reduce noise.
+     * In addition, a person’s face is detected to obtain a clear image of the person.
+     */
+    @SerialName("nightView")
+    NIGHT_VIEW,
+
+    /**
+     * Preset "Lens-by-Lens Exposure" mode just for Theta SC2.
+     *
+     * Image processing such as exposure adjustment and white balance adjustment is performed
+     * individually for each image captured with the front and rear lenses.
+     * This mode is suitable for capturing scenes with significantly different brightness conditions
+     * between the camera front side and the camera rear side.
+     * Images captured with the front and rear lenses are displayed side by side
+     */
+    @SerialName("lensbylensExposure")
+    LENS_BY_LENS_EXPOSURE,
+
+    /**
+     * Preset "Room" mode just for SC2 for business.
+     *
+     * Suitable for indoor shooting where there is gap in brightness between outdoors and indoors.
+     * Also, the self-timer function enables time shift between shooting with the front lens
+     * and rear lens making it possible for the photographer not to be captured in the image.
+     */
+    @SerialName("room")
+    ROOM,
 }
 
 /**

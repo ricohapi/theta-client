@@ -728,6 +728,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _preset
+         */
+        Preset("_preset", PresetEnum::class),
+
+        /**
+         * Option name
          * previewFormat
          */
         PreviewFormat("previewFormat", PreviewFormatEnum::class),
@@ -982,6 +988,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var powerSaving: PowerSavingEnum? = null,
 
         /**
+         * Preset mode of Theta SC2 anf Theta SC2 for business.
+         */
+        var preset: PresetEnum? = null,
+
+        /**
          * Format of live view.
          */
         var previewFormat: PreviewFormatEnum? = null,
@@ -1094,6 +1105,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             offDelay = null,
             password = null,
             powerSaving = null,
+            preset = null,
             previewFormat = null,
             proxy = null,
             shootingMethod = null,
@@ -1138,6 +1150,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             offDelay = options.offDelay?.let { OffDelayEnum.get(it) },
             password = options._password,
             powerSaving = options._powerSaving?.let { PowerSavingEnum.get(it) },
+            preset = options._preset?.let { PresetEnum.get(it) },
             previewFormat = options.previewFormat?.let { PreviewFormatEnum.get(it) },
             proxy = options._proxy?.let { Proxy(it) },
             shootingMethod = options._shootingMethod?.let { ShootingMethodEnum.get(it) },
@@ -1183,6 +1196,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 offDelay = offDelay?.sec,
                 _password = password,
                 _powerSaving = powerSaving?.value,
+                _preset = preset?.value,
                 previewFormat = previewFormat?.toPreviewFormat(),
                 _proxy = proxy?.toTransferredProxy(),
                 sleepDelay = sleepDelay?.sec,
@@ -1235,6 +1249,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.OffDelay -> offDelay
                 OptionNameEnum.Password -> password
                 OptionNameEnum.PowerSaving -> powerSaving
+                OptionNameEnum.Preset -> preset
                 OptionNameEnum.PreviewFormat -> previewFormat
                 OptionNameEnum.Proxy -> proxy
                 OptionNameEnum.RemainingPictures -> remainingPictures
@@ -1288,6 +1303,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.OffDelay -> offDelay = value as OffDelay
                 OptionNameEnum.Password -> password = value as String
                 OptionNameEnum.PowerSaving -> powerSaving = value as PowerSavingEnum
+                OptionNameEnum.Preset -> preset = value as PresetEnum
                 OptionNameEnum.PreviewFormat -> previewFormat = value as PreviewFormatEnum
                 OptionNameEnum.Proxy -> proxy = value as Proxy
                 OptionNameEnum.ShootingMethod -> shootingMethod = value as ShootingMethodEnum
@@ -1484,7 +1500,26 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Shooting mode.
          * Video capture mode
          */
-        VIDEO(CaptureMode.VIDEO);
+        VIDEO(CaptureMode.VIDEO),
+
+        /**
+         * Shooting mode.
+         * Live preview mode.
+         * This mode can not be set.
+         */
+        LIVE_STREAMING(CaptureMode.LIVE_STREAMING),
+
+        /**
+         * Shooting mode.
+         * Interval still image capture mode just for Theta SC2 and Theta SC2 for business.
+         */
+        INTERVAL(CaptureMode.INTERVAL),
+
+        /**
+         * Shooting mode.
+         * Preset mode just for Theta SC2 and Theta SC2 for business.
+         */
+        PRESET(CaptureMode.PRESET);
 
         companion object {
             /**
@@ -2989,6 +3024,59 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @return PowerSavingEnum
              */
             fun get(value: PowerSaving): PowerSavingEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Preset mode of Theta SC2 and Theta SC2 for business.
+     */
+    enum class PresetEnum(val value: Preset) {
+        /**
+         * Preset "Face" mode suitable for portrait shooting just for Theta SC2.
+         *
+         * A person’s face is detected and its position is adjusted to the center of the image
+         * to obtain a clear image of the person.
+         */
+        FACE(Preset.FACE),
+
+        /**
+         * Preset "Night View" mode just for Theta SC2.
+         *
+         * The dynamic range of bright areas is expanded to reduce noise.
+         * In addition, a person’s face is detected to obtain a clear image of the person.
+         */
+        NIGHT_VIEW(Preset.NIGHT_VIEW),
+
+        /**
+         * Preset "Lens-by-Lens Exposure" mode just for Theta SC2.
+         *
+         * Image processing such as exposure adjustment and white balance adjustment is performed
+         * individually for each image captured with the front and rear lenses.
+         * This mode is suitable for capturing scenes with significantly different brightness conditions
+         * between the camera front side and the camera rear side.
+         * Images captured with the front and rear lenses are displayed side by side
+         */
+        LENS_BY_LENS_EXPOSURE(Preset.LENS_BY_LENS_EXPOSURE),
+
+        /**
+         * Preset "Room" mode just for SC2 for business.
+         *
+         * Suitable for indoor shooting where there is gap in brightness between outdoors and indoors.
+         * Also, the self-timer function enables time shift between shooting with the front lens
+         * and rear lens making it possible for the photographer not to be captured in the image.
+         */
+        ROOM(Preset.ROOM);
+
+        companion object {
+            /**
+             * Convert Preset to PresetEnum
+             *
+             * @param value
+             * @return PresetEnum
+             */
+            fun get(value: Preset): PresetEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }

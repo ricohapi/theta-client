@@ -40,6 +40,7 @@ class OptionsTest {
         val offDelay = ThetaRepository.OffDelayEnum.OFF_DELAY_10M
         val password = "password"
         val powerSaving = ThetaRepository.PowerSavingEnum.ON
+        val preset = ThetaRepository.PresetEnum.FACE
         val previewFormat = ThetaRepository.PreviewFormatEnum.W1024_H512_F30
         val proxy = ThetaRepository.Proxy(use = false, url = "", port = 8080)
         val remainingPictures = 100
@@ -83,6 +84,7 @@ class OptionsTest {
             offDelay = offDelay,
             password = password,
             powerSaving = powerSaving,
+            preset = preset,
             previewFormat = previewFormat,
             proxy = proxy,
             remainingPictures = remainingPictures,
@@ -126,6 +128,7 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.OffDelay), offDelay, "offDelay")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Password), password, "password")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.PowerSaving), powerSaving, "powerSaving")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Preset), preset, "preset")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.PreviewFormat), previewFormat, "previewFormat")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Proxy), proxy, "proxy")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.RemainingPictures), remainingPictures, "remainingPictures")
@@ -171,6 +174,7 @@ class OptionsTest {
             Pair(ThetaRepository.OptionNameEnum.OffDelay, ThetaRepository.OffDelayEnum.OFF_DELAY_10M),
             Pair(ThetaRepository.OptionNameEnum.Password, "password"),
             Pair(ThetaRepository.OptionNameEnum.PowerSaving, ThetaRepository.PowerSavingEnum.OFF),
+            Pair(ThetaRepository.OptionNameEnum.Preset, ThetaRepository.PresetEnum.NIGHT_VIEW),
             Pair(ThetaRepository.OptionNameEnum.PreviewFormat, ThetaRepository.PreviewFormatEnum.W1024_H512_F30),
             Pair(ThetaRepository.OptionNameEnum.Proxy, ThetaRepository.Proxy(use = false, url = "", port = 8080)),
             Pair(ThetaRepository.OptionNameEnum.RemainingPictures, 101),
@@ -230,6 +234,7 @@ class OptionsTest {
         val offDelay = Pair(600, ThetaRepository.OffDelayEnum.OFF_DELAY_10M)
         val password = Pair("password", "password")
         val powerSaving = Pair(PowerSaving.OFF, ThetaRepository.PowerSavingEnum.OFF)
+        val preset = Pair(Preset.LENS_BY_LENS_EXPOSURE, ThetaRepository.PresetEnum.LENS_BY_LENS_EXPOSURE)
         val previewFormat = Pair(PreviewFormat(1024, 512, 30), ThetaRepository.PreviewFormatEnum.W1024_H512_F30)
         val proxy = Pair(Proxy(use = false, url = "", port = 8080), ThetaRepository.Proxy(use = false, url = "", port = 8080))
         val remainingPictures = Pair(101, 101)
@@ -271,6 +276,7 @@ class OptionsTest {
             offDelay = offDelay.first,
             _password = password.first,
             _powerSaving = powerSaving.first,
+            _preset = preset.first,
             previewFormat = previewFormat.first,
             _proxy = proxy.first,
             remainingPictures = remainingPictures.first,
@@ -310,6 +316,7 @@ class OptionsTest {
         assertEquals(options.offDelay, offDelay.second, "offDelay")
         assertEquals(options.password, password.second, "password")
         assertEquals(options.powerSaving, powerSaving.second, "powerSaving")
+        assertEquals(options.preset, preset.second, "preset")
         assertEquals(options.previewFormat, previewFormat.second, "previewFormat")
         assertEquals(options.proxy, proxy.second, "proxy")
         assertEquals(options.remainingPictures, remainingPictures.second, "remainingPictures")
@@ -356,6 +363,7 @@ class OptionsTest {
         val offDelay = Pair(600, ThetaRepository.OffDelayEnum.OFF_DELAY_10M)
         val password = Pair("password", "password")
         val powerSaving = Pair(PowerSaving.OFF, ThetaRepository.PowerSavingEnum.OFF)
+        val preset = Pair(Preset.FACE, ThetaRepository.PresetEnum.FACE)
         val previewFormat = Pair(PreviewFormat(640, 320, 30), ThetaRepository.PreviewFormatEnum.W640_H320_F30)
         val proxy = Pair(Proxy(use = false, url = "", port = 8080), ThetaRepository.Proxy(use = false, url = "", port = 8080))
         val remainingPictures = Pair(101, 101)
@@ -397,6 +405,7 @@ class OptionsTest {
             offDelay = offDelay.second,
             password = password.second,
             powerSaving = powerSaving.second,
+            preset = preset.second,
             previewFormat = previewFormat.second,
             proxy = proxy.second,
             remainingPictures = remainingPictures.second,
@@ -436,6 +445,7 @@ class OptionsTest {
         assertEquals(options.offDelay, offDelay.first, "offDelay")
         assertEquals(options._password, password.first, "password")
         assertEquals(options._powerSaving, powerSaving.first, "powerSaving")
+        assertEquals(options._preset, preset.first, "preset")
         assertEquals(options.previewFormat, previewFormat.first, "previewFormat")
         assertEquals(options._proxy, proxy.first, "proxy")
         assertEquals(options.remainingPictures, remainingPictures.first, "remainingPictures")
