@@ -388,6 +388,32 @@ static convert_t AuthModeEnum = {
 };
 
 /**
+ * AiAutoThumbnailEnum converter
+ */
+static convert_t AiAutoThumbnailEnum = {
+  .toTheta = @{
+    @"ON": THETACThetaRepositoryAiAutoThumbnailEnum.on,
+    @"OFF": THETACThetaRepositoryAiAutoThumbnailEnum.off
+  },
+  .fromTheta = @{
+      THETACThetaRepositoryAiAutoThumbnailEnum.on: @"ON",
+      THETACThetaRepositoryAiAutoThumbnailEnum.off: @"OFF"
+  },
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [AiAutoThumbnailEnum.toTheta objectForKey:[rct objectForKey:@"aiAutoThumbnail"]];
+    if (val) {
+      opt.aiAutoThumbnail = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [AiAutoThumbnailEnum.fromTheta objectForKey:opt.aiAutoThumbnail];
+    if (val) {
+      [rct setObject:val forKey:@"aiAutoThumbnail"];
+    }
+  }
+};
+
+/**
  * ApertureEnum converter
  */
 static convert_t ApertureEnum = {
@@ -1854,6 +1880,7 @@ static convert_t UsernameCvt = {
  * OptionNames converter
  */
 static NSDictionary *NameToOptionEnum = @{
+  @"AiAutoThumbnail": THETACThetaRepositoryOptionNameEnum.aiautothumbnail,
   @"Aperture": THETACThetaRepositoryOptionNameEnum.aperture,
   @"BluetoothPower": THETACThetaRepositoryOptionNameEnum.bluetoothpower,
   @"CameraControlSource": THETACThetaRepositoryOptionNameEnum.cameracontrolsource,
@@ -1897,6 +1924,7 @@ static NSDictionary *NameToOptionEnum = @{
  * OptionNameEnum to OptionName
  */
 static NSDictionary *OptionEnumToOption = @{
+  @"AiAutoThumbnail": @"aiAutoThumbnail",
   @"Aperture": @"aperture",
   @"BluetoothPower": @"bluetoothPower",
   @"CameraControlSource": @"cameraControlSource",
@@ -1943,6 +1971,7 @@ typedef convert_t * (^OptionConverter)();
  * option converter tables
  */
 static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
+  @"aiAutoThumbnail": ^{return &AiAutoThumbnailEnum;},
   @"aperture": ^{return &ApertureEnum;},
   @"bluetoothPower": ^{return &BluetoothPowerEnum;},
   @"cameraControlSource": ^{return &CameraControlSourceEnum;},

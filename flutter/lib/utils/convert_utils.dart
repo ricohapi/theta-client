@@ -163,7 +163,9 @@ class ConvertUtils {
     for (var entry in data.entries) {
       final name = OptionNameEnum.getValue(entry.key)!;
       switch (name) {
-
+        case OptionNameEnum.aiAutoThumbnail:
+          result.aiAutoThumbnail = AiAutoThumbnailEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.aperture:
           result.aperture = ApertureEnum.getValue(entry.value);
           break;
@@ -289,7 +291,9 @@ class ConvertUtils {
   }
 
   static dynamic convertOptionValueToMapValue(dynamic value) {
-    if (value is ApertureEnum) {
+    if (value is AiAutoThumbnailEnum) {
+      return value.rawValue;
+    } else if (value is ApertureEnum) {
       return value.rawValue;
     } else if (value is CameraControlSourceEnum) {
       return value.rawValue;

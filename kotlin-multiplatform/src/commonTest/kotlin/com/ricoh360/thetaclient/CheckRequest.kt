@@ -35,6 +35,7 @@ class CheckRequest {
 
         fun checkSetOptions(
             request: HttpRequestData,
+            aiAutoThumbnail: AiAutoThumbnail? = null,
             aperture: Float? = null,
             bluetoothPower: BluetoothPower? = null,
             cameraControlSource: CameraControlSource? = null,
@@ -78,6 +79,9 @@ class CheckRequest {
             }
             val optionsRequest = js.decodeFromString<SetOptionsRequest>(body.text)
 
+            aiAutoThumbnail?.let {
+                assertEquals(optionsRequest.parameters.options._aiAutoThumbnail, it, "setOptions _aiAutoThumbnail")
+            }
             aperture?.let {
                 assertEquals(optionsRequest.parameters.options.aperture, it, "setOptions aperture")
             }

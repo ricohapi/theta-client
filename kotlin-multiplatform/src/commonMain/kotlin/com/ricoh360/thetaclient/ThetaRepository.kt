@@ -594,6 +594,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     enum class OptionNameEnum(val value: String, val valueType: KClass<*>) {
         /**
          * Option name
+         * _aiAutoThumbnail
+         */
+        AiAutoThumbnail("_aiAutoThumbnail", AiAutoThumbnailEnum::class),
+
+        /**
+         * Option name
          * aperture
          */
         Aperture("aperture", ApertureEnum::class),
@@ -822,6 +828,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * Refer to the [options category](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
      */
     data class Options(
+        /**
+         * AI auto thumbnail setting.
+         */
+        var aiAutoThumbnail: AiAutoThumbnailEnum? = null,
+
         /**
          * Aperture value.
          */
@@ -1072,6 +1083,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var wlanFrequency: WlanFrequencyEnum? = null,
     ) {
         constructor() : this(
+            aiAutoThumbnail = null,
             aperture = null,
             bluetoothPower = null,
             cameraControlSource = null,
@@ -1112,6 +1124,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         )
 
         constructor(options: com.ricoh360.thetaclient.transferred.Options) : this(
+            aiAutoThumbnail = options._aiAutoThumbnail?.let { AiAutoThumbnailEnum.get(it) },
             aperture = options.aperture?.let { ApertureEnum.get(it) },
             bluetoothPower = options._bluetoothPower?.let { BluetoothPowerEnum.get(it) },
             cameraControlSource = options._cameraControlSource?.let { CameraControlSourceEnum.get(it) },
@@ -1161,6 +1174,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          */
         fun toOptions(): com.ricoh360.thetaclient.transferred.Options {
             return Options(
+                _aiAutoThumbnail = aiAutoThumbnail?.value,
                 aperture = aperture?.value,
                 _bluetoothPower = bluetoothPower?.value,
                 _cameraControlSource = cameraControlSource?.value,
@@ -1213,6 +1227,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         fun <T> getValue(name: OptionNameEnum): T? {
             @Suppress("UNCHECKED_CAST")
             return when (name) {
+                OptionNameEnum.AiAutoThumbnail -> aiAutoThumbnail
                 OptionNameEnum.Aperture -> aperture
                 OptionNameEnum.BluetoothPower -> bluetoothPower
                 OptionNameEnum.CameraControlSource -> cameraControlSource
@@ -1266,6 +1281,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 throw ThetaWebApiException("Invalid value type")
             }
             when (name) {
+                OptionNameEnum.AiAutoThumbnail -> aiAutoThumbnail = value as AiAutoThumbnailEnum
                 OptionNameEnum.Aperture -> aperture = value as ApertureEnum
                 OptionNameEnum.BluetoothPower -> bluetoothPower = value as BluetoothPowerEnum
                 OptionNameEnum.CameraControlSource -> cameraControlSource = value as CameraControlSourceEnum
@@ -1303,6 +1319,33 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.WhiteBalance -> whiteBalance = value as WhiteBalanceEnum
                 OptionNameEnum.WhiteBalanceAutoStrength -> whiteBalanceAutoStrength = value as WhiteBalanceAutoStrengthEnum
                 OptionNameEnum.WlanFrequency -> wlanFrequency = value as WlanFrequencyEnum
+            }
+        }
+    }
+
+    /**
+     * AI auto thumbnail setting.
+     */
+    enum class AiAutoThumbnailEnum(val value: AiAutoThumbnail) {
+        /**
+         * AI auto setting ON
+         */
+        ON(AiAutoThumbnail.ON),
+
+        /**
+         * AI auto setting OFF
+         */
+        OFF(AiAutoThumbnail.OFF);
+
+        companion object {
+            /**
+             * Convert AiAutoThumbnail to AiAutoThumbnailEnum
+             *
+             * @param value AI auto thumbnail setting.
+             * @return AiAutoThumbnailEnum
+             */
+            fun get(value: AiAutoThumbnail): AiAutoThumbnailEnum? {
+                return values().firstOrNull { it.value == value }
             }
         }
     }

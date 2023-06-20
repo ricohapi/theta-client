@@ -344,6 +344,7 @@ class ThetaClientReactNativeModule(
 
   /** option converter */
   private val converters = mapOf(
+    "aiAutoThumbnail" to AiAutoThumbnailConverter(),
     "aperture" to ApertureConverter(),
     "bluetoothPower" to BluetoothPowerConverter(),
     "cameraControlSource" to CameraControlSourceConverter(),
@@ -386,6 +387,7 @@ class ThetaClientReactNativeModule(
 
   /** OptionNameEnum to option */
   private val optionEnumToOption = mapOf(
+    "AiAutoThumbnail" to "aiAutoThumbnail",
     "Aperture" to "aperture",
     "BluetoothPower" to "bluetoothPower",
     "CameraControlSource" to "cameraControlSource",

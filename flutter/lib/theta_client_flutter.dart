@@ -922,6 +922,9 @@ class AccessPoint {
 /// [options name](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
 enum OptionNameEnum {
   /// Option name aperture
+  aiAutoThumbnail('AiAutoThumbnail', AiAutoThumbnailEnum),
+
+  /// Option name aperture
   aperture('Aperture', ApertureEnum),
 
   /// Option name _cameraControlSource
@@ -1042,6 +1045,28 @@ enum OptionNameEnum {
 
   static OptionNameEnum? getValue(String rawValue) {
     return OptionNameEnum.values.cast<OptionNameEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// AI auto thumbnail setting.
+///
+/// For RICOH THETA X
+enum AiAutoThumbnailEnum {
+  /// AI auto setting ON.
+  on('ON'),
+
+  /// AI auto setting OFF.
+  off('OFF');
+
+  final String rawValue;
+  const AiAutoThumbnailEnum(this.rawValue);
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static AiAutoThumbnailEnum? getValue(String rawValue) {
+    return AiAutoThumbnailEnum.values.cast<AiAutoThumbnailEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
   }
 }
 
@@ -2725,6 +2750,9 @@ class Proxy {
 ///
 /// Refer to the [options category](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
 class Options {
+  /// AI auto thumbnail setting.
+  AiAutoThumbnailEnum? aiAutoThumbnail;
+
   /// Aperture value.
   ApertureEnum? aperture;
 
@@ -2906,6 +2934,8 @@ class Options {
   /// Get Option value.
   T? getValue<T>(OptionNameEnum name) {
     switch (name) {
+      case OptionNameEnum.aiAutoThumbnail:
+        return aiAutoThumbnail as T;
       case OptionNameEnum.aperture:
         return aperture as T;
       case OptionNameEnum.cameraControlSource:
@@ -2988,6 +3018,9 @@ class Options {
     }
 
     switch (name) {
+      case OptionNameEnum.aiAutoThumbnail:
+        aiAutoThumbnail = value;
+        break;
       case OptionNameEnum.aperture:
         aperture = value;
         break;

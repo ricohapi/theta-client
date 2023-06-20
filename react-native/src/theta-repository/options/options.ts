@@ -1,3 +1,4 @@
+import type { AiAutoThumbnailEnum } from './option-ai-auto-thumbnail';
 import type { CameraControlSourceEnum } from './option-camera-control-source';
 import type { CameraModeEnum } from './option-camera-mode';
 import type { NetworkTypeEnum } from './option-network-type';
@@ -456,6 +457,8 @@ export type WhiteBalanceEnum =
 
 /** Camera setting options name. */
 export const OptionNameEnum = {
+  /** _aiAutoThumbnail */
+  AiAutoThumbnail: 'AiAutoThumbnail',
   /** aperture */
   Aperture: 'Aperture',
   /** _bluetoothPower*/
@@ -538,6 +541,8 @@ export type OptionNameEnum =
 
 /** camera setting options */
 export type Options = {
+  /** AI auto thumbnail setting. */
+  aiAutoThumbnail?: AiAutoThumbnailEnum;
   /** Aperture value. */
   aperture?: ApertureEnum;
   /** BluetoothPower */
