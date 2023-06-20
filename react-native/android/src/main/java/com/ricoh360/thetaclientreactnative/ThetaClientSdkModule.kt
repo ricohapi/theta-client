@@ -3,9 +3,7 @@ package com.ricoh360.thetaclientreactnative
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.ricoh360.thetaclient.ThetaRepository
-import com.ricoh360.thetaclient.capture.PhotoCapture
-import com.ricoh360.thetaclient.capture.VideoCapture
-import com.ricoh360.thetaclient.capture.VideoCapturing
+import com.ricoh360.thetaclient.capture.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.*
 import java.util.*
@@ -25,6 +23,9 @@ class ThetaClientReactNativeModule(
   var previewing: Boolean = false
   var photoCaptureBuilder: PhotoCapture.Builder? = null
   var photoCapture: PhotoCapture? = null
+  var timeShiftCaptureBuilder: TimeShiftCapture.Builder? = null
+  var timeShiftCapture: TimeShiftCapture? = null
+  var timeShiftCapturing: TimeShiftCapturing? = null
   var videoCaptureBuilder: VideoCapture.Builder? = null
   var videoCapture: VideoCapture? = null
   var videoCapturing: VideoCapturing? = null
@@ -53,6 +54,12 @@ class ThetaClientReactNativeModule(
     listenerCount -= count
   }
 
+  fun sendNotifyEvent(param: WritableMap) {
+    reactApplicationContext
+      .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+      .emit(EVENT_NOTIFY, param)
+  }
+
   /**
    * retreive constant
    */
@@ -72,6 +79,9 @@ class ThetaClientReactNativeModule(
         previewing = false
         photoCaptureBuilder = null
         photoCapture = null
+        timeShiftCaptureBuilder = null
+        timeShiftCapture = null
+        timeShiftCapturing = null
         videoCaptureBuilder = null
         videoCapture = null
         videoCapturing = null
@@ -365,6 +375,7 @@ class ThetaClientReactNativeModule(
     "shutterSpeed" to ShutterSpeedConverter(),
     "shutterVolume" to ShutterVolumeConverter(),
     "sleepDelay" to SleepDelayConverter(),
+    "timeShift" to TimeShiftConverter(),
     "totalSpace" to TotalSpaceConverter(),
     "username" to UsernameConverter(),
     "whiteBalance" to WhiteBalanceConverter(),
@@ -406,6 +417,7 @@ class ThetaClientReactNativeModule(
     "ShutterSpeed" to "shutterSpeed",
     "ShutterVolume" to "shutterVolume",
     "SleepDelay" to "sleepDelay",
+    "TimeShift" to "timeShift",
     "TotalSpace" to "totalSpace",
     "Username" to "username",
     "WhiteBalance" to "whiteBalance",
@@ -595,6 +607,101 @@ class ThetaClientReactNativeModule(
     launch {
       photoCapture!!.takePicture(TakePictureCallback())
     }
+  }
+
+  /**
+   * getTimeShiftCaptureBuilder  -  get time-shift builder from repository
+   */
+  @ReactMethod
+  fun getTimeShiftCaptureBuilder() {
+    val theta = theta ?: throw Exception(messageNotInit)
+    timeShiftCaptureBuilder = theta.getTimeShiftCaptureBuilder()
+  }
+
+  /**
+   * buildTimeShiftCapture  -  build time-shift
+   * @param options option to execute time-shift
+   * @param interval interval of checking time-shift status
+   * @param promise Promise for buildTimeShiftCapture
+   */
+  @ReactMethod
+  fun buildTimeShiftCapture(options: ReadableMap, interval: Int, promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    
+    timeShiftCaptureBuilder?.let { builder ->
+      launch {
+        try {
+          val iterator = options.keySetIterator()
+          while (iterator.hasNextKey()) {
+            val key = iterator.nextKey()
+            val cvt = converters[key]
+            cvt?.setTimeShiftOption(options, builder)
+          }
+
+          if (interval >= 0) {
+            builder.setCheckStatusCommandInterval(interval.toLong())
+          }
+
+          timeShiftCapture = builder.build()
+          promise.resolve(true)
+          timeShiftCaptureBuilder = null
+        } catch (t: Throwable) {
+          promise.reject(t)
+          timeShiftCaptureBuilder = null
+        }
+      }
+    } ?: run {
+      promise.reject(Exception("no timeShiftCaptureBuilder"))
+    }
+  }
+
+  /**
+   * startTimeShiftCapture  -  start time-shift
+   * @param promise promise for startTimeShiftCapture
+   */
+  @ReactMethod
+  fun startTimeShiftCapture(promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    timeShiftCapture?.let { capture ->
+      class StartCaptureCallback : TimeShiftCapture.StartCaptureCallback {
+        override fun onSuccess(fileUrl: String?) {
+          promise.resolve(fileUrl)
+          timeShiftCapture = null
+        }
+
+        override fun onProgress(completion: Float) {
+          sendNotifyEvent(
+            toNotify("TIME-SHIFT-PROGRESS", toCaptureProgressNotifyParam(value = completion))
+          )
+        }
+
+        override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
+          promise.reject(exception)
+          timeShiftCapture = null
+        }
+      }
+      timeShiftCapturing = capture.startCapture(StartCaptureCallback())
+    } ?: run {
+      promise.reject(Exception("no timeShiftCapture"))
+    }
+  }
+
+  /**
+   * cancelTimeShiftCapture  -  stop time-shift
+   * @param promise promise for stopTimeShiftCapture
+   */
+  @ReactMethod
+  fun cancelTimeShiftCapture(promise: Promise) {
+    if (theta == null) {
+      throw Exception(messageNotInit)
+    }
+    timeShiftCapturing?.cancelCapture()
   }
 
   /**
@@ -1332,11 +1439,12 @@ class ThetaClientReactNativeModule(
       } catch (t: Throwable) {
         promise.reject(t)
       }
-     }
     }
+  }
 
   companion object {
     const val NAME = "ThetaClientReactNative"
     const val EVENT_NAME = "ThetaFrameEvent"
+    const val EVENT_NOTIFY = "ThetaNotify"
   }
 }

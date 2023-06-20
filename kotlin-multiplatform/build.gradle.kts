@@ -11,7 +11,7 @@ plugins {
     id("io.gitlab.arturbosch.detekt").version("1.19.0")
 }
 
-val theta_client_version = "1.1.0"
+val theta_client_version = "1.2.0"
 // Init publish property
 initProp()
 

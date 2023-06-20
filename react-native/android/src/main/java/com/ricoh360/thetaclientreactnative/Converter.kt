@@ -7,7 +7,30 @@ import com.facebook.react.bridge.WritableMap
 import com.ricoh360.thetaclient.DigestAuth
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.capture.PhotoCapture
+import com.ricoh360.thetaclient.capture.TimeShiftCapture
 import com.ricoh360.thetaclient.capture.VideoCapture
+
+const val KEY_NOTIFY_NAME = "name"
+const val KEY_NOTIFY_PARAMS = "params"
+const val KEY_NOTIFY_PARAM_COMPLETION = "completion"
+
+fun toNotify(
+  name: String,
+  params: WritableMap?
+): WritableMap {
+  val objects = Arguments.createMap()
+  objects.putString(KEY_NOTIFY_NAME, name)
+  params?.run {
+    objects.putMap(KEY_NOTIFY_PARAMS, params)
+  }
+  return objects
+}
+
+fun toCaptureProgressNotifyParam(value: Float): WritableMap {
+  val result = Arguments.createMap()
+  result.putDouble(KEY_NOTIFY_PARAM_COMPLETION, value.toDouble())
+  return result
+}
 
 /**
  * convert option interface
@@ -16,6 +39,7 @@ interface OptionConverter {
   fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {}
   fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {}
   fun setPhotoOption(objects: ReadableMap, builder: PhotoCapture.Builder) {}
+  fun setTimeShiftOption(objects: ReadableMap, builder: TimeShiftCapture.Builder) {}
   fun setVideoOption(objects: ReadableMap, builder: VideoCapture.Builder) {}
 }
 
@@ -36,6 +60,12 @@ class ApertureConverter : OptionConverter {
   }
 
   override fun setPhotoOption(objects: ReadableMap, builder: PhotoCapture.Builder) {
+    objects.getString("aperture")?.let {
+      builder.setAperture(ThetaRepository.ApertureEnum.valueOf(it))
+    }
+  }
+
+  override fun setTimeShiftOption(objects: ReadableMap, builder: TimeShiftCapture.Builder) {
     objects.getString("aperture")?.let {
       builder.setAperture(ThetaRepository.ApertureEnum.valueOf(it))
     }
@@ -138,6 +168,12 @@ class ExposureCompensationConverter : OptionConverter {
     }
   }
 
+  override fun setTimeShiftOption(objects: ReadableMap, builder: TimeShiftCapture.Builder) {
+    objects.getString("exposureCompensation")?.let {
+      builder.setExposureCompensation(ThetaRepository.ExposureCompensationEnum.valueOf(it))
+    }
+  }
+
   override fun setVideoOption(objects: ReadableMap, builder: VideoCapture.Builder) {
     objects.getString("exposureCompensation")?.let {
       builder.setExposureCompensation(ThetaRepository.ExposureCompensationEnum.valueOf(it))
@@ -167,6 +203,12 @@ class ExposureDelayConverter : OptionConverter {
     }
   }
 
+  override fun setTimeShiftOption(objects: ReadableMap, builder: TimeShiftCapture.Builder) {
+    objects.getString("exposureDelay")?.let {
+      builder.setExposureDelay(ThetaRepository.ExposureDelayEnum.valueOf(it))
+    }
+  }
+
   override fun setVideoOption(objects: ReadableMap, builder: VideoCapture.Builder) {
     objects.getString("exposureDelay")?.let {
       builder.setExposureDelay(ThetaRepository.ExposureDelayEnum.valueOf(it))
@@ -191,6 +233,12 @@ class ExposureProgramConverter : OptionConverter {
   }
 
   override fun setPhotoOption(objects: ReadableMap, builder: PhotoCapture.Builder) {
+    objects.getString("exposureProgram")?.let {
+      builder.setExposureProgram(ThetaRepository.ExposureProgramEnum.valueOf(it))
+    }
+  }
+
+  override fun setTimeShiftOption(objects: ReadableMap, builder: TimeShiftCapture.Builder) {
     objects.getString("exposureProgram")?.let {
       builder.setExposureProgram(ThetaRepository.ExposureProgramEnum.valueOf(it))
     }
@@ -265,6 +313,12 @@ class GpsTagRecordingConverter : OptionConverter {
     }
   }
 
+  override fun setTimeShiftOption(objects: ReadableMap, builder: TimeShiftCapture.Builder) {
+    objects.getString("gpsTagRecording")?.let {
+      builder.setGpsTagRecording(ThetaRepository.GpsTagRecordingEnum.valueOf(it))
+    }
+  }
+
   override fun setVideoOption(objects: ReadableMap, builder: VideoCapture.Builder) {
     objects.getString("gpsTagRecording")?.let {
       builder.setGpsTagRecording(ThetaRepository.GpsTagRecordingEnum.valueOf(it))
@@ -294,6 +348,12 @@ class IsoConverter : OptionConverter {
     }
   }
 
+  override fun setTimeShiftOption(objects: ReadableMap, builder: TimeShiftCapture.Builder) {
+    objects.getString("iso")?.let {
+      builder.setIso(ThetaRepository.IsoEnum.valueOf(it))
+    }
+  }
+
   override fun setVideoOption(objects: ReadableMap, builder: VideoCapture.Builder) {
     objects.getString("iso")?.let {
       builder.setIso(ThetaRepository.IsoEnum.valueOf(it))
@@ -318,6 +378,12 @@ class IsoAutoHighLimitConverter : OptionConverter {
   }
 
   override fun setPhotoOption(objects: ReadableMap, builder: PhotoCapture.Builder) {
+    objects.getString("isoAutoHighLimit")?.let {
+      builder.setIsoAutoHighLimit(ThetaRepository.IsoAutoHighLimitEnum.valueOf(it))
+    }
+  }
+
+  override fun setTimeShiftOption(objects: ReadableMap, builder: TimeShiftCapture.Builder) {
     objects.getString("isoAutoHighLimit")?.let {
       builder.setIsoAutoHighLimit(ThetaRepository.IsoAutoHighLimitEnum.valueOf(it))
     }
@@ -373,19 +439,19 @@ class MaxRecordableTimeConverter : OptionConverter {
 /**
  * NetworkTypeConverter
  */
- class NetworkTypeConverter : OptionConverter {
+class NetworkTypeConverter : OptionConverter {
   override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
     objects.getString("networkType")?.let {
       options.networkType = ThetaRepository.NetworkTypeEnum.valueOf(it)
     }
   }
 
-   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
     options.networkType?.let {
       objects.putString("networkType", it.toString())
     }
   }
- }
+}
 
 /**
  * OffDelayConverter
@@ -485,6 +551,43 @@ class ProxyConverter : OptionConverter {
 }
 
 /**
+ * TimeShiftConverter
+ */
+class TimeShiftConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getMap("timeShift")?.let { timeShiftMap ->
+      val timeShift = ThetaRepository.TimeShiftSetting()
+      if (timeShiftMap.hasKey("isFrontFirst")) {
+        timeShift.isFrontFirst = timeShiftMap.getBoolean("isFrontFirst")
+      }
+      timeShiftMap.getString("firstInterval")?.let {
+        timeShift.firstInterval = ThetaRepository.TimeShiftIntervalEnum.valueOf(it)
+      }
+      timeShiftMap.getString("secondInterval")?.let {
+        timeShift.secondInterval = ThetaRepository.TimeShiftIntervalEnum.valueOf(it)
+      }
+      options.timeShift = timeShift
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.timeShift?.let { timeShiftMap ->
+      val timeShift = Arguments.createMap()
+      timeShiftMap.isFrontFirst?.let {
+        timeShift.putBoolean("isFrontFirst", it)
+      }
+      timeShiftMap.firstInterval?.let {
+        timeShift.putString("firstInterval", it.toString())
+      }
+      timeShiftMap.secondInterval?.let {
+        timeShift.putString("secondInterval", it.toString())
+      }
+      objects.putMap("timeShift", timeShift)
+    }
+  }
+ }
+
+/**
  * ShootingMethodConverter
  */
 class ShootingMethodConverter : OptionConverter {
@@ -518,6 +621,12 @@ class WhiteBalanceConverter : OptionConverter {
   }
 
   override fun setPhotoOption(objects: ReadableMap, builder: PhotoCapture.Builder) {
+    objects.getString("whiteBalance")?.let {
+      builder.setWhiteBalance(ThetaRepository.WhiteBalanceEnum.valueOf(it))
+    }
+  }
+
+  override fun setTimeShiftOption(objects: ReadableMap, builder: TimeShiftCapture.Builder) {
     objects.getString("whiteBalance")?.let {
       builder.setWhiteBalance(ThetaRepository.WhiteBalanceEnum.valueOf(it))
     }
@@ -580,6 +689,10 @@ class ColorTemperatureConverter : OptionConverter {
   }
 
   override fun setPhotoOption(objects: ReadableMap, builder: PhotoCapture.Builder) {
+    builder.setColorTemperature(objects.getInt("colorTemperature"))
+  }
+
+  override fun setTimeShiftOption(objects: ReadableMap, builder: TimeShiftCapture.Builder) {
     builder.setColorTemperature(objects.getInt("colorTemperature"))
   }
 
@@ -817,13 +930,17 @@ fun configToTheta(objects: ReadableMap): ThetaRepository.Config {
 
   config.shutterVolume = if (objects.hasKey("shutterVolume")) {
     objects.getInt("shutterVolume")
-  }  else { null }
+  } else {
+    null
+  }
 
   config.clientMode = if (objects.hasKey("clientMode")) {
     objects.getMap("clientMode")?.let {
       digestAuthToTheta(it)
     }
-  }  else { null }
+  } else {
+    null
+  }
 
   return config
 }
@@ -832,7 +949,11 @@ fun digestAuthToTheta(objects: ReadableMap): DigestAuth? {
   val username = objects.getString("username") ?: run {
     return null
   }
-  val password = if (objects.hasKey("password")) { objects.getString("password") }  else { null }
+  val password = if (objects.hasKey("password")) {
+    objects.getString("password")
+  } else {
+    null
+  }
   return DigestAuth(username, password)
 }
 

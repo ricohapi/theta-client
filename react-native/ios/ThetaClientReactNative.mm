@@ -5,6 +5,21 @@
 #define MESSAGE_NOT_INIT @"Not initialized."
 #define ERROR_CODE_ERROR @"error"
 
+static NSDictionary* toNotify(NSString *name, NSDictionary *params) {
+    NSMutableDictionary *objects = [NSMutableDictionary dictionary];
+    [objects setObject:name forKey:@"name"];
+    if (params != nil) {
+        [objects setObject:params forKey:@"params"];
+    }
+    return objects;
+}
+
+static NSDictionary* toCaptureProgressNotifyParam(NSNumber *value) {
+    NSMutableDictionary *result = [NSMutableDictionary dictionary];
+    [result setObject:value forKey:@"completion"];
+    return toNotify(@"TIME-SHIFT-PROGRESS", result);
+}
+
 /**
  * converter for int32_t
  */
@@ -60,6 +75,74 @@ RCT_NUMBER_CONVERTER(int32_t, intValue)
 {
   _resolve(fileUrl);
   _sdk.photoCapture = nil;
+}
+
+- (void)onProgressCompletion:(float)completion {
+}
+
+@end
+
+/**
+ * time-shift startCapture callback holder
+ */
+typedef void (^ TimeShiftOnProgressBlock)(float);
+@interface TimeShiftStartCallback: NSObject <THETACTimeShiftCaptureStartCaptureCallback>
+@end
+@implementation TimeShiftStartCallback {
+    RCTPromiseResolveBlock _resolve; ///< start capture resolver
+    TimeShiftOnProgressBlock _onProgress; ///< start capture resolver
+    RCTPromiseRejectBlock _reject; ///< start capture rejecter
+    ThetaClientReactNative *_sdk; ///< theta client sdk instance
+}
+
+/**
+ * initialize TimeShiftCallback
+ * @param sdk theta client sdk instance
+ * @param resolve resolver for promise
+ * @param reject rejecter for promise
+ * @return initialized callback instance
+ */
+-(id)initWith:(ThetaClientReactNative *)sdk
+ withProgress:(TimeShiftOnProgressBlock)onProgress
+ withResolver:(RCTPromiseResolveBlock)resolve
+ withRejecter:(RCTPromiseRejectBlock)reject
+{
+    self = [super init];
+    if (self) {
+        _sdk = sdk;
+        _onProgress = onProgress;
+        _resolve = resolve;
+        _reject = reject;
+    }
+    return self;
+}
+
+/**
+ * call when error detect
+ * @param exception exception object
+ */
+-(void)onErrorException:(THETACThetaRepositoryThetaRepositoryException *)exception {
+    _reject(@"error", exception.message, nil);
+    _sdk.timeShiftCapture = nil;
+    _sdk.timeShiftCapturing = nil;
+}
+
+/**
+ * call when successfully time-shift captured
+ * @param fileUrl captured video file url
+ */
+- (void)onSuccessFileUrl_:(NSString * _Nullable)fileUrl {
+    _resolve(fileUrl != nil ? fileUrl : [NSNull null]);
+    _sdk.timeShiftCapture = nil;
+    _sdk.timeShiftCapturing = nil;
+}
+
+/**
+ * call when check time-shift progress
+ * @param completion captured video file url
+ */
+- (void)onProgressCompletion:(float)completion {
+    _onProgress(completion);
 }
 @end
 
@@ -182,18 +265,21 @@ typedef void (^SetFromTheta)(NSMutableDictionary *, THETACThetaRepositoryOptions
 typedef void (^SetToTheta)(NSDictionary *, THETACThetaRepositoryOptions *);
 /** option converter to set photo option */
 typedef void (^SetPhotoOption)(NSDictionary *, THETACPhotoCaptureBuilder *);
+/** option converter to set time-shift option */
+typedef void (^SetTimeShiftOption)(NSDictionary *, THETACTimeShiftCaptureBuilder *);
 /** option converter to set video option */
 typedef void (^SetVideoOption)(NSDictionary *, THETACVideoCaptureBuilder *);
 
 typedef struct _convert_t {
-  NSDictionary* toTheta;        ///< dictionary react to theta
-  NSDictionary* fromTheta;      ///< dictionary theta to react
-  NSDictionary* photoOption;    ///< dictionary photoOption
-  NSDictionary* videoOption;    ///< dictionary videoOption
-  SetToTheta setToTheta;        ///< option setter react to theta
-  SetFromTheta setFromTheta;    ///< option setter theta to react
-  SetPhotoOption setPhotoOption; ///< photo option setter
-  SetVideoOption setVideoOption; ///< video option setter
+    NSDictionary* toTheta; ///< dictionary react to theta
+    NSDictionary* fromTheta; ///< dictionary theta to react
+    NSDictionary* photoOption; ///< dictionary photoOption
+    NSDictionary* videoOption; ///< dictionary videoOption
+    SetToTheta setToTheta; ///< option setter react to theta
+    SetFromTheta setFromTheta; ///< option setter theta to react
+    SetPhotoOption setPhotoOption; ///< photo option setter
+    SetTimeShiftOption setTimeShiftOption; ///< photo option setter
+    SetVideoOption setVideoOption; ///< video option setter
 } convert_t;
 
 /**
@@ -337,6 +423,12 @@ static convert_t ApertureEnum = {
     id val = [ApertureEnum.toTheta objectForKey:[rct objectForKey:@"aperture"]];
     if (val) {
       [builder setApertureAperture:val];
+    }
+  },
+  .setTimeShiftOption = ^(NSDictionary* rct, THETACTimeShiftCaptureBuilder *builder) {
+    id val = [ApertureEnum.toTheta objectForKey:[rct objectForKey:@"aperture"]];
+    if (val) {
+        [builder setApertureAperture:val];
     }
   },
   .setVideoOption = ^(NSDictionary* rct, THETACVideoCaptureBuilder *builder) {
@@ -509,6 +601,12 @@ static convert_t ExposureCompensationEnum = {
       [builder setExposureCompensationValue:val];
     }
   },
+  .setTimeShiftOption = ^(NSDictionary* rct, THETACTimeShiftCaptureBuilder *builder) {
+    id val = [ExposureCompensationEnum.toTheta objectForKey:[rct objectForKey:@"exposureCompensation"]];
+    if (val) {
+        [builder setExposureCompensationValue:val];
+    }
+  },
   .setVideoOption = ^(NSDictionary* rct, THETACVideoCaptureBuilder *builder) {
     id val = [ExposureCompensationEnum.toTheta
                  objectForKey:[rct objectForKey:@"exposureCompensation"]];
@@ -566,6 +664,12 @@ static convert_t ExposureDelayEnum = {
       [builder setExposureDelayDelay:val];
     }
   },
+  .setTimeShiftOption = ^(NSDictionary* rct, THETACTimeShiftCaptureBuilder *builder) {
+    id val = [ExposureDelayEnum.toTheta objectForKey:[rct objectForKey:@"exposureDelay"]];
+    if (val) {
+        [builder setExposureDelayDelay:val];
+    }
+  },
   .setVideoOption = ^(NSDictionary* rct, THETACVideoCaptureBuilder *builder) {
     id val = [ExposureDelayEnum.toTheta objectForKey:[rct objectForKey:@"exposureDelay"]];
     if (val) {
@@ -610,6 +714,12 @@ static convert_t ExposureProgramEnum = {
                  objectForKey:[rct objectForKey:@"exposureProgram"]];
     if (val) {
       [builder setExposureProgramProgram:val];
+    }
+  },
+  .setTimeShiftOption = ^(NSDictionary* rct, THETACTimeShiftCaptureBuilder *builder) {
+    id val = [ExposureProgramEnum.toTheta objectForKey:[rct objectForKey:@"exposureProgram"]];
+    if (val) {
+        [builder setExposureProgramProgram:val];
     }
   },
   .setVideoOption = ^(NSDictionary* rct, THETACVideoCaptureBuilder *builder) {
@@ -788,6 +898,12 @@ static convert_t GpsTagRecordingEnum = {
       [builder setGpsTagRecordingValue:val];
     }
   },
+  .setTimeShiftOption = ^(NSDictionary* rct, THETACTimeShiftCaptureBuilder *builder) {
+    id val = [GpsTagRecordingEnum.toTheta objectForKey:[rct objectForKey:@"_gpsTagRecording"]];
+    if (val) {
+        [builder setGpsTagRecordingValue:val];
+    }
+  },
   .setVideoOption = ^(NSDictionary* rct, THETACVideoCaptureBuilder *builder) {
     id val = [GpsTagRecordingEnum.toTheta
                  objectForKey:[rct objectForKey:@"_gpsTagRecording"]];
@@ -869,6 +985,12 @@ static convert_t IsoEnum = {
       [builder setIsoIso:val];
     }
   },
+  .setTimeShiftOption = ^(NSDictionary* rct, THETACTimeShiftCaptureBuilder *builder) {
+    id val = [IsoEnum.toTheta objectForKey:[rct objectForKey:@"iso"]];
+    if (val) {
+        [builder setIsoIso:val];
+    }
+  },
   .setVideoOption = ^(NSDictionary* rct, THETACVideoCaptureBuilder *builder) {
     id val = [IsoEnum.toTheta objectForKey:[rct objectForKey:@"iso"]];
     if (val) {
@@ -941,6 +1063,12 @@ static convert_t IsoAutoHighLimitEnum = {
                  objectForKey:[rct objectForKey:@"isoAutoHighLimit"]];
     if (val) {
       [builder setIsoAutoHighLimitIso:val];
+    }
+  },
+  .setTimeShiftOption = ^(NSDictionary* rct, THETACTimeShiftCaptureBuilder *builder) {
+    id val = [IsoAutoHighLimitEnum.toTheta objectForKey:[rct objectForKey:@"isoAutoHighLimit"]];
+    if (val) {
+        [builder setIsoAutoHighLimitIso:val];
     }
   },
   .setVideoOption = ^(NSDictionary* rct, THETACVideoCaptureBuilder *builder) {
@@ -1600,6 +1728,66 @@ static convert_t ProxyCvt = {
 };
 
 /**
+ * TimeShift converter
+ */
+static convert_t TimeShiftCvt = {
+  .toTheta = @{
+    @"INTERVAL_0": THETACThetaRepositoryTimeShiftIntervalEnum.interval0,
+    @"INTERVAL_1": THETACThetaRepositoryTimeShiftIntervalEnum.interval1,
+    @"INTERVAL_2": THETACThetaRepositoryTimeShiftIntervalEnum.interval2,
+    @"INTERVAL_3": THETACThetaRepositoryTimeShiftIntervalEnum.interval3,
+    @"INTERVAL_4": THETACThetaRepositoryTimeShiftIntervalEnum.interval4,
+    @"INTERVAL_5": THETACThetaRepositoryTimeShiftIntervalEnum.interval5,
+    @"INTERVAL_6": THETACThetaRepositoryTimeShiftIntervalEnum.interval6,
+    @"INTERVAL_7": THETACThetaRepositoryTimeShiftIntervalEnum.interval7,
+    @"INTERVAL_8": THETACThetaRepositoryTimeShiftIntervalEnum.interval8,
+    @"INTERVAL_9": THETACThetaRepositoryTimeShiftIntervalEnum.interval9,
+    @"INTERVAL_10": THETACThetaRepositoryTimeShiftIntervalEnum.interval10
+  },
+  .fromTheta = @{
+    THETACThetaRepositoryTimeShiftIntervalEnum.interval0: @"INTERVAL_0",
+    THETACThetaRepositoryTimeShiftIntervalEnum.interval1: @"INTERVAL_1",
+    THETACThetaRepositoryTimeShiftIntervalEnum.interval2: @"INTERVAL_2",
+    THETACThetaRepositoryTimeShiftIntervalEnum.interval3: @"INTERVAL_3",
+    THETACThetaRepositoryTimeShiftIntervalEnum.interval4: @"INTERVAL_4",
+    THETACThetaRepositoryTimeShiftIntervalEnum.interval5: @"INTERVAL_5",
+    THETACThetaRepositoryTimeShiftIntervalEnum.interval6: @"INTERVAL_6",
+    THETACThetaRepositoryTimeShiftIntervalEnum.interval7: @"INTERVAL_7",
+    THETACThetaRepositoryTimeShiftIntervalEnum.interval8: @"INTERVAL_8",
+    THETACThetaRepositoryTimeShiftIntervalEnum.interval9: @"INTERVAL_9",
+    THETACThetaRepositoryTimeShiftIntervalEnum.interval10: @"INTERVAL_10"
+  },
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    NSDictionary *timeshiftDic = [rct objectForKey:@"timeShift"];
+    if (timeshiftDic) {
+      opt.timeShift = [[THETACThetaRepositoryTimeShiftSetting alloc]
+                       initWithIsFrontFirst:!isNull([timeshiftDic objectForKey:@"isFrontFirst"]) ? [THETACBoolean numberWithBool:((NSNumber*) [timeshiftDic objectForKey:@"isFrontFirst"]).boolValue] : nil
+                       firstInterval:!isNull([timeshiftDic objectForKey:@"firstInterval"]) ? [TimeShiftCvt.toTheta objectForKey:[timeshiftDic objectForKey:@"firstInterval"]] : nil
+                       secondInterval:!isNull([timeshiftDic objectForKey:@"secondInterval"]) ? [TimeShiftCvt.toTheta objectForKey:[timeshiftDic objectForKey:@"secondInterval"]] : nil];
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    if (opt.timeShift) {
+      NSMutableDictionary *timeshift = [NSMutableDictionary dictionary];
+      
+      if (opt.timeShift.isFrontFirst) {
+        [timeshift setObject:@(((NSNumber *) opt.timeShift.isFrontFirst).boolValue) forKey:@"isFrontFirst"];
+      }
+      
+      if (opt.timeShift.firstInterval) {
+        [timeshift setObject:[TimeShiftCvt.fromTheta objectForKey:opt.timeShift.firstInterval] forKey:@"firstInterval"];
+      }
+      
+      if (opt.timeShift.secondInterval) {
+        [timeshift setObject:[TimeShiftCvt.fromTheta objectForKey:opt.timeShift.secondInterval] forKey:@"secondInterval"];
+      }
+      
+      [rct setObject:timeshift forKey:@"timeShift"];
+    }
+  }
+};
+
+/**
  * ShootingMethod convertor
  */
 static convert_t ShootingMethodEnum = {
@@ -1696,6 +1884,7 @@ static NSDictionary *NameToOptionEnum = @{
   @"RemainingPictures": THETACThetaRepositoryOptionNameEnum.remainingpictures,
   @"RemainingVideoSeconds": THETACThetaRepositoryOptionNameEnum.remainingvideoseconds,
   @"RemainingSpace": THETACThetaRepositoryOptionNameEnum.remainingspace,
+  @"TimeShift": THETACThetaRepositoryOptionNameEnum.timeshift,
   @"TotalSpace": THETACThetaRepositoryOptionNameEnum.totalspace,
   @"ShutterVolume": THETACThetaRepositoryOptionNameEnum.shuttervolume,
   @"Username": THETACThetaRepositoryOptionNameEnum.username,
@@ -1738,6 +1927,7 @@ static NSDictionary *OptionEnumToOption = @{
   @"RemainingPictures": @"remainingPictures",
   @"RemainingVideoSeconds": @"remainingVideoSeconds",
   @"RemainingSpace": @"remainingSpace",
+  @"TimeShift": @"timeShift",
   @"TotalSpace": @"totalSpace",
   @"ShutterVolume": @"shutterVolume",
   @"Username": @"username",
@@ -1783,6 +1973,7 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"remainingPictures": ^{return &RemainingPicturesCvt;},
   @"remainingVideoSeconds": ^{return &RemainingVideoSecondsCvt;},
   @"remainingSpace": ^{return &RemainingSpaceCvt;},
+  @"timeShift": ^{return &TimeShiftCvt;},
   @"totalSpace": ^{return &TotalSpaceCvt;},
   @"shutterVolume": ^{return &ShutterVolumeCvt;},
   @"username": ^{return &UsernameCvt;},
@@ -1793,6 +1984,7 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
 };
 
 static NSString *EVENT_NAME = @"ThetaFrameEvent";
+static NSString *EVENT_NOTIFY = @"ThetaNotify";
 
 THETACDigestAuth* digestAuthToTheta(NSDictionary* objects)
 {
@@ -1895,7 +2087,7 @@ RCT_EXPORT_MODULE(ThetaClientReactNative)
  */
 -(NSArray *)supportedEvents
 {
-  return @[EVENT_NAME];
+    return @[EVENT_NAME, EVENT_NOTIFY];
 }
 
 /**
@@ -1932,6 +2124,9 @@ RCT_REMAP_METHOD(initialize,
   self.theta = nil;
   self.photoCaptureBuilder = nil;
   self.photoCapture = nil;
+  self.timeShiftCaptureBuilder = nil;
+  self.timeShiftCapture = nil;
+  self.timeShiftCapturing = nil;
   self.videoCaptureBuilder = nil;
   self.videoCapture = nil;
   self.videoCapturing = nil;
@@ -2417,6 +2612,116 @@ RCT_REMAP_METHOD(takePicture,
                                                withResolver:resolve
                                                withRejecter:reject];
   [self.photoCapture takePictureCallback:callback];
+}
+
+/**
+ * getTimeShiftCaptureBuilder  -  get time-shift  builder from repository
+ */
+RCT_REMAP_METHOD(getTimeShiftCaptureBuilder,
+                 getTimeShiftCaptureBuilder)
+{
+    if (!_theta) {
+        [NSException raise:ERROR_CODE_ERROR format:MESSAGE_NOT_INIT];
+        return;
+    }
+    self.timeShiftCaptureBuilder = [_theta getTimeShiftCaptureBuilder];
+}
+
+/**
+ * buildTimeShiftCapture  -  build time-shift capture
+ * @param options option to execute time-shift
+ * @param interval interval of checking time-shift status
+ * @param resolve resolver for buildTimeShiftCapture
+ * @param rejecter rejecter for buildTimeShiftCapture
+ */
+RCT_REMAP_METHOD(buildTimeShiftCapture,
+                 buildTimeShiftCaptureWithOptions:(NSDictionary*)options
+                 withInterval:(int)interval
+                 withResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+{
+    if (!_theta) {
+        reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+        return;
+    }
+    if (!self.timeShiftCaptureBuilder) {
+        reject(@"error", @"no time-shift capture pbuilder", nil);
+        return;
+    }
+    
+    for (id option in [options allKeys]) {
+        convert_t *convert = [NameToConverter objectForKey:option]();
+        if (convert && convert->setTimeShiftOption) {
+            convert->setTimeShiftOption(options, self.timeShiftCaptureBuilder);
+        }
+    }
+
+    if (interval >= 0) {
+        [self.timeShiftCaptureBuilder setCheckStatusCommandIntervalTimeMillis: (int64_t)interval];
+    }
+
+    [self.timeShiftCaptureBuilder buildWithCompletionHandler:^(THETACTimeShiftCapture *timeShiftCapture, NSError *error) {
+        if (error) {
+            reject(@"error", [error localizedDescription], error);
+            return;
+        }
+        if (timeShiftCapture) {
+            self.timeShiftCapture = timeShiftCapture;
+            self.timeShiftCaptureBuilder = nil;
+            resolve(@(YES));
+        } else {
+            reject(@"error", @"no timeShiftCapture", nil);
+        }
+    }];
+}
+
+/**
+ * startTimeShiftCapture  -  start time-shift
+ * @param resolve resolver for startTimeShiftCapture
+ * @param rejecter rejecter for startTimeShiftCapture
+ */
+RCT_REMAP_METHOD(startTimeShiftCapture,
+                 startTimeShiftCaptureWithResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+{
+    if (!_theta) {
+        reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+        return;
+    }
+    if (!self.timeShiftCapture) {
+        reject(@"error", @"no timeShiftCapture", nil);
+        return;
+    }
+    
+    TimeShiftStartCallback *callback = [[TimeShiftStartCallback alloc] initWith:self
+                                                                   withProgress:^(float completion) {
+        [self sendEventWithName:EVENT_NOTIFY
+                           body:toCaptureProgressNotifyParam([NSNumber numberWithFloat:completion])];
+    }
+                                                                   withResolver:resolve
+                                                                   withRejecter:reject];
+    self.timeShiftCapturing = [self.timeShiftCapture startCaptureCallback:callback];
+}
+
+/**
+ * cancelTimeShiftCapture  -  stop time-shift
+ * @param resolve resolver for stopTimeShiftCapture
+ * @param rejecter rejecter for stopTimeShiftCapture
+ */
+RCT_REMAP_METHOD(cancelTimeShiftCapture,
+                 cancelTimeShiftCaptureWithResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
+{
+    if (!_theta) {
+        reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+        return;
+    }
+
+    if (!self.timeShiftCapturing) {
+        reject(@"error", @"no timeShiftCapturing", nil);
+        return;
+    }
+
+    [self.timeShiftCapturing cancelCapture];
 }
 
 /**

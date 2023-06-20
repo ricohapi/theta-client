@@ -504,6 +504,27 @@ void main() {
     }
   });
 
+  test('TimeShiftIntervalEnum', () async {
+    List<List<dynamic>> data = [
+      [TimeShiftIntervalEnum.interval_0, 'INTERVAL_0'],
+      [TimeShiftIntervalEnum.interval_1, 'INTERVAL_1'],
+      [TimeShiftIntervalEnum.interval_2, 'INTERVAL_2'],
+      [TimeShiftIntervalEnum.interval_3, 'INTERVAL_3'],
+      [TimeShiftIntervalEnum.interval_4, 'INTERVAL_4'],
+      [TimeShiftIntervalEnum.interval_5, 'INTERVAL_5'],
+      [TimeShiftIntervalEnum.interval_6, 'INTERVAL_6'],
+      [TimeShiftIntervalEnum.interval_7, 'INTERVAL_7'],
+      [TimeShiftIntervalEnum.interval_8, 'INTERVAL_8'],
+      [TimeShiftIntervalEnum.interval_9, 'INTERVAL_9'],
+      [TimeShiftIntervalEnum.interval_10, 'INTERVAL_10'],
+    ];
+    expect(data.length, TimeShiftIntervalEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+
   test('WhiteBalanceEnum', () async {
     List<List<dynamic>> data = [
       [WhiteBalanceEnum.auto, 'AUTO'],

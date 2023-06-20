@@ -63,6 +63,7 @@ class CheckRequest {
             shutterSpeed: Double? = null,
             shutterVolume: Int? = null,
             sleepDelay: Int? = null,
+            timeShift: TimeShift? = null,
             whiteBalance: WhiteBalance? = null,
             whiteBalanceAutoStrength: WhiteBalanceAutoStrength? = null,
             wlanFrequency: WlanFrequency? = null,
@@ -160,6 +161,9 @@ class CheckRequest {
             }
             sleepDelay?.let {
                 assertEquals(optionsRequest.parameters.options.sleepDelay, it, "setOptions sleepDelay")
+            }
+            timeShift?.let {
+                assertEquals(optionsRequest.parameters.options._timeShift, it, "setOptions timeShift")
             }
             whiteBalance?.let {
                 assertEquals(optionsRequest.parameters.options.whiteBalance, it, "setOptions whiteBalance")

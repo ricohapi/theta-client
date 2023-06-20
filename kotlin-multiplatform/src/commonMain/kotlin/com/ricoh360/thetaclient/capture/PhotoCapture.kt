@@ -50,6 +50,13 @@ class PhotoCapture private constructor(private val endpoint: String, options: Op
         fun onSuccess(fileUrl: String)
 
         /**
+         * Called when state "inProgress".
+         *
+         * @param completion Progress rate of command executed
+         */
+        fun onProgress(completion: Float) {}
+
+        /**
          * Called when error occurs.
          *
          * @param exception Exception of error occurs
@@ -66,32 +73,33 @@ class PhotoCapture private constructor(private val endpoint: String, options: Op
         scope.launch {
             lateinit var takePictureResponse: TakePictureResponse
             try {
-                takePictureResponse = ThetaApi.callTakePictureCommand(endpoint)
+                takePictureResponse = ThetaApi.callTakePictureCommand(endpoint = endpoint)
                 val id = takePictureResponse.id
                 while (takePictureResponse.state == CommandState.IN_PROGRESS) {
-                    delay(CHECK_COMMAND_STATUS_INTERVAL)
+                    delay(timeMillis = CHECK_COMMAND_STATUS_INTERVAL)
                     takePictureResponse = ThetaApi.callStatusApi(
-                        endpoint,
-                        StatusApiParams(id = id)
+                        endpoint = endpoint,
+                        params = StatusApiParams(id = id)
                     ) as TakePictureResponse
+                    callback.onProgress(completion = takePictureResponse.progress?.completion ?: 0f)
                 }
             } catch (e: JsonConvertException) {
-                callback.onError(ThetaRepository.ThetaWebApiException(e.message ?: e.toString()))
+                callback.onError(exception = ThetaRepository.ThetaWebApiException(message = e.message ?: e.toString()))
                 return@launch
             } catch (e: ResponseException) {
-                callback.onError(ThetaRepository.ThetaWebApiException.create(e))
+                callback.onError(exception = ThetaRepository.ThetaWebApiException.create(exception = e))
                 return@launch
             } catch (e: Exception) {
-                callback.onError(ThetaRepository.NotConnectedException(e.message ?: e.toString()))
+                callback.onError(exception = ThetaRepository.NotConnectedException(message = e.message ?: e.toString()))
                 return@launch
             }
 
             if (takePictureResponse.state == CommandState.DONE) {
-                callback.onSuccess(takePictureResponse.results!!.fileUrl)
+                callback.onSuccess(fileUrl = takePictureResponse.results!!.fileUrl)
                 return@launch
             }
 
-            callback.onError(ThetaRepository.ThetaWebApiException(takePictureResponse.error!!.message))
+            callback.onError(exception = ThetaRepository.ThetaWebApiException(message = takePictureResponse.error?.message ?: takePictureResponse.error.toString()))
         }
     }
 
@@ -99,8 +107,9 @@ class PhotoCapture private constructor(private val endpoint: String, options: Op
      * Builder of PhotoCapture
      *
      * @property endpoint URL of Theta web API endpoint
+     * @property cameraModel Camera model info.
      */
-    class Builder internal constructor(private val endpoint: String) : Capture.Builder<Builder>() {
+    class Builder internal constructor(private val endpoint: String, private val cameraModel: String? = null) : Capture.Builder<Builder>() {
 
         /**
          * Builds an instance of a PhotoCapture that has all the combined parameters of the Options that have been added to the Builder.
@@ -110,9 +119,14 @@ class PhotoCapture private constructor(private val endpoint: String, options: Op
         @Throws(Throwable::class)
         suspend fun build(): PhotoCapture {
             try {
+                val modeOptions = when (ThetaRepository.ThetaModel.get(cameraModel)) {
+                    ThetaRepository.ThetaModel.THETA_X -> Options(captureMode = CaptureMode.IMAGE, _shootingMethod = ShootingMethod.NORMAL)
+                    else -> Options(captureMode = CaptureMode.IMAGE)
+                }
+
                 ThetaApi.callSetOptionsCommand(
                     endpoint,
-                    SetOptionsParams(Options(captureMode = CaptureMode.IMAGE))
+                    SetOptionsParams(modeOptions)
                 ).error?.let {
                     throw ThetaRepository.ThetaWebApiException(it.message)
                 }

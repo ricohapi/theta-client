@@ -186,6 +186,24 @@ func toProxy(params: [String : Any]) -> ThetaRepository.Proxy {
     )
 }
 
+func toTimeShift(params: [String : Any]) -> ThetaRepository.TimeShiftSetting {
+    var firstInterval: ThetaRepository.TimeShiftIntervalEnum? = nil;
+    if let name = params["firstInterval"] as? String {
+        firstInterval = getEnumValue(values: ThetaRepository.TimeShiftIntervalEnum.values(), name: name)
+    }
+
+    var secondInterval: ThetaRepository.TimeShiftIntervalEnum? = nil;
+    if let name = params["secondInterval"] as? String {
+        secondInterval = getEnumValue(values: ThetaRepository.TimeShiftIntervalEnum.values(), name: name)
+    }
+
+    return ThetaRepository.TimeShiftSetting(
+        isFrontFirst: toKotlinBoolean(value: params["isFrontFirst"]),
+        firstInterval: firstInterval,
+        secondInterval: secondInterval
+    )
+}
+
 func convertGetOptionsParam(params: [String]) -> [ThetaRepository.OptionNameEnum] {
     var array: [ThetaRepository.OptionNameEnum] = []
     let values = ThetaRepository.OptionNameEnum.values()
@@ -214,6 +232,14 @@ func convertResult(proxy: ThetaRepository.Proxy) -> [String: Any] {
     ]
 }
 
+func convertResult(timeshift: ThetaRepository.TimeShiftSetting) -> [String: Any] {
+    return [
+        "isFrontFirst": convertKotlinBooleanToBool(value: timeshift.isFrontFirst),
+        "firstInterval": timeshift.firstInterval?.name,
+        "secondInterval": timeshift.secondInterval?.name,
+    ]
+}
+
 func convertResult(options: ThetaRepository.Options) -> [String: Any] {
     var result = [String: Any]()
     let nameList = ThetaRepository.OptionNameEnum.values()
@@ -232,6 +258,8 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                 result[name.name] = convertResult(gpsInfo: gpsInfo)
             } else if value is ThetaRepository.Proxy, let proxy = value as? ThetaRepository.Proxy {
                 result[name.name] = convertResult(proxy: proxy)
+            } else if value is ThetaRepository.TimeShiftSetting, let timeshift = value as? ThetaRepository.TimeShiftSetting {
+                result[name.name] = convertResult(timeshift: timeshift)
             }
         }
     }
@@ -250,6 +278,13 @@ func toKotlinInt(value: Any?) -> KotlinInt? {
         return nil
     }
     return KotlinInt(integerLiteral: value)
+}
+
+func toKotlinBoolean(value: Any?) -> KotlinBoolean? {
+    guard let value = value as? Bool else {
+        return nil
+    }
+    return KotlinBoolean(booleanLiteral: value)
 }
 
 func convertSetOptionsParam(params: [String: Any]) -> ThetaRepository.Options {
@@ -353,6 +388,11 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         break
     case ThetaRepository.OptionNameEnum.sleepdelay.name:
         options.sleepDelay = getEnumValue(values: ThetaRepository.SleepDelayEnum.values(), name: value as! String)!
+        break
+    case ThetaRepository.OptionNameEnum.timeshift.name:
+        if let params = value as? [String : Any] {
+            options.timeShift = toTimeShift(params: params)
+        }
         break
     case ThetaRepository.OptionNameEnum.totalspace.name:
         options.totalSpace = KotlinLong(integerLiteral: value as! Int)
