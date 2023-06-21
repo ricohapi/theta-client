@@ -27,6 +27,13 @@ class TimeShiftCapture private constructor(
         return checkStatusCommandInterval
     }
 
+    /**
+     * Get Time-shift setting object.
+     * @return ThetaRepository.TimeShiftSetting
+     */
+    fun getTimeShiftSetting() = options._timeShift?.let { ThetaRepository.TimeShiftSetting(it) }
+
+
     // TODO: Add get photo option property
 
     /**
@@ -158,6 +165,48 @@ class TimeShiftCapture private constructor(
 
         fun setCheckStatusCommandInterval(timeMillis: Long): Builder {
             this.interval = timeMillis
+            return this
+        }
+
+        /**
+         * Set is front first.
+         *
+         * @param isFrontFirst is front first
+         * @return Builder
+         */
+        fun setIsFrontFirst(isFrontFirst: Boolean): Builder {
+            if (options._timeShift == null) {
+                options._timeShift = TimeShift()
+            }
+            options._timeShift?.firstShooting = if (isFrontFirst) FirstShootingEnum.FRONT else FirstShootingEnum.REAR
+            return this
+        }
+
+        /**
+         * set time (sec) before 1st lens shooting
+         *
+         * @param interval ThetaRepository.TimeShiftIntervalEnum
+         * @return Builder
+         */
+        fun setFirstInterval(interval: ThetaRepository.TimeShiftIntervalEnum): Builder {
+            if (options._timeShift == null) {
+                options._timeShift = TimeShift()
+            }
+            options._timeShift?.firstInterval = interval.sec
+            return this
+        }
+
+        /**
+         * set time (sec) from 1st lens shooting until start of 2nd lens shooting.
+         *
+         * @param interval ThetaRepository.TimeShiftIntervalEnum
+         * @return Builder
+         */
+        fun setSecondInterval(interval: ThetaRepository.TimeShiftIntervalEnum): Builder {
+            if (options._timeShift == null) {
+                options._timeShift = TimeShift()
+            }
+            options._timeShift?.secondInterval = interval.sec
             return this
         }
 

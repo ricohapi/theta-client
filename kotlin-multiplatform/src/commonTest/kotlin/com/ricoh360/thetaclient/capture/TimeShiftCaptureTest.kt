@@ -183,6 +183,69 @@ class TimeShiftCaptureTest {
     }
 
     /**
+     * Setting IsFrontFirst.
+     */
+    @Test
+    fun settingIsFrontFirstTest() = runTest {
+        val isFrontFirst = false
+
+        MockApiClient.onRequest = {
+            ByteReadChannel(Resource("src/commonTest/resources/setOptions/set_options_done.json").readText())
+        }
+
+        // execute
+        val thetaRepository = ThetaRepository(endpoint)
+        val capture = thetaRepository.getTimeShiftCaptureBuilder()
+            .setIsFrontFirst(isFrontFirst)
+            .build()
+
+        // check result
+        assertEquals(capture.getTimeShiftSetting()?.isFrontFirst ?: true, isFrontFirst, "set setIsFrontFirst $isFrontFirst")
+    }
+
+    /**
+     * Setting FirstInterval.
+     */
+    @Test
+    fun settingFirstIntervalTest() = runTest {
+        val interval: ThetaRepository.TimeShiftIntervalEnum = ThetaRepository.TimeShiftIntervalEnum.INTERVAL_3
+
+        MockApiClient.onRequest = {
+            ByteReadChannel(Resource("src/commonTest/resources/setOptions/set_options_done.json").readText())
+        }
+
+        // execute
+        val thetaRepository = ThetaRepository(endpoint)
+        val capture = thetaRepository.getTimeShiftCaptureBuilder()
+            .setFirstInterval(interval)
+            .build()
+
+        // check result
+        assertEquals(capture.getTimeShiftSetting()?.firstInterval, interval, "set setFirstInterval $interval")
+    }
+
+    /**
+     * Setting SecondInterval.
+     */
+    @Test
+    fun settingSecondIntervalTest() = runTest {
+        val interval: ThetaRepository.TimeShiftIntervalEnum = ThetaRepository.TimeShiftIntervalEnum.INTERVAL_5
+
+        MockApiClient.onRequest = {
+            ByteReadChannel(Resource("src/commonTest/resources/setOptions/set_options_done.json").readText())
+        }
+
+        // execute
+        val thetaRepository = ThetaRepository(endpoint)
+        val capture = thetaRepository.getTimeShiftCaptureBuilder()
+            .setSecondInterval(interval)
+            .build()
+
+        // check result
+        assertEquals(capture.getTimeShiftSetting()?.secondInterval, interval, "set setSecondInterval $interval")
+    }
+
+    /**
      * Error response to build call.
      */
     @Test
