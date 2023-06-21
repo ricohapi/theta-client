@@ -110,7 +110,7 @@ class TimeShiftCapture private constructor(
      * @property endpoint URL of Theta web API endpoint
      * @property cameraModel Camera model info.
      */
-    class Builder internal constructor(private val endpoint: String, private val cameraModel: String? = null) : Capture.Builder<Builder>() {
+    class Builder internal constructor(private val endpoint: String, private val cameraModel: ThetaRepository.ThetaModel? = null) : Capture.Builder<Builder>() {
         private var interval: Long? = null
 
         /**
@@ -121,7 +121,7 @@ class TimeShiftCapture private constructor(
         @Throws(Throwable::class)
         suspend fun build(): TimeShiftCapture {
             try {
-                val modeOptions = when (ThetaRepository.ThetaModel.get(cameraModel)) {
+                val modeOptions = when (cameraModel) {
                     ThetaRepository.ThetaModel.THETA_X -> Options(captureMode = CaptureMode.IMAGE, _shootingMethod = ShootingMethod.TIMESHIFT)
                     else -> Options(captureMode = CaptureMode.IMAGE)
                 }

@@ -63,7 +63,7 @@ class ConvertVideoFormatsTest {
      * Execute convertVideoFormats normal test.
      */
     private suspend fun checkCallConvertVideoFormats(
-        cameraModel: String,
+        cameraModel: ThetaRepository.ThetaModel,
         toLowResolution: Boolean,
         applyTopBottomCorrection: Boolean,
         format: VideoFormat?,
@@ -72,7 +72,7 @@ class ConvertVideoFormatsTest {
         topBottomCorrection: TopBottomCorrection?,
         noConvert: Boolean
     ) {
-        print("Camera model: $cameraModel\n")
+        print("Camera model: ${cameraModel.value}\n")
 
         val fileUrl = "http://dummy.MP4"
         // setup
@@ -118,9 +118,8 @@ class ConvertVideoFormatsTest {
     fun convertVideoFormatsTest() = runTest {
         val codec = "H.264/MPEG-4 AVC"
 
-        val modelZ1 = "RICOH THETA Z1"
         checkCallConvertVideoFormats(
-            cameraModel = modelZ1,
+            cameraModel = ThetaRepository.ThetaModel.THETA_Z1,
             toLowResolution = false,
             applyTopBottomCorrection = true,
             format = VideoFormat.VIDEO_4K,
@@ -130,7 +129,7 @@ class ConvertVideoFormatsTest {
             noConvert = false
         )
         checkCallConvertVideoFormats(
-            cameraModel = modelZ1,
+            cameraModel = ThetaRepository.ThetaModel.THETA_Z1,
             toLowResolution = true,
             applyTopBottomCorrection = false,
             format = VideoFormat.VIDEO_2K,
@@ -140,9 +139,8 @@ class ConvertVideoFormatsTest {
             noConvert = false
         )
 
-        val modelX = "RICOH THETA X"
         checkCallConvertVideoFormats(
-            cameraModel = modelX,
+            cameraModel = ThetaRepository.ThetaModel.THETA_X,
             toLowResolution = true,
             applyTopBottomCorrection = true,
             format = VideoFormat.VIDEO_4K,
@@ -152,7 +150,7 @@ class ConvertVideoFormatsTest {
             noConvert = false
         )
         checkCallConvertVideoFormats(
-            cameraModel = modelX,
+            cameraModel = ThetaRepository.ThetaModel.THETA_X,
             toLowResolution = false,
             applyTopBottomCorrection = false,
             format = null,
@@ -162,9 +160,8 @@ class ConvertVideoFormatsTest {
             noConvert = true
         )
 
-        val modelS = "RICOH THETA S"
         checkCallConvertVideoFormats(
-            cameraModel = modelS,
+            cameraModel = ThetaRepository.ThetaModel.THETA_S,
             toLowResolution = false,
             applyTopBottomCorrection = true,
             format = null,
@@ -174,9 +171,8 @@ class ConvertVideoFormatsTest {
             noConvert = true
         )
 
-        val modelSC = "RICOH THETA SC"
         checkCallConvertVideoFormats(
-            cameraModel = modelSC,
+            cameraModel = ThetaRepository.ThetaModel.THETA_SC,
             toLowResolution = false,
             applyTopBottomCorrection = true,
             format = null,
@@ -186,9 +182,8 @@ class ConvertVideoFormatsTest {
             noConvert = true
         )
 
-        val modelOther = "Other camera"
         checkCallConvertVideoFormats(
-            cameraModel = modelOther,
+            cameraModel = ThetaRepository.ThetaModel.THETA_V,
             toLowResolution = false,
             applyTopBottomCorrection = true,
             format = VideoFormat.VIDEO_4K,
@@ -198,7 +193,7 @@ class ConvertVideoFormatsTest {
             noConvert = false
         )
         checkCallConvertVideoFormats(
-            cameraModel = modelOther,
+            cameraModel = ThetaRepository.ThetaModel.THETA_V,
             toLowResolution = true,
             applyTopBottomCorrection = false,
             format = VideoFormat.VIDEO_2K,

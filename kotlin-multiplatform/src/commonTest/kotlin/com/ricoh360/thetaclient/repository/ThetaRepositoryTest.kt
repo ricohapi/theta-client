@@ -675,4 +675,30 @@ class ThetaRepositoryTest {
             assertTrue(e.message!!.indexOf("503", 0, true) >= 0, "status error")
         }
     }
+
+    /**
+     * Check Theta SC2 and Theta SC2 for business
+     *
+     */
+    @Test
+    fun thetaModelTest() = runTest {
+        // setup
+        val responseArray = arrayOf(
+            Resource("src/commonTest/resources/info/info_sc2.json").readText(),
+            Resource("src/commonTest/resources/getOptions/get_options_done.json").readText()
+        )
+
+        var counter = 0
+        MockApiClient.onRequest = { request ->
+            val index = counter++
+            ByteReadChannel(responseArray[index])
+        }
+
+        ThetaRepository.newInstance(endpoint)
+        assertTrue(ThetaRepository.ThetaModel.THETA_SC2 == ThetaRepository.ThetaModel.get("RICOH THETA SC2", "01.82"), "model SC2")
+        assertTrue(ThetaRepository.ThetaModel.THETA_SC2_B == ThetaRepository.ThetaModel.get("RICOH THETA SC2", "06.52"), "model SC2 for business")
+        assertNull(ThetaRepository.ThetaModel.get("RICOH THETA SC2"), "No firmware version")
+        assertTrue(ThetaRepository.ThetaModel.THETA_Z1 == ThetaRepository.ThetaModel.get("RICOH THETA Z1"), "model Z1")
+    }
+
 }

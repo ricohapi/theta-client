@@ -54,7 +54,7 @@ class SetPluginOrdersTest {
         }
 
         val thetaRepository = ThetaRepository(endpoint)
-        thetaRepository.cameraModel = "RICOH THETA Z1"
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_Z1
         val pluginList = listOf("com.theta360.usbstorage", "", "", "") // more than 3
         kotlin.runCatching {
             thetaRepository.setPluginOrders(pluginList)
