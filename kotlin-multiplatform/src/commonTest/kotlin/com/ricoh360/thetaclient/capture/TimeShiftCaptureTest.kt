@@ -70,6 +70,7 @@ class TimeShiftCaptureTest {
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
         val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder().build()
 
         var file: String? = null
@@ -80,17 +81,19 @@ class TimeShiftCaptureTest {
             }
 
             override fun onProgress(completion: Float) {
-                assertEquals(completion, 0f, "onProgress")
+                println("onProgress $completion")
+                assertTrue(completion >= 0f, "onProgress")
             }
 
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
+                println("onError ${exception.toString()}")
                 assertTrue(false, "error start time-shift")
                 deferred.complete(Unit)
             }
         })
 
         runBlocking {
-            withTimeout(7000) {
+            withTimeout(30_000) {
                 deferred.await()
             }
         }

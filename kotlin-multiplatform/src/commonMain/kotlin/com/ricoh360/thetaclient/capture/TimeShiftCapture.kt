@@ -70,24 +70,33 @@ class TimeShiftCapture private constructor(
                     params = StartCaptureParams(_mode = ShootingMode.TIME_SHIFT_SHOOTING)
                 )
 
+                /*
+                 * Note that Theta SC2 for business returns a response different from Theta X like this:
+                 *   {"name":"camera.takePicture","id":"2543","progress":{"completion":0.0},"state":"inProgress"}
+                 *   {"name":"camera.takePicture","results":{"fileUrl":"http://192.168.1.1/files/thetasc22050e7735b9b5838795e2ee7/100RICOH/R0010075.JPG"},"state":"done"}
+                 * So it can not cast to StartCaptureResponse.
+                 * Dirty hacks are unavoidable!
+                 */
                 runBlocking {
                     val id = startCaptureResponse.id
-                    while (startCaptureResponse.state == CommandState.IN_PROGRESS) {
+                    var response: CommandApiResponse = startCaptureResponse
+                    while (response.state == CommandState.IN_PROGRESS) {
                         delay(timeMillis = checkStatusCommandInterval)
-                        startCaptureResponse = ThetaApi.callStatusApi(
+                        response = ThetaApi.callStatusApi(
                             endpoint = endpoint,
                             params = StatusApiParams(id = id)
-                        ) as StartCaptureResponse
-                        callback.onProgress(completion = startCaptureResponse.progress?.completion ?: 0f)
+                        )
+                        callback.onProgress(completion = response.progress?.completion ?: 0f)
                     }
 
-                    if (startCaptureResponse.state == CommandState.DONE) {
-                        callback.onSuccess(
-                            fileUrl = when (startCaptureResponse.results?.fileUrls?.isEmpty() == false) {
-                                true -> startCaptureResponse.results?.fileUrls?.first()
-                                false -> null
-                            }
-                        )
+                    if (response.state == CommandState.DONE) {
+                        var fileUrl: String? = null;
+                        if (response.name == "camera.startCapture") { // Theta X
+                            fileUrl = (response as StartCaptureResponse).results?.fileUrls?.firstOrNull()
+                        } else if (response.name == "camera.takePicture") { // Theta SC2 for business
+                            fileUrl = (response as TakePictureResponse).results?.fileUrl
+                        }
+                        callback.onSuccess(fileUrl = fileUrl)
                         return@runBlocking
                     }
                     callback.onError(exception = ThetaRepository.ThetaWebApiException(message = startCaptureResponse.error?.message ?: startCaptureResponse.error.toString()))
@@ -123,6 +132,7 @@ class TimeShiftCapture private constructor(
             try {
                 val modeOptions = when (cameraModel) {
                     ThetaRepository.ThetaModel.THETA_X -> Options(captureMode = CaptureMode.IMAGE, _shootingMethod = ShootingMethod.TIMESHIFT)
+                    ThetaRepository.ThetaModel.THETA_SC2_B -> Options(captureMode = CaptureMode.PRESET, _preset = Preset.ROOM)
                     else -> Options(captureMode = CaptureMode.IMAGE)
                 }
 
