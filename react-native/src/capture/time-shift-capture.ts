@@ -2,6 +2,7 @@ import type { EmitterSubscription } from 'react-native';
 import { CaptureBuilder } from './capture';
 import { NativeModules } from 'react-native';
 import { BaseNotify, CaptureProgressNotify, addNotifyListener } from './notify';
+import type { TimeShiftIntervalEnum } from 'src/theta-repository/options';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 /**
@@ -66,6 +67,9 @@ export class TimeShiftCapture {
  */
 export class TimeShiftCaptureBuilder extends CaptureBuilder<TimeShiftCaptureBuilder> {
   interval?: number;
+  isFrontFirst?: number;
+  firstInterval?: TimeShiftIntervalEnum;
+  secondInterval?: TimeShiftIntervalEnum;
 
   /** construct TimeShiftCaptureBuilder instance */
   constructor() {
@@ -85,6 +89,36 @@ export class TimeShiftCaptureBuilder extends CaptureBuilder<TimeShiftCaptureBuil
   }
 
   /**
+   * Set is front first.
+   * @param isFrontFirst is front first
+   * @returns TimeShiftCaptureBuilder
+   */
+  setIsFrontFirst(isFrontFirst: boolean): TimeShiftCaptureBuilder {
+    this.isFrontFirst = Number(isFrontFirst);
+    return this;
+  }
+
+  /**
+   * set time (sec) before 1st lens shooting
+   * @param interval 1st interval
+   * @returns TimeShiftCaptureBuilder
+   */
+  setFirstInterval(interval: TimeShiftIntervalEnum): TimeShiftCaptureBuilder {
+    this.firstInterval = interval;
+    return this;
+  }
+
+  /**
+   * set time (sec) from 1st lens shooting until start of 2nd lens shooting.
+   * @param interval 2nd interval
+   * @returns TimeShiftCaptureBuilder
+   */
+  setSecondInterval(interval: TimeShiftIntervalEnum): TimeShiftCaptureBuilder {
+    this.secondInterval = interval;
+    return this;
+  }
+
+  /**
    * Builds an instance of a TimeShiftCapture that has all the combined
    * parameters of the Options that have been added to the Builder.
    *
@@ -93,7 +127,10 @@ export class TimeShiftCaptureBuilder extends CaptureBuilder<TimeShiftCaptureBuil
   build(): Promise<TimeShiftCapture> {
     return ThetaClientReactNative.buildTimeShiftCapture(
       this.options,
-      this.interval ?? -1
+      this.interval ?? -1,
+      this.isFrontFirst ?? -1,
+      this.firstInterval,
+      this.secondInterval
     ).then(() => new TimeShiftCapture());
   }
 }

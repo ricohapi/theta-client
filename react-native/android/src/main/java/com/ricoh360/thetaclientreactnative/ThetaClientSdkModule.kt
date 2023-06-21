@@ -622,15 +622,25 @@ class ThetaClientReactNativeModule(
    * buildTimeShiftCapture  -  build time-shift
    * @param options option to execute time-shift
    * @param interval interval of checking time-shift status
+   * @param isFrontFirst is front first
+   * @param firstInterval time (sec) before 1st lens shooting
+   * @param secondInterval time (sec) from 1st lens shooting until start of 2nd lens shooting
    * @param promise Promise for buildTimeShiftCapture
    */
   @ReactMethod
-  fun buildTimeShiftCapture(options: ReadableMap, interval: Int, promise: Promise) {
+  fun buildTimeShiftCapture(
+    options: ReadableMap,
+    interval: Int,
+    isFrontFirst: Int,
+    firstInterval: String?,
+    secondInterval: String?,
+    promise: Promise
+  ) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
     }
-    
+
     timeShiftCaptureBuilder?.let { builder ->
       launch {
         try {
@@ -643,6 +653,18 @@ class ThetaClientReactNativeModule(
 
           if (interval >= 0) {
             builder.setCheckStatusCommandInterval(interval.toLong())
+          }
+
+          if (isFrontFirst >= 0) {
+            builder.setIsFrontFirst(isFrontFirst == 1)
+          }
+
+          firstInterval?.let {
+            builder.setFirstInterval(ThetaRepository.TimeShiftIntervalEnum.valueOf(it))
+          }
+
+          secondInterval?.let {
+            builder.setSecondInterval(ThetaRepository.TimeShiftIntervalEnum.valueOf(it))
           }
 
           timeShiftCapture = builder.build()

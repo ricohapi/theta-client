@@ -2631,12 +2631,18 @@ RCT_REMAP_METHOD(getTimeShiftCaptureBuilder,
  * buildTimeShiftCapture  -  build time-shift capture
  * @param options option to execute time-shift
  * @param interval interval of checking time-shift status
+ * @param isFrontFirst is front first
+ * @param firstInterval time (sec) before 1st lens shooting
+ * @param secondInterval time (sec) from 1st lens shooting until start of 2nd lens shooting
  * @param resolve resolver for buildTimeShiftCapture
  * @param rejecter rejecter for buildTimeShiftCapture
  */
 RCT_REMAP_METHOD(buildTimeShiftCapture,
                  buildTimeShiftCaptureWithOptions:(NSDictionary*)options
                  withInterval:(int)interval
+                 withIsFrontFirst:(int)isFrontFirst
+                 withFirstInterval:(NSString *)firstInterval
+                 withSecondInterval:(NSString *)secondInterval
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
@@ -2655,11 +2661,23 @@ RCT_REMAP_METHOD(buildTimeShiftCapture,
             convert->setTimeShiftOption(options, self.timeShiftCaptureBuilder);
         }
     }
-
+    
     if (interval >= 0) {
         [self.timeShiftCaptureBuilder setCheckStatusCommandIntervalTimeMillis: (int64_t)interval];
     }
-
+    
+    if (isFrontFirst >= 0) {
+        [self.timeShiftCaptureBuilder setIsFrontFirstIsFrontFirst: isFrontFirst == 1];
+    }
+    
+    if (!isNull(firstInterval)) {
+        [self.timeShiftCaptureBuilder setFirstIntervalInterval: [TimeShiftCvt.toTheta objectForKey:firstInterval]];
+    }
+    
+    if (!isNull(secondInterval)) {
+        [self.timeShiftCaptureBuilder setSecondIntervalInterval: [TimeShiftCvt.toTheta objectForKey:secondInterval]];
+    }
+    
     [self.timeShiftCaptureBuilder buildWithCompletionHandler:^(THETACTimeShiftCapture *timeShiftCapture, NSError *error) {
         if (error) {
             reject(@"error", [error localizedDescription], error);

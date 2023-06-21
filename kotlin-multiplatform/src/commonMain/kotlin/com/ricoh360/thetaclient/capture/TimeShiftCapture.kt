@@ -185,7 +185,7 @@ class TimeShiftCapture private constructor(
         /**
          * set time (sec) before 1st lens shooting
          *
-         * @param interval ThetaRepository.TimeShiftIntervalEnum
+         * @param interval 1st interval
          * @return Builder
          */
         fun setFirstInterval(interval: ThetaRepository.TimeShiftIntervalEnum): Builder {
@@ -199,7 +199,7 @@ class TimeShiftCapture private constructor(
         /**
          * set time (sec) from 1st lens shooting until start of 2nd lens shooting.
          *
-         * @param interval ThetaRepository.TimeShiftIntervalEnum
+         * @param interval 2nd interval
          * @return Builder
          */
         fun setSecondInterval(interval: ThetaRepository.TimeShiftIntervalEnum): Builder {
