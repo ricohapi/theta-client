@@ -121,7 +121,7 @@ complexity:
   #    threshold: 60
   LongParameterList:
     active: true
-    functionThreshold: 10 # 1メソッドの最大引数数
+    functionThreshold: 10 # Max argument size of one method
     constructorThreshold: 7
     ignoreDefaultParameters: false
     ignoreDataClasses: true
@@ -156,11 +156,11 @@ complexity:
         "**/jsTest/**",
         "**/iosTest/**",
       ]
-    thresholdInFiles: 11
-    thresholdInClasses: 50 # 1クラスの最大メソッド数
-    thresholdInInterfaces: 11
-    thresholdInObjects: 20 # 1オブジェクト最大メソッド数
-    thresholdInEnums: 11
+    # thresholdInFiles: 11
+    thresholdInClasses: 50 # Max function size of one class
+    # thresholdInInterfaces: 11 # Max function size of one interface
+    # thresholdInObjects: 20 # Max function size of one object
+    # thresholdInEnums: 11 # Max function size of one enum
     ignoreDeprecated: false
     ignorePrivate: false
     ignoreOverridden: false
