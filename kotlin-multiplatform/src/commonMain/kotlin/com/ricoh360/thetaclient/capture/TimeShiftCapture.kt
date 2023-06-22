@@ -175,9 +175,7 @@ class TimeShiftCapture private constructor(
          * @return Builder
          */
         fun setIsFrontFirst(isFrontFirst: Boolean): Builder {
-            if (options._timeShift == null) {
-                options._timeShift = TimeShift()
-            }
+            checkAndInitTimeShiftSetting()
             options._timeShift?.firstShooting = if (isFrontFirst) FirstShootingEnum.FRONT else FirstShootingEnum.REAR
             return this
         }
@@ -189,9 +187,7 @@ class TimeShiftCapture private constructor(
          * @return Builder
          */
         fun setFirstInterval(interval: ThetaRepository.TimeShiftIntervalEnum): Builder {
-            if (options._timeShift == null) {
-                options._timeShift = TimeShift()
-            }
+            checkAndInitTimeShiftSetting()
             options._timeShift?.firstInterval = interval.sec
             return this
         }
@@ -203,11 +199,15 @@ class TimeShiftCapture private constructor(
          * @return Builder
          */
         fun setSecondInterval(interval: ThetaRepository.TimeShiftIntervalEnum): Builder {
+            checkAndInitTimeShiftSetting()
+            options._timeShift?.secondInterval = interval.sec
+            return this
+        }
+
+        private fun checkAndInitTimeShiftSetting() {
             if (options._timeShift == null) {
                 options._timeShift = TimeShift()
             }
-            options._timeShift?.secondInterval = interval.sec
-            return this
         }
 
         // TODO: Add set photo option property

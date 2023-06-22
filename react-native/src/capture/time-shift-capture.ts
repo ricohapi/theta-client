@@ -67,9 +67,6 @@ export class TimeShiftCapture {
  */
 export class TimeShiftCaptureBuilder extends CaptureBuilder<TimeShiftCaptureBuilder> {
   interval?: number;
-  isFrontFirst?: number;
-  firstInterval?: TimeShiftIntervalEnum;
-  secondInterval?: TimeShiftIntervalEnum;
 
   /** construct TimeShiftCaptureBuilder instance */
   constructor() {
@@ -94,7 +91,10 @@ export class TimeShiftCaptureBuilder extends CaptureBuilder<TimeShiftCaptureBuil
    * @returns TimeShiftCaptureBuilder
    */
   setIsFrontFirst(isFrontFirst: boolean): TimeShiftCaptureBuilder {
-    this.isFrontFirst = Number(isFrontFirst);
+    this.checkAndInitTimeShiftSetting();
+    if (this.options.timeShift != null) {
+      this.options.timeShift.isFrontFirst = isFrontFirst;
+    }
     return this;
   }
 
@@ -104,7 +104,10 @@ export class TimeShiftCaptureBuilder extends CaptureBuilder<TimeShiftCaptureBuil
    * @returns TimeShiftCaptureBuilder
    */
   setFirstInterval(interval: TimeShiftIntervalEnum): TimeShiftCaptureBuilder {
-    this.firstInterval = interval;
+    this.checkAndInitTimeShiftSetting();
+    if (this.options.timeShift != null) {
+      this.options.timeShift.firstInterval = interval;
+    }
     return this;
   }
 
@@ -114,8 +117,21 @@ export class TimeShiftCaptureBuilder extends CaptureBuilder<TimeShiftCaptureBuil
    * @returns TimeShiftCaptureBuilder
    */
   setSecondInterval(interval: TimeShiftIntervalEnum): TimeShiftCaptureBuilder {
-    this.secondInterval = interval;
+    this.checkAndInitTimeShiftSetting();
+    if (this.options.timeShift != null) {
+      this.options.timeShift.secondInterval = interval;
+    }
     return this;
+  }
+
+  private checkAndInitTimeShiftSetting() {
+    if (this.options.timeShift == null) {
+      this.options.timeShift = {
+        isFrontFirst: undefined,
+        firstInterval: undefined,
+        secondInterval: undefined,
+      };
+    }
   }
 
   /**
@@ -127,10 +143,7 @@ export class TimeShiftCaptureBuilder extends CaptureBuilder<TimeShiftCaptureBuil
   build(): Promise<TimeShiftCapture> {
     return ThetaClientReactNative.buildTimeShiftCapture(
       this.options,
-      this.interval ?? -1,
-      this.isFrontFirst ?? -1,
-      this.firstInterval,
-      this.secondInterval
+      this.interval ?? -1
     ).then(() => new TimeShiftCapture());
   }
 }
