@@ -132,7 +132,12 @@ class TimeShiftCapture private constructor(
             try {
                 val modeOptions = when (cameraModel) {
                     ThetaRepository.ThetaModel.THETA_X -> Options(captureMode = CaptureMode.IMAGE, _shootingMethod = ShootingMethod.TIMESHIFT)
-                    ThetaRepository.ThetaModel.THETA_SC2_B -> Options(captureMode = CaptureMode.PRESET, _preset = Preset.ROOM)
+                    ThetaRepository.ThetaModel.THETA_SC2_B -> Options(
+                        captureMode = CaptureMode.PRESET,
+                        _preset = Preset.ROOM,
+                        _timeShift = TimeShift(firstShooting = FirstShootingEnum.FRONT, firstInterval = 2, secondInterval = 5),
+                        exposureDelay = 2, // without this option, sometimes shooting is normal but time-shift
+                    )
                     else -> Options(captureMode = CaptureMode.IMAGE)
                 }
 
