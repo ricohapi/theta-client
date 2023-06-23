@@ -5,6 +5,8 @@ import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.CaptureMode
+import com.ricoh360.thetaclient.transferred.FirstShootingEnum
+import com.ricoh360.thetaclient.transferred.TimeShift
 import io.ktor.client.network.sockets.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -189,7 +191,16 @@ class TimeShiftCaptureTest {
     fun settingIsFrontFirstTest() = runTest {
         val isFrontFirst = false
 
-        MockApiClient.onRequest = {
+        var index = 0
+        MockApiClient.onRequest = { request ->
+            // check request
+            when (index) {
+                1 -> {
+                    CheckRequest.checkSetOptions(request, timeShift = TimeShift(firstShooting = FirstShootingEnum.REAR))
+                }
+            }
+            index += 1
+
             ByteReadChannel(Resource("src/commonTest/resources/setOptions/set_options_done.json").readText())
         }
 
@@ -210,7 +221,16 @@ class TimeShiftCaptureTest {
     fun settingFirstIntervalTest() = runTest {
         val interval: ThetaRepository.TimeShiftIntervalEnum = ThetaRepository.TimeShiftIntervalEnum.INTERVAL_3
 
-        MockApiClient.onRequest = {
+        var index = 0
+        MockApiClient.onRequest = { request ->
+            // check request
+            when (index) {
+                1 -> {
+                    CheckRequest.checkSetOptions(request, timeShift = TimeShift(firstInterval = 3))
+                }
+            }
+            index += 1
+
             ByteReadChannel(Resource("src/commonTest/resources/setOptions/set_options_done.json").readText())
         }
 
@@ -231,7 +251,16 @@ class TimeShiftCaptureTest {
     fun settingSecondIntervalTest() = runTest {
         val interval: ThetaRepository.TimeShiftIntervalEnum = ThetaRepository.TimeShiftIntervalEnum.INTERVAL_5
 
-        MockApiClient.onRequest = {
+        var index = 0
+        MockApiClient.onRequest = { request ->
+            // check request
+            when (index) {
+                1 -> {
+                    CheckRequest.checkSetOptions(request, timeShift = TimeShift(secondInterval = 5))
+                }
+            }
+            index += 1
+
             ByteReadChannel(Resource("src/commonTest/resources/setOptions/set_options_done.json").readText())
         }
 

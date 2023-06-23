@@ -2663,11 +2663,11 @@ RCT_REMAP_METHOD(buildTimeShiftCapture,
             convert->setTimeShiftOption(options, self.timeShiftCaptureBuilder);
         }
     }
-    
+
     if (interval >= 0) {
         [self.timeShiftCaptureBuilder setCheckStatusCommandIntervalTimeMillis: (int64_t)interval];
     }
-    
+
     [self.timeShiftCaptureBuilder buildWithCompletionHandler:^(THETACTimeShiftCapture *timeShiftCapture, NSError *error) {
         if (error) {
             reject(@"error", [error localizedDescription], error);

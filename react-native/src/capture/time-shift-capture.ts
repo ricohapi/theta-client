@@ -2,7 +2,7 @@ import type { EmitterSubscription } from 'react-native';
 import { CaptureBuilder } from './capture';
 import { NativeModules } from 'react-native';
 import { BaseNotify, CaptureProgressNotify, addNotifyListener } from './notify';
-import type { TimeShiftIntervalEnum } from 'src/theta-repository/options';
+import type { TimeShiftIntervalEnum } from '../theta-repository/options';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 /**
@@ -126,11 +126,7 @@ export class TimeShiftCaptureBuilder extends CaptureBuilder<TimeShiftCaptureBuil
 
   private checkAndInitTimeShiftSetting() {
     if (this.options.timeShift == null) {
-      this.options.timeShift = {
-        isFrontFirst: undefined,
-        firstInterval: undefined,
-        secondInterval: undefined,
-      };
+      this.options.timeShift = {};
     }
   }
 
