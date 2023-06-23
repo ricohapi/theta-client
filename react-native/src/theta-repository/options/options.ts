@@ -2,6 +2,7 @@ import type { CameraControlSourceEnum } from './option-camera-control-source';
 import type { CameraModeEnum } from './option-camera-mode';
 import type { NetworkTypeEnum } from './option-network-type';
 import type { PowerSavingEnum } from './option-power-saving';
+import type { PresetEnum } from './option-preset';
 import type { PreviewFormatEnum } from './option-preview-format';
 import type { Proxy } from './option-proxy';
 import type { ShootingMethodEnum } from './option-shooting-method';
@@ -47,6 +48,12 @@ export const CaptureModeEnum = {
   IMAGE: 'IMAGE',
   /** Video capture mode */
   VIDEO: 'VIDEO',
+  /** Live preview mode. This mode can not be set. */
+  LIVE_STREAMING: 'LIVE_STREAMING',
+  /** Interval still image capture mode just for Theta SC2 and Theta SC2 for business */
+  INTERVAL: 'INTERVAL',
+  /** Preset mode just for Theta SC2 and Theta SC2 for business */
+  PRESET: 'PRESET',
 } as const;
 
 /** type definition of CaptureModeEnum */
@@ -500,6 +507,8 @@ export const OptionNameEnum = {
   Password: 'Password',
   /** powerSaving */
   PowerSaving: 'PowerSaving',
+  /** preset */
+  Preset: 'Preset',
   /** previewFormat */
   PreviewFormat: 'PreviewFormat',
   /** proxy */
@@ -582,6 +591,8 @@ export type Options = {
   password?: String;
   /** Power saving mode */
   powerSaving?: PowerSavingEnum;
+  /** Preset mode */
+  preset?: PresetEnum;
   /** Format of live view  */
   previewFormat?: PreviewFormatEnum;
   /** Proxy information to be used when wired LAN is enabled. */

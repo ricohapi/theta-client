@@ -4,6 +4,7 @@ export * from './option-camera-mode';
 export * from './option-network-type';
 export * from './option-proxy';
 export * from './option-power-saving';
+export * from './option-preset';
 export * from './option-preview-format';
 export * from './option-shooting-method';
 export * from './option-shutter-speed';
