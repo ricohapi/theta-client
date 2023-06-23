@@ -1,4 +1,4 @@
-import { CaptureModeEnum } from '../../theta-repository/options/options';
+import { CaptureModeEnum } from '../../theta-repository/options/option-capture-mode';
 
 describe('CaptureModeEnum', () => {
   const data: string[][] = [
