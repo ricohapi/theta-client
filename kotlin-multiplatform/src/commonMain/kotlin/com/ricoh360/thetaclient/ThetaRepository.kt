@@ -3921,28 +3921,127 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * THETA projection type
+     */
+    enum class ProjectionTypeEnum(val value: _ProjectionType) {
+        /**
+         * Equirectangular type
+         */
+        EQUIRECTANGULAR(_ProjectionType.EQUIRECTANGULAR),
+
+        /**
+         * Dual Fisheye type
+         */
+        DUAL_FISHEYE(_ProjectionType.DUAL_FISHEYE),
+        ;
+
+        companion object {
+            /**
+             * Convert _ProjectionType to ProjectionTypeEnum
+             *
+             * @param value projection type
+             * @return ProjectionTypeEnum
+             */
+            fun get(value: _ProjectionType): ProjectionTypeEnum? {
+                return ProjectionTypeEnum.values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Video codec
+     */
+    enum class CodecEnum(val value: String) {
+        /**
+         * codec H.264/MPEG-4 AVC
+         */
+        H264MP4AVC("H.264/MPEG-4 AVC"),
+        ;
+
+        companion object {
+            /**
+             * Convert codec to CodecEnum
+             *
+             * @param value codec
+             * @return CodecEnum
+             */
+            fun get(value: String): CodecEnum? {
+                return CodecEnum.values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
      * File information in Theta.
      * @property name File name.
+     * @property fileUrl You can get a file using HTTP GET to [fileUrl].
      * @property size File size in bytes.
      * @property dateTime File creation time in the format "YYYY:MM:DD HH:MM:SS".
-     * @property fileUrl You can get a file using HTTP GET to [fileUrl].
+     * @property lat Latitude.
+     * @property lng Longitude.
+     * @property width Horizontal size of image (pixels).
+     * @property height Vertical size of image (pixels).
      * @property thumbnailUrl You can get a thumbnail image using HTTP GET to [thumbnailUrl].
+     * @property intervalCaptureGroupId Group ID of a still image shot by interval shooting.
+     * @property compositeShootingGroupId Group ID of a still image shot by interval composite shooting.
+     * @property autoBracketGroupId Group ID of a still image shot by multi bracket shooting.
+     * @property recordTime Video shooting time (sec).
+     * @property isProcessed Whether or not image processing has been completed.
+     * @property previewUrl URL of the file being processed.
+     * @property codec Codec: “H.264/MPEG-4 AVC”.
+     * @property projectionType Projection type of movie file: “Equirectangular” or “Dual-Fisheye”.
+     * @property continuousShootingGroupId Group ID of continuous shooting.  (RICOH THETA X or later)
+     * @property frameRate Frame rate.  (RICOH THETA X or later)
+     * @property favorite Favorite.  (RICOH THETA X or later)
+     * @property imageDescription Image description.  (RICOH THETA X or later)
      * @property storageID Storage ID. (RICOH THETA X Version 2.00.0 or later)
      */
     data class FileInfo(
         val name: String,
+        val fileUrl: String,
         val size: Long,
         val dateTime: String,
-        val fileUrl: String,
+        val lat: Float?,
+        val lng: Float?,
+        val width: Int?,
+        val height: Int?,
         val thumbnailUrl: String,
+        val intervalCaptureGroupId: String?,
+        val compositeShootingGroupId: String?,
+        val autoBracketGroupId: String?,
+        val recordTime: Int?,
+        val isProcessed: Boolean?,
+        val previewUrl: String?,
+        val codec: CodecEnum?,
+        val projectionType: ProjectionTypeEnum?,
+        val continuousShootingGroupId: String?,
+        val frameRate: Int?,
+        val favorite: Boolean?,
+        val imageDescription: String?,
         val storageID: String?,
     ) {
         constructor(cameraFileInfo: CameraFileInfo) : this(
             cameraFileInfo.name,
+            cameraFileInfo.fileUrl,
             cameraFileInfo.size,
             cameraFileInfo.dateTimeZone!!.take(16), // Delete timezone
-            cameraFileInfo.fileUrl,
+            cameraFileInfo.lat,
+            cameraFileInfo.lng,
+            cameraFileInfo.width,
+            cameraFileInfo.height,
             thumbnailUrl = cameraFileInfo.getThumbnailUrl(),
+            cameraFileInfo._intervalCaptureGroupId,
+            cameraFileInfo._compositeShootingGroupId,
+            cameraFileInfo._autoBracketGroupId,
+            cameraFileInfo._recordTime,
+            cameraFileInfo.isProcessed,
+            cameraFileInfo.previewUrl,
+            cameraFileInfo._codec?.let { CodecEnum.get(it) },
+            cameraFileInfo._projectionType?.let { ProjectionTypeEnum.get(it) },
+            cameraFileInfo._continuousShootingGroupId,
+            cameraFileInfo._frameRate,
+            cameraFileInfo._favorite,
+            cameraFileInfo._imageDescription,
             cameraFileInfo._storageID,
         )
     }
