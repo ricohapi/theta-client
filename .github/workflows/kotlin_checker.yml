@@ -1,0 +1,22 @@
+name: kotlin_checker
+on: [pull_request] # only PR will run
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "2.7"
+          architecture: "x64"
+      - name: install danger
+        run: |
+          gem install bundler
+          bundle install
+      - name: Run detekt # run the detekt task from build.gradle
+        run: ./gradlew detekt --stacktrace
+      - name: run danger
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: danger

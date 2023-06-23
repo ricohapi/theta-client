@@ -8,6 +8,7 @@ plugins {
     id("org.jetbrains.dokka")
     kotlin("native.cocoapods")
     signing
+    id("io.gitlab.arturbosch.detekt").version("1.19.0")
 }
 
 val theta_client_version = "1.2.0"
@@ -167,6 +168,19 @@ signing {
         )
         sign(publishing.publications)
     }
+}
+
+detekt {
+    ignoreFailures = false
+    buildUponDefaultConfig = true // preconfigure defaults
+    allRules = false // activate all available (even unstable) rules.
+    config = files("$rootDir/config/detekt.yml") // config file
+    baseline = file("$rootDir/config/baseline.xml")
+    source = files(
+        "$rootDir/kotlin-multiplatform/src/commonMain/",
+        "$rootDir/flutter/android/src/",
+        "$rootDir/react-native/android/src/"
+    ) // the folders to be checked
 }
 
 ext["signing.keyId"] = null
