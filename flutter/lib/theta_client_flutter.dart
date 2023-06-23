@@ -986,6 +986,9 @@ enum OptionNameEnum {
   /// Option name powerSaving
   powerSaving('PowerSaving', PowerSavingEnum),
 
+  /// Option name preset
+  preset('Preset', PresetEnum),
+
   /// Option name previewFormat
   previewFormat('PreviewFormat', PreviewFormatEnum),
 
@@ -1147,7 +1150,16 @@ enum CaptureModeEnum {
   image('IMAGE'),
 
   /// Shooting mode. Video capture mode
-  video('VIDEO');
+  video('VIDEO'),
+  
+  /// Shooting mode. Live streaming mode just for Theta S.
+  liveStreaming('LIVE_STREAMING'),
+
+  /// Shooting mode. Interval still image capture mode just for Theta SC2 and Theta SC2 for business
+  interval('INTERVAL'),
+
+  /// Shooting mode. Preset mode just for Theta SC2 and Theta SC2 for business
+  preset('PRESET');
 
   final String rawValue;
   const CaptureModeEnum(this.rawValue);
@@ -1893,6 +1905,28 @@ enum PowerSavingEnum {
 
   static PowerSavingEnum? getValue(String rawValue) {
     return PowerSavingEnum.values.cast<PowerSavingEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
+/// Preset
+enum PresetEnum {
+  face('FACE'),
+  nightView('NIGHT_VIEW'),
+  lensByLendsExposure('LENS_BY_LENS_EXPOSURE'),
+  room('ROOM');
+
+  final String rawValue;
+  const PresetEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static PresetEnum? getValue(String rawValue) {
+    return PresetEnum.values.cast<PresetEnum?>().firstWhere(
         (element) => element?.rawValue == rawValue,
         orElse: () => null);
   }
@@ -2842,6 +2876,9 @@ class Options {
   /// PowerSaving
   PowerSavingEnum? powerSaving;
 
+  /// Preset
+  PresetEnum? preset;
+
   /// PreviewFormat
   PreviewFormatEnum? previewFormat;
 
@@ -2948,6 +2985,8 @@ class Options {
         return password as T;
       case OptionNameEnum.powerSaving:
         return powerSaving as T;
+      case OptionNameEnum.preset:
+        return preset as T;
       case OptionNameEnum.previewFormat:
         return previewFormat as T;
       case OptionNameEnum.proxy:
@@ -3050,6 +3089,9 @@ class Options {
         break;
       case OptionNameEnum.powerSaving:
         powerSaving = value;
+        break;
+      case OptionNameEnum.preset:
+        preset = value;
         break;
       case OptionNameEnum.previewFormat:
         previewFormat = value;

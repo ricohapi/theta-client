@@ -1535,7 +1535,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Shooting mode.
-         * Live preview mode.
+         * Live streaming mode just for Theta S.
          * This mode can not be set.
          */
         LIVE_STREAMING(CaptureMode.LIVE_STREAMING),

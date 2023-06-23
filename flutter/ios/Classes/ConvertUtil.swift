@@ -360,6 +360,9 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.powersaving.name:
         options.powerSaving = getEnumValue(values: ThetaRepository.PowerSavingEnum.values(), name: value as! String)!
         break;
+    case ThetaRepository.OptionNameEnum.preset.name:
+        options.preset = getEnumValue(values: ThetaRepository.PresetEnum.values(), name: value as! String)!
+        break;
     case ThetaRepository.OptionNameEnum.previewformat.name:
         options.previewFormat = getEnumValue(values: ThetaRepository.PreviewFormatEnum.values(), name: value as! String)!
         break;
