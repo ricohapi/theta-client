@@ -5,6 +5,8 @@ import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.CaptureMode
+import com.ricoh360.thetaclient.transferred.FirstShootingEnum
+import com.ricoh360.thetaclient.transferred.TimeShift
 import com.ricoh360.thetaclient.transferred.Preset
 import io.ktor.client.network.sockets.*
 import io.ktor.client.request.*
@@ -254,6 +256,96 @@ class TimeShiftCaptureTest {
 
         // check result
         assertEquals(capture.getCheckStatusCommandInterval(), timeMillis, "set CheckStatusCommandInterval $timeMillis")
+    }
+
+    /**
+     * Setting IsFrontFirst.
+     */
+    @Test
+    fun settingIsFrontFirstTest() = runTest {
+        val isFrontFirst = false
+
+        var index = 0
+        MockApiClient.onRequest = { request ->
+            // check request
+            when (index) {
+                1 -> {
+                    CheckRequest.checkSetOptions(request, timeShift = TimeShift(firstShooting = FirstShootingEnum.REAR))
+                }
+            }
+            index += 1
+
+            ByteReadChannel(Resource("src/commonTest/resources/setOptions/set_options_done.json").readText())
+        }
+
+        // execute
+        val thetaRepository = ThetaRepository(endpoint)
+        val capture = thetaRepository.getTimeShiftCaptureBuilder()
+            .setIsFrontFirst(isFrontFirst)
+            .build()
+
+        // check result
+        assertEquals(capture.getTimeShiftSetting()?.isFrontFirst ?: true, isFrontFirst, "set setIsFrontFirst $isFrontFirst")
+    }
+
+    /**
+     * Setting FirstInterval.
+     */
+    @Test
+    fun settingFirstIntervalTest() = runTest {
+        val interval: ThetaRepository.TimeShiftIntervalEnum = ThetaRepository.TimeShiftIntervalEnum.INTERVAL_3
+
+        var index = 0
+        MockApiClient.onRequest = { request ->
+            // check request
+            when (index) {
+                1 -> {
+                    CheckRequest.checkSetOptions(request, timeShift = TimeShift(firstInterval = 3))
+                }
+            }
+            index += 1
+
+            ByteReadChannel(Resource("src/commonTest/resources/setOptions/set_options_done.json").readText())
+        }
+
+        // execute
+        val thetaRepository = ThetaRepository(endpoint)
+        val capture = thetaRepository.getTimeShiftCaptureBuilder()
+            .setFirstInterval(interval)
+            .build()
+
+        // check result
+        assertEquals(capture.getTimeShiftSetting()?.firstInterval, interval, "set setFirstInterval $interval")
+    }
+
+    /**
+     * Setting SecondInterval.
+     */
+    @Test
+    fun settingSecondIntervalTest() = runTest {
+        val interval: ThetaRepository.TimeShiftIntervalEnum = ThetaRepository.TimeShiftIntervalEnum.INTERVAL_5
+
+        var index = 0
+        MockApiClient.onRequest = { request ->
+            // check request
+            when (index) {
+                1 -> {
+                    CheckRequest.checkSetOptions(request, timeShift = TimeShift(secondInterval = 5))
+                }
+            }
+            index += 1
+
+            ByteReadChannel(Resource("src/commonTest/resources/setOptions/set_options_done.json").readText())
+        }
+
+        // execute
+        val thetaRepository = ThetaRepository(endpoint)
+        val capture = thetaRepository.getTimeShiftCaptureBuilder()
+            .setSecondInterval(interval)
+            .build()
+
+        // check result
+        assertEquals(capture.getTimeShiftSetting()?.secondInterval, interval, "set setSecondInterval $interval")
     }
 
     /**

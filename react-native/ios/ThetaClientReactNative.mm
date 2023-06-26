@@ -278,7 +278,7 @@ typedef struct _convert_t {
     SetToTheta setToTheta; ///< option setter react to theta
     SetFromTheta setFromTheta; ///< option setter theta to react
     SetPhotoOption setPhotoOption; ///< photo option setter
-    SetTimeShiftOption setTimeShiftOption; ///< photo option setter
+    SetTimeShiftOption setTimeShiftOption; ///< time-shift option setter
     SetVideoOption setVideoOption; ///< video option setter
 } convert_t;
 
@@ -857,13 +857,17 @@ static convert_t FileFormatEnum = {
 static convert_t FilterEnum = {
   .toTheta = @{
     @"OFF": THETACThetaRepositoryFilterEnum.off,
+    @"DR_COMP": THETACThetaRepositoryFilterEnum.drComp,
     @"NOISE_REDUCTION": THETACThetaRepositoryFilterEnum.noiseReduction,
-    @"HDR": THETACThetaRepositoryFilterEnum.hdr
+    @"HDR": THETACThetaRepositoryFilterEnum.hdr,
+    @"HH_HDR": THETACThetaRepositoryFilterEnum.hhHdr
   },
   .fromTheta = @{
     THETACThetaRepositoryFilterEnum.off: @"OFF",
+    THETACThetaRepositoryFilterEnum.drComp: @"DR_COMP",
     THETACThetaRepositoryFilterEnum.noiseReduction: @"NOISE_REDUCTION",
-    THETACThetaRepositoryFilterEnum.hdr: @"HDR"
+    THETACThetaRepositoryFilterEnum.hdr: @"HDR",
+    THETACThetaRepositoryFilterEnum.hhHdr: @"HH_HDR"
   },
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     id val = [FilterEnum.toTheta objectForKey:[rct objectForKey:@"filter"]];
@@ -1821,7 +1825,15 @@ static convert_t TimeShiftCvt = {
       
       [rct setObject:timeshift forKey:@"timeShift"];
     }
-  }
+  },
+  .setTimeShiftOption = ^(NSDictionary* rct, THETACTimeShiftCaptureBuilder *builder) {
+    NSDictionary *timeshiftDic = [rct objectForKey:@"timeShift"];
+    if (timeshiftDic) {
+      [builder setIsFrontFirstIsFrontFirst:!isNull([timeshiftDic objectForKey:@"isFrontFirst"]) ? [THETACBoolean numberWithBool:((NSNumber*) [timeshiftDic objectForKey:@"isFrontFirst"]).boolValue] : nil];
+      [builder setFirstIntervalInterval:!isNull([timeshiftDic objectForKey:@"firstInterval"]) ? [TimeShiftCvt.toTheta objectForKey:[timeshiftDic objectForKey:@"firstInterval"]] : nil];
+      [builder setSecondIntervalInterval:!isNull([timeshiftDic objectForKey:@"secondInterval"]) ? [TimeShiftCvt.toTheta objectForKey:[timeshiftDic objectForKey:@"secondInterval"]] : nil];
+    }
+  },
 };
 
 /**

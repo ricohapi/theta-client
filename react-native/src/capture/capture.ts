@@ -9,7 +9,7 @@ import type {
   IsoEnum,
   Options,
   WhiteBalanceEnum,
-} from 'src/theta-repository/options';
+} from '../theta-repository/options';
 
 /**
  * Capture Builder class
