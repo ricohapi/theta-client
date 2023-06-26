@@ -2272,6 +2272,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         OFF(ImageFilter.OFF),
 
         /**
+         * Image processing filter. DR compensation.
+         *
+         * RICOH THETA X is not supported
+         */
+        DR_COMP(ImageFilter.DR_COMP),
+
+        /**
          * Image processing filter. Noise reduction.
          */
         NOISE_REDUCTION(ImageFilter.NOISE_REDUCTION),
@@ -2279,7 +2286,15 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         /**
          * Image processing filter. HDR.
          */
-        HDR(ImageFilter.HDR);
+        HDR(ImageFilter.HDR),
+
+        /**
+         * Image processing filter. Handheld HDR.
+         *
+         * RICOH THETA Z1 firmware v1.20.1 or later and RICOH THETA V firmware v3.10.1 or later.
+         * RICOH THETA X is not supported
+         */
+        HH_HDR(ImageFilter.HH_HDR);
 
         companion object {
             /**

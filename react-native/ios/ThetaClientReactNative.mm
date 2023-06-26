@@ -851,13 +851,17 @@ static convert_t FileFormatEnum = {
 static convert_t FilterEnum = {
   .toTheta = @{
     @"OFF": THETACThetaRepositoryFilterEnum.off,
+    @"DR_COMP": THETACThetaRepositoryFilterEnum.drComp,
     @"NOISE_REDUCTION": THETACThetaRepositoryFilterEnum.noiseReduction,
-    @"HDR": THETACThetaRepositoryFilterEnum.hdr
+    @"HDR": THETACThetaRepositoryFilterEnum.hdr,
+    @"HH_HDR": THETACThetaRepositoryFilterEnum.hhHdr
   },
   .fromTheta = @{
     THETACThetaRepositoryFilterEnum.off: @"OFF",
+    THETACThetaRepositoryFilterEnum.drComp: @"DR_COMP",
     THETACThetaRepositoryFilterEnum.noiseReduction: @"NOISE_REDUCTION",
-    THETACThetaRepositoryFilterEnum.hdr: @"HDR"
+    THETACThetaRepositoryFilterEnum.hdr: @"HDR",
+    THETACThetaRepositoryFilterEnum.hhHdr: @"HH_HDR"
   },
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     id val = [FilterEnum.toTheta objectForKey:[rct objectForKey:@"filter"]];

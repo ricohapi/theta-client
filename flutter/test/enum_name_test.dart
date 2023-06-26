@@ -293,8 +293,10 @@ void main() {
   test('FilterEnum', () async {
     List<List<dynamic>> data = [
       [FilterEnum.off, 'OFF'],
+      [FilterEnum.drComp, 'DR_COMP'],
       [FilterEnum.noiseReduction, 'NOISE_REDUCTION'],
       [FilterEnum.hdr, 'HDR'],
+      [FilterEnum.hhHdr, 'HH_HDR'],
     ];
     expect(data.length, FilterEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
