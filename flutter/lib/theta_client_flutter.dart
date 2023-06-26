@@ -1515,11 +1515,22 @@ enum FilterEnum {
   /// Image processing filter. No filter.
   off('OFF'),
 
+  /// Image processing filter. DR compensation.
+  ///
+  /// RICOH THETA X is not supported.
+  drComp('DR_COMP'),
+
   /// Image processing filter. Noise reduction.
   noiseReduction('NOISE_REDUCTION'),
 
   /// Image processing filter. HDR.
-  hdr('HDR');
+  hdr('HDR'),
+
+  /// Image processing filter. Handheld HDR.
+  ///
+  /// RICOH THETA Z1 firmware v1.20.1 or later and RICOH THETA V firmware v3.10.1 or later.
+  /// RICOH THETA X is not supported.
+  hhHdr('HH_HDR');
 
   final String rawValue;
   const FilterEnum(this.rawValue);

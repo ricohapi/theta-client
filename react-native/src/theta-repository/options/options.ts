@@ -1,6 +1,7 @@
 import type { AiAutoThumbnailEnum } from './option-ai-auto-thumbnail';
 import type { CameraControlSourceEnum } from './option-camera-control-source';
 import type { CameraModeEnum } from './option-camera-mode';
+import type { FilterEnum } from './option-filter';
 import type { NetworkTypeEnum } from './option-network-type';
 import type { PowerSavingEnum } from './option-power-saving';
 import type { PreviewFormatEnum } from './option-preview-format';
@@ -205,19 +206,6 @@ export type PhotoFileFormatEnum =
 /** type definition of VideoFileFormatEnum */
 export type VideoFileFormatEnum =
   typeof VideoFileFormatEnum[keyof typeof VideoFileFormatEnum];
-
-/** Image processing filter. */
-export const FilterEnum = {
-  /** No filter. */
-  OFF: 'OFF',
-  /** Noise reduction. */
-  NOISE_REDUCTION: 'NOISE_REDUCTION',
-  /** HDR. */
-  HDR: 'HDR',
-} as const;
-
-/** type definition of FilterEnum */
-export type FilterEnum = typeof FilterEnum[keyof typeof FilterEnum];
 
 /** GPS information */
 export type GpsInfo = {

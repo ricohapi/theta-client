@@ -2,6 +2,7 @@ export * from './options';
 export * from './option-ai-auto-thumbnail';
 export * from './option-camera-control-source';
 export * from './option-camera-mode';
+export * from './option-filter';
 export * from './option-network-type';
 export * from './option-proxy';
 export * from './option-power-saving';
