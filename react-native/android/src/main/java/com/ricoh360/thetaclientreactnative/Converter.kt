@@ -978,3 +978,64 @@ fun timeoutToTheta(objects: ReadableMap): ThetaRepository.Timeout {
     objects.getInt("socketTimeout").toLong(),
   )
 }
+
+fun fileInfoFromTheta(fileInfo: ThetaRepository.FileInfo): ReadableMap {
+  val result = Arguments.createMap()
+  result.putString("name", fileInfo.name)
+  result.putString("fileUrl", fileInfo.fileUrl)
+  result.putDouble("size", fileInfo.size.toDouble())
+  result.putString("dateTime", fileInfo.dateTime)
+  fileInfo.lat?.run {
+    result.putDouble("lat", this.toDouble())
+  }
+  fileInfo.lng?.run {
+    result.putDouble("lng", this.toDouble())
+  }
+  fileInfo.width?.run {
+    result.putInt("width", this)
+  }
+  fileInfo.height?.run {
+    result.putInt("height", this)
+  }
+  result.putString("thumbnailUrl", fileInfo.thumbnailUrl)
+  fileInfo.intervalCaptureGroupId?.run {
+    result.putString("intervalCaptureGroupId", this)
+  }
+  fileInfo.compositeShootingGroupId?.run {
+    result.putString("compositeShootingGroupId", this)
+  }
+  fileInfo.autoBracketGroupId?.run {
+    result.putString("autoBracketGroupId", this)
+  }
+  fileInfo.recordTime?.run {
+    result.putInt("recordTime", this)
+  }
+  fileInfo.isProcessed?.run {
+    result.putBoolean("isProcessed", this)
+  }
+  fileInfo.previewUrl?.run {
+    result.putString("previewUrl", this)
+  }
+  fileInfo.codec?.run {
+    result.putString("codec", this.name)
+  }
+  fileInfo.projectionType?.run {
+    result.putString("projectionType", this.name)
+  }
+  fileInfo.continuousShootingGroupId?.run {
+    result.putString("continuousShootingGroupId", this)
+  }
+  fileInfo.frameRate?.run {
+    result.putInt("frameRate", this)
+  }
+  fileInfo.favorite?.run {
+    result.putBoolean("favorite", this)
+  }
+  fileInfo.imageDescription?.run {
+    result.putString("imageDescription", this)
+  }
+  fileInfo.storageID?.run {
+    result.putString("storageID", this)
+  }
+  return result
+}

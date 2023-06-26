@@ -1,7 +1,9 @@
 import { NativeModules } from 'react-native';
 import {
+  CodecEnum,
   FileInfo,
   FileTypeEnum,
+  ProjectionTypeEnum,
   StorageEnum,
   ThetaFiles,
   listFiles,
@@ -20,6 +22,15 @@ describe('listFiles', () => {
     [FileTypeEnum.IMAGE, 'IMAGE'],
     [FileTypeEnum.VIDEO, 'VIDEO'],
     [FileTypeEnum.ALL, 'ALL'],
+  ];
+
+  const codecEnumArray: [CodecEnum, string][] = [
+    [CodecEnum.H264MP4AVC, 'H264MP4AVC'],
+  ];
+
+  const projectionTypeEnumArray: [ProjectionTypeEnum, string][] = [
+    [ProjectionTypeEnum.EQUIRECTANGULAR, 'EQUIRECTANGULAR'],
+    [ProjectionTypeEnum.DUAL_FISHEYE, 'DUAL_FISHEYE'],
   ];
 
   beforeEach(() => {
@@ -139,6 +150,22 @@ describe('listFiles', () => {
   test('StorageEnum data', () => {
     storageEnumArray.forEach((item) => {
       expect(item[0] ? item[0].toString() : '').toBe(item[1]);
+    });
+  });
+
+  test('CodecEnum data', () => {
+    expect(codecEnumArray.length).toBe(Object.keys(CodecEnum).length);
+    codecEnumArray.forEach((item) => {
+      expect(item[0]).toBe(item[1]);
+    });
+  });
+
+  test('ProjectionTypeEnum data', () => {
+    expect(projectionTypeEnumArray.length).toBe(
+      Object.keys(ProjectionTypeEnum).length
+    );
+    projectionTypeEnumArray.forEach((item) => {
+      expect(item[0]).toBe(item[1]);
     });
   });
 });

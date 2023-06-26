@@ -2062,6 +2062,69 @@ THETACThetaRepositoryTimeout* timeoutToTheta(NSDictionary* objects)
   return timeout;
 }
 
+NSDictionary* fileInfoFromTheta(THETACThetaRepositoryFileInfo* fileInfo) {
+  NSMutableDictionary *fileInfoObject = [[NSMutableDictionary alloc] initWithDictionary:@{
+    @"name":fileInfo.name,
+    @"fileUrl":fileInfo.fileUrl,
+    @"size":@(fileInfo.size),
+    @"dateTime":fileInfo.dateTime,
+    @"thumbnailUrl":fileInfo.thumbnailUrl
+  }];
+  if (fileInfo.lat) {
+    [fileInfoObject setObject:@(fileInfo.lat.floatValue) forKey:@"lat"];
+  }
+  if (fileInfo.lng) {
+    [fileInfoObject setObject:@(fileInfo.lng.floatValue) forKey:@"lng"];
+  }
+  if (fileInfo.width) {
+    [fileInfoObject setObject:@(fileInfo.width.intValue) forKey:@"width"];
+  }
+  if (fileInfo.height) {
+    [fileInfoObject setObject:@(fileInfo.height.intValue) forKey:@"height"];
+  }
+  if (fileInfo.intervalCaptureGroupId) {
+    [fileInfoObject setObject:fileInfo.intervalCaptureGroupId forKey:@"intervalCaptureGroupId"];
+  }
+  if (fileInfo.compositeShootingGroupId) {
+    [fileInfoObject setObject:fileInfo.compositeShootingGroupId forKey:@"compositeShootingGroupId"];
+  }
+  if (fileInfo.autoBracketGroupId) {
+    [fileInfoObject setObject:fileInfo.autoBracketGroupId forKey:@"autoBracketGroupId"];
+  }
+  if (fileInfo.recordTime) {
+    [fileInfoObject setObject:@(fileInfo.recordTime.intValue) forKey:@"recordTime"];
+  }
+  if (fileInfo.isProcessed) {
+    [fileInfoObject setObject:@(fileInfo.isProcessed.boolValue) forKey:@"isProcessed"];
+  }
+  if (fileInfo.previewUrl) {
+    [fileInfoObject setObject:fileInfo.previewUrl forKey:@"previewUrl"];
+  }
+  if (fileInfo.codec) {
+    [fileInfoObject setObject:fileInfo.codec.name forKey:@"codec"];
+  }
+  if (fileInfo.projectionType) {
+    [fileInfoObject setObject:fileInfo.projectionType.name forKey:@"projectionType"];
+  }
+  if (fileInfo.continuousShootingGroupId) {
+    [fileInfoObject setObject:fileInfo.continuousShootingGroupId forKey:@"continuousShootingGroupId"];
+  }
+  if (fileInfo.frameRate) {
+    [fileInfoObject setObject:@(fileInfo.frameRate.intValue) forKey:@"frameRate"];
+  }
+  if (fileInfo.favorite) {
+    [fileInfoObject setObject:@(fileInfo.favorite.boolValue) forKey:@"favorite"];
+  }
+  if (fileInfo.imageDescription) {
+    [fileInfoObject setObject:fileInfo.imageDescription forKey:@"imageDescription"];
+  }
+  if (fileInfo.storageID) {
+    [fileInfoObject setObject:fileInfo.storageID forKey:@"storageID"];
+  }
+
+  return fileInfoObject;
+}
+
 /**
  * ThetaClientReactNative implementation
  */
@@ -2303,17 +2366,7 @@ RCT_REMAP_METHOD(listFiles,
         NSMutableArray *ary = [[NSMutableArray alloc] init];
         for (int i = 0; i < items.fileList.count; i++) {
           THETACThetaRepositoryFileInfo *finfo = items.fileList[i];
-          NSMutableDictionary *fileInfoObject = [[NSMutableDictionary alloc] initWithDictionary:@{
-            @"name":finfo.name,
-            @"size":@(finfo.size),
-            @"dateTime":finfo.dateTime,
-            @"thumbnailUrl":finfo.thumbnailUrl,
-            @"fileUrl":finfo.fileUrl
-          }];
-          if (finfo.storageID) {
-            [fileInfoObject setObject:finfo.storageID forKey:@"storageID"];
-          }
-          [ary addObject:fileInfoObject];
+          [ary addObject:fileInfoFromTheta(finfo)];
         }
         resolve(@{@"fileList":ary,
               @"totalEntries": @(items.totalEntries)});
