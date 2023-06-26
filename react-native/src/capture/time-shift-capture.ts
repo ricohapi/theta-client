@@ -2,6 +2,7 @@ import type { EmitterSubscription } from 'react-native';
 import { CaptureBuilder } from './capture';
 import { NativeModules } from 'react-native';
 import { BaseNotify, CaptureProgressNotify, addNotifyListener } from './notify';
+import type { TimeShiftIntervalEnum } from '../theta-repository/options';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 /**
@@ -82,6 +83,51 @@ export class TimeShiftCaptureBuilder extends CaptureBuilder<TimeShiftCaptureBuil
   setCheckStatusCommandInterval(timeMillis: number): TimeShiftCaptureBuilder {
     this.interval = timeMillis;
     return this;
+  }
+
+  /**
+   * Set is front first.
+   * @param isFrontFirst is front first
+   * @returns TimeShiftCaptureBuilder
+   */
+  setIsFrontFirst(isFrontFirst: boolean): TimeShiftCaptureBuilder {
+    this.checkAndInitTimeShiftSetting();
+    if (this.options.timeShift != null) {
+      this.options.timeShift.isFrontFirst = isFrontFirst;
+    }
+    return this;
+  }
+
+  /**
+   * set time (sec) before 1st lens shooting
+   * @param interval 1st interval
+   * @returns TimeShiftCaptureBuilder
+   */
+  setFirstInterval(interval: TimeShiftIntervalEnum): TimeShiftCaptureBuilder {
+    this.checkAndInitTimeShiftSetting();
+    if (this.options.timeShift != null) {
+      this.options.timeShift.firstInterval = interval;
+    }
+    return this;
+  }
+
+  /**
+   * set time (sec) from 1st lens shooting until start of 2nd lens shooting.
+   * @param interval 2nd interval
+   * @returns TimeShiftCaptureBuilder
+   */
+  setSecondInterval(interval: TimeShiftIntervalEnum): TimeShiftCaptureBuilder {
+    this.checkAndInitTimeShiftSetting();
+    if (this.options.timeShift != null) {
+      this.options.timeShift.secondInterval = interval;
+    }
+    return this;
+  }
+
+  private checkAndInitTimeShiftSetting() {
+    if (this.options.timeShift == null) {
+      this.options.timeShift = {};
+    }
   }
 
   /**

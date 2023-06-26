@@ -585,7 +585,21 @@ class TimeShiftConverter : OptionConverter {
       objects.putMap("timeShift", timeShift)
     }
   }
- }
+
+  override fun setTimeShiftOption(objects: ReadableMap, builder: TimeShiftCapture.Builder) {
+    objects.getMap("timeShift")?.let { timeShiftMap ->
+      if (timeShiftMap.hasKey("isFrontFirst")) {
+        builder.setIsFrontFirst(timeShiftMap.getBoolean("isFrontFirst"))
+      }
+      timeShiftMap.getString("firstInterval")?.let {
+        builder.setFirstInterval(ThetaRepository.TimeShiftIntervalEnum.valueOf(it))
+      }
+      timeShiftMap.getString("secondInterval")?.let {
+        builder.setSecondInterval(ThetaRepository.TimeShiftIntervalEnum.valueOf(it))
+      }
+    }
+  }
+}
 
 /**
  * ShootingMethodConverter

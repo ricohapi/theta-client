@@ -278,7 +278,7 @@ typedef struct _convert_t {
     SetToTheta setToTheta; ///< option setter react to theta
     SetFromTheta setFromTheta; ///< option setter theta to react
     SetPhotoOption setPhotoOption; ///< photo option setter
-    SetTimeShiftOption setTimeShiftOption; ///< photo option setter
+    SetTimeShiftOption setTimeShiftOption; ///< time-shift option setter
     SetVideoOption setVideoOption; ///< video option setter
 } convert_t;
 
@@ -1784,7 +1784,15 @@ static convert_t TimeShiftCvt = {
       
       [rct setObject:timeshift forKey:@"timeShift"];
     }
-  }
+  },
+  .setTimeShiftOption = ^(NSDictionary* rct, THETACTimeShiftCaptureBuilder *builder) {
+    NSDictionary *timeshiftDic = [rct objectForKey:@"timeShift"];
+    if (timeshiftDic) {
+      [builder setIsFrontFirstIsFrontFirst:!isNull([timeshiftDic objectForKey:@"isFrontFirst"]) ? [THETACBoolean numberWithBool:((NSNumber*) [timeshiftDic objectForKey:@"isFrontFirst"]).boolValue] : nil];
+      [builder setFirstIntervalInterval:!isNull([timeshiftDic objectForKey:@"firstInterval"]) ? [TimeShiftCvt.toTheta objectForKey:[timeshiftDic objectForKey:@"firstInterval"]] : nil];
+      [builder setSecondIntervalInterval:!isNull([timeshiftDic objectForKey:@"secondInterval"]) ? [TimeShiftCvt.toTheta objectForKey:[timeshiftDic objectForKey:@"secondInterval"]] : nil];
+    }
+  },
 };
 
 /**
