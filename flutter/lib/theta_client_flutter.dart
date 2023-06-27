@@ -921,7 +921,7 @@ class AccessPoint {
 ///
 /// [options name](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
 enum OptionNameEnum {
-  /// Option name aperture
+  /// Option name _aiAutoThumbnail
   aiAutoThumbnail('AiAutoThumbnail', AiAutoThumbnailEnum),
 
   /// Option name aperture
