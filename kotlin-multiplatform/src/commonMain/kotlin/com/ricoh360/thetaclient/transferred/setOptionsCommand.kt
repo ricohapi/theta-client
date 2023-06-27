@@ -96,6 +96,7 @@ data class ResultSetOptions(
  * option key value pair
  */
 @Serializable
+@Suppress("ConstructorParameterNaming")
 data class Options(
     /**
      * Turns the AI auto setting ON/OFF.
@@ -151,7 +152,7 @@ data class Options(
      * The current setting can be acquired by camera.getOptions, and
      * it can be changed by camera.setOptions.
      *
-     * Swithcing modes may take time. Wait a while to send the command
+     * Switching modes may take time. Wait a while to send the command
      * that takes place after switching the mode.
      *
      * Live streaming mode is supported by only RICOH THETA S.
@@ -517,7 +518,7 @@ data class Options(
     var shutterSpeed: Double? = null,
 
     /**
-     * Supported shutter spped.
+     * Supported shutter speed.
      */
     var shutterSpeedSupport: List<Double>? = null,
 
@@ -1324,7 +1325,7 @@ enum class Language {
     TW,
 
     /**
-     * Chineses: zh-CN
+     * Chinese: zh-CN
      */
     @SerialName("zh-CN")
     CN,
