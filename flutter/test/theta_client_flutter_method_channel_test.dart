@@ -230,6 +230,8 @@ void main() {
         'dateTime': dateTime,
         'fileUrl': fileUrl,
         'thumbnailUrl': thumbnailUrl,
+        'codec': 'H264MP4AVC',
+        'projectionType': 'DUAL_FISHEYE',
       };
       fileList.add(info);
       fileList.add(info);
@@ -250,6 +252,8 @@ void main() {
       expect(fileInfo.dateTime, dateTime);
       expect(fileInfo.fileUrl, fileUrl);
       expect(fileInfo.thumbnailUrl, thumbnailUrl);
+      expect(fileInfo.codec, CodecEnum.h264mp4avc);
+      expect(fileInfo.projectionType, ProjectionTypeEnum.dualFisheye);
       expect(fileInfo.storageID, null);
       expect(thetaFiles.totalEntries, 10);
     }
