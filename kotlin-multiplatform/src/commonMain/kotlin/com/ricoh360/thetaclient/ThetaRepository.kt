@@ -330,12 +330,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         /**
          * THETA SC2
          */
-        THETA_SC2("RICOH THETA SC2", 1),
+        THETA_SC2("RICOH THETA SC2", MAJOR_VERSION_SC2),
 
         /**
          * THETA SC2 for business
          */
-        THETA_SC2_B("RICOH THETA SC2", 6);
+        THETA_SC2_B("RICOH THETA SC2", MAJOR_VERSION_SC2_B);
 
         companion object {
             /**
@@ -5567,3 +5567,13 @@ const val CHECK_COMMAND_STATUS_INTERVAL = 1000L
  * The size of setPluginOrders()'s argument list for Z1
  */
 const val SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 = 3
+
+/**
+ * Major version of the SC2 firmware
+ */
+const val MAJOR_VERSION_SC2 = 1
+
+/**
+ * Major version of the SC2 for business firmware
+ */
+const val MAJOR_VERSION_SC2_B = 6
