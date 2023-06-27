@@ -41,7 +41,6 @@ kotlin {
         val coroutines_version = "1.6.4"
         val coroutines_mtversion = "1.6.4-native-mt"
         val ktor_version = "2.1.2"
-        val logback_version = "1.4.4"
         val kryptoVersion = "3.4.0"
 
         val commonMain by getting {
@@ -213,4 +212,8 @@ fun getExtraString(name: String): String? {
         return ext[name]?.toString()
     }
     return null
+}
+
+tasks.dokkaHtml.configure {
+    moduleName.set("theta-client")
 }
