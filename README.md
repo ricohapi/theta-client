@@ -54,7 +54,7 @@ theta-client$ ./gradlew testReleaseUnitTest
 ```
 
 ## How to Use
-See tutorial in `docs` directory.
+See tutorials in `docs` directory and [KDoc](https://ricohapi.github.io/theta-client/) of this library.
 
 
 ## License
