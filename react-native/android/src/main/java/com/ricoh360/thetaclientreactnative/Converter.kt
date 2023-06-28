@@ -985,57 +985,57 @@ fun fileInfoFromTheta(fileInfo: ThetaRepository.FileInfo): ReadableMap {
   result.putString("fileUrl", fileInfo.fileUrl)
   result.putDouble("size", fileInfo.size.toDouble())
   result.putString("dateTime", fileInfo.dateTime)
-  fileInfo.lat?.run {
-    result.putDouble("lat", this.toDouble())
+  fileInfo.lat?.let {
+    result.putDouble("lat", it.toDouble())
   }
-  fileInfo.lng?.run {
-    result.putDouble("lng", this.toDouble())
+  fileInfo.lng?.let {
+    result.putDouble("lng", it.toDouble())
   }
-  fileInfo.width?.run {
-    result.putInt("width", this)
+  fileInfo.width?.let {
+    result.putInt("width", it)
   }
-  fileInfo.height?.run {
-    result.putInt("height", this)
+  fileInfo.height?.let {
+    result.putInt("height", it)
   }
   result.putString("thumbnailUrl", fileInfo.thumbnailUrl)
-  fileInfo.intervalCaptureGroupId?.run {
-    result.putString("intervalCaptureGroupId", this)
+  fileInfo.intervalCaptureGroupId?.let {
+    result.putString("intervalCaptureGroupId", it)
   }
-  fileInfo.compositeShootingGroupId?.run {
-    result.putString("compositeShootingGroupId", this)
+  fileInfo.compositeShootingGroupId?.let {
+    result.putString("compositeShootingGroupId", it)
   }
-  fileInfo.autoBracketGroupId?.run {
-    result.putString("autoBracketGroupId", this)
+  fileInfo.autoBracketGroupId?.let {
+    result.putString("autoBracketGroupId", it)
   }
-  fileInfo.recordTime?.run {
-    result.putInt("recordTime", this)
+  fileInfo.recordTime?.let {
+    result.putInt("recordTime", it)
   }
-  fileInfo.isProcessed?.run {
-    result.putBoolean("isProcessed", this)
+  fileInfo.isProcessed?.let {
+    result.putBoolean("isProcessed", it)
   }
-  fileInfo.previewUrl?.run {
-    result.putString("previewUrl", this)
+  fileInfo.previewUrl?.let {
+    result.putString("previewUrl", it)
   }
-  fileInfo.codec?.run {
-    result.putString("codec", this.name)
+  fileInfo.codec?.let {
+    result.putString("codec", it.name)
   }
-  fileInfo.projectionType?.run {
-    result.putString("projectionType", this.name)
+  fileInfo.projectionType?.let {
+    result.putString("projectionType", it.name)
   }
-  fileInfo.continuousShootingGroupId?.run {
-    result.putString("continuousShootingGroupId", this)
+  fileInfo.continuousShootingGroupId?.let {
+    result.putString("continuousShootingGroupId", it)
   }
-  fileInfo.frameRate?.run {
-    result.putInt("frameRate", this)
+  fileInfo.frameRate?.let {
+    result.putInt("frameRate", it)
   }
-  fileInfo.favorite?.run {
-    result.putBoolean("favorite", this)
+  fileInfo.favorite?.let {
+    result.putBoolean("favorite", it)
   }
-  fileInfo.imageDescription?.run {
-    result.putString("imageDescription", this)
+  fileInfo.imageDescription?.let {
+    result.putString("imageDescription", it)
   }
-  fileInfo.storageID?.run {
-    result.putString("storageID", this)
+  fileInfo.storageID?.let {
+    result.putString("storageID", it)
   }
   return result
 }
