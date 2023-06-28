@@ -4803,8 +4803,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     @Throws(Throwable::class)
     suspend fun convertVideoFormats(fileUrl: String, toLowResolution: Boolean, applyTopBottomCorrection: Boolean = true): String {
-        val params = when (cameraModel) {
-            ThetaModel.THETA_X -> {
+        val params = when {
+            cameraModel == ThetaModel.THETA_X -> {
                 if (!toLowResolution) {
                     return fileUrl
                 }
@@ -4813,7 +4813,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                     size = VideoFormat.VIDEO_4K
                 )
             }
-            ThetaModel.THETA_S, ThetaModel.THETA_SC, ThetaModel.THETA_SC2, ThetaModel.THETA_SC2_B -> {
+            ThetaModel.isBeforeThetaV(cameraModel) -> {
                 return fileUrl
             }
             else -> {
