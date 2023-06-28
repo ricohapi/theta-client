@@ -30,9 +30,9 @@ export type FileInfo = {
   isProcessed?: boolean;
   /** URL of the file being processed. */
   previewUrl?: string;
-  /** Codec: “H.264/MPEG-4 AVC”. */
+  /** Codec. (RICOH THETA V or later) */
   codec?: CodecEnum;
-  /** Projection type of movie file: “Equirectangular” or “Dual-Fisheye”. */
+  /** Projection type of movie file. (RICOH THETA V or later) */
   projectionType?: ProjectionTypeEnum;
   /** Group ID of continuous shooting.  (RICOH THETA X or later) */
   continuousShootingGroupId?: string;

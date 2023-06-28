@@ -3993,8 +3993,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @property recordTime Video shooting time (sec).
      * @property isProcessed Whether or not image processing has been completed.
      * @property previewUrl URL of the file being processed.
-     * @property codec Codec: “H.264/MPEG-4 AVC”.
-     * @property projectionType Projection type of movie file: “Equirectangular” or “Dual-Fisheye”.
+     * @property codec Codec. (RICOH THETA V or later)
+     * @property projectionType Projection type of movie file. (RICOH THETA V or later)
      * @property continuousShootingGroupId Group ID of continuous shooting.  (RICOH THETA X or later)
      * @property frameRate Frame rate.  (RICOH THETA X or later)
      * @property favorite Favorite.  (RICOH THETA X or later)

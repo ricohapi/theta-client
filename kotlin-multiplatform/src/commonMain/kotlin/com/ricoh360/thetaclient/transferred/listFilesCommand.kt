@@ -230,12 +230,12 @@ data class CameraFileInfo(
     val previewUrl: String,
 
     /**
-     * Codec: “H.264/MPEG-4 AVC”
+     * Codec. (RICOH THETA V or later)
      */
     val _codec: String?,
 
     /**
-     * Projection type of movie file: “Equirectangular” or “Dual-Fisheye”.
+     * Projection type of movie file. (RICOH THETA V or later)
      */
     val _projectionType: _ProjectionType?,
 

@@ -571,10 +571,10 @@ class FileInfo {
   /// URL of the file being processed.
   final String? previewUrl;
 
-  /// Codec: “H.264/MPEG-4 AVC”.
+  /// Codec. (RICOH THETA V or later)
   final CodecEnum? codec;
 
-  /// Projection type of movie file: “Equirectangular” or “Dual-Fisheye”.
+  /// Projection type of movie file. (RICOH THETA V or later)
   final ProjectionTypeEnum? projectionType;
 
   /// Group ID of continuous shooting.  (RICOH THETA X or later)
