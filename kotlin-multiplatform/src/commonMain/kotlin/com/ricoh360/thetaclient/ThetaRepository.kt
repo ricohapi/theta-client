@@ -253,11 +253,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     internal suspend fun getConfigSetting(config: Config, model: ThetaModel) {
         val optionNameList = listOfNotNull(
             OptionNameEnum.DateTimeZone.value,
-            // For THETA V or later
-            when(model) {
-                ThetaModel.THETA_S, ThetaModel.THETA_SC, ThetaModel.THETA_SC2, ThetaModel.THETA_SC2_B -> null
-                else -> OptionNameEnum.Language.value
-            },
+            if (ThetaModel.isBeforeThetaV(model)) null else OptionNameEnum.Language.value,
             OptionNameEnum.OffDelay.value,
             OptionNameEnum.SleepDelay.value,
             OptionNameEnum.ShutterVolume.value
@@ -351,7 +347,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                         when (it.value) {
                             THETA_SC2.value -> {
                                 serialNumber?.let { sn ->
-                                    it.firstCharOfSerialNumber == sn.first()
+                                    if (sn.first() == FIRST_CHAR_OF_SERIAL_NUMBER_SC2_B) { // In case of Theta SC2 for business
+                                        it.firstCharOfSerialNumber == sn.first()
+                                    } else { // In case of Theta SC2
+                                        it.firstCharOfSerialNumber != FIRST_CHAR_OF_SERIAL_NUMBER_SC2_B
+                                    }
                                 } ?: false
                             }
                             else -> true
@@ -5573,11 +5573,13 @@ const val CHECK_COMMAND_STATUS_INTERVAL = 1000L
 const val SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 = 3
 
 /**
- * First character of the serial number of the SC2
+ * One of the first characters of the serial number of the SC2.
+ * Note that '2' is also used.
  */
 const val FIRST_CHAR_OF_SERIAL_NUMBER_SC2 = '0'
 
 /**
- * First character of the serial number of the SC2 for business
+ * The first character of the serial number of the SC2 for business.
+ * Other characters are used to SC2.
  */
 const val FIRST_CHAR_OF_SERIAL_NUMBER_SC2_B = '4'
