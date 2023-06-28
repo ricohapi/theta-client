@@ -202,6 +202,7 @@ class TimeShiftCaptureTest {
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
         val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder().build()
 
         var file: String? = null
@@ -250,6 +251,7 @@ class TimeShiftCaptureTest {
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
         val capture = thetaRepository.getTimeShiftCaptureBuilder()
             .setCheckStatusCommandInterval(timeMillis)
             .build()
@@ -280,6 +282,7 @@ class TimeShiftCaptureTest {
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
         val capture = thetaRepository.getTimeShiftCaptureBuilder()
             .setIsFrontFirst(isFrontFirst)
             .build()
@@ -310,6 +313,7 @@ class TimeShiftCaptureTest {
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
         val capture = thetaRepository.getTimeShiftCaptureBuilder()
             .setFirstInterval(interval)
             .build()
@@ -340,6 +344,7 @@ class TimeShiftCaptureTest {
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
         val capture = thetaRepository.getTimeShiftCaptureBuilder()
             .setSecondInterval(interval)
             .build()
@@ -367,6 +372,7 @@ class TimeShiftCaptureTest {
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
 
         var exceptionSetCaptureMode = false
         try {
@@ -415,6 +421,7 @@ class TimeShiftCaptureTest {
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
 
         // execute status error and json response
         var exceptionStatusJson = false
@@ -455,6 +462,7 @@ class TimeShiftCaptureTest {
         }
 
         val thetaRepository = ThetaRepository(endpoint)
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
         val capture = thetaRepository.getTimeShiftCaptureBuilder().build()
 
         // execute error response
@@ -529,6 +537,7 @@ class TimeShiftCaptureTest {
         }
 
         val thetaRepository = ThetaRepository(endpoint)
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
         val capture = thetaRepository.getTimeShiftCaptureBuilder().build()
 
         // execute status error and json response
@@ -622,6 +631,7 @@ class TimeShiftCaptureTest {
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
         val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder().build()
 
         var capturing = timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {

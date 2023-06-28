@@ -97,11 +97,12 @@ class TimeShiftCapture private constructor(
                     }
 
                     if (response.state == CommandState.DONE) {
-                        var fileUrl: String? = null;
-                        if (response.name == "camera.startCapture") { // Theta X
-                            fileUrl = (response as StartCaptureResponse).results?.fileUrls?.firstOrNull()
-                        } else if (response.name == "camera.takePicture") { // Theta SC2 for business
-                            fileUrl = (response as TakePictureResponse).results?.fileUrl
+                        var fileUrl: String? = when (response.name) {
+                            // Theta X
+                            "camera.startCapture" -> (response as StartCaptureResponse).results?.fileUrls?.firstOrNull()
+                            // Theta SC2 for business
+                            "camera.takePicture" -> (response as TakePictureResponse).results?.fileUrl
+                            else -> null
                         }
                         callback.onSuccess(fileUrl = fileUrl)
                         return@runBlocking
@@ -142,8 +143,8 @@ class TimeShiftCapture private constructor(
                     ThetaRepository.ThetaModel.THETA_SC2_B -> Options(
                         captureMode = CaptureMode.PRESET,
                         _preset = Preset.ROOM,
-                        _timeShift = TimeShift(firstShooting = FirstShootingEnum.FRONT, firstInterval = 2, secondInterval = 5),
-                        exposureDelay = 2, // without this option, sometimes shooting is normal but time-shift
+                        _timeShift = TimeShift(firstShooting = FirstShootingEnum.FRONT, firstInterval = SC2B_DEFAILT_FIRST_INTERVAL, secondInterval = SC2B_DEFAULT_SECOND_INTERVAL),
+                        exposureDelay = SC2B_DEFAULT_EXPOSURE_DELAY, // without this option, sometimes shooting is normal but time-shift
                     )
                     else -> Options(captureMode = CaptureMode.IMAGE)
                 }
@@ -226,5 +227,12 @@ class TimeShiftCapture private constructor(
         }
 
         // TODO: Add set photo option property
+
+        companion object {
+            // default values for time-shift settings of Theta SC2 for business
+            const val SC2B_DEFAILT_FIRST_INTERVAL = 2
+            const val SC2B_DEFAULT_SECOND_INTERVAL = 5
+            const val SC2B_DEFAULT_EXPOSURE_DELAY = 2
+        }
     }
 }

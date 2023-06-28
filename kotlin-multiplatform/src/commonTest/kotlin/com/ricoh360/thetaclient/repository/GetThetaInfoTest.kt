@@ -300,9 +300,9 @@ class GetThetaInfoTest {
         modelNameArray.forEachIndexed { index, it ->
             when (index) {
                 // SC2
-                2 -> assertEquals(ThetaRepository.ThetaModel.get(it, "01.50"), modelEnumArray[index], "Name: $it ThetaModel: $modelEnumArray[index].value")
+                2 -> assertEquals(ThetaRepository.ThetaModel.get(it, "00118200"), modelEnumArray[index], "Name: $it ThetaModel: $modelEnumArray[index].value")
                 // SC2 for business
-                3 -> assertEquals(ThetaRepository.ThetaModel.get(it, "06.70"), modelEnumArray[index], "Name: $it ThetaModel: $modelEnumArray[index].value")
+                3 -> assertEquals(ThetaRepository.ThetaModel.get(it, "40118200"), modelEnumArray[index], "Name: $it ThetaModel: $modelEnumArray[index].value")
                 // other models
                 else -> assertEquals(ThetaRepository.ThetaModel.get(it), modelEnumArray[index], "Name: $it ThetaModel: $modelEnumArray[index].value")
             }

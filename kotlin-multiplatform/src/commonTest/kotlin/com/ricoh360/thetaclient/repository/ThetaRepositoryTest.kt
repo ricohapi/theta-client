@@ -695,8 +695,8 @@ class ThetaRepositoryTest {
         }
 
         ThetaRepository.newInstance(endpoint)
-        assertTrue(ThetaRepository.ThetaModel.THETA_SC2 == ThetaRepository.ThetaModel.get("RICOH THETA SC2", "01.82"), "model SC2")
-        assertTrue(ThetaRepository.ThetaModel.THETA_SC2_B == ThetaRepository.ThetaModel.get("RICOH THETA SC2", "06.52"), "model SC2 for business")
+        assertTrue(ThetaRepository.ThetaModel.THETA_SC2 == ThetaRepository.ThetaModel.get("RICOH THETA SC2", "00118200"), "model SC2")
+        assertTrue(ThetaRepository.ThetaModel.THETA_SC2_B == ThetaRepository.ThetaModel.get("RICOH THETA SC2", "40118200"), "model SC2 for business")
         assertNull(ThetaRepository.ThetaModel.get("RICOH THETA SC2"), "No firmware version")
         assertTrue(ThetaRepository.ThetaModel.THETA_Z1 == ThetaRepository.ThetaModel.get("RICOH THETA Z1"), "model Z1")
     }
