@@ -452,7 +452,7 @@ test('PresetEnum', () async {
     List<List<dynamic>> data = [
       [PresetEnum.face, 'FACE'],
       [PresetEnum.nightView, 'NIGHT_VIEW'],
-      [PresetEnum.lensByLendsExposure, 'LENS_BY_LENS_EXPOSURE'],
+      [PresetEnum.lensByLensExposure, 'LENS_BY_LENS_EXPOSURE'],
       [PresetEnum.room, 'ROOM'],
     ];
     expect(data.length, PresetEnum.values.length, reason: 'enum count');

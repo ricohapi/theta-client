@@ -1925,7 +1925,7 @@ enum PowerSavingEnum {
 enum PresetEnum {
   face('FACE'),
   nightView('NIGHT_VIEW'),
-  lensByLendsExposure('LENS_BY_LENS_EXPOSURE'),
+  lensByLensExposure('LENS_BY_LENS_EXPOSURE'),
   room('ROOM');
 
   final String rawValue;
