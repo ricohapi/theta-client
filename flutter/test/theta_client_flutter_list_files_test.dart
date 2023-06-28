@@ -62,6 +62,7 @@ void main() {
     List<List<dynamic>> data = [
       [ProjectionTypeEnum.equirectangular, 'EQUIRECTANGULAR'],
       [ProjectionTypeEnum.dualFisheye, 'DUAL_FISHEYE'],
+      [ProjectionTypeEnum.fisheye, 'FISHEYE'],
     ];
     expect(data.length, ProjectionTypeEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {

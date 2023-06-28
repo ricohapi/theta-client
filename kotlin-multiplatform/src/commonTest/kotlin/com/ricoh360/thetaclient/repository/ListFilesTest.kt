@@ -6,6 +6,7 @@ import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.FileType
 import com.ricoh360.thetaclient.transferred.ListFilesRequest
 import com.ricoh360.thetaclient.transferred.Storage
+import com.ricoh360.thetaclient.transferred._ProjectionType
 import io.ktor.client.network.sockets.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -293,7 +294,7 @@ class ListFilesTest {
      * Check group id.
      */
     @Test
-    fun listFilesCheckGoupIDTest() = runTest {
+    fun listFilesCheckGroupIDTest() = runTest {
         val fileType = ThetaRepository.FileTypeEnum.VIDEO
         val startPosition = 0
         val entryCount = 10
@@ -303,7 +304,7 @@ class ListFilesTest {
         )
 
         var counter = 0
-        MockApiClient.onRequest = { request ->
+        MockApiClient.onRequest = { _ ->
             val index = counter++
 
             ByteReadChannel(responseArray[index])
@@ -474,6 +475,38 @@ class ListFilesTest {
             assertTrue(false, "response is normal.")
         } catch (e: ThetaRepository.NotConnectedException) {
             assertTrue(e.message!!.indexOf("time", 0, true) >= 0, "timeout exception")
+        }
+    }
+
+    /**
+     * Convert ProjectionTypeEnum.
+     */
+    @Test
+    fun convertProjectionTypeEnumTest() = runTest {
+        val values = listOf(
+            Pair(ThetaRepository.ProjectionTypeEnum.EQUIRECTANGULAR, _ProjectionType.EQUIRECTANGULAR),
+            Pair(ThetaRepository.ProjectionTypeEnum.DUAL_FISHEYE, _ProjectionType.DUAL_FISHEYE),
+            Pair(ThetaRepository.ProjectionTypeEnum.FISHEYE, _ProjectionType.FISHEYE),
+        )
+
+        assertEquals(ThetaRepository.ProjectionTypeEnum.values().size, values.size)
+        values.forEach {
+            assertEquals(ThetaRepository.ProjectionTypeEnum.get(it.second), it.first, "ProjectionTypeEnum ${it.first}")
+        }
+    }
+
+    /**
+     * Convert CodecEnum.
+     */
+    @Test
+    fun convertCodecEnumTest() = runTest {
+        val values = listOf(
+            Pair(ThetaRepository.CodecEnum.H264MP4AVC, "H.264/MPEG-4 AVC"),
+        )
+
+        assertEquals(ThetaRepository.CodecEnum.values().size, values.size)
+        values.forEach {
+            assertEquals(ThetaRepository.CodecEnum.get(it.second), it.first, "CodecEnum ${it.first}")
         }
     }
 }

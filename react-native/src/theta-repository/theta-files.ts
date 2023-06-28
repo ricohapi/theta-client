@@ -95,6 +95,8 @@ export const ProjectionTypeEnum = {
   EQUIRECTANGULAR: 'EQUIRECTANGULAR',
   /** Dual Fisheye type */
   DUAL_FISHEYE: 'DUAL_FISHEYE',
+  /** Dual Fisheye type */
+  FISHEYE: 'FISHEYE',
 } as const;
 
 /** type definition of ProjectionTypeEnum */

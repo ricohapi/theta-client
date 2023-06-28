@@ -293,6 +293,12 @@ enum class _ProjectionType {
      */
     @SerialName("Dual-Fisheye")
     DUAL_FISHEYE,
+
+    /**
+     * Fisheye type
+     */
+    @SerialName("Fisheye")
+    FISHEYE,
 }
 
 /**

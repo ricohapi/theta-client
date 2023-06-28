@@ -506,7 +506,10 @@ enum ProjectionTypeEnum {
   equirectangular('EQUIRECTANGULAR'),
 
   /// Dual Fisheye type
-  dualFisheye('DUAL_FISHEYE');
+  dualFisheye('DUAL_FISHEYE'),
+
+  /// Fisheye type
+  fisheye('FISHEYE');
 
   final String rawValue;
   const ProjectionTypeEnum(this.rawValue);

@@ -31,6 +31,7 @@ describe('listFiles', () => {
   const projectionTypeEnumArray: [ProjectionTypeEnum, string][] = [
     [ProjectionTypeEnum.EQUIRECTANGULAR, 'EQUIRECTANGULAR'],
     [ProjectionTypeEnum.DUAL_FISHEYE, 'DUAL_FISHEYE'],
+    [ProjectionTypeEnum.FISHEYE, 'FISHEYE'],
   ];
 
   beforeEach(() => {

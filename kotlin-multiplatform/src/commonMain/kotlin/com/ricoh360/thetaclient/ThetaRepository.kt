@@ -3933,6 +3933,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Dual Fisheye type
          */
         DUAL_FISHEYE(_ProjectionType.DUAL_FISHEYE),
+
+        /**
+         * Fisheye type
+         */
+        FISHEYE(_ProjectionType.FISHEYE),
         ;
 
         companion object {
