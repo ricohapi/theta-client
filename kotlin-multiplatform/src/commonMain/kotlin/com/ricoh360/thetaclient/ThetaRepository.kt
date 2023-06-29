@@ -324,12 +324,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         THETA_X("RICOH THETA X"),
 
         /**
-         * THETA SC2
+         * THETA SC2, the 1st character of which serial number is always other than
+         * FIRST_CHAR_OF_SERIAL_NUMBER_SC2_B.
          */
-        THETA_SC2("RICOH THETA SC2", FIRST_CHAR_OF_SERIAL_NUMBER_SC2),
+        THETA_SC2("RICOH THETA SC2"),
 
         /**
-         * THETA SC2 for business
+         * THETA SC2 for business, the first character of which serial number is always
+         * FIRST_CHAR_OF_SERIAL_NUMBER_SC2_B.
          */
         THETA_SC2_B("RICOH THETA SC2", FIRST_CHAR_OF_SERIAL_NUMBER_SC2_B);
 
@@ -342,21 +344,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @return ThetaModel
              */
             fun get(model: String?, serialNumber: String? = null): ThetaModel? {
-                return values().firstOrNull {
-                    if (it.value == model) {
-                        when (it.value) {
-                            THETA_SC2.value -> {
-                                serialNumber?.let { sn ->
-                                    if (sn.first() == FIRST_CHAR_OF_SERIAL_NUMBER_SC2_B) { // In case of Theta SC2 for business
-                                        it.firstCharOfSerialNumber == sn.first()
-                                    } else { // In case of Theta SC2
-                                        it.firstCharOfSerialNumber != FIRST_CHAR_OF_SERIAL_NUMBER_SC2_B
-                                    }
-                                } ?: false
-                            }
-                            else -> true
-                        }
-                    } else false
+                return serialNumber?.first()?.let { firstChar ->
+                    values().filter { it.firstCharOfSerialNumber != null }.firstOrNull {
+                        it.value == model && it.firstCharOfSerialNumber == firstChar
+                    }
+                } ?: run { // In case of serialNumber is null or either model or serialNumber is not matched.
+                    values().sortedWith(compareBy<ThetaModel> { it.value }.thenBy { it.firstCharOfSerialNumber })
+                        .firstOrNull { it.value == model }
                 }
             }
 
@@ -5571,12 +5565,6 @@ const val CHECK_COMMAND_STATUS_INTERVAL = 1000L
  * The size of setPluginOrders()'s argument list for Z1
  */
 const val SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 = 3
-
-/**
- * One of the first characters of the serial number of the SC2.
- * Note that '2' is also used.
- */
-const val FIRST_CHAR_OF_SERIAL_NUMBER_SC2 = '0'
 
 /**
  * The first character of the serial number of the SC2 for business.

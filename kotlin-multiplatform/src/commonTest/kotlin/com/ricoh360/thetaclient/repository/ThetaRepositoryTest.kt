@@ -677,29 +677,25 @@ class ThetaRepositoryTest {
     }
 
     /**
-     * Check Theta SC2 and Theta SC2 for business
-     *
+     * Check Theta models
      */
     @Test
     fun thetaModelTest() = runTest {
-        // setup
-        val responseArray = arrayOf(
-            Resource("src/commonTest/resources/info/info_sc2.json").readText(),
-            Resource("src/commonTest/resources/getOptions/get_options_done.json").readText()
+        val data = arrayOf(
+            arrayOf("RICOH THETA SC2", "12345", ThetaRepository.ThetaModel.THETA_SC2),
+            arrayOf("RICOH THETA SC2", "42345", ThetaRepository.ThetaModel.THETA_SC2_B),
+            arrayOf("RICOH THETA SC2", null, ThetaRepository.ThetaModel.THETA_SC2),
+            arrayOf("RICOH THETA X", null, ThetaRepository.ThetaModel.THETA_X),
+            arrayOf("RICOH THETA X", "2222222", ThetaRepository.ThetaModel.THETA_X),
+            arrayOf("RICOH THETA Z1", null, ThetaRepository.ThetaModel.THETA_Z1),
+            arrayOf("RICOH THETA Z1","4444444", ThetaRepository.ThetaModel.THETA_Z1),
+            arrayOf("RICOH THETA V", null, ThetaRepository.ThetaModel.THETA_V),
+            arrayOf("RICOH THETA S", null, ThetaRepository.ThetaModel.THETA_S),
+            arrayOf("RICOH THETA SC", null, ThetaRepository.ThetaModel.THETA_SC),
         )
-
-        var counter = 0
-        MockApiClient.onRequest = { request ->
-            val index = counter++
-            ByteReadChannel(responseArray[index])
+        for (item in data) {
+            assertEquals(ThetaRepository.ThetaModel.get(item[0] as String, item[1] as? String), item[2], (item[2] as? ThetaRepository.ThetaModel)?.name ?: "null")
         }
-
-        ThetaRepository.newInstance(endpoint)
-        assertTrue(ThetaRepository.ThetaModel.THETA_SC2 == ThetaRepository.ThetaModel.get("RICOH THETA SC2", "00118200"), "model SC2")
-        assertTrue(ThetaRepository.ThetaModel.THETA_SC2 == ThetaRepository.ThetaModel.get("RICOH THETA SC2", "20118200"), "model SC2")
-        assertTrue(ThetaRepository.ThetaModel.THETA_SC2_B == ThetaRepository.ThetaModel.get("RICOH THETA SC2", "40118200"), "model SC2 for business")
-        assertNull(ThetaRepository.ThetaModel.get("RICOH THETA SC2"), "No firmware version")
-        assertTrue(ThetaRepository.ThetaModel.THETA_Z1 == ThetaRepository.ThetaModel.get("RICOH THETA Z1"), "model Z1")
     }
 
 }
