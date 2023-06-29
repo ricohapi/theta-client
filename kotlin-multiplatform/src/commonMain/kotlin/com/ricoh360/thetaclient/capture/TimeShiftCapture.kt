@@ -99,7 +99,10 @@ class TimeShiftCapture private constructor(
                     if (response.state == CommandState.DONE) {
                         var fileUrl: String? = when (response.name) {
                             // Theta X
-                            "camera.startCapture" -> (response as StartCaptureResponse).results?.fileUrls?.firstOrNull()
+                            "camera.startCapture" -> {
+                                val captureResponse = response as StartCaptureResponse
+                                captureResponse.results?.fileUrls?.firstOrNull() ?: captureResponse.results?.fileUrl
+                            }
                             // Theta SC2 for business
                             "camera.takePicture" -> (response as TakePictureResponse).results?.fileUrl
                             else -> null
@@ -143,7 +146,7 @@ class TimeShiftCapture private constructor(
                     ThetaRepository.ThetaModel.THETA_SC2_B -> Options(
                         captureMode = CaptureMode.PRESET,
                         _preset = Preset.ROOM,
-                        _timeShift = TimeShift(firstShooting = FirstShootingEnum.FRONT, firstInterval = SC2B_DEFAILT_FIRST_INTERVAL, secondInterval = SC2B_DEFAULT_SECOND_INTERVAL),
+                        _timeShift = TimeShift(firstShooting = FirstShootingEnum.FRONT, firstInterval = SC2B_DEFAULT_FIRST_INTERVAL, secondInterval = SC2B_DEFAULT_SECOND_INTERVAL),
                         exposureDelay = SC2B_DEFAULT_EXPOSURE_DELAY, // without this option, sometimes shooting is normal but time-shift
                     )
                     else -> Options(captureMode = CaptureMode.IMAGE)
@@ -230,7 +233,7 @@ class TimeShiftCapture private constructor(
 
         companion object {
             // default values for time-shift settings of Theta SC2 for business
-            const val SC2B_DEFAILT_FIRST_INTERVAL = 2
+            const val SC2B_DEFAULT_FIRST_INTERVAL = 2
             const val SC2B_DEFAULT_SECOND_INTERVAL = 5
             const val SC2B_DEFAULT_EXPOSURE_DELAY = 2
         }

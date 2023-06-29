@@ -150,6 +150,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         try {
             val info = ThetaApi.callInfoApi(endpoint)
             cameraModel = ThetaModel.get(info.model, info.serialNumber)
+            println("init camera model: ${cameraModel?.name}")
             if (checkChangedApi2(info.model, info.firmwareVersion)) {
                 val state = ThetaApi.callStateApi(endpoint)
                 if (state.state._apiVersion == 1) {

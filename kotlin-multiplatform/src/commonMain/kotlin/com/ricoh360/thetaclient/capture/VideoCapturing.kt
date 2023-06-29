@@ -46,7 +46,8 @@ class VideoCapturing internal constructor(
                 return@launch
             }
 
-            callback.onSuccess(response.results!!.fileUrls[0])
+            val fileUrl = response.results?.fileUrls?.firstOrNull() ?: response.results?.fileUrl ?: ""
+            callback.onSuccess(fileUrl)
         }
     }
 }

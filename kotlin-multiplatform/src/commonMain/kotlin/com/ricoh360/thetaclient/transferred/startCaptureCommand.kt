@@ -123,5 +123,10 @@ data class ResultStartCapture(
     /**
      * List of file URLS
      */
-    val fileUrls: List<String>,
+    val fileUrls: List<String>? = null,
+    /**
+     * File URL
+     * For SC2
+     */
+    val fileUrl: String? = null,
 )
