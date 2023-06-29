@@ -297,6 +297,9 @@ func convertSetOptionsParam(params: [String: Any]) -> ThetaRepository.Options {
 
 func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any) {
     switch (name) {
+    case ThetaRepository.OptionNameEnum.aiautothumbnail.name:
+        options.aiAutoThumbnail = getEnumValue(values: ThetaRepository.AiAutoThumbnailEnum.values(), name: value as! String)!
+        break
     case ThetaRepository.OptionNameEnum.aperture.name:
         options.aperture = getEnumValue(values: ThetaRepository.ApertureEnum.values(), name: value as! String)!
         break

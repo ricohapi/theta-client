@@ -44,6 +44,23 @@ interface OptionConverter {
 }
 
 /**
+ * AiAutoThumbnailConverter
+ */
+class AiAutoThumbnailConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("aiAutoThumbnail")?.let {
+      options.aiAutoThumbnail = ThetaRepository.AiAutoThumbnailEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.aiAutoThumbnail?.let {
+      objects.putString("aiAutoThumbnail", it.toString())
+    }
+  }
+}
+
+/**
  * ApertureConverter
  */
 class ApertureConverter : OptionConverter {

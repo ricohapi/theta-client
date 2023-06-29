@@ -324,6 +324,7 @@ fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
 
 fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
     return when (name) {
+        OptionNameEnum.AiAutoThumbnail -> AiAutoThumbnailEnum.values().find { it.name == valueName }
         OptionNameEnum.Aperture -> ApertureEnum.values().find { it.name == valueName }
         OptionNameEnum.CameraControlSource -> CameraControlSourceEnum.values().find { it.name == valueName }
         OptionNameEnum.CameraMode -> CameraModeEnum.values().find { it.name == valueName }
