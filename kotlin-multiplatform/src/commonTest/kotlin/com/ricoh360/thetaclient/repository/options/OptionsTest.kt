@@ -20,6 +20,15 @@ class OptionsTest {
     fun optionsPrimaryConstructorTest() {
         val aperture = ThetaRepository.ApertureEnum.APERTURE_2_1
         val bluetoothPower = ThetaRepository.BluetoothPowerEnum.ON
+        val burstMode = ThetaRepository.BurstModeEnum.ON
+        val burstOption = ThetaRepository.BurstOption(
+            burstCaptureNum = ThetaRepository.BurstCaptureNumEnum.BURST_CAPTURE_NUM_1,
+            burstBracketStep = ThetaRepository.BurstBracketStepEnum.BRACKET_STEP_0_0,
+            burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_0_0,
+            burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_15,
+            burstEnableIsoControl = ThetaRepository.BurstEnableIsoControlEnum.OFF,
+            burstOrder = ThetaRepository.BurstOrderEnum.BURST_BRACKET_ORDER_0
+        )
         val cameraControlSource = ThetaRepository.CameraControlSourceEnum.CAMERA
         val cameraMode = ThetaRepository.CameraModeEnum.CAPTURE
         val captureMode = ThetaRepository.CaptureModeEnum.IMAGE
@@ -63,6 +72,8 @@ class OptionsTest {
         val options = ThetaRepository.Options(
             aperture = aperture,
             bluetoothPower = bluetoothPower,
+            burstMode = burstMode,
+            burstOption = burstOption,
             cameraControlSource = cameraControlSource,
             cameraMode = cameraMode,
             captureMode = captureMode,
@@ -106,6 +117,8 @@ class OptionsTest {
 
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Aperture), aperture, "aperture")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.BluetoothPower), bluetoothPower, "bluetoothPower")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.BurstMode), burstMode, "burstMode")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.BurstOption), burstOption, "burstOption")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CameraControlSource), cameraControlSource, "cameraControlSource")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CameraMode), cameraMode, "cameraMode")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CaptureMode), captureMode, "captureMode")
@@ -151,6 +164,17 @@ class OptionsTest {
         val values = listOf(
             Pair(ThetaRepository.OptionNameEnum.Aperture, ThetaRepository.ApertureEnum.APERTURE_2_1),
             Pair(ThetaRepository.OptionNameEnum.BluetoothPower, ThetaRepository.BluetoothPowerEnum.ON),
+            Pair(ThetaRepository.OptionNameEnum.BurstMode, ThetaRepository.BurstModeEnum.ON),
+            Pair(
+                ThetaRepository.OptionNameEnum.BurstOption, ThetaRepository.BurstOption(
+                    burstCaptureNum = ThetaRepository.BurstCaptureNumEnum.BURST_CAPTURE_NUM_1,
+                    burstBracketStep = ThetaRepository.BurstBracketStepEnum.BRACKET_STEP_0_0,
+                    burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_0_0,
+                    burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_15,
+                    burstEnableIsoControl = ThetaRepository.BurstEnableIsoControlEnum.OFF,
+                    burstOrder = ThetaRepository.BurstOrderEnum.BURST_BRACKET_ORDER_0
+                )
+            ),
             Pair(ThetaRepository.OptionNameEnum.CameraControlSource, ThetaRepository.CameraControlSourceEnum.CAMERA),
             Pair(ThetaRepository.OptionNameEnum.CameraMode, ThetaRepository.CameraModeEnum.CAPTURE),
             Pair(ThetaRepository.OptionNameEnum.CaptureMode, ThetaRepository.CaptureModeEnum.IMAGE),
@@ -207,6 +231,24 @@ class OptionsTest {
     fun optionsSecondaryConstructorTest() {
         val aperture = Pair(2.1f, ThetaRepository.ApertureEnum.APERTURE_2_1)
         val bluetoothPower = Pair(BluetoothPower.ON, ThetaRepository.BluetoothPowerEnum.ON)
+        val burstMode = Pair(BurstMode.ON, ThetaRepository.BurstModeEnum.ON)
+        val burstOption = Pair(
+            BurstOption(
+                _burstCaptureNum = BurstCaptureNum.BURST_CAPTURE_NUM_1,
+                _burstBracketStep = BurstBracketStep.BRACKET_STEP_0_0,
+                _burstCompensation = BurstCompensation.BURST_COMPENSATION_0_0,
+                _burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_15,
+                _burstEnableIsoControl = BurstEnableIsoControl.OFF,
+                _burstOrder = BurstOrder.BURST_BRACKET_ORDER_0
+            ), ThetaRepository.BurstOption(
+                burstCaptureNum = ThetaRepository.BurstCaptureNumEnum.BURST_CAPTURE_NUM_1,
+                burstBracketStep = ThetaRepository.BurstBracketStepEnum.BRACKET_STEP_0_0,
+                burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_0_0,
+                burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_15,
+                burstEnableIsoControl = ThetaRepository.BurstEnableIsoControlEnum.OFF,
+                burstOrder = ThetaRepository.BurstOrderEnum.BURST_BRACKET_ORDER_0
+            )
+        )
         val cameraControlSource = Pair(CameraControlSource.CAMERA, ThetaRepository.CameraControlSourceEnum.CAMERA)
         val cameraMode = Pair(CameraMode.CAPTURE, ThetaRepository.CameraModeEnum.CAPTURE)
         val captureMode = Pair(CaptureMode.IMAGE, ThetaRepository.CaptureModeEnum.IMAGE)
@@ -251,6 +293,8 @@ class OptionsTest {
         val orgOptions = Options(
             aperture = aperture.first,
             _bluetoothPower = bluetoothPower.first,
+            _burstMode = burstMode.first,
+            _burstOption = burstOption.first,
             _cameraControlSource = cameraControlSource.first,
             _cameraMode = cameraMode.first,
             captureMode = captureMode.first,
@@ -290,6 +334,8 @@ class OptionsTest {
 
         assertEquals(options.aperture, aperture.second, "aperture")
         assertEquals(options.bluetoothPower, bluetoothPower.second, "bluetoothPower")
+        assertEquals(options.burstMode, burstMode.second, "burstMode")
+        assertEquals(options.burstOption, burstOption.second, "burstOption")
         assertEquals(options.cameraControlSource, cameraControlSource.second, "cameraControlSource")
         assertEquals(options.cameraMode, cameraMode.second, "cameraMode")
         assertEquals(options.captureMode, captureMode.second, "captureMode")
@@ -330,6 +376,24 @@ class OptionsTest {
     fun optionsConvertTest() {
         val aperture = Pair(2.1f, ThetaRepository.ApertureEnum.APERTURE_2_1)
         val bluetoothPower = Pair(BluetoothPower.ON, ThetaRepository.BluetoothPowerEnum.ON)
+        val burstMode = Pair(BurstMode.ON, ThetaRepository.BurstModeEnum.ON)
+        val burstOption = Pair(
+            BurstOption(
+                _burstCaptureNum = BurstCaptureNum.BURST_CAPTURE_NUM_1,
+                _burstBracketStep = BurstBracketStep.BRACKET_STEP_0_0,
+                _burstCompensation = BurstCompensation.BURST_COMPENSATION_0_0,
+                _burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_15,
+                _burstEnableIsoControl = BurstEnableIsoControl.OFF,
+                _burstOrder = BurstOrder.BURST_BRACKET_ORDER_0
+            ), ThetaRepository.BurstOption(
+                burstCaptureNum = ThetaRepository.BurstCaptureNumEnum.BURST_CAPTURE_NUM_1,
+                burstBracketStep = ThetaRepository.BurstBracketStepEnum.BRACKET_STEP_0_0,
+                burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_0_0,
+                burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_15,
+                burstEnableIsoControl = ThetaRepository.BurstEnableIsoControlEnum.OFF,
+                burstOrder = ThetaRepository.BurstOrderEnum.BURST_BRACKET_ORDER_0
+            )
+        )
         val cameraControlSource = Pair(CameraControlSource.CAMERA, ThetaRepository.CameraControlSourceEnum.CAMERA)
         val cameraMode = Pair(CameraMode.CAPTURE, ThetaRepository.CameraModeEnum.CAPTURE)
         val captureMode = Pair(CaptureMode.IMAGE, ThetaRepository.CaptureModeEnum.IMAGE)
@@ -377,6 +441,8 @@ class OptionsTest {
         val orgOptions = ThetaRepository.Options(
             aperture = aperture.second,
             bluetoothPower = bluetoothPower.second,
+            burstMode = burstMode.second,
+            burstOption = burstOption.second,
             cameraControlSource = cameraControlSource.second,
             cameraMode = cameraMode.second,
             captureMode = captureMode.second,
@@ -416,6 +482,8 @@ class OptionsTest {
 
         assertEquals(options.aperture, aperture.first, "aperture")
         assertEquals(options._bluetoothPower, bluetoothPower.first, "bluetoothPower")
+        assertEquals(options._burstMode, burstMode.first, "burstMode")
+        assertEquals(options._burstOption, burstOption.first, "burstOption")
         assertEquals(options._cameraControlSource, cameraControlSource.first, "cameraControlSource")
         assertEquals(options._cameraMode, cameraMode.first, "cameraMode")
         assertEquals(options.captureMode, captureMode.first, "captureMode")

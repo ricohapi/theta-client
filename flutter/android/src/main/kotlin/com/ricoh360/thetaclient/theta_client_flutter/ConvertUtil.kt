@@ -82,6 +82,28 @@ fun toResult(fileInfoList: List<FileInfo>): List<Map<String, Any>> {
     return result
 }
 
+fun toBurstOption(map: Map<String, Any>): BurstOption {
+    return BurstOption(
+        burstCaptureNum = (map["burstCaptureNum"] as? String)?.let { BurstCaptureNumEnum.valueOf(it) },
+        burstBracketStep = (map["burstBracketStep"] as? String)?.let { BurstBracketStepEnum.valueOf(it) },
+        burstCompensation = (map["burstCompensation"] as? String)?.let { BurstCompensationEnum.valueOf(it) },
+        burstMaxExposureTime = (map["burstMaxExposureTime"] as? String)?.let { BurstMaxExposureTimeEnum.valueOf(it) },
+        burstEnableIsoControl = (map["burstEnableIsoControl"] as? String)?.let { BurstEnableIsoControlEnum.valueOf(it) },
+        burstOrder = (map["burstOrder"] as? String)?.let { BurstOrderEnum.valueOf(it) }
+    )
+}
+
+fun toResult(burstOption: BurstOption): Map<String, Any?> {
+    return mapOf(
+        "burstCaptureNum" to burstOption.burstCaptureNum?.value?.name,
+        "burstBracketStep" to burstOption.burstBracketStep?.value?.name,
+        "burstCompensation" to burstOption.burstCompensation?.value?.name,
+        "burstMaxExposureTime" to burstOption.burstMaxExposureTime?.value?.name,
+        "burstEnableIsoControl" to burstOption.burstEnableIsoControl?.value?.name,
+        "burstOrder" to burstOption.burstOrder?.value?.name
+    )
+}
+
 fun toGpsInfo(map: Map<String, Any>): GpsInfo {
     return GpsInfo(
         latitude = (map["latitude"] as Double).toFloat(),
@@ -244,7 +266,11 @@ fun toResult(options: Options): Map<String, Any> {
         OptionNameEnum.Username
     )
     OptionNameEnum.values().forEach { name ->
-        if (name == OptionNameEnum.GpsInfo) {
+        if (name == OptionNameEnum.BurstOption) {
+            options.getValue<BurstOption>(OptionNameEnum.BurstOption)?.let { burstOption ->
+                result[OptionNameEnum.BurstOption.name] = toResult(burstOption)
+            }
+        } else if (name == OptionNameEnum.GpsInfo) {
             options.getValue<GpsInfo>(OptionNameEnum.GpsInfo)?.let { gpsInfo ->
                 result[OptionNameEnum.GpsInfo.name] = toResult(gpsInfo)
             }
@@ -306,6 +332,9 @@ fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
             optionValue = value.toLong()
         }
         options.setValue(name, optionValue)
+    } else if (name == OptionNameEnum.BurstOption) {
+        @Suppress("UNCHECKED_CAST")
+        options.setValue(name, toBurstOption(value as Map<String, Any>))
     } else if (name == OptionNameEnum.GpsInfo) {
         @Suppress("UNCHECKED_CAST")
         options.setValue(name, toGpsInfo(value as Map<String, Any>))
@@ -325,6 +354,7 @@ fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
 fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
     return when (name) {
         OptionNameEnum.Aperture -> ApertureEnum.values().find { it.name == valueName }
+        OptionNameEnum.BurstMode -> BurstModeEnum.values().find { it.name == valueName }
         OptionNameEnum.CameraControlSource -> CameraControlSourceEnum.values().find { it.name == valueName }
         OptionNameEnum.CameraMode -> CameraModeEnum.values().find { it.name == valueName }
         OptionNameEnum.CaptureMode -> CaptureModeEnum.values().find { it.name == valueName }

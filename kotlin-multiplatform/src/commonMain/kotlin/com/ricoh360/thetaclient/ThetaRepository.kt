@@ -606,6 +606,18 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _burstMode
+         */
+        BurstMode("_burstMode", BurstModeEnum::class),
+
+        /**
+         * Option name
+         * _burstOption
+         */
+        BurstOption("_burstOption", ThetaRepository.BurstOption::class),
+
+        /**
+         * Option name
          * _cameraControlSource
          */
         CameraControlSource("_cameraControlSource", CameraControlSourceEnum::class),
@@ -831,6 +843,16 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Bluetooth power.
          */
         var bluetoothPower: BluetoothPowerEnum? = null,
+
+        /**
+         * @see BurstModeEnum
+         */
+        var burstMode: BurstModeEnum? = null,
+
+        /**
+         * @see BurstOption
+         */
+        var burstOption: BurstOption? = null,
 
         /**
          * @see CameraControlSourceEnum
@@ -1074,6 +1096,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         constructor() : this(
             aperture = null,
             bluetoothPower = null,
+            burstMode = null,
+            burstOption = null,
             cameraControlSource = null,
             cameraMode = null,
             captureMode = null,
@@ -1114,6 +1138,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         constructor(options: com.ricoh360.thetaclient.transferred.Options) : this(
             aperture = options.aperture?.let { ApertureEnum.get(it) },
             bluetoothPower = options._bluetoothPower?.let { BluetoothPowerEnum.get(it) },
+            burstMode = options._burstMode?.let { BurstModeEnum.get(it) },
+            burstOption = options._burstOption?.let { BurstOption(it) },
             cameraControlSource = options._cameraControlSource?.let { CameraControlSourceEnum.get(it) },
             cameraMode = options._cameraMode?.let { CameraModeEnum.get(it) },
             captureMode = options.captureMode?.let { CaptureModeEnum.get(it) },
@@ -1163,6 +1189,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             return Options(
                 aperture = aperture?.value,
                 _bluetoothPower = bluetoothPower?.value,
+                _burstMode = burstMode?.value,
+                _burstOption = burstOption?.toTransferredBurstOption(),
                 _cameraControlSource = cameraControlSource?.value,
                 _cameraMode = cameraMode?.value,
                 captureMode = captureMode?.value,
@@ -1215,6 +1243,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             return when (name) {
                 OptionNameEnum.Aperture -> aperture
                 OptionNameEnum.BluetoothPower -> bluetoothPower
+                OptionNameEnum.BurstMode -> burstMode
+                OptionNameEnum.BurstOption -> burstOption
                 OptionNameEnum.CameraControlSource -> cameraControlSource
                 OptionNameEnum.CameraMode -> cameraMode
                 OptionNameEnum.CaptureMode -> captureMode
@@ -1268,6 +1298,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             when (name) {
                 OptionNameEnum.Aperture -> aperture = value as ApertureEnum
                 OptionNameEnum.BluetoothPower -> bluetoothPower = value as BluetoothPowerEnum
+                OptionNameEnum.BurstMode -> burstMode = value as BurstModeEnum
+                OptionNameEnum.BurstOption -> burstOption = value as BurstOption
                 OptionNameEnum.CameraControlSource -> cameraControlSource = value as CameraControlSourceEnum
                 OptionNameEnum.CameraMode -> cameraMode = value as CameraModeEnum
                 OptionNameEnum.CaptureMode -> captureMode = value as CaptureModeEnum
@@ -1393,6 +1425,342 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              */
             fun get(value: BluetoothPower): BluetoothPowerEnum? {
                 return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * BurstMode setting.
+     * When this is set to ON, burst shooting is enabled,
+     * and a screen dedicated to burst shooting is displayed in Live View.
+     */
+    enum class BurstModeEnum(val value: BurstMode) {
+        /**
+         * BurstMode ON
+         */
+        ON(BurstMode.ON),
+
+        /**
+         * BurstMode OFF
+         */
+        OFF(BurstMode.OFF);
+
+        companion object {
+            /**
+             * Convert BurstMode to BurstModeEnum
+             *
+             * @param value BurstMode
+             * @return BluetoothPowerEnum
+             */
+            fun get(value: BurstMode): BurstModeEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Burst shooting setting.
+     */
+    data class BurstOption(
+        /**
+         * @see BurstCaptureNumEnum
+         */
+        val burstCaptureNum: BurstCaptureNumEnum?,
+
+        /**
+         * @see BurstBracketStepEnum
+         */
+        val burstBracketStep: BurstBracketStepEnum?,
+
+        /**
+         * @see BurstCompensationEnum
+         */
+        val burstCompensation: BurstCompensationEnum?,
+
+        /**
+         * @see BurstMaxExposureTimeEnum
+         */
+        val burstMaxExposureTime: BurstMaxExposureTimeEnum?,
+
+        /**
+         * @see BurstEnableIsoControlEnum
+         */
+        val burstEnableIsoControl: BurstEnableIsoControlEnum?,
+
+        /**
+         * @see BurstOrderEnum
+         */
+        val burstOrder: BurstOrderEnum?
+    ) {
+        constructor(option: com.ricoh360.thetaclient.transferred.BurstOption) : this(
+            burstCaptureNum = option._burstCaptureNum?.let { BurstCaptureNumEnum.get(value = it) },
+            burstBracketStep = option._burstBracketStep?.let { BurstBracketStepEnum.get(value = it) },
+            burstCompensation = option._burstCompensation?.let { BurstCompensationEnum.get(value = it) },
+            burstMaxExposureTime = option._burstMaxExposureTime?.let { BurstMaxExposureTimeEnum.get(value = it) },
+            burstEnableIsoControl = option._burstEnableIsoControl?.let { BurstEnableIsoControlEnum.get(value = it) },
+            burstOrder = option._burstOrder?.let { BurstOrderEnum.get(value = it) }
+        )
+
+        /**
+         * Convert Proxy to transferred.BurstOption
+         *
+         * @return transferred.BurstOption
+         */
+        fun toTransferredBurstOption(): com.ricoh360.thetaclient.transferred.BurstOption {
+            return BurstOption(
+                _burstCaptureNum = burstCaptureNum?.value,
+                _burstBracketStep = burstBracketStep?.value,
+                _burstCompensation = burstCompensation?.value,
+                _burstMaxExposureTime = burstMaxExposureTime?.value,
+                _burstEnableIsoControl = burstEnableIsoControl?.value,
+                _burstOrder = burstOrder?.value
+            )
+        }
+    }
+
+    /**
+     * Number of shots for burst shooting
+     * 1, 3, 5, 7, 9
+     */
+    enum class BurstCaptureNumEnum(val value: BurstCaptureNum) {
+        BURST_CAPTURE_NUM_1(BurstCaptureNum.BURST_CAPTURE_NUM_1),
+        BURST_CAPTURE_NUM_3(BurstCaptureNum.BURST_CAPTURE_NUM_3),
+        BURST_CAPTURE_NUM_5(BurstCaptureNum.BURST_CAPTURE_NUM_5),
+        BURST_CAPTURE_NUM_7(BurstCaptureNum.BURST_CAPTURE_NUM_7),
+        BURST_CAPTURE_NUM_9(BurstCaptureNum.BURST_CAPTURE_NUM_9);
+
+        companion object {
+            /**
+             * Convert BurstCaptureNum to BurstCaptureNumEnum
+             *
+             * @param value BurstCaptureNum
+             * @return BurstCaptureNumEnum
+             */
+            fun get(value: BurstCaptureNum): BurstCaptureNumEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+
+            /**
+             * Convert Int to BurstCaptureNumEnum
+             *
+             * @param value Int
+             * @return BurstCaptureNumEnum
+             */
+            fun get(value: Int): BurstCaptureNumEnum? {
+                return values().firstOrNull { it.value.value == value }
+            }
+        }
+    }
+
+    /**
+     * Bracket value range between each shot for burst shooting
+     * 0.0, 0.3, 0.7, 1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0
+     */
+    enum class BurstBracketStepEnum(val value: BurstBracketStep) {
+        BRACKET_STEP_0_0(BurstBracketStep.BRACKET_STEP_0_0),
+        BRACKET_STEP_0_3(BurstBracketStep.BRACKET_STEP_0_3),
+        BRACKET_STEP_0_7(BurstBracketStep.BRACKET_STEP_0_7),
+        BRACKET_STEP_1_0(BurstBracketStep.BRACKET_STEP_1_0),
+        BRACKET_STEP_1_3(BurstBracketStep.BRACKET_STEP_1_3),
+        BRACKET_STEP_1_7(BurstBracketStep.BRACKET_STEP_1_7),
+        BRACKET_STEP_2_0(BurstBracketStep.BRACKET_STEP_2_0),
+        BRACKET_STEP_2_3(BurstBracketStep.BRACKET_STEP_2_3),
+        BRACKET_STEP_2_7(BurstBracketStep.BRACKET_STEP_2_7),
+        BRACKET_STEP_3_0(BurstBracketStep.BRACKET_STEP_3_0);
+
+        companion object {
+            /**
+             * Convert BurstBracketStep to BurstBracketStepEnum
+             *
+             * @param value BurstBracketStep
+             * @return BurstBracketStepEnum
+             */
+            fun get(value: BurstBracketStep): BurstBracketStepEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+
+            /**
+             * Convert Int to BurstCaptureNumEnum
+             *
+             * @param value Float
+             * @return BurstCaptureNumEnum
+             */
+            fun get(value: Float): BurstBracketStepEnum? {
+                return values().firstOrNull { it.value.value == value }
+            }
+        }
+    }
+
+    /**
+     * Exposure compensation for the base image and entire shooting for burst shooting
+     * -5.0, -4.7, -4,3, -4.0, -3.7, -3,3, -3.0, -2.7, -2,3, -2.0, -1.7, -1,3, -1.0, -0.7, -0,3,
+     * 0.0, 0.3, 0.7, 1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 4.3, 4.7, 5.0
+     */
+    enum class BurstCompensationEnum(val value: BurstCompensation) {
+        BURST_COMPENSATION_DOWN_5_0(BurstCompensation.BURST_COMPENSATION_DOWN_5_0),
+        BURST_COMPENSATION_DOWN_4_7(BurstCompensation.BURST_COMPENSATION_DOWN_4_7),
+        BURST_COMPENSATION_DOWN_4_3(BurstCompensation.BURST_COMPENSATION_DOWN_4_3),
+        BURST_COMPENSATION_DOWN_4_0(BurstCompensation.BURST_COMPENSATION_DOWN_4_0),
+        BURST_COMPENSATION_DOWN_3_7(BurstCompensation.BURST_COMPENSATION_DOWN_3_7),
+        BURST_COMPENSATION_DOWN_3_3(BurstCompensation.BURST_COMPENSATION_DOWN_3_3),
+        BURST_COMPENSATION_DOWN_3_0(BurstCompensation.BURST_COMPENSATION_DOWN_3_0),
+        BURST_COMPENSATION_DOWN_2_7(BurstCompensation.BURST_COMPENSATION_DOWN_2_7),
+        BURST_COMPENSATION_DOWN_2_3(BurstCompensation.BURST_COMPENSATION_DOWN_2_3),
+        BURST_COMPENSATION_DOWN_2_0(BurstCompensation.BURST_COMPENSATION_DOWN_2_0),
+        BURST_COMPENSATION_DOWN_1_7(BurstCompensation.BURST_COMPENSATION_DOWN_1_7),
+        BURST_COMPENSATION_DOWN_1_3(BurstCompensation.BURST_COMPENSATION_DOWN_1_3),
+        BURST_COMPENSATION_DOWN_1_0(BurstCompensation.BURST_COMPENSATION_DOWN_1_0),
+        BURST_COMPENSATION_DOWN_0_7(BurstCompensation.BURST_COMPENSATION_DOWN_0_7),
+        BURST_COMPENSATION_DOWN_0_3(BurstCompensation.BURST_COMPENSATION_DOWN_0_3),
+        BURST_COMPENSATION_0_0(BurstCompensation.BURST_COMPENSATION_0_0),
+        BURST_COMPENSATION_UP_0_3(BurstCompensation.BURST_COMPENSATION_UP_0_3),
+        BURST_COMPENSATION_UP_0_7(BurstCompensation.BURST_COMPENSATION_UP_0_7),
+        BURST_COMPENSATION_UP_1_0(BurstCompensation.BURST_COMPENSATION_UP_1_0),
+        BURST_COMPENSATION_UP_1_3(BurstCompensation.BURST_COMPENSATION_UP_1_3),
+        BURST_COMPENSATION_UP_1_7(BurstCompensation.BURST_COMPENSATION_UP_1_7),
+        BURST_COMPENSATION_UP_2_0(BurstCompensation.BURST_COMPENSATION_UP_2_0),
+        BURST_COMPENSATION_UP_2_3(BurstCompensation.BURST_COMPENSATION_UP_2_3),
+        BURST_COMPENSATION_UP_2_7(BurstCompensation.BURST_COMPENSATION_UP_2_7),
+        BURST_COMPENSATION_UP_3_0(BurstCompensation.BURST_COMPENSATION_UP_3_0),
+        BURST_COMPENSATION_UP_3_3(BurstCompensation.BURST_COMPENSATION_UP_3_3),
+        BURST_COMPENSATION_UP_3_7(BurstCompensation.BURST_COMPENSATION_UP_3_7),
+        BURST_COMPENSATION_UP_4_0(BurstCompensation.BURST_COMPENSATION_UP_4_0),
+        BURST_COMPENSATION_UP_4_3(BurstCompensation.BURST_COMPENSATION_UP_4_3),
+        BURST_COMPENSATION_UP_4_7(BurstCompensation.BURST_COMPENSATION_UP_4_7),
+        BURST_COMPENSATION_UP_5_0(BurstCompensation.BURST_COMPENSATION_UP_5_0);
+
+        companion object {
+            /**
+             * Convert BurstCompensation to BurstCompensationEnum
+             *
+             * @param value BurstCompensation
+             * @return BurstCompensationEnum
+             */
+            fun get(value: BurstCompensation): BurstCompensationEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+
+            /**
+             * Convert Int to BurstCompensationEnum
+             *
+             * @param value Float
+             * @return BurstCompensationEnum
+             */
+            fun get(value: Float): BurstCompensationEnum? {
+                return values().firstOrNull { it.value.value == value }
+            }
+        }
+    }
+
+    /**
+     * Maximum exposure time for burst shooting
+     * 0.5, 0.625, 0.76923076, 1, 1.3, 1.6, 2, 2.5, 3.2, 4, 5, 6, 8, 10, 13, 15, 20, 25, 30, 40, 50, 60
+     */
+    enum class BurstMaxExposureTimeEnum(val value: BurstMaxExposureTime) {
+        MAX_EXPOSURE_TIME_0_5(BurstMaxExposureTime.MAX_EXPOSURE_TIME_0_5),
+        MAX_EXPOSURE_TIME_0_625(BurstMaxExposureTime.MAX_EXPOSURE_TIME_0_625),
+        MAX_EXPOSURE_TIME_0_76923076(BurstMaxExposureTime.MAX_EXPOSURE_TIME_0_76923076),
+        MAX_EXPOSURE_TIME_1(BurstMaxExposureTime.MAX_EXPOSURE_TIME_1),
+        MAX_EXPOSURE_TIME_1_3(BurstMaxExposureTime.MAX_EXPOSURE_TIME_1_3),
+        MAX_EXPOSURE_TIME_1_6(BurstMaxExposureTime.MAX_EXPOSURE_TIME_1_6),
+        MAX_EXPOSURE_TIME_2(BurstMaxExposureTime.MAX_EXPOSURE_TIME_2),
+        MAX_EXPOSURE_TIME_2_5(BurstMaxExposureTime.MAX_EXPOSURE_TIME_2_5),
+        MAX_EXPOSURE_TIME_3_2(BurstMaxExposureTime.MAX_EXPOSURE_TIME_3_2),
+        MAX_EXPOSURE_TIME_4(BurstMaxExposureTime.MAX_EXPOSURE_TIME_4),
+        MAX_EXPOSURE_TIME_5(BurstMaxExposureTime.MAX_EXPOSURE_TIME_5),
+        MAX_EXPOSURE_TIME_6(BurstMaxExposureTime.MAX_EXPOSURE_TIME_6),
+        MAX_EXPOSURE_TIME_8(BurstMaxExposureTime.MAX_EXPOSURE_TIME_8),
+        MAX_EXPOSURE_TIME_10(BurstMaxExposureTime.MAX_EXPOSURE_TIME_10),
+        MAX_EXPOSURE_TIME_13(BurstMaxExposureTime.MAX_EXPOSURE_TIME_13),
+        MAX_EXPOSURE_TIME_15(BurstMaxExposureTime.MAX_EXPOSURE_TIME_15),
+        MAX_EXPOSURE_TIME_20(BurstMaxExposureTime.MAX_EXPOSURE_TIME_20),
+        MAX_EXPOSURE_TIME_25(BurstMaxExposureTime.MAX_EXPOSURE_TIME_25),
+        MAX_EXPOSURE_TIME_30(BurstMaxExposureTime.MAX_EXPOSURE_TIME_30),
+        MAX_EXPOSURE_TIME_40(BurstMaxExposureTime.MAX_EXPOSURE_TIME_40),
+        MAX_EXPOSURE_TIME_50(BurstMaxExposureTime.MAX_EXPOSURE_TIME_50),
+        MAX_EXPOSURE_TIME_60(BurstMaxExposureTime.MAX_EXPOSURE_TIME_60);
+
+        companion object {
+            /**
+             * Convert BurstMaxExposureTime to BurstMaxExposureTimeEnum
+             *
+             * @param value BurstMaxExposureTime
+             * @return BurstMaxExposureTimeEnum
+             */
+            fun get(value: BurstMaxExposureTime): BurstMaxExposureTimeEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+
+            /**
+             * Convert Int to BurstMaxExposureTimeEnum
+             *
+             * @param value Double
+             * @return BurstMaxExposureTimeEnum
+             */
+            fun get(value: Double): BurstMaxExposureTimeEnum? {
+                return values().firstOrNull { it.value.value == value }
+            }
+        }
+    }
+
+    /**
+     * Adjustment with ISO sensitivity for burst shooting
+     * 0: Do not adjust with ISO sensitivity, 1: Adjust with ISO sensitivity
+     */
+    enum class BurstEnableIsoControlEnum(val value: BurstEnableIsoControl) {
+        OFF(BurstEnableIsoControl.OFF),
+        ON(BurstEnableIsoControl.ON);
+
+        companion object {
+            /**
+             * Convert BurstEnableIsoControl to BurstEnableIsoControlEnum
+             *
+             * @param value BurstEnableIsoControl
+             * @return BurstEnableIsoControlEnum
+             */
+            fun get(value: BurstEnableIsoControl): BurstEnableIsoControlEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+
+            /**
+             * Convert Int to BurstEnableIsoControlEnum
+             *
+             * @param value Int
+             * @return BurstEnableIsoControlEnum
+             */
+            fun get(value: Int): BurstEnableIsoControlEnum? {
+                return values().firstOrNull { it.value.value == value }
+            }
+        }
+    }
+
+    /**
+     * Shooting order for burst shooting
+     * 0: '0' → '-' → '+', 1: '-' → '0' → '+'
+     */
+    enum class BurstOrderEnum(val value: BurstOrder) {
+        BURST_BRACKET_ORDER_0(BurstOrder.BURST_BRACKET_ORDER_0),
+        BURST_BRACKET_ORDER_1(BurstOrder.BURST_BRACKET_ORDER_1);
+
+        companion object {
+            /**
+             * Convert BurstOrder to BurstOrderEnum
+             *
+             * @param value BurstOrder
+             * @return BurstOrderEnum
+             */
+            fun get(value: BurstOrder): BurstOrderEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+
+            /**
+             * Convert Int to BurstOrderEnum
+             *
+             * @param value Int
+             * @return BurstOrderEnum
+             */
+            fun get(value: Int): BurstOrderEnum? {
+                return values().firstOrNull { it.value.value == value }
             }
         }
     }

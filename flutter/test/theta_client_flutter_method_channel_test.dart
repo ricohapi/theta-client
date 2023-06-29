@@ -403,6 +403,7 @@ void main() {
     };
     List<List<dynamic>> data = [
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
+      [OptionNameEnum.burstMode, 'BurstMode', BurstModeEnum.on, 'ON'],
       [OptionNameEnum.cameraControlSource, 'CameraControlSource', CameraControlSourceEnum.camera, 'CAMERA'],
       [OptionNameEnum.cameraMode, 'CameraMode', CameraModeEnum.capture, 'CAPTURE'],
       [OptionNameEnum.captureMode, 'CaptureMode', CaptureModeEnum.image, 'IMAGE'],
@@ -459,9 +460,9 @@ void main() {
 
     expect(options, isNotNull);
     expect(options.aperture, data[0][2]);
-    expect(options.cameraControlSource, data[1][2]);
-    expect(options.cameraMode, data[2][2]);
-    expect(options.captureMode, data[3][2]);
+    expect(options.cameraControlSource, data[2][2]);
+    expect(options.cameraMode, data[3][2]);
+    expect(options.captureMode, data[4][2]);
     for (int i = 0; i < data.length; i++) {
       expect(options.getValue(data[i][0]), data[i][2], reason: data[i][1]);
     }
@@ -477,6 +478,7 @@ void main() {
     };
     List<List<dynamic>> data = [
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
+      [OptionNameEnum.burstMode, 'BurstMode', BurstModeEnum.on, 'ON'],
       [OptionNameEnum.cameraMode, 'CameraMode', CameraModeEnum.capture, 'CAPTURE'],
       [OptionNameEnum.captureMode, 'CaptureMode', CaptureModeEnum.image, 'IMAGE'],
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 2, 2],

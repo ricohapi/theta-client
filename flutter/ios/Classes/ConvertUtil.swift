@@ -167,6 +167,58 @@ func setVideoCaptureBuilderParams(params: [String : Any], builder: VideoCapture.
     }
 }
 
+func toBurstOption(params: [String : Any]) -> ThetaRepository.BurstOption {
+    var burstCaptureNum: ThetaRepository.BurstCaptureNumEnum? = nil;
+    if let name = params["burstCaptureNum"] as? String {
+        burstCaptureNum = getEnumValue(values: ThetaRepository.BurstCaptureNumEnum.values(), name: name)
+    }
+    
+    var burstBracketStep: ThetaRepository.BurstBracketStepEnum? = nil;
+    if let name = params["burstBracketStep"] as? String {
+        burstBracketStep = getEnumValue(values: ThetaRepository.BurstBracketStepEnum.values(), name: name)
+    }
+    
+    var burstCompensation: ThetaRepository.BurstCompensationEnum? = nil;
+    if let name = params["burstCompensation"] as? String {
+        burstCompensation = getEnumValue(values: ThetaRepository.BurstCompensationEnum.values(), name: name)
+    }
+    
+    var burstMaxExposureTime: ThetaRepository.BurstMaxExposureTimeEnum? = nil;
+    if let name = params["burstMaxExposureTime"] as? String {
+        burstMaxExposureTime = getEnumValue(values: ThetaRepository.BurstMaxExposureTimeEnum.values(), name: name)
+    }
+    
+    var burstEnableIsoControl: ThetaRepository.BurstEnableIsoControlEnum? = nil;
+    if let name = params["burstEnableIsoControl"] as? String {
+        burstEnableIsoControl = getEnumValue(values: ThetaRepository.BurstEnableIsoControlEnum.values(), name: name)
+    }
+    
+    var burstOrder: ThetaRepository.BurstOrderEnum? = nil;
+    if let name = params["burstOrder"] as? String {
+        burstOrder = getEnumValue(values: ThetaRepository.BurstOrderEnum.values(), name: name)
+    }
+    
+    return ThetaRepository.BurstOption(
+        burstCaptureNum: burstCaptureNum,
+        burstBracketStep: burstBracketStep,
+        burstCompensation: burstCompensation,
+        burstMaxExposureTime: burstMaxExposureTime,
+        burstEnableIsoControl: burstEnableIsoControl,
+        burstOrder: burstOrder
+    )
+}
+
+func convertResult(burstOption: ThetaRepository.BurstOption) -> [String: Any] {
+    return [
+        "burstCaptureNum": burstOption.burstCaptureNum?.value.name,
+        "burstBracketStep": burstOption.burstBracketStep?.value.name,
+        "burstCompensation": burstOption.burstCompensation?.value.name,
+        "burstMaxExposureTime": burstOption.burstEnableIsoControl?.value.name,
+        "burstEnableIsoControl": burstOption.burstEnableIsoControl?.value.name,
+        "burstOrder": burstOption.burstOrder?.value.name,
+    ]
+}
+
 func toGpsInfo(params: [String : Any]) -> ThetaRepository.GpsInfo {
     return ThetaRepository.GpsInfo(
         latitude: params["latitude"] as! Float,
@@ -253,7 +305,9 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                 result[name.name] = value as! Bool ? true: false
             } else if value is NSNumber || value is String {
                 result[name.name] = value
-            } else if value is ThetaRepository.GpsInfo {
+            } else if value is ThetaRepository.BurstOption, let burstOption = value as? ThetaRepository.BurstOption {
+                result[name.name] = convertResult(burstOption: burstOption)
+            }  else if value is ThetaRepository.GpsInfo {
                 let gpsInfo = value as! ThetaRepository.GpsInfo
                 result[name.name] = convertResult(gpsInfo: gpsInfo)
             } else if value is ThetaRepository.Proxy, let proxy = value as? ThetaRepository.Proxy {
@@ -299,6 +353,14 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     switch (name) {
     case ThetaRepository.OptionNameEnum.aperture.name:
         options.aperture = getEnumValue(values: ThetaRepository.ApertureEnum.values(), name: value as! String)!
+        break
+    case ThetaRepository.OptionNameEnum.burstmode.name:
+        options.burstMode = getEnumValue(values: ThetaRepository.BurstModeEnum.values(), name: value as! String)!
+        break
+    case ThetaRepository.OptionNameEnum.burstoption.name:
+        if let params = value as? [String : Any] {
+            options.burstOption = toBurstOption(params: params)
+        }
         break
     case ThetaRepository.OptionNameEnum.cameracontrolsource.name:
         options.cameraControlSource = getEnumValue(values: ThetaRepository.CameraControlSourceEnum.values(), name: value as! String)!
