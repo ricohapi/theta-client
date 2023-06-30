@@ -98,12 +98,13 @@ class TimeShiftCapture private constructor(
 
                     if (response.state == CommandState.DONE) {
                         var fileUrl: String? = when (response.name) {
-                            // Theta X
+                            // Theta X returns "results.fileUrls".
+                            // Theta SC2 for business (after taking a video) returns "results.fileUrl".
                             "camera.startCapture" -> {
                                 val captureResponse = response as StartCaptureResponse
                                 captureResponse.results?.fileUrls?.firstOrNull() ?: captureResponse.results?.fileUrl
                             }
-                            // Theta SC2 for business
+                            // Theta SC2 for business after taking a photo
                             "camera.takePicture" -> (response as TakePictureResponse).results?.fileUrl
                             else -> null
                         }
