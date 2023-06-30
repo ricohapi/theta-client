@@ -115,6 +115,17 @@ void main() {
     }
   });
 
+  test('AiAutoThumbnailEnum', () async {
+    List<List<dynamic>> data = [
+      [AiAutoThumbnailEnum.on, 'ON'],
+      [AiAutoThumbnailEnum.off, 'OFF'],
+    ];
+    expect(data.length, AiAutoThumbnailEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
   test('ApertureEnum', () async {
     List<List<dynamic>> data = [
       [ApertureEnum.apertureAuto, 'APERTURE_AUTO'],

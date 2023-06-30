@@ -35,10 +35,26 @@ class ConvertUtils {
     for (Map<dynamic, dynamic> element in inputList.cast<Map<dynamic, dynamic>>()) {
       var info = FileInfo(
         element['name'],
+        element['fileUrl'],
         element['size'],
         element['dateTime'],
-        element['fileUrl'],
+        element['lat'],
+        element['lng'],
+        element['width'],
+        element['height'],
         element['thumbnailUrl'],
+        element['intervalCaptureGroupId'],
+        element['compositeShootingGroupId'],
+        element['autoBracketGroupId'],
+        element['recordTime'],
+        element['isProcessed'],
+        element['previewUrl'],
+        (element['codec'] != null) ? CodecEnum.getValue(element['codec'] as String) : null,
+        (element['projectionType'] != null) ? ProjectionTypeEnum.getValue(element['projectionType'] as String) : null,
+        element['continuousShootingGroupId'],
+        element['frameRate'],
+        element['favorite'],
+        element['imageDescription'],
         element['storageID']
       );
       fileList.add(info);
@@ -190,7 +206,9 @@ class ConvertUtils {
     for (var entry in data.entries) {
       final name = OptionNameEnum.getValue(entry.key)!;
       switch (name) {
-
+        case OptionNameEnum.aiAutoThumbnail:
+          result.aiAutoThumbnail = AiAutoThumbnailEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.aperture:
           result.aperture = ApertureEnum.getValue(entry.value);
           break;
@@ -322,7 +340,9 @@ class ConvertUtils {
   }
 
   static dynamic convertOptionValueToMapValue(dynamic value) {
-    if (value is ApertureEnum) {
+    if (value is AiAutoThumbnailEnum) {
+      return value.rawValue;
+    } else if (value is ApertureEnum) {
       return value.rawValue;
     } else if (value is BurstModeEnum) {
       return value.rawValue;

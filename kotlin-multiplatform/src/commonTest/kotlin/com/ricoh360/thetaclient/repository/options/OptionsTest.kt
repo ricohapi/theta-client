@@ -18,6 +18,7 @@ class OptionsTest {
      */
     @Test
     fun optionsPrimaryConstructorTest() {
+        val aiAutoThumbnail = ThetaRepository.AiAutoThumbnailEnum.ON
         val aperture = ThetaRepository.ApertureEnum.APERTURE_2_1
         val bluetoothPower = ThetaRepository.BluetoothPowerEnum.ON
         val burstMode = ThetaRepository.BurstModeEnum.ON
@@ -70,6 +71,7 @@ class OptionsTest {
         val wlanFrequency = ThetaRepository.WlanFrequencyEnum.GHZ_2_4
 
         val options = ThetaRepository.Options(
+            aiAutoThumbnail = aiAutoThumbnail,
             aperture = aperture,
             bluetoothPower = bluetoothPower,
             burstMode = burstMode,
@@ -115,6 +117,7 @@ class OptionsTest {
             assertNotNull(options.getValue(it), "option: ${it.value}")
         }
 
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.AiAutoThumbnail), aiAutoThumbnail, "aiAutoThumbnail")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Aperture), aperture, "aperture")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.BluetoothPower), bluetoothPower, "bluetoothPower")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.BurstMode), burstMode, "burstMode")
@@ -162,6 +165,7 @@ class OptionsTest {
     @Test
     fun optionsSetValueTest() {
         val values = listOf(
+            Pair(ThetaRepository.OptionNameEnum.AiAutoThumbnail, ThetaRepository.AiAutoThumbnailEnum.OFF),
             Pair(ThetaRepository.OptionNameEnum.Aperture, ThetaRepository.ApertureEnum.APERTURE_2_1),
             Pair(ThetaRepository.OptionNameEnum.BluetoothPower, ThetaRepository.BluetoothPowerEnum.ON),
             Pair(ThetaRepository.OptionNameEnum.BurstMode, ThetaRepository.BurstModeEnum.ON),
@@ -229,6 +233,7 @@ class OptionsTest {
      */
     @Test
     fun optionsSecondaryConstructorTest() {
+        val aiAutoThumbnail = Pair(AiAutoThumbnail.OFF, ThetaRepository.AiAutoThumbnailEnum.OFF)
         val aperture = Pair(2.1f, ThetaRepository.ApertureEnum.APERTURE_2_1)
         val bluetoothPower = Pair(BluetoothPower.ON, ThetaRepository.BluetoothPowerEnum.ON)
         val burstMode = Pair(BurstMode.ON, ThetaRepository.BurstModeEnum.ON)
@@ -291,6 +296,7 @@ class OptionsTest {
         val whiteBalanceAutoStrength = Pair(WhiteBalanceAutoStrength.OFF, ThetaRepository.WhiteBalanceAutoStrengthEnum.OFF)
 
         val orgOptions = Options(
+            _aiAutoThumbnail = aiAutoThumbnail.first,
             aperture = aperture.first,
             _bluetoothPower = bluetoothPower.first,
             _burstMode = burstMode.first,
@@ -332,6 +338,7 @@ class OptionsTest {
         )
         val options = ThetaRepository.Options(orgOptions)
 
+        assertEquals(options.aiAutoThumbnail, aiAutoThumbnail.second, "aiAutoThumbnail")
         assertEquals(options.aperture, aperture.second, "aperture")
         assertEquals(options.bluetoothPower, bluetoothPower.second, "bluetoothPower")
         assertEquals(options.burstMode, burstMode.second, "burstMode")
@@ -374,6 +381,7 @@ class OptionsTest {
 
     @Test
     fun optionsConvertTest() {
+        val aiAutoThumbnail = Pair(AiAutoThumbnail.ON, ThetaRepository.AiAutoThumbnailEnum.ON)
         val aperture = Pair(2.1f, ThetaRepository.ApertureEnum.APERTURE_2_1)
         val bluetoothPower = Pair(BluetoothPower.ON, ThetaRepository.BluetoothPowerEnum.ON)
         val burstMode = Pair(BurstMode.ON, ThetaRepository.BurstModeEnum.ON)
@@ -439,6 +447,7 @@ class OptionsTest {
         val whiteBalanceAutoStrength = Pair(WhiteBalanceAutoStrength.ON, ThetaRepository.WhiteBalanceAutoStrengthEnum.ON)
 
         val orgOptions = ThetaRepository.Options(
+            aiAutoThumbnail = aiAutoThumbnail.second,
             aperture = aperture.second,
             bluetoothPower = bluetoothPower.second,
             burstMode = burstMode.second,
@@ -480,6 +489,7 @@ class OptionsTest {
         )
         val options = orgOptions.toOptions()
 
+        assertEquals(options._aiAutoThumbnail, aiAutoThumbnail.first, "aiAutoThumbnail")
         assertEquals(options.aperture, aperture.first, "aperture")
         assertEquals(options._bluetoothPower, bluetoothPower.first, "bluetoothPower")
         assertEquals(options._burstMode, burstMode.first, "burstMode")

@@ -44,6 +44,23 @@ interface OptionConverter {
 }
 
 /**
+ * AiAutoThumbnailConverter
+ */
+class AiAutoThumbnailConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("aiAutoThumbnail")?.let {
+      options.aiAutoThumbnail = ThetaRepository.AiAutoThumbnailEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.aiAutoThumbnail?.let {
+      objects.putString("aiAutoThumbnail", it.toString())
+    }
+  }
+}
+
+/**
  * ApertureConverter
  */
 class ApertureConverter : OptionConverter {
@@ -1037,4 +1054,65 @@ fun timeoutToTheta(objects: ReadableMap): ThetaRepository.Timeout {
     objects.getInt("requestTimeout").toLong(),
     objects.getInt("socketTimeout").toLong(),
   )
+}
+
+fun fileInfoFromTheta(fileInfo: ThetaRepository.FileInfo): ReadableMap {
+  val result = Arguments.createMap()
+  result.putString("name", fileInfo.name)
+  result.putString("fileUrl", fileInfo.fileUrl)
+  result.putDouble("size", fileInfo.size.toDouble())
+  result.putString("dateTime", fileInfo.dateTime)
+  fileInfo.lat?.let {
+    result.putDouble("lat", it.toDouble())
+  }
+  fileInfo.lng?.let {
+    result.putDouble("lng", it.toDouble())
+  }
+  fileInfo.width?.let {
+    result.putInt("width", it)
+  }
+  fileInfo.height?.let {
+    result.putInt("height", it)
+  }
+  result.putString("thumbnailUrl", fileInfo.thumbnailUrl)
+  fileInfo.intervalCaptureGroupId?.let {
+    result.putString("intervalCaptureGroupId", it)
+  }
+  fileInfo.compositeShootingGroupId?.let {
+    result.putString("compositeShootingGroupId", it)
+  }
+  fileInfo.autoBracketGroupId?.let {
+    result.putString("autoBracketGroupId", it)
+  }
+  fileInfo.recordTime?.let {
+    result.putInt("recordTime", it)
+  }
+  fileInfo.isProcessed?.let {
+    result.putBoolean("isProcessed", it)
+  }
+  fileInfo.previewUrl?.let {
+    result.putString("previewUrl", it)
+  }
+  fileInfo.codec?.let {
+    result.putString("codec", it.name)
+  }
+  fileInfo.projectionType?.let {
+    result.putString("projectionType", it.name)
+  }
+  fileInfo.continuousShootingGroupId?.let {
+    result.putString("continuousShootingGroupId", it)
+  }
+  fileInfo.frameRate?.let {
+    result.putInt("frameRate", it)
+  }
+  fileInfo.favorite?.let {
+    result.putBoolean("favorite", it)
+  }
+  fileInfo.imageDescription?.let {
+    result.putString("imageDescription", it)
+  }
+  fileInfo.storageID?.let {
+    result.putString("storageID", it)
+  }
+  return result
 }

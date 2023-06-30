@@ -71,11 +71,27 @@ fun toResult(fileInfoList: List<FileInfo>): List<Map<String, Any>> {
     fileInfoList.forEach {
         val map = mutableMapOf<String, Any>(
             "name" to it.name,
+            "fileUrl" to it.fileUrl,
             "size" to it.size,
             "dateTime" to it.dateTime,
-            "fileUrl" to it.fileUrl,
             "thumbnailUrl" to it.thumbnailUrl,
         )
+        it.lat?.run { map.put("lat", this) }
+        it.lng?.run { map.put("lng", this) }
+        it.width?.run { map.put("width", this) }
+        it.height?.run { map.put("height", this) }
+        it.intervalCaptureGroupId?.run { map.put("intervalCaptureGroupId", this) }
+        it.compositeShootingGroupId?.run { map.put("compositeShootingGroupId", this) }
+        it.autoBracketGroupId?.run { map.put("autoBracketGroupId", this) }
+        it.recordTime?.run { map.put("recordTime", this) }
+        it.isProcessed?.run { map.put("isProcessed", this) }
+        it.previewUrl?.run { map.put("previewUrl", this) }
+        it.codec?.run { map.put("codec", this.name) }
+        it.projectionType?.run { map.put("projectionType", this.name) }
+        it.continuousShootingGroupId?.run { map.put("continuousShootingGroupId", this) }
+        it.frameRate?.run { map.put("frameRate", this) }
+        it.favorite?.run { map.put("favorite", this) }
+        it.imageDescription?.run { map.put("imageDescription", this) }
         it.storageID?.run { map.put("storageID", this) }
         result.add(map)
     }
@@ -353,6 +369,7 @@ fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
 
 fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
     return when (name) {
+        OptionNameEnum.AiAutoThumbnail -> AiAutoThumbnailEnum.values().find { it.name == valueName }
         OptionNameEnum.Aperture -> ApertureEnum.values().find { it.name == valueName }
         OptionNameEnum.BurstMode -> BurstModeEnum.values().find { it.name == valueName }
         OptionNameEnum.CameraControlSource -> CameraControlSourceEnum.values().find { it.name == valueName }

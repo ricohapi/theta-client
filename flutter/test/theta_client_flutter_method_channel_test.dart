@@ -230,6 +230,8 @@ void main() {
         'dateTime': dateTime,
         'fileUrl': fileUrl,
         'thumbnailUrl': thumbnailUrl,
+        'codec': 'H264MP4AVC',
+        'projectionType': 'DUAL_FISHEYE',
       };
       fileList.add(info);
       fileList.add(info);
@@ -250,6 +252,8 @@ void main() {
       expect(fileInfo.dateTime, dateTime);
       expect(fileInfo.fileUrl, fileUrl);
       expect(fileInfo.thumbnailUrl, thumbnailUrl);
+      expect(fileInfo.codec, CodecEnum.h264mp4avc);
+      expect(fileInfo.projectionType, ProjectionTypeEnum.dualFisheye);
       expect(fileInfo.storageID, null);
       expect(thetaFiles.totalEntries, 10);
     }
@@ -402,6 +406,7 @@ void main() {
       'isFrontFirst': true, 'firstInterval': TimeShiftIntervalEnum.interval_5.toString(), 'secondInterval': TimeShiftIntervalEnum.interval_10.toString()
     };
     List<List<dynamic>> data = [
+      [OptionNameEnum.aiAutoThumbnail, 'AiAutoThumbnail', AiAutoThumbnailEnum.off, 'OFF'],
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
       [OptionNameEnum.burstMode, 'BurstMode', BurstModeEnum.on, 'ON'],
       [OptionNameEnum.cameraControlSource, 'CameraControlSource', CameraControlSourceEnum.camera, 'CAMERA'],
@@ -459,10 +464,10 @@ void main() {
     Options options = await platform.getOptions(optionNames);
 
     expect(options, isNotNull);
-    expect(options.aperture, data[0][2]);
-    expect(options.cameraControlSource, data[2][2]);
-    expect(options.cameraMode, data[3][2]);
-    expect(options.captureMode, data[4][2]);
+    expect(options.aperture, data[1][2]);
+    expect(options.cameraControlSource, data[3][2]);
+    expect(options.cameraMode, data[4][2]);
+    expect(options.captureMode, data[5][2]);
     for (int i = 0; i < data.length; i++) {
       expect(options.getValue(data[i][0]), data[i][2], reason: data[i][1]);
     }
@@ -477,6 +482,7 @@ void main() {
       'isFrontFirst': true, 'firstInterval': TimeShiftIntervalEnum.interval_5.toString(), 'secondInterval': TimeShiftIntervalEnum.interval_10.toString()
     };
     List<List<dynamic>> data = [
+      [OptionNameEnum.aiAutoThumbnail, 'AiAutoThumbnail', AiAutoThumbnailEnum.on, 'ON'],
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
       [OptionNameEnum.burstMode, 'BurstMode', BurstModeEnum.on, 'ON'],
       [OptionNameEnum.cameraMode, 'CameraMode', CameraModeEnum.capture, 'CAPTURE'],

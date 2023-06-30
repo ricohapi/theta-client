@@ -230,23 +230,14 @@ class ThetaClientReactNativeModule(
           entryCount,
           storage?.let { ThetaRepository.StorageEnum.valueOf(it) },
         )
-        val resultlist = Arguments.createArray()
+        val resultList = Arguments.createArray()
         fileList.forEach {
-          val result = Arguments.createMap()
-          result.putString("name", it.name)
-          result.putDouble("size", it.size.toDouble())
-          result.putString("dateTime", it.dateTime)
-          result.putString("thumbnailUrl", it.thumbnailUrl)
-          result.putString("fileUrl", it.fileUrl)
-          it.storageID?.run {
-            result.putString("storageID", this)
-          }
-          resultlist.pushMap(result)
+          resultList.pushMap(fileInfoFromTheta(it))
         }
-        val resultmap = Arguments.createMap()
-        resultmap.putArray("fileList", resultlist)
-        resultmap.putInt("totalEntries", totalEntries)
-        promise.resolve(resultmap)
+        val resultMap = Arguments.createMap()
+        resultMap.putArray("fileList", resultList)
+        resultMap.putInt("totalEntries", totalEntries)
+        promise.resolve(resultMap)
       } catch (t: Throwable) {
         promise.reject(t)
       }
@@ -344,6 +335,7 @@ class ThetaClientReactNativeModule(
 
   /** option converter */
   private val converters = mapOf(
+    "aiAutoThumbnail" to AiAutoThumbnailConverter(),
     "aperture" to ApertureConverter(),
     "bluetoothPower" to BluetoothPowerConverter(),
     "burstMode" to BurstModeConverter(),
@@ -388,6 +380,7 @@ class ThetaClientReactNativeModule(
 
   /** OptionNameEnum to option */
   private val optionEnumToOption = mapOf(
+    "AiAutoThumbnail" to "aiAutoThumbnail",
     "Aperture" to "aperture",
     "BluetoothPower" to "bluetoothPower",
     "BurstMode" to "burstMode",
