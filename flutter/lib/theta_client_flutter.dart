@@ -482,10 +482,55 @@ enum StorageEnum {
   }
 }
 
+/// Video codec
+enum CodecEnum {
+  /// codec H.264/MPEG-4 AVC
+  h264mp4avc('H264MP4AVC');
+
+  final String rawValue;
+  const CodecEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static CodecEnum? getValue(String rawValue) {
+    return CodecEnum.values.cast<CodecEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// THETA projection type
+enum ProjectionTypeEnum {
+  /// Equirectangular type
+  equirectangular('EQUIRECTANGULAR'),
+
+  /// Dual Fisheye type
+  dualFisheye('DUAL_FISHEYE'),
+
+  /// Fisheye type
+  fisheye('FISHEYE');
+
+  final String rawValue;
+  const ProjectionTypeEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static ProjectionTypeEnum? getValue(String rawValue) {
+    return ProjectionTypeEnum.values.cast<ProjectionTypeEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
 /// File information in Theta.
 class FileInfo {
   /// File name.
   final String name;
+
+  /// You can get a file using HTTP GET to [fileUrl].
+  final String fileUrl;
 
   /// File size in bytes.
   final int size;
@@ -493,15 +538,84 @@ class FileInfo {
   /// File creation time in the format "YYYY:MM:DD HH:MM:SS".
   final String dateTime;
 
-  /// You can get a file using HTTP GET to [fileUrl].
-  final String fileUrl;
+  /// Latitude.
+  final double? lat;
+
+  /// Longitude.
+  final double? lng;
+
+  /// Horizontal size of image (pixels).
+  final int? width;
+
+  /// Vertical size of image (pixels).
+  final int? height;
 
   /// You can get a thumbnail image using HTTP GET to [thumbnailUrl].
   final String thumbnailUrl;
 
+  /// Group ID of a still image shot by interval shooting.
+  final String? intervalCaptureGroupId;
+
+  /// Group ID of a still image shot by interval composite shooting.
+  final String? compositeShootingGroupId;
+
+  /// Group ID of a still image shot by multi bracket shooting.
+  final String? autoBracketGroupId;
+
+  /// Video shooting time (sec).
+  final int? recordTime;
+
+  /// Whether or not image processing has been completed.
+  final bool? isProcessed;
+
+  /// URL of the file being processed.
+  final String? previewUrl;
+
+  /// Codec. (RICOH THETA V or later)
+  final CodecEnum? codec;
+
+  /// Projection type of movie file. (RICOH THETA V or later)
+  final ProjectionTypeEnum? projectionType;
+
+  /// Group ID of continuous shooting.  (RICOH THETA X or later)
+  final String? continuousShootingGroupId;
+
+  /// Frame rate.  (RICOH THETA X or later)
+  final int? frameRate;
+
+  /// Favorite.  (RICOH THETA X or later)
+  final bool? favorite;
+
+  /// Image description.  (RICOH THETA X or later)
+  final String? imageDescription;
+
+  /// Storage ID. (RICOH THETA X Version 2.00.0 or later)
   final String? storageID;
 
-  FileInfo(this.name, this.size, this.dateTime, this.fileUrl, this.thumbnailUrl, [this.storageID]);
+  FileInfo(
+    this.name,
+    this.fileUrl,
+    this.size,
+    this.dateTime,
+    this.lat,
+    this.lng,
+    this.width,
+    this.height,
+    this.thumbnailUrl,
+    this.intervalCaptureGroupId,
+    this.compositeShootingGroupId,
+    this.autoBracketGroupId,
+    this.recordTime,
+    this.isProcessed,
+    this.previewUrl,
+    this.codec,
+    this.projectionType,
+    this.continuousShootingGroupId,
+    this.frameRate,
+    this.favorite,
+    this.imageDescription,
+    this.storageID
+  );
 }
 
 /// Data about files in Theta.
@@ -1854,7 +1968,7 @@ enum NetworkTypeEnum {
   // Client mode via WLAN
   client('CLIENT'),
 
-  // Client mode via Ethernet cable supporte by Theta Z1 and V.
+  // Client mode via Ethernet cable supported by Theta Z1 and V.
   ethernet('ETHERNET'),
 
   // Network is off. This value can be gotten only by plugin.
