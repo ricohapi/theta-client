@@ -96,6 +96,66 @@ class BluetoothPowerConverter : OptionConverter {
 }
 
 /**
+ * BurstModeConverter
+ */
+class BurstModeConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("burstMode")?.let {
+      options.burstMode = ThetaRepository.BurstModeEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.burstMode?.let {
+      objects.putString("burstMode", it.toString())
+    }
+  }
+}
+
+/**
+ * BurstOptionConverter
+ */
+class BurstOptionConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getMap("burstOption")?.let {
+      options.burstOption = ThetaRepository.BurstOption(
+        burstCaptureNum = it.getString("burstCaptureNum")?.let { ThetaRepository.BurstCaptureNumEnum.valueOf(it) },
+        burstBracketStep = it.getString("burstBracketStep")?.let { ThetaRepository.BurstBracketStepEnum.valueOf(it) },
+        burstCompensation = it.getString("burstCompensation")?.let { ThetaRepository.BurstCompensationEnum.valueOf(it) },
+        burstMaxExposureTime = it.getString("burstMaxExposureTime")?.let { ThetaRepository.BurstMaxExposureTimeEnum.valueOf(it) },
+        burstEnableIsoControl = it.getString("burstEnableIsoControl")?.let { ThetaRepository.BurstEnableIsoControlEnum.valueOf(it) },
+        burstOrder = it.getString("burstOrder")?.let { ThetaRepository.BurstOrderEnum.valueOf(it) }
+      )
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.burstOption?.let {
+      val burstOption = Arguments.createMap()
+      it.burstCaptureNum?.value?.name?.let { name ->
+        burstOption.putString("burstCaptureNum", name)
+      }
+      it.burstBracketStep?.value?.name?.let { name ->
+        burstOption.putString("burstBracketStep", name)
+      }
+      it.burstCompensation?.value?.name?.let { name ->
+        burstOption.putString("burstCompensation", name)
+      }
+      it.burstMaxExposureTime?.value?.name?.let { name ->
+        burstOption.putString("burstMaxExposureTime", name)
+      }
+      it.burstEnableIsoControl?.value?.name?.let { name ->
+        burstOption.putString("burstEnableIsoControl", name)
+      }
+      it.burstOrder?.value?.name?.let { name ->
+        burstOption.putString("burstOrder", name)
+      }
+      objects.putMap("burstOption", burstOption)
+    }
+  }
+}
+
+/**
  * CameraControlSourceConverter
  */
 class CameraControlSourceConverter : OptionConverter {
@@ -489,12 +549,12 @@ class PowerSavingConverter : OptionConverter {
     }
   }
 
-   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
     options.powerSaving?.let {
       objects.putString("powerSaving", it.toString())
     }
   }
- }
+}
 
 /**
  * PreviewFormatConverter

@@ -346,6 +346,8 @@ class ThetaClientReactNativeModule(
   private val converters = mapOf(
     "aperture" to ApertureConverter(),
     "bluetoothPower" to BluetoothPowerConverter(),
+    "burstMode" to BurstModeConverter(),
+    "burstOption" to BurstOptionConverter(),
     "cameraControlSource" to CameraControlSourceConverter(),
     "cameraMode" to CameraModeConverter(),
     "captureMode" to CaptureModeConverter(),
@@ -388,6 +390,8 @@ class ThetaClientReactNativeModule(
   private val optionEnumToOption = mapOf(
     "Aperture" to "aperture",
     "BluetoothPower" to "bluetoothPower",
+    "BurstMode" to "burstMode",
+    "BurstOption" to "burstOption",
     "CameraControlSource" to "cameraControlSource",
     "CameraMode" to "cameraMode",
     "CaptureMode" to "captureMode",
