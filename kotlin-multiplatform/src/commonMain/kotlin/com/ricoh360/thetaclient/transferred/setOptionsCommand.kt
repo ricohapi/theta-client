@@ -1448,7 +1448,7 @@ object WlanFrequencySerializer : KSerializer<WlanFrequency> {
 
     override fun deserialize(decoder: Decoder): WlanFrequency {
         val frequency = decoder.decodeDouble()
-        return if (frequency < 5) WlanFrequency.GHZ_2_4 else WlanFrequency.GHZ_5
+        return if(frequency < 5) WlanFrequency.GHZ_2_4 else WlanFrequency.GHZ_5
     }
 }
 
