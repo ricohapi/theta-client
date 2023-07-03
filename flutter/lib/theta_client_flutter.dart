@@ -632,6 +632,8 @@ class ThetaFiles {
 /// BurstMode setting.
 /// When this is set to ON, burst shooting is enabled,
 /// and a screen dedicated to burst shooting is displayed in Live View.
+///
+/// only For RICOH THETA Z1 firmware v2.10.1 or later
 enum BurstModeEnum {
   /// BurstMode ON
   on('ON'),
@@ -656,6 +658,8 @@ enum BurstModeEnum {
 }
 
 /// Burst shooting setting.
+///
+/// only For RICOH THETA Z1 firmware v2.10.1 or later
 class BurstOption {
   /// see [BurstCaptureNumEnum]
   BurstCaptureNumEnum? burstCaptureNum;

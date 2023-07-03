@@ -1476,6 +1476,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * BurstMode setting.
      * When this is set to ON, burst shooting is enabled,
      * and a screen dedicated to burst shooting is displayed in Live View.
+     *
+     * only For RICOH THETA Z1 firmware v2.10.1 or later
      */
     enum class BurstModeEnum(val value: BurstMode) {
         /**
@@ -1503,6 +1505,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
     /**
      * Burst shooting setting.
+     *
+     * only For RICOH THETA Z1 firmware v2.10.1 or later
      */
     data class BurstOption(
         /**

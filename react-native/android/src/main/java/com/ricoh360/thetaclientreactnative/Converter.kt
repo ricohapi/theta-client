@@ -134,14 +134,14 @@ class BurstModeConverter : OptionConverter {
  */
 class BurstOptionConverter : OptionConverter {
   override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
-    objects.getMap("burstOption")?.let {
+    objects.getMap("burstOption")?.let { map ->
       options.burstOption = ThetaRepository.BurstOption(
-        burstCaptureNum = it.getString("burstCaptureNum")?.let { ThetaRepository.BurstCaptureNumEnum.valueOf(it) },
-        burstBracketStep = it.getString("burstBracketStep")?.let { ThetaRepository.BurstBracketStepEnum.valueOf(it) },
-        burstCompensation = it.getString("burstCompensation")?.let { ThetaRepository.BurstCompensationEnum.valueOf(it) },
-        burstMaxExposureTime = it.getString("burstMaxExposureTime")?.let { ThetaRepository.BurstMaxExposureTimeEnum.valueOf(it) },
-        burstEnableIsoControl = it.getString("burstEnableIsoControl")?.let { ThetaRepository.BurstEnableIsoControlEnum.valueOf(it) },
-        burstOrder = it.getString("burstOrder")?.let { ThetaRepository.BurstOrderEnum.valueOf(it) }
+        burstCaptureNum = map.getString("burstCaptureNum")?.let { ThetaRepository.BurstCaptureNumEnum.valueOf(it) },
+        burstBracketStep = map.getString("burstBracketStep")?.let { ThetaRepository.BurstBracketStepEnum.valueOf(it) },
+        burstCompensation = map.getString("burstCompensation")?.let { ThetaRepository.BurstCompensationEnum.valueOf(it) },
+        burstMaxExposureTime = map.getString("burstMaxExposureTime")?.let { ThetaRepository.BurstMaxExposureTimeEnum.valueOf(it) },
+        burstEnableIsoControl = map.getString("burstEnableIsoControl")?.let { ThetaRepository.BurstEnableIsoControlEnum.valueOf(it) },
+        burstOrder = map.getString("burstOrder")?.let { ThetaRepository.BurstOrderEnum.valueOf(it) }
       )
     }
   }
