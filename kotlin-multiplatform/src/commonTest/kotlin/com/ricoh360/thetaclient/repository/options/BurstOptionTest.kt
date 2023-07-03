@@ -100,22 +100,293 @@ class BurstOptionTest {
     fun convertOptionTest() = runTest {
         val values = listOf(
             Pair(
-                ThetaRepository.BurstOption(
-                    burstCaptureNum = ThetaRepository.BurstCaptureNumEnum.BURST_CAPTURE_NUM_1,
-                    burstBracketStep = ThetaRepository.BurstBracketStepEnum.BRACKET_STEP_0_0,
-                    burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_0_0,
-                    burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_15,
-                    burstEnableIsoControl = ThetaRepository.BurstEnableIsoControlEnum.OFF,
-                    burstOrder = ThetaRepository.BurstOrderEnum.BURST_BRACKET_ORDER_0
-                ), BurstOption(
-                    _burstCaptureNum = BurstCaptureNum.BURST_CAPTURE_NUM_1,
-                    _burstBracketStep = BurstBracketStep.BRACKET_STEP_0_0,
-                    _burstCompensation = BurstCompensation.BURST_COMPENSATION_0_0,
-                    _burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_15,
-                    _burstEnableIsoControl = BurstEnableIsoControl.OFF,
-                    _burstOrder = BurstOrder.BURST_BRACKET_ORDER_0
-                )
-            )
+                ThetaRepository.BurstOption(burstCaptureNum = ThetaRepository.BurstCaptureNumEnum.BURST_CAPTURE_NUM_1),
+                BurstOption(_burstCaptureNum = BurstCaptureNum.BURST_CAPTURE_NUM_1)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCaptureNum = ThetaRepository.BurstCaptureNumEnum.BURST_CAPTURE_NUM_3),
+                BurstOption(_burstCaptureNum = BurstCaptureNum.BURST_CAPTURE_NUM_3)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCaptureNum = ThetaRepository.BurstCaptureNumEnum.BURST_CAPTURE_NUM_5),
+                BurstOption(_burstCaptureNum = BurstCaptureNum.BURST_CAPTURE_NUM_5)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCaptureNum = ThetaRepository.BurstCaptureNumEnum.BURST_CAPTURE_NUM_7),
+                BurstOption(_burstCaptureNum = BurstCaptureNum.BURST_CAPTURE_NUM_7)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCaptureNum = ThetaRepository.BurstCaptureNumEnum.BURST_CAPTURE_NUM_9),
+                BurstOption(_burstCaptureNum = BurstCaptureNum.BURST_CAPTURE_NUM_9)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstBracketStep = ThetaRepository.BurstBracketStepEnum.BRACKET_STEP_0_0),
+                BurstOption(_burstBracketStep = BurstBracketStep.BRACKET_STEP_0_0)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstBracketStep = ThetaRepository.BurstBracketStepEnum.BRACKET_STEP_0_3),
+                BurstOption(_burstBracketStep = BurstBracketStep.BRACKET_STEP_0_3)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstBracketStep = ThetaRepository.BurstBracketStepEnum.BRACKET_STEP_0_7),
+                BurstOption(_burstBracketStep = BurstBracketStep.BRACKET_STEP_0_7)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstBracketStep = ThetaRepository.BurstBracketStepEnum.BRACKET_STEP_1_0),
+                BurstOption(_burstBracketStep = BurstBracketStep.BRACKET_STEP_1_0)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstBracketStep = ThetaRepository.BurstBracketStepEnum.BRACKET_STEP_1_3),
+                BurstOption(_burstBracketStep = BurstBracketStep.BRACKET_STEP_1_3)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstBracketStep = ThetaRepository.BurstBracketStepEnum.BRACKET_STEP_1_7),
+                BurstOption(_burstBracketStep = BurstBracketStep.BRACKET_STEP_1_7)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstBracketStep = ThetaRepository.BurstBracketStepEnum.BRACKET_STEP_2_0),
+                BurstOption(_burstBracketStep = BurstBracketStep.BRACKET_STEP_2_0)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstBracketStep = ThetaRepository.BurstBracketStepEnum.BRACKET_STEP_2_3),
+                BurstOption(_burstBracketStep = BurstBracketStep.BRACKET_STEP_2_3)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstBracketStep = ThetaRepository.BurstBracketStepEnum.BRACKET_STEP_2_7),
+                BurstOption(_burstBracketStep = BurstBracketStep.BRACKET_STEP_2_7)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstBracketStep = ThetaRepository.BurstBracketStepEnum.BRACKET_STEP_3_0),
+                BurstOption(_burstBracketStep = BurstBracketStep.BRACKET_STEP_3_0)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_DOWN_5_0),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_DOWN_5_0)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_DOWN_4_7),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_DOWN_4_7)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_DOWN_4_3),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_DOWN_4_3)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_DOWN_4_0),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_DOWN_4_0)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_DOWN_3_7),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_DOWN_3_7)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_DOWN_3_3),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_DOWN_3_3)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_DOWN_3_0),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_DOWN_3_0)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_DOWN_2_7),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_DOWN_2_7)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_DOWN_2_3),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_DOWN_2_3)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_DOWN_2_0),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_DOWN_2_0)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_DOWN_1_7),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_DOWN_1_7)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_DOWN_1_3),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_DOWN_1_3)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_DOWN_1_0),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_DOWN_1_0)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_DOWN_0_7),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_DOWN_0_7)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_DOWN_0_3),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_DOWN_0_3)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_0_0),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_0_0)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_UP_0_3),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_UP_0_3)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_UP_0_7),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_UP_0_7)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_UP_1_0),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_UP_1_0)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_UP_1_3),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_UP_1_3)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_UP_1_7),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_UP_1_7)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_UP_2_0),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_UP_2_0)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_UP_2_3),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_UP_2_3)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_UP_2_7),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_UP_2_7)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_UP_3_0),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_UP_3_0)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_UP_3_3),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_UP_3_3)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_UP_3_7),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_UP_3_7)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_UP_4_0),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_UP_4_0)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_UP_4_3),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_UP_4_3)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_UP_4_7),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_UP_4_7)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_UP_5_0),
+                BurstOption(_burstCompensation = BurstCompensation.BURST_COMPENSATION_UP_5_0)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_0_5),
+                BurstOption(_burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_0_5)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_0_625),
+                BurstOption(_burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_0_625)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_0_76923076),
+                BurstOption(_burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_0_76923076)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_1),
+                BurstOption(_burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_1)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_1_3),
+                BurstOption(_burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_1_3)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_1_6),
+                BurstOption(_burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_1_6)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_2),
+                BurstOption(_burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_2)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_2_5),
+                BurstOption(_burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_2_5)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_3_2),
+                BurstOption(_burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_3_2)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_4),
+                BurstOption(_burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_4)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_5),
+                BurstOption(_burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_5)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_6),
+                BurstOption(_burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_6)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_8),
+                BurstOption(_burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_8)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_10),
+                BurstOption(_burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_10)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_13),
+                BurstOption(_burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_13)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_15),
+                BurstOption(_burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_15)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_20),
+                BurstOption(_burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_20)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_25),
+                BurstOption(_burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_25)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_30),
+                BurstOption(_burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_30)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_40),
+                BurstOption(_burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_40)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_50),
+                BurstOption(_burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_50)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_60),
+                BurstOption(_burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_60)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstEnableIsoControl = ThetaRepository.BurstEnableIsoControlEnum.OFF),
+                BurstOption(_burstEnableIsoControl = BurstEnableIsoControl.OFF)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstEnableIsoControl = ThetaRepository.BurstEnableIsoControlEnum.ON),
+                BurstOption(_burstEnableIsoControl = BurstEnableIsoControl.ON)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstOrder = ThetaRepository.BurstOrderEnum.BURST_BRACKET_ORDER_0),
+                BurstOption(_burstOrder = BurstOrder.BURST_BRACKET_ORDER_0)
+            ),
+            Pair(
+                ThetaRepository.BurstOption(burstOrder = ThetaRepository.BurstOrderEnum.BURST_BRACKET_ORDER_1),
+                BurstOption(_burstOrder = BurstOrder.BURST_BRACKET_ORDER_1)
+            ),
         )
 
         values.forEach {

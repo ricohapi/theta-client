@@ -695,32 +695,32 @@ data class BurstOption(
     /**
      * @see BurstCaptureNum
      */
-    val _burstCaptureNum: BurstCaptureNum?,
+    val _burstCaptureNum: BurstCaptureNum? = null,
 
     /**
      * @see BurstBracketStep
      */
-    val _burstBracketStep: BurstBracketStep?,
+    val _burstBracketStep: BurstBracketStep? = null,
 
     /**
      * @see BurstCompensation
      */
-    val _burstCompensation: BurstCompensation?,
+    val _burstCompensation: BurstCompensation? = null,
 
     /**
      * @see BurstMaxExposureTime
      */
-    val _burstMaxExposureTime: BurstMaxExposureTime?,
+    val _burstMaxExposureTime: BurstMaxExposureTime? = null,
 
     /**
      * @see BurstEnableIsoControl
      */
-    val _burstEnableIsoControl: BurstEnableIsoControl?,
+    val _burstEnableIsoControl: BurstEnableIsoControl? = null,
 
     /**
      * @see BurstOrder
      */
-    val _burstOrder: BurstOrder?
+    val _burstOrder: BurstOrder? = null
 )
 
 /**

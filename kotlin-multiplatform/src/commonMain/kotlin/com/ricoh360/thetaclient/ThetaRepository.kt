@@ -1508,32 +1508,32 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         /**
          * @see BurstCaptureNumEnum
          */
-        val burstCaptureNum: BurstCaptureNumEnum?,
+        val burstCaptureNum: BurstCaptureNumEnum? = null,
 
         /**
          * @see BurstBracketStepEnum
          */
-        val burstBracketStep: BurstBracketStepEnum?,
+        val burstBracketStep: BurstBracketStepEnum? = null,
 
         /**
          * @see BurstCompensationEnum
          */
-        val burstCompensation: BurstCompensationEnum?,
+        val burstCompensation: BurstCompensationEnum? = null,
 
         /**
          * @see BurstMaxExposureTimeEnum
          */
-        val burstMaxExposureTime: BurstMaxExposureTimeEnum?,
+        val burstMaxExposureTime: BurstMaxExposureTimeEnum? = null,
 
         /**
          * @see BurstEnableIsoControlEnum
          */
-        val burstEnableIsoControl: BurstEnableIsoControlEnum?,
+        val burstEnableIsoControl: BurstEnableIsoControlEnum? = null,
 
         /**
          * @see BurstOrderEnum
          */
-        val burstOrder: BurstOrderEnum?
+        val burstOrder: BurstOrderEnum? = null
     ) {
         constructor(option: com.ricoh360.thetaclient.transferred.BurstOption) : this(
             burstCaptureNum = option._burstCaptureNum?.let { BurstCaptureNumEnum.get(value = it) },
