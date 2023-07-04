@@ -553,11 +553,17 @@ static convert_t CameraModeEnum = {
 static convert_t CaptureModeEnum = {
   .toTheta = @{
     @"IMAGE": THETACThetaRepositoryCaptureModeEnum.image,
-    @"VIDEO": THETACThetaRepositoryCaptureModeEnum.video
+    @"VIDEO": THETACThetaRepositoryCaptureModeEnum.video,
+    @"LIVE_STREAMING": THETACThetaRepositoryCaptureModeEnum.liveStreaming,
+    @"INTERVAL": THETACThetaRepositoryCaptureModeEnum.interval,
+    @"PRESET": THETACThetaRepositoryCaptureModeEnum.preset
   },
   .fromTheta = @{
     THETACThetaRepositoryCaptureModeEnum.image: @"IMAGE",
-    THETACThetaRepositoryCaptureModeEnum.video: @"VIDEO"
+    THETACThetaRepositoryCaptureModeEnum.video: @"VIDEO",
+    THETACThetaRepositoryCaptureModeEnum.liveStreaming: @"LIVE_STREAMING",
+    THETACThetaRepositoryCaptureModeEnum.interval: @"INTERVAL",
+    THETACThetaRepositoryCaptureModeEnum.preset: @"PRESET"
   },
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     id val = [CaptureModeEnum.toTheta objectForKey:[rct objectForKey:@"captureMode"]];
@@ -1681,7 +1687,7 @@ static convert_t WlanFrequencyEnum = {
   },
   .fromTheta = @{
     THETACThetaRepositoryWlanFrequencyEnum.ghz24: @"GHZ_2_4",
-    THETACThetaRepositoryWlanFrequencyEnum.ghz5: @"GHZ_5",
+    THETACThetaRepositoryWlanFrequencyEnum.ghz5: @"GHZ_5"
   },
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     id val = [WlanFrequencyEnum.toTheta objectForKey:[rct objectForKey:@"wlanFrequency"]];
@@ -1713,6 +1719,37 @@ static convert_t PasswordCvt = {
     }
   }
 };
+
+/**
+ * Preset convertor
+ */
+static convert_t PresetEnum = {
+  .toTheta = @{
+    @"FACE": THETACThetaRepositoryPresetEnum.face,
+    @"NIGHT_VIEW": THETACThetaRepositoryPresetEnum.nightView,
+    @"LENS_BY_LENS_EXPOSURE": THETACThetaRepositoryPresetEnum.lensByLensExposure,
+    @"ROOM": THETACThetaRepositoryPresetEnum.room
+  },
+  .fromTheta = @{
+    THETACThetaRepositoryPresetEnum.face: @"FACE",
+    THETACThetaRepositoryPresetEnum.nightView: @"NIGHT_VIEW",
+    THETACThetaRepositoryPresetEnum.lensByLensExposure: @"LENS_BY_LENS_EXPOSURE",
+    THETACThetaRepositoryPresetEnum.room: @"ROOM"
+  },
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [PresetEnum.toTheta objectForKey:[rct objectForKey:@"preset"]];
+    if (val) {
+      opt.preset = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [PresetEnum.fromTheta objectForKey:opt.preset];
+    if (val) {
+      [rct setObject:val forKey:@"preset"];
+    }
+  }
+};
+
 
 /**
  * Proxy converter
@@ -1915,6 +1952,7 @@ static NSDictionary *NameToOptionEnum = @{
   @"OffDelay": THETACThetaRepositoryOptionNameEnum.offdelay,
   @"Password": THETACThetaRepositoryOptionNameEnum.password,
   @"PowerSaving": THETACThetaRepositoryOptionNameEnum.powersaving,
+  @"Preset": THETACThetaRepositoryOptionNameEnum.preset,
   @"PreviewFormat": THETACThetaRepositoryOptionNameEnum.previewformat,
   @"Proxy": THETACThetaRepositoryOptionNameEnum.proxy,
   @"ShootingMethod": THETACThetaRepositoryOptionNameEnum.shootingmethod,
@@ -1959,6 +1997,7 @@ static NSDictionary *OptionEnumToOption = @{
   @"OffDelay": @"offDelay",
   @"Password": @"password",
   @"PowerSaving": @"powerSaving",
+  @"Preset": @"preset",
   @"PreviewFormat": @"previewFormat",
   @"Proxy": @"proxy",
   @"ShootingMethod": @"shootingMethod",
@@ -2006,6 +2045,7 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"offDelay": ^{return &OffDelayEnum;},
   @"password": ^{return &PasswordCvt;},
   @"powerSaving": ^{return &PowerSavingEnum;},
+  @"preset": ^{return &PresetEnum;},
   @"previewFormat": ^{return &PreviewFormatEnum;},
   @"proxy": ^{return &ProxyCvt;},
   @"shootingMethod": ^{return &ShootingMethodEnum;},

@@ -357,6 +357,7 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
         OptionNameEnum.NetworkType -> NetworkTypeEnum.values().find { it.name == valueName }
         OptionNameEnum.OffDelay -> OffDelayEnum.values().find { it.name == valueName }
         OptionNameEnum.PowerSaving -> PowerSavingEnum.values().find { it.name == valueName }
+        OptionNameEnum.Preset -> PresetEnum.values().find { it.name == valueName }
         OptionNameEnum.PreviewFormat -> PreviewFormatEnum.values().find { it.name == valueName }
         OptionNameEnum.ShootingMethod -> ShootingMethodEnum.values().find { it.name == valueName }
         OptionNameEnum.ShutterSpeed -> ShutterSpeedEnum.values().find { it.name == valueName }

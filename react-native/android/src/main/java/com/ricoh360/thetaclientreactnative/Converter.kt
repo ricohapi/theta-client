@@ -514,6 +514,23 @@ class PowerSavingConverter : OptionConverter {
  }
 
 /**
+ * PresetConverter
+ */
+class PresetConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("preset")?.let {
+      options.preset = ThetaRepository.PresetEnum.valueOf(it)
+    }
+  }
+
+   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.preset?.let {
+      objects.putString("preset", it.toString())
+    }
+  }
+ }
+
+/**
  * PreviewFormatConverter
  */
 class PreviewFormatConverter : OptionConverter {

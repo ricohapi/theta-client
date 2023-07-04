@@ -149,7 +149,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     internal suspend fun init() {
         try {
             val info = ThetaApi.callInfoApi(endpoint)
-            cameraModel = info.model
+            cameraModel = ThetaModel.get(info.model, info.serialNumber)
+            println("init camera model: ${cameraModel?.name}")
             if (checkChangedApi2(info.model, info.firmwareVersion)) {
                 val state = ThetaApi.callStateApi(endpoint)
                 if (state.state._apiVersion == 1) {
@@ -220,8 +221,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     @Throws(Throwable::class)
     internal suspend fun setConfigSettings(config: Config) {
         val options = config.getOptions()
-        ThetaModel.get(cameraModel)?.let {
-            if (it == ThetaModel.THETA_S || it == ThetaModel.THETA_SC || it == ThetaModel.THETA_SC2) {
+        cameraModel?.let {
+            if (ThetaModel.isBeforeThetaV(it)) {
                 // _language is THETA V or later
                 options._language = null
             }
@@ -250,12 +251,10 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @exception ThetaWebApiException If an error occurs in THETA.
      */
     @Throws(Throwable::class)
-    internal suspend fun getConfigSetting(config: Config, model: String) {
+    internal suspend fun getConfigSetting(config: Config, model: ThetaModel) {
         val optionNameList = listOfNotNull(
             OptionNameEnum.DateTimeZone.value,
-            // For THETA V or later
-            ThetaModel.get(model)
-                ?.let { if (it != ThetaModel.THETA_S && it != ThetaModel.THETA_SC && it != ThetaModel.THETA_SC2) OptionNameEnum.Language.value else null },
+            if (ThetaModel.isBeforeThetaV(model)) null else OptionNameEnum.Language.value,
             OptionNameEnum.OffDelay.value,
             OptionNameEnum.SleepDelay.value,
             OptionNameEnum.ShutterVolume.value
@@ -290,13 +289,16 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Camera model.
      */
-    var cameraModel: String? = null
+    var cameraModel: ThetaModel? = null
         internal set
 
     /**
      * Support THETA model
+     *
+     * @param value Theta model got by [getThetaInfo]
+     * @param firstCharOfSerialNumber First character of serialNumber got by [getThetaInfo]. Needed just for Theta SC2 or SC2 for business.
      */
-    enum class ThetaModel(val value: String) {
+    enum class ThetaModel(val value: String, val firstCharOfSerialNumber: Char? = null) {
         /**
          * THETA S
          */
@@ -323,21 +325,49 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         THETA_X("RICOH THETA X"),
 
         /**
-         * THETA SC2
+         * THETA SC2, the 1st character of which serial number is always other than
+         * FIRST_CHAR_OF_SERIAL_NUMBER_SC2_B.
          */
-        THETA_SC2("RICOH THETA SC2");
+        THETA_SC2("RICOH THETA SC2"),
+
+        /**
+         * THETA SC2 for business, the first character of which serial number is always
+         * FIRST_CHAR_OF_SERIAL_NUMBER_SC2_B.
+         */
+        THETA_SC2_B("RICOH THETA SC2", FIRST_CHAR_OF_SERIAL_NUMBER_SC2_B);
 
         companion object {
             /**
              * Get THETA model
              *
-             * @param model Camera model
+             * @param model Theta model got by [getThetaInfo]
+             * @param serialNumber serial number got by [getThetaInfo], needed just for Theta SC2 and SC2 for business.
              * @return ThetaModel
              */
-            fun get(model: String?): ThetaModel? {
-                return values().firstOrNull {
-                    it.value == model
+            fun get(model: String?, serialNumber: String? = null): ThetaModel? {
+                return serialNumber?.first()?.let { firstChar ->
+                    values().filter { it.firstCharOfSerialNumber != null }.firstOrNull {
+                        it.value == model && it.firstCharOfSerialNumber == firstChar
+                    }
+                } ?: run { // In case of serialNumber is null or either model or serialNumber is not matched.
+                    values().sortedWith(compareBy<ThetaModel> { it.value }.thenBy { it.firstCharOfSerialNumber })
+                        .firstOrNull { it.value == model }
                 }
+            }
+
+            /**
+             * Distinguish models older than Theta V
+             *
+             * @param model
+             * @return true if the model is older than Theta V
+             */
+            fun isBeforeThetaV(model: ThetaModel?): Boolean {
+                return listOf(
+                    THETA_S,
+                    THETA_SC,
+                    THETA_SC2,
+                    THETA_SC2_B,
+                ).contains(model)
             }
         }
     }
@@ -353,7 +383,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     suspend fun getThetaInfo(): ThetaInfo {
         try {
             val response = ThetaApi.callInfoApi(endpoint)
-            cameraModel = response.model
+            cameraModel = ThetaModel.get(response.model, response.serialNumber)
             return ThetaInfo(response)
         } catch (e: JsonConvertException) {
             throw ThetaWebApiException(e.message ?: e.toString())
@@ -734,6 +764,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _preset
+         */
+        Preset("_preset", PresetEnum::class),
+
+        /**
+         * Option name
          * previewFormat
          */
         PreviewFormat("previewFormat", PreviewFormatEnum::class),
@@ -993,6 +1029,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var powerSaving: PowerSavingEnum? = null,
 
         /**
+         * Preset mode of Theta SC2 and Theta SC2 for business.
+         */
+        var preset: PresetEnum? = null,
+
+        /**
          * Format of live view.
          */
         var previewFormat: PreviewFormatEnum? = null,
@@ -1106,6 +1147,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             offDelay = null,
             password = null,
             powerSaving = null,
+            preset = null,
             previewFormat = null,
             proxy = null,
             shootingMethod = null,
@@ -1151,6 +1193,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             offDelay = options.offDelay?.let { OffDelayEnum.get(it) },
             password = options._password,
             powerSaving = options._powerSaving?.let { PowerSavingEnum.get(it) },
+            preset = options._preset?.let { PresetEnum.get(it) },
             previewFormat = options.previewFormat?.let { PreviewFormatEnum.get(it) },
             proxy = options._proxy?.let { Proxy(it) },
             shootingMethod = options._shootingMethod?.let { ShootingMethodEnum.get(it) },
@@ -1197,6 +1240,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 offDelay = offDelay?.sec,
                 _password = password,
                 _powerSaving = powerSaving?.value,
+                _preset = preset?.value,
                 previewFormat = previewFormat?.toPreviewFormat(),
                 _proxy = proxy?.toTransferredProxy(),
                 sleepDelay = sleepDelay?.sec,
@@ -1250,6 +1294,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.OffDelay -> offDelay
                 OptionNameEnum.Password -> password
                 OptionNameEnum.PowerSaving -> powerSaving
+                OptionNameEnum.Preset -> preset
                 OptionNameEnum.PreviewFormat -> previewFormat
                 OptionNameEnum.Proxy -> proxy
                 OptionNameEnum.RemainingPictures -> remainingPictures
@@ -1304,6 +1349,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.OffDelay -> offDelay = value as OffDelay
                 OptionNameEnum.Password -> password = value as String
                 OptionNameEnum.PowerSaving -> powerSaving = value as PowerSavingEnum
+                OptionNameEnum.Preset -> preset = value as PresetEnum
                 OptionNameEnum.PreviewFormat -> previewFormat = value as PreviewFormatEnum
                 OptionNameEnum.Proxy -> proxy = value as Proxy
                 OptionNameEnum.ShootingMethod -> shootingMethod = value as ShootingMethodEnum
@@ -1527,7 +1573,26 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Shooting mode.
          * Video capture mode
          */
-        VIDEO(CaptureMode.VIDEO);
+        VIDEO(CaptureMode.VIDEO),
+
+        /**
+         * Shooting mode.
+         * Live streaming mode just for Theta S.
+         * This mode can not be set.
+         */
+        LIVE_STREAMING(CaptureMode.LIVE_STREAMING),
+
+        /**
+         * Shooting mode.
+         * Interval still image capture mode just for Theta SC2 and Theta SC2 for business.
+         */
+        INTERVAL(CaptureMode.INTERVAL),
+
+        /**
+         * Shooting mode.
+         * Preset mode just for Theta SC2 and Theta SC2 for business.
+         */
+        PRESET(CaptureMode.PRESET);
 
         companion object {
             /**
@@ -3047,6 +3112,59 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @return PowerSavingEnum
              */
             fun get(value: PowerSaving): PowerSavingEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Preset mode of Theta SC2 and Theta SC2 for business.
+     */
+    enum class PresetEnum(val value: Preset) {
+        /**
+         * Preset "Face" mode suitable for portrait shooting just for Theta SC2.
+         *
+         * A person’s face is detected and its position is adjusted to the center of the image
+         * to obtain a clear image of the person.
+         */
+        FACE(Preset.FACE),
+
+        /**
+         * Preset "Night View" mode just for Theta SC2.
+         *
+         * The dynamic range of bright areas is expanded to reduce noise.
+         * In addition, a person’s face is detected to obtain a clear image of the person.
+         */
+        NIGHT_VIEW(Preset.NIGHT_VIEW),
+
+        /**
+         * Preset "Lens-by-Lens Exposure" mode just for Theta SC2.
+         *
+         * Image processing such as exposure adjustment and white balance adjustment is performed
+         * individually for each image captured with the front and rear lenses.
+         * This mode is suitable for capturing scenes with significantly different brightness conditions
+         * between the camera front side and the camera rear side.
+         * Images captured with the front and rear lenses are displayed side by side
+         */
+        LENS_BY_LENS_EXPOSURE(Preset.LENS_BY_LENS_EXPOSURE),
+
+        /**
+         * Preset "Room" mode just for SC2 for business.
+         *
+         * Suitable for indoor shooting where there is gap in brightness between outdoors and indoors.
+         * Also, the self-timer function enables time shift between shooting with the front lens
+         * and rear lens making it possible for the photographer not to be captured in the image.
+         */
+        ROOM(Preset.ROOM);
+
+        companion object {
+            /**
+             * Convert Preset to PresetEnum
+             *
+             * @param value
+             * @return PresetEnum
+             */
+            fun get(value: Preset): PresetEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -4827,8 +4945,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     @Throws(Throwable::class)
     suspend fun convertVideoFormats(fileUrl: String, toLowResolution: Boolean, applyTopBottomCorrection: Boolean = true): String {
-        val params = when (ThetaModel.get(cameraModel)) {
-            ThetaModel.THETA_X -> {
+        val params = when {
+            cameraModel == ThetaModel.THETA_X -> {
                 if (!toLowResolution) {
                     return fileUrl
                 }
@@ -4837,7 +4955,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                     size = VideoFormat.VIDEO_4K
                 )
             }
-            ThetaModel.THETA_S, ThetaModel.THETA_SC, ThetaModel.THETA_SC2 -> {
+            ThetaModel.isBeforeThetaV(cameraModel) -> {
                 return fileUrl
             }
             else -> {
@@ -5521,7 +5639,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     @Throws(Throwable::class)
     suspend fun setPluginOrders(plugins: List<String>) {
         val plugins = plugins.toMutableList()
-        if (ThetaModel.get(cameraModel) == ThetaModel.THETA_Z1) {
+        if (cameraModel == ThetaModel.THETA_Z1) {
             when {
                 plugins.size > SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 -> {
                     throw ArgumentException("Argument list must have $SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 or less elements for RICOH THETA Z1")
@@ -5595,3 +5713,9 @@ const val CHECK_COMMAND_STATUS_INTERVAL = 1000L
  * The size of setPluginOrders()'s argument list for Z1
  */
 const val SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 = 3
+
+/**
+ * The first character of the serial number of the SC2 for business.
+ * Other characters are used to SC2.
+ */
+const val FIRST_CHAR_OF_SERIAL_NUMBER_SC2_B = '4'

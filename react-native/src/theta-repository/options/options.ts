@@ -1,9 +1,11 @@
 import type { AiAutoThumbnailEnum } from './option-ai-auto-thumbnail';
 import type { CameraControlSourceEnum } from './option-camera-control-source';
 import type { CameraModeEnum } from './option-camera-mode';
+import type { CaptureModeEnum } from './option-capture-mode';
 import type { FilterEnum } from './option-filter';
 import type { NetworkTypeEnum } from './option-network-type';
 import type { PowerSavingEnum } from './option-power-saving';
+import type { PresetEnum } from './option-preset';
 import type { PreviewFormatEnum } from './option-preview-format';
 import type { Proxy } from './option-proxy';
 import type { ShootingMethodEnum } from './option-shooting-method';
@@ -42,18 +44,6 @@ export const BluetoothPowerEnum = {
 /** type definition of BluetoothPowerEnum */
 export type BluetoothPowerEnum =
   typeof BluetoothPowerEnum[keyof typeof BluetoothPowerEnum];
-
-/** Shooting mode. */
-export const CaptureModeEnum = {
-  /** Still image capture mode */
-  IMAGE: 'IMAGE',
-  /** Video capture mode */
-  VIDEO: 'VIDEO',
-} as const;
-
-/** type definition of CaptureModeEnum */
-export type CaptureModeEnum =
-  typeof CaptureModeEnum[keyof typeof CaptureModeEnum];
 
 /** Exposure compensation (EV). */
 export const ExposureCompensationEnum = {
@@ -491,6 +481,8 @@ export const OptionNameEnum = {
   Password: 'Password',
   /** powerSaving */
   PowerSaving: 'PowerSaving',
+  /** preset */
+  Preset: 'Preset',
   /** previewFormat */
   PreviewFormat: 'PreviewFormat',
   /** proxy */
@@ -575,6 +567,8 @@ export type Options = {
   password?: String;
   /** Power saving mode */
   powerSaving?: PowerSavingEnum;
+  /** Preset mode */
+  preset?: PresetEnum;
   /** Format of live view  */
   previewFormat?: PreviewFormatEnum;
   /** Proxy information to be used when wired LAN is enabled. */

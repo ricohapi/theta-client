@@ -21,4 +21,4 @@ describe('PreviewFormatEnum', () => {
       expect(item[0] ? item[0].toString() : '').toBe(item[1]);
     });
   });
-})
+});

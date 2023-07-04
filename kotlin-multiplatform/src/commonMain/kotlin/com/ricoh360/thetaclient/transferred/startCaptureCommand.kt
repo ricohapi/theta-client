@@ -121,7 +121,13 @@ data class StartCaptureResponse(
 @Serializable
 data class ResultStartCapture(
     /**
-     * List of file URLS
+     * List of file URLs.
+     * For others than Theta SC2.
      */
-    val fileUrls: List<String>,
+    val fileUrls: List<String>? = null,
+    /**
+     * File URL.
+     * For theta SC2 only.
+     */
+    val fileUrl: String? = null,
 )

@@ -159,6 +159,9 @@ void main() {
     List<List<dynamic>> data = [
       [CaptureModeEnum.image, 'IMAGE'],
       [CaptureModeEnum.video, 'VIDEO'],
+      [CaptureModeEnum.liveStreaming, 'LIVE_STREAMING'],
+      [CaptureModeEnum.interval, 'INTERVAL'],
+      [CaptureModeEnum.preset, 'PRESET'],
     ];
     expect(data.length, CaptureModeEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
@@ -451,6 +454,19 @@ void main() {
       [PowerSavingEnum.off, 'OFF'],
     ];
     expect(data.length, PowerSavingEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+test('PresetEnum', () async {
+    List<List<dynamic>> data = [
+      [PresetEnum.face, 'FACE'],
+      [PresetEnum.nightView, 'NIGHT_VIEW'],
+      [PresetEnum.lensByLensExposure, 'LENS_BY_LENS_EXPOSURE'],
+      [PresetEnum.room, 'ROOM'],
+    ];
+    expect(data.length, PresetEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }

@@ -4,18 +4,20 @@ import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
-import com.ricoh360.thetaclient.transferred.CaptureMode
+import com.ricoh360.thetaclient.transferred.Preset
 import com.ricoh360.thetaclient.transferred.Options
-import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.http.content.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class CaptureModeTest {
+class PresetTest {
     private val endpoint = "http://192.168.1.1:80/"
 
     @BeforeTest
@@ -29,79 +31,84 @@ class CaptureModeTest {
     }
 
     /**
-     * Get option captureMode.
+     * Get option preset.
      */
     @Test
-    fun getOptionCaptureModeTest() = runTest {
+    fun getOptionPresetTest() = runTest {
         val optionNames = listOf(
-            ThetaRepository.OptionNameEnum.CaptureMode
+            ThetaRepository.OptionNameEnum.Preset
         )
         val stringOptionNames = listOf(
-            "captureMode"
+            "_preset"
         )
 
         MockApiClient.onRequest = { request ->
             // check request
             CheckRequest.checkGetOptions(request, stringOptionNames)
 
-            ByteReadChannel(Resource("src/commonTest/resources/options/option_capture_mode_image.json").readText())
+            ByteReadChannel(Resource("src/commonTest/resources/options/option_preset_room.json").readText())
         }
 
         val thetaRepository = ThetaRepository(endpoint)
         val options = thetaRepository.getOptions(optionNames)
-        assertEquals(options.captureMode, ThetaRepository.CaptureModeEnum.IMAGE)
+        assertEquals(options.preset, ThetaRepository.PresetEnum.ROOM, "preset")
     }
 
     /**
-     * Set option captureMode.
+     * Set option preset.
      */
     @Test
-    fun setOptionCaptureModeTest() = runTest {
-        val value = Pair(ThetaRepository.CaptureModeEnum.IMAGE, CaptureMode.IMAGE)
+    fun setOptionPresetTest() = runTest {
+        val value = Pair(ThetaRepository.PresetEnum.ROOM, Preset.ROOM)
 
         MockApiClient.onRequest = { request ->
             // check request
-            CheckRequest.checkSetOptions(request, captureMode = value.second)
+            CheckRequest.checkSetOptions(request, preset = value.second)
 
             ByteReadChannel(Resource("src/commonTest/resources/setOptions/set_options_done.json").readText())
         }
 
         val thetaRepository = ThetaRepository(endpoint)
         val options = ThetaRepository.Options(
-            captureMode = value.first
+            preset = value.first
         )
-        thetaRepository.setOptions(options)
+        kotlin.runCatching {
+            thetaRepository.setOptions(options)
+        }.onSuccess {
+            assertTrue(true, "setOptions Preset")
+        }.onFailure {
+            println(it.toString())
+            assertTrue(false, "setOptions Preset")
+        }
     }
 
     /**
      * Convert ThetaRepository.Options to Options.
      */
     @Test
-    fun convertOptionCaptureModeTest() = runTest {
+    fun convertOptionPresetTest() = runTest {
         val values = listOf(
-            Pair(ThetaRepository.CaptureModeEnum.IMAGE, CaptureMode.IMAGE),
-            Pair(ThetaRepository.CaptureModeEnum.VIDEO, CaptureMode.VIDEO),
-            Pair(ThetaRepository.CaptureModeEnum.LIVE_STREAMING, CaptureMode.LIVE_STREAMING),
-            Pair(ThetaRepository.CaptureModeEnum.INTERVAL, CaptureMode.INTERVAL),
-            Pair(ThetaRepository.CaptureModeEnum.PRESET, CaptureMode.PRESET),
+            Pair(ThetaRepository.PresetEnum.ROOM, Preset.ROOM),
+            Pair(ThetaRepository.PresetEnum.FACE, Preset.FACE),
+            Pair(ThetaRepository.PresetEnum.NIGHT_VIEW, Preset.NIGHT_VIEW),
+            Pair(ThetaRepository.PresetEnum.LENS_BY_LENS_EXPOSURE, Preset.LENS_BY_LENS_EXPOSURE),
         )
 
         values.forEach {
             val orgOptions = Options(
-                captureMode = it.second
+                _preset = it.second
             )
             val options = ThetaRepository.Options(orgOptions)
-            assertEquals(options.captureMode, it.first, "captureMode ${it.second}")
+            assertEquals(options.preset, it.first, "preset ${it.second}")
         }
 
-        values.filter {
-            it.first != null
-        }.forEach {
+        values.forEach {
             val orgOptions = ThetaRepository.Options(
-                captureMode = it.first
+                preset = it.first
             )
             val options = orgOptions.toOptions()
-            assertEquals(options.captureMode, it.second, "captureMode ${it.second}")
+            assertEquals(options._preset, it.second, "preset ${it.second}")
         }
     }
+
 }

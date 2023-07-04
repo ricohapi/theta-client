@@ -58,6 +58,7 @@ class CheckRequest {
             networkType: NetworkType? = null,
             offDelay: Int? = null,
             powerSaving: PowerSaving? = null,
+            preset: Preset? = null,
             previewFormat: PreviewFormat? = null,
             proxy: Proxy? = null,
             shootingMethod: ShootingMethod? = null,
@@ -147,6 +148,9 @@ class CheckRequest {
             }
             powerSaving?.let {
                 assertEquals(optionsRequest.parameters.options._powerSaving, it, "setOptions powerSaving")
+            }
+            preset?.let {
+                assertEquals(optionsRequest.parameters.options._preset, it, "setOptions preset")
             }
             previewFormat?.let {
                 assertEquals(optionsRequest.parameters.options.previewFormat, it, "setOptions previewFormat")

@@ -109,7 +109,7 @@ class PhotoCapture private constructor(private val endpoint: String, options: Op
      * @property endpoint URL of Theta web API endpoint
      * @property cameraModel Camera model info.
      */
-    class Builder internal constructor(private val endpoint: String, private val cameraModel: String? = null) : Capture.Builder<Builder>() {
+    class Builder internal constructor(private val endpoint: String, private val cameraModel: ThetaRepository.ThetaModel? = null) : Capture.Builder<Builder>() {
 
         /**
          * Builds an instance of a PhotoCapture that has all the combined parameters of the Options that have been added to the Builder.
@@ -119,7 +119,7 @@ class PhotoCapture private constructor(private val endpoint: String, options: Op
         @Throws(Throwable::class)
         suspend fun build(): PhotoCapture {
             try {
-                val modeOptions = when (ThetaRepository.ThetaModel.get(cameraModel)) {
+                val modeOptions = when (cameraModel) {
                     ThetaRepository.ThetaModel.THETA_X -> Options(captureMode = CaptureMode.IMAGE, _shootingMethod = ShootingMethod.NORMAL)
                     else -> Options(captureMode = CaptureMode.IMAGE)
                 }
