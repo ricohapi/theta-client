@@ -455,6 +455,10 @@ export const OptionNameEnum = {
   CaptureMode: 'CaptureMode',
   /** colorTemperature */
   ColorTemperature: 'ColorTemperature',
+  /** _compositeShootingOutputInterval */
+  CompositeShootingOutputInterval: 'CompositeShootingOutputInterval',
+  /** _compositeShootingTime */
+  CompositeShootingTime: 'CompositeShootingTime',
   /** dateTimeZone */
   DateTimeZone: 'DateTimeZone',
   /** exposureCompensation */
@@ -545,6 +549,28 @@ export type Options = {
   captureMode?: CaptureModeEnum;
   /** Color temperature of the camera (Kelvin). */
   colorTemperature?: number;
+  /**
+   * In-progress save interval for interval composite shooting (sec).
+   *
+   * 0 (no saving), 60 to 600. In 60-second units.
+   *
+   * For
+   * RICOH THETA Z1
+   * RICOH THETA SC firmware v1.10 or later
+   * RICOH THETA S firmware v01.82 or later
+   */
+  compositeShootingOutputInterval?: number;
+  /**
+   * Shooting time for interval composite shooting (sec).
+   *
+   * 600 to 86400. In 600-second units.
+   *
+   * For
+   * RICOH THETA Z1
+   * RICOH THETA SC firmware v1.10 or later
+   * RICOH THETA S firmware v01.82 or later
+   */
+  compositeShootingTime?: number;
   /** Current system time of RICOH THETA. Setting another options will result in an error. */
   dateTimeZone?: string;
   /** Exposure compensation (EV). */

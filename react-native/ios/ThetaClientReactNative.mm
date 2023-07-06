@@ -1598,6 +1598,40 @@ static convert_t ColorTemperatureCvt = {
 };
 
 /**
+ * CompositeShootingOutputInterval  converter
+ */
+static convert_t CompositeShootingOutputIntervalCvt = {
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    NSNumber* val = [rct objectForKey:@"compositeShootingOutputInterval"];
+    if (val) {
+      opt.compositeShootingOutputInterval = [THETACInt numberWithInt:[val intValue]];
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    if (opt.compositeShootingOutputInterval) {
+      [rct setObject:opt.compositeShootingOutputInterval forKey:@"compositeShootingOutputInterval"];
+    }
+  },
+};
+
+/**
+ * CompositeShootingTime  converter
+ */
+static convert_t CompositeShootingTimeCvt = {
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    NSNumber* val = [rct objectForKey:@"compositeShootingTime"];
+    if (val) {
+      opt.compositeShootingTime = [THETACInt numberWithInt:[val intValue]];
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    if (opt.compositeShootingTime) {
+      [rct setObject:opt.compositeShootingTime forKey:@"compositeShootingTime"];
+    }
+  },
+};
+
+/**
  * DateTimeZone converter
  */
 static convert_t DateTimeZoneCvt = {
@@ -2116,6 +2150,8 @@ static NSDictionary *NameToOptionEnum = @{
   @"CameraMode": THETACThetaRepositoryOptionNameEnum.cameramode,
   @"CaptureMode": THETACThetaRepositoryOptionNameEnum.capturemode,
   @"ColorTemperature": THETACThetaRepositoryOptionNameEnum.colortemperature,
+  @"CompositeShootingOutputInterval": THETACThetaRepositoryOptionNameEnum.compositeshootingoutputinterval,
+  @"CompositeShootingTime": THETACThetaRepositoryOptionNameEnum.compositeshootingtime,
   @"DateTimeZone": THETACThetaRepositoryOptionNameEnum.datetimezone,
   @"ExposureCompensation": THETACThetaRepositoryOptionNameEnum.exposurecompensation,
   @"ExposureDelay": THETACThetaRepositoryOptionNameEnum.exposuredelay,
@@ -2163,6 +2199,8 @@ static NSDictionary *OptionEnumToOption = @{
   @"CameraMode": @"cameraMode",
   @"CaptureMode": @"captureMode",
   @"ColorTemperature": @"colorTemperature",
+  @"CompositeShootingOutputInterval": @"compositeShootingOutputInterval",
+  @"CompositeShootingTime": @"compositeShootingTime",
   @"DateTimeZone": @"dateTimeZone",
   @"ExposureCompensation": @"exposureCompensation",
   @"ExposureDelay": @"exposureDelay",
@@ -2213,6 +2251,8 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"cameraMode": ^{return &CameraModeEnum;},
   @"captureMode": ^{return &CaptureModeEnum;},
   @"colorTemperature": ^{return &ColorTemperatureCvt;},
+  @"compositeShootingOutputInterval": ^{return &CompositeShootingOutputIntervalCvt;},
+  @"compositeShootingTime": ^{return &CompositeShootingTimeCvt;},
   @"dateTimeZone": ^{return &DateTimeZoneCvt;},
   @"exposureCompensation": ^{return &ExposureCompensationEnum;},
   @"exposureDelay": ^{return &ExposureDelayEnum;},

@@ -810,6 +810,36 @@ class ColorTemperatureConverter : OptionConverter {
 }
 
 /**
+ * CompositeShootingOutputIntervalConverter
+ */
+class CompositeShootingOutputIntervalConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    options.compositeShootingOutputInterval = objects.getInt("compositeShootingOutputInterval")
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.compositeShootingOutputInterval?.let {
+      objects.putInt("compositeShootingOutputInterval", it)
+    }
+  }
+}
+
+/**
+ * CompositeShootingTimeConverter
+ */
+class CompositeShootingTimeConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    options.compositeShootingTime = objects.getInt("compositeShootingTime")
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.compositeShootingTime?.let {
+      objects.putInt("compositeShootingTime", it)
+    }
+  }
+}
+
+/**
  * DateTimeZoneConverter
  */
 class DateTimeZoneConverter : OptionConverter {

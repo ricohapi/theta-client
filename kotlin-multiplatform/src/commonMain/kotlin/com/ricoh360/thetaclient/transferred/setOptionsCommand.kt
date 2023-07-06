@@ -204,6 +204,40 @@ data class Options(
     var _colorTemperature: Int? = null,
 
     /**
+     * In-progress save interval for interval composite shooting (sec).
+     *
+     * 0 (no saving), 60 to 600. In 60-second units.
+     *
+     * For
+     * RICOH THETA Z1
+     * RICOH THETA SC firmware v1.10 or later
+     * RICOH THETA S firmware v01.82 or later
+     */
+    var _compositeShootingOutputInterval: Int? = null,
+
+    /**
+     * Supported in-progress save interval for interval composite shooting (sec).
+     */
+    var _compositeShootingOutputIntervalSupport: List<Int>? = null,
+
+    /**
+     * Shooting time for interval composite shooting (sec).
+     *
+     * 600 to 86400. In 600-second units.
+     *
+     * For
+     * RICOH THETA Z1
+     * RICOH THETA SC firmware v1.10 or later
+     * RICOH THETA S firmware v01.82 or later
+     */
+    var _compositeShootingTime: Int? = null,
+
+    /**
+     * Supported shooting time for interval composite shooting (sec
+     */
+    var _compositeShootingTimeSupport: List<Int>? = null,
+
+    /**
      * Current system time of RICOH THETA. Setting another options
      * will result in an error.
      *

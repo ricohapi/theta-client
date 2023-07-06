@@ -1319,6 +1319,12 @@ enum OptionNameEnum {
   /// Option name _colorTemperature
   colorTemperature('ColorTemperature', int),
 
+  /// Option name _compositeShootingOutputInterval
+  compositeShootingOutputInterval('CompositeShootingOutputInterval', int),
+
+  /// Option name _compositeShootingTime
+  compositeShootingTime('CompositeShootingTime', int),
+
   /// Option name dateTimeZone
   dateTimeZone('DateTimeZone', String),
 
@@ -3214,6 +3220,26 @@ class Options {
   /// 2500 to 10000. In 100-Kelvin units.
   int? colorTemperature;
 
+  /// In-progress save interval for interval composite shooting (sec).
+  /// 
+  /// 0 (no saving), 60 to 600. In 60-second units.
+  /// 
+  /// For
+  /// RICOH THETA Z1
+  /// RICOH THETA SC firmware v1.10 or later
+  /// RICOH THETA S firmware v01.82 or later
+  int? compositeShootingOutputInterval;
+
+  /// Shooting time for interval composite shooting (sec).
+  /// 
+  /// 600 to 86400. In 600-second units.
+  /// 
+  /// For
+  /// RICOH THETA Z1
+  /// RICOH THETA SC firmware v1.10 or later
+  /// RICOH THETA S firmware v01.82 or later
+  int? compositeShootingTime;
+
   /// Current system time of RICOH THETA. Setting another options will result in an error.
   /// 
   /// With RICOH THETA X camera.setOptions can be changed only when Date/time setting is AUTO in menu UI.
@@ -3386,6 +3412,10 @@ class Options {
         return captureMode as T;
       case OptionNameEnum.colorTemperature:
         return colorTemperature as T;
+      case OptionNameEnum.compositeShootingOutputInterval:
+        return compositeShootingOutputInterval as T;
+      case OptionNameEnum.compositeShootingTime:
+        return compositeShootingTime as T;
       case OptionNameEnum.dateTimeZone:
         return dateTimeZone as T;
       case OptionNameEnum.exposureCompensation:
@@ -3483,6 +3513,12 @@ class Options {
         break;
       case OptionNameEnum.colorTemperature:
         colorTemperature = value;
+        break;
+      case OptionNameEnum.compositeShootingOutputInterval:
+        compositeShootingOutputInterval = value;
+        break;
+      case OptionNameEnum.compositeShootingTime:
+        compositeShootingTime = value;
         break;
       case OptionNameEnum.dateTimeZone:
         dateTimeZone = value;

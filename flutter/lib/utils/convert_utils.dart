@@ -230,6 +230,12 @@ class ConvertUtils {
         case OptionNameEnum.colorTemperature:
           result.colorTemperature = entry.value;
           break;
+        case OptionNameEnum.compositeShootingOutputInterval:
+          result.compositeShootingOutputInterval = entry.value;
+          break;
+        case OptionNameEnum.compositeShootingTime:
+          result.compositeShootingTime = entry.value;
+          break;
         case OptionNameEnum.dateTimeZone:
           result.dateTimeZone = entry.value;
           break;

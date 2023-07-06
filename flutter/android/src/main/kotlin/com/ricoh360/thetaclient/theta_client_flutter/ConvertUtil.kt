@@ -271,6 +271,8 @@ fun toResult(options: Options): Map<String, Any> {
 
     val valueOptions = listOf(
         OptionNameEnum.ColorTemperature,
+        OptionNameEnum.CompositeShootingOutputInterval,
+        OptionNameEnum.CompositeShootingTime,
         OptionNameEnum.DateTimeZone,
         OptionNameEnum.IsGpsOn,
         OptionNameEnum.Password,
@@ -332,6 +334,8 @@ fun toSetOptionsParam(data: Map<String, Any>): Options {
 fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
     val valueOptions = listOf(
         OptionNameEnum.ColorTemperature,
+        OptionNameEnum.CompositeShootingOutputInterval,
+        OptionNameEnum.CompositeShootingTime,
         OptionNameEnum.DateTimeZone,
         OptionNameEnum.IsGpsOn,
         OptionNameEnum.Password,

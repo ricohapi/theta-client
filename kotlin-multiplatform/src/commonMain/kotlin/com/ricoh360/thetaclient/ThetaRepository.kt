@@ -678,6 +678,28 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _compositeShootingOutputInterval
+         *
+         * For
+         * RICOH THETA Z1
+         * RICOH THETA SC firmware v1.10 or later
+         * RICOH THETA S firmware v01.82 or later
+         */
+        CompositeShootingOutputInterval("_compositeShootingOutputInterval", Int::class),
+
+        /**
+         * Option name
+         * _compositeShootingTime
+         *
+         * For
+         * RICOH THETA Z1
+         * RICOH THETA SC firmware v1.10 or later
+         * RICOH THETA S firmware v01.82 or later
+         */
+        CompositeShootingTime("_compositeShootingTime", Int::class),
+
+        /**
+         * Option name
          * dateTimeZone
          */
         DateTimeZone("dateTimeZone", String::class),
@@ -928,6 +950,30 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var colorTemperature: Int? = null,
 
         /**
+         * In-progress save interval for interval composite shooting (sec).
+         *
+         * 0 (no saving), 60 to 600. In 60-second units.
+         *
+         * For
+         * RICOH THETA Z1
+         * RICOH THETA SC firmware v1.10 or later
+         * RICOH THETA S firmware v01.82 or later
+         */
+        var compositeShootingOutputInterval: Int? = null,
+
+        /**
+         * Shooting time for interval composite shooting (sec).
+         *
+         * 600 to 86400. In 600-second units.
+         *
+         * For
+         * RICOH THETA Z1
+         * RICOH THETA SC firmware v1.10 or later
+         * RICOH THETA S firmware v01.82 or later
+         */
+        var compositeShootingTime: Int? = null,
+
+        /**
          * Current system time of RICOH THETA. Setting another options will result in an error.
          *
          * With RICOH THETA X camera.setOptions can be changed only when Date/time setting is AUTO in menu UI.
@@ -1155,6 +1201,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             cameraMode = null,
             captureMode = null,
             colorTemperature = null,
+            compositeShootingOutputInterval = null,
+            compositeShootingTime = null,
             dateTimeZone = null,
             exposureCompensation = null,
             exposureDelay = null,
@@ -1199,6 +1247,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             cameraMode = options._cameraMode?.let { CameraModeEnum.get(it) },
             captureMode = options.captureMode?.let { CaptureModeEnum.get(it) },
             colorTemperature = options._colorTemperature,
+            compositeShootingOutputInterval = options._compositeShootingOutputInterval,
+            compositeShootingTime = options._compositeShootingTime,
             dateTimeZone = options.dateTimeZone,
             exposureCompensation = options.exposureCompensation?.let {
                 ExposureCompensationEnum.get(
@@ -1252,6 +1302,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _cameraMode = cameraMode?.value,
                 captureMode = captureMode?.value,
                 _colorTemperature = colorTemperature,
+                _compositeShootingOutputInterval = compositeShootingOutputInterval,
+                _compositeShootingTime = compositeShootingTime,
                 dateTimeZone = dateTimeZone,
                 exposureCompensation = exposureCompensation?.value,
                 exposureDelay = exposureDelay?.sec,
@@ -1308,6 +1360,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.CameraMode -> cameraMode
                 OptionNameEnum.CaptureMode -> captureMode
                 OptionNameEnum.ColorTemperature -> colorTemperature
+                OptionNameEnum.CompositeShootingOutputInterval -> compositeShootingOutputInterval
+                OptionNameEnum.CompositeShootingTime -> compositeShootingTime
                 OptionNameEnum.DateTimeZone -> dateTimeZone
                 OptionNameEnum.ExposureCompensation -> exposureCompensation
                 OptionNameEnum.ExposureDelay -> exposureDelay
@@ -1365,6 +1419,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.CameraMode -> cameraMode = value as CameraModeEnum
                 OptionNameEnum.CaptureMode -> captureMode = value as CaptureModeEnum
                 OptionNameEnum.ColorTemperature -> colorTemperature = value as Int
+                OptionNameEnum.CompositeShootingOutputInterval -> compositeShootingOutputInterval = value as Int
+                OptionNameEnum.CompositeShootingTime -> compositeShootingTime = value as Int
                 OptionNameEnum.DateTimeZone -> dateTimeZone = value as String
                 OptionNameEnum.ExposureCompensation -> exposureCompensation = value as ExposureCompensationEnum
                 OptionNameEnum.ExposureDelay -> exposureDelay = value as ExposureDelayEnum

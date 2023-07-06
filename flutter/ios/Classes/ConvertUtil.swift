@@ -425,6 +425,12 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.colortemperature.name:
         options.colorTemperature = KotlinInt(integerLiteral: value as! Int)
         break
+    case ThetaRepository.OptionNameEnum.compositeshootingoutputinterval.name:
+        options.compositeShootingOutputInterval = KotlinInt(integerLiteral: value as! Int)
+        break
+    case ThetaRepository.OptionNameEnum.compositeshootingtime.name:
+        options.compositeShootingTime = KotlinInt(integerLiteral: value as! Int)
+        break
     case ThetaRepository.OptionNameEnum.datetimezone.name:
         options.dateTimeZone = value as? String
         break
