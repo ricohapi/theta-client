@@ -20,6 +20,11 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
+  Future<ThetaModel?> getThetaModel() {
+    return onGetThetaModel();
+  }
+
+  @override
   Future<ThetaInfo> getThetaInfo() {
     return onGetThetaInfo();
   }
@@ -230,6 +235,7 @@ class MockThetaClientFlutterPlatform
 
 Future<void> Function() onCallInitialize = Future.value;
 Future<bool> Function() onCallIsInitialized = Future.value;
+Future<ThetaModel?> Function() onGetThetaModel = Future.value;
 Future<ThetaInfo> Function() onGetThetaInfo = Future.value;
 Future<ThetaState> Function() onGetThetaState = Future.value;
 Future<void> Function() onCallGetLivePreview = Future.value;
@@ -285,22 +291,38 @@ void main() {
     expect(await thetaClientPlugin.isInitialized(), isTrue);
   });
 
+  test('getThetaModel', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    const thetaModel = ThetaModel.thetaZ1;
+    onGetThetaModel = () {
+      return Future.value(thetaModel);
+    };
+
+    var model = await thetaClientPlugin.getThetaModel();
+    expect(model, thetaModel);
+  });
+
   test('getThetaInfo', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
     MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     const model = 'RICOH THETA Z1';
+    const thetaModel = ThetaModel.thetaZ1;
     const api = ['a', 'b'];
     const apiLevel = [2];
     var endpoints = Endpoints(80, 80);
     onGetThetaInfo = () {
       return Future.value(ThetaInfo('RICOH', model, 'serialNo', 'wlanMac', 'blMac',
-      'firmVersion', 'supportUrl', true, true, 1, api, endpoints, apiLevel));
+      'firmVersion', 'supportUrl', true, true, 1, api, endpoints, apiLevel, thetaModel));
     };
 
     var thetaInfo = await thetaClientPlugin.getThetaInfo();
     expect(thetaInfo.model, model);
+    expect(thetaInfo.thetaModel, thetaModel);
   });
 
   test('getThetaState', () async {

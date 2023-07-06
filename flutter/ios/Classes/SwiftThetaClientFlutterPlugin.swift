@@ -49,6 +49,8 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             result(thetaRepository != nil)
         case "restoreSettings":
             self.restoreSettings(result: result)
+        case "getThetaModel":
+            self.getThetaModel(result: result)
         case "getThetaInfo":
             self.getThetaInfo(result: result)
         case "getThetaState":
@@ -190,7 +192,16 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             }
         }
     }
-    
+
+    func getThetaModel(result: @escaping FlutterResult) {
+        if (thetaRepository == nil) {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return;
+        }
+        result(thetaRepository?.cameraModel?.name)
+    }
+
     func getThetaInfo(result: @escaping FlutterResult) {
         if (thetaRepository == nil) {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
@@ -202,7 +213,10 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
                 result(flutterError)
             } else {
-                let resultInfo = convertResult(thetaInfo: response!)
+                var resultInfo = convertResult(thetaInfo: response!)
+                if let thetaModel = self.thetaRepository?.cameraModel {
+                    resultInfo["thetaModel"] = thetaModel.name
+                }
                 result(resultInfo)
             }
         }

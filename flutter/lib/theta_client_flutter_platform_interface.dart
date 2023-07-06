@@ -41,6 +41,10 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('restoreSettings() has not been implemented.');
   }
 
+  Future<ThetaModel?> getThetaModel() {
+    throw UnimplementedError('getThetaModel() has not been implemented.');
+  }
+
   Future<ThetaInfo> getThetaInfo() {
     throw UnimplementedError('getThetaInfo() has not been implemented.');
   }

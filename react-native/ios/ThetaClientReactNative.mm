@@ -2396,7 +2396,7 @@ THETACThetaRepositoryTimeout* timeoutToTheta(NSDictionary* objects)
 }
 
 NSDictionary* fileInfoFromTheta(THETACThetaRepositoryFileInfo* fileInfo) {
-  NSMutableDictionary *fileInfoObject = [[NSMutableDictionary alloc] initWithDictionary:@{
+  NSMutableDictionary *fileInfoObject = [NSMutableDictionary dictionaryWithDictionary:@{
     @"name":fileInfo.name,
     @"fileUrl":fileInfo.fileUrl,
     @"size":@(fileInfo.size),
@@ -2573,6 +2573,22 @@ RCT_REMAP_METHOD(isInitialized,
 }
 
 /**
+ * getThetaModel  -  Returns the connected THETA model.
+ * @param resolve for getThetaModel
+ * @param rejecter
+ */
+RCT_REMAP_METHOD(getThetaModel,
+                 getThetaModelWithResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+{
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
+  resolve(self.theta.cameraModel ? self.theta.cameraModel.name : nil);
+}
+
+/**
  * getThetaInfo  -  retrieve ThetaInfo from THETA via repository
  * @param resolve resolver for getThetaInfo
  * @param rejecter rejecter for getThetaInfo
@@ -2594,22 +2610,28 @@ RCT_REMAP_METHOD(getThetaInfo,
       for (THETACInt *element in info.apiLevel) {
         [apiLevelList addObject:@([element intValue])];
       }
-      resolve(@{@"manufacturer": info.manufacturer,
-                @"model": info.model,
-                @"serialNumber": info.serialNumber,
-                @"wlanMacAddress": info.wlanMacAddress != nil ? info.wlanMacAddress : [NSNull null],
-                @"bluetoothMacAddress": info.bluetoothMacAddress != nil ? info.bluetoothMacAddress : [NSNull null],
-                @"firmwareVersion": info.firmwareVersion,
-                @"supportUrl": info.supportUrl,
-                @"hasGps": @(info.hasGps),
-                @"hasGyro": @(info.hasGyro),
-                @"uptime": @(info.uptime),
-                @"api": info.api,
-                @"endpoints": @{
-                  @"httpPort": @(info.endpoints.httpPort),
-                  @"httpUpdatesPort": @(info.endpoints.httpUpdatesPort),
-                },
-                @"apiLevel": apiLevelList});
+      NSMutableDictionary *thetaInfoObject = [NSMutableDictionary dictionaryWithDictionary:@{
+        @"manufacturer": info.manufacturer,
+        @"model": info.model,
+        @"serialNumber": info.serialNumber,
+        @"wlanMacAddress": info.wlanMacAddress != nil ? info.wlanMacAddress : [NSNull null],
+        @"bluetoothMacAddress": info.bluetoothMacAddress != nil ? info.bluetoothMacAddress : [NSNull null],
+        @"firmwareVersion": info.firmwareVersion,
+        @"supportUrl": info.supportUrl,
+        @"hasGps": @(info.hasGps),
+        @"hasGyro": @(info.hasGyro),
+        @"uptime": @(info.uptime),
+        @"api": info.api,
+        @"endpoints": @{
+          @"httpPort": @(info.endpoints.httpPort),
+          @"httpUpdatesPort": @(info.endpoints.httpUpdatesPort),
+        },
+        @"apiLevel": apiLevelList
+      }];
+      if (self.theta.cameraModel) {
+        [thetaInfoObject setObject:self.theta.cameraModel.name forKey:@"thetaModel"];
+      }
+      resolve(thetaInfoObject);
     } else {
       reject(ERROR_CODE_ERROR, @"no info", nil);
     }

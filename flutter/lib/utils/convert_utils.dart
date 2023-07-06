@@ -88,13 +88,14 @@ class ConvertUtils {
       data['uptime'],
       apiList,
       endpoints,
-      apiLevelList
+      apiLevelList,
+      ThetaModel.getValue(data['thetaModel'])
     );
     return thetaInfo;
   }
 
   static ThetaState convertThetaState(Map<dynamic, dynamic> data) {
-    var thetaInfo = ThetaState(
+    var thetaState = ThetaState(
       data['fingerprint'],
       data['batteryLevel'],
       data['storageUri'],
@@ -116,7 +117,7 @@ class ConvertUtils {
       ConvertUtils.toCameraErrorList(data['cameraError']),
       data['isBatteryInsert'],
     );
-    return thetaInfo;
+    return thetaState;
   }
 
   static Map<String, dynamic> convertGpsInfoParam(GpsInfo gpsInfo) {

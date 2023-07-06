@@ -667,6 +667,22 @@ test('PresetEnum', () async {
     }
   });
 
+  test('ThetaModel', () async {
+    List<List<dynamic>> data = [
+      [ThetaModel.thetaS, 'THETA_S'],
+      [ThetaModel.thetaSC, 'THETA_SC'],
+      [ThetaModel.thetaV, 'THETA_V'],
+      [ThetaModel.thetaZ1, 'THETA_Z1'],
+      [ThetaModel.thetaX, 'THETA_X'],
+      [ThetaModel.thetaSC2, 'THETA_SC2'],
+      [ThetaModel.thetaSC2B, 'THETA_SC2_B'],
+    ];
+    expect(data.length, ThetaModel.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
   test('TimeShiftIntervalEnum', () async {
     List<List<dynamic>> data = [
       [TimeShiftIntervalEnum.interval_0, 'INTERVAL_0'],

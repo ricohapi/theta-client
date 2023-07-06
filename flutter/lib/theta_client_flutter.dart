@@ -13,92 +13,100 @@ class ThetaClientFlutter {
 
   /// Initialize object.
   /// 
-  /// * @param [endpoint] URL of Theta web API endpoint.
-  /// * @param config Configuration of initialize. If null, get from THETA.
-  /// * @param timeout Timeout of HTTP call.
-  /// * @throws If an error occurs in THETA.
+  /// - @param [endpoint] URL of Theta web API endpoint.
+  /// - @param config Configuration of initialize. If null, get from THETA.
+  /// - @param timeout Timeout of HTTP call.
+  /// - @throws If an error occurs in THETA.
   Future<void> initialize([String endpoint = 'http://192.168.1.1:80/', ThetaConfig? config, ThetaTimeout? timeout]) {
     return ThetaClientFlutterPlatform.instance.initialize(endpoint, config, timeout);
   }
 
   /// Returns whether it is initialized or not.
   /// 
-  /// * @return Whether it is initialized or not.
-  /// * @throws If an error occurs in THETA.
+  /// - @return Whether it is initialized or not.
+  /// - @throws If an error occurs in THETA.
   Future<bool> isInitialized() {
     return ThetaClientFlutterPlatform.instance.isInitialized();
   }
 
   /// Restore setting to THETA
   /// 
-  /// * @throws If an error occurs in THETA.
+  /// - @throws If an error occurs in THETA.
   Future<void> restoreSettings() {
     return ThetaClientFlutterPlatform.instance.restoreSettings();
   }
 
+  /// Returns the connected THETA model.
+  /// 
+  /// - @return THETA model.
+  /// - @throws If an error occurs in THETA.
+  Future<ThetaModel?> getThetaModel() {
+    return ThetaClientFlutterPlatform.instance.getThetaModel();
+  }
+
   /// Get basic information about Theta.
   /// 
-  /// * @return Static attributes of Theta.
-  /// * @throws If an error occurs in THETA.
+  /// - @return Static attributes of Theta.
+  /// - @throws If an error occurs in THETA.
   Future<ThetaInfo> getThetaInfo() {
     return ThetaClientFlutterPlatform.instance.getThetaInfo();
   }
 
   /// Get current state of Theta.
   /// 
-  /// * @return Mutable values representing Theta status.
-  /// * @throws If an error occurs in THETA.
+  /// - @return Mutable values representing Theta status.
+  /// - @throws If an error occurs in THETA.
   Future<ThetaState> getThetaState() {
     return ThetaClientFlutterPlatform.instance.getThetaState();
   }
 
   /// Start live preview as motion JPEG.
   /// 
-  /// * @param [frameHandler] Called for each JPEG frame.
-  /// * @throws Command is currently disabled; for example, the camera is shooting a video.
+  /// - @param [frameHandler] Called for each JPEG frame.
+  /// - @throws Command is currently disabled; for example, the camera is shooting a video.
   Future<void> getLivePreview(bool Function(Uint8List) frameHandler) {
     return ThetaClientFlutterPlatform.instance.getLivePreview(frameHandler);
   }
 
   /// Lists information of images and videos in Theta.
   /// 
-  /// * @param [fileType] Type of the files to be listed.
-  /// * @param [entryCount] Desired number of entries to return.
+  /// - @param [fileType] Type of the files to be listed.
+  /// - @param [entryCount] Desired number of entries to return.
   /// If [entryCount] is more than the number of remaining files, just return entries of actual remaining files.
-  /// * @param [startPosition] The position of the first file to be returned in the list. 0 represents the first file.
+  /// - @param [startPosition] The position of the first file to be returned in the list. 0 represents the first file.
   /// If [startPosition] is larger than the position of the last file, an empty list is returned.
-  /// * @return A list of file information and number of totalEntries.
+  /// - @return A list of file information and number of totalEntries.
   /// see https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md
-  /// * @throws If an error occurs in THETA.
+  /// - @throws If an error occurs in THETA.
   Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, [int startPosition = 0, StorageEnum? storage]) {
     return ThetaClientFlutterPlatform.instance.listFiles(fileType, entryCount, startPosition, storage);
   }
 
   /// Delete files in Theta.
   /// 
-  /// * @param [fileUrls] URLs of the file to be deleted.
-  /// * @throws Some of [fileUrls] don't exist.  All specified files cannot be deleted.
+  /// - @param [fileUrls] URLs of the file to be deleted.
+  /// - @throws Some of [fileUrls] don't exist.  All specified files cannot be deleted.
   Future<void> deleteFiles(List<String> fileUrls) {
     return ThetaClientFlutterPlatform.instance.deleteFiles(fileUrls);
   }
 
   /// Delete all files in Theta.
   /// 
-  /// * @throws If an error occurs in THETA.
+  /// - @throws If an error occurs in THETA.
   Future<void> deleteAllFiles() {
     return ThetaClientFlutterPlatform.instance.deleteAllFiles();
   }
 
   /// Delete all image files in Theta.
   /// 
-  /// * @throws If an error occurs in THETA.
+  /// - @throws If an error occurs in THETA.
   Future<void> deleteAllImageFiles() {
     return ThetaClientFlutterPlatform.instance.deleteAllImageFiles();
   }
 
   /// Delete all video files in Theta.
   /// 
-  /// * @throws If an error occurs in THETA.
+  /// - @throws If an error occurs in THETA.
   Future<void> deleteAllVideoFiles() {
     return ThetaClientFlutterPlatform.instance.deleteAllVideoFiles();
   }
@@ -120,8 +128,8 @@ class ThetaClientFlutter {
   /// Refer to the [options category](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
   /// of API v2.1 reference for details on properties that can be acquired.
   /// 
-  /// * @param optionNames List of [OptionNameEnum].
-  /// * @return [Options] acquired
+  /// - @param optionNames List of [OptionNameEnum].
+  /// - @return [Options] acquired
   Future<Options> getOptions(List<OptionNameEnum> optionNames) {
     return ThetaClientFlutterPlatform.instance.getOptions(optionNames);
   }
@@ -131,8 +139,8 @@ class ThetaClientFlutter {
   /// Check the properties that can be set and specifications by the API v2.1 reference options
   /// category or [camera.getOptions](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md).
   /// 
-  /// * @param options Camera setting options.
-  /// * @throws When an invalid option is specified.
+  /// - @param options Camera setting options.
+  /// - @throws When an invalid option is specified.
   Future<void> setOptions(Options options) {
     return ThetaClientFlutterPlatform.instance.setOptions(options);
   }
@@ -142,9 +150,9 @@ class ThetaClientFlutter {
   /// This command cannot be executed during video recording.
   /// RICOH THETA V firmware v2.00.2 or later
   /// 
-  /// * @param[fileUrl] URL of a still image file
-  /// * @return Exif and [photo sphere XMP](https://developers.google.com/streetview/spherical-metadata/)
-  /// * @throws Command is currently disabled; for example, the camera is shooting a video.
+  /// - @param[fileUrl] URL of a still image file
+  /// - @return Exif and [photo sphere XMP](https://developers.google.com/streetview/spherical-metadata/)
+  /// - @throws Command is currently disabled; for example, the camera is shooting a video.
   Future<Metadata> getMetadata(String fileUrl) {
     return ThetaClientFlutterPlatform.instance.getMetadata(fileUrl);
   }
@@ -152,14 +160,14 @@ class ThetaClientFlutter {
   /// Reset all device settings and capture settings.
   /// After reset, the camera will be restarted.
   /// 
-  /// * @throws If an error occurs in THETA.
+  /// - @throws If an error occurs in THETA.
   Future<void> reset() {
     return ThetaClientFlutterPlatform.instance.reset();
   }
 
   /// Stop running self-timer.
   /// 
-  /// * @throws If an error occurs in THETA.
+  /// - @throws If an error occurs in THETA.
   Future<void> stopSelfTimer() {
     return ThetaClientFlutterPlatform.instance.stopSelfTimer();
   }
@@ -168,25 +176,25 @@ class ThetaClientFlutter {
   /// 
   /// Theta S and Theta SC don't support this functionality, so always [fileUrl] is returned.
   /// 
-  /// * @param fileUrl URL of a saved movie file.
-  /// * @param toLowResolution If true generates lower resolution video, otherwise same resolution.
-  /// * @param applyTopBottomCorrection apply Top/bottom correction. This parameter is ignored on Theta X.
-  /// * @return URL of a converted movie file.
-  /// * @throws Command is currently disabled.
+  /// - @param fileUrl URL of a saved movie file.
+  /// - @param toLowResolution If true generates lower resolution video, otherwise same resolution.
+  /// - @param applyTopBottomCorrection apply Top/bottom correction. This parameter is ignored on Theta X.
+  /// - @return URL of a converted movie file.
+  /// - @throws Command is currently disabled.
   Future<String> convertVideoFormats(String fileUrl, bool toLowResolution, [bool applyTopBottomCorrection = true]) {
     return ThetaClientFlutterPlatform.instance.convertVideoFormats(fileUrl, toLowResolution, applyTopBottomCorrection);
   }
 
   /// Cancels the movie format conversion.
   /// 
-  /// * @throws When convertVideoFormats is not started.
+  /// - @throws When convertVideoFormats is not started.
   Future<void> cancelVideoConvert() {
     return ThetaClientFlutterPlatform.instance.cancelVideoConvert();
   }
 
   /// Turns the wireless LAN off.
   /// 
-  /// * @throws If an error occurs in THETA.
+  /// - @throws If an error occurs in THETA.
   Future<void> finishWlan() {
     return ThetaClientFlutterPlatform.instance.finishWlan();
   }
@@ -196,21 +204,21 @@ class ThetaClientFlutter {
   /// For RICOH THETA X, only the access points registered with [setAccessPoint] can be acquired.
   /// (The access points automatically detected with the camera UI cannot be acquired with this API.)
   ///
-  /// @return Lists the access points stored on the camera and the access points detected by the camera.
-  /// @throws If an error occurs in THETA.
+  /// - @return Lists the access points stored on the camera and the access points detected by the camera.
+  /// - @throws If an error occurs in THETA.
   Future<List<AccessPoint>> listAccessPoints() {
     return ThetaClientFlutterPlatform.instance.listAccessPoints();
   }
 
   /// Set access point. IP address is set dynamically.
   ///
-  /// @param ssid SSID of the access point.
-  /// @param ssidStealth True if SSID stealth is enabled.
-  /// @param authMode Authentication mode.
-  /// @param password Password. If [authMode] is "[none]", pass empty String.
-  /// @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
-  /// @param proxy Proxy information to be used for the access point.
-  /// @throws If an error occurs in THETA.
+  /// - @param ssid SSID of the access point.
+  /// - @param ssidStealth True if SSID stealth is enabled.
+  /// - @param authMode Authentication mode.
+  /// - @param password Password. If [authMode] is "[none]", pass empty String.
+  /// - @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
+  /// - @param proxy Proxy information to be used for the access point.
+  /// - @throws If an error occurs in THETA.
   Future<void> setAccessPointDynamically(String ssid,
       {bool ssidStealth = false,
       AuthModeEnum authMode = AuthModeEnum.none,
@@ -223,16 +231,16 @@ class ThetaClientFlutter {
 
   /// Set access point. IP address is set statically.
   ///
-  /// @param ssid SSID of the access point.
-  /// @param ssidStealth True if SSID stealth is enabled.
-  /// @param authMode Authentication mode.
-  /// @param password Password. If [authMode] is "[none]", pass empty String.
-  /// @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
-  /// @param ipAddress IP address assigns to Theta.
-  /// @param subnetMask Subnet mask.
-  /// @param defaultGateway Default gateway.
-  /// @param proxy Proxy information to be used for the access point.
-  /// @throws If an error occurs in THETA.
+  /// - @param ssid SSID of the access point.
+  /// - @param ssidStealth True if SSID stealth is enabled.
+  /// - @param authMode Authentication mode.
+  /// - @param password Password. If [authMode] is "[none]", pass empty String.
+  /// - @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
+  /// - @param ipAddress IP address assigns to Theta.
+  /// - @param subnetMask Subnet mask.
+  /// - @param defaultGateway Default gateway.
+  /// - @param proxy Proxy information to be used for the access point.
+  /// - @throws If an error occurs in THETA.
   Future<void> setAccessPointStatically(String ssid,
       {bool ssidStealth = false,
       AuthModeEnum authMode = AuthModeEnum.none,
@@ -249,8 +257,8 @@ class ThetaClientFlutter {
   /// Deletes access point information used in client mode.
   /// Only the access points registered with [setAccessPoint] can be deleted.
   ///
-  /// @param ssid SSID of the access point.
-  /// @throws If an error occurs in THETA.
+  /// - @param ssid SSID of the access point.
+  /// - @throws If an error occurs in THETA.
   Future<void> deleteAccessPoint(String ssid) {
     return ThetaClientFlutterPlatform.instance.deleteAccessPoint(ssid);
   }
@@ -261,10 +269,10 @@ class ThetaClientFlutter {
   /// Refer to the [options Overview](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
   /// of API v2.1 reference  for properties available for acquisition.
   ///
-  /// @param captureMode The target shooting mode.
-  /// @return Options of my setting
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @param captureMode The target shooting mode.
+  /// - @return Options of my setting
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<Options> getMySetting(CaptureModeEnum captureMode) {
     return ThetaClientFlutterPlatform.instance.getMySetting(captureMode);
   }
@@ -275,46 +283,46 @@ class ThetaClientFlutter {
   /// Refer to the [options Overview](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
   /// of API v2.1 reference  for properties available for acquisition.
   ///
-  /// @param optionNames List of option names to acquire.
-  /// @return Options of my setting
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @param optionNames List of option names to acquire.
+  /// - @return Options of my setting
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<Options> getMySettingFromOldModel(List<OptionNameEnum> optionNames) {
     return ThetaClientFlutterPlatform.instance.getMySettingFromOldModel(optionNames);
   }
 
   /// Registers shooting conditions in My Settings.
   ///
-  /// @param captureMode The target shooting mode.  RICOH THETA S and SC do not support My Settings in video capture mode.
-  /// @param options registered to My Settings.
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @param captureMode The target shooting mode.  RICOH THETA S and SC do not support My Settings in video capture mode.
+  /// - @param options registered to My Settings.
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<void> setMySetting(CaptureModeEnum captureMode, Options options) {
     return ThetaClientFlutterPlatform.instance.setMySetting(captureMode, options);
   }
 
   /// Delete shooting conditions in My Settings. Supported just by Theta X and Z1.
   ///
-  /// @param captureMode The target shooting mode.
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @param captureMode The target shooting mode.
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<void> deleteMySetting(CaptureModeEnum captureMode) {
     return ThetaClientFlutterPlatform.instance.deleteMySetting(captureMode);
   }
 
   /// Acquires a list of installed plugins. Supported just by Theta X, Z1 and V.
-  /// @return a list of installed plugin information
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @return a list of installed plugin information
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<List<PluginInfo>> listPlugins() {
     return ThetaClientFlutterPlatform.instance.listPlugins();
   }
 
   /// Sets the installed plugin for boot. Supported just by Theta V.
   ///
-  /// @param packageName package name of the plugin
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @param packageName package name of the plugin
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<void> setPlugin(String packageName) {
     return ThetaClientFlutterPlatform.instance.setPlugin(packageName);
   }
@@ -323,50 +331,50 @@ class ThetaClientFlutter {
   /// If [packageName] is not specified, plugin 1 will start.
   /// Supported just by Theta X, Z1 and V.
   ///
-  /// @param packageName package name of the plugin.  Theta V does not support this parameter.
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @param packageName package name of the plugin.  Theta V does not support this parameter.
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<void> startPlugin([String? packageName]) {
     return ThetaClientFlutterPlatform.instance.startPlugin(packageName);
   }
 
   /// Stop the running plugin.
   /// Supported just by Theta X, Z1 and V.
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<void> stopPlugin() {
     return ThetaClientFlutterPlatform.instance.stopPlugin();
   }
 
   /// Acquires the license for the installed plugin
   ///
-  /// @param packageName package name of the target plugin
-  /// @return HTML string of the license
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @param packageName package name of the target plugin
+  /// - @return HTML string of the license
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<String> getPluginLicense(String packageName) {
     return ThetaClientFlutterPlatform.instance.getPluginLicense(packageName);
   }
 
   /// Return the plugin orders.  Supported just by Theta X and Z1.
   ///
-  /// @return list of package names of plugins
+  /// - @return list of package names of plugins
   /// For Z1, list of three package names for the start-up plugin. No restrictions for the number of package names for X.
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<List<String>> getPluginOrders() {
     return ThetaClientFlutterPlatform.instance.getPluginOrders();
   }
 
   /// Sets the plugin orders.  Supported just by Theta X and Z1.
   ///
-  /// @param plugins list of package names of plugins
+  /// - @param plugins list of package names of plugins
   /// For Z1, list size must be three. No restrictions for the size for X.
   /// When not specifying, set an empty string.
   /// If an empty string is placed mid-way, it will be moved to the front.
   /// Specifying zero package name will result in an error.
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<void> setPluginOrders(List<String> plugins) {
     return ThetaClientFlutterPlatform.instance.setPluginOrders(plugins);
   }
@@ -374,14 +382,50 @@ class ThetaClientFlutter {
   /// Registers identification information (UUID) of a BLE device (Smartphone application) connected to the camera.
   /// UUID can be set while the wireless LAN function of the camera is placed in the direct mode.
   ///
-  /// @param uuid Format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  /// - @param uuid Format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
   /// Alphabetic letters are not case-sensitive.
-  /// @return Device name generated from the serial number (S/N) of the camera.
+  /// - @return Device name generated from the serial number (S/N) of the camera.
   /// Eg. "00101234" or "THETAXS00101234" when the serial number (S/N) is "XS00101234"
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<String> setBluetoothDevice(String uuid) {
     return ThetaClientFlutterPlatform.instance.setBluetoothDevice(uuid);
+  }
+}
+
+/// Support THETA model.
+enum ThetaModel {
+  /// THETA S
+  thetaS('THETA_S'),
+
+  /// THETA SC
+  thetaSC('THETA_SC'),
+
+  /// THETA V
+  thetaV('THETA_V'),
+
+  /// THETA Z1
+  thetaZ1('THETA_Z1'),
+
+  /// THETA X
+  thetaX('THETA_X'),
+
+  /// THETA SC2
+  thetaSC2('THETA_SC2'),
+
+  /// THETA SC2 for business
+  thetaSC2B('THETA_SC2_B');
+
+  final String rawValue;
+  const ThetaModel(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static ThetaModel? getValue(String? rawValue) {
+    return ThetaModel.values.cast<ThetaModel?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
   }
 }
 
@@ -426,9 +470,12 @@ class ThetaInfo {
   /// List of supported APIs (1: v2.0, 2: v2.1)
   final List<int> apiLevel;
 
+  /// THETA model
+  final ThetaModel? thetaModel;
+
   ThetaInfo(this.manufacturer, this.model, this.serialNumber, this.wlanMacAddress,
     this.bluetoothMacAddress, this.firmwareVersion, this.supportUrl, this.hasGps, this.hasGyro,
-    this.uptime, this.api, this.endpoints, this.apiLevel);
+    this.uptime, this.api, this.endpoints, this.apiLevel, this.thetaModel);
 }
 
 /// Endpoint information

@@ -81,6 +81,16 @@ void enableEventReceiver() {
   }
 
   @override
+  Future<ThetaModel?> getThetaModel() async {
+    var completer = Completer<ThetaModel?>();
+    final thetaModel =
+        await methodChannel.invokeMethod<String?>('getThetaModel');
+    completer
+        .complete(ThetaModel.getValue(thetaModel));
+    return completer.future;
+  }
+
+  @override
   Future<ThetaInfo> getThetaInfo() async {
       var completer = Completer<ThetaInfo>();
       try {

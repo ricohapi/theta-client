@@ -76,6 +76,9 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     restoreSettings(result)
                 }
             }
+            "getThetaModel" -> {
+                getThetaModel(result)
+            }
             "getThetaInfo" -> {
                 scope.launch {
                     getThetaInfo(result)
@@ -315,6 +318,14 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
+    fun getThetaModel(result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        result.success(thetaRepository?.cameraModel?.name)
+    }
+
     suspend fun getThetaInfo(result: Result) {
         if (thetaRepository == null) {
             result.error(errorCode, messageNotInit, null)
@@ -322,7 +333,11 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         }
         try {
             val response = thetaRepository!!.getThetaInfo()
-            result.success(toResult(response))
+            val thetaInfoMap = toResult(response).toMutableMap()
+            thetaRepository?.cameraModel?.let {
+                thetaInfoMap.put("thetaModel", it.name)
+            }
+            result.success(thetaInfoMap)
         } catch (e: Exception) {
             result.error(e.javaClass.simpleName, e.message, null)
         }

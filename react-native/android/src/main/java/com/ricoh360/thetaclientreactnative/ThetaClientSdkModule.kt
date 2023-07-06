@@ -108,6 +108,20 @@ class ThetaClientReactNativeModule(
   }
 
   /**
+   * getThetaModel  -  Returns the connected THETA model
+   * @param promise promise to set result
+   */
+  @ReactMethod
+  fun getThetaModel(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    promise.resolve(theta.cameraModel?.name)
+  }
+
+  /**
    * getThetaInfo  -  retrieve ThetaInfo from THETA via repository
    * @param promise promise to set result
    */
@@ -142,6 +156,9 @@ class ThetaClientReactNativeModule(
         ep.putInt("httpUpdatesPort", info.endpoints.httpUpdatesPort)
         result.putMap("endpoints", ep)
         result.putArray("apiLevel", Arguments.fromList(info.apiLevel))
+        theta.cameraModel?.let {
+          result.putString("thetaModel", it.name)
+        }
         promise.resolve(result)
       } catch (t: Throwable) {
         promise.reject(t)

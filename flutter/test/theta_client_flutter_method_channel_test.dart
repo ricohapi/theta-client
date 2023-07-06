@@ -25,6 +25,25 @@ void main() {
     expect(await platform.getPlatformVersion(), '42');
   });
 
+  test('getThetaModel', () async {
+    const thetaModel = ThetaModel.thetaZ1;
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      return thetaModel.rawValue;
+    });
+
+    var model = await platform.getThetaModel();
+    expect(model, thetaModel);
+  });
+
+  test('getThetaModel null', () async {
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      return null;
+    });
+
+    var model = await platform.getThetaModel();
+    expect(model, null);
+  });
+
   test('getThetaInfo', () async {
     const manufacturer = 'RICOH';
     const model = 'RICOH THETA Z1';
@@ -40,6 +59,7 @@ void main() {
       '/osc/commands/execute','/osc/commands/status'];
     var endpoints = <String, int>{'httpPort': 80, 'httpUpdatesPort': 80};
     const apiLevel = [2];
+    const thetaModel = ThetaModel.thetaZ1;
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       final Map info = <String, dynamic> {
         'manufacturer': manufacturer,
@@ -55,6 +75,7 @@ void main() {
         'api': api,
         'endpoints': endpoints,
         'apiLevel': apiLevel,
+        'thetaModel': thetaModel.rawValue,
       };
       return info;
     });
@@ -74,6 +95,7 @@ void main() {
     expect(thetaInfo.endpoints.httpPort, 80);
     expect(thetaInfo.endpoints.httpUpdatesPort, 80);
     expect(thetaInfo.apiLevel, apiLevel);
+    expect(thetaInfo.thetaModel, thetaModel);
   });
 
   test('getThetaState', () async {
