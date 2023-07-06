@@ -42,7 +42,9 @@ class CheckRequest {
             burstOption: BurstOption? = null,
             cameraControlSource: CameraControlSource? = null,
             cameraMode: CameraMode? = null,
+            captureInterval: Int? = null,
             captureMode: CaptureMode? = null,
+            captureNumber: Int? = null,
             clientVersion: Int? = null,
             colorTemperature: Int? = null,
             dateTimeZone: String? = null,
@@ -103,8 +105,14 @@ class CheckRequest {
             cameraMode?.let {
                 assertEquals(optionsRequest.parameters.options._cameraMode, it, "setOptions cameraMode")
             }
+            captureInterval?.let {
+                assertEquals(optionsRequest.parameters.options.captureInterval, it, "setOptions captureInterval")
+            }
             captureMode?.let {
                 assertEquals(optionsRequest.parameters.options.captureMode, it, "setOptions captureMode")
+            }
+            captureNumber?.let {
+                assertEquals(optionsRequest.parameters.options.captureNumber, it, "setOptions captureNumber")
             }
             clientVersion?.let {
                 assertEquals(optionsRequest.parameters.options.clientVersion, it, "setOptions clientVersion")

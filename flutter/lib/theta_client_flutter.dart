@@ -1313,8 +1313,14 @@ enum OptionNameEnum {
   /// Option name _cameraMode
   cameraMode('CameraMode', CameraModeEnum),
 
+  /// Option name captureInterval
+  captureInterval('CaptureInterval', int),
+
   /// Option name captureMode
   captureMode('CaptureMode', CaptureModeEnum),
+
+  /// Option name captureNumber
+  captureNumber('CaptureNumber', int),
 
   /// Option name _colorTemperature
   colorTemperature('ColorTemperature', int),
@@ -3208,8 +3214,43 @@ class Options {
   /// For RICOH THETA X
   CameraModeEnum? cameraMode;
 
+  /// Shooting interval (sec.) for interval shooting.
+  ///
+  /// ### Support value
+  /// The value that can be set differs depending on the image format ([fileFormat]) to be shot.
+  /// #### For RICOH THETA X or later
+  /// | Image format | Image size  | Support value |
+  /// | ------------ | ----------- | ------------- |
+  /// | JPEG         | 11008 x 5504 <br>5504 x 2752 | Minimum value(minInterval):6 <br>Maximum value(maxInterval):3600 |
+  ///
+  /// #### For RICOH THETA Z1
+  /// | Image format | Image size  | Support value |
+  /// | ------------ | ----------- | ------------- |
+  /// | JPEG         | 6720 x 3360 | Minimum value(minInterval):6 <br>Maximum value(maxInterval):3600 |
+  /// | RAW+         | 6720 x 3360 | Minimum value(minInterval):10 <br>Maximum value(maxInterval):3600 |
+  ///
+  /// #### For RICOH THETA V
+  /// | Image format | Image size  | Support value |
+  /// | ------------ | ----------- | ------------- |
+  /// | JPEG         | 5376 x 2688 | Minimum value(minInterval):4 <br>Maximum value(maxInterval):3600 |
+  ///
+  /// #### For RICOH THETA S or SC
+  /// | Image format | Image size  | Support value |
+  /// | ------------ | ----------- | ------------- |
+  /// | JPEG         | 5376 x 2688 | Minimum value(minInterval):8 <br>Maximum value(maxInterval):3600 |
+  /// | JPEG         | 2048 x 1024 | Minimum value(minInterval):5 <br>Maximum value(maxInterval):3600 |
+  int? captureInterval;
+
   /// Shooting mode.
   CaptureModeEnum? captureMode;
+
+  /// Number of shots for interval shooting.
+  ///
+  /// ### Support value
+  /// - 0: Unlimited (_limitless)
+  /// - 2: Minimum value (minNumber)
+  /// - 9999: Maximum value (maxNumber)
+  int? captureNumber;
 
   /// Color temperature of the camera (Kelvin).
   /// 
@@ -3408,8 +3449,12 @@ class Options {
         return cameraControlSource as T;
       case OptionNameEnum.cameraMode:
         return cameraMode as T;
+      case OptionNameEnum.captureInterval:
+        return captureInterval as T;
       case OptionNameEnum.captureMode:
         return captureMode as T;
+      case OptionNameEnum.captureNumber:
+        return captureNumber as T;
       case OptionNameEnum.colorTemperature:
         return colorTemperature as T;
       case OptionNameEnum.compositeShootingOutputInterval:
@@ -3508,8 +3553,14 @@ class Options {
       case OptionNameEnum.cameraMode:
         cameraMode = value;
         break;
+      case OptionNameEnum.captureInterval:
+        captureInterval = value;
+        break;
       case OptionNameEnum.captureMode:
         captureMode = value;
+        break;
+      case OptionNameEnum.captureNumber:
+        captureNumber = value;
         break;
       case OptionNameEnum.colorTemperature:
         colorTemperature = value;

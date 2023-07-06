@@ -161,6 +161,16 @@ data class Options(
     var _cameraMode: CameraMode? = null,
 
     /**
+     * Shooting interval (sec.) for interval shooting.
+     */
+    var captureInterval: Int? = null,
+
+    /**
+     * supported capture interval.
+     */
+    var captureIntervalSupport: CaptureIntervalSupport? = null,
+
+    /**
      * Shooting mode.
      *
      * The current setting can be acquired by camera.getOptions, and
@@ -177,6 +187,16 @@ data class Options(
      * supported shooting mode.
      */
     var captureModeSupport: List<CaptureMode>? = null,
+
+    /**
+     * Number of shots for interval shooting.
+     */
+    var captureNumber: Int? = null,
+
+    /**
+     * supported capture number.
+     */
+    var captureNumberSupport: CaptureNumberSupport? = null,
 
     /**
      * API version of the camera. (RICOH THETA S firmware version
@@ -1977,3 +1997,45 @@ enum class ImageStitching {
     @SerialName("none")
     NONE,
 }
+
+/**
+ * Capture interval support
+ */
+@Serializable
+data class CaptureIntervalSupport(
+    /**
+     * minimum interval
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    val minInterval: Int? = null,
+
+    /**
+     * maximum interval
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    val maxInterval: Int? = null,
+)
+
+/**
+ * Capture number support
+ */
+@Serializable
+data class CaptureNumberSupport(
+    /**
+     * Unlimited
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    val _limitless: Int? = null,
+
+    /**
+     * minimum value
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    val minNumber: Int? = null,
+
+    /**
+     * maximum value
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    val maxNumber: Int? = null,
+)

@@ -270,6 +270,8 @@ fun toResult(options: Options): Map<String, Any> {
     val result = mutableMapOf<String, Any>()
 
     val valueOptions = listOf(
+        OptionNameEnum.CaptureInterval,
+        OptionNameEnum.CaptureNumber,
         OptionNameEnum.ColorTemperature,
         OptionNameEnum.CompositeShootingOutputInterval,
         OptionNameEnum.CompositeShootingTime,
@@ -333,6 +335,8 @@ fun toSetOptionsParam(data: Map<String, Any>): Options {
 
 fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
     val valueOptions = listOf(
+        OptionNameEnum.CaptureInterval,
+        OptionNameEnum.CaptureNumber,
         OptionNameEnum.ColorTemperature,
         OptionNameEnum.CompositeShootingOutputInterval,
         OptionNameEnum.CompositeShootingTime,

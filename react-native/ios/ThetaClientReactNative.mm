@@ -726,6 +726,23 @@ static convert_t CameraModeEnum = {
 };
 
 /**
+ * CaptureInterval converter
+ */
+static convert_t CaptureIntervalConverter = {
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    NSNumber* val = [rct objectForKey:@"captureInterval"];
+    if (val) {
+      opt.captureInterval = [THETACInt numberWithInt:[val intValue]];
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    if (opt.captureInterval) {
+      [rct setObject:opt.captureInterval forKey:@"captureInterval"];
+    }
+  },
+};
+
+/**
  * CaptureModeEnum converter
  */
 static convert_t CaptureModeEnum = {
@@ -755,6 +772,23 @@ static convert_t CaptureModeEnum = {
       [rct setObject:val forKey:@"captureMode"];
     }
   }
+};
+
+/**
+ * CaptureNumber converter
+ */
+static convert_t CaptureNumberConverter = {
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    NSNumber* val = [rct objectForKey:@"captureNumber"];
+    if (val) {
+      opt.captureNumber = [THETACInt numberWithInt:[val intValue]];
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    if (opt.captureNumber) {
+      [rct setObject:opt.captureNumber forKey:@"captureNumber"];
+    }
+  },
 };
 
 /**
@@ -2148,7 +2182,9 @@ static NSDictionary *NameToOptionEnum = @{
   @"BurstOption": THETACThetaRepositoryOptionNameEnum.burstoption,
   @"CameraControlSource": THETACThetaRepositoryOptionNameEnum.cameracontrolsource,
   @"CameraMode": THETACThetaRepositoryOptionNameEnum.cameramode,
+  @"CaptureInterval": THETACThetaRepositoryOptionNameEnum.captureinterval,
   @"CaptureMode": THETACThetaRepositoryOptionNameEnum.capturemode,
+  @"CaptureNumber": THETACThetaRepositoryOptionNameEnum.capturenumber,
   @"ColorTemperature": THETACThetaRepositoryOptionNameEnum.colortemperature,
   @"CompositeShootingOutputInterval": THETACThetaRepositoryOptionNameEnum.compositeshootingoutputinterval,
   @"CompositeShootingTime": THETACThetaRepositoryOptionNameEnum.compositeshootingtime,
@@ -2197,7 +2233,9 @@ static NSDictionary *OptionEnumToOption = @{
   @"BurstOption": @"burstOption",
   @"CameraControlSource": @"cameraControlSource",
   @"CameraMode": @"cameraMode",
+  @"CaptureInterval": @"captureInterval",
   @"CaptureMode": @"captureMode",
+  @"CaptureNumber": @"captureNumber",
   @"ColorTemperature": @"colorTemperature",
   @"CompositeShootingOutputInterval": @"compositeShootingOutputInterval",
   @"CompositeShootingTime": @"compositeShootingTime",
@@ -2249,7 +2287,9 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"burstOption": ^{return &BurstOptionCvt;},
   @"cameraControlSource": ^{return &CameraControlSourceEnum;},
   @"cameraMode": ^{return &CameraModeEnum;},
+  @"captureInterval": ^{return &CaptureIntervalConverter;},
   @"captureMode": ^{return &CaptureModeEnum;},
+  @"captureNumber": ^{return &CaptureNumberConverter;},
   @"colorTemperature": ^{return &ColorTemperatureCvt;},
   @"compositeShootingOutputInterval": ^{return &CompositeShootingOutputIntervalCvt;},
   @"compositeShootingTime": ^{return &CompositeShootingTimeCvt;},

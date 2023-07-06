@@ -451,8 +451,12 @@ export const OptionNameEnum = {
   CameraControlSource: 'CameraControlSource',
   /** cameraMode */
   CameraMode: 'CameraMode',
+  /** captureInterval */
+  CaptureInterval: 'CaptureInterval',
   /** captureMode */
   CaptureMode: 'CaptureMode',
+  /** captureNumber */
+  CaptureNumber: 'CaptureNumber',
   /** colorTemperature */
   ColorTemperature: 'ColorTemperature',
   /** _compositeShootingOutputInterval */
@@ -545,8 +549,45 @@ export type Options = {
   cameraControlSource?: CameraControlSourceEnum;
   /** Camera mode. */
   cameraMode?: CameraModeEnum;
+  /**
+   * Shooting interval (sec.) for interval shooting.
+   *
+   * ### Support value
+   * The value that can be set differs depending on the image format ([fileFormat]) to be shot.
+   * #### For RICOH THETA X or later
+   * | Image format | Image size  | Support value |
+   * | ------------ | ----------- | ------------- |
+   * | JPEG         | 11008 x 5504 <br>5504 x 2752 | Minimum value(minInterval):6 <br>Maximum value(maxInterval):3600 |
+   *
+   * #### For RICOH THETA Z1
+   * | Image format | Image size  | Support value |
+   * | ------------ | ----------- | ------------- |
+   * | JPEG         | 6720 x 3360 | Minimum value(minInterval):6 <br>Maximum value(maxInterval):3600 |
+   * | RAW+         | 6720 x 3360 | Minimum value(minInterval):10 <br>Maximum value(maxInterval):3600 |
+   *
+   * #### For RICOH THETA V
+   * | Image format | Image size  | Support value |
+   * | ------------ | ----------- | ------------- |
+   * | JPEG         | 5376 x 2688 | Minimum value(minInterval):4 <br>Maximum value(maxInterval):3600 |
+   *
+   * #### For RICOH THETA S or SC
+   * | Image format | Image size  | Support value |
+   * | ------------ | ----------- | ------------- |
+   * | JPEG         | 5376 x 2688 | Minimum value(minInterval):8 <br>Maximum value(maxInterval):3600 |
+   * | JPEG         | 2048 x 1024 | Minimum value(minInterval):5 <br>Maximum value(maxInterval):3600 |
+   */
+  captureInterval?: number;
   /** Shooting mode. */
   captureMode?: CaptureModeEnum;
+  /**
+   * Number of shots for interval shooting.
+   *
+   * ### Support value
+   * - 0: Unlimited (_limitless)
+   * - 2: Minimum value (minNumber)
+   * - 9999: Maximum value (maxNumber)
+   */
+  captureNumber?: number;
   /** Color temperature of the camera (Kelvin). */
   colorTemperature?: number;
   /**

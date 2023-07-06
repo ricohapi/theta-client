@@ -224,8 +224,14 @@ class ConvertUtils {
         case OptionNameEnum.cameraMode:
           result.cameraMode = CameraModeEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.captureInterval:
+          result.captureInterval = entry.value;
+          break;
         case OptionNameEnum.captureMode:
           result.captureMode = CaptureModeEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.captureNumber:
+          result.captureNumber = entry.value;
           break;
         case OptionNameEnum.colorTemperature:
           result.colorTemperature = entry.value;

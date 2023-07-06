@@ -207,6 +207,21 @@ class CameraModeConverter : OptionConverter {
 }
 
 /**
+ * CaptureIntervalConverter
+ */
+class CaptureIntervalConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    options.captureInterval = objects.getInt("captureInterval")
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.captureInterval?.let {
+      objects.putInt("captureInterval", it)
+    }
+  }
+}
+
+/**
  * CaptureModeConverter
  */
 class CaptureModeConverter : OptionConverter {
@@ -219,6 +234,21 @@ class CaptureModeConverter : OptionConverter {
   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
     options.captureMode?.let {
       objects.putString("captureMode", it.toString())
+    }
+  }
+}
+
+/**
+ * CaptureNumberConverter
+ */
+class CaptureNumberConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    options.captureNumber = objects.getInt("captureNumber")
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.captureNumber?.let {
+      objects.putInt("captureNumber", it)
     }
   }
 }

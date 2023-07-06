@@ -32,7 +32,9 @@ class OptionsTest {
         )
         val cameraControlSource = ThetaRepository.CameraControlSourceEnum.CAMERA
         val cameraMode = ThetaRepository.CameraModeEnum.CAPTURE
+        val captureInterval = 6
         val captureMode = ThetaRepository.CaptureModeEnum.IMAGE
+        val captureNumber = 0
         val colorTemperature = 10
         val compositeShootingOutputInterval = 60
         val compositeShootingTime = 600
@@ -81,7 +83,9 @@ class OptionsTest {
             burstOption = burstOption,
             cameraControlSource = cameraControlSource,
             cameraMode = cameraMode,
+            captureInterval = captureInterval,
             captureMode = captureMode,
+            captureNumber = captureNumber,
             colorTemperature = colorTemperature,
             compositeShootingOutputInterval = compositeShootingOutputInterval,
             compositeShootingTime = compositeShootingTime,
@@ -130,7 +134,9 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.BurstOption), burstOption, "burstOption")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CameraControlSource), cameraControlSource, "cameraControlSource")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CameraMode), cameraMode, "cameraMode")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CaptureInterval), captureInterval, "captureInterval")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CaptureMode), captureMode, "captureMode")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CaptureNumber), captureNumber, "captureNumber")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ColorTemperature), colorTemperature, "colorTemperature")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CompositeShootingOutputInterval), compositeShootingOutputInterval, "compositeShootingOutputInterval")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CompositeShootingTime), compositeShootingTime, "compositeShootingTime")
@@ -190,7 +196,9 @@ class OptionsTest {
             ),
             Pair(ThetaRepository.OptionNameEnum.CameraControlSource, ThetaRepository.CameraControlSourceEnum.CAMERA),
             Pair(ThetaRepository.OptionNameEnum.CameraMode, ThetaRepository.CameraModeEnum.CAPTURE),
+            Pair(ThetaRepository.OptionNameEnum.CaptureInterval, 4),
             Pair(ThetaRepository.OptionNameEnum.CaptureMode, ThetaRepository.CaptureModeEnum.IMAGE),
+            Pair(ThetaRepository.OptionNameEnum.CaptureNumber, 0),
             Pair(ThetaRepository.OptionNameEnum.ColorTemperature, 10),
             Pair(ThetaRepository.OptionNameEnum.CompositeShootingOutputInterval, 60),
             Pair(ThetaRepository.OptionNameEnum.CompositeShootingTime, 600),
@@ -268,7 +276,9 @@ class OptionsTest {
         )
         val cameraControlSource = Pair(CameraControlSource.CAMERA, ThetaRepository.CameraControlSourceEnum.CAMERA)
         val cameraMode = Pair(CameraMode.CAPTURE, ThetaRepository.CameraModeEnum.CAPTURE)
+        val captureInterval = Pair(5, 5)
         val captureMode = Pair(CaptureMode.IMAGE, ThetaRepository.CaptureModeEnum.IMAGE)
+        val captureNumber = Pair(9999, 9999)
         val colorTemperature = Pair(10, 10)
         val compositeShootingOutputInterval = Pair(60, 60)
         val compositeShootingTime = Pair(600, 600)
@@ -318,7 +328,9 @@ class OptionsTest {
             _burstOption = burstOption.first,
             _cameraControlSource = cameraControlSource.first,
             _cameraMode = cameraMode.first,
+            captureInterval = captureInterval.first,
             captureMode = captureMode.first,
+            captureNumber = captureNumber.first,
             _colorTemperature = colorTemperature.first,
             _compositeShootingOutputInterval = compositeShootingOutputInterval.first,
             _compositeShootingTime = compositeShootingTime.first,
@@ -363,7 +375,9 @@ class OptionsTest {
         assertEquals(options.burstOption, burstOption.second, "burstOption")
         assertEquals(options.cameraControlSource, cameraControlSource.second, "cameraControlSource")
         assertEquals(options.cameraMode, cameraMode.second, "cameraMode")
+        assertEquals(options.captureInterval, captureInterval.second, "captureInterval")
         assertEquals(options.captureMode, captureMode.second, "captureMode")
+        assertEquals(options.captureNumber, captureNumber.second, "captureNumber")
         assertEquals(options.colorTemperature, colorTemperature.second, "colorTemperature")
         assertEquals(options.compositeShootingOutputInterval, compositeShootingOutputInterval.second, "compositeShootingOutputInterval")
         assertEquals(options.compositeShootingTime, compositeShootingTime.second, "compositeShootingTime")
@@ -425,7 +439,9 @@ class OptionsTest {
         )
         val cameraControlSource = Pair(CameraControlSource.CAMERA, ThetaRepository.CameraControlSourceEnum.CAMERA)
         val cameraMode = Pair(CameraMode.CAPTURE, ThetaRepository.CameraModeEnum.CAPTURE)
+        val captureInterval = Pair(20, 20)
         val captureMode = Pair(CaptureMode.IMAGE, ThetaRepository.CaptureModeEnum.IMAGE)
+        val captureNumber = Pair(30, 30)
         val colorTemperature = Pair(10, 10)
         val compositeShootingOutputInterval = Pair(60, 60)
         val compositeShootingTime = Pair(600, 600)
@@ -478,7 +494,9 @@ class OptionsTest {
             burstOption = burstOption.second,
             cameraControlSource = cameraControlSource.second,
             cameraMode = cameraMode.second,
+            captureInterval = captureInterval.second,
             captureMode = captureMode.second,
+            captureNumber = captureNumber.second,
             colorTemperature = colorTemperature.second,
             compositeShootingOutputInterval = compositeShootingOutputInterval.second,
             compositeShootingTime = compositeShootingTime.second,
@@ -523,7 +541,9 @@ class OptionsTest {
         assertEquals(options._burstOption, burstOption.first, "burstOption")
         assertEquals(options._cameraControlSource, cameraControlSource.first, "cameraControlSource")
         assertEquals(options._cameraMode, cameraMode.first, "cameraMode")
+        assertEquals(options.captureInterval, captureInterval.first, "captureInterval")
         assertEquals(options.captureMode, captureMode.first, "captureMode")
+        assertEquals(options.captureNumber, captureNumber.first, "captureNumber")
         assertEquals(options._colorTemperature, colorTemperature.first, "colorTemperature")
         assertEquals(options._compositeShootingOutputInterval, compositeShootingOutputInterval.first, "compositeShootingOutputInterval")
         assertEquals(options._compositeShootingTime, compositeShootingTime.first, "compositeShootingTime")
