@@ -6,6 +6,7 @@ import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.FileType
 import com.ricoh360.thetaclient.transferred.ListFilesRequest
 import com.ricoh360.thetaclient.transferred.Storage
+import com.ricoh360.thetaclient.transferred._ProjectionType
 import io.ktor.client.network.sockets.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -76,6 +77,9 @@ class ListFilesTest {
             assertTrue(it.dateTime.indexOf("+", 0) < 0, "FileInfo dateTime timezone")
             assertTrue(it.dateTime.length == 16, "FileInfo dateTime length")
             assertTrue(it.size >= 0, "FileInfo size")
+            assertTrue((it.width ?: -1) > 0)
+            assertTrue((it.height ?: -1) > 0)
+            assertNotNull(it.projectionType)
             assertEquals(it.thumbnailUrl, it.fileUrl + "?type=thumb", "FileInfo thumbnailUrl")
         }
         assertTrue(response.fileList.isNotEmpty(), "entryCount")
@@ -208,10 +212,131 @@ class ListFilesTest {
             assertTrue(it.dateTime.indexOf("+", 0) < 0, "FileInfo dateTime timezone")
             assertTrue(it.dateTime.length == 16, "FileInfo dateTime length")
             assertTrue(it.size >= 0, "FileInfo size")
+            assertTrue((it.recordTime ?: -1) >= 0, "FileInfo recordTime")
+            assertEquals(it.codec, ThetaRepository.CodecEnum.H264MP4AVC)
             assertEquals(it.thumbnailUrl, it.fileUrl + "?type=thumb", "FileInfo thumbnailUrl")
         }
         assertTrue(response.fileList.isNotEmpty(), "entryCount")
         assertEquals(response.totalEntries, 17, "totalEntries")
+    }
+
+    /**
+     * call listFiles with dual fish eye.
+     */
+    @Test
+    fun listFilesCheckDualFishEyeTest() = runTest {
+        val fileType = ThetaRepository.FileTypeEnum.VIDEO
+        val startPosition = 0
+        val entryCount = 10
+
+        MockApiClient.onRequest = { request ->
+            // check request
+            assertEquals(request.url.encodedPath, "/osc/commands/execute", "request path")
+            checkRequest(request, fileType.value, startPosition, entryCount)
+
+            ByteReadChannel(Resource("src/commonTest/resources/listFiles/listfiles_v_video_dual-fish.json").readText())
+        }
+
+        val thetaRepository = ThetaRepository(endpoint)
+        val response = thetaRepository.listFiles(fileType, startPosition, entryCount)
+        response.fileList.forEach {
+            assertTrue(it.name.endsWith(".MP4"), "FileInfo name")
+            assertTrue(!it.name.startsWith("http://"), "FileInfo name not url")
+            assertTrue(it.fileUrl.startsWith("http://"), "FileInfo fileUrl")
+            assertTrue(it.dateTime.indexOf("+", 0) < 0, "FileInfo dateTime timezone")
+            assertTrue(it.dateTime.length == 16, "FileInfo dateTime length")
+            assertTrue(it.size >= 0, "FileInfo size")
+            assertEquals(it.projectionType, ThetaRepository.ProjectionTypeEnum.DUAL_FISHEYE)
+            assertEquals(it.thumbnailUrl, it.fileUrl + "?type=thumb", "FileInfo thumbnailUrl")
+        }
+        assertTrue(response.fileList.isNotEmpty(), "entryCount")
+        assertEquals(response.totalEntries, 2, "totalEntries")
+    }
+
+    /**
+     * call listFiles with frame rate.
+     */
+    @Test
+    fun listFilesCheckFrameRateTest() = runTest {
+        val fileType = ThetaRepository.FileTypeEnum.VIDEO
+        val startPosition = 0
+        val entryCount = 10
+
+        MockApiClient.onRequest = { request ->
+            // check request
+            assertEquals(request.url.encodedPath, "/osc/commands/execute", "request path")
+            checkRequest(request, fileType.value, startPosition, entryCount)
+
+            ByteReadChannel(Resource("src/commonTest/resources/listFiles/listfiles_x_video_5.json").readText())
+        }
+
+        val thetaRepository = ThetaRepository(endpoint)
+        val response = thetaRepository.listFiles(fileType, startPosition, entryCount)
+        response.fileList.forEach {
+            assertTrue(it.name.endsWith(".MP4"), "FileInfo name")
+            assertTrue(!it.name.startsWith("http://"), "FileInfo name not url")
+            assertTrue(it.fileUrl.startsWith("http://"), "FileInfo fileUrl")
+            assertTrue(it.dateTime.indexOf("+", 0) < 0, "FileInfo dateTime timezone")
+            assertTrue(it.dateTime.length == 16, "FileInfo dateTime length")
+            assertTrue(it.size >= 0, "FileInfo size")
+            assertTrue((it.frameRate ?: -1) > 0, "FileInfo frameRate")
+            assertEquals(it.codec, ThetaRepository.CodecEnum.H264MP4AVC)
+            assertNotNull(it.favorite)
+            assertNotNull(it.imageDescription)
+            assertNotNull(it.previewUrl)
+            assertEquals(it.projectionType, ThetaRepository.ProjectionTypeEnum.EQUIRECTANGULAR)
+            assertEquals(it.thumbnailUrl, it.fileUrl + "?type=thumb", "FileInfo thumbnailUrl")
+        }
+        assertTrue(response.fileList.isNotEmpty(), "entryCount")
+    }
+
+    /**
+     * Check group id.
+     */
+    @Test
+    fun listFilesCheckGroupIDTest() = runTest {
+        val fileType = ThetaRepository.FileTypeEnum.VIDEO
+        val startPosition = 0
+        val entryCount = 10
+        val responseArray = arrayOf(
+            Resource("src/commonTest/resources/listFiles/listfiles_z1_group_id.json").readText(),
+            Resource("src/commonTest/resources/listFiles/listfiles_x_continuousShootingGroupId.json").readText()
+        )
+
+        var counter = 0
+        MockApiClient.onRequest = { _ ->
+            val index = counter++
+
+            ByteReadChannel(responseArray[index])
+        }
+
+        val thetaRepository = ThetaRepository(endpoint)
+        var response = thetaRepository.listFiles(fileType, startPosition, entryCount)
+        var intervalCaptureGroupId: String? = null
+        var compositeShootingGroupId: String? = null
+        var autoBracketGroupId: String? = null
+        var continuousShootingGroupId: String? = null
+        response.fileList.forEach {
+            it.intervalCaptureGroupId?.apply {
+                intervalCaptureGroupId = this
+            }
+            it.compositeShootingGroupId?.apply {
+                compositeShootingGroupId = this
+            }
+            it.autoBracketGroupId?.apply {
+                autoBracketGroupId = this
+            }
+        }
+        response = thetaRepository.listFiles(fileType, startPosition, entryCount)
+        response.fileList.forEach {
+            it.continuousShootingGroupId?.apply {
+                continuousShootingGroupId = this
+            }
+        }
+        assertTrue((intervalCaptureGroupId?.length ?: 0) > 0, "intervalCaptureGroupId")
+        assertTrue((compositeShootingGroupId?.length ?: 0) > 0, "compositeShootingGroupId")
+        assertTrue((autoBracketGroupId?.length ?: 0) > 0, "autoBracketGroupId")
+        assertTrue((continuousShootingGroupId?.length ?: 0) > 0, "continuousShootingGroupId")
     }
 
     /**
@@ -350,6 +475,38 @@ class ListFilesTest {
             assertTrue(false, "response is normal.")
         } catch (e: ThetaRepository.NotConnectedException) {
             assertTrue(e.message!!.indexOf("time", 0, true) >= 0, "timeout exception")
+        }
+    }
+
+    /**
+     * Convert ProjectionTypeEnum.
+     */
+    @Test
+    fun convertProjectionTypeEnumTest() = runTest {
+        val values = listOf(
+            Pair(ThetaRepository.ProjectionTypeEnum.EQUIRECTANGULAR, _ProjectionType.EQUIRECTANGULAR),
+            Pair(ThetaRepository.ProjectionTypeEnum.DUAL_FISHEYE, _ProjectionType.DUAL_FISHEYE),
+            Pair(ThetaRepository.ProjectionTypeEnum.FISHEYE, _ProjectionType.FISHEYE),
+        )
+
+        assertEquals(ThetaRepository.ProjectionTypeEnum.values().size, values.size)
+        values.forEach {
+            assertEquals(ThetaRepository.ProjectionTypeEnum.get(it.second), it.first, "ProjectionTypeEnum ${it.first}")
+        }
+    }
+
+    /**
+     * Convert CodecEnum.
+     */
+    @Test
+    fun convertCodecEnumTest() = runTest {
+        val values = listOf(
+            Pair(ThetaRepository.CodecEnum.H264MP4AVC, "H.264/MPEG-4 AVC"),
+        )
+
+        assertEquals(ThetaRepository.CodecEnum.values().size, values.size)
+        values.forEach {
+            assertEquals(ThetaRepository.CodecEnum.get(it.second), it.first, "CodecEnum ${it.first}")
         }
     }
 }

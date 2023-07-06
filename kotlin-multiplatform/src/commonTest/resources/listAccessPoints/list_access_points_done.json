@@ -15,6 +15,12 @@
       {
         "connectionPriority": 2,
         "ipAddressAllocation": "dynamic",
+        "_proxy": {
+          "use": true,
+          "url": "xxx",
+          "port": 8081,
+          "userid": "abc"
+        },
         "security": "WPA/WPA2 PSK",
         "ssid": "MightyThor2",
         "ssidStealth": true

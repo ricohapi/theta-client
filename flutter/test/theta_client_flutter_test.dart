@@ -20,6 +20,11 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
+  Future<ThetaModel?> getThetaModel() {
+    return onGetThetaModel();
+  }
+
+  @override
   Future<ThetaInfo> getThetaInfo() {
     return onGetThetaInfo();
   }
@@ -153,12 +158,12 @@ class MockThetaClientFlutterPlatform
   }
   
   @override
-  Future<void> setAccessPointDynamically(String ssid, bool ssidStealth, AuthModeEnum authMode, String password, int connectionPriority) {
+  Future<void> setAccessPointDynamically(String ssid, bool ssidStealth, AuthModeEnum authMode, String password, int connectionPriority, Proxy? proxy) {
     return Future.value();
   }
   
   @override
-  Future<void> setAccessPointStatically(String ssid, bool ssidStealth, AuthModeEnum authMode, String password, int connectionPriority, String ipAddress, String subnetMask, String defaultGateway) {
+  Future<void> setAccessPointStatically(String ssid, bool ssidStealth, AuthModeEnum authMode, String password, int connectionPriority, String ipAddress, String subnetMask, String defaultGateway, Proxy? proxy) {
     return Future.value();
   }
   
@@ -230,6 +235,7 @@ class MockThetaClientFlutterPlatform
 
 Future<void> Function() onCallInitialize = Future.value;
 Future<bool> Function() onCallIsInitialized = Future.value;
+Future<ThetaModel?> Function() onGetThetaModel = Future.value;
 Future<ThetaInfo> Function() onGetThetaInfo = Future.value;
 Future<ThetaState> Function() onGetThetaState = Future.value;
 Future<void> Function() onCallGetLivePreview = Future.value;
@@ -285,22 +291,38 @@ void main() {
     expect(await thetaClientPlugin.isInitialized(), isTrue);
   });
 
+  test('getThetaModel', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    const thetaModel = ThetaModel.thetaZ1;
+    onGetThetaModel = () {
+      return Future.value(thetaModel);
+    };
+
+    var model = await thetaClientPlugin.getThetaModel();
+    expect(model, thetaModel);
+  });
+
   test('getThetaInfo', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
     MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     const model = 'RICOH THETA Z1';
+    const thetaModel = ThetaModel.thetaZ1;
     const api = ['a', 'b'];
     const apiLevel = [2];
     var endpoints = Endpoints(80, 80);
     onGetThetaInfo = () {
       return Future.value(ThetaInfo('RICOH', model, 'serialNo', 'wlanMac', 'blMac',
-      'firmVersion', 'supportUrl', true, true, 1, api, endpoints, apiLevel));
+      'firmVersion', 'supportUrl', true, true, 1, api, endpoints, apiLevel, thetaModel));
     };
 
     var thetaInfo = await thetaClientPlugin.getThetaInfo();
     expect(thetaInfo.model, model);
+    expect(thetaInfo.thetaModel, thetaModel);
   });
 
   test('getThetaState', () async {
@@ -376,32 +398,6 @@ void main() {
     expect(thetaState.isSdCard, isSdCard);
     expect(thetaState.cameraError, cameraError);
     expect(thetaState.isBatteryInsert, isBatteryInsert);
-  });
-
-  test('listFiles', () async {
-    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
-    ThetaClientFlutterPlatform.instance = fakePlatform;
-
-    const name = 'R0013336.JPG';
-    var infoList = List<FileInfo>.empty(growable: true);
-    infoList.add(
-      FileInfo(
-        name,
-        100,
-        '2022:11:15 14:00:15',
-        'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG',
-        'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG?type=thumb',
-        '01234567890',
-      )
-    );
-    var input = ThetaFiles(infoList, 10);
-    onCallListFiles = () {
-      return Future.value(input);
-    };
-
-    var result = await thetaClientPlugin.listFiles(FileTypeEnum.image, 10, 10, StorageEnum.current);
-    expect(result, input);
   });
 
   test('getPhotoCaptureBuilder', () async {

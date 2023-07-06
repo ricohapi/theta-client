@@ -13,92 +13,100 @@ class ThetaClientFlutter {
 
   /// Initialize object.
   /// 
-  /// * @param [endpoint] URL of Theta web API endpoint.
-  /// * @param config Configuration of initialize. If null, get from THETA.
-  /// * @param timeout Timeout of HTTP call.
-  /// * @throws If an error occurs in THETA.
+  /// - @param [endpoint] URL of Theta web API endpoint.
+  /// - @param config Configuration of initialize. If null, get from THETA.
+  /// - @param timeout Timeout of HTTP call.
+  /// - @throws If an error occurs in THETA.
   Future<void> initialize([String endpoint = 'http://192.168.1.1:80/', ThetaConfig? config, ThetaTimeout? timeout]) {
     return ThetaClientFlutterPlatform.instance.initialize(endpoint, config, timeout);
   }
 
   /// Returns whether it is initialized or not.
   /// 
-  /// * @return Whether it is initialized or not.
-  /// * @throws If an error occurs in THETA.
+  /// - @return Whether it is initialized or not.
+  /// - @throws If an error occurs in THETA.
   Future<bool> isInitialized() {
     return ThetaClientFlutterPlatform.instance.isInitialized();
   }
 
   /// Restore setting to THETA
   /// 
-  /// * @throws If an error occurs in THETA.
+  /// - @throws If an error occurs in THETA.
   Future<void> restoreSettings() {
     return ThetaClientFlutterPlatform.instance.restoreSettings();
   }
 
+  /// Returns the connected THETA model.
+  /// 
+  /// - @return THETA model.
+  /// - @throws If an error occurs in THETA.
+  Future<ThetaModel?> getThetaModel() {
+    return ThetaClientFlutterPlatform.instance.getThetaModel();
+  }
+
   /// Get basic information about Theta.
   /// 
-  /// * @return Static attributes of Theta.
-  /// * @throws If an error occurs in THETA.
+  /// - @return Static attributes of Theta.
+  /// - @throws If an error occurs in THETA.
   Future<ThetaInfo> getThetaInfo() {
     return ThetaClientFlutterPlatform.instance.getThetaInfo();
   }
 
   /// Get current state of Theta.
   /// 
-  /// * @return Mutable values representing Theta status.
-  /// * @throws If an error occurs in THETA.
+  /// - @return Mutable values representing Theta status.
+  /// - @throws If an error occurs in THETA.
   Future<ThetaState> getThetaState() {
     return ThetaClientFlutterPlatform.instance.getThetaState();
   }
 
   /// Start live preview as motion JPEG.
   /// 
-  /// * @param [frameHandler] Called for each JPEG frame.
-  /// * @throws Command is currently disabled; for example, the camera is shooting a video.
+  /// - @param [frameHandler] Called for each JPEG frame.
+  /// - @throws Command is currently disabled; for example, the camera is shooting a video.
   Future<void> getLivePreview(bool Function(Uint8List) frameHandler) {
     return ThetaClientFlutterPlatform.instance.getLivePreview(frameHandler);
   }
 
   /// Lists information of images and videos in Theta.
   /// 
-  /// * @param [fileType] Type of the files to be listed.
-  /// * @param [entryCount] Desired number of entries to return.
+  /// - @param [fileType] Type of the files to be listed.
+  /// - @param [entryCount] Desired number of entries to return.
   /// If [entryCount] is more than the number of remaining files, just return entries of actual remaining files.
-  /// * @param [startPosition] The position of the first file to be returned in the list. 0 represents the first file.
+  /// - @param [startPosition] The position of the first file to be returned in the list. 0 represents the first file.
   /// If [startPosition] is larger than the position of the last file, an empty list is returned.
-  /// * @return A list of file information and number of totalEntries.
+  /// - @return A list of file information and number of totalEntries.
   /// see https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md
-  /// * @throws If an error occurs in THETA.
+  /// - @throws If an error occurs in THETA.
   Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, [int startPosition = 0, StorageEnum? storage]) {
     return ThetaClientFlutterPlatform.instance.listFiles(fileType, entryCount, startPosition, storage);
   }
 
   /// Delete files in Theta.
   /// 
-  /// * @param [fileUrls] URLs of the file to be deleted.
-  /// * @throws Some of [fileUrls] don't exist.  All specified files cannot be deleted.
+  /// - @param [fileUrls] URLs of the file to be deleted.
+  /// - @throws Some of [fileUrls] don't exist.  All specified files cannot be deleted.
   Future<void> deleteFiles(List<String> fileUrls) {
     return ThetaClientFlutterPlatform.instance.deleteFiles(fileUrls);
   }
 
   /// Delete all files in Theta.
   /// 
-  /// * @throws If an error occurs in THETA.
+  /// - @throws If an error occurs in THETA.
   Future<void> deleteAllFiles() {
     return ThetaClientFlutterPlatform.instance.deleteAllFiles();
   }
 
   /// Delete all image files in Theta.
   /// 
-  /// * @throws If an error occurs in THETA.
+  /// - @throws If an error occurs in THETA.
   Future<void> deleteAllImageFiles() {
     return ThetaClientFlutterPlatform.instance.deleteAllImageFiles();
   }
 
   /// Delete all video files in Theta.
   /// 
-  /// * @throws If an error occurs in THETA.
+  /// - @throws If an error occurs in THETA.
   Future<void> deleteAllVideoFiles() {
     return ThetaClientFlutterPlatform.instance.deleteAllVideoFiles();
   }
@@ -120,8 +128,8 @@ class ThetaClientFlutter {
   /// Refer to the [options category](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
   /// of API v2.1 reference for details on properties that can be acquired.
   /// 
-  /// * @param optionNames List of [OptionNameEnum].
-  /// * @return [Options] acquired
+  /// - @param optionNames List of [OptionNameEnum].
+  /// - @return [Options] acquired
   Future<Options> getOptions(List<OptionNameEnum> optionNames) {
     return ThetaClientFlutterPlatform.instance.getOptions(optionNames);
   }
@@ -131,8 +139,8 @@ class ThetaClientFlutter {
   /// Check the properties that can be set and specifications by the API v2.1 reference options
   /// category or [camera.getOptions](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md).
   /// 
-  /// * @param options Camera setting options.
-  /// * @throws When an invalid option is specified.
+  /// - @param options Camera setting options.
+  /// - @throws When an invalid option is specified.
   Future<void> setOptions(Options options) {
     return ThetaClientFlutterPlatform.instance.setOptions(options);
   }
@@ -142,9 +150,9 @@ class ThetaClientFlutter {
   /// This command cannot be executed during video recording.
   /// RICOH THETA V firmware v2.00.2 or later
   /// 
-  /// * @param[fileUrl] URL of a still image file
-  /// * @return Exif and [photo sphere XMP](https://developers.google.com/streetview/spherical-metadata/)
-  /// * @throws Command is currently disabled; for example, the camera is shooting a video.
+  /// - @param[fileUrl] URL of a still image file
+  /// - @return Exif and [photo sphere XMP](https://developers.google.com/streetview/spherical-metadata/)
+  /// - @throws Command is currently disabled; for example, the camera is shooting a video.
   Future<Metadata> getMetadata(String fileUrl) {
     return ThetaClientFlutterPlatform.instance.getMetadata(fileUrl);
   }
@@ -152,14 +160,14 @@ class ThetaClientFlutter {
   /// Reset all device settings and capture settings.
   /// After reset, the camera will be restarted.
   /// 
-  /// * @throws If an error occurs in THETA.
+  /// - @throws If an error occurs in THETA.
   Future<void> reset() {
     return ThetaClientFlutterPlatform.instance.reset();
   }
 
   /// Stop running self-timer.
   /// 
-  /// * @throws If an error occurs in THETA.
+  /// - @throws If an error occurs in THETA.
   Future<void> stopSelfTimer() {
     return ThetaClientFlutterPlatform.instance.stopSelfTimer();
   }
@@ -168,91 +176,89 @@ class ThetaClientFlutter {
   /// 
   /// Theta S and Theta SC don't support this functionality, so always [fileUrl] is returned.
   /// 
-  /// * @param fileUrl URL of a saved movie file.
-  /// * @param toLowResolution If true generates lower resolution video, otherwise same resolution.
-  /// * @param applyTopBottomCorrection apply Top/bottom correction. This parameter is ignored on Theta X.
-  /// * @return URL of a converted movie file.
-  /// * @throws Command is currently disabled.
+  /// - @param fileUrl URL of a saved movie file.
+  /// - @param toLowResolution If true generates lower resolution video, otherwise same resolution.
+  /// - @param applyTopBottomCorrection apply Top/bottom correction. This parameter is ignored on Theta X.
+  /// - @return URL of a converted movie file.
+  /// - @throws Command is currently disabled.
   Future<String> convertVideoFormats(String fileUrl, bool toLowResolution, [bool applyTopBottomCorrection = true]) {
     return ThetaClientFlutterPlatform.instance.convertVideoFormats(fileUrl, toLowResolution, applyTopBottomCorrection);
   }
 
   /// Cancels the movie format conversion.
   /// 
-  /// * @throws When convertVideoFormats is not started.
+  /// - @throws When convertVideoFormats is not started.
   Future<void> cancelVideoConvert() {
     return ThetaClientFlutterPlatform.instance.cancelVideoConvert();
   }
 
   /// Turns the wireless LAN off.
   /// 
-  /// * @throws If an error occurs in THETA.
+  /// - @throws If an error occurs in THETA.
   Future<void> finishWlan() {
     return ThetaClientFlutterPlatform.instance.finishWlan();
   }
 
   /// Acquires the access point list used in client mode.
-  /// 
+  ///
   /// For RICOH THETA X, only the access points registered with [setAccessPoint] can be acquired.
   /// (The access points automatically detected with the camera UI cannot be acquired with this API.)
-  /// 
-  /// * @return Lists the access points stored on the camera and the access points detected by the camera.
-  /// * @throws If an error occurs in THETA.
+  ///
+  /// - @return Lists the access points stored on the camera and the access points detected by the camera.
+  /// - @throws If an error occurs in THETA.
   Future<List<AccessPoint>> listAccessPoints() {
     return ThetaClientFlutterPlatform.instance.listAccessPoints();
   }
 
   /// Set access point. IP address is set dynamically.
-  /// 
-  /// * @param ssid SSID of the access point.
-  /// * @param ssidStealth True if SSID stealth is enabled.
-  /// * @param authMode Authentication mode.
-  /// * @param password Password. If [authMode] is "[none]", pass empty String.
-  /// * @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
-  /// * @throws If an error occurs in THETA.
-  Future<void> setAccessPointDynamically(
-    String ssid,
-    {
-      bool ssidStealth = false,
+  ///
+  /// - @param ssid SSID of the access point.
+  /// - @param ssidStealth True if SSID stealth is enabled.
+  /// - @param authMode Authentication mode.
+  /// - @param password Password. If [authMode] is "[none]", pass empty String.
+  /// - @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
+  /// - @param proxy Proxy information to be used for the access point.
+  /// - @throws If an error occurs in THETA.
+  Future<void> setAccessPointDynamically(String ssid,
+      {bool ssidStealth = false,
       AuthModeEnum authMode = AuthModeEnum.none,
       String password = '',
-      int connectionPriority = 1
-    }
-  ) {
-    return ThetaClientFlutterPlatform.instance.setAccessPointDynamically(ssid, ssidStealth, authMode, password, connectionPriority);
+      int connectionPriority = 1,
+      Proxy? proxy}) {
+    return ThetaClientFlutterPlatform.instance.setAccessPointDynamically(
+        ssid, ssidStealth, authMode, password, connectionPriority, proxy);
   }
 
   /// Set access point. IP address is set statically.
-  /// 
-  /// * @param ssid SSID of the access point.
-  /// * @param ssidStealth True if SSID stealth is enabled.
-  /// * @param authMode Authentication mode.
-  /// * @param password Password. If [authMode] is "[none]", pass empty String.
-  /// * @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
-  /// * @param ipAddress IP address assigns to Theta.
-  /// * @param subnetMask Subnet mask.
-  /// * @param defaultGateway Default gateway.
-  /// * @throws If an error occurs in THETA.
-  Future<void> setAccessPointStatically(
-    String ssid,
-    {
-      bool ssidStealth = false,
+  ///
+  /// - @param ssid SSID of the access point.
+  /// - @param ssidStealth True if SSID stealth is enabled.
+  /// - @param authMode Authentication mode.
+  /// - @param password Password. If [authMode] is "[none]", pass empty String.
+  /// - @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
+  /// - @param ipAddress IP address assigns to Theta.
+  /// - @param subnetMask Subnet mask.
+  /// - @param defaultGateway Default gateway.
+  /// - @param proxy Proxy information to be used for the access point.
+  /// - @throws If an error occurs in THETA.
+  Future<void> setAccessPointStatically(String ssid,
+      {bool ssidStealth = false,
       AuthModeEnum authMode = AuthModeEnum.none,
       String password = '',
       int connectionPriority = 1,
       required String ipAddress,
       required String subnetMask,
-      required String defaultGateway
-    }
-  ) {
-    return ThetaClientFlutterPlatform.instance.setAccessPointStatically(ssid, ssidStealth, authMode, password, connectionPriority, ipAddress, subnetMask, defaultGateway);
+      required String defaultGateway,
+      Proxy? proxy}) {
+    return ThetaClientFlutterPlatform.instance.setAccessPointStatically(ssid, ssidStealth, authMode,
+        password, connectionPriority, ipAddress, subnetMask, defaultGateway, proxy);
   }
 
   /// Deletes access point information used in client mode.
   /// Only the access points registered with [setAccessPoint] can be deleted.
-  /// 
-  /// * @param ssid SSID of the access point.
-  /// * @throws If an error occurs in THETA.
+  ///
+  /// - @param ssid SSID of the access point.
+  /// - @throws If an error occurs in THETA.
   Future<void> deleteAccessPoint(String ssid) {
     return ThetaClientFlutterPlatform.instance.deleteAccessPoint(ssid);
   }
@@ -263,10 +269,10 @@ class ThetaClientFlutter {
   /// Refer to the [options Overview](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
   /// of API v2.1 reference  for properties available for acquisition.
   ///
-  /// @param captureMode The target shooting mode.
-  /// @return Options of my setting
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @param captureMode The target shooting mode.
+  /// - @return Options of my setting
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<Options> getMySetting(CaptureModeEnum captureMode) {
     return ThetaClientFlutterPlatform.instance.getMySetting(captureMode);
   }
@@ -277,46 +283,46 @@ class ThetaClientFlutter {
   /// Refer to the [options Overview](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
   /// of API v2.1 reference  for properties available for acquisition.
   ///
-  /// @param optionNames List of option names to acquire.
-  /// @return Options of my setting
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @param optionNames List of option names to acquire.
+  /// - @return Options of my setting
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<Options> getMySettingFromOldModel(List<OptionNameEnum> optionNames) {
     return ThetaClientFlutterPlatform.instance.getMySettingFromOldModel(optionNames);
   }
 
   /// Registers shooting conditions in My Settings.
   ///
-  /// @param captureMode The target shooting mode.  RICOH THETA S and SC do not support My Settings in video capture mode.
-  /// @param options registered to My Settings.
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @param captureMode The target shooting mode.  RICOH THETA S and SC do not support My Settings in video capture mode.
+  /// - @param options registered to My Settings.
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<void> setMySetting(CaptureModeEnum captureMode, Options options) {
     return ThetaClientFlutterPlatform.instance.setMySetting(captureMode, options);
   }
 
   /// Delete shooting conditions in My Settings. Supported just by Theta X and Z1.
   ///
-  /// @param captureMode The target shooting mode.
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @param captureMode The target shooting mode.
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<void> deleteMySetting(CaptureModeEnum captureMode) {
     return ThetaClientFlutterPlatform.instance.deleteMySetting(captureMode);
   }
 
   /// Acquires a list of installed plugins. Supported just by Theta X, Z1 and V.
-  /// @return a list of installed plugin information
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @return a list of installed plugin information
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<List<PluginInfo>> listPlugins() {
     return ThetaClientFlutterPlatform.instance.listPlugins();
   }
 
   /// Sets the installed plugin for boot. Supported just by Theta V.
   ///
-  /// @param packageName package name of the plugin
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @param packageName package name of the plugin
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<void> setPlugin(String packageName) {
     return ThetaClientFlutterPlatform.instance.setPlugin(packageName);
   }
@@ -325,50 +331,50 @@ class ThetaClientFlutter {
   /// If [packageName] is not specified, plugin 1 will start.
   /// Supported just by Theta X, Z1 and V.
   ///
-  /// @param packageName package name of the plugin.  Theta V does not support this parameter.
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @param packageName package name of the plugin.  Theta V does not support this parameter.
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<void> startPlugin([String? packageName]) {
     return ThetaClientFlutterPlatform.instance.startPlugin(packageName);
   }
 
   /// Stop the running plugin.
   /// Supported just by Theta X, Z1 and V.
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<void> stopPlugin() {
     return ThetaClientFlutterPlatform.instance.stopPlugin();
   }
 
   /// Acquires the license for the installed plugin
   ///
-  /// @param packageName package name of the target plugin
-  /// @return HTML string of the license
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @param packageName package name of the target plugin
+  /// - @return HTML string of the license
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<String> getPluginLicense(String packageName) {
     return ThetaClientFlutterPlatform.instance.getPluginLicense(packageName);
   }
 
   /// Return the plugin orders.  Supported just by Theta X and Z1.
   ///
-  /// @return list of package names of plugins
+  /// - @return list of package names of plugins
   /// For Z1, list of three package names for the start-up plugin. No restrictions for the number of package names for X.
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<List<String>> getPluginOrders() {
     return ThetaClientFlutterPlatform.instance.getPluginOrders();
   }
 
   /// Sets the plugin orders.  Supported just by Theta X and Z1.
   ///
-  /// @param plugins list of package names of plugins
+  /// - @param plugins list of package names of plugins
   /// For Z1, list size must be three. No restrictions for the size for X.
   /// When not specifying, set an empty string.
   /// If an empty string is placed mid-way, it will be moved to the front.
   /// Specifying zero package name will result in an error.
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<void> setPluginOrders(List<String> plugins) {
     return ThetaClientFlutterPlatform.instance.setPluginOrders(plugins);
   }
@@ -376,14 +382,50 @@ class ThetaClientFlutter {
   /// Registers identification information (UUID) of a BLE device (Smartphone application) connected to the camera.
   /// UUID can be set while the wireless LAN function of the camera is placed in the direct mode.
   ///
-  /// @param uuid Format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  /// - @param uuid Format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
   /// Alphabetic letters are not case-sensitive.
-  /// @return Device name generated from the serial number (S/N) of the camera.
+  /// - @return Device name generated from the serial number (S/N) of the camera.
   /// Eg. "00101234" or "THETAXS00101234" when the serial number (S/N) is "XS00101234"
-  /// @exception ThetaWebApiException When an invalid option is specified.
-  /// @exception NotConnectedException
+  /// - @exception ThetaWebApiException When an invalid option is specified.
+  /// - @exception NotConnectedException
   Future<String> setBluetoothDevice(String uuid) {
     return ThetaClientFlutterPlatform.instance.setBluetoothDevice(uuid);
+  }
+}
+
+/// Support THETA model.
+enum ThetaModel {
+  /// THETA S
+  thetaS('THETA_S'),
+
+  /// THETA SC
+  thetaSC('THETA_SC'),
+
+  /// THETA V
+  thetaV('THETA_V'),
+
+  /// THETA Z1
+  thetaZ1('THETA_Z1'),
+
+  /// THETA X
+  thetaX('THETA_X'),
+
+  /// THETA SC2
+  thetaSC2('THETA_SC2'),
+
+  /// THETA SC2 for business
+  thetaSC2B('THETA_SC2_B');
+
+  final String rawValue;
+  const ThetaModel(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static ThetaModel? getValue(String? rawValue) {
+    return ThetaModel.values.cast<ThetaModel?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
   }
 }
 
@@ -428,9 +470,12 @@ class ThetaInfo {
   /// List of supported APIs (1: v2.0, 2: v2.1)
   final List<int> apiLevel;
 
+  /// THETA model
+  final ThetaModel? thetaModel;
+
   ThetaInfo(this.manufacturer, this.model, this.serialNumber, this.wlanMacAddress,
     this.bluetoothMacAddress, this.firmwareVersion, this.supportUrl, this.hasGps, this.hasGyro,
-    this.uptime, this.api, this.endpoints, this.apiLevel);
+    this.uptime, this.api, this.endpoints, this.apiLevel, this.thetaModel);
 }
 
 /// Endpoint information
@@ -484,10 +529,55 @@ enum StorageEnum {
   }
 }
 
+/// Video codec
+enum CodecEnum {
+  /// codec H.264/MPEG-4 AVC
+  h264mp4avc('H264MP4AVC');
+
+  final String rawValue;
+  const CodecEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static CodecEnum? getValue(String rawValue) {
+    return CodecEnum.values.cast<CodecEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// THETA projection type
+enum ProjectionTypeEnum {
+  /// Equirectangular type
+  equirectangular('EQUIRECTANGULAR'),
+
+  /// Dual Fisheye type
+  dualFisheye('DUAL_FISHEYE'),
+
+  /// Fisheye type
+  fisheye('FISHEYE');
+
+  final String rawValue;
+  const ProjectionTypeEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static ProjectionTypeEnum? getValue(String rawValue) {
+    return ProjectionTypeEnum.values.cast<ProjectionTypeEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
 /// File information in Theta.
 class FileInfo {
   /// File name.
   final String name;
+
+  /// You can get a file using HTTP GET to [fileUrl].
+  final String fileUrl;
 
   /// File size in bytes.
   final int size;
@@ -495,15 +585,84 @@ class FileInfo {
   /// File creation time in the format "YYYY:MM:DD HH:MM:SS".
   final String dateTime;
 
-  /// You can get a file using HTTP GET to [fileUrl].
-  final String fileUrl;
+  /// Latitude.
+  final double? lat;
+
+  /// Longitude.
+  final double? lng;
+
+  /// Horizontal size of image (pixels).
+  final int? width;
+
+  /// Vertical size of image (pixels).
+  final int? height;
 
   /// You can get a thumbnail image using HTTP GET to [thumbnailUrl].
   final String thumbnailUrl;
 
+  /// Group ID of a still image shot by interval shooting.
+  final String? intervalCaptureGroupId;
+
+  /// Group ID of a still image shot by interval composite shooting.
+  final String? compositeShootingGroupId;
+
+  /// Group ID of a still image shot by multi bracket shooting.
+  final String? autoBracketGroupId;
+
+  /// Video shooting time (sec).
+  final int? recordTime;
+
+  /// Whether or not image processing has been completed.
+  final bool? isProcessed;
+
+  /// URL of the file being processed.
+  final String? previewUrl;
+
+  /// Codec. (RICOH THETA V or later)
+  final CodecEnum? codec;
+
+  /// Projection type of movie file. (RICOH THETA V or later)
+  final ProjectionTypeEnum? projectionType;
+
+  /// Group ID of continuous shooting.  (RICOH THETA X or later)
+  final String? continuousShootingGroupId;
+
+  /// Frame rate.  (RICOH THETA X or later)
+  final int? frameRate;
+
+  /// Favorite.  (RICOH THETA X or later)
+  final bool? favorite;
+
+  /// Image description.  (RICOH THETA X or later)
+  final String? imageDescription;
+
+  /// Storage ID. (RICOH THETA X Version 2.00.0 or later)
   final String? storageID;
 
-  FileInfo(this.name, this.size, this.dateTime, this.fileUrl, this.thumbnailUrl, [this.storageID]);
+  FileInfo(
+    this.name,
+    this.fileUrl,
+    this.size,
+    this.dateTime,
+    this.lat,
+    this.lng,
+    this.width,
+    this.height,
+    this.thumbnailUrl,
+    this.intervalCaptureGroupId,
+    this.compositeShootingGroupId,
+    this.autoBracketGroupId,
+    this.recordTime,
+    this.isProcessed,
+    this.previewUrl,
+    this.codec,
+    this.projectionType,
+    this.continuousShootingGroupId,
+    this.frameRate,
+    this.favorite,
+    this.imageDescription,
+    this.storageID
+  );
 }
 
 /// Data about files in Theta.
@@ -515,6 +674,266 @@ class ThetaFiles {
   final int totalEntries;
 
   ThetaFiles(this.fileList, this.totalEntries);
+}
+
+/// BurstMode setting.
+/// When this is set to ON, burst shooting is enabled,
+/// and a screen dedicated to burst shooting is displayed in Live View.
+///
+/// only For RICOH THETA Z1 firmware v2.10.1 or later
+enum BurstModeEnum {
+  /// BurstMode ON
+  on('ON'),
+
+  /// BurstMode OFF
+  off('OFF');
+
+  final String rawValue;
+
+  const BurstModeEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static BurstModeEnum? getValue(String rawValue) {
+    return BurstModeEnum.values
+        .cast<BurstModeEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Burst shooting setting.
+///
+/// only For RICOH THETA Z1 firmware v2.10.1 or later
+class BurstOption {
+  /// see [BurstCaptureNumEnum]
+  BurstCaptureNumEnum? burstCaptureNum;
+
+  /// see [BurstBracketStepEnum]
+  BurstBracketStepEnum? burstBracketStep;
+
+  /// see [BurstCompensationEnum]
+  BurstCompensationEnum? burstCompensation;
+
+  /// see [BurstMaxExposureTimeEnum]
+  BurstMaxExposureTimeEnum? burstMaxExposureTime;
+
+  /// see [BurstEnableIsoControlEnum]
+  BurstEnableIsoControlEnum? burstEnableIsoControl;
+
+  /// see [BurstOrderEnum]
+  BurstOrderEnum? burstOrder;
+
+  BurstOption(this.burstCaptureNum, this.burstBracketStep, this.burstCompensation,
+      this.burstMaxExposureTime, this.burstEnableIsoControl, this.burstOrder);
+
+  @override
+  bool operator ==(Object other) => hashCode == other.hashCode;
+
+  @override
+  int get hashCode => Object.hashAll([
+        burstCaptureNum,
+        burstBracketStep,
+        burstCompensation,
+        burstMaxExposureTime,
+        burstEnableIsoControl,
+        burstOrder
+      ]);
+}
+
+/// Number of shots for burst shooting
+/// 1, 3, 5, 7, 9
+enum BurstCaptureNumEnum {
+  burstCaptureNum_1('BURST_CAPTURE_NUM_1'),
+  burstCaptureNum_3('BURST_CAPTURE_NUM_3'),
+  burstCaptureNum_5('BURST_CAPTURE_NUM_5'),
+  burstCaptureNum_7('BURST_CAPTURE_NUM_7'),
+  burstCaptureNum_9('BURST_CAPTURE_NUM_9');
+
+  final String rawValue;
+
+  const BurstCaptureNumEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static BurstCaptureNumEnum? getValue(String rawValue) {
+    return BurstCaptureNumEnum.values
+        .cast<BurstCaptureNumEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Bracket value range between each shot for burst shooting
+/// 0.0, 0.3, 0.7, 1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0
+enum BurstBracketStepEnum {
+  bracketStep_0_0('BRACKET_STEP_0_0'),
+  bracketStep_0_3('BRACKET_STEP_0_3'),
+  bracketStep_0_7('BRACKET_STEP_0_7'),
+  bracketStep_1_0('BRACKET_STEP_1_0'),
+  bracketStep_1_3('BRACKET_STEP_1_3'),
+  bracketStep_1_7('BRACKET_STEP_1_7'),
+  bracketStep_2_0('BRACKET_STEP_2_0'),
+  bracketStep_2_3('BRACKET_STEP_2_3'),
+  bracketStep_2_7('BRACKET_STEP_2_7'),
+  bracketStep_3_0('BRACKET_STEP_3_0');
+
+  final String rawValue;
+
+  const BurstBracketStepEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static BurstBracketStepEnum? getValue(String rawValue) {
+    return BurstBracketStepEnum.values
+        .cast<BurstBracketStepEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Exposure compensation for the base image and entire shooting for burst shooting
+/// -5.0, -4.7, -4,3, -4.0, -3.7, -3,3, -3.0, -2.7, -2,3, -2.0, -1.7, -1,3, -1.0, -0.7, -0,3,
+/// 0.0, 0.3, 0.7, 1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 4.3, 4.7, 5.0
+enum BurstCompensationEnum {
+  burstCompensationDown_5_0('BURST_COMPENSATION_DOWN_5_0'),
+  burstCompensationDown_4_7('BURST_COMPENSATION_DOWN_4_7'),
+  burstCompensationDown_4_3('BURST_COMPENSATION_DOWN_4_3'),
+  burstCompensationDown_4_0('BURST_COMPENSATION_DOWN_4_0'),
+  burstCompensationDown_3_7('BURST_COMPENSATION_DOWN_3_7'),
+  burstCompensationDown_3_3('BURST_COMPENSATION_DOWN_3_3'),
+  burstCompensationDown_3_0('BURST_COMPENSATION_DOWN_3_0'),
+  burstCompensationDown_2_7('BURST_COMPENSATION_DOWN_2_7'),
+  burstCompensationDown_2_3('BURST_COMPENSATION_DOWN_2_3'),
+  burstCompensationDown_2_0('BURST_COMPENSATION_DOWN_2_0'),
+  burstCompensationDown_1_7('BURST_COMPENSATION_DOWN_1_7'),
+  burstCompensationDown_1_3('BURST_COMPENSATION_DOWN_1_3'),
+  burstCompensationDown_1_0('BURST_COMPENSATION_DOWN_1_0'),
+  burstCompensationDown_0_7('BURST_COMPENSATION_DOWN_0_7'),
+  burstCompensationDown_0_3('BURST_COMPENSATION_DOWN_0_3'),
+  burstCompensation_0_0('BURST_COMPENSATION_0_0'),
+  burstCompensationUp_0_3('BURST_COMPENSATION_UP_0_3'),
+  burstCompensationUp_0_7('BURST_COMPENSATION_UP_0_7'),
+  burstCompensationUp_1_0('BURST_COMPENSATION_UP_1_0'),
+  burstCompensationUp_1_3('BURST_COMPENSATION_UP_1_3'),
+  burstCompensationUp_1_7('BURST_COMPENSATION_UP_1_7'),
+  burstCompensationUp_2_0('BURST_COMPENSATION_UP_2_0'),
+  burstCompensationUp_2_3('BURST_COMPENSATION_UP_2_3'),
+  burstCompensationUp_2_7('BURST_COMPENSATION_UP_2_7'),
+  burstCompensationUp_3_0('BURST_COMPENSATION_UP_3_0'),
+  burstCompensationUp_3_3('BURST_COMPENSATION_UP_3_3'),
+  burstCompensationUp_3_7('BURST_COMPENSATION_UP_3_7'),
+  burstCompensationUp_4_0('BURST_COMPENSATION_UP_4_0'),
+  burstCompensationUp_4_3('BURST_COMPENSATION_UP_4_3'),
+  burstCompensationUp_4_7('BURST_COMPENSATION_UP_4_7'),
+  burstCompensationUp_5_0('BURST_COMPENSATION_UP_5_0');
+
+  final String rawValue;
+
+  const BurstCompensationEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static BurstCompensationEnum? getValue(String rawValue) {
+    return BurstCompensationEnum.values
+        .cast<BurstCompensationEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Maximum exposure time for burst shooting
+/// 0.5, 0.625, 0.76923076, 1, 1.3, 1.6, 2, 2.5, 3.2, 4, 5, 6, 8, 10, 13, 15, 20, 25, 30, 40, 50, 60
+enum BurstMaxExposureTimeEnum {
+  maxExposureTime_0_5('MAX_EXPOSURE_TIME_0_5'),
+  maxExposureTime_0_625('MAX_EXPOSURE_TIME_0_625'),
+  maxExposureTime_0_76923076('MAX_EXPOSURE_TIME_0_76923076'),
+  maxExposureTime_1('MAX_EXPOSURE_TIME_1'),
+  maxExposureTime_1_3('MAX_EXPOSURE_TIME_1_3'),
+  maxExposureTime_1_6('MAX_EXPOSURE_TIME_1_6'),
+  maxExposureTime_2('MAX_EXPOSURE_TIME_2'),
+  maxExposureTime_2_5('MAX_EXPOSURE_TIME_2_5'),
+  maxExposureTime_3_2('MAX_EXPOSURE_TIME_3_2'),
+  maxExposureTime_4('MAX_EXPOSURE_TIME_4'),
+  maxExposureTime_5('MAX_EXPOSURE_TIME_5'),
+  maxExposureTime_6('MAX_EXPOSURE_TIME_6'),
+  maxExposureTime_8('MAX_EXPOSURE_TIME_8'),
+  maxExposureTime_10('MAX_EXPOSURE_TIME_10'),
+  maxExposureTime_13('MAX_EXPOSURE_TIME_13'),
+  maxExposureTime_15('MAX_EXPOSURE_TIME_15'),
+  maxExposureTime_20('MAX_EXPOSURE_TIME_20'),
+  maxExposureTime_25('MAX_EXPOSURE_TIME_25'),
+  maxExposureTime_30('MAX_EXPOSURE_TIME_30'),
+  maxExposureTime_40('MAX_EXPOSURE_TIME_40'),
+  maxExposureTime_50('MAX_EXPOSURE_TIME_50'),
+  maxExposureTime_60('MAX_EXPOSURE_TIME_60');
+
+  final String rawValue;
+
+  const BurstMaxExposureTimeEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static BurstMaxExposureTimeEnum? getValue(String rawValue) {
+    return BurstMaxExposureTimeEnum.values
+        .cast<BurstMaxExposureTimeEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Adjustment with ISO sensitivity for burst shooting
+/// 0: Do not adjust with ISO sensitivity, 1: Adjust with ISO sensitivity
+enum BurstEnableIsoControlEnum {
+  off('OFF'),
+  on('ON');
+
+  final String rawValue;
+
+  const BurstEnableIsoControlEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static BurstEnableIsoControlEnum? getValue(String rawValue) {
+    return BurstEnableIsoControlEnum.values
+        .cast<BurstEnableIsoControlEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Shooting order for burst shooting
+/// 0: '0' → '-' → '+', 1: '-' → '0' → '+'
+enum BurstOrderEnum {
+  burstBracketOrder_0('BURST_BRACKET_ORDER_0'),
+  burstBracketOrder_1('BURST_BRACKET_ORDER_1');
+
+  final String rawValue;
+
+  const BurstOrderEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static BurstOrderEnum? getValue(String rawValue) {
+    return BurstOrderEnum.values
+        .cast<BurstOrderEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
 }
 
 /// Capture Status
@@ -912,15 +1331,28 @@ class AccessPoint {
   /// Default Gateway. This setting can be acquired when “usingDhcp” is false.
   String? defaultGateway;
 
-  AccessPoint(this.ssid, this.ssidStealth, this.authMode, this.connectionPriority, this.usingDhcp, this.ipAddress, this.subnetMask, this.defaultGateway);
+  /// Proxy information to be used for the access point.
+  Proxy? proxy;
+
+  AccessPoint(this.ssid, this.ssidStealth, this.authMode, this.connectionPriority, this.usingDhcp,
+      this.ipAddress, this.subnetMask, this.defaultGateway, this.proxy);
 }
 
 /// Camera setting options name.
 ///
 /// [options name](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
 enum OptionNameEnum {
+  /// Option name _aiAutoThumbnail
+  aiAutoThumbnail('AiAutoThumbnail', AiAutoThumbnailEnum),
+
   /// Option name aperture
   aperture('Aperture', ApertureEnum),
+
+  /// Option name _burstMode
+  burstMode('BurstMode', BurstModeEnum),
+
+  /// Option name _burstOption
+  burstOption('BurstOption', BurstOption),
 
   /// Option name _cameraControlSource
   cameraControlSource('CameraControlSource', CameraControlSourceEnum),
@@ -928,11 +1360,23 @@ enum OptionNameEnum {
   /// Option name _cameraMode
   cameraMode('CameraMode', CameraModeEnum),
 
+  /// Option name captureInterval
+  captureInterval('CaptureInterval', int),
+
   /// Option name captureMode
   captureMode('CaptureMode', CaptureModeEnum),
 
+  /// Option name captureNumber
+  captureNumber('CaptureNumber', int),
+
   /// Option name _colorTemperature
   colorTemperature('ColorTemperature', int),
+
+  /// Option name _compositeShootingOutputInterval
+  compositeShootingOutputInterval('CompositeShootingOutputInterval', int),
+
+  /// Option name _compositeShootingTime
+  compositeShootingTime('CompositeShootingTime', int),
 
   /// Option name dateTimeZone
   dateTimeZone('DateTimeZone', String),
@@ -981,6 +1425,15 @@ enum OptionNameEnum {
   /// Option name _password
   password('Password', String),
 
+  /// Option name powerSaving
+  powerSaving('PowerSaving', PowerSavingEnum),
+
+  /// Option name preset
+  preset('Preset', PresetEnum),
+
+  /// Option name previewFormat
+  previewFormat('PreviewFormat', PreviewFormatEnum),
+
   /// Option name _proxy
   proxy('Proxy', Proxy),
 
@@ -993,6 +1446,9 @@ enum OptionNameEnum {
   /// Option name remainingSpace
   remainingSpace('RemainingSpace', int),
 
+  /// Option name shootingMethod
+  shootingMethod('ShootingMethod', ShootingMethodEnum),
+
   /// Shutter speed (sec).
   shutterSpeed('ShutterSpeed', ShutterSpeedEnum),
 
@@ -1001,6 +1457,9 @@ enum OptionNameEnum {
 
   /// Option name sleepDelay
   sleepDelay('SleepDelay', SleepDelayEnum),
+
+  /// Option name timeShift
+  timeShift('TimeShift', TimeShift),
 
   /// Option name totalSpace
   totalSpace('TotalSpace', int),
@@ -1028,6 +1487,28 @@ enum OptionNameEnum {
 
   static OptionNameEnum? getValue(String rawValue) {
     return OptionNameEnum.values.cast<OptionNameEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// AI auto thumbnail setting.
+///
+/// For RICOH THETA X
+enum AiAutoThumbnailEnum {
+  /// AI auto setting ON.
+  on('ON'),
+
+  /// AI auto setting OFF.
+  off('OFF');
+
+  final String rawValue;
+  const AiAutoThumbnailEnum(this.rawValue);
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static AiAutoThumbnailEnum? getValue(String rawValue) {
+    return AiAutoThumbnailEnum.values.cast<AiAutoThumbnailEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
   }
 }
 
@@ -1133,7 +1614,16 @@ enum CaptureModeEnum {
   image('IMAGE'),
 
   /// Shooting mode. Video capture mode
-  video('VIDEO');
+  video('VIDEO'),
+  
+  /// Shooting mode. Live streaming mode just for Theta S.
+  liveStreaming('LIVE_STREAMING'),
+
+  /// Shooting mode. Interval still image capture mode just for Theta SC2 and Theta SC2 for business
+  interval('INTERVAL'),
+
+  /// Shooting mode. Preset mode just for Theta SC2 and Theta SC2 for business
+  preset('PRESET');
 
   final String rawValue;
   const CaptureModeEnum(this.rawValue);
@@ -1476,11 +1966,22 @@ enum FilterEnum {
   /// Image processing filter. No filter.
   off('OFF'),
 
+  /// Image processing filter. DR compensation.
+  ///
+  /// RICOH THETA X is not supported.
+  drComp('DR_COMP'),
+
   /// Image processing filter. Noise reduction.
   noiseReduction('NOISE_REDUCTION'),
 
   /// Image processing filter. HDR.
-  hdr('HDR');
+  hdr('HDR'),
+
+  /// Image processing filter. Handheld HDR.
+  ///
+  /// RICOH THETA Z1 firmware v1.20.1 or later and RICOH THETA V firmware v3.10.1 or later.
+  /// RICOH THETA X is not supported.
+  hhHdr('HH_HDR');
 
   final String rawValue;
   const FilterEnum(this.rawValue);
@@ -1804,7 +2305,7 @@ enum NetworkTypeEnum {
   // Client mode via WLAN
   client('CLIENT'),
 
-  // Client mode via Ethernet cable supporte by Theta Z1 and V.
+  // Client mode via Ethernet cable supported by Theta Z1 and V.
   ethernet('ETHERNET'),
 
   // Network is off. This value can be gotten only by plugin.
@@ -1860,6 +2361,134 @@ enum OffDelayEnum {
   }
 }
 
+/// PowerSaving
+///
+/// For Theta X only
+enum PowerSavingEnum {
+  /// Power saving mode ON
+  on('ON'),
+  /// Power saving mode OFF
+  off('OFF');
+
+  final String rawValue;
+  const PowerSavingEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static PowerSavingEnum? getValue(String rawValue) {
+    return PowerSavingEnum.values.cast<PowerSavingEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
+/// Preset
+enum PresetEnum {
+  face('FACE'),
+  nightView('NIGHT_VIEW'),
+  lensByLensExposure('LENS_BY_LENS_EXPOSURE'),
+  room('ROOM');
+
+  final String rawValue;
+  const PresetEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static PresetEnum? getValue(String rawValue) {
+    return PresetEnum.values.cast<PresetEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
+/// Format of live view
+enum PreviewFormatEnum {
+  /// width_height_framerate
+  /// For Theta X, Z1, V and SC2
+  // ignore: constant_identifier_names
+  w1024_h512_f30('W1024_H512_F30'),
+  /// For Theta X. This value can't set.
+  // ignore: constant_identifier_names
+  w1024_h512_f15('W1024_H512_F15'),
+  /// For Theta X
+  // ignore: constant_identifier_names
+  w512_h512_f30('W512_H512_F30'),
+  /// For Theta Z1 and V
+  // ignore: constant_identifier_names
+  w1920_h960_f8('W1920_H960_F8'),
+  /// For Theta Z1 and V
+  // ignore: constant_identifier_names
+  w1024_h512_f8('W1024_H512_F8'),
+  /// For Theta Z1 and V
+  // ignore: constant_identifier_names
+  w640_h320_f30('W640_H320_F30'),
+  /// For Theta Z1 and V
+  // ignore: constant_identifier_names
+  w640_h320_f8('W640_H320_F8'),
+  /// For Theta S and SC
+  // ignore: constant_identifier_names
+  w640_h320_f10('W640_H320_F10');
+
+  final String rawValue;
+  const PreviewFormatEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static PreviewFormatEnum? getValue(String rawValue) {
+    return PreviewFormatEnum.values.cast<PreviewFormatEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
+/// Shooting method
+///
+/// Shooting method for My Settings mode. In RICOH THETA X, it is used outside of MySetting.
+/// Can be acquired and set only when in the Still image shooting mode and _function is the My Settings shooting function.
+/// Changing _function initializes the setting details to Normal shooting.
+enum ShootingMethodEnum {
+  /// Normal shooting
+  normal('NORMAL'),
+  /// Interval shooting
+  interval('INTERVAL'),
+  /// Move interval shooting (RICOH THETA Z1 firmware v1.50.1 or later, RICOH THETA X is not supported)
+  moveInterval('MOVE_INTERVAL'),
+  /// Fixed interval shooting (RICOH THETA Z1 firmware v1.50.1 or later, RICOH THETA X is not supported)
+  fixedInterval('FIXED_INTERVAL'),
+  /// Multi bracket shooting
+  bracket('BRACKET'),
+  /// Interval composite shooting (RICOH THETA X is not supported)
+  composite('COMPOSITE'),
+  /// Continuous shooting (RICOH THETA X or later)
+  continuous('CONTINUOUS'),
+  /// Time shift shooting (RICOH THETA X or later)
+  timeShift('TIME_SHIFT'),
+  /// Burst shooting (RICOH THETA Z1 v2.10.1 or later, RICOH THETA X is not supported)
+  burst('BURST');
+
+  final String rawValue;
+  const ShootingMethodEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static ShootingMethodEnum? getValue(String rawValue) {
+    return ShootingMethodEnum.values.cast<ShootingMethodEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
 
 /// Shutter speed (sec).
 /// 
@@ -2134,6 +2763,8 @@ enum SleepDelayEnum {
   }
 }
 
+
+
 /// White balance.
 /// 
 /// It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
@@ -2202,6 +2833,78 @@ enum WhiteBalanceEnum {
   static WhiteBalanceEnum? getValue(String rawValue) {
     return WhiteBalanceEnum.values.cast<WhiteBalanceEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
   }
+}
+
+/// Time shift shooting option
+class TimeShift {
+  /// Shooting order.
+  /// true: first shoot the front side (side with Theta logo) then shoot the rear side (side with monitor).
+  /// false: first shoot the rear side then shoot the front side.
+  /// default is front first.
+  bool? isFrontFirst;
+
+  /// Time before 1st lens shooting.
+  /// For V or Z1, default is 5 seconds. For X, default is 2 seconds.
+  TimeShiftIntervalEnum? firstInterval;
+
+  /// Time from 1st lens shooting until start of 2nd lens shooting.
+  /// Default is 5 seconds.
+  TimeShiftIntervalEnum? secondInterval;
+
+  TimeShift({this.isFrontFirst, this.firstInterval, this.secondInterval});
+
+  @override
+  bool operator ==(Object other) => hashCode == other.hashCode;
+
+  @override
+  int get hashCode => Object.hashAll([isFrontFirst, firstInterval, secondInterval]);
+
+  @override
+  String toString() {
+    return '${isFrontFirst.toString()}, ${firstInterval?.toString()}, ${secondInterval?.toString()}';
+  }
+}
+
+/// Interval of TimeShit
+enum TimeShiftIntervalEnum {
+  /// 0 second
+  interval_0('INTERVAL_0'),
+  /// 1second
+  interval_1('INTERVAL_1'),
+  /// 2 seconds
+  interval_2('INTERVAL_2'),
+  /// 3 seconds
+  interval_3('INTERVAL_3'),
+  /// 4 seconds
+  interval_4('INTERVAL_4'),
+  /// 5 seconds
+  interval_5('INTERVAL_5'),
+  /// 6 seconds
+  interval_6('INTERVAL_6'),
+  /// 7 seconds
+  interval_7('INTERVAL_7'),
+  /// 8 seconds
+  interval_8('INTERVAL_8'),
+  /// 9 seconds
+  interval_9('INTERVAL_9'),
+  /// 10 seconds
+  interval_10('INTERVAL_10');
+
+  final String rawValue;
+  const TimeShiftIntervalEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static TimeShiftIntervalEnum? getValue(String rawValue) {
+    return TimeShiftIntervalEnum.values
+      .cast<TimeShiftIntervalEnum?>()
+      .firstWhere((element) => element?.rawValue == rawValue,
+          orElse: () => null);
+  }
+
 }
 
 /// White balance auto strength.
@@ -2531,8 +3234,19 @@ class Proxy {
 ///
 /// Refer to the [options category](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
 class Options {
+  /// AI auto thumbnail setting.
+  AiAutoThumbnailEnum? aiAutoThumbnail;
+
   /// Aperture value.
   ApertureEnum? aperture;
+
+  /// BurstMode setting.
+  /// When this is set to ON, burst shooting is enabled,
+  /// and a screen dedicated to burst shooting is displayed in Live View.
+  BurstModeEnum? burstMode;
+
+  /// Burst shooting setting.
+  BurstOption? burstOption;
 
   /// camera control source
   /// Sets whether to lock/unlock the camera UI.
@@ -2547,8 +3261,43 @@ class Options {
   /// For RICOH THETA X
   CameraModeEnum? cameraMode;
 
+  /// Shooting interval (sec.) for interval shooting.
+  ///
+  /// ### Support value
+  /// The value that can be set differs depending on the image format ([fileFormat]) to be shot.
+  /// #### For RICOH THETA X or later
+  /// | Image format | Image size  | Support value |
+  /// | ------------ | ----------- | ------------- |
+  /// | JPEG         | 11008 x 5504 <br>5504 x 2752 | Minimum value(minInterval):6 <br>Maximum value(maxInterval):3600 |
+  ///
+  /// #### For RICOH THETA Z1
+  /// | Image format | Image size  | Support value |
+  /// | ------------ | ----------- | ------------- |
+  /// | JPEG         | 6720 x 3360 | Minimum value(minInterval):6 <br>Maximum value(maxInterval):3600 |
+  /// | RAW+         | 6720 x 3360 | Minimum value(minInterval):10 <br>Maximum value(maxInterval):3600 |
+  ///
+  /// #### For RICOH THETA V
+  /// | Image format | Image size  | Support value |
+  /// | ------------ | ----------- | ------------- |
+  /// | JPEG         | 5376 x 2688 | Minimum value(minInterval):4 <br>Maximum value(maxInterval):3600 |
+  ///
+  /// #### For RICOH THETA S or SC
+  /// | Image format | Image size  | Support value |
+  /// | ------------ | ----------- | ------------- |
+  /// | JPEG         | 5376 x 2688 | Minimum value(minInterval):8 <br>Maximum value(maxInterval):3600 |
+  /// | JPEG         | 2048 x 1024 | Minimum value(minInterval):5 <br>Maximum value(maxInterval):3600 |
+  int? captureInterval;
+
   /// Shooting mode.
   CaptureModeEnum? captureMode;
+
+  /// Number of shots for interval shooting.
+  ///
+  /// ### Support value
+  /// - 0: Unlimited (_limitless)
+  /// - 2: Minimum value (minNumber)
+  /// - 9999: Maximum value (maxNumber)
+  int? captureNumber;
 
   /// Color temperature of the camera (Kelvin).
   /// 
@@ -2558,6 +3307,26 @@ class Options {
   /// Support value
   /// 2500 to 10000. In 100-Kelvin units.
   int? colorTemperature;
+
+  /// In-progress save interval for interval composite shooting (sec).
+  /// 
+  /// 0 (no saving), 60 to 600. In 60-second units.
+  /// 
+  /// For
+  /// RICOH THETA Z1
+  /// RICOH THETA SC firmware v1.10 or later
+  /// RICOH THETA S firmware v01.82 or later
+  int? compositeShootingOutputInterval;
+
+  /// Shooting time for interval composite shooting (sec).
+  /// 
+  /// 600 to 86400. In 600-second units.
+  /// 
+  /// For
+  /// RICOH THETA Z1
+  /// RICOH THETA SC firmware v1.10 or later
+  /// RICOH THETA S firmware v01.82 or later
+  int? compositeShootingTime;
 
   /// Current system time of RICOH THETA. Setting another options will result in an error.
   /// 
@@ -2645,6 +3414,15 @@ class Options {
   /// Password used for digest authentication when _networkType is set to client mode.
   String? password;
 
+  /// PowerSaving
+  PowerSavingEnum? powerSaving;
+
+  /// Preset
+  PresetEnum? preset;
+
+  /// PreviewFormat
+  PreviewFormatEnum? previewFormat;
+
   /// see [Proxy]
   Proxy? proxy;
 
@@ -2656,6 +3434,9 @@ class Options {
 
   /// Remaining usable storage space (byte).
   int? remainingSpace;
+
+  /// ShootingMethod
+  ShootingMethodEnum? shootingMethod;
 
   /// Shutter speed (sec).
   /// 
@@ -2672,6 +3453,9 @@ class Options {
 
   /// Length of standby time before the camera enters the sleep mode.
   SleepDelayEnum? sleepDelay;
+
+  /// TimeShift
+  TimeShift? timeShift;
 
   /// Total storage space (byte).
   int? totalSpace;
@@ -2700,16 +3484,30 @@ class Options {
   /// Get Option value.
   T? getValue<T>(OptionNameEnum name) {
     switch (name) {
+      case OptionNameEnum.aiAutoThumbnail:
+        return aiAutoThumbnail as T;
       case OptionNameEnum.aperture:
         return aperture as T;
+      case OptionNameEnum.burstMode:
+        return burstMode as T;
+      case OptionNameEnum.burstOption:
+        return burstOption as T;
       case OptionNameEnum.cameraControlSource:
         return cameraControlSource as T;
       case OptionNameEnum.cameraMode:
         return cameraMode as T;
+      case OptionNameEnum.captureInterval:
+        return captureInterval as T;
       case OptionNameEnum.captureMode:
         return captureMode as T;
+      case OptionNameEnum.captureNumber:
+        return captureNumber as T;
       case OptionNameEnum.colorTemperature:
         return colorTemperature as T;
+      case OptionNameEnum.compositeShootingOutputInterval:
+        return compositeShootingOutputInterval as T;
+      case OptionNameEnum.compositeShootingTime:
+        return compositeShootingTime as T;
       case OptionNameEnum.dateTimeZone:
         return dateTimeZone as T;
       case OptionNameEnum.exposureCompensation:
@@ -2740,6 +3538,12 @@ class Options {
         return offDelay as T;
       case OptionNameEnum.password:
         return password as T;
+      case OptionNameEnum.powerSaving:
+        return powerSaving as T;
+      case OptionNameEnum.preset:
+        return preset as T;
+      case OptionNameEnum.previewFormat:
+        return previewFormat as T;
       case OptionNameEnum.proxy:
         return proxy as T;
       case OptionNameEnum.remainingPictures:
@@ -2748,12 +3552,16 @@ class Options {
         return remainingVideoSeconds as T;
       case OptionNameEnum.remainingSpace:
         return remainingSpace as T;
+      case OptionNameEnum.shootingMethod:
+        return shootingMethod as T;
       case OptionNameEnum.shutterSpeed:
         return shutterSpeed as T;
       case OptionNameEnum.shutterVolume:
         return shutterVolume as T;
       case OptionNameEnum.sleepDelay:
         return sleepDelay as T;
+      case OptionNameEnum.timeShift:
+        return timeShift as T;
       case OptionNameEnum.totalSpace:
         return totalSpace as T;
       case OptionNameEnum.username:
@@ -2774,8 +3582,17 @@ class Options {
     }
 
     switch (name) {
+      case OptionNameEnum.aiAutoThumbnail:
+        aiAutoThumbnail = value;
+        break;
       case OptionNameEnum.aperture:
         aperture = value;
+        break;
+      case OptionNameEnum.burstMode:
+        burstMode = value;
+        break;
+      case OptionNameEnum.burstOption:
+        burstOption = value;
         break;
       case OptionNameEnum.cameraControlSource:
         cameraControlSource = value;
@@ -2783,11 +3600,23 @@ class Options {
       case OptionNameEnum.cameraMode:
         cameraMode = value;
         break;
+      case OptionNameEnum.captureInterval:
+        captureInterval = value;
+        break;
       case OptionNameEnum.captureMode:
         captureMode = value;
         break;
+      case OptionNameEnum.captureNumber:
+        captureNumber = value;
+        break;
       case OptionNameEnum.colorTemperature:
         colorTemperature = value;
+        break;
+      case OptionNameEnum.compositeShootingOutputInterval:
+        compositeShootingOutputInterval = value;
+        break;
+      case OptionNameEnum.compositeShootingTime:
+        compositeShootingTime = value;
         break;
       case OptionNameEnum.dateTimeZone:
         dateTimeZone = value;
@@ -2834,6 +3663,15 @@ class Options {
       case OptionNameEnum.password:
         password = value;
         break;
+      case OptionNameEnum.powerSaving:
+        powerSaving = value;
+        break;
+      case OptionNameEnum.preset:
+        preset = value;
+        break;
+      case OptionNameEnum.previewFormat:
+        previewFormat = value;
+        break;
       case OptionNameEnum.proxy:
         proxy = value;
         break;
@@ -2846,6 +3684,9 @@ class Options {
       case OptionNameEnum.remainingSpace:
         remainingSpace = value;
         break;
+      case OptionNameEnum.shootingMethod:
+        shootingMethod = value;
+        break;
       case OptionNameEnum.shutterSpeed:
         shutterSpeed = value;
         break;
@@ -2854,6 +3695,9 @@ class Options {
         break;
       case OptionNameEnum.sleepDelay:
         sleepDelay = value;
+        break;
+      case OptionNameEnum.timeShift:
+        timeShift = value;
         break;
       case OptionNameEnum.totalSpace:
         totalSpace = value;

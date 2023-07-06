@@ -25,6 +25,25 @@ void main() {
     expect(await platform.getPlatformVersion(), '42');
   });
 
+  test('getThetaModel', () async {
+    const thetaModel = ThetaModel.thetaZ1;
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      return thetaModel.rawValue;
+    });
+
+    var model = await platform.getThetaModel();
+    expect(model, thetaModel);
+  });
+
+  test('getThetaModel null', () async {
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      return null;
+    });
+
+    var model = await platform.getThetaModel();
+    expect(model, null);
+  });
+
   test('getThetaInfo', () async {
     const manufacturer = 'RICOH';
     const model = 'RICOH THETA Z1';
@@ -40,6 +59,7 @@ void main() {
       '/osc/commands/execute','/osc/commands/status'];
     var endpoints = <String, int>{'httpPort': 80, 'httpUpdatesPort': 80};
     const apiLevel = [2];
+    const thetaModel = ThetaModel.thetaZ1;
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       final Map info = <String, dynamic> {
         'manufacturer': manufacturer,
@@ -55,6 +75,7 @@ void main() {
         'api': api,
         'endpoints': endpoints,
         'apiLevel': apiLevel,
+        'thetaModel': thetaModel.rawValue,
       };
       return info;
     });
@@ -74,6 +95,7 @@ void main() {
     expect(thetaInfo.endpoints.httpPort, 80);
     expect(thetaInfo.endpoints.httpUpdatesPort, 80);
     expect(thetaInfo.apiLevel, apiLevel);
+    expect(thetaInfo.thetaModel, thetaModel);
   });
 
   test('getThetaState', () async {
@@ -230,6 +252,8 @@ void main() {
         'dateTime': dateTime,
         'fileUrl': fileUrl,
         'thumbnailUrl': thumbnailUrl,
+        'codec': 'H264MP4AVC',
+        'projectionType': 'DUAL_FISHEYE',
       };
       fileList.add(info);
       fileList.add(info);
@@ -250,6 +274,8 @@ void main() {
       expect(fileInfo.dateTime, dateTime);
       expect(fileInfo.fileUrl, fileUrl);
       expect(fileInfo.thumbnailUrl, thumbnailUrl);
+      expect(fileInfo.codec, CodecEnum.h264mp4avc);
+      expect(fileInfo.projectionType, ProjectionTypeEnum.dualFisheye);
       expect(fileInfo.storageID, null);
       expect(thetaFiles.totalEntries, 10);
     }
@@ -398,12 +424,21 @@ void main() {
       'latitude': 1.0, 'longitude': 2.0, 'altitude': 3.0, 'dateTimeZone': '2022:01:01 00:01:00+09:00'
     };
     Map<String, dynamic> proxyMap = {'use': false, 'url': '', 'port': 8081, 'userid': '', 'password': ''};
+    Map<String, dynamic> timeShiftMap = {
+      'isFrontFirst': true, 'firstInterval': TimeShiftIntervalEnum.interval_5.toString(), 'secondInterval': TimeShiftIntervalEnum.interval_10.toString()
+    };
     List<List<dynamic>> data = [
+      [OptionNameEnum.aiAutoThumbnail, 'AiAutoThumbnail', AiAutoThumbnailEnum.off, 'OFF'],
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
+      [OptionNameEnum.burstMode, 'BurstMode', BurstModeEnum.on, 'ON'],
       [OptionNameEnum.cameraControlSource, 'CameraControlSource', CameraControlSourceEnum.camera, 'CAMERA'],
       [OptionNameEnum.cameraMode, 'CameraMode', CameraModeEnum.capture, 'CAPTURE'],
       [OptionNameEnum.captureMode, 'CaptureMode', CaptureModeEnum.image, 'IMAGE'],
+      [OptionNameEnum.captureInterval, 'CaptureInterval', 6, 6],
+      [OptionNameEnum.captureNumber, 'CaptureNumber', 0, 0],
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 2, 2],
+      [OptionNameEnum.compositeShootingOutputInterval, 'CompositeShootingOutputInterval', 60, 60],
+      [OptionNameEnum.compositeShootingTime, 'CompositeShootingTime', 600, 600],
       [OptionNameEnum.dateTimeZone, 'DateTimeZone', '2022:01:01 00:01:00+09:00', '2022:01:01 00:01:00+09:00'],
       [OptionNameEnum.exposureCompensation, 'ExposureCompensation', ExposureCompensationEnum.m0_3, 'M0_3'],
       [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delay1, 'DELAY_1'],
@@ -419,13 +454,18 @@ void main() {
       [OptionNameEnum.networkType, 'NetworkType', NetworkTypeEnum.client, 'CLIENT'],
       [OptionNameEnum.offDelay, 'OffDelay', OffDelayEnum.offDelay_10m, 'OFF_DELAY_10M'],
       [OptionNameEnum.password, 'Password', 'password', 'password'],
+      [OptionNameEnum.powerSaving, 'PowerSaving', PowerSavingEnum.on, 'ON'],
+      [OptionNameEnum.preset, 'Preset', PresetEnum.room, 'ROOM'],
+      [OptionNameEnum.previewFormat, 'PreviewFormat', PreviewFormatEnum.w1024_h512_f30, 'W1024_H512_F30'],
       [OptionNameEnum.proxy, 'Proxy', Proxy(false, '', 8081, '', ''), proxyMap],
       [OptionNameEnum.remainingPictures, 'RemainingPictures', 3, 3],
       [OptionNameEnum.remainingVideoSeconds, 'RemainingVideoSeconds', 4, 4],
       [OptionNameEnum.remainingSpace, 'RemainingSpace', 5, 5],
+      [OptionNameEnum.shootingMethod, 'ShootingMethod', ShootingMethodEnum.normal, 'NORMAL'],
       [OptionNameEnum.shutterSpeed, 'ShutterSpeed', ShutterSpeedEnum.shutterSpeedOneOver_10, 'SHUTTER_SPEED_ONE_OVER_10'],
       [OptionNameEnum.shutterVolume, 'ShutterVolume', 7, 7],
       [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
+      [OptionNameEnum.timeShift, 'TimeShift', TimeShift(isFrontFirst: true, firstInterval: TimeShiftIntervalEnum.interval_5, secondInterval: TimeShiftIntervalEnum.interval_10), timeShiftMap],
       [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
       [OptionNameEnum.username, 'Username', 'username', 'username'],
       [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
@@ -451,10 +491,10 @@ void main() {
     Options options = await platform.getOptions(optionNames);
 
     expect(options, isNotNull);
-    expect(options.aperture, data[0][2]);
-    expect(options.cameraControlSource, data[1][2]);
-    expect(options.cameraMode, data[2][2]);
-    expect(options.captureMode, data[3][2]);
+    expect(options.aperture, data[1][2]);
+    expect(options.cameraControlSource, data[3][2]);
+    expect(options.cameraMode, data[4][2]);
+    expect(options.captureMode, data[5][2]);
     for (int i = 0; i < data.length; i++) {
       expect(options.getValue(data[i][0]), data[i][2], reason: data[i][1]);
     }
@@ -465,11 +505,20 @@ void main() {
       'latitude': 1.0, 'longitude': 2.0, 'altitude': 3.0, 'dateTimeZone': '2022:01:01 00:01:00+09:00'
     };
     Map<String, dynamic> proxyMap = {'use': false, 'url': '', 'port': 8081, 'userid': '', 'password': ''};
+    Map<String, dynamic> timeShiftMap = {
+      'isFrontFirst': true, 'firstInterval': TimeShiftIntervalEnum.interval_5.toString(), 'secondInterval': TimeShiftIntervalEnum.interval_10.toString()
+    };
     List<List<dynamic>> data = [
+      [OptionNameEnum.aiAutoThumbnail, 'AiAutoThumbnail', AiAutoThumbnailEnum.on, 'ON'],
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
+      [OptionNameEnum.burstMode, 'BurstMode', BurstModeEnum.on, 'ON'],
       [OptionNameEnum.cameraMode, 'CameraMode', CameraModeEnum.capture, 'CAPTURE'],
       [OptionNameEnum.captureMode, 'CaptureMode', CaptureModeEnum.image, 'IMAGE'],
+      [OptionNameEnum.captureInterval, 'CaptureInterval', 4, 4],
+      [OptionNameEnum.captureNumber, 'CaptureNumber', 2, 2],
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 2, 2],
+      [OptionNameEnum.compositeShootingOutputInterval, 'CompositeShootingOutputInterval', 60, 60],
+      [OptionNameEnum.compositeShootingTime, 'CompositeShootingTime', 600, 600],
       [OptionNameEnum.dateTimeZone, 'DateTimeZone', '2022:01:01 00:01:00+09:00', '2022:01:01 00:01:00+09:00'],
       [OptionNameEnum.exposureCompensation, 'ExposureCompensation', ExposureCompensationEnum.m0_3, 'M0_3'],
       [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delay1, 'DELAY_1'],
@@ -485,13 +534,18 @@ void main() {
       [OptionNameEnum.networkType, 'NetworkType', NetworkTypeEnum.client, 'CLIENT'],
       [OptionNameEnum.offDelay, 'OffDelay', OffDelayEnum.offDelay_15m, 'OFF_DELAY_15M'],
       [OptionNameEnum.password, 'Password', 'password', 'password'],
+      [OptionNameEnum.powerSaving, 'PowerSaving', PowerSavingEnum.on, 'ON'],
+      [OptionNameEnum.preset, 'Preset', PresetEnum.room, 'ROOM'],
+      [OptionNameEnum.previewFormat, 'PreviewFormat', PreviewFormatEnum.w1024_h512_f30, 'W1024_H512_F30'],
       [OptionNameEnum.proxy, 'Proxy', Proxy(false, '', 8081, '', ''), proxyMap],
       [OptionNameEnum.remainingPictures, 'RemainingPictures', 3, 3],
       [OptionNameEnum.remainingVideoSeconds, 'RemainingVideoSeconds', 4, 4],
       [OptionNameEnum.remainingSpace, 'RemainingSpace', 5, 5],
+      [OptionNameEnum.shootingMethod, 'ShootingMethod', ShootingMethodEnum.normal, 'NORMAL'],
       [OptionNameEnum.shutterSpeed, 'ShutterSpeed', ShutterSpeedEnum.shutterSpeedOneOver_20, 'SHUTTER_SPEED_ONE_OVER_20'],
       [OptionNameEnum.shutterVolume, 'ShutterVolume', 7, 7],
       [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
+      [OptionNameEnum.timeShift, 'TimeShift', TimeShift(isFrontFirst: true, firstInterval: TimeShiftIntervalEnum.interval_5, secondInterval: TimeShiftIntervalEnum.interval_10), timeShiftMap],
       [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
       [OptionNameEnum.username, 'Username', 'username', 'username'],
       [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
@@ -781,6 +835,12 @@ void main() {
         'authMode': 'NONE',
         'connectionPriority': 1,
         'usingDhcp': true,
+        'proxy': {
+          'use': true,
+          'url': 'xxx',
+          'port': 8081,
+          'userid': 'abc'
+        },
       },
       {
         'ssid': 'ssid_test2',
@@ -791,6 +851,12 @@ void main() {
         'ipAddress': '192.168.1.2',
         'subnetMask': '255.255.255.0',
         'defaultGateway': '192.168.1.100',
+        'proxy': {
+          'use': false,
+          'url': '',
+          'port': 0,
+          'userid': ''
+        },
       },
       {
         'ssid': 'ssid_test3',
@@ -801,6 +867,12 @@ void main() {
         'ipAddress': '192.168.1.3',
         'subnetMask': '255.255.255.0',
         'defaultGateway': '192.168.1.101',
+        'proxy': {
+          'use': true,
+          'url': 'xxx',
+          'port': 8081,
+          'userid': 'abc'
+        },
       },
     ];
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
@@ -817,6 +889,10 @@ void main() {
       expect(resultList[i].ipAddress, data[i]['ipAddress']);
       expect(resultList[i].subnetMask, data[i]['subnetMask']);
       expect(resultList[i].defaultGateway, data[i]['defaultGateway']);
+      expect(resultList[i].proxy?.use, (data[i]['proxy'] as Map<String, dynamic>)['use']);
+      expect(resultList[i].proxy?.url, (data[i]['proxy'] as Map<String, dynamic>)['url']);
+      expect(resultList[i].proxy?.port, (data[i]['proxy'] as Map<String, dynamic>)['port']);
+      expect(resultList[i].proxy?.userid, (data[i]['proxy'] as Map<String, dynamic>)['userid']);
     }
   });
 
@@ -826,6 +902,7 @@ void main() {
     const authMode = AuthModeEnum.wep;
     const password = 'password1';
     const connectionPriority = 2;
+    var proxy = Proxy(true, 'https://xxx', 8081, 'abc', 'pwpwpwp111');
 
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       expect(methodCall.method, 'setAccessPointDynamically');
@@ -836,9 +913,14 @@ void main() {
       expect(arguments['authMode'], authMode.rawValue);
       expect(arguments['password'], password);
       expect(arguments['connectionPriority'], connectionPriority);
+      expect(arguments['proxy']['use'], proxy.use);
+      expect(arguments['proxy']['url'], proxy.url);
+      expect(arguments['proxy']['port'], proxy.port);
+      expect(arguments['proxy']['userid'], proxy.userid);
+      expect(arguments['proxy']['password'], proxy.password);
       return Future.value();
     });
-    await platform.setAccessPointDynamically(ssid, ssidStealth, authMode, password, connectionPriority);
+    await platform.setAccessPointDynamically(ssid, ssidStealth, authMode, password, connectionPriority, proxy);
   });
 
   test('setAccessPointStatically', () async {
@@ -850,6 +932,7 @@ void main() {
     const ipAddress = '192.168.1.2';
     const subnetMask = '255.255.255.0';
     const defaultGateway = '192.168.1.3';
+    var proxy = Proxy(true, 'https://xxx', 8081, 'abc', 'pwpwpwp111');
 
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       expect(methodCall.method, 'setAccessPointStatically');
@@ -863,9 +946,14 @@ void main() {
       expect(arguments['ipAddress'], ipAddress);
       expect(arguments['subnetMask'], subnetMask);
       expect(arguments['defaultGateway'], defaultGateway);
+      expect(arguments['proxy']['use'], proxy.use);
+      expect(arguments['proxy']['url'], proxy.url);
+      expect(arguments['proxy']['port'], proxy.port);
+      expect(arguments['proxy']['userid'], proxy.userid);
+      expect(arguments['proxy']['password'], proxy.password);
       return Future.value();
     });
-    await platform.setAccessPointStatically(ssid, ssidStealth, authMode, password, connectionPriority, ipAddress, subnetMask, defaultGateway);
+    await platform.setAccessPointStatically(ssid, ssidStealth, authMode, password, connectionPriority, ipAddress, subnetMask, defaultGateway, proxy);
   });
 
   test('deleteAccessPoint', () async {

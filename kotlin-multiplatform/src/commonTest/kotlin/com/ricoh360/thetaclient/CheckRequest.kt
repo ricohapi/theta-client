@@ -35,11 +35,16 @@ class CheckRequest {
 
         fun checkSetOptions(
             request: HttpRequestData,
+            aiAutoThumbnail: AiAutoThumbnail? = null,
             aperture: Float? = null,
             bluetoothPower: BluetoothPower? = null,
+            burstMode: BurstMode? = null,
+            burstOption: BurstOption? = null,
             cameraControlSource: CameraControlSource? = null,
             cameraMode: CameraMode? = null,
+            captureInterval: Int? = null,
             captureMode: CaptureMode? = null,
+            captureNumber: Int? = null,
             clientVersion: Int? = null,
             colorTemperature: Int? = null,
             dateTimeZone: String? = null,
@@ -56,10 +61,15 @@ class CheckRequest {
             maxRecordableTime: Int? = null,
             networkType: NetworkType? = null,
             offDelay: Int? = null,
+            powerSaving: PowerSaving? = null,
+            preset: Preset? = null,
+            previewFormat: PreviewFormat? = null,
             proxy: Proxy? = null,
+            shootingMethod: ShootingMethod? = null,
             shutterSpeed: Double? = null,
             shutterVolume: Int? = null,
             sleepDelay: Int? = null,
+            timeShift: TimeShift? = null,
             whiteBalance: WhiteBalance? = null,
             whiteBalanceAutoStrength: WhiteBalanceAutoStrength? = null,
             wlanFrequency: WlanFrequency? = null,
@@ -74,11 +84,20 @@ class CheckRequest {
             }
             val optionsRequest = js.decodeFromString<SetOptionsRequest>(body.text)
 
+            aiAutoThumbnail?.let {
+                assertEquals(optionsRequest.parameters.options._aiAutoThumbnail, it, "setOptions _aiAutoThumbnail")
+            }
             aperture?.let {
                 assertEquals(optionsRequest.parameters.options.aperture, it, "setOptions aperture")
             }
             bluetoothPower?.let {
                 assertEquals(optionsRequest.parameters.options._bluetoothPower, it, "setOptions bluetoothPower")
+            }
+            burstMode?.let {
+                assertEquals(optionsRequest.parameters.options._burstMode, it, "setOptions burstMode")
+            }
+            burstOption?.let {
+                assertEquals(optionsRequest.parameters.options._burstOption, it, "setOptions burstOption")
             }
             cameraControlSource?.let {
                 assertEquals(optionsRequest.parameters.options._cameraControlSource, it, "setOptions cameraControlSource")
@@ -86,8 +105,14 @@ class CheckRequest {
             cameraMode?.let {
                 assertEquals(optionsRequest.parameters.options._cameraMode, it, "setOptions cameraMode")
             }
+            captureInterval?.let {
+                assertEquals(optionsRequest.parameters.options.captureInterval, it, "setOptions captureInterval")
+            }
             captureMode?.let {
                 assertEquals(optionsRequest.parameters.options.captureMode, it, "setOptions captureMode")
+            }
+            captureNumber?.let {
+                assertEquals(optionsRequest.parameters.options.captureNumber, it, "setOptions captureNumber")
             }
             clientVersion?.let {
                 assertEquals(optionsRequest.parameters.options.clientVersion, it, "setOptions clientVersion")
@@ -137,8 +162,20 @@ class CheckRequest {
             offDelay?.let {
                 assertEquals(optionsRequest.parameters.options.offDelay, it, "setOptions offDelay")
             }
+            powerSaving?.let {
+                assertEquals(optionsRequest.parameters.options._powerSaving, it, "setOptions powerSaving")
+            }
+            preset?.let {
+                assertEquals(optionsRequest.parameters.options._preset, it, "setOptions preset")
+            }
+            previewFormat?.let {
+                assertEquals(optionsRequest.parameters.options.previewFormat, it, "setOptions previewFormat")
+            }
             proxy?.let {
                 assertEquals(optionsRequest.parameters.options._proxy, it, "setOptions proxy")
+            }
+            shootingMethod?.let {
+                assertEquals(optionsRequest.parameters.options._shootingMethod, it, "setOptions shootingMethod")
             }
             shutterSpeed?.let {
                 assertEquals(optionsRequest.parameters.options.shutterSpeed, it, "setOptions shutterSpeed")
@@ -148,6 +185,9 @@ class CheckRequest {
             }
             sleepDelay?.let {
                 assertEquals(optionsRequest.parameters.options.sleepDelay, it, "setOptions sleepDelay")
+            }
+            timeShift?.let {
+                assertEquals(optionsRequest.parameters.options._timeShift, it, "setOptions timeShift")
             }
             whiteBalance?.let {
                 assertEquals(optionsRequest.parameters.options.whiteBalance, it, "setOptions whiteBalance")

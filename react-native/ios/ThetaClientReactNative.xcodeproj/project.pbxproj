@@ -26,8 +26,8 @@
 		134814201AA4EA6300B7C361 /* libThetaClientReactNative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libThetaClientReactNative.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CE81D83B7C8A97F7FAAFA59 /* Pods-ThetaClientReactNative.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThetaClientReactNative.debug.xcconfig"; path = "Target Support Files/Pods-ThetaClientReactNative/Pods-ThetaClientReactNative.debug.xcconfig"; sourceTree = "<group>"; };
 		5C2D0EDC139486FC8778E75C /* Pods-ThetaClientReactNative.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThetaClientReactNative.release.xcconfig"; path = "Target Support Files/Pods-ThetaClientReactNative/Pods-ThetaClientReactNative.release.xcconfig"; sourceTree = "<group>"; };
+		9636E7362A4C5D4200D8882D /* ThetaClientReactNative.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ThetaClientReactNative.mm; sourceTree = "<group>"; };
 		B3E7B5881CC2AC0600A0062D /* ThetaClientReactNative.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThetaClientReactNative.h; sourceTree = "<group>"; };
-		B3E7B5891CC2AC0600A0062D /* ThetaClientReactNative.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThetaClientReactNative.m; sourceTree = "<group>"; };
 		F8133CD481CB10AE963C64B5 /* Pods_ThetaClientReactNative.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ThetaClientReactNative.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -55,7 +55,7 @@
 			isa = PBXGroup;
 			children = (
 				B3E7B5881CC2AC0600A0062D /* ThetaClientReactNative.h */,
-				B3E7B5891CC2AC0600A0062D /* ThetaClientReactNative.m */,
+				9636E7362A4C5D4200D8882D /* ThetaClientReactNative.mm */,
 				134814211AA4EA7D00B7C361 /* Products */,
 				5CCD595E6E5DC2E4DE6A3B39 /* Pods */,
 				E14C170C6E7AD09CDE7ABA0D /* Frameworks */,

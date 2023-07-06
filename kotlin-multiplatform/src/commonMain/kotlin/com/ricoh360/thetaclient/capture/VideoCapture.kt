@@ -2,10 +2,7 @@ package com.ricoh360.thetaclient.capture
 
 import com.ricoh360.thetaclient.ThetaApi
 import com.ricoh360.thetaclient.ThetaRepository
-import com.ricoh360.thetaclient.transferred.CaptureMode
-import com.ricoh360.thetaclient.transferred.Options
-import com.ricoh360.thetaclient.transferred.SetOptionsParams
-import com.ricoh360.thetaclient.transferred.StartCaptureParams
+import com.ricoh360.thetaclient.transferred.*
 import io.ktor.client.plugins.*
 import io.ktor.serialization.*
 import kotlinx.coroutines.CoroutineScope
@@ -103,7 +100,7 @@ class VideoCapture private constructor(private val endpoint: String, options: Op
             try {
                 ThetaApi.callSetOptionsCommand(
                     endpoint,
-                    SetOptionsParams(Options(captureMode = CaptureMode.VIDEO))
+                    SetOptionsParams(options = Options(captureMode = CaptureMode.VIDEO))
                 ).error?.let {
                     throw ThetaRepository.ThetaWebApiException(it.message)
                 }

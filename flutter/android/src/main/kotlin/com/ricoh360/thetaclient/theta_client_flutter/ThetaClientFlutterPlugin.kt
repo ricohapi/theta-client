@@ -76,6 +76,9 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     restoreSettings(result)
                 }
             }
+            "getThetaModel" -> {
+                getThetaModel(result)
+            }
             "getThetaInfo" -> {
                 scope.launch {
                     getThetaInfo(result)
@@ -275,6 +278,14 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     suspend fun initialize(call: MethodCall, result: Result) {
+        thetaRepository = null
+        previewing = false
+        photoCaptureBuilder = null
+        photoCapture = null
+        videoCaptureBuilder = null
+        videoCapture = null
+        videoCapturing = null
+
         try {
             endpoint = call.argument<String>("endpoint")!!
             val config = call.argument<Map<String, Any>>("config")?.let {
@@ -307,6 +318,14 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
+    fun getThetaModel(result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        result.success(thetaRepository?.cameraModel?.name)
+    }
+
     suspend fun getThetaInfo(result: Result) {
         if (thetaRepository == null) {
             result.error(errorCode, messageNotInit, null)
@@ -314,7 +333,11 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         }
         try {
             val response = thetaRepository!!.getThetaInfo()
-            result.success(toResult(response))
+            val thetaInfoMap = toResult(response).toMutableMap()
+            thetaRepository?.cameraModel?.let {
+                thetaInfoMap.put("thetaModel", it.name)
+            }
+            result.success(thetaInfoMap)
         } catch (e: Exception) {
             result.error(e.javaClass.simpleName, e.message, null)
         }
@@ -652,8 +675,12 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             return
         }
         try {
-            val response = thetaRepository!!.listAccessPoints()
-            result.success(toListAccessPointsResult(response))
+            val response = thetaRepository?.listAccessPoints()
+            response?.let {
+                result.success(toListAccessPointsResult(response))
+            } ?: run {
+                result.error(errorCode, messageNoResult, null)
+            }
         } catch (e: Exception) {
             result.error(e.javaClass.simpleName, e.message, null)
         }
@@ -673,7 +700,12 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             }!!
             val password = call.argument<String>("password")!!
             val connectionPriority = call.argument<Int>("connectionPriority")!!
-            thetaRepository!!.setAccessPointDynamically(ssid, ssidStealth, authMode, password, connectionPriority)
+
+            var proxy: ThetaRepository.Proxy? = null
+            (call.argument<Any>("proxy") as? Map<String, Any>)?.let {
+                proxy = toProxy(map = it)
+            }
+            thetaRepository?.setAccessPointDynamically(ssid, ssidStealth, authMode, password, connectionPriority, proxy)
             result.success(null)
         } catch (e: Exception) {
             result.error(e.javaClass.simpleName, e.message, null)
@@ -697,7 +729,12 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             val ipAddress = call.argument<String>("ipAddress")!!
             val subnetMask = call.argument<String>("subnetMask")!!
             val defaultGateway = call.argument<String>("defaultGateway")!!
-            thetaRepository!!.setAccessPointStatically(ssid, ssidStealth, authMode, password, connectionPriority, ipAddress, subnetMask, defaultGateway)
+
+            var proxy: ThetaRepository.Proxy? = null
+            (call.argument<Any>("proxy") as? Map<String, Any>)?.let {
+                proxy = toProxy(map = it)
+            }
+            thetaRepository?.setAccessPointStatically(ssid, ssidStealth, authMode, password, connectionPriority, ipAddress, subnetMask, defaultGateway, proxy)
             result.success(null)
         } catch (e: Exception) {
             result.error(e.javaClass.simpleName, e.message, null)
@@ -711,7 +748,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         }
         try {
             val params = call.arguments as String
-            thetaRepository!!.deleteAccessPoint(params)
+            thetaRepository?.deleteAccessPoint(params)
             result.success(null)
         } catch (e: Exception) {
             result.error(e.javaClass.simpleName, e.message, null)

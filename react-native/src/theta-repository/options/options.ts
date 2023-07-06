@@ -1,8 +1,18 @@
+import type { AiAutoThumbnailEnum } from './option-ai-auto-thumbnail';
+import type { BurstModeEnum } from './option-burst-mode';
+import type { BurstOption } from './option-burst-option';
 import type { CameraControlSourceEnum } from './option-camera-control-source';
 import type { CameraModeEnum } from './option-camera-mode';
+import type { CaptureModeEnum } from './option-capture-mode';
+import type { FilterEnum } from './option-filter';
 import type { NetworkTypeEnum } from './option-network-type';
+import type { PowerSavingEnum } from './option-power-saving';
+import type { PresetEnum } from './option-preset';
+import type { PreviewFormatEnum } from './option-preview-format';
 import type { Proxy } from './option-proxy';
+import type { ShootingMethodEnum } from './option-shooting-method';
 import type { ShutterSpeedEnum } from './option-shutter-speed';
+import type { TimeShift } from './option-time-shift';
 import type { WhiteBalanceAutoStrengthEnum } from './option-white-balance-auto-strength';
 import type { WlanFrequencyEnum } from './option-wlan-frequency';
 
@@ -36,18 +46,6 @@ export const BluetoothPowerEnum = {
 /** type definition of BluetoothPowerEnum */
 export type BluetoothPowerEnum =
   typeof BluetoothPowerEnum[keyof typeof BluetoothPowerEnum];
-
-/** Shooting mode. */
-export const CaptureModeEnum = {
-  /** Still image capture mode */
-  IMAGE: 'IMAGE',
-  /** Video capture mode */
-  VIDEO: 'VIDEO',
-} as const;
-
-/** type definition of CaptureModeEnum */
-export type CaptureModeEnum =
-  typeof CaptureModeEnum[keyof typeof CaptureModeEnum];
 
 /** Exposure compensation (EV). */
 export const ExposureCompensationEnum = {
@@ -200,19 +198,6 @@ export type PhotoFileFormatEnum =
 /** type definition of VideoFileFormatEnum */
 export type VideoFileFormatEnum =
   typeof VideoFileFormatEnum[keyof typeof VideoFileFormatEnum];
-
-/** Image processing filter. */
-export const FilterEnum = {
-  /** No filter. */
-  OFF: 'OFF',
-  /** Noise reduction. */
-  NOISE_REDUCTION: 'NOISE_REDUCTION',
-  /** HDR. */
-  HDR: 'HDR',
-} as const;
-
-/** type definition of FilterEnum */
-export type FilterEnum = typeof FilterEnum[keyof typeof FilterEnum];
 
 /** GPS information */
 export type GpsInfo = {
@@ -452,18 +437,32 @@ export type WhiteBalanceEnum =
 
 /** Camera setting options name. */
 export const OptionNameEnum = {
+  /** _aiAutoThumbnail */
+  AiAutoThumbnail: 'AiAutoThumbnail',
   /** aperture */
   Aperture: 'Aperture',
   /** _bluetoothPower*/
   BluetoothPower: 'BluetoothPower',
+  /** _burstMode*/
+  BurstMode: 'BurstMode',
+  /** _burstOption*/
+  BurstOption: 'BurstOption',
   /** _cameraControlSource */
   CameraControlSource: 'CameraControlSource',
   /** cameraMode */
   CameraMode: 'CameraMode',
+  /** captureInterval */
+  CaptureInterval: 'CaptureInterval',
   /** captureMode */
   CaptureMode: 'CaptureMode',
+  /** captureNumber */
+  CaptureNumber: 'CaptureNumber',
   /** colorTemperature */
   ColorTemperature: 'ColorTemperature',
+  /** _compositeShootingOutputInterval */
+  CompositeShootingOutputInterval: 'CompositeShootingOutputInterval',
+  /** _compositeShootingTime */
+  CompositeShootingTime: 'CompositeShootingTime',
   /** dateTimeZone */
   DateTimeZone: 'DateTimeZone',
   /** exposureCompensation */
@@ -494,8 +493,16 @@ export const OptionNameEnum = {
   OffDelay: 'OffDelay',
   /** password */
   Password: 'Password',
+  /** powerSaving */
+  PowerSaving: 'PowerSaving',
+  /** preset */
+  Preset: 'Preset',
+  /** previewFormat */
+  PreviewFormat: 'PreviewFormat',
   /** proxy */
   Proxy: 'Proxy',
+  /** shootingMethod */
+  ShootingMethod: 'ShootingMethod',
   /** shutterSpeed */
   ShutterSpeed: 'ShutterSpeed',
   /** sleepDelay */
@@ -506,6 +513,8 @@ export const OptionNameEnum = {
   RemainingVideoSeconds: 'RemainingVideoSeconds',
   /** remainingSpace */
   RemainingSpace: 'RemainingSpace',
+  /** timeShift */
+  TimeShift: 'TimeShift',
   /** totalSpace */
   TotalSpace: 'TotalSpace',
   /** shutterVolume */
@@ -526,18 +535,83 @@ export type OptionNameEnum =
 
 /** camera setting options */
 export type Options = {
+  /** AI auto thumbnail setting. */
+  aiAutoThumbnail?: AiAutoThumbnailEnum;
   /** Aperture value. */
   aperture?: ApertureEnum;
   /** BluetoothPower */
   bluetoothPower?: BluetoothPowerEnum;
+  /** BurstMode */
+  burstMode?: BurstModeEnum;
+  /** BurstOption */
+  burstOption?: BurstOption;
   /** camera control source. */
   cameraControlSource?: CameraControlSourceEnum;
   /** Camera mode. */
   cameraMode?: CameraModeEnum;
+  /**
+   * Shooting interval (sec.) for interval shooting.
+   *
+   * ### Support value
+   * The value that can be set differs depending on the image format ([fileFormat]) to be shot.
+   * #### For RICOH THETA X or later
+   * | Image format | Image size  | Support value |
+   * | ------------ | ----------- | ------------- |
+   * | JPEG         | 11008 x 5504 <br>5504 x 2752 | Minimum value(minInterval):6 <br>Maximum value(maxInterval):3600 |
+   *
+   * #### For RICOH THETA Z1
+   * | Image format | Image size  | Support value |
+   * | ------------ | ----------- | ------------- |
+   * | JPEG         | 6720 x 3360 | Minimum value(minInterval):6 <br>Maximum value(maxInterval):3600 |
+   * | RAW+         | 6720 x 3360 | Minimum value(minInterval):10 <br>Maximum value(maxInterval):3600 |
+   *
+   * #### For RICOH THETA V
+   * | Image format | Image size  | Support value |
+   * | ------------ | ----------- | ------------- |
+   * | JPEG         | 5376 x 2688 | Minimum value(minInterval):4 <br>Maximum value(maxInterval):3600 |
+   *
+   * #### For RICOH THETA S or SC
+   * | Image format | Image size  | Support value |
+   * | ------------ | ----------- | ------------- |
+   * | JPEG         | 5376 x 2688 | Minimum value(minInterval):8 <br>Maximum value(maxInterval):3600 |
+   * | JPEG         | 2048 x 1024 | Minimum value(minInterval):5 <br>Maximum value(maxInterval):3600 |
+   */
+  captureInterval?: number;
   /** Shooting mode. */
   captureMode?: CaptureModeEnum;
+  /**
+   * Number of shots for interval shooting.
+   *
+   * ### Support value
+   * - 0: Unlimited (_limitless)
+   * - 2: Minimum value (minNumber)
+   * - 9999: Maximum value (maxNumber)
+   */
+  captureNumber?: number;
   /** Color temperature of the camera (Kelvin). */
   colorTemperature?: number;
+  /**
+   * In-progress save interval for interval composite shooting (sec).
+   *
+   * 0 (no saving), 60 to 600. In 60-second units.
+   *
+   * For
+   * RICOH THETA Z1
+   * RICOH THETA SC firmware v1.10 or later
+   * RICOH THETA S firmware v01.82 or later
+   */
+  compositeShootingOutputInterval?: number;
+  /**
+   * Shooting time for interval composite shooting (sec).
+   *
+   * 600 to 86400. In 600-second units.
+   *
+   * For
+   * RICOH THETA Z1
+   * RICOH THETA SC firmware v1.10 or later
+   * RICOH THETA S firmware v01.82 or later
+   */
+  compositeShootingTime?: number;
   /** Current system time of RICOH THETA. Setting another options will result in an error. */
   dateTimeZone?: string;
   /** Exposure compensation (EV). */
@@ -568,6 +642,12 @@ export type Options = {
   offDelay?: OffDelayEnum;
   /** Password used for digest authentication when _networkType is set to client mode. */
   password?: String;
+  /** Power saving mode */
+  powerSaving?: PowerSavingEnum;
+  /** Preset mode */
+  preset?: PresetEnum;
+  /** Format of live view  */
+  previewFormat?: PreviewFormatEnum;
   /** Proxy information to be used when wired LAN is enabled. */
   proxy?: Proxy;
   /** The estimated remaining number of shots for the current shooting settings. */
@@ -576,6 +656,8 @@ export type Options = {
   remainingVideoSeconds?: number;
   /** Remaining usable storage space (byte). */
   remainingSpace?: number;
+  /** Shooting method for My Settings mode. In RICOH THETA X, it is used outside of MySetting.  */
+  shootingMethod?: ShootingMethodEnum;
   /**
    * Shutter speed (sec).
    *
@@ -587,6 +669,8 @@ export type Options = {
   shutterVolume?: number;
   /** Length of standby time before the camera enters the sleep mode. */
   sleepDelay?: SleepDelayEnum;
+  /** Time shift shooting */
+  timeShift?: TimeShift;
   /** Total storage space (byte). */
   totalSpace?: number;
   /** User name used for digest authentication when _networkType is set to client mode. */

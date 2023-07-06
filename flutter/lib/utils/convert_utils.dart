@@ -2,16 +2,59 @@ import 'package:theta_client_flutter/digest_auth.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
 class ConvertUtils {
+  static BurstOption? convertBurstOption(Map<dynamic, dynamic>? data) {
+    if (data == null) {
+      return null;
+    }
+
+    var burstOption = BurstOption(
+      BurstCaptureNumEnum.getValue(data['burstCaptureNum']),
+      BurstBracketStepEnum.getValue(data['burstBracketStep']),
+      BurstCompensationEnum.getValue(data['burstCompensation']),
+      BurstMaxExposureTimeEnum.getValue(data['burstMaxExposureTime']),
+      BurstEnableIsoControlEnum.getValue(data['burstEnableIsoControl']),
+      BurstOrderEnum.getValue(data['burstOrder']),
+    );
+    return burstOption;
+  }
+
+  static Map<String, dynamic> convertBurstOptionParam(BurstOption burstOption) {
+    return {
+      'burstCaptureNum': burstOption.burstCaptureNum?.rawValue,
+      'burstBracketStep': burstOption.burstBracketStep?.rawValue,
+      'burstCompensation': burstOption.burstCompensation?.rawValue,
+      'burstMaxExposureTime': burstOption.burstMaxExposureTime?.rawValue,
+      'burstEnableIsoControl': burstOption.burstEnableIsoControl?.rawValue,
+      'burstOrder': burstOption.burstOrder?.rawValue,
+    };
+  }
+
   static ThetaFiles convertThetaFiles(Map<dynamic, dynamic> data) {
     var inputList = data['fileList'] as List<dynamic>;
     var fileList = List<FileInfo>.empty(growable: true);
     for (Map<dynamic, dynamic> element in inputList.cast<Map<dynamic, dynamic>>()) {
       var info = FileInfo(
         element['name'],
+        element['fileUrl'],
         element['size'],
         element['dateTime'],
-        element['fileUrl'],
+        element['lat'],
+        element['lng'],
+        element['width'],
+        element['height'],
         element['thumbnailUrl'],
+        element['intervalCaptureGroupId'],
+        element['compositeShootingGroupId'],
+        element['autoBracketGroupId'],
+        element['recordTime'],
+        element['isProcessed'],
+        element['previewUrl'],
+        (element['codec'] != null) ? CodecEnum.getValue(element['codec'] as String) : null,
+        (element['projectionType'] != null) ? ProjectionTypeEnum.getValue(element['projectionType'] as String) : null,
+        element['continuousShootingGroupId'],
+        element['frameRate'],
+        element['favorite'],
+        element['imageDescription'],
         element['storageID']
       );
       fileList.add(info);
@@ -45,13 +88,14 @@ class ConvertUtils {
       data['uptime'],
       apiList,
       endpoints,
-      apiLevelList
+      apiLevelList,
+      ThetaModel.getValue(data['thetaModel'])
     );
     return thetaInfo;
   }
 
   static ThetaState convertThetaState(Map<dynamic, dynamic> data) {
-    var thetaInfo = ThetaState(
+    var thetaState = ThetaState(
       data['fingerprint'],
       data['batteryLevel'],
       data['storageUri'],
@@ -73,7 +117,7 @@ class ConvertUtils {
       ConvertUtils.toCameraErrorList(data['cameraError']),
       data['isBatteryInsert'],
     );
-    return thetaInfo;
+    return thetaState;
   }
 
   static Map<String, dynamic> convertGpsInfoParam(GpsInfo gpsInfo) {
@@ -127,7 +171,27 @@ class ConvertUtils {
     };
   }
 
-  static Proxy convertProxy(Map<dynamic, dynamic> data) {
+  static Map<String, dynamic> convertTimeShiftParam(TimeShift timeShift) {
+    var map = <String, dynamic>{};
+    if(timeShift.isFrontFirst != null) map['isFrontFirst'] = timeShift.isFrontFirst;
+    if(timeShift.firstInterval != null) map['firstInterval'] = timeShift.firstInterval.toString();
+    if(timeShift.secondInterval != null) map['secondInterval'] = timeShift.secondInterval.toString();
+    return map;
+  }
+
+  static TimeShift convertTimeShift(Map<dynamic, dynamic> data) {
+    var timeShift = TimeShift();
+    if(data['isFrontFirst'] != null) timeShift.isFrontFirst = data['isFrontFirst'];
+    if(data['firstInterval'] != null) timeShift.firstInterval = TimeShiftIntervalEnum.getValue(data['firstInterval']);
+    if(data['secondInterval'] != null) timeShift.secondInterval = TimeShiftIntervalEnum.getValue(data['secondInterval']);
+    return timeShift;
+  }
+
+  static Proxy? convertProxy(Map<dynamic, dynamic>? data) {
+    if (data == null) {
+      return null;
+    }
+
     var proxy = Proxy(
       data['use'] ?? false,
       data['url'],
@@ -143,9 +207,17 @@ class ConvertUtils {
     for (var entry in data.entries) {
       final name = OptionNameEnum.getValue(entry.key)!;
       switch (name) {
-        
+        case OptionNameEnum.aiAutoThumbnail:
+          result.aiAutoThumbnail = AiAutoThumbnailEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.aperture:
           result.aperture = ApertureEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.burstMode:
+          result.burstMode = BurstModeEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.burstOption:
+          result.burstOption = convertBurstOption(entry.value);
           break;
         case OptionNameEnum.cameraControlSource:
           result.cameraControlSource = CameraControlSourceEnum.getValue(entry.value);
@@ -153,11 +225,23 @@ class ConvertUtils {
         case OptionNameEnum.cameraMode:
           result.cameraMode = CameraModeEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.captureInterval:
+          result.captureInterval = entry.value;
+          break;
         case OptionNameEnum.captureMode:
           result.captureMode = CaptureModeEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.captureNumber:
+          result.captureNumber = entry.value;
+          break;
         case OptionNameEnum.colorTemperature:
           result.colorTemperature = entry.value;
+          break;
+        case OptionNameEnum.compositeShootingOutputInterval:
+          result.compositeShootingOutputInterval = entry.value;
+          break;
+        case OptionNameEnum.compositeShootingTime:
+          result.compositeShootingTime = entry.value;
           break;
         case OptionNameEnum.dateTimeZone:
           result.dateTimeZone = entry.value;
@@ -204,6 +288,15 @@ class ConvertUtils {
         case OptionNameEnum.password:
           result.password = entry.value;
           break;
+        case OptionNameEnum.powerSaving:
+          result.powerSaving = PowerSavingEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.preset:
+          result.preset = PresetEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.previewFormat:
+          result.previewFormat = PreviewFormatEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.proxy:
           result.proxy = convertProxy(entry.value);
           break;
@@ -216,6 +309,9 @@ class ConvertUtils {
         case OptionNameEnum.remainingSpace:
           result.remainingSpace = entry.value;
           break;
+        case OptionNameEnum.shootingMethod:
+          result.shootingMethod = ShootingMethodEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.shutterSpeed:
           result.shutterSpeed = ShutterSpeedEnum.getValue(entry.value);
           break;
@@ -224,6 +320,9 @@ class ConvertUtils {
           break;
         case OptionNameEnum.sleepDelay:
           result.sleepDelay = SleepDelayEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.timeShift:
+          result.timeShift = convertTimeShift(entry.value);
           break;
         case OptionNameEnum.totalSpace:
           result.totalSpace = entry.value;
@@ -247,7 +346,7 @@ class ConvertUtils {
 
   static Map<String, dynamic> convertSetOptionsParam(Options options) {
     Map<String, dynamic> result = {};
-    for (var element in OptionNameEnum.values) { 
+    for (var element in OptionNameEnum.values) {
       var value = options.getValue(element);
       if (value != null) {
         result[element.rawValue] = convertOptionValueToMapValue(value);
@@ -257,8 +356,14 @@ class ConvertUtils {
   }
 
   static dynamic convertOptionValueToMapValue(dynamic value) {
-    if (value is ApertureEnum) {
+    if (value is AiAutoThumbnailEnum) {
       return value.rawValue;
+    } else if (value is ApertureEnum) {
+      return value.rawValue;
+    } else if (value is BurstModeEnum) {
+      return value.rawValue;
+    } else if (value is BurstOption) {
+      return convertBurstOptionParam(value);
     } else if (value is CameraControlSourceEnum) {
       return value.rawValue;
     } else if (value is CameraModeEnum) {
@@ -287,6 +392,14 @@ class ConvertUtils {
       return value.rawValue;
     } else if (value is OffDelayEnum) {
       return value.rawValue;
+    } else if (value is PowerSavingEnum) {
+      return value.rawValue;
+    } else if (value is PresetEnum) {
+      return value.rawValue;
+    } else if (value is PreviewFormatEnum) {
+      return value.rawValue;
+    } else if (value is ShootingMethodEnum) {
+      return value.rawValue;
     } else if (value is ShutterSpeedEnum) {
       return value.rawValue;
     } else if (value is SleepDelayEnum) {
@@ -303,6 +416,8 @@ class ConvertUtils {
       return convertGpsInfoParam(value);
     } else if (value is Proxy) {
       return convertProxyParam(value);
+    } else if (value is TimeShift) {
+      return convertTimeShiftParam(value);
     }
     return null;
   }
@@ -390,16 +505,17 @@ class ConvertUtils {
   static List<AccessPoint> toAccessPointList(List<Map<dynamic, dynamic>> data) {
     var accessPointList = List<AccessPoint>.empty(growable: true);
     for (Map<dynamic, dynamic> element in data) {
+      var authModeValue = AuthModeEnum.getValue(element['authMode']);
       var accessPoint = AccessPoint(
-        element['ssid'],
-        element['ssidStealth'],
-        AuthModeEnum.getValue(element['authMode'])!,
-        element['connectionPriority'],
-        element['usingDhcp'],
-        element['ipAddress'],
-        element['subnetMask'],
-        element['defaultGateway']
-      );
+          element['ssid'],
+          element['ssidStealth'],
+          (authModeValue != null) ? authModeValue : AuthModeEnum.none,
+          element['connectionPriority'],
+          element['usingDhcp'],
+          element['ipAddress'],
+          element['subnetMask'],
+          element['defaultGateway'],
+          convertProxy(element['proxy']));
       accessPointList.add(accessPoint);
     }
     return accessPointList;

@@ -1,13 +1,22 @@
 import { AccessPoint, AuthModeEnum } from './access-point';
 import type { FileTypeEnum, StorageEnum, ThetaFiles } from './theta-files';
 import type { ThetaState } from './theta-state';
-import type { ThetaInfo } from './theta-info';
+import type { ThetaInfo, ThetaModel } from './theta-info';
 import type { MetaInfo } from './theta-meta';
 import type { PluginInfo } from './theta-plugin';
 
 import { NativeModules } from 'react-native';
-import type { OptionNameEnum, Options, CaptureModeEnum } from './options';
-import { PhotoCaptureBuilder, VideoCaptureBuilder } from '../capture';
+import type {
+  OptionNameEnum,
+  Options,
+  CaptureModeEnum,
+  Proxy,
+} from './options';
+import {
+  PhotoCaptureBuilder,
+  VideoCaptureBuilder,
+  TimeShiftCaptureBuilder,
+} from '../capture';
 import type { ThetaConfig } from './theta-config';
 import type { ThetaTimeout } from './theta-timeout';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
@@ -30,6 +39,16 @@ export function initialize(
 }
 
 /**
+ * Returns whether it is initialized or not.
+ *
+ * @function isInitialized
+ * @return promise of boolean result
+ **/
+export function isInitialized(): Promise<boolean> {
+  return ThetaClientReactNative.isInitialized();
+}
+
+/**
  * Reset all device settings and capture settings.
  * After reset, the camera will be restarted.
  *
@@ -49,6 +68,17 @@ export function reset(): Promise<boolean> {
 export function getPhotoCaptureBuilder(): PhotoCaptureBuilder {
   ThetaClientReactNative.getPhotoCaptureBuilder();
   return new PhotoCaptureBuilder();
+}
+
+/**
+ * Get TimeShiftCaptureBuilder for time-shift.
+ *
+ * @function getTimeShiftCaptureBuilder
+ * @return created TimeShiftCaptureBuilder
+ */
+export function getTimeShiftCaptureBuilder(): TimeShiftCaptureBuilder {
+  ThetaClientReactNative.getTimeShiftCaptureBuilder();
+  return new TimeShiftCaptureBuilder();
 }
 
 /**
@@ -157,6 +187,24 @@ export function finishWlan(): Promise<boolean> {
  */
 export function setBluetoothDevice(uuid: string): Promise<String> {
   return ThetaClientReactNative.setBluetoothDevice(uuid);
+}
+
+/**
+ * Returns the connected THETA model.
+ *
+ * @function getThetaModel
+ * @return promise of THETA model
+ **/
+export function getThetaModel(): Promise<ThetaModel | undefined> {
+  return new Promise<ThetaModel | undefined>(async (resolve, reject) => {
+    await ThetaClientReactNative.getThetaModel()
+      .then((result?: string) => {
+        resolve((result as ThetaModel) ?? undefined);
+      })
+      .catch((error: any) => {
+        reject(error);
+      });
+  });
 }
 
 /**
@@ -303,6 +351,7 @@ export function listAccessPoints(): Promise<AccessPoint[]> {
  * @param {AuthModeEnum} authMode Authentication mode.
  * @param {string} password Password. If authMode is "NONE", pass empty String.
  * @param {number} connectionPriority Connection priority 1 to 5.
+ * @param {Proxy} proxy Proxy information to be used for the access point.
  * @return promise of boolean result
  */
 export function setAccessPointDynamically(
@@ -310,14 +359,16 @@ export function setAccessPointDynamically(
   ssidStealth: boolean = false,
   authMode: AuthModeEnum = AuthModeEnum.NONE,
   password: string = '',
-  connectionPriority: number = 1
+  connectionPriority: number = 1,
+  proxy?: Proxy
 ): Promise<boolean> {
   return ThetaClientReactNative.setAccessPointDynamically(
     ssid,
     ssidStealth,
     authMode,
     password,
-    connectionPriority
+    connectionPriority,
+    proxy
   );
 }
 
@@ -333,6 +384,7 @@ export function setAccessPointDynamically(
  * @param {string} ipAddress IP address assigns to Theta.
  * @param {string} subnetMask Subnet mask.
  * @param {string} defaultGateway Default gateway.
+ * @param {Proxy} proxy Proxy information to be used for the access point.
  * @return promise of boolean result
  */
 export function setAccessPointStatically(
@@ -343,7 +395,8 @@ export function setAccessPointStatically(
   connectionPriority: number = 1,
   ipAddress: string,
   subnetMask: string,
-  defaultGateway: string
+  defaultGateway: string,
+  proxy?: Proxy
 ): Promise<boolean> {
   return ThetaClientReactNative.setAccessPointStatically(
     ssid,
@@ -353,7 +406,8 @@ export function setAccessPointStatically(
     connectionPriority,
     ipAddress,
     subnetMask,
-    defaultGateway
+    defaultGateway,
+    proxy
   );
 }
 

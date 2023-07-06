@@ -71,15 +71,53 @@ fun toResult(fileInfoList: List<FileInfo>): List<Map<String, Any>> {
     fileInfoList.forEach {
         val map = mutableMapOf<String, Any>(
             "name" to it.name,
+            "fileUrl" to it.fileUrl,
             "size" to it.size,
             "dateTime" to it.dateTime,
-            "fileUrl" to it.fileUrl,
             "thumbnailUrl" to it.thumbnailUrl,
         )
+        it.lat?.run { map.put("lat", this) }
+        it.lng?.run { map.put("lng", this) }
+        it.width?.run { map.put("width", this) }
+        it.height?.run { map.put("height", this) }
+        it.intervalCaptureGroupId?.run { map.put("intervalCaptureGroupId", this) }
+        it.compositeShootingGroupId?.run { map.put("compositeShootingGroupId", this) }
+        it.autoBracketGroupId?.run { map.put("autoBracketGroupId", this) }
+        it.recordTime?.run { map.put("recordTime", this) }
+        it.isProcessed?.run { map.put("isProcessed", this) }
+        it.previewUrl?.run { map.put("previewUrl", this) }
+        it.codec?.run { map.put("codec", this.name) }
+        it.projectionType?.run { map.put("projectionType", this.name) }
+        it.continuousShootingGroupId?.run { map.put("continuousShootingGroupId", this) }
+        it.frameRate?.run { map.put("frameRate", this) }
+        it.favorite?.run { map.put("favorite", this) }
+        it.imageDescription?.run { map.put("imageDescription", this) }
         it.storageID?.run { map.put("storageID", this) }
         result.add(map)
     }
     return result
+}
+
+fun toBurstOption(map: Map<String, Any>): BurstOption {
+    return BurstOption(
+        burstCaptureNum = (map["burstCaptureNum"] as? String)?.let { BurstCaptureNumEnum.valueOf(it) },
+        burstBracketStep = (map["burstBracketStep"] as? String)?.let { BurstBracketStepEnum.valueOf(it) },
+        burstCompensation = (map["burstCompensation"] as? String)?.let { BurstCompensationEnum.valueOf(it) },
+        burstMaxExposureTime = (map["burstMaxExposureTime"] as? String)?.let { BurstMaxExposureTimeEnum.valueOf(it) },
+        burstEnableIsoControl = (map["burstEnableIsoControl"] as? String)?.let { BurstEnableIsoControlEnum.valueOf(it) },
+        burstOrder = (map["burstOrder"] as? String)?.let { BurstOrderEnum.valueOf(it) }
+    )
+}
+
+fun toResult(burstOption: BurstOption): Map<String, Any?> {
+    return mapOf(
+        "burstCaptureNum" to burstOption.burstCaptureNum?.value?.name,
+        "burstBracketStep" to burstOption.burstBracketStep?.value?.name,
+        "burstCompensation" to burstOption.burstCompensation?.value?.name,
+        "burstMaxExposureTime" to burstOption.burstMaxExposureTime?.value?.name,
+        "burstEnableIsoControl" to burstOption.burstEnableIsoControl?.value?.name,
+        "burstOrder" to burstOption.burstOrder?.value?.name
+    )
 }
 
 fun toGpsInfo(map: Map<String, Any>): GpsInfo {
@@ -99,6 +137,20 @@ fun toProxy(map: Map<String, Any>): Proxy {
         userid = map["userid"] as? String,
         password = map["password"] as? String
     )
+}
+
+fun toTimeShift(map: Map<String, Any>): TimeShiftSetting {
+    var timeShift = TimeShiftSetting()
+    map["isFrontFirst"]?.let {
+        timeShift.isFrontFirst = it as Boolean
+    }
+    map["firstInterval"]?.let {
+        timeShift.firstInterval = TimeShiftIntervalEnum.valueOf(it as String)
+    }
+    map["secondInterval"]?.let {
+        timeShift.secondInterval = TimeShiftIntervalEnum.valueOf(it as String)
+    }
+    return timeShift
 }
 
 fun <T> setCaptureBuilderParams(call: MethodCall, builder: Capture.Builder<T>) {
@@ -200,11 +252,29 @@ fun toResult(proxy: Proxy): Map<String, Any?> {
     )
 }
 
+fun toResult(timeShift: TimeShiftSetting): Map<String, Any> {
+    val result = mutableMapOf<String, Any>()
+    timeShift.isFrontFirst?.let { value ->
+        result["isFrontFirst"] = value
+    }
+    timeShift.firstInterval?.let { value ->
+        result["firstInterval"] = value.toString()
+    }
+    timeShift.secondInterval?.let { value ->
+        result["secondInterval"] = value.toString()
+    }
+    return result
+}
+
 fun toResult(options: Options): Map<String, Any> {
     val result = mutableMapOf<String, Any>()
 
     val valueOptions = listOf(
+        OptionNameEnum.CaptureInterval,
+        OptionNameEnum.CaptureNumber,
         OptionNameEnum.ColorTemperature,
+        OptionNameEnum.CompositeShootingOutputInterval,
+        OptionNameEnum.CompositeShootingTime,
         OptionNameEnum.DateTimeZone,
         OptionNameEnum.IsGpsOn,
         OptionNameEnum.Password,
@@ -216,13 +286,21 @@ fun toResult(options: Options): Map<String, Any> {
         OptionNameEnum.Username
     )
     OptionNameEnum.values().forEach { name ->
-        if (name == OptionNameEnum.GpsInfo) {
+        if (name == OptionNameEnum.BurstOption) {
+            options.getValue<BurstOption>(OptionNameEnum.BurstOption)?.let { burstOption ->
+                result[OptionNameEnum.BurstOption.name] = toResult(burstOption)
+            }
+        } else if (name == OptionNameEnum.GpsInfo) {
             options.getValue<GpsInfo>(OptionNameEnum.GpsInfo)?.let { gpsInfo ->
                 result[OptionNameEnum.GpsInfo.name] = toResult(gpsInfo)
             }
         } else if (name == OptionNameEnum.Proxy) {
             options.getValue<Proxy>(OptionNameEnum.Proxy)?.let { proxy ->
                 result[OptionNameEnum.Proxy.name] = toResult(proxy)
+            }
+        } else if (name == OptionNameEnum.TimeShift) {
+            options.getValue<TimeShiftSetting>(OptionNameEnum.TimeShift)?.let { timeShift ->
+                result[OptionNameEnum.TimeShift.name] = toResult(timeShift)
             }
         } else if (valueOptions.contains(name)) {
             addOptionsValueToMap<Any>(options, name, result)
@@ -257,7 +335,11 @@ fun toSetOptionsParam(data: Map<String, Any>): Options {
 
 fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
     val valueOptions = listOf(
+        OptionNameEnum.CaptureInterval,
+        OptionNameEnum.CaptureNumber,
         OptionNameEnum.ColorTemperature,
+        OptionNameEnum.CompositeShootingOutputInterval,
+        OptionNameEnum.CompositeShootingTime,
         OptionNameEnum.DateTimeZone,
         OptionNameEnum.IsGpsOn,
         OptionNameEnum.Password,
@@ -274,12 +356,18 @@ fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
             optionValue = value.toLong()
         }
         options.setValue(name, optionValue)
+    } else if (name == OptionNameEnum.BurstOption) {
+        @Suppress("UNCHECKED_CAST")
+        options.setValue(name, toBurstOption(value as Map<String, Any>))
     } else if (name == OptionNameEnum.GpsInfo) {
         @Suppress("UNCHECKED_CAST")
         options.setValue(name, toGpsInfo(value as Map<String, Any>))
     } else if (name == OptionNameEnum.Proxy) {
         @Suppress("UNCHECKED_CAST")
         options.setValue(name, toProxy(value as Map<String, Any>))
+    } else if (name == OptionNameEnum.TimeShift) {
+        @Suppress("UNCHECKED_CAST")
+        options.setValue(name, toTimeShift(value as Map<String, Any>))
     } else {
         getOptionValueEnum(name, value as String)?.let {
             options.setValue(name, it)
@@ -289,7 +377,9 @@ fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
 
 fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
     return when (name) {
+        OptionNameEnum.AiAutoThumbnail -> AiAutoThumbnailEnum.values().find { it.name == valueName }
         OptionNameEnum.Aperture -> ApertureEnum.values().find { it.name == valueName }
+        OptionNameEnum.BurstMode -> BurstModeEnum.values().find { it.name == valueName }
         OptionNameEnum.CameraControlSource -> CameraControlSourceEnum.values().find { it.name == valueName }
         OptionNameEnum.CameraMode -> CameraModeEnum.values().find { it.name == valueName }
         OptionNameEnum.CaptureMode -> CaptureModeEnum.values().find { it.name == valueName }
@@ -304,6 +394,10 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
         OptionNameEnum.MaxRecordableTime -> MaxRecordableTimeEnum.values().find { it.name == valueName }
         OptionNameEnum.NetworkType -> NetworkTypeEnum.values().find { it.name == valueName }
         OptionNameEnum.OffDelay -> OffDelayEnum.values().find { it.name == valueName }
+        OptionNameEnum.PowerSaving -> PowerSavingEnum.values().find { it.name == valueName }
+        OptionNameEnum.Preset -> PresetEnum.values().find { it.name == valueName }
+        OptionNameEnum.PreviewFormat -> PreviewFormatEnum.values().find { it.name == valueName }
+        OptionNameEnum.ShootingMethod -> ShootingMethodEnum.values().find { it.name == valueName }
         OptionNameEnum.ShutterSpeed -> ShutterSpeedEnum.values().find { it.name == valueName }
         OptionNameEnum.SleepDelay -> SleepDelayEnum.values().find { it.name == valueName }
         OptionNameEnum.WhiteBalance -> WhiteBalanceEnum.values().find { it.name == valueName }
@@ -400,6 +494,9 @@ fun toListAccessPointsResult(accessPointList: List<AccessPoint>): List<Map<Strin
         }
         accessPoint.defaultGateway?.let {
             result["defaultGateway"] = it
+        }
+        accessPoint.proxy?.let {
+            result["proxy"] = toResult(proxy = it)
         }
         resultList.add(result)
     }

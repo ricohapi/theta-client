@@ -143,6 +143,8 @@ class Theta {
             func onSuccess(fileUrl: String) {
                 callback(fileUrl, nil)
             }
+            func onProgress(completion: Float) {
+            }
             func onError(exception: ThetaException) {
                 callback(nil, exception as? Error)
             }
