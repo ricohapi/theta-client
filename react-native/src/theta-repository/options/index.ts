@@ -1,5 +1,7 @@
 export * from './options';
 export * from './option-ai-auto-thumbnail';
+export * from './option-burst-mode';
+export * from './option-burst-option';
 export * from './option-camera-control-source';
 export * from './option-camera-mode';
 export * from './option-capture-mode';

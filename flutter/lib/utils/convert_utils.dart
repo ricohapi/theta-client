@@ -2,6 +2,33 @@ import 'package:theta_client_flutter/digest_auth.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
 class ConvertUtils {
+  static BurstOption? convertBurstOption(Map<dynamic, dynamic>? data) {
+    if (data == null) {
+      return null;
+    }
+
+    var burstOption = BurstOption(
+      BurstCaptureNumEnum.getValue(data['burstCaptureNum']),
+      BurstBracketStepEnum.getValue(data['burstBracketStep']),
+      BurstCompensationEnum.getValue(data['burstCompensation']),
+      BurstMaxExposureTimeEnum.getValue(data['burstMaxExposureTime']),
+      BurstEnableIsoControlEnum.getValue(data['burstEnableIsoControl']),
+      BurstOrderEnum.getValue(data['burstOrder']),
+    );
+    return burstOption;
+  }
+
+  static Map<String, dynamic> convertBurstOptionParam(BurstOption burstOption) {
+    return {
+      'burstCaptureNum': burstOption.burstCaptureNum?.rawValue,
+      'burstBracketStep': burstOption.burstBracketStep?.rawValue,
+      'burstCompensation': burstOption.burstCompensation?.rawValue,
+      'burstMaxExposureTime': burstOption.burstMaxExposureTime?.rawValue,
+      'burstEnableIsoControl': burstOption.burstEnableIsoControl?.rawValue,
+      'burstOrder': burstOption.burstOrder?.rawValue,
+    };
+  }
+
   static ThetaFiles convertThetaFiles(Map<dynamic, dynamic> data) {
     var inputList = data['fileList'] as List<dynamic>;
     var fileList = List<FileInfo>.empty(growable: true);
@@ -185,6 +212,12 @@ class ConvertUtils {
         case OptionNameEnum.aperture:
           result.aperture = ApertureEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.burstMode:
+          result.burstMode = BurstModeEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.burstOption:
+          result.burstOption = convertBurstOption(entry.value);
+          break;
         case OptionNameEnum.cameraControlSource:
           result.cameraControlSource = CameraControlSourceEnum.getValue(entry.value);
           break;
@@ -314,6 +347,10 @@ class ConvertUtils {
       return value.rawValue;
     } else if (value is ApertureEnum) {
       return value.rawValue;
+    } else if (value is BurstModeEnum) {
+      return value.rawValue;
+    } else if (value is BurstOption) {
+      return convertBurstOptionParam(value);
     } else if (value is CameraControlSourceEnum) {
       return value.rawValue;
     } else if (value is CameraModeEnum) {

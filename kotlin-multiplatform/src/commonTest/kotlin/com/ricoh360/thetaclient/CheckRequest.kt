@@ -38,6 +38,8 @@ class CheckRequest {
             aiAutoThumbnail: AiAutoThumbnail? = null,
             aperture: Float? = null,
             bluetoothPower: BluetoothPower? = null,
+            burstMode: BurstMode? = null,
+            burstOption: BurstOption? = null,
             cameraControlSource: CameraControlSource? = null,
             cameraMode: CameraMode? = null,
             captureMode: CaptureMode? = null,
@@ -88,6 +90,12 @@ class CheckRequest {
             }
             bluetoothPower?.let {
                 assertEquals(optionsRequest.parameters.options._bluetoothPower, it, "setOptions bluetoothPower")
+            }
+            burstMode?.let {
+                assertEquals(optionsRequest.parameters.options._burstMode, it, "setOptions burstMode")
+            }
+            burstOption?.let {
+                assertEquals(optionsRequest.parameters.options._burstOption, it, "setOptions burstOption")
             }
             cameraControlSource?.let {
                 assertEquals(optionsRequest.parameters.options._cameraControlSource, it, "setOptions cameraControlSource")

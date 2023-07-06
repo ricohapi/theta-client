@@ -629,6 +629,266 @@ class ThetaFiles {
   ThetaFiles(this.fileList, this.totalEntries);
 }
 
+/// BurstMode setting.
+/// When this is set to ON, burst shooting is enabled,
+/// and a screen dedicated to burst shooting is displayed in Live View.
+///
+/// only For RICOH THETA Z1 firmware v2.10.1 or later
+enum BurstModeEnum {
+  /// BurstMode ON
+  on('ON'),
+
+  /// BurstMode OFF
+  off('OFF');
+
+  final String rawValue;
+
+  const BurstModeEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static BurstModeEnum? getValue(String rawValue) {
+    return BurstModeEnum.values
+        .cast<BurstModeEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Burst shooting setting.
+///
+/// only For RICOH THETA Z1 firmware v2.10.1 or later
+class BurstOption {
+  /// see [BurstCaptureNumEnum]
+  BurstCaptureNumEnum? burstCaptureNum;
+
+  /// see [BurstBracketStepEnum]
+  BurstBracketStepEnum? burstBracketStep;
+
+  /// see [BurstCompensationEnum]
+  BurstCompensationEnum? burstCompensation;
+
+  /// see [BurstMaxExposureTimeEnum]
+  BurstMaxExposureTimeEnum? burstMaxExposureTime;
+
+  /// see [BurstEnableIsoControlEnum]
+  BurstEnableIsoControlEnum? burstEnableIsoControl;
+
+  /// see [BurstOrderEnum]
+  BurstOrderEnum? burstOrder;
+
+  BurstOption(this.burstCaptureNum, this.burstBracketStep, this.burstCompensation,
+      this.burstMaxExposureTime, this.burstEnableIsoControl, this.burstOrder);
+
+  @override
+  bool operator ==(Object other) => hashCode == other.hashCode;
+
+  @override
+  int get hashCode => Object.hashAll([
+        burstCaptureNum,
+        burstBracketStep,
+        burstCompensation,
+        burstMaxExposureTime,
+        burstEnableIsoControl,
+        burstOrder
+      ]);
+}
+
+/// Number of shots for burst shooting
+/// 1, 3, 5, 7, 9
+enum BurstCaptureNumEnum {
+  burstCaptureNum_1('BURST_CAPTURE_NUM_1'),
+  burstCaptureNum_3('BURST_CAPTURE_NUM_3'),
+  burstCaptureNum_5('BURST_CAPTURE_NUM_5'),
+  burstCaptureNum_7('BURST_CAPTURE_NUM_7'),
+  burstCaptureNum_9('BURST_CAPTURE_NUM_9');
+
+  final String rawValue;
+
+  const BurstCaptureNumEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static BurstCaptureNumEnum? getValue(String rawValue) {
+    return BurstCaptureNumEnum.values
+        .cast<BurstCaptureNumEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Bracket value range between each shot for burst shooting
+/// 0.0, 0.3, 0.7, 1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0
+enum BurstBracketStepEnum {
+  bracketStep_0_0('BRACKET_STEP_0_0'),
+  bracketStep_0_3('BRACKET_STEP_0_3'),
+  bracketStep_0_7('BRACKET_STEP_0_7'),
+  bracketStep_1_0('BRACKET_STEP_1_0'),
+  bracketStep_1_3('BRACKET_STEP_1_3'),
+  bracketStep_1_7('BRACKET_STEP_1_7'),
+  bracketStep_2_0('BRACKET_STEP_2_0'),
+  bracketStep_2_3('BRACKET_STEP_2_3'),
+  bracketStep_2_7('BRACKET_STEP_2_7'),
+  bracketStep_3_0('BRACKET_STEP_3_0');
+
+  final String rawValue;
+
+  const BurstBracketStepEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static BurstBracketStepEnum? getValue(String rawValue) {
+    return BurstBracketStepEnum.values
+        .cast<BurstBracketStepEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Exposure compensation for the base image and entire shooting for burst shooting
+/// -5.0, -4.7, -4,3, -4.0, -3.7, -3,3, -3.0, -2.7, -2,3, -2.0, -1.7, -1,3, -1.0, -0.7, -0,3,
+/// 0.0, 0.3, 0.7, 1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 4.3, 4.7, 5.0
+enum BurstCompensationEnum {
+  burstCompensationDown_5_0('BURST_COMPENSATION_DOWN_5_0'),
+  burstCompensationDown_4_7('BURST_COMPENSATION_DOWN_4_7'),
+  burstCompensationDown_4_3('BURST_COMPENSATION_DOWN_4_3'),
+  burstCompensationDown_4_0('BURST_COMPENSATION_DOWN_4_0'),
+  burstCompensationDown_3_7('BURST_COMPENSATION_DOWN_3_7'),
+  burstCompensationDown_3_3('BURST_COMPENSATION_DOWN_3_3'),
+  burstCompensationDown_3_0('BURST_COMPENSATION_DOWN_3_0'),
+  burstCompensationDown_2_7('BURST_COMPENSATION_DOWN_2_7'),
+  burstCompensationDown_2_3('BURST_COMPENSATION_DOWN_2_3'),
+  burstCompensationDown_2_0('BURST_COMPENSATION_DOWN_2_0'),
+  burstCompensationDown_1_7('BURST_COMPENSATION_DOWN_1_7'),
+  burstCompensationDown_1_3('BURST_COMPENSATION_DOWN_1_3'),
+  burstCompensationDown_1_0('BURST_COMPENSATION_DOWN_1_0'),
+  burstCompensationDown_0_7('BURST_COMPENSATION_DOWN_0_7'),
+  burstCompensationDown_0_3('BURST_COMPENSATION_DOWN_0_3'),
+  burstCompensation_0_0('BURST_COMPENSATION_0_0'),
+  burstCompensationUp_0_3('BURST_COMPENSATION_UP_0_3'),
+  burstCompensationUp_0_7('BURST_COMPENSATION_UP_0_7'),
+  burstCompensationUp_1_0('BURST_COMPENSATION_UP_1_0'),
+  burstCompensationUp_1_3('BURST_COMPENSATION_UP_1_3'),
+  burstCompensationUp_1_7('BURST_COMPENSATION_UP_1_7'),
+  burstCompensationUp_2_0('BURST_COMPENSATION_UP_2_0'),
+  burstCompensationUp_2_3('BURST_COMPENSATION_UP_2_3'),
+  burstCompensationUp_2_7('BURST_COMPENSATION_UP_2_7'),
+  burstCompensationUp_3_0('BURST_COMPENSATION_UP_3_0'),
+  burstCompensationUp_3_3('BURST_COMPENSATION_UP_3_3'),
+  burstCompensationUp_3_7('BURST_COMPENSATION_UP_3_7'),
+  burstCompensationUp_4_0('BURST_COMPENSATION_UP_4_0'),
+  burstCompensationUp_4_3('BURST_COMPENSATION_UP_4_3'),
+  burstCompensationUp_4_7('BURST_COMPENSATION_UP_4_7'),
+  burstCompensationUp_5_0('BURST_COMPENSATION_UP_5_0');
+
+  final String rawValue;
+
+  const BurstCompensationEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static BurstCompensationEnum? getValue(String rawValue) {
+    return BurstCompensationEnum.values
+        .cast<BurstCompensationEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Maximum exposure time for burst shooting
+/// 0.5, 0.625, 0.76923076, 1, 1.3, 1.6, 2, 2.5, 3.2, 4, 5, 6, 8, 10, 13, 15, 20, 25, 30, 40, 50, 60
+enum BurstMaxExposureTimeEnum {
+  maxExposureTime_0_5('MAX_EXPOSURE_TIME_0_5'),
+  maxExposureTime_0_625('MAX_EXPOSURE_TIME_0_625'),
+  maxExposureTime_0_76923076('MAX_EXPOSURE_TIME_0_76923076'),
+  maxExposureTime_1('MAX_EXPOSURE_TIME_1'),
+  maxExposureTime_1_3('MAX_EXPOSURE_TIME_1_3'),
+  maxExposureTime_1_6('MAX_EXPOSURE_TIME_1_6'),
+  maxExposureTime_2('MAX_EXPOSURE_TIME_2'),
+  maxExposureTime_2_5('MAX_EXPOSURE_TIME_2_5'),
+  maxExposureTime_3_2('MAX_EXPOSURE_TIME_3_2'),
+  maxExposureTime_4('MAX_EXPOSURE_TIME_4'),
+  maxExposureTime_5('MAX_EXPOSURE_TIME_5'),
+  maxExposureTime_6('MAX_EXPOSURE_TIME_6'),
+  maxExposureTime_8('MAX_EXPOSURE_TIME_8'),
+  maxExposureTime_10('MAX_EXPOSURE_TIME_10'),
+  maxExposureTime_13('MAX_EXPOSURE_TIME_13'),
+  maxExposureTime_15('MAX_EXPOSURE_TIME_15'),
+  maxExposureTime_20('MAX_EXPOSURE_TIME_20'),
+  maxExposureTime_25('MAX_EXPOSURE_TIME_25'),
+  maxExposureTime_30('MAX_EXPOSURE_TIME_30'),
+  maxExposureTime_40('MAX_EXPOSURE_TIME_40'),
+  maxExposureTime_50('MAX_EXPOSURE_TIME_50'),
+  maxExposureTime_60('MAX_EXPOSURE_TIME_60');
+
+  final String rawValue;
+
+  const BurstMaxExposureTimeEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static BurstMaxExposureTimeEnum? getValue(String rawValue) {
+    return BurstMaxExposureTimeEnum.values
+        .cast<BurstMaxExposureTimeEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Adjustment with ISO sensitivity for burst shooting
+/// 0: Do not adjust with ISO sensitivity, 1: Adjust with ISO sensitivity
+enum BurstEnableIsoControlEnum {
+  off('OFF'),
+  on('ON');
+
+  final String rawValue;
+
+  const BurstEnableIsoControlEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static BurstEnableIsoControlEnum? getValue(String rawValue) {
+    return BurstEnableIsoControlEnum.values
+        .cast<BurstEnableIsoControlEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Shooting order for burst shooting
+/// 0: '0' → '-' → '+', 1: '-' → '0' → '+'
+enum BurstOrderEnum {
+  burstBracketOrder_0('BURST_BRACKET_ORDER_0'),
+  burstBracketOrder_1('BURST_BRACKET_ORDER_1');
+
+  final String rawValue;
+
+  const BurstOrderEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static BurstOrderEnum? getValue(String rawValue) {
+    return BurstOrderEnum.values
+        .cast<BurstOrderEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
 /// Capture Status
 enum CaptureStatusEnum {
   /// Capture status. Performing continuously shoot
@@ -1040,6 +1300,12 @@ enum OptionNameEnum {
 
   /// Option name aperture
   aperture('Aperture', ApertureEnum),
+
+  /// Option name _burstMode
+  burstMode('BurstMode', BurstModeEnum),
+
+  /// Option name _burstOption
+  burstOption('BurstOption', BurstOption),
 
   /// Option name _cameraControlSource
   cameraControlSource('CameraControlSource', CameraControlSourceEnum),
@@ -2915,6 +3181,14 @@ class Options {
   /// Aperture value.
   ApertureEnum? aperture;
 
+  /// BurstMode setting.
+  /// When this is set to ON, burst shooting is enabled,
+  /// and a screen dedicated to burst shooting is displayed in Live View.
+  BurstModeEnum? burstMode;
+
+  /// Burst shooting setting.
+  BurstOption? burstOption;
+
   /// camera control source
   /// Sets whether to lock/unlock the camera UI.
   /// The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
@@ -3100,6 +3374,10 @@ class Options {
         return aiAutoThumbnail as T;
       case OptionNameEnum.aperture:
         return aperture as T;
+      case OptionNameEnum.burstMode:
+        return burstMode as T;
+      case OptionNameEnum.burstOption:
+        return burstOption as T;
       case OptionNameEnum.cameraControlSource:
         return cameraControlSource as T;
       case OptionNameEnum.cameraMode:
@@ -3187,6 +3465,12 @@ class Options {
         break;
       case OptionNameEnum.aperture:
         aperture = value;
+        break;
+      case OptionNameEnum.burstMode:
+        burstMode = value;
+        break;
+      case OptionNameEnum.burstOption:
+        burstOption = value;
         break;
       case OptionNameEnum.cameraControlSource:
         cameraControlSource = value;

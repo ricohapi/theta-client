@@ -126,6 +126,20 @@ data class Options(
     var _bluetoothPower: BluetoothPower? = null,
 
     /**
+     * burst mode
+     *
+     * @see BurstMode
+     */
+    var _burstMode: BurstMode? = null,
+
+    /**
+     * burst option
+     *
+     * @see BurstOption
+     */
+    var _burstOption: BurstOption? = null,
+
+    /**
      * camera control source
      *
      * @see CameraControlSource
@@ -662,6 +676,325 @@ enum class BluetoothPower {
      */
     @SerialName("OFF")
     OFF,
+}
+
+/**
+ * BurstMode setting.
+ * When this is set to ON, burst shooting is enabled,
+ * and a screen dedicated to burst shooting is displayed in Live View.
+ *
+ * only For RICOH THETA Z1 firmware v2.10.1 or later
+ */
+@Serializable
+enum class BurstMode {
+    /**
+     * BurstMode ON
+     */
+    @SerialName("ON")
+    ON,
+
+    /**
+     * BurstMode OFF
+     */
+    @SerialName("OFF")
+    OFF,
+}
+
+/**
+ * Burst shooting setting.
+ *
+ * only For RICOH THETA Z1 firmware v2.10.1 or later
+ */
+@Serializable
+data class BurstOption(
+    /**
+     * @see BurstCaptureNum
+     */
+    val _burstCaptureNum: BurstCaptureNum? = null,
+
+    /**
+     * @see BurstBracketStep
+     */
+    val _burstBracketStep: BurstBracketStep? = null,
+
+    /**
+     * @see BurstCompensation
+     */
+    val _burstCompensation: BurstCompensation? = null,
+
+    /**
+     * @see BurstMaxExposureTime
+     */
+    val _burstMaxExposureTime: BurstMaxExposureTime? = null,
+
+    /**
+     * @see BurstEnableIsoControl
+     */
+    val _burstEnableIsoControl: BurstEnableIsoControl? = null,
+
+    /**
+     * @see BurstOrder
+     */
+    val _burstOrder: BurstOrder? = null
+)
+
+/**
+ * Number of shots for burst shooting
+ * 1, 3, 5, 7, 9
+ */
+@Serializable(with = BurstCaptureNumSerializer::class)
+enum class BurstCaptureNum(val value: Int) {
+    BURST_CAPTURE_NUM_1(1),
+    BURST_CAPTURE_NUM_3(3),
+    BURST_CAPTURE_NUM_5(5),
+    BURST_CAPTURE_NUM_7(7),
+    BURST_CAPTURE_NUM_9(9);
+
+    companion object {
+        fun getDefault(): BurstCaptureNum {
+            return BURST_CAPTURE_NUM_1
+        }
+
+        fun getFromValue(value: Int?): BurstCaptureNum? {
+            return values().firstOrNull { it.value == value }
+        }
+    }
+}
+
+object BurstCaptureNumSerializer : KSerializer<BurstCaptureNum> {
+    override val descriptor: SerialDescriptor
+        get() = PrimitiveSerialDescriptor("_burstCaptureNum", PrimitiveKind.INT)
+
+    override fun serialize(encoder: Encoder, value: BurstCaptureNum) {
+        encoder.encodeInt(value.value)
+    }
+
+    override fun deserialize(decoder: Decoder): BurstCaptureNum {
+        return BurstCaptureNum.getFromValue(value = decoder.decodeInt()) ?: BurstCaptureNum.getDefault()
+    }
+}
+
+/**
+ * Bracket value range between each shot for burst shooting
+ * 0.0, 0.3, 0.7, 1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0
+ */
+@Serializable(with = BurstBracketStepSerializer::class)
+enum class BurstBracketStep(val value: Float) {
+    BRACKET_STEP_0_0(0.0F),
+    BRACKET_STEP_0_3(0.3F),
+    BRACKET_STEP_0_7(0.7F),
+    BRACKET_STEP_1_0(1.0F),
+    BRACKET_STEP_1_3(1.3F),
+    BRACKET_STEP_1_7(1.7F),
+    BRACKET_STEP_2_0(2.0F),
+    BRACKET_STEP_2_3(2.3F),
+    BRACKET_STEP_2_7(2.7F),
+    BRACKET_STEP_3_0(3.0F);
+
+    companion object {
+        fun getDefault(): BurstBracketStep {
+            return BRACKET_STEP_1_0
+        }
+
+        fun getFromValue(value: Float?): BurstBracketStep? {
+            return BurstBracketStep.values().firstOrNull { it.value == value }
+        }
+    }
+}
+
+object BurstBracketStepSerializer : KSerializer<BurstBracketStep> {
+    override val descriptor: SerialDescriptor
+        get() = PrimitiveSerialDescriptor("_burstBracketStep", PrimitiveKind.FLOAT)
+
+    override fun serialize(encoder: Encoder, value: BurstBracketStep) {
+        encoder.encodeFloat(value.value)
+    }
+
+    override fun deserialize(decoder: Decoder): BurstBracketStep {
+        return BurstBracketStep.getFromValue(value = decoder.decodeFloat()) ?: BurstBracketStep.getDefault()
+    }
+}
+
+/**
+ * Exposure compensation for the base image and entire shooting for burst shooting
+ * -5.0, -4.7, -4,3, -4.0, -3.7, -3,3, -3.0, -2.7, -2,3, -2.0, -1.7, -1,3, -1.0, -0.7, -0,3,
+ * 0.0, 0.3, 0.7, 1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 4.3, 4.7, 5.0
+ */
+@Serializable(with = BurstCompensationSerializer::class)
+enum class BurstCompensation(val value: Float) {
+    BURST_COMPENSATION_DOWN_5_0(-5.0f),
+    BURST_COMPENSATION_DOWN_4_7(-4.7f),
+    BURST_COMPENSATION_DOWN_4_3(-4.3f),
+    BURST_COMPENSATION_DOWN_4_0(-4.0f),
+    BURST_COMPENSATION_DOWN_3_7(-3.7f),
+    BURST_COMPENSATION_DOWN_3_3(-3.3f),
+    BURST_COMPENSATION_DOWN_3_0(-3.0f),
+    BURST_COMPENSATION_DOWN_2_7(-2.7f),
+    BURST_COMPENSATION_DOWN_2_3(-2.3f),
+    BURST_COMPENSATION_DOWN_2_0(-2.0f),
+    BURST_COMPENSATION_DOWN_1_7(-1.7f),
+    BURST_COMPENSATION_DOWN_1_3(-1.3f),
+    BURST_COMPENSATION_DOWN_1_0(-1.0f),
+    BURST_COMPENSATION_DOWN_0_7(-0.7f),
+    BURST_COMPENSATION_DOWN_0_3(-0.3f),
+    BURST_COMPENSATION_0_0(0.0f),
+    BURST_COMPENSATION_UP_0_3(0.3f),
+    BURST_COMPENSATION_UP_0_7(0.7f),
+    BURST_COMPENSATION_UP_1_0(1.0f),
+    BURST_COMPENSATION_UP_1_3(1.3f),
+    BURST_COMPENSATION_UP_1_7(1.7f),
+    BURST_COMPENSATION_UP_2_0(2.0f),
+    BURST_COMPENSATION_UP_2_3(2.3f),
+    BURST_COMPENSATION_UP_2_7(2.7f),
+    BURST_COMPENSATION_UP_3_0(3.0f),
+    BURST_COMPENSATION_UP_3_3(3.3f),
+    BURST_COMPENSATION_UP_3_7(3.7f),
+    BURST_COMPENSATION_UP_4_0(4.0f),
+    BURST_COMPENSATION_UP_4_3(4.3f),
+    BURST_COMPENSATION_UP_4_7(4.7f),
+    BURST_COMPENSATION_UP_5_0(5.0f);
+
+    companion object {
+        fun getDefault(): BurstCompensation {
+            return BURST_COMPENSATION_0_0
+        }
+
+        fun getFromValue(value: Float?): BurstCompensation? {
+            return BurstCompensation.values().firstOrNull { it.value == value }
+        }
+    }
+}
+
+object BurstCompensationSerializer : KSerializer<BurstCompensation> {
+    override val descriptor: SerialDescriptor
+        get() = PrimitiveSerialDescriptor("_burstCompensation", PrimitiveKind.FLOAT)
+
+    override fun serialize(encoder: Encoder, value: BurstCompensation) {
+        encoder.encodeFloat(value.value)
+    }
+
+    override fun deserialize(decoder: Decoder): BurstCompensation {
+        return BurstCompensation.getFromValue(value = decoder.decodeFloat()) ?: BurstCompensation.getDefault()
+    }
+}
+
+/**
+ * Maximum exposure time for burst shooting
+ * 0.5, 0.625, 0.76923076, 1, 1.3, 1.6, 2, 2.5, 3.2, 4, 5, 6, 8, 10, 13, 15, 20, 25, 30, 40, 50, 60
+ */
+@Serializable(with = BurstMaxExposureTimeSerializer::class)
+enum class BurstMaxExposureTime(val value: Double) {
+    MAX_EXPOSURE_TIME_0_5(0.5),
+    MAX_EXPOSURE_TIME_0_625(0.625),
+    MAX_EXPOSURE_TIME_0_76923076(0.76923076),
+    MAX_EXPOSURE_TIME_1(1.0),
+    MAX_EXPOSURE_TIME_1_3(1.3),
+    MAX_EXPOSURE_TIME_1_6(1.6),
+    MAX_EXPOSURE_TIME_2(2.0),
+    MAX_EXPOSURE_TIME_2_5(2.5),
+    MAX_EXPOSURE_TIME_3_2(3.2),
+    MAX_EXPOSURE_TIME_4(4.0),
+    MAX_EXPOSURE_TIME_5(5.0),
+    MAX_EXPOSURE_TIME_6(6.0),
+    MAX_EXPOSURE_TIME_8(8.0),
+    MAX_EXPOSURE_TIME_10(10.0),
+    MAX_EXPOSURE_TIME_13(13.0),
+    MAX_EXPOSURE_TIME_15(15.0),
+    MAX_EXPOSURE_TIME_20(20.0),
+    MAX_EXPOSURE_TIME_25(25.0),
+    MAX_EXPOSURE_TIME_30(30.0),
+    MAX_EXPOSURE_TIME_40(40.0),
+    MAX_EXPOSURE_TIME_50(50.0),
+    MAX_EXPOSURE_TIME_60(60.0);
+
+    companion object {
+        fun getDefault(): BurstMaxExposureTime {
+            return MAX_EXPOSURE_TIME_15
+        }
+
+        fun getFromValue(value: Double?): BurstMaxExposureTime? {
+            return BurstMaxExposureTime.values().firstOrNull { it.value == value }
+        }
+    }
+}
+
+object BurstMaxExposureTimeSerializer : KSerializer<BurstMaxExposureTime> {
+    override val descriptor: SerialDescriptor
+        get() = PrimitiveSerialDescriptor("_burstMaxExposureTime", PrimitiveKind.DOUBLE)
+
+    override fun serialize(encoder: Encoder, value: BurstMaxExposureTime) {
+        encoder.encodeDouble(value.value)
+    }
+
+    override fun deserialize(decoder: Decoder): BurstMaxExposureTime {
+        return BurstMaxExposureTime.getFromValue(value = decoder.decodeDouble()) ?: BurstMaxExposureTime.getDefault()
+    }
+}
+
+/**
+ * Adjustment with ISO sensitivity for burst shooting
+ * 0: Do not adjust with ISO sensitivity, 1: Adjust with ISO sensitivity
+ */
+@Serializable(with = BurstEnableIsoControlSerializer::class)
+enum class BurstEnableIsoControl(val value: Int) {
+    OFF(0),
+    ON(1);
+
+    companion object {
+        fun getDefault(): BurstEnableIsoControl {
+            return OFF
+        }
+
+        fun getFromValue(value: Int?): BurstEnableIsoControl? {
+            return BurstEnableIsoControl.values().firstOrNull { it.value == value }
+        }
+    }
+}
+
+object BurstEnableIsoControlSerializer : KSerializer<BurstEnableIsoControl> {
+    override val descriptor: SerialDescriptor
+        get() = PrimitiveSerialDescriptor("_burstEnableIsoControl", PrimitiveKind.INT)
+
+    override fun serialize(encoder: Encoder, value: BurstEnableIsoControl) {
+        encoder.encodeInt(value.value)
+    }
+
+    override fun deserialize(decoder: Decoder): BurstEnableIsoControl {
+        return BurstEnableIsoControl.getFromValue(value = decoder.decodeInt()) ?: BurstEnableIsoControl.getDefault()
+    }
+}
+
+/**
+ * Shooting order for burst shooting
+ * 0: '0' → '-' → '+', 1: '-' → '0' → '+'
+ */
+@Serializable(with = BurstOrderSerializer::class)
+enum class BurstOrder(val value: Int) {
+    BURST_BRACKET_ORDER_0(0),
+    BURST_BRACKET_ORDER_1(1);
+
+    companion object {
+        fun getDefault(): BurstOrder {
+            return BURST_BRACKET_ORDER_0
+        }
+
+        fun getFromValue(value: Int?): BurstOrder? {
+            return BurstOrder.values().firstOrNull { it.value == value }
+        }
+    }
+}
+
+object BurstOrderSerializer : KSerializer<BurstOrder> {
+    override val descriptor: SerialDescriptor
+        get() = PrimitiveSerialDescriptor("_burstOrder", PrimitiveKind.INT)
+
+    override fun serialize(encoder: Encoder, value: BurstOrder) {
+        encoder.encodeInt(value.value)
+    }
+
+    override fun deserialize(decoder: Decoder): BurstOrder {
+        return BurstOrder.getFromValue(value = decoder.decodeInt()) ?: BurstOrder.getDefault()
+    }
 }
 
 /**
