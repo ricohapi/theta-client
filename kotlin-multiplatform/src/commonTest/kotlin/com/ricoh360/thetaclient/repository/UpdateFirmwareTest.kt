@@ -54,7 +54,7 @@ class UpdateFirmwareTest {
 
         val thetaRepository = ThetaRepository(endpoint)
         val fileContents = listOf("firmware binary 1".toByteArray(), "firmware binary 2".toByteArray())
-        val fileNames = listOf("firm file 1", "firm file 2")
+        val fileNames = listOf("firm_file_name_1", "firm_file_name_2")
 
         kotlin.runCatching {
             thetaRepository.updateFirmware(apiPath!!, fileContents, fileNames)

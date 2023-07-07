@@ -35,14 +35,16 @@ class UpdateFirmwareOnTheta {
             println(it.toString())
             assertTrue(false, "updateFirmwareTest")
         }
+        println("Firmware size: ${firmware.size}")
 
         lateinit var apiPath: String
         kotlin.runCatching {
-            apiPath = System.getenv(UpdateFirmwareTest.FIRMWARE_UPDATE_API_ENV_NAME)
+            apiPath = System.getenv(UpdateFirmwareTest.FIRMWARE_UPDATE_API_ENV_NAME) ?: ""
         }.onFailure {
             println("${UpdateFirmwareTest.FIRMWARE_UPDATE_API_ENV_NAME} can not be accessed so updateFirmwareTest() is skipped")
             assertTrue(false, "Can't get API path")
         }
+        println("API path: $apiPath")
 
         MockApiClient.onRequest = { request ->
             // check request
@@ -50,6 +52,7 @@ class UpdateFirmwareOnTheta {
             ByteReadChannel(Resource("src/commonTest/resources/updateFirmware/update_firmware.done.json").readText())
         }
         val thetaRepository = ThetaRepository(endpoint)
+        //thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_SC2_B
         thetaRepository.updateFirmware(apiPath, listOf(firmware), listOf(file))
         assertTrue(true, "call updateFirmware()")
     }

@@ -11,6 +11,7 @@ import io.ktor.client.network.sockets.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
+import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.statement.*
@@ -128,18 +129,38 @@ object ThetaApi {
         } else if(fileContents.size != fileNames.size) {
             throw IllegalArgumentException("Different size of fileContents and fileNames")
         }
-        return httpClient.submitFormWithBinaryData(
+       return httpClient.post(getApiUrl(endpoint, apiPath)) {
+           headers {
+               append("Connection", "Keep-Alive") // theta app sends
+           }
+           setBody(MultiPartFormDataContent(
+               formData {
+                   for(i in fileContents.indices) {
+                       append(key = "\"firmware\"", value = fileContents[i], headers = Headers.build {
+                           append(HttpHeaders.ContentDisposition, "filename=\"${fileNames[i]}\"")
+                           append(HttpHeaders.ContentType, "application/octet-stream")
+                           append("Content-Transfer-Encoding", "binary") // not a http header but theta app sends
+                       })
+                   }
+               },
+               boundary = "pppppppppppppppp"
+           ))
+       }.body()
+/*      return httpClient.submitFormWithBinaryData(
             url = getApiUrl(endpoint, apiPath),
             formData = formData {
                 for(i in fileContents.indices) {
-                    append(key = "\"firmware\"",value = fileContents[i], Headers.build {
+                    append(key = "\"firmware\"", value = fileContents[i], headers = Headers.build {
                         append(HttpHeaders.ContentDisposition, "filename=\"${fileNames[i]}\"")
                         append(HttpHeaders.ContentType, "application/octet-stream")
+                        append("Content-Transfer-Encoding", "binary") // not a http header but theta app sends
                     })
                 }
-
+            },
+            block = {
+                headers.append("Connection", "Keep-Alive")
             }
-        ).body()
+        ).body() */
     }
 
     /*
