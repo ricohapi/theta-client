@@ -91,13 +91,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * from sending a request to receiving first response bytes.
          * To disable this timeout, set its value to 0.
          */
-        val requestTimeout: Long = 20_000,
+        val requestTimeout: Long = 120_000,
 
         /**
          * Specifies a maximum time (in milliseconds) of inactivity between two data packets
          * when exchanging data with a server.
          */
-        val socketTimeout: Long = 20_000
+        val socketTimeout: Long = 120_000
     )
 
     companion object {

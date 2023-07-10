@@ -25,9 +25,9 @@ class UpdateFirmwareOnTheta {
     }
 
     @Test
-    fun updateFirmwareTest() = runTest {
+    fun updateFirmwareByFileTest() = runTest(dispatchTimeoutMs = 120_000L) {
         val dir = "/media/sf_vmshare/ex" // directory firmware files exist
-        val file = "bx1_v641.frm" // or bx1_v652.frm
+        val file = "bx1_v652.frm" // one of bx1_v652.frm, bx1_v641.frm
         lateinit var firmware: ByteArray
         kotlin.runCatching {
             firmware = readFile(dir, file)

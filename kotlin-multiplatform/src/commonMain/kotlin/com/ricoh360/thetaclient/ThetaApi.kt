@@ -132,6 +132,7 @@ object ThetaApi {
        return httpClient.post(getApiUrl(endpoint, apiPath)) {
            headers {
                append("Connection", "Keep-Alive") // theta app sends
+               append("Cache-Control", "no-store") // theta app sends
            }
            setBody(MultiPartFormDataContent(
                formData {
@@ -143,7 +144,7 @@ object ThetaApi {
                        })
                    }
                },
-               boundary = "pppppppppppppppp"
+               boundary = "b783d64f-a16c-4928-a718-94f027c35fe1"
            ))
        }.body()
 /*      return httpClient.submitFormWithBinaryData(
