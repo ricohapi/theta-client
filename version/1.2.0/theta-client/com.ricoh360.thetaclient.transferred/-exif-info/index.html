@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>ExifInfo</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/jetbrains-mono.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+<link href="../../../styles/multimodule.css" rel="Stylesheet">
+</head>
+<body>
+<div class="navigation-wrapper" id="navigation-wrapper">
+    <div id="leftToggler"><span class="icon-toggler"></span></div>
+    <div class="library-name">
+            <a href="../../../index.html">
+                    <span>theta-client</span>
+            </a>
+    </div>
+    <div>
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;theta-client/com.ricoh360.thetaclient.transferred/-exif-info/index.html&quot;}">1.2.0</dokka-template-command>    </div>
+    <div class="pull-right d-flex">
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":kotlin-multiplatform:dokkaHtml/commonMain">common</button>
+        </div>
+        <button id="theme-toggle-button"><span id="theme-toggle"></span></button>
+        <div id="searchBar"></div>
+    </div>
+</div>
+<div id="container">
+    <div id="leftColumn">
+        <div id="sideMenu"></div>
+    </div>
+    <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="theta-client::com.ricoh360.thetaclient.transferred/ExifInfo///PointingToDeclaration//1539438162">
+  <div class="breadcrumbs"><a href="../../../index.html">theta-client</a><span class="delimiter">/</span><a href="../index.html">com.ricoh360.thetaclient.transferred</a><span class="delimiter">/</span><span class="current">ExifInfo</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Exif</span><wbr></wbr><span><span>Info</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">ExifInfo</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>ExifVersion<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>ImageDescription<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>DateTime<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>ImageWidth<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>ImageLength<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>ColorSpace<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>Compression<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>Orientation<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>Flash<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>FocalLength<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>WhiteBalance<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>ExposureTime<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>FNumber<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>ExposureProgram<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>PhotographicSensitivity<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>ApertureValue<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>BrightnessValue<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>ExposureBiasValue<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>GPSLatitudeRef<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>GPSLatitude<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>GPSLongitudeRef<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>GPSLongitude<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>Make<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>Model<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>Software<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>Copyright<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><p class="paragraph">exif information (exif 2.3) https://www.cipa.jp/std/documents/j/DC-008-2012_J.pdf</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="1038694542%2FConstructors%2F1539438162" anchor-label="ExifInfo" id="1038694542%2FConstructors%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-exif-info.html"><span>Exif</span><wbr></wbr><span><span>Info</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1038694542%2FConstructors%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ExifVersion<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">ImageDescription<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">DateTime<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">ImageWidth<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">ImageLength<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">ColorSpace<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">Compression<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">Orientation<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">Flash<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">FocalLength<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">WhiteBalance<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">ExposureTime<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">FNumber<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">ExposureProgram<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">PhotographicSensitivity<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">ApertureValue<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">BrightnessValue<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">ExposureBiasValue<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">GPSLatitudeRef<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">GPSLatitude<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">GPSLongitudeRef<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">GPSLongitude<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">Make<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">Model<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">Software<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">Copyright<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="1013892518%2FProperties%2F1539438162" anchor-label="ApertureValue" id="1013892518%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-aperture-value.html"><span>Aperture</span><wbr></wbr><span><span>Value</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1013892518%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-aperture-value.html">ApertureValue</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div><div class="brief "><p class="paragraph">Aperture value</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-631892953%2FProperties%2F1539438162" anchor-label="BrightnessValue" id="-631892953%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-brightness-value.html"><span>Brightness</span><wbr></wbr><span><span>Value</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-631892953%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-brightness-value.html">BrightnessValue</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Brightness value</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2121877648%2FProperties%2F1539438162" anchor-label="ColorSpace" id="-2121877648%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-color-space.html"><span>Color</span><wbr></wbr><span><span>Space</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2121877648%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-color-space.html">ColorSpace</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Color space</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="41368097%2FProperties%2F1539438162" anchor-label="Compression" id="41368097%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-compression.html"><span><span>Compression</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="41368097%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-compression.html">Compression</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Compression format.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="904042848%2FProperties%2F1539438162" anchor-label="Copyright" id="904042848%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-copyright.html"><span><span>Copyright</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="904042848%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-copyright.html">Copyright</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Copyright</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-334847048%2FProperties%2F1539438162" anchor-label="DateTime" id="-334847048%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-date-time.html"><span>Date</span><wbr></wbr><span><span>Time</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-334847048%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-date-time.html">DateTime</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Time created or updated</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1011591137%2FProperties%2F1539438162" anchor-label="ExifVersion" id="-1011591137%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-exif-version.html"><span>Exif</span><wbr></wbr><span><span>Version</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1011591137%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-exif-version.html">ExifVersion</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">EXIF Support version</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1043136138%2FProperties%2F1539438162" anchor-label="ExposureBiasValue" id="-1043136138%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-exposure-bias-value.html"><span>Exposure</span><wbr></wbr><span>Bias</span><wbr></wbr><span><span>Value</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1043136138%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-exposure-bias-value.html">ExposureBiasValue</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Exposure compensation value</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-992222486%2FProperties%2F1539438162" anchor-label="ExposureProgram" id="-992222486%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-exposure-program.html"><span>Exposure</span><wbr></wbr><span><span>Program</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-992222486%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-exposure-program.html">ExposureProgram</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Exposure program</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1704482303%2FProperties%2F1539438162" anchor-label="ExposureTime" id="1704482303%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-exposure-time.html"><span>Exposure</span><wbr></wbr><span><span>Time</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1704482303%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-exposure-time.html">ExposureTime</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div><div class="brief "><p class="paragraph">Exposure time</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2029077079%2FProperties%2F1539438162" anchor-label="Flash" id="2029077079%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-flash.html"><span><span>Flash</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2029077079%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-flash.html">Flash</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Flash exposure</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2043212456%2FProperties%2F1539438162" anchor-label="FNumber" id="-2043212456%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-f-number.html"><span><span>FNumber</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2043212456%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-f-number.html">FNumber</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div><div class="brief "><p class="paragraph">F number</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1169120900%2FProperties%2F1539438162" anchor-label="FocalLength" id="-1169120900%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-focal-length.html"><span>Focal</span><wbr></wbr><span><span>Length</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1169120900%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-focal-length.html">FocalLength</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Focal length</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1957565871%2FProperties%2F1539438162" anchor-label="GPSLatitude" id="-1957565871%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-g-p-s-latitude.html"><span><span>GPSLatitude</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1957565871%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-g-p-s-latitude.html">GPSLatitude</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Latitude</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1430652010%2FProperties%2F1539438162" anchor-label="GPSLatitudeRef" id="-1430652010%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-g-p-s-latitude-ref.html"><span>GPSLatitude</span><wbr></wbr><span><span>Ref</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1430652010%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-g-p-s-latitude-ref.html">GPSLatitudeRef</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Latitudinal direction of movement</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1024613230%2FProperties%2F1539438162" anchor-label="GPSLongitude" id="1024613230%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-g-p-s-longitude.html"><span><span>GPSLongitude</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1024613230%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-g-p-s-longitude.html">GPSLongitude</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Longitude</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-731571879%2FProperties%2F1539438162" anchor-label="GPSLongitudeRef" id="-731571879%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-g-p-s-longitude-ref.html"><span>GPSLongitude</span><wbr></wbr><span><span>Ref</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-731571879%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-g-p-s-longitude-ref.html">GPSLongitudeRef</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Longitudinal direction of movement</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1003551630%2FProperties%2F1539438162" anchor-label="ImageDescription" id="-1003551630%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-image-description.html"><span>Image</span><wbr></wbr><span><span>Description</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1003551630%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-image-description.html">ImageDescription</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Title or name</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="148499398%2FProperties%2F1539438162" anchor-label="ImageLength" id="148499398%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-image-length.html"><span>Image</span><wbr></wbr><span><span>Length</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="148499398%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-image-length.html">ImageLength</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Height (px) RICOH THETA X is not supported</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1051134632%2FProperties%2F1539438162" anchor-label="ImageWidth" id="1051134632%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-image-width.html"><span>Image</span><wbr></wbr><span><span>Width</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1051134632%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-image-width.html">ImageWidth</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Width (px) RICOH THETA X is not supported</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-872444987%2FProperties%2F1539438162" anchor-label="Make" id="-872444987%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-make.html"><span><span>Make</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-872444987%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-make.html">Make</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Camera manufacturer</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1325196994%2FProperties%2F1539438162" anchor-label="Model" id="-1325196994%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-model.html"><span><span>Model</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1325196994%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-model.html">Model</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Camera model</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2092791561%2FProperties%2F1539438162" anchor-label="Orientation" id="-2092791561%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-orientation.html"><span><span>Orientation</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2092791561%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-orientation.html">Orientation</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Image orientation</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="355549598%2FProperties%2F1539438162" anchor-label="PhotographicSensitivity" id="355549598%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-photographic-sensitivity.html"><span>Photographic</span><wbr></wbr><span><span>Sensitivity</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="355549598%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-photographic-sensitivity.html">PhotographicSensitivity</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Shooting sensitivity</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-508651732%2FProperties%2F1539438162" anchor-label="Software" id="-508651732%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-software.html"><span><span>Software</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-508651732%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-software.html">Software</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Firmware software name</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="318161120%2FProperties%2F1539438162" anchor-label="WhiteBalance" id="318161120%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-white-balance.html"><span>White</span><wbr></wbr><span><span>Balance</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="318161120%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-white-balance.html">WhiteBalance</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">White balance</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2023 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+    </div>
+</div>
+</body>
+</html>
