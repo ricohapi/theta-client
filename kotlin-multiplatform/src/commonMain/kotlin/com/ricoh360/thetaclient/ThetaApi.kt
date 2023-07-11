@@ -132,7 +132,8 @@ object ThetaApi {
        return httpClient.post(getApiUrl(endpoint, apiPath)) {
            headers {
                append("Connection", "Keep-Alive") // theta app sends
-               append("Cache-Control", "no-store") // theta app sends
+               //append("Cache-Control", "no-cache, no-store") // theta app sends
+               append("Cache-Control", "no-cache") // theta app sends
            }
            setBody(MultiPartFormDataContent(
                formData {

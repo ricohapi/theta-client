@@ -25,9 +25,9 @@ class UpdateFirmwareOnTheta {
     }
 
     @Test
-    fun updateFirmwareByFileTest() = runTest(dispatchTimeoutMs = 120_000L) {
+    fun updateFirmwareSc2_bTest() = runTest(dispatchTimeoutMs = 180_000L) {
         val dir = "/media/sf_vmshare/ex" // directory firmware files exist
-        val file = "bx1_v652.frm" // one of bx1_v652.frm, bx1_v641.frm
+        val file = "bx1_v641.frm" // one of bx1_v652.frm, bx1_v641.frm
         lateinit var firmware: ByteArray
         kotlin.runCatching {
             firmware = readFile(dir, file)
@@ -52,7 +52,7 @@ class UpdateFirmwareOnTheta {
             ByteReadChannel(Resource("src/commonTest/resources/updateFirmware/update_firmware.done.json").readText())
         }
         val thetaRepository = ThetaRepository(endpoint)
-        //thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_SC2_B
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_SC2_B
         thetaRepository.updateFirmware(apiPath, listOf(firmware), listOf(file))
         assertTrue(true, "call updateFirmware()")
     }
