@@ -215,6 +215,18 @@ func setVideoCaptureBuilderParams(params: [String : Any], builder: VideoCapture.
     }
 }
 
+func toBitrate(value: Any) -> ThetaRepositoryBitrate? {
+    if value is NSNumber, let intVal = value as? Int32 {
+        return ThetaRepository.BitrateNumber(value: intVal)
+    } else if let name = value as? String, let enumValue = getEnumValue(values: ThetaRepository.BitrateEnum.values(), name: name) {
+        return enumValue
+    } else if let str = value as? String {
+        return ThetaRepository.BitrateEnum.companion.get(str: str)
+    } else {
+        return nil
+    }
+ }
+
 func toBurstOption(params: [String : Any]) -> ThetaRepository.BurstOption {
     var burstCaptureNum: ThetaRepository.BurstCaptureNumEnum? = nil;
     if let name = params["burstCaptureNum"] as? String {
@@ -353,6 +365,8 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                 result[name.name] = value as! Bool ? true: false
             } else if value is NSNumber || value is String {
                 result[name.name] = value
+            } else if let bitrate = value as? ThetaRepository.BitrateNumber {
+                result[name.name] = bitrate.value
             } else if value is ThetaRepository.BurstOption, let burstOption = value as? ThetaRepository.BurstOption {
                 result[name.name] = convertResult(burstOption: burstOption)
             }  else if value is ThetaRepository.GpsInfo {
@@ -404,6 +418,9 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         break
     case ThetaRepository.OptionNameEnum.aperture.name:
         options.aperture = getEnumValue(values: ThetaRepository.ApertureEnum.values(), name: value as! String)!
+        break
+    case ThetaRepository.OptionNameEnum.bitrate.name:
+        options.bitrate = toBitrate(value: value)
         break
     case ThetaRepository.OptionNameEnum.burstmode.name:
         options.burstMode = getEnumValue(values: ThetaRepository.BurstModeEnum.values(), name: value as! String)!

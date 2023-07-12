@@ -636,6 +636,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _bitrate
+         */
+        Bitrate("_bitrate", ThetaRepository.Bitrate::class),
+
+        /**
+         * Option name
          * _bluetoothPower
          */
         BluetoothPower("_bluetoothPower", BluetoothPowerEnum::class),
@@ -924,6 +930,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Aperture value.
          */
         var aperture: ApertureEnum? = null,
+
+        /**
+         * @see Bitrate
+         */
+        var bitrate: Bitrate? = null,
 
         /**
          * Bluetooth power.
@@ -1255,6 +1266,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         constructor() : this(
             aiAutoThumbnail = null,
             aperture = null,
+            bitrate = null,
             bluetoothPower = null,
             burstMode = null,
             burstOption = null,
@@ -1304,6 +1316,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         constructor(options: com.ricoh360.thetaclient.transferred.Options) : this(
             aiAutoThumbnail = options._aiAutoThumbnail?.let { AiAutoThumbnailEnum.get(it) },
             aperture = options.aperture?.let { ApertureEnum.get(it) },
+            bitrate = options._bitrate?.let { BitrateEnum.get(it) },
             bluetoothPower = options._bluetoothPower?.let { BluetoothPowerEnum.get(it) },
             burstMode = options._burstMode?.let { BurstModeEnum.get(it) },
             burstOption = options._burstOption?.let { BurstOption(it) },
@@ -1362,6 +1375,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             return Options(
                 _aiAutoThumbnail = aiAutoThumbnail?.value,
                 aperture = aperture?.value,
+                _bitrate = bitrate?.rawValue,
                 _bluetoothPower = bluetoothPower?.value,
                 _burstMode = burstMode?.value,
                 _burstOption = burstOption?.toTransferredBurstOption(),
@@ -1423,6 +1437,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             return when (name) {
                 OptionNameEnum.AiAutoThumbnail -> aiAutoThumbnail
                 OptionNameEnum.Aperture -> aperture
+                OptionNameEnum.Bitrate -> bitrate
                 OptionNameEnum.BluetoothPower -> bluetoothPower
                 OptionNameEnum.BurstMode -> burstMode
                 OptionNameEnum.BurstOption -> burstOption
@@ -1485,6 +1500,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             when (name) {
                 OptionNameEnum.AiAutoThumbnail -> aiAutoThumbnail = value as AiAutoThumbnailEnum
                 OptionNameEnum.Aperture -> aperture = value as ApertureEnum
+                OptionNameEnum.Bitrate -> bitrate = value as Bitrate
                 OptionNameEnum.BluetoothPower -> bluetoothPower = value as BluetoothPowerEnum
                 OptionNameEnum.BurstMode -> burstMode = value as BurstModeEnum
                 OptionNameEnum.BurstOption -> burstOption = value as BurstOption
@@ -1619,6 +1635,124 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              */
             fun get(value: Float): ApertureEnum? {
                 return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Movie bit rate.
+     *
+     * ### Support value
+     * The supported value depends on the shooting mode [CaptureMode].
+     *
+     * | Shooting mode | Supported value |
+     * | ------------- | --------------- |
+     * |         video | "Fine", "Normal", "Economy"(RICOH THETA X or later) <br/>"2000000"-"120000000" (RICOH THETA X v1.20 or later) |
+     * |         image | "Auto", "1048576"-"20971520" (RICOH THETA X v1.20 or later) |
+     * | _liveStreaming |         "Auto" |
+     *
+     * #### RICOH THETA X
+     * | Video mode | Fine<br/>[Mbps] | Normal<br/>[Mbps] | Economy<br/>[Mbps] | Remark |
+     * |------------| --------------- | ------------------| ------------------ | ------ |
+     * |   2K 30fps |              32 |                16 |                  8 |        |
+     * |   2K 60fps |              64 |                32 |                 16 |        |
+     * |   4K 10fps |              48 |                24 |                 12 |        |
+     * |   4K 15fps |              64 |                32 |                 16 |        |
+     * |   4K 30fps |             100 |                54 |                 32 |        |
+     * |   4K 60fps |             120 |                64 |                 32 |        |
+     * | 5.7K  2fps |              16 |                12 |                  8 | firmware v2.00.0 or later   |
+     * |            |              64 |                32 |                 16 | firmware v1.40.0 or later   (I-frame only)|
+     * |            |              16 |                 8 |                  4 | firmware v1.30.0 or earlier |
+     * | 5.7K  5fps |              40 |                30 |                 20 | firmware v2.00.0 or later   |
+     * |            |             120 |                80 |                 40 | firmware v1.40.0 or later   (I-frame only)|
+     * |            |              32 |                16 |                  8 | firmware v1.30.0 or earlier |
+     * | 5.7K 10fps |              80 |                60 |                 40 | firmware v2.00.0 or later   |
+     * |            |              64 |                40 |                 20 | firmware v1.40.0 or later   |
+     * |            |              48 |                24 |                 12 | firmware v1.30.0 or earlier |
+     * | 5.7K 15fps |              64 |                32 |                 16 |        |
+     * | 5.7K 30fps |             120 |                64 |                 32 |        |
+     * |   8K  2fps |              64 |                32 |                 16 | firmware v1.40.0 or later   (I-frame only)|
+     * |            |              32 |                16 |                  8 | firmware v1.30.0 or earlier (I-frame only)|
+     * |   8K  5fps |             120 |                96 |                 40 | firmware v1.40.0 or later   (I-frame only)|
+     * |            |              64 |                32 |                 16 | firmware v1.30.0 or earlier (I-frame only)|
+     * |   8K 10fps |             120 |                96 |                 40 | firmware v1.40.0 or later   (I-frame only)|
+     * |            |             120 |                64 |                 32 | firmware v1.30.0 or earlier (I-frame only)|
+     *
+     * For
+     * - RICOH THETA X
+     * - RICOH THETA Z1
+     * - RICOH THETA V firmware v2.50.1 or later
+     */
+    interface Bitrate {
+        val rawValue: String
+    }
+
+    /**
+     * Movie bit rate value of number.
+     */
+    class BitrateNumber(val value: Int) : Bitrate {
+        override val rawValue: String
+            get() = value.toString()
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other is Bitrate) {
+                return other.rawValue == rawValue
+            }
+            return false
+        }
+
+        override fun hashCode(): Int {
+            return rawValue.hashCode()
+        }
+
+        companion object {
+            /**
+             * Convert string to BitrateNumber
+             *
+             * @return [BitrateNumber]
+             */
+            fun get(str: String): BitrateNumber? {
+                return (str.toIntOrNull())?.let { BitrateNumber(it) }
+            }
+        }
+    }
+
+    /**
+     * Movie bit rate value of string.
+     */
+    enum class BitrateEnum(val value: String) : Bitrate {
+        /**
+         * Auto
+         */
+        AUTO("Auto"),
+
+        /**
+         * Fine
+         */
+        FINE("Fine"),
+
+        /**
+         * Normal
+         */
+        NORMAL("Normal"),
+
+        /**
+         * Economy
+         */
+        ECONOMY("Economy");
+
+        override val rawValue: String
+            get() = value
+
+        companion object {
+            /**
+             * Convert string to BitrateEnum
+             *
+             * @return [BitrateEnum]
+             */
+            fun get(str: String): Bitrate? {
+                return BitrateEnum.values().firstOrNull { it.value == str } ?: BitrateNumber.get(str)
             }
         }
     }

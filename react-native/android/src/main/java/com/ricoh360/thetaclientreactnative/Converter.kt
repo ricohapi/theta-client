@@ -96,6 +96,32 @@ class ApertureConverter : OptionConverter {
 }
 
 /**
+ * BitrateConverter
+ */
+class BitrateConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    val type = objects.getType("bitrate")
+    if (type == ReadableType.Number) {
+      options.bitrate = ThetaRepository.BitrateNumber(objects.getInt("bitrate"));
+    } else if (type == ReadableType.String) {
+      objects.getString("bitrate")?.let { rateStr ->
+        options.bitrate = ThetaRepository.BitrateEnum.valueOf(rateStr)
+      }
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.bitrate?.let {
+      if (it is ThetaRepository.BitrateEnum) {
+        objects.putString("bitrate", it.toString())
+      } else if (it is ThetaRepository.BitrateNumber) {
+        objects.putInt("bitrate", it.value)
+      }
+    }
+  }
+}
+
+/**
  * BluetoothPowerConverter
  */
 class BluetoothPowerConverter : OptionConverter {

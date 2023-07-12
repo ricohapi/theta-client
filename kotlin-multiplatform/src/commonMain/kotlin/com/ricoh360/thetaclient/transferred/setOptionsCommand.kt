@@ -120,6 +120,16 @@ data class Options(
     var apertureSupport: List<Float>? = null,
 
     /**
+     * Movie bit rate.
+     */
+    var _bitrate: String? = null,
+
+    /**
+     * Movie bit rate support.
+     */
+    var _bitrateSupport: List<String>? = null,
+
+    /**
      * bluetooth power
      *
      * @see BluetoothPower

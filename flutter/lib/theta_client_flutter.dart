@@ -1348,6 +1348,9 @@ enum OptionNameEnum {
   /// Option name aperture
   aperture('Aperture', ApertureEnum),
 
+  /// Option name _bitrate
+  bitrate('Bitrate', Bitrate),
+
   /// Option name _burstMode
   burstMode('BurstMode', BurstModeEnum),
 
@@ -1556,6 +1559,84 @@ enum ApertureEnum {
   static ApertureEnum? getValue(String rawValue) {
     return ApertureEnum.values.cast<ApertureEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
   }
+}
+
+/// Movie bit rate.
+///
+/// ### Support value
+/// The supported value depends on the shooting mode [CaptureMode].
+///
+/// | Shooting mode | Supported value |
+/// | ------------- | --------------- |
+/// |         video | "Fine", "Normal", "Economy"(RICOH THETA X or later) <br/>"2000000"-"120000000" (RICOH THETA X v1.20 or later) |
+/// |         image | "Auto", "1048576"-"20971520" (RICOH THETA X v1.20 or later) |
+/// | _liveStreaming |         "Auto" |
+///
+/// #### RICOH THETA X
+/// | Video mode | Fine<br/>[Mbps] | Normal<br/>[Mbps] | Economy<br/>[Mbps] | Remark |
+/// |------------| --------------- | ------------------| ------------------ | ------ |
+/// |   2K 30fps |              32 |                16 |                  8 |        |
+/// |   2K 60fps |              64 |                32 |                 16 |        |
+/// |   4K 10fps |              48 |                24 |                 12 |        |
+/// |   4K 15fps |              64 |                32 |                 16 |        |
+/// |   4K 30fps |             100 |                54 |                 32 |        |
+/// |   4K 60fps |             120 |                64 |                 32 |        |
+/// | 5.7K  2fps |              16 |                12 |                  8 | firmware v2.00.0 or later   |
+/// |            |              64 |                32 |                 16 | firmware v1.40.0 or later   (I-frame only)|
+/// |            |              16 |                 8 |                  4 | firmware v1.30.0 or earlier |
+/// | 5.7K  5fps |              40 |                30 |                 20 | firmware v2.00.0 or later   |
+/// |            |             120 |                80 |                 40 | firmware v1.40.0 or later   (I-frame only)|
+/// |            |              32 |                16 |                  8 | firmware v1.30.0 or earlier |
+/// | 5.7K 10fps |              80 |                60 |                 40 | firmware v2.00.0 or later   |
+/// |            |              64 |                40 |                 20 | firmware v1.40.0 or later   |
+/// |            |              48 |                24 |                 12 | firmware v1.30.0 or earlier |
+/// | 5.7K 15fps |              64 |                32 |                 16 |        |
+/// | 5.7K 30fps |             120 |                64 |                 32 |        |
+/// |   8K  2fps |              64 |                32 |                 16 | firmware v1.40.0 or later   (I-frame only)|
+/// |            |              32 |                16 |                  8 | firmware v1.30.0 or earlier (I-frame only)|
+/// |   8K  5fps |             120 |                96 |                 40 | firmware v1.40.0 or later   (I-frame only)|
+/// |            |              64 |                32 |                 16 | firmware v1.30.0 or earlier (I-frame only)|
+/// |   8K 10fps |             120 |                96 |                 40 | firmware v1.40.0 or later   (I-frame only)|
+/// |            |             120 |                64 |                 32 | firmware v1.30.0 or earlier (I-frame only)|
+///
+/// For
+/// - RICOH THETA X
+/// - RICOH THETA Z1
+/// - RICOH THETA V firmware v2.50.1 or later
+class Bitrate {
+  final String rawValue;
+
+  Bitrate._internal(String rateStr) : rawValue = rateStr;
+
+  @override
+  bool operator ==(Object other) => hashCode == other.hashCode;
+
+  @override
+  int get hashCode => Object.hashAll([rawValue]);
+
+  @override
+  String toString() => rawValue;
+
+  static final auto = Bitrate._internal('AUTO');
+  static final fine = Bitrate._internal('FINE');
+  static final normal = Bitrate._internal('NORMAL');
+  static final economy = Bitrate._internal('ECONOMY');
+
+  static final values = [auto, fine, normal, economy];
+
+  static Bitrate? getValue(String rawValue) {
+    var list = List<Bitrate?>.of(values);
+    list.add(null);
+    return list.firstWhere((element) {
+      return element?.rawValue == rawValue;
+    }, orElse: () => null);
+  }
+}
+
+/// Movie bit rate value of number.
+class BitrateNumber extends Bitrate {
+  final int value;
+  BitrateNumber(this.value): super._internal(value.toString());
 }
 
 /// Camera control source.
@@ -2192,8 +2273,8 @@ enum IsoEnum {
 
   final String rawValue;
   const IsoEnum(this.rawValue);
-  @override
 
+  @override
   String toString() {
     return rawValue;
   }
@@ -3337,6 +3418,9 @@ class Options {
   /// Aperture value.
   ApertureEnum? aperture;
 
+  /// see [Bitrate]
+  Bitrate? bitrate;
+
   /// BurstMode setting.
   /// When this is set to ON, burst shooting is enabled,
   /// and a screen dedicated to burst shooting is displayed in Live View.
@@ -3588,6 +3672,8 @@ class Options {
         return aiAutoThumbnail as T;
       case OptionNameEnum.aperture:
         return aperture as T;
+      case OptionNameEnum.bitrate:
+        return bitrate as T;
       case OptionNameEnum.burstMode:
         return burstMode as T;
       case OptionNameEnum.burstOption:
@@ -3689,6 +3775,9 @@ class Options {
         break;
       case OptionNameEnum.aperture:
         aperture = value;
+        break;
+      case OptionNameEnum.bitrate:
+        bitrate = value;
         break;
       case OptionNameEnum.burstMode:
         burstMode = value;

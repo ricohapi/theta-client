@@ -354,6 +354,7 @@ class ThetaClientReactNativeModule(
   private val converters = mapOf(
     "aiAutoThumbnail" to AiAutoThumbnailConverter(),
     "aperture" to ApertureConverter(),
+    "bitrate" to BitrateConverter(),
     "bluetoothPower" to BluetoothPowerConverter(),
     "burstMode" to BurstModeConverter(),
     "burstOption" to BurstOptionConverter(),
@@ -405,6 +406,7 @@ class ThetaClientReactNativeModule(
   private val optionEnumToOption = mapOf(
     "AiAutoThumbnail" to "aiAutoThumbnail",
     "Aperture" to "aperture",
+    "Bitrate" to "bitrate",
     "BluetoothPower" to "bluetoothPower",
     "BurstMode" to "burstMode",
     "BurstOption" to "burstOption",

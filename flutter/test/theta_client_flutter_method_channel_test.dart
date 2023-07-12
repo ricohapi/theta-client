@@ -430,6 +430,7 @@ void main() {
     List<List<dynamic>> data = [
       [OptionNameEnum.aiAutoThumbnail, 'AiAutoThumbnail', AiAutoThumbnailEnum.off, 'OFF'],
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
+      [OptionNameEnum.bitrate, 'Bitrate', Bitrate.fine, 'FINE'],
       [OptionNameEnum.burstMode, 'BurstMode', BurstModeEnum.on, 'ON'],
       [OptionNameEnum.cameraControlSource, 'CameraControlSource', CameraControlSourceEnum.camera, 'CAMERA'],
       [OptionNameEnum.cameraMode, 'CameraMode', CameraModeEnum.capture, 'CAPTURE'],
@@ -493,9 +494,9 @@ void main() {
 
     expect(options, isNotNull);
     expect(options.aperture, data[1][2]);
-    expect(options.cameraControlSource, data[3][2]);
-    expect(options.cameraMode, data[4][2]);
-    expect(options.captureMode, data[5][2]);
+    expect(options.cameraControlSource, data[4][2]);
+    expect(options.cameraMode, data[5][2]);
+    expect(options.captureMode, data[6][2]);
     for (int i = 0; i < data.length; i++) {
       expect(options.getValue(data[i][0]), data[i][2], reason: data[i][1]);
     }
@@ -512,6 +513,7 @@ void main() {
     List<List<dynamic>> data = [
       [OptionNameEnum.aiAutoThumbnail, 'AiAutoThumbnail', AiAutoThumbnailEnum.on, 'ON'],
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
+      [OptionNameEnum.bitrate, 'Bitrate', Bitrate.fine, 'FINE'],
       [OptionNameEnum.burstMode, 'BurstMode', BurstModeEnum.on, 'ON'],
       [OptionNameEnum.cameraMode, 'CameraMode', CameraModeEnum.capture, 'CAPTURE'],
       [OptionNameEnum.captureMode, 'CaptureMode', CaptureModeEnum.image, 'IMAGE'],

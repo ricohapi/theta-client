@@ -213,6 +213,9 @@ class ConvertUtils {
         case OptionNameEnum.aperture:
           result.aperture = ApertureEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.bitrate:
+          result.bitrate = (entry.value is int) ? BitrateNumber(entry.value): Bitrate.getValue(entry.value);
+          break;
         case OptionNameEnum.burstMode:
           result.burstMode = BurstModeEnum.getValue(entry.value);
           break;
@@ -362,6 +365,10 @@ class ConvertUtils {
     if (value is AiAutoThumbnailEnum) {
       return value.rawValue;
     } else if (value is ApertureEnum) {
+      return value.rawValue;
+    } else if (value is BitrateNumber) {
+      return value.value;
+    } else if (value is Bitrate) {
       return value.rawValue;
     } else if (value is BurstModeEnum) {
       return value.rawValue;

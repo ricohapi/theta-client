@@ -37,6 +37,7 @@ class CheckRequest {
             request: HttpRequestData,
             aiAutoThumbnail: AiAutoThumbnail? = null,
             aperture: Float? = null,
+            bitrate: String? = null,
             bluetoothPower: BluetoothPower? = null,
             burstMode: BurstMode? = null,
             burstOption: BurstOption? = null,
@@ -91,6 +92,9 @@ class CheckRequest {
             }
             aperture?.let {
                 assertEquals(optionsRequest.parameters.options.aperture, it, "setOptions aperture")
+            }
+            bitrate?.let {
+                assertEquals(optionsRequest.parameters.options._bitrate, it, "setOptions bitrate")
             }
             bluetoothPower?.let {
                 assertEquals(optionsRequest.parameters.options._bluetoothPower, it, "setOptions bluetoothPower")
