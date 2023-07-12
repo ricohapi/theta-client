@@ -1,10 +1,6 @@
 package com.ricoh360.thetaclient
 
-import android.os.strictmode.DiskReadViolation
-import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.repository.UpdateFirmwareTest
-import io.ktor.http.HttpStatusCode
-import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import java.nio.file.Files
@@ -20,7 +16,7 @@ import kotlin.test.*
  *   - Set the path of Theta firmware update API to environment variable THETA_FU_API_PATH
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-class UpdateFirmwareOnTheta {
+class UpdateFirmwareOnActualTheta {
     private val endpoint = "http://192.168.1.1:80/"
 
     @Test
