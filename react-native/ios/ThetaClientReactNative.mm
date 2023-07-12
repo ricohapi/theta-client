@@ -792,6 +792,44 @@ static convert_t CaptureNumberConverter = {
 };
 
 /**
+ * ContinuousNumberEnum converter
+ */
+static convert_t ContinuousNumberEnum = {
+  .toTheta = nil,
+  .fromTheta = nil,
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    if (!ContinuousNumberEnum.toTheta) {
+      NSMutableDictionary* dictionary = [[NSMutableDictionary alloc] init];
+      THETACKotlinArray* array = THETACThetaRepositoryContinuousNumberEnum.values;
+      for (int i = 0; i < array.size; i++) {
+        THETACThetaRepositoryContinuousNumberEnum* item = [array getIndex:i];
+        [dictionary setObject:item forKey:item.name];
+      }
+      ContinuousNumberEnum.toTheta = dictionary;
+    }
+    id val = [ContinuousNumberEnum.toTheta objectForKey:[rct objectForKey:@"continuousNumber"]];
+    if (val) {
+      opt.continuousNumber = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    if (!ContinuousNumberEnum.fromTheta) {
+      NSMutableDictionary* dictionary = [[NSMutableDictionary alloc] init];
+      THETACKotlinArray* array = THETACThetaRepositoryContinuousNumberEnum.values;
+      for (int i = 0; i < array.size; i++) {
+        THETACThetaRepositoryContinuousNumberEnum* item = [array getIndex:i];
+        [dictionary setObject:item.name forKey:item];
+      }
+      ContinuousNumberEnum.fromTheta = dictionary;
+    }
+    id val = [ContinuousNumberEnum.fromTheta objectForKey:opt.continuousNumber];
+    if (val) {
+      [rct setObject:val forKey:@"continuousNumber"];
+    }
+  }
+};
+
+/**
  * ExposureCompensationEnum converter
  */
 static convert_t ExposureCompensationEnum = {
@@ -2188,6 +2226,7 @@ static NSDictionary *NameToOptionEnum = @{
   @"ColorTemperature": THETACThetaRepositoryOptionNameEnum.colortemperature,
   @"CompositeShootingOutputInterval": THETACThetaRepositoryOptionNameEnum.compositeshootingoutputinterval,
   @"CompositeShootingTime": THETACThetaRepositoryOptionNameEnum.compositeshootingtime,
+  @"ContinuousNumber": THETACThetaRepositoryOptionNameEnum.continuousnumber,
   @"DateTimeZone": THETACThetaRepositoryOptionNameEnum.datetimezone,
   @"ExposureCompensation": THETACThetaRepositoryOptionNameEnum.exposurecompensation,
   @"ExposureDelay": THETACThetaRepositoryOptionNameEnum.exposuredelay,
@@ -2239,6 +2278,7 @@ static NSDictionary *OptionEnumToOption = @{
   @"ColorTemperature": @"colorTemperature",
   @"CompositeShootingOutputInterval": @"compositeShootingOutputInterval",
   @"CompositeShootingTime": @"compositeShootingTime",
+  @"ContinuousNumber": @"continuousNumber",
   @"DateTimeZone": @"dateTimeZone",
   @"ExposureCompensation": @"exposureCompensation",
   @"ExposureDelay": @"exposureDelay",
@@ -2293,6 +2333,7 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"colorTemperature": ^{return &ColorTemperatureCvt;},
   @"compositeShootingOutputInterval": ^{return &CompositeShootingOutputIntervalCvt;},
   @"compositeShootingTime": ^{return &CompositeShootingTimeCvt;},
+  @"continuousNumber": ^{return &ContinuousNumberEnum;},
   @"dateTimeZone": ^{return &DateTimeZoneCvt;},
   @"exposureCompensation": ^{return &ExposureCompensationEnum;},
   @"exposureDelay": ^{return &ExposureDelayEnum;},

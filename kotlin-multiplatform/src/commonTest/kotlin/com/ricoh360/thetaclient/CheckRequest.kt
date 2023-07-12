@@ -45,6 +45,8 @@ class CheckRequest {
             captureInterval: Int? = null,
             captureMode: CaptureMode? = null,
             captureNumber: Int? = null,
+            compositeShootingOutputInterval: Int? = null,
+            compositeShootingTime: Int? = null,
             clientVersion: Int? = null,
             colorTemperature: Int? = null,
             dateTimeZone: String? = null,
@@ -113,6 +115,12 @@ class CheckRequest {
             }
             captureNumber?.let {
                 assertEquals(optionsRequest.parameters.options.captureNumber, it, "setOptions captureNumber")
+            }
+            compositeShootingOutputInterval?.let {
+                assertEquals(optionsRequest.parameters.options._compositeShootingOutputInterval, it, "setOptions compositeShootingOutputInterval")
+            }
+            compositeShootingTime?.let {
+                assertEquals(optionsRequest.parameters.options._compositeShootingTime, it, "setOptions compositeShootingTime")
             }
             clientVersion?.let {
                 assertEquals(optionsRequest.parameters.options.clientVersion, it, "setOptions clientVersion")

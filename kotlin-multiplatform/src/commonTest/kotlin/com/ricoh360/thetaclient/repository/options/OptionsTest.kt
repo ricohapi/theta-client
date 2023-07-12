@@ -38,6 +38,7 @@ class OptionsTest {
         val colorTemperature = 10
         val compositeShootingOutputInterval = 60
         val compositeShootingTime = 600
+        val continuousNumber = ThetaRepository.ContinuousNumberEnum.MAX_1
         val dateTimeZone = "2014:05:18 01:04:29+08:00"
         val exposureCompensation = ThetaRepository.ExposureCompensationEnum.M0_3
         val exposureDelay = ThetaRepository.ExposureDelayEnum.DELAY_10
@@ -89,6 +90,7 @@ class OptionsTest {
             colorTemperature = colorTemperature,
             compositeShootingOutputInterval = compositeShootingOutputInterval,
             compositeShootingTime = compositeShootingTime,
+            continuousNumber = continuousNumber,
             dateTimeZone = dateTimeZone,
             exposureCompensation = exposureCompensation,
             exposureDelay = exposureDelay,
@@ -140,6 +142,7 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ColorTemperature), colorTemperature, "colorTemperature")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CompositeShootingOutputInterval), compositeShootingOutputInterval, "compositeShootingOutputInterval")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CompositeShootingTime), compositeShootingTime, "compositeShootingTime")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ContinuousNumber), continuousNumber, "continuousNumber")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.DateTimeZone), dateTimeZone, "dateTimeZone")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ExposureCompensation), exposureCompensation, "exposureCompensation")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ExposureDelay), exposureDelay, "exposureDelay")

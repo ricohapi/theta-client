@@ -437,6 +437,9 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.compositeshootingtime.name:
         options.compositeShootingTime = KotlinInt(integerLiteral: value as! Int)
         break
+    case ThetaRepository.OptionNameEnum.continuousnumber.name:
+        options.continuousNumber = getEnumValue(values: ThetaRepository.ContinuousNumberEnum.values(), name: value as! String)!
+        break
     case ThetaRepository.OptionNameEnum.datetimezone.name:
         options.dateTimeZone = value as? String
         break

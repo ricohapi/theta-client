@@ -4,6 +4,7 @@ import type { BurstOption } from './option-burst-option';
 import type { CameraControlSourceEnum } from './option-camera-control-source';
 import type { CameraModeEnum } from './option-camera-mode';
 import type { CaptureModeEnum } from './option-capture-mode';
+import type { ContinuousNumberEnum } from './option-continuous-number';
 import type { FilterEnum } from './option-filter';
 import type { NetworkTypeEnum } from './option-network-type';
 import type { PowerSavingEnum } from './option-power-saving';
@@ -463,6 +464,8 @@ export const OptionNameEnum = {
   CompositeShootingOutputInterval: 'CompositeShootingOutputInterval',
   /** _compositeShootingTime */
   CompositeShootingTime: 'CompositeShootingTime',
+  /** continuousNumber */
+  ContinuousNumber: 'ContinuousNumber',
   /** dateTimeZone */
   DateTimeZone: 'DateTimeZone',
   /** exposureCompensation */
@@ -612,6 +615,8 @@ export type Options = {
    * RICOH THETA S firmware v01.82 or later
    */
   compositeShootingTime?: number;
+  /** Number of shots for continuous shooting. */
+  continuousNumber?: ContinuousNumberEnum;
   /** Current system time of RICOH THETA. Setting another options will result in an error. */
   dateTimeZone?: string;
   /** Exposure compensation (EV). */

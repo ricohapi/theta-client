@@ -383,6 +383,7 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
         OptionNameEnum.CameraControlSource -> CameraControlSourceEnum.values().find { it.name == valueName }
         OptionNameEnum.CameraMode -> CameraModeEnum.values().find { it.name == valueName }
         OptionNameEnum.CaptureMode -> CaptureModeEnum.values().find { it.name == valueName }
+        OptionNameEnum.ContinuousNumber -> ContinuousNumberEnum.values().find { it.name == valueName }
         OptionNameEnum.ExposureCompensation -> ExposureCompensationEnum.values().find { it.name == valueName }
         OptionNameEnum.ExposureDelay -> ExposureDelayEnum.values().find { it.name == valueName }
         OptionNameEnum.ExposureProgram -> ExposureProgramEnum.values().find { it.name == valueName }

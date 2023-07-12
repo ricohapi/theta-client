@@ -1378,6 +1378,9 @@ enum OptionNameEnum {
   /// Option name _compositeShootingTime
   compositeShootingTime('CompositeShootingTime', int),
 
+  /// Option name continuousNumber
+  continuousNumber('ContinuousNumber', ContinuousNumberEnum),
+
   /// Option name dateTimeZone
   dateTimeZone('DateTimeZone', String),
 
@@ -1635,6 +1638,100 @@ enum CaptureModeEnum {
 
   static CaptureModeEnum? getValue(String rawValue) {
     return CaptureModeEnum.values.cast<CaptureModeEnum?>().firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Number of shots for continuous shooting.
+/// It can be acquired by camera.getOptions.
+///
+/// For RICOH THETA X
+/// - 11k image: Maximum value 8
+/// - 5.5k image: Maximum value 20
+///
+/// Depending on available storage capacity, the value may be less than maximum.
+enum ContinuousNumberEnum {
+  /// Disable continuous shooting.
+  off('OFF'),
+
+  /// Maximum value 1
+  max1('MAX_1'),
+
+  /// Maximum value 2
+  max2('MAX_2'),
+
+  /// Maximum value 3
+  max3('MAX_3'),
+
+  /// Maximum value 4
+  max4('MAX_4'),
+
+  /// Maximum value 5
+  max5('MAX_5'),
+
+  /// Maximum value 6
+  max6('MAX_6'),
+
+  /// Maximum value 7
+  max7('MAX_7'),
+
+  /// Maximum value 8
+  max8('MAX_8'),
+
+  /// Maximum value 9
+  max9('MAX_9'),
+
+  /// Maximum value 10
+  max10('MAX_10'),
+
+  /// Maximum value 11
+  max11('MAX_11'),
+
+  /// Maximum value 12
+  max12('MAX_12'),
+
+  /// Maximum value 13
+  max13('MAX_13'),
+
+  /// Maximum value 14
+  max14('MAX_14'),
+
+  /// Maximum value 15
+  max15('MAX_15'),
+
+  /// Maximum value 16
+  max16('MAX_16'),
+
+  /// Maximum value 17
+  max17('MAX_17'),
+
+  /// Maximum value 18
+  max18('MAX_18'),
+
+  /// Maximum value 19
+  max19('MAX_19'),
+
+  /// Maximum value 20
+  max20('MAX_20'),
+
+  /// Unsupported value
+  /// 
+  /// If camera.getOptions returns the number other than 0 to 20, this value is set.
+  /// Do not use this value to setOptions().
+  unsupported('UNSUPPORTED');
+
+  final String rawValue;
+
+  const ContinuousNumberEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static ContinuousNumberEnum? getValue(String rawValue) {
+    return ContinuousNumberEnum.values
+        .cast<ContinuousNumberEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
   }
 }
 
@@ -3328,6 +3425,9 @@ class Options {
   /// RICOH THETA S firmware v01.82 or later
   int? compositeShootingTime;
 
+  /// see [ContinuousNumberEnum]
+  ContinuousNumberEnum? continuousNumber;
+
   /// Current system time of RICOH THETA. Setting another options will result in an error.
   /// 
   /// With RICOH THETA X camera.setOptions can be changed only when Date/time setting is AUTO in menu UI.
@@ -3508,6 +3608,8 @@ class Options {
         return compositeShootingOutputInterval as T;
       case OptionNameEnum.compositeShootingTime:
         return compositeShootingTime as T;
+      case OptionNameEnum.continuousNumber:
+        return continuousNumber as T;
       case OptionNameEnum.dateTimeZone:
         return dateTimeZone as T;
       case OptionNameEnum.exposureCompensation:
@@ -3617,6 +3719,9 @@ class Options {
         break;
       case OptionNameEnum.compositeShootingTime:
         compositeShootingTime = value;
+        break;
+      case OptionNameEnum.continuousNumber:
+        continuousNumber = value;
         break;
       case OptionNameEnum.dateTimeZone:
         dateTimeZone = value;

@@ -3,6 +3,7 @@
  */
 package com.ricoh360.thetaclient.transferred
 
+import com.ricoh360.thetaclient.ThetaRepository.ContinuousNumberEnum
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -256,6 +257,18 @@ data class Options(
      * Supported shooting time for interval composite shooting (sec
      */
     var _compositeShootingTimeSupport: List<Int>? = null,
+
+    /**
+     * Number of shots for continuous shooting.
+     * It can be acquired by camera.getOptions.
+     *
+     * For RICOH THETA X
+     * - 11k image: Maximum value 8
+     * - 5.5k image: Maximum value 20
+     *
+     * Depending on available storage capacity, the value may be less than maximum.
+     */
+    var continuousNumber: Int? = null,
 
     /**
      * Current system time of RICOH THETA. Setting another options

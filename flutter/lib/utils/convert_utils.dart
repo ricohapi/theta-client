@@ -243,6 +243,9 @@ class ConvertUtils {
         case OptionNameEnum.compositeShootingTime:
           result.compositeShootingTime = entry.value;
           break;
+        case OptionNameEnum.continuousNumber:
+          result.continuousNumber = ContinuousNumberEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.dateTimeZone:
           result.dateTimeZone = entry.value;
           break;
@@ -369,6 +372,8 @@ class ConvertUtils {
     } else if (value is CameraModeEnum) {
       return value.rawValue;
     } else if (value is CaptureModeEnum) {
+      return value.rawValue;
+    } else if (value is ContinuousNumberEnum) {
       return value.rawValue;
     } else if (value is ExposureCompensationEnum) {
       return value.rawValue;

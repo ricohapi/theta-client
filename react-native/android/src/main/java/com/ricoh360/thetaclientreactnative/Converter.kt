@@ -254,6 +254,23 @@ class CaptureNumberConverter : OptionConverter {
 }
 
 /**
+ * ContinuousNumberConverter
+ */
+class ContinuousNumberConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("continuousNumber")?.let {
+      options.continuousNumber = ThetaRepository.ContinuousNumberEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.continuousNumber?.let {
+      objects.putString("continuousNumber", it.toString())
+    }
+  }
+}
+
+/**
  * ExposureCompensationConverter
  */
 class ExposureCompensationConverter : OptionConverter {

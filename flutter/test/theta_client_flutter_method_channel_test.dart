@@ -439,6 +439,7 @@ void main() {
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 2, 2],
       [OptionNameEnum.compositeShootingOutputInterval, 'CompositeShootingOutputInterval', 60, 60],
       [OptionNameEnum.compositeShootingTime, 'CompositeShootingTime', 600, 600],
+      [OptionNameEnum.continuousNumber, 'ContinuousNumber', ContinuousNumberEnum.max11, 'MAX_11'],
       [OptionNameEnum.dateTimeZone, 'DateTimeZone', '2022:01:01 00:01:00+09:00', '2022:01:01 00:01:00+09:00'],
       [OptionNameEnum.exposureCompensation, 'ExposureCompensation', ExposureCompensationEnum.m0_3, 'M0_3'],
       [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delay1, 'DELAY_1'],

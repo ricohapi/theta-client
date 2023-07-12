@@ -711,6 +711,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * continuousNumber
+         */
+        ContinuousNumber("continuousNumber", ContinuousNumberEnum::class),
+
+        /**
+         * Option name
          * dateTimeZone
          */
         DateTimeZone("dateTimeZone", String::class),
@@ -1024,6 +1030,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var compositeShootingTime: Int? = null,
 
         /**
+         * @see ContinuousNumberEnum
+         */
+        var continuousNumber: ContinuousNumberEnum? = null,
+
+        /**
          * Current system time of RICOH THETA. Setting another options will result in an error.
          *
          * With RICOH THETA X camera.setOptions can be changed only when Date/time setting is AUTO in menu UI.
@@ -1255,6 +1266,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             colorTemperature = null,
             compositeShootingOutputInterval = null,
             compositeShootingTime = null,
+            continuousNumber = null,
             dateTimeZone = null,
             exposureCompensation = null,
             exposureDelay = null,
@@ -1303,6 +1315,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             colorTemperature = options._colorTemperature,
             compositeShootingOutputInterval = options._compositeShootingOutputInterval,
             compositeShootingTime = options._compositeShootingTime,
+            continuousNumber = options.continuousNumber?.let { ContinuousNumberEnum.get(it) },
             dateTimeZone = options.dateTimeZone,
             exposureCompensation = options.exposureCompensation?.let {
                 ExposureCompensationEnum.get(
@@ -1360,6 +1373,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _colorTemperature = colorTemperature,
                 _compositeShootingOutputInterval = compositeShootingOutputInterval,
                 _compositeShootingTime = compositeShootingTime,
+                continuousNumber = continuousNumber?.value,
                 dateTimeZone = dateTimeZone,
                 exposureCompensation = exposureCompensation?.value,
                 exposureDelay = exposureDelay?.sec,
@@ -1420,6 +1434,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.ColorTemperature -> colorTemperature
                 OptionNameEnum.CompositeShootingOutputInterval -> compositeShootingOutputInterval
                 OptionNameEnum.CompositeShootingTime -> compositeShootingTime
+                OptionNameEnum.ContinuousNumber -> continuousNumber
                 OptionNameEnum.DateTimeZone -> dateTimeZone
                 OptionNameEnum.ExposureCompensation -> exposureCompensation
                 OptionNameEnum.ExposureDelay -> exposureDelay
@@ -1481,6 +1496,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.ColorTemperature -> colorTemperature = value as Int
                 OptionNameEnum.CompositeShootingOutputInterval -> compositeShootingOutputInterval = value as Int
                 OptionNameEnum.CompositeShootingTime -> compositeShootingTime = value as Int
+                OptionNameEnum.ContinuousNumber -> continuousNumber = value as ContinuousNumberEnum
                 OptionNameEnum.DateTimeZone -> dateTimeZone = value as String
                 OptionNameEnum.ExposureCompensation -> exposureCompensation = value as ExposureCompensationEnum
                 OptionNameEnum.ExposureDelay -> exposureDelay = value as ExposureDelayEnum
@@ -2091,6 +2107,144 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              */
             fun get(value: CaptureMode): CaptureModeEnum? {
                 return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Number of shots for continuous shooting.
+     * It can be acquired by camera.getOptions.
+     *
+     * For RICOH THETA X
+     * - 11k image: Maximum value 8
+     * - 5.5k image: Maximum value 20
+     *
+     * Depending on available storage capacity, the value may be less than maximum.
+     */
+    enum class ContinuousNumberEnum(val value: Int) {
+        /**
+         * Disable continuous shooting.
+         */
+        OFF(0),
+
+        /**
+         * Maximum value 1
+         */
+        MAX_1(1),
+
+        /**
+         * Maximum value 2
+         */
+        MAX_2(2),
+
+        /**
+         * Maximum value 3
+         */
+        MAX_3(3),
+
+        /**
+         * Maximum value 4
+         */
+        MAX_4(4),
+
+        /**
+         * Maximum value 5
+         */
+        MAX_5(5),
+
+        /**
+         * Maximum value 6
+         */
+        MAX_6(6),
+
+        /**
+         * Maximum value 7
+         */
+        MAX_7(7),
+
+        /**
+         * Maximum value 8
+         */
+        MAX_8(8),
+
+        /**
+         * Maximum value 9
+         */
+        MAX_9(9),
+
+        /**
+         * Maximum value 10
+         */
+        MAX_10(10),
+
+        /**
+         * Maximum value 11
+         */
+        MAX_11(11),
+
+        /**
+         * Maximum value 12
+         */
+        MAX_12(12),
+
+        /**
+         * Maximum value 13
+         */
+        MAX_13(13),
+
+        /**
+         * Maximum value 14
+         */
+        MAX_14(14),
+
+        /**
+         * Maximum value 15
+         */
+        MAX_15(15),
+
+        /**
+         * Maximum value 16
+         */
+        MAX_16(16),
+
+        /**
+         * Maximum value 17
+         */
+        MAX_17(17),
+
+        /**
+         * Maximum value 18
+         */
+        MAX_18(18),
+
+        /**
+         * Maximum value 19
+         */
+        MAX_19(19),
+
+        /**
+         * Maximum value 20
+         */
+        MAX_20(20),
+
+        /**
+         * Unsupported value
+         *
+         * If camera.getOptions returns the number other than 0 to 20, this value is set.
+         * Do not use this value to setOptions().
+         */
+        UNSUPPORTED(-1),
+        ;
+
+        companion object {
+            /**
+             * Convert value to ContinuousNumberEnum
+             *
+             * @param value continuous number value.
+             * @return ContinuousNumberEnum
+             */
+            fun get(value: Int): ContinuousNumberEnum {
+                return values().firstOrNull { it.value == value } ?: UNSUPPORTED
             }
         }
     }
