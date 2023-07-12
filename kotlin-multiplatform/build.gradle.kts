@@ -1,4 +1,6 @@
 import java.util.*
+import org.jetbrains.dokka.versioning.VersioningPlugin
+import org.jetbrains.dokka.versioning.VersioningConfiguration
 
 plugins {
     kotlin("multiplatform")
@@ -9,6 +11,10 @@ plugins {
     kotlin("native.cocoapods")
     signing
     id("io.gitlab.arturbosch.detekt").version("1.19.0")
+}
+
+dependencies {
+    dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.8.20")
 }
 
 val theta_client_version = "1.2.0"
@@ -216,4 +222,25 @@ fun getExtraString(name: String): String? {
 
 tasks.dokkaHtml.configure {
     moduleName.set("theta-client")
+
+    if(project.properties["version"].toString() != theta_client_version) {
+        throw GradleException("The release version does not match the version defined in Gradle.")
+    }
+
+    val pagesDir = file(project.properties["workspace"].toString()).resolve("gh-pages")
+    val currentVersion = theta_client_version
+    val currentDocsDir = pagesDir.resolve("docs")
+    val docVersionsDir = pagesDir.resolve("version")
+    outputDirectory.set(currentDocsDir)
+
+    pluginConfiguration<VersioningPlugin, VersioningConfiguration> {
+        version = currentVersion
+        olderVersionsDir = docVersionsDir
+    }
+
+    doLast {
+        val storedDir = docVersionsDir.resolve(currentVersion)
+        currentDocsDir.copyRecursively(storedDir)
+        storedDir.resolve("older").deleteRecursively()
+    }
 }
