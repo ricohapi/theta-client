@@ -144,24 +144,9 @@ object ThetaApi {
                        })
                    }
                },
-               boundary = "b783d64f-a16c-4928-a718-94f027c35fe1"
+               boundary = "b783d64f-a16c-4928-a718-94f027c35fe1" // any uuid can be used
            ))
        }.body()
-/*      return httpClient.submitFormWithBinaryData(
-            url = getApiUrl(endpoint, apiPath),
-            formData = formData {
-                for(i in fileContents.indices) {
-                    append(key = "\"firmware\"", value = fileContents[i], headers = Headers.build {
-                        append(HttpHeaders.ContentDisposition, "filename=\"${fileNames[i]}\"")
-                        append(HttpHeaders.ContentType, "application/octet-stream")
-                        append("Content-Transfer-Encoding", "binary") // not a http header but theta app sends
-                    })
-                }
-            },
-            block = {
-                headers.append("Connection", "Keep-Alive")
-            }
-        ).body() */
     }
 
     /*

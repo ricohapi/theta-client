@@ -417,6 +417,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
     /**
      * Update the firmware of Theta using non-public API.
+     * In case of Theta SC2, power off and on by hand is needed after this command finishes.
      *
      * @param apiPath The path of firmware update API which is non-public.
      * @param fileContents List of firmware binary.
