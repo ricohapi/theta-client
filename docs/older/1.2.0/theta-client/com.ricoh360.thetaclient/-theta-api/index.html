@@ -1,0 +1,584 @@
+<!doctype html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>ThetaApi</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/jetbrains-mono.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script>
+<link href="../../../styles/multimodule.css" rel="Stylesheet">
+</head>
+<body>
+<div class="navigation-wrapper" id="navigation-wrapper">
+    <div id="leftToggler"><span class="icon-toggler"></span></div>
+    <div class="library-name">
+            <a href="../../../index.html">
+                    <span>theta-client</span>
+            </a>
+    </div>
+    <div>
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;theta-client/com.ricoh360.thetaclient/-theta-api/index.html&quot;}"><div class="versions-dropdown">
+  <div class="versions-dropdown-button">1.2.0</div>
+  <div class="versions-dropdown-data"><a href="../../../../../theta-client/com.ricoh360.thetaclient/-theta-api/index.html">1.3.0</a><a href="index.html">1.2.0</a></div>
+</div>
+</dokka-template-command>    </div>
+    <div class="pull-right d-flex">
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":kotlin-multiplatform:dokkaHtml/commonMain">common</button>
+        </div>
+        <button id="theme-toggle-button"><span id="theme-toggle"></span></button>
+        <div id="searchBar"></div>
+    </div>
+</div>
+<div id="container">
+    <div id="leftColumn">
+        <div id="sideMenu"></div>
+    </div>
+    <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="theta-client::com.ricoh360.thetaclient/ThetaApi///PointingToDeclaration//1539438162">
+  <div class="breadcrumbs"><a href="../../../index.html">theta-client</a><span class="delimiter">/</span><a href="../index.html">com.ricoh360.thetaclient</a><span class="delimiter">/</span><span class="current">ThetaApi</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Theta</span><wbr><span><span>Api</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">ThetaApi</a></div><p class="paragraph">Http client using <a href="https://jp.ktor.work/clients/index.html">Ktor</a></p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="1582827798%2FProperties%2F1539438162" anchor-label="httpClient" id="1582827798%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="http-client.html"><span>http</span><wbr><span><span>Client</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1582827798%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="http-client.html">httpClient</a><span class="token operator">: </span><span data-unresolved-link="io.ktor.client/HttpClient///PointingToDeclaration/">HttpClient</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1080590978%2FProperties%2F1539438162" anchor-label="previewClient" id="-1080590978%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="preview-client.html"><span>preview</span><wbr><span><span>Client</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1080590978%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="preview-client.html">previewClient</a><span class="token operator">: </span><a href="../-preview-client/index.html">PreviewClient</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="2113479278%2FFunctions%2F1539438162" anchor-label="callCancelVideoConvertCommand" id="2113479278%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-cancel-video-convert-command.html"><span>call</span><wbr><span>Cancel</span><wbr><span>Video</span><wbr><span>Convert</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2113479278%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-cancel-video-convert-command.html"><span class="token function">callCancelVideoConvertCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-cancel-video-convert-response/index.html">CancelVideoConvertResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._cancel_video_convert.md">camera._cancelVideoConvert</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2052637883%2FFunctions%2F1539438162" anchor-label="callConvertVideoFormatsCommand" id="2052637883%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-convert-video-formats-command.html"><span>call</span><wbr><span>Convert</span><wbr><span>Video</span><wbr><span>Formats</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2052637883%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-convert-video-formats-command.html"><span class="token function">callConvertVideoFormatsCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">params<span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-convert-video-formats-params/index.html">ConvertVideoFormatsParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-convert-video-formats-response/index.html">ConvertVideoFormatsResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._convert_video_formats.md">camera._convertVideoFormats</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="218125339%2FFunctions%2F1539438162" anchor-label="callDeleteAccessPointCommand" id="218125339%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-delete-access-point-command.html"><span>call</span><wbr><span>Delete</span><wbr><span>Access</span><wbr><span>Point</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="218125339%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-delete-access-point-command.html"><span class="token function">callDeleteAccessPointCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">params<span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-delete-access-point-params/index.html">DeleteAccessPointParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-delete-access-point-response/index.html">DeleteAccessPointResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._delete_access_point.md">camera._deleteAccessPoint</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-755626271%2FFunctions%2F1539438162" anchor-label="callDeleteCommand" id="-755626271%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-delete-command.html"><span>call</span><wbr><span>Delete</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-755626271%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-delete-command.html"><span class="token function">callDeleteCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">params<span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-delete-params/index.html">DeleteParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-delete-response/index.html">DeleteResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.delete.md">camera.delete</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="819872475%2FFunctions%2F1539438162" anchor-label="callDeleteMySettingCommand" id="819872475%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-delete-my-setting-command.html"><span>call</span><wbr><span>Delete</span><wbr><span>My</span><wbr><span>Setting</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="819872475%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-delete-my-setting-command.html"><span class="token function">callDeleteMySettingCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">params<span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-delete-my-setting-params/index.html">DeleteMySettingParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-delete-my-setting-response/index.html">DeleteMySettingResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._delete_mysetting.md">camera._deleteMySetting</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1239158613%2FFunctions%2F1539438162" anchor-label="callFinishWlanCommand" id="-1239158613%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-finish-wlan-command.html"><span>call</span><wbr><span>Finish</span><wbr><span>Wlan</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1239158613%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-finish-wlan-command.html"><span class="token function">callFinishWlanCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-finish-wlan-response/index.html">FinishWlanResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._finish_wlan.md">camera._finishWlan</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="71453886%2FFunctions%2F1539438162" anchor-label="callGetLivePreviewCommand" id="71453886%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-get-live-preview-command.html"><span>call</span><wbr><span>Get</span><wbr><span>Live</span><wbr><span>Preview</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="71453886%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="call-get-live-preview-command.html"><span class="token function">callGetLivePreviewCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/Flow///PointingToDeclaration/">Flow</span><span class="token operator">&lt;</span><span class="token keyword"></span><span data-unresolved-link="io.ktor.utils.io.core/ByteReadPacket///PointingToDeclaration/">ByteReadPacket</span><span class="token operator">&gt;</span></div><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-get-live-preview-command.html"><span class="token function">callGetLivePreviewCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">frameHandler<span class="token operator">: </span><span class="token keyword">suspend </span><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-pair/index.html">Pair</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte-array/index.html">ByteArray</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">&gt;</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.get_live_preview.md">camera.getLivePreview</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1758135333%2FFunctions%2F1539438162" anchor-label="callGetMetadataCommand" id="-1758135333%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-get-metadata-command.html"><span>call</span><wbr><span>Get</span><wbr><span>Metadata</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1758135333%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-get-metadata-command.html"><span class="token function">callGetMetadataCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">params<span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-get-metadata-params/index.html">GetMetadataParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-get-metadata-response/index.html">GetMetadataResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._get_metadata.md">camera._getMetadata</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1690792731%2FFunctions%2F1539438162" anchor-label="callGetMySettingCommand" id="1690792731%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-get-my-setting-command.html"><span>call</span><wbr><span>Get</span><wbr><span>My</span><wbr><span>Setting</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1690792731%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-get-my-setting-command.html"><span class="token function">callGetMySettingCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">params<span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-get-my-setting-params/index.html">GetMySettingParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-get-my-setting-response/index.html">GetMySettingResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._get_my_setting.md">camera._getMySetting</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-278535705%2FFunctions%2F1539438162" anchor-label="callGetOptionsCommand" id="-278535705%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-get-options-command.html"><span>call</span><wbr><span>Get</span><wbr><span>Options</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-278535705%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-get-options-command.html"><span class="token function">callGetOptionsCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">params<span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-get-options-params/index.html">GetOptionsParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-get-options-response/index.html">GetOptionsResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.get_options.md">camera.getOptions</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1155703175%2FFunctions%2F1539438162" anchor-label="callGetPluginLicenseCommand" id="1155703175%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-get-plugin-license-command.html"><span>call</span><wbr><span>Get</span><wbr><span>Plugin</span><wbr><span>License</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1155703175%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-get-plugin-license-command.html"><span class="token function">callGetPluginLicenseCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">params<span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-get-plugin-license-params/index.html">GetPluginLicenseParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="io.ktor.client.statement/HttpResponse///PointingToDeclaration/">HttpResponse</span></div><div class="brief "><p class="paragraph">Acquires the license for the installed plugin</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1336268854%2FFunctions%2F1539438162" anchor-label="callGetPluginOrdersCommand" id="1336268854%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-get-plugin-orders-command.html"><span>call</span><wbr><span>Get</span><wbr><span>Plugin</span><wbr><span>Orders</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1336268854%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-get-plugin-orders-command.html"><span class="token function">callGetPluginOrdersCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-get-plugin-orders-response/index.html">GetPluginOrdersResponse</a></div><div class="brief "><p class="paragraph">Return the plugins for plugin mode. Supported just by Theta X and Z1.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1352699809%2FFunctions%2F1539438162" anchor-label="callInfoApi" id="1352699809%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-info-api.html"><span>call</span><wbr><span>Info</span><wbr><span><span>Api</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1352699809%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-info-api.html"><span class="token function">callInfoApi</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-info-api-response/index.html">InfoApiResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/protocols/info.md">/osc/info</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1620037125%2FFunctions%2F1539438162" anchor-label="callListAccessPointsCommand" id="-1620037125%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-list-access-points-command.html"><span>call</span><wbr><span>List</span><wbr><span>Access</span><wbr><span>Points</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1620037125%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-list-access-points-command.html"><span class="token function">callListAccessPointsCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-list-access-points-response/index.html">ListAccessPointsResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._list_access_points.md">camera._listAccessPoints</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-679074789%2FFunctions%2F1539438162" anchor-label="callListFilesCommand" id="-679074789%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-list-files-command.html"><span>call</span><wbr><span>List</span><wbr><span>Files</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-679074789%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-list-files-command.html"><span class="token function">callListFilesCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">params<span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-list-files-params/index.html">ListFilesParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-list-files-response/index.html">ListFilesResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md">camera.listFiles</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1538298626%2FFunctions%2F1539438162" anchor-label="callListPluginsCommand" id="1538298626%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-list-plugins-command.html"><span>call</span><wbr><span>List</span><wbr><span>Plugins</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1538298626%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-list-plugins-command.html"><span class="token function">callListPluginsCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-list-plugins-response/index.html">ListPluginsResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._list_plugins.md">camera._listPlugins</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="478082427%2FFunctions%2F1539438162" anchor-label="callPluginControlCommand" id="478082427%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-plugin-control-command.html"><span>call</span><wbr><span>Plugin</span><wbr><span>Control</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="478082427%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-plugin-control-command.html"><span class="token function">callPluginControlCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">params<span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-plugin-control-params/index.html">PluginControlParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-plugin-control-response/index.html">PluginControlResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._plugin_control.md">camera._pluginControl</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1841824117%2FFunctions%2F1539438162" anchor-label="callResetCommand" id="1841824117%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-reset-command.html"><span>call</span><wbr><span>Reset</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1841824117%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-reset-command.html"><span class="token function">callResetCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-reset-response/index.html">ResetResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.reset.md">camera.reset</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1755092259%2FFunctions%2F1539438162" anchor-label="callSetAccessPointCommand" id="1755092259%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-set-access-point-command.html"><span>call</span><wbr><span>Set</span><wbr><span>Access</span><wbr><span>Point</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1755092259%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-set-access-point-command.html"><span class="token function">callSetAccessPointCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">params<span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-set-access-point-params/index.html">SetAccessPointParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-set-access-point-response/index.html">SetAccessPointResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._set_access_point.md">camera._setAccessPoint</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="825477875%2FFunctions%2F1539438162" anchor-label="callSetBluetoothDeviceCommand" id="825477875%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-set-bluetooth-device-command.html"><span>call</span><wbr><span>Set</span><wbr><span>Bluetooth</span><wbr><span>Device</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="825477875%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-set-bluetooth-device-command.html"><span class="token function">callSetBluetoothDeviceCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">params<span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-set-bluetooth-device-params/index.html">SetBluetoothDeviceParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-set-bluetooth-device-response/index.html">SetBluetoothDeviceResponse</a></div><div class="brief "><p class="paragraph">Registers identification information (UUID) of a BLE device (Smartphone application) connected to the camera. UUID can be set while the wireless LAN function of the camera is placed in the direct mode.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1710640947%2FFunctions%2F1539438162" anchor-label="callSetMySettingCommand" id="1710640947%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-set-my-setting-command.html"><span>call</span><wbr><span>Set</span><wbr><span>My</span><wbr><span>Setting</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1710640947%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-set-my-setting-command.html"><span class="token function">callSetMySettingCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">params<span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-set-my-setting-params/index.html">SetMySettingParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-set-my-setting-response/index.html">SetMySettingResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._set_my_setting.md">camera._setMySetting</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-402376961%2FFunctions%2F1539438162" anchor-label="callSetOptionsCommand" id="-402376961%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-set-options-command.html"><span>call</span><wbr><span>Set</span><wbr><span>Options</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-402376961%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-set-options-command.html"><span class="token function">callSetOptionsCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">params<span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-set-options-params/index.html">SetOptionsParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-set-options-response/index.html">SetOptionsResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.set_options.md">camera.setOptions</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-42107237%2FFunctions%2F1539438162" anchor-label="callSetPluginCommand" id="-42107237%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-set-plugin-command.html"><span>call</span><wbr><span>Set</span><wbr><span>Plugin</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-42107237%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-set-plugin-command.html"><span class="token function">callSetPluginCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">params<span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-set-plugin-params/index.html">SetPluginParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-set-plugin-response/index.html">SetPluginResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._set_plugin.md">camera_setPlugin</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-272712325%2FFunctions%2F1539438162" anchor-label="callSetPluginOrdersCommand" id="-272712325%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-set-plugin-orders-command.html"><span>call</span><wbr><span>Set</span><wbr><span>Plugin</span><wbr><span>Orders</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-272712325%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-set-plugin-orders-command.html"><span class="token function">callSetPluginOrdersCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">params<span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-set-plugin-orders-params/index.html">SetPluginOrdersParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-set-plugin-orders-response/index.html">SetPluginOrdersResponse</a></div><div class="brief "><p class="paragraph">Sets the plugins for plugin mode.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-313397201%2FFunctions%2F1539438162" anchor-label="callStartCaptureCommand" id="-313397201%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-start-capture-command.html"><span>call</span><wbr><span>Start</span><wbr><span>Capture</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-313397201%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-start-capture-command.html"><span class="token function">callStartCaptureCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">params<span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-start-capture-params/index.html">StartCaptureParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-start-capture-response/index.html">StartCaptureResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.start_capture.md">camera.startCapture</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1156419412%2FFunctions%2F1539438162" anchor-label="callStartSessionCommand" id="-1156419412%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-start-session-command.html"><span>call</span><wbr><span>Start</span><wbr><span>Session</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1156419412%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-start-session-command.html"><span class="token function">callStartSessionCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-start-session-response/index.html">StartSessionResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.0/commands/camera.start_session.md">camera.startSession</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1186360706%2FFunctions%2F1539438162" anchor-label="callStateApi" id="1186360706%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-state-api.html"><span>call</span><wbr><span>State</span><wbr><span><span>Api</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1186360706%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-state-api.html"><span class="token function">callStateApi</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-state-api-response/index.html">StateApiResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/protocols/state.md">/osc/state</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1523287654%2FFunctions%2F1539438162" anchor-label="callStatusApi" id="-1523287654%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-status-api.html"><span>call</span><wbr><span>Status</span><wbr><span><span>Api</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1523287654%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-status-api.html"><span class="token function">callStatusApi</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">params<span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-status-api-params/index.html">StatusApiParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-command-api-response/index.html">CommandApiResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/protocols/commands_status.md">/osc/commands/status</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-83581312%2FFunctions%2F1539438162" anchor-label="callStopCaptureCommand" id="-83581312%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-stop-capture-command.html"><span>call</span><wbr><span>Stop</span><wbr><span>Capture</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-83581312%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-stop-capture-command.html"><span class="token function">callStopCaptureCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-stop-capture-response/index.html">StopCaptureResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.stop_capture.md">camera.stopCapture</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-50029491%2FFunctions%2F1539438162" anchor-label="callStopSelfTimerCommand" id="-50029491%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-stop-self-timer-command.html"><span>call</span><wbr><span>Stop</span><wbr><span>Self</span><wbr><span>Timer</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-50029491%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-stop-self-timer-command.html"><span class="token function">callStopSelfTimerCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-stop-self-timer-response/index.html">StopSelfTimerResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera._stop_self_timer.md">camera._stopSelfTimer</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1681891379%2FFunctions%2F1539438162" anchor-label="callTakePictureCommand" id="-1681891379%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="call-take-picture-command.html"><span>call</span><wbr><span>Take</span><wbr><span>Picture</span><wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1681891379%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call-take-picture-command.html"><span class="token function">callTakePictureCommand</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">endpoint<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.ricoh360.thetaclient.transferred/-take-picture-response/index.html">TakePictureResponse</a></div><div class="brief "><p class="paragraph">Call <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.take_picture.md">camera.takePicture</a></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2023 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+    </div>
+</div>
+</body>
+</html>
+
