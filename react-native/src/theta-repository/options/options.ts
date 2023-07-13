@@ -35,7 +35,7 @@ export const ApertureEnum = {
 } as const;
 
 /** type definition of ApertureEnum */
-export type ApertureEnum = typeof ApertureEnum[keyof typeof ApertureEnum];
+export type ApertureEnum = (typeof ApertureEnum)[keyof typeof ApertureEnum];
 
 /** BluetoothPower value. */
 export const BluetoothPowerEnum = {
@@ -47,7 +47,7 @@ export const BluetoothPowerEnum = {
 
 /** type definition of BluetoothPowerEnum */
 export type BluetoothPowerEnum =
-  typeof BluetoothPowerEnum[keyof typeof BluetoothPowerEnum];
+  (typeof BluetoothPowerEnum)[keyof typeof BluetoothPowerEnum];
 
 /** Exposure compensation (EV). */
 export const ExposureCompensationEnum = {
@@ -81,7 +81,7 @@ export const ExposureCompensationEnum = {
 
 /** type definition of ExposureCompensationEnum */
 export type ExposureCompensationEnum =
-  typeof ExposureCompensationEnum[keyof typeof ExposureCompensationEnum];
+  (typeof ExposureCompensationEnum)[keyof typeof ExposureCompensationEnum];
 
 /** Operating time (sec.) of the self-timer. */
 export const ExposureDelayEnum = {
@@ -111,7 +111,7 @@ export const ExposureDelayEnum = {
 
 /** type definition of ExposureDelayEnum */
 export type ExposureDelayEnum =
-  typeof ExposureDelayEnum[keyof typeof ExposureDelayEnum];
+  (typeof ExposureDelayEnum)[keyof typeof ExposureDelayEnum];
 
 /** Exposure program. The exposure settings that take priority can be selected. */
 export const ExposureProgramEnum = {
@@ -129,7 +129,7 @@ export const ExposureProgramEnum = {
 
 /** type definition of ExposureProgramEnum */
 export type ExposureProgramEnum =
-  typeof ExposureProgramEnum[keyof typeof ExposureProgramEnum];
+  (typeof ExposureProgramEnum)[keyof typeof ExposureProgramEnum];
 
 /** file format type in theta */
 export const FileFormatTypeEnum = {
@@ -143,7 +143,7 @@ export const FileFormatTypeEnum = {
 
 /** type definition of FileFormatTypeEnum */
 export type FileFormatTypeEnum =
-  typeof FileFormatTypeEnum[keyof typeof FileFormatTypeEnum];
+  (typeof FileFormatTypeEnum)[keyof typeof FileFormatTypeEnum];
 
 /** Photo image format */
 export const PhotoFileFormatEnum = {
@@ -195,11 +195,11 @@ export const VideoFileFormatEnum = {
 
 /** type definition of PhotoFileFormatEnum */
 export type PhotoFileFormatEnum =
-  typeof PhotoFileFormatEnum[keyof typeof PhotoFileFormatEnum];
+  (typeof PhotoFileFormatEnum)[keyof typeof PhotoFileFormatEnum];
 
 /** type definition of VideoFileFormatEnum */
 export type VideoFileFormatEnum =
-  typeof VideoFileFormatEnum[keyof typeof VideoFileFormatEnum];
+  (typeof VideoFileFormatEnum)[keyof typeof VideoFileFormatEnum];
 
 /** GPS information */
 export type GpsInfo = {
@@ -223,7 +223,7 @@ export const GpsTagRecordingEnum = {
 
 /** type definition of GpsTagRecordingEnum */
 export type GpsTagRecordingEnum =
-  typeof GpsTagRecordingEnum[keyof typeof GpsTagRecordingEnum];
+  (typeof GpsTagRecordingEnum)[keyof typeof GpsTagRecordingEnum];
 
 /** ISO sensitivity. */
 export const IsoEnum = {
@@ -276,7 +276,7 @@ export const IsoEnum = {
 } as const;
 
 /** type definition IsoEnum */
-export type IsoEnum = typeof IsoEnum[keyof typeof IsoEnum];
+export type IsoEnum = (typeof IsoEnum)[keyof typeof IsoEnum];
 
 /** ISO sensitivity upper limit when ISO sensitivity is set to automatic. */
 export const IsoAutoHighLimitEnum = {
@@ -322,7 +322,7 @@ export const IsoAutoHighLimitEnum = {
 
 /** type definition of IsoAutoHighLimitEnum */
 export type IsoAutoHighLimitEnum =
-  typeof IsoAutoHighLimitEnum[keyof typeof IsoAutoHighLimitEnum];
+  (typeof IsoAutoHighLimitEnum)[keyof typeof IsoAutoHighLimitEnum];
 
 /** language */
 export const LanguageEnum = {
@@ -347,7 +347,7 @@ export const LanguageEnum = {
 } as const;
 
 /** type definition of LanguageEnum */
-export type LanguageEnum = typeof LanguageEnum[keyof typeof LanguageEnum];
+export type LanguageEnum = (typeof LanguageEnum)[keyof typeof LanguageEnum];
 
 /** Maximum recordable time (in seconds) of the camera */
 export const MaxRecordableTimeEnum = {
@@ -360,12 +360,12 @@ export const MaxRecordableTimeEnum = {
   /** 7200 seconds for Theta X only */
   RECORDABLE_TIME_7200: 'RECORDABLE_TIME_7200',
   /** Just used by getMySetting/setMySetting command */
-  DO_NOT_UPDATE_MY_SETTING_CONDITION: 'DO_NOT_UPDATE_MY_SETTING_CONDITION'
+  DO_NOT_UPDATE_MY_SETTING_CONDITION: 'DO_NOT_UPDATE_MY_SETTING_CONDITION',
 } as const;
 
 /** type definition of MaxRecordableTimeEnum */
 export type MaxRecordableTimeEnum =
-  typeof MaxRecordableTimeEnum[keyof typeof MaxRecordableTimeEnum];
+  (typeof MaxRecordableTimeEnum)[keyof typeof MaxRecordableTimeEnum];
 
 /** Length of standby time before the camera automatically powers OFF. */
 export const OffDelayEnum = {
@@ -383,7 +383,7 @@ export const OffDelayEnum = {
 
 /** type definition of OffDelayEnum */
 export type OffDelayEnum =
-  | typeof OffDelayEnum[keyof typeof OffDelayEnum]
+  | (typeof OffDelayEnum)[keyof typeof OffDelayEnum]
   | number;
 
 /** Length of standby time before the camera enters the sleep mode. */
@@ -402,7 +402,7 @@ export const SleepDelayEnum = {
 
 /** type definition of SleepDelayEnum */
 export type SleepDelayEnum =
-  | typeof SleepDelayEnum[keyof typeof SleepDelayEnum]
+  | (typeof SleepDelayEnum)[keyof typeof SleepDelayEnum]
   | number;
 
 /** White balance. */

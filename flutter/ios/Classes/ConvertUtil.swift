@@ -18,69 +18,69 @@ func getEnumValue<T, E: KotlinEnum<T>>(values: KotlinArray<E>, name: String) -> 
 }
 
 func convertResult(fileInfoList: [ThetaRepository.FileInfo]) -> [[String: Any]] {
-  var resultList = [[String: Any]]()
-  fileInfoList.forEach({ fileInfo in
-    var item = [
-      "name": fileInfo.name,
-      "fileUrl": fileInfo.fileUrl,
-      "size": fileInfo.size,
-      "dateTime": fileInfo.dateTime,
-      "thumbnailUrl": fileInfo.thumbnailUrl,
-    ]
-    if let lat = fileInfo.lat {
-      item["lat"] = lat.floatValue
-    }
-    if let lng = fileInfo.lng {
-      item["lng"] = lng.floatValue
-    }
-    if let width = fileInfo.width {
-      item["width"] = width.intValue
-    }
-    if let height = fileInfo.height {
-      item["height"] = height.intValue
-    }
-    if let intervalCaptureGroupId = fileInfo.intervalCaptureGroupId {
-      item["intervalCaptureGroupId"] = intervalCaptureGroupId
-    }
-    if let compositeShootingGroupId = fileInfo.compositeShootingGroupId {
-      item["compositeShootingGroupId"] = compositeShootingGroupId
-    }
-    if let autoBracketGroupId = fileInfo.autoBracketGroupId {
-      item["autoBracketGroupId"] = autoBracketGroupId
-    }
-    if let recordTime = fileInfo.recordTime {
-      item["recordTime"] = recordTime.intValue
-    }
-    if let isProcessed = fileInfo.isProcessed {
-      item["isProcessed"] = isProcessed.boolValue
-    }
-    if let previewUrl = fileInfo.previewUrl {
-      item["previewUrl"] = previewUrl
-    }
-    if let codec = fileInfo.codec {
-      item["codec"] = codec.name
-    }
-    if let projectionType = fileInfo.projectionType {
-      item["projectionType"] = projectionType.name
-    }
-    if let continuousShootingGroupId = fileInfo.continuousShootingGroupId {
-      item["continuousShootingGroupId"] = continuousShootingGroupId
-    }
-    if let frameRate = fileInfo.frameRate {
-      item["frameRate"] = frameRate.intValue
-    }
-    if let favorite = fileInfo.favorite {
-      item["favorite"] = favorite.boolValue
-    }
-    if let imageDescription = fileInfo.imageDescription {
-      item["imageDescription"] = imageDescription
-    }
-    if let storageID = fileInfo.storageID {
-      item["storageID"] = storageID
-    }
-    resultList.append(item)
-  })
-  return resultList
+    var resultList = [[String: Any]]()
+    fileInfoList.forEach({ fileInfo in
+        var item = [
+            "name": fileInfo.name,
+            "fileUrl": fileInfo.fileUrl,
+            "size": fileInfo.size,
+            "dateTime": fileInfo.dateTime,
+            "thumbnailUrl": fileInfo.thumbnailUrl,
+        ]
+        if let lat = fileInfo.lat {
+            item["lat"] = lat.floatValue
+        }
+        if let lng = fileInfo.lng {
+            item["lng"] = lng.floatValue
+        }
+        if let width = fileInfo.width {
+            item["width"] = width.intValue
+        }
+        if let height = fileInfo.height {
+            item["height"] = height.intValue
+        }
+        if let intervalCaptureGroupId = fileInfo.intervalCaptureGroupId {
+            item["intervalCaptureGroupId"] = intervalCaptureGroupId
+        }
+        if let compositeShootingGroupId = fileInfo.compositeShootingGroupId {
+            item["compositeShootingGroupId"] = compositeShootingGroupId
+        }
+        if let autoBracketGroupId = fileInfo.autoBracketGroupId {
+            item["autoBracketGroupId"] = autoBracketGroupId
+        }
+        if let recordTime = fileInfo.recordTime {
+            item["recordTime"] = recordTime.intValue
+        }
+        if let isProcessed = fileInfo.isProcessed {
+            item["isProcessed"] = isProcessed.boolValue
+        }
+        if let previewUrl = fileInfo.previewUrl {
+            item["previewUrl"] = previewUrl
+        }
+        if let codec = fileInfo.codec {
+            item["codec"] = codec.name
+        }
+        if let projectionType = fileInfo.projectionType {
+            item["projectionType"] = projectionType.name
+        }
+        if let continuousShootingGroupId = fileInfo.continuousShootingGroupId {
+            item["continuousShootingGroupId"] = continuousShootingGroupId
+        }
+        if let frameRate = fileInfo.frameRate {
+            item["frameRate"] = frameRate.intValue
+        }
+        if let favorite = fileInfo.favorite {
+            item["favorite"] = favorite.boolValue
+        }
+        if let imageDescription = fileInfo.imageDescription {
+            item["imageDescription"] = imageDescription
+        }
+        if let storageID = fileInfo.storageID {
+            item["storageID"] = storageID
+        }
+        resultList.append(item)
+    })
+    return resultList
 }
 
 func convertResult(thetaInfo: ThetaRepository.ThetaInfo) -> [String: Any?] {
@@ -225,7 +225,7 @@ func toBitrate(value: Any) -> ThetaRepositoryBitrate? {
     } else {
         return nil
     }
- }
+}
 
 func toBurstOption(params: [String : Any]) -> ThetaRepository.BurstOption {
     var burstCaptureNum: ThetaRepository.BurstCaptureNumEnum? = nil;
@@ -303,12 +303,12 @@ func toTimeShift(params: [String : Any]) -> ThetaRepository.TimeShiftSetting {
     if let name = params["firstInterval"] as? String {
         firstInterval = getEnumValue(values: ThetaRepository.TimeShiftIntervalEnum.values(), name: name)
     }
-
+    
     var secondInterval: ThetaRepository.TimeShiftIntervalEnum? = nil;
     if let name = params["secondInterval"] as? String {
         secondInterval = getEnumValue(values: ThetaRepository.TimeShiftIntervalEnum.values(), name: name)
     }
-
+    
     return ThetaRepository.TimeShiftSetting(
         isFrontFirst: toKotlinBoolean(value: params["isFrontFirst"]),
         firstInterval: firstInterval,
@@ -385,7 +385,7 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
 func convertKotlinBooleanToBool(value: Any?) -> Bool? {
     guard let value = value else { return nil }
     guard value is KotlinBoolean, let numVal = value as? NSNumber else { return false }
-
+    
     return numVal.boolValue
 }
 

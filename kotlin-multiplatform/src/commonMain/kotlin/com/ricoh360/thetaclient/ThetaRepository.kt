@@ -4619,24 +4619,34 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     enum class TimeShiftIntervalEnum(val sec: Int) {
         /** 0 second */
         INTERVAL_0(0),
+
         /** 1 second */
         INTERVAL_1(1),
+
         /** 2 seconds */
         INTERVAL_2(2),
+
         /** 3 seconds */
         INTERVAL_3(3),
+
         /** 4 seconds */
         INTERVAL_4(4),
+
         /** 5 seconds */
         INTERVAL_5(5),
+
         /** 6 seconds */
         INTERVAL_6(6),
+
         /** 7 seconds */
         INTERVAL_7(7),
+
         /** 8 seconds */
         INTERVAL_8(8),
+
         /** 9 seconds */
         INTERVAL_9(9),
+
         /** 10 seconds */
         INTERVAL_10(10);
 

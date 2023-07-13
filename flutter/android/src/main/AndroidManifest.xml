@@ -1,3 +1,2 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.ricoh360.thetaclient.theta_client_flutter">
-</manifest>
+    package="com.ricoh360.thetaclient.theta_client_flutter"></manifest>

@@ -624,7 +624,7 @@ void main() {
     }
   });
 
-test('PresetEnum', () async {
+  test('PresetEnum', () async {
     List<List<dynamic>> data = [
       [PresetEnum.face, 'FACE'],
       [PresetEnum.nightView, 'NIGHT_VIEW'],

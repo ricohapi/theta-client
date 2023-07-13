@@ -53,7 +53,7 @@ export const ContinuousNumberEnum = {
   MAX_20: 'MAX_20',
   /**
    * Unsupported value
-   * 
+   *
    * If camera.getOptions returns the number other than 0 to 20, this value is set.
    * Do not use this value to setOptions().
    */

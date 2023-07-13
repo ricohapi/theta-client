@@ -51,6 +51,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 override fun onListen(arguments: Any?, events: EventChannel.EventSink) {
                     eventSink = events
                 }
+
                 override fun onCancel(arguments: Any?) {
                     Log.w("Android", "EventChannel onCancel called")
                 }
@@ -420,6 +421,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             override fun onSuccess(fileUrl: String) {
                 result.success(fileUrl)
             }
+
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
                 result.error(exception.javaClass.simpleName, exception.message, null)
             }
@@ -459,6 +461,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             override fun onSuccess(fileUrl: String) {
                 result.success(fileUrl)
             }
+
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
                 result.error(exception.javaClass.simpleName, exception.message, null)
             }

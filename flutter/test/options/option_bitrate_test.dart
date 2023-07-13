@@ -63,7 +63,7 @@ void main() {
   test('setOptions', () async {
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
-      expect(arguments['Bitrate'],'AUTO', reason: 'quality');
+      expect(arguments['Bitrate'], 'AUTO', reason: 'quality');
       return Future.value();
     });
     final options = Options();

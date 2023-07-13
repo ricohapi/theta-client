@@ -656,12 +656,12 @@ class PresetConverter : OptionConverter {
     }
   }
 
-   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
     options.preset?.let {
       objects.putString("preset", it.toString())
     }
   }
- }
+}
 
 /**
  * PreviewFormatConverter
@@ -673,12 +673,12 @@ class PreviewFormatConverter : OptionConverter {
     }
   }
 
-   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
     options.previewFormat?.let {
       objects.putString("previewFormat", it.toString())
     }
   }
- }
+}
 
 /**
  * ProxyConverter
@@ -778,12 +778,12 @@ class ShootingMethodConverter : OptionConverter {
     }
   }
 
-   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
     options.shootingMethod?.let {
       objects.putString("shootingMethod", it.toString())
     }
   }
- }
+}
 
 /**
  * WhiteBalanceConverter

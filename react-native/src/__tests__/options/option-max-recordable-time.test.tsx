@@ -6,7 +6,10 @@ describe('MaxRecordableTimeEnum', () => {
     [MaxRecordableTimeEnum.RECORDABLE_TIME_300, 'RECORDABLE_TIME_300'],
     [MaxRecordableTimeEnum.RECORDABLE_TIME_1500, 'RECORDABLE_TIME_1500'],
     [MaxRecordableTimeEnum.RECORDABLE_TIME_7200, 'RECORDABLE_TIME_7200'],
-    [MaxRecordableTimeEnum.DO_NOT_UPDATE_MY_SETTING_CONDITION, 'DO_NOT_UPDATE_MY_SETTING_CONDITION'],
+    [
+      MaxRecordableTimeEnum.DO_NOT_UPDATE_MY_SETTING_CONDITION,
+      'DO_NOT_UPDATE_MY_SETTING_CONDITION',
+    ],
   ];
 
   test('length', () => {

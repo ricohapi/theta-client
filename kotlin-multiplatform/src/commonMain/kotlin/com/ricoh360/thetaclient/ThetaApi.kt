@@ -272,11 +272,11 @@ object ThetaApi {
     ) {
         var retry = 4 // retry count when preview command failed
         val WAIT = 500L // time between retry (ms)
-        while(retry-- > 0) {
+        while (retry-- > 0) {
             try {
                 previewClient.request(endpoint)
-            } catch(ex: PreviewClientException) {
-                if(retry <= 0) throw ex
+            } catch (ex: PreviewClientException) {
+                if (retry <= 0) throw ex
                 runBlocking {
                     delay(WAIT)
                 }

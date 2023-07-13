@@ -34,28 +34,29 @@ class ConvertUtils {
     var fileList = List<FileInfo>.empty(growable: true);
     for (Map<dynamic, dynamic> element in inputList.cast<Map<dynamic, dynamic>>()) {
       var info = FileInfo(
-        element['name'],
-        element['fileUrl'],
-        element['size'],
-        element['dateTime'],
-        element['lat'],
-        element['lng'],
-        element['width'],
-        element['height'],
-        element['thumbnailUrl'],
-        element['intervalCaptureGroupId'],
-        element['compositeShootingGroupId'],
-        element['autoBracketGroupId'],
-        element['recordTime'],
-        element['isProcessed'],
-        element['previewUrl'],
-        (element['codec'] != null) ? CodecEnum.getValue(element['codec'] as String) : null,
-        (element['projectionType'] != null) ? ProjectionTypeEnum.getValue(element['projectionType'] as String) : null,
-        element['continuousShootingGroupId'],
-        element['frameRate'],
-        element['favorite'],
-        element['imageDescription'],
-        element['storageID']
+          element['name'],
+          element['fileUrl'],
+          element['size'],
+          element['dateTime'],
+          element['lat'],
+          element['lng'],
+          element['width'],
+          element['height'],
+          element['thumbnailUrl'],
+          element['intervalCaptureGroupId'],
+          element['compositeShootingGroupId'],
+          element['autoBracketGroupId'],
+          element['recordTime'],
+          element['isProcessed'],
+          element['previewUrl'],
+          (element['codec'] != null) ? CodecEnum.getValue(element['codec'] as String) : null,
+          (element['projectionType'] != null) ? ProjectionTypeEnum.getValue(
+              element['projectionType'] as String) : null,
+          element['continuousShootingGroupId'],
+          element['frameRate'],
+          element['favorite'],
+          element['imageDescription'],
+          element['storageID']
       );
       fileList.add(info);
     }
@@ -68,28 +69,28 @@ class ConvertUtils {
       apiList.add(str);
     });
     Endpoints endpoints = Endpoints(
-      data['endpoints']['httpPort'],
-      data['endpoints']['httpUpdatesPort']
+        data['endpoints']['httpPort'],
+        data['endpoints']['httpUpdatesPort']
     );
     var apiLevelList = List<int>.empty(growable: true);
     data['apiLevel'].forEach((n) {
       apiLevelList.add(n);
     });
     var thetaInfo = ThetaInfo(
-      data['manufacturer'],
-      data['model'],
-      data['serialNumber'],
-      data['wlanMacAddress'],
-      data['bluetoothMacAddress'],
-      data['firmwareVersion'],
-      data['supportUrl'],
-      data['hasGps'],
-      data['hasGyro'],
-      data['uptime'],
-      apiList,
-      endpoints,
-      apiLevelList,
-      ThetaModel.getValue(data['thetaModel'])
+        data['manufacturer'],
+        data['model'],
+        data['serialNumber'],
+        data['wlanMacAddress'],
+        data['bluetoothMacAddress'],
+        data['firmwareVersion'],
+        data['supportUrl'],
+        data['hasGps'],
+        data['hasGyro'],
+        data['uptime'],
+        apiList,
+        endpoints,
+        apiLevelList,
+        ThetaModel.getValue(data['thetaModel'])
     );
     return thetaInfo;
   }
@@ -173,17 +174,20 @@ class ConvertUtils {
 
   static Map<String, dynamic> convertTimeShiftParam(TimeShift timeShift) {
     var map = <String, dynamic>{};
-    if(timeShift.isFrontFirst != null) map['isFrontFirst'] = timeShift.isFrontFirst;
-    if(timeShift.firstInterval != null) map['firstInterval'] = timeShift.firstInterval.toString();
-    if(timeShift.secondInterval != null) map['secondInterval'] = timeShift.secondInterval.toString();
+    if (timeShift.isFrontFirst != null) map['isFrontFirst'] = timeShift.isFrontFirst;
+    if (timeShift.firstInterval != null) map['firstInterval'] = timeShift.firstInterval.toString();
+    if (timeShift.secondInterval != null)
+      map['secondInterval'] = timeShift.secondInterval.toString();
     return map;
   }
 
   static TimeShift convertTimeShift(Map<dynamic, dynamic> data) {
     var timeShift = TimeShift();
-    if(data['isFrontFirst'] != null) timeShift.isFrontFirst = data['isFrontFirst'];
-    if(data['firstInterval'] != null) timeShift.firstInterval = TimeShiftIntervalEnum.getValue(data['firstInterval']);
-    if(data['secondInterval'] != null) timeShift.secondInterval = TimeShiftIntervalEnum.getValue(data['secondInterval']);
+    if (data['isFrontFirst'] != null) timeShift.isFrontFirst = data['isFrontFirst'];
+    if (data['firstInterval'] != null)
+      timeShift.firstInterval = TimeShiftIntervalEnum.getValue(data['firstInterval']);
+    if (data['secondInterval'] != null)
+      timeShift.secondInterval = TimeShiftIntervalEnum.getValue(data['secondInterval']);
     return timeShift;
   }
 
@@ -214,7 +218,8 @@ class ConvertUtils {
           result.aperture = ApertureEnum.getValue(entry.value);
           break;
         case OptionNameEnum.bitrate:
-          result.bitrate = (entry.value is int) ? BitrateNumber(entry.value): Bitrate.getValue(entry.value);
+          result.bitrate =
+          (entry.value is int) ? BitrateNumber(entry.value) : Bitrate.getValue(entry.value);
           break;
         case OptionNameEnum.burstMode:
           result.burstMode = BurstModeEnum.getValue(entry.value);
@@ -477,29 +482,29 @@ class ConvertUtils {
 
   static Exif convertExif(Map<dynamic, dynamic> data) {
     var exif = Exif(
-      data['exifVersion'],
-      data['dateTime'],
-      data['imageWidth'],
-      data['imageLength'],
-      data['gpsLatitude'],
-      data['gpsLongitude']
+        data['exifVersion'],
+        data['dateTime'],
+        data['imageWidth'],
+        data['imageLength'],
+        data['gpsLatitude'],
+        data['gpsLongitude']
     );
     return exif;
   }
 
   static Xmp convertXmp(Map<dynamic, dynamic> data) {
     var xmp = Xmp(
-      data['poseHeadingDegrees'],
-      data['fullPanoWidthPixels'],
-      data['fullPanoHeightPixels']
+        data['poseHeadingDegrees'],
+        data['fullPanoWidthPixels'],
+        data['fullPanoHeightPixels']
     );
     return xmp;
   }
 
   static Metadata convertMetadata(Map<dynamic, dynamic> data) {
     var metadata = Metadata(
-      convertExif(data['exif']),
-      convertXmp(data['xmp'])
+        convertExif(data['exif']),
+        convertXmp(data['xmp'])
     );
     return metadata;
   }
@@ -577,6 +582,7 @@ enum TagNameEnum {
 
   final String rawValue;
   final dynamic valueType;
+
   const TagNameEnum(this.rawValue, this.valueType);
 
   @override
