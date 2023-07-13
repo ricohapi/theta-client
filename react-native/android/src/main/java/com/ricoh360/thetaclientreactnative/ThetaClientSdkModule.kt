@@ -354,6 +354,7 @@ class ThetaClientReactNativeModule(
   private val converters = mapOf(
     "aiAutoThumbnail" to AiAutoThumbnailConverter(),
     "aperture" to ApertureConverter(),
+    "bitrate" to BitrateConverter(),
     "bluetoothPower" to BluetoothPowerConverter(),
     "burstMode" to BurstModeConverter(),
     "burstOption" to BurstOptionConverter(),
@@ -365,6 +366,7 @@ class ThetaClientReactNativeModule(
     "colorTemperature" to ColorTemperatureConverter(),
     "compositeShootingOutputInterval" to CompositeShootingOutputIntervalConverter(),
     "compositeShootingTime" to CompositeShootingTimeConverter(),
+    "continuousNumber" to ContinuousNumberConverter(),
     "dateTimeZone" to DateTimeZoneConverter(),
     "exposureCompensation" to ExposureCompensationConverter(),
     "exposureDelay" to ExposureDelayConverter(),
@@ -404,6 +406,7 @@ class ThetaClientReactNativeModule(
   private val optionEnumToOption = mapOf(
     "AiAutoThumbnail" to "aiAutoThumbnail",
     "Aperture" to "aperture",
+    "Bitrate" to "bitrate",
     "BluetoothPower" to "bluetoothPower",
     "BurstMode" to "burstMode",
     "BurstOption" to "burstOption",
@@ -415,6 +418,7 @@ class ThetaClientReactNativeModule(
     "ColorTemperature" to "colorTemperature",
     "CompositeShootingOutputInterval" to "compositeShootingOutputInterval",
     "CompositeShootingTime" to "compositeShootingTime",
+    "ContinuousNumber" to "continuousNumber",
     "DateTimeZone" to "dateTimeZone",
     "ExposureCompensation" to "exposureCompensation",
     "ExposureDelay" to "exposureDelay",
@@ -654,7 +658,7 @@ class ThetaClientReactNativeModule(
       promise.reject(Exception(messageNotInit))
       return
     }
-    
+
     timeShiftCaptureBuilder?.let { builder ->
       launch {
         try {
@@ -1212,8 +1216,8 @@ class ThetaClientReactNativeModule(
    * @param optionNames The target shooting mode
    * @param promise promise to set result
    */
-   @ReactMethod
-   fun getMySettingFromOldModel(optionNames: ReadableArray, promise: Promise) {
+  @ReactMethod
+  fun getMySettingFromOldModel(optionNames: ReadableArray, promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -1296,8 +1300,8 @@ class ThetaClientReactNativeModule(
    * listPlugins - acquires a list of installed plugins
    * @param promise promise to set result
    */
-   @ReactMethod
-   fun listPlugins(promise: Promise) {
+  @ReactMethod
+  fun listPlugins(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -1325,133 +1329,133 @@ class ThetaClientReactNativeModule(
         promise.reject(t)
       }
     }
-   }
+  }
 
-   /**
-    * setPlugin - sets the installed plugin for boot. Supported just by Theta V.
-    * @param packageName Package name of the target plugin.
-    * @param promise promise to set result
-    */
-    @ReactMethod
-    fun setPlugin(packageName: String, promise: Promise) {
-     val theta = theta
-     if (theta == null) {
-       promise.reject(Exception(messageNotInit))
-       return
-     }
-     launch {
+  /**
+   * setPlugin - sets the installed plugin for boot. Supported just by Theta V.
+   * @param packageName Package name of the target plugin.
+   * @param promise promise to set result
+   */
+  @ReactMethod
+  fun setPlugin(packageName: String, promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    launch {
       try {
         theta.setPlugin(packageName)
         promise.resolve(true)
       } catch (t: Throwable) {
         promise.reject(t)
       }
-     }
     }
+  }
 
-   /**
-    * startPlugin - start the plugin specified by the [packageName].
-    * @param packageName Package name of the target plugin.
-    * @param promise promise to set result
-    */
-    @ReactMethod
-    fun startPlugin(packageName: String, promise: Promise) {
-     val theta = theta
-     if (theta == null) {
-       promise.reject(Exception(messageNotInit))
-       return
-     }
-     launch {
+  /**
+   * startPlugin - start the plugin specified by the [packageName].
+   * @param packageName Package name of the target plugin.
+   * @param promise promise to set result
+   */
+  @ReactMethod
+  fun startPlugin(packageName: String, promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    launch {
       try {
         theta.startPlugin(packageName)
         promise.resolve(true)
       } catch (t: Throwable) {
         promise.reject(t)
       }
-     }
     }
+  }
 
   /**
-    * stopPlugin - Stop the running plugin.
-    * @param promise promise to set result
-    */
-    @ReactMethod
-    fun stopPlugin(promise: Promise) {
+   * stopPlugin - Stop the running plugin.
+   * @param promise promise to set result
+   */
+  @ReactMethod
+  fun stopPlugin(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
     }
-     launch {
+    launch {
       try {
         theta.stopPlugin()
         promise.resolve(true)
       } catch (t: Throwable) {
         promise.reject(t)
       }
-     }
     }
+  }
 
   /**
-    * getPluginLicense - acquires the license for the installed plugin.
-    * @param packageName Package name of the target plugin.
-    * @param promise promise to set result
-    */
-    @ReactMethod
-    fun getPluginLicense(packageName: String, promise: Promise) {
+   * getPluginLicense - acquires the license for the installed plugin.
+   * @param packageName Package name of the target plugin.
+   * @param promise promise to set result
+   */
+  @ReactMethod
+  fun getPluginLicense(packageName: String, promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
     }
-     launch {
+    launch {
       try {
         val result = theta.getPluginLicense(packageName)
         promise.resolve(result)
       } catch (t: Throwable) {
         promise.reject(t)
       }
-     }
     }
+  }
 
   /**
-    * getPluginOrders - Return the plugin orders.  Supported just by Theta X and Z1..
-    * @param promise promise to set result, list of package names of plugins.
-    */
-    @ReactMethod
-    fun getPluginOrders(promise: Promise) {
+   * getPluginOrders - Return the plugin orders.  Supported just by Theta X and Z1..
+   * @param promise promise to set result, list of package names of plugins.
+   */
+  @ReactMethod
+  fun getPluginOrders(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
     }
-     launch {
+    launch {
       try {
         val result = theta.getPluginOrders()
         promise.resolve(Arguments.fromList(result))
       } catch (t: Throwable) {
         promise.reject(t)
       }
-     }
     }
+  }
 
   /**
-    * setPluginOrders - Return the plugin orders.  Supported just by Theta X and Z1.
-    * @param plugins list of package names of plugins
-    * For Z1, list size must be three. No restrictions for the size for X.
-    * When not specifying, set an empty string.
-    * If an empty string is placed mid-way, it will be moved to the front.
-    * Specifying zero package name will result in an error.
-    * @param promise promise to set result
-    */
-    @ReactMethod
-    fun setPluginOrders(plugins: ReadableArray, promise: Promise) {
+   * setPluginOrders - Return the plugin orders.  Supported just by Theta X and Z1.
+   * @param plugins list of package names of plugins
+   * For Z1, list size must be three. No restrictions for the size for X.
+   * When not specifying, set an empty string.
+   * If an empty string is placed mid-way, it will be moved to the front.
+   * Specifying zero package name will result in an error.
+   * @param promise promise to set result
+   */
+  @ReactMethod
+  fun setPluginOrders(plugins: ReadableArray, promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
     }
-     launch {
+    launch {
       try {
         val pluginList = mutableListOf<String>()
         for (index in 0..(plugins.size() - 1)) {

@@ -286,7 +286,15 @@ fun toResult(options: Options): Map<String, Any> {
         OptionNameEnum.Username
     )
     OptionNameEnum.values().forEach { name ->
-        if (name == OptionNameEnum.BurstOption) {
+        if (name == OptionNameEnum.Bitrate) {
+            options.getValue<Bitrate>(OptionNameEnum.Bitrate)?.let { bitrate ->
+                if (bitrate is BitrateEnum) {
+                    result[OptionNameEnum.Bitrate.name] = bitrate.toString()
+                } else if (bitrate is BitrateNumber) {
+                    result[OptionNameEnum.Bitrate.name] = bitrate.value
+                }
+            }
+        } else if (name == OptionNameEnum.BurstOption) {
             options.getValue<BurstOption>(OptionNameEnum.BurstOption)?.let { burstOption ->
                 result[OptionNameEnum.BurstOption.name] = toResult(burstOption)
             }
@@ -356,6 +364,13 @@ fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
             optionValue = value.toLong()
         }
         options.setValue(name, optionValue)
+    } else if (name == OptionNameEnum.Bitrate) {
+        @Suppress("UNCHECKED_CAST")
+        if (value is Int) {
+            options.setValue(name, BitrateNumber(value as Int))
+        } else if (BitrateEnum.values().map { it.name }.contains(value as String)) {
+            options.setValue(name, BitrateEnum.valueOf(value as String))
+        }
     } else if (name == OptionNameEnum.BurstOption) {
         @Suppress("UNCHECKED_CAST")
         options.setValue(name, toBurstOption(value as Map<String, Any>))
@@ -383,6 +398,7 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
         OptionNameEnum.CameraControlSource -> CameraControlSourceEnum.values().find { it.name == valueName }
         OptionNameEnum.CameraMode -> CameraModeEnum.values().find { it.name == valueName }
         OptionNameEnum.CaptureMode -> CaptureModeEnum.values().find { it.name == valueName }
+        OptionNameEnum.ContinuousNumber -> ContinuousNumberEnum.values().find { it.name == valueName }
         OptionNameEnum.ExposureCompensation -> ExposureCompensationEnum.values().find { it.name == valueName }
         OptionNameEnum.ExposureDelay -> ExposureDelayEnum.values().find { it.name == valueName }
         OptionNameEnum.ExposureProgram -> ExposureProgramEnum.values().find { it.name == valueName }

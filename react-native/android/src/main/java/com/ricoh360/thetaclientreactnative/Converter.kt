@@ -96,6 +96,32 @@ class ApertureConverter : OptionConverter {
 }
 
 /**
+ * BitrateConverter
+ */
+class BitrateConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    val type = objects.getType("bitrate")
+    if (type == ReadableType.Number) {
+      options.bitrate = ThetaRepository.BitrateNumber(objects.getInt("bitrate"));
+    } else if (type == ReadableType.String) {
+      objects.getString("bitrate")?.let { rateStr ->
+        options.bitrate = ThetaRepository.BitrateEnum.valueOf(rateStr)
+      }
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.bitrate?.let {
+      if (it is ThetaRepository.BitrateEnum) {
+        objects.putString("bitrate", it.toString())
+      } else if (it is ThetaRepository.BitrateNumber) {
+        objects.putInt("bitrate", it.value)
+      }
+    }
+  }
+}
+
+/**
  * BluetoothPowerConverter
  */
 class BluetoothPowerConverter : OptionConverter {
@@ -249,6 +275,23 @@ class CaptureNumberConverter : OptionConverter {
   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
     options.captureNumber?.let {
       objects.putInt("captureNumber", it)
+    }
+  }
+}
+
+/**
+ * ContinuousNumberConverter
+ */
+class ContinuousNumberConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("continuousNumber")?.let {
+      options.continuousNumber = ThetaRepository.ContinuousNumberEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.continuousNumber?.let {
+      objects.putString("continuousNumber", it.toString())
     }
   }
 }
@@ -613,12 +656,12 @@ class PresetConverter : OptionConverter {
     }
   }
 
-   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
     options.preset?.let {
       objects.putString("preset", it.toString())
     }
   }
- }
+}
 
 /**
  * PreviewFormatConverter
@@ -630,12 +673,12 @@ class PreviewFormatConverter : OptionConverter {
     }
   }
 
-   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
     options.previewFormat?.let {
       objects.putString("previewFormat", it.toString())
     }
   }
- }
+}
 
 /**
  * ProxyConverter
@@ -735,12 +778,12 @@ class ShootingMethodConverter : OptionConverter {
     }
   }
 
-   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
     options.shootingMethod?.let {
       objects.putString("shootingMethod", it.toString())
     }
   }
- }
+}
 
 /**
  * WhiteBalanceConverter

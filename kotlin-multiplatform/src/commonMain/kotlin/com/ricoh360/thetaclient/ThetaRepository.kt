@@ -664,6 +664,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _bitrate
+         */
+        Bitrate("_bitrate", ThetaRepository.Bitrate::class),
+
+        /**
+         * Option name
          * _bluetoothPower
          */
         BluetoothPower("_bluetoothPower", BluetoothPowerEnum::class),
@@ -736,6 +742,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * RICOH THETA S firmware v01.82 or later
          */
         CompositeShootingTime("_compositeShootingTime", Int::class),
+
+        /**
+         * Option name
+         * continuousNumber
+         */
+        ContinuousNumber("continuousNumber", ContinuousNumberEnum::class),
 
         /**
          * Option name
@@ -948,6 +960,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var aperture: ApertureEnum? = null,
 
         /**
+         * @see Bitrate
+         */
+        var bitrate: Bitrate? = null,
+
+        /**
          * Bluetooth power.
          */
         var bluetoothPower: BluetoothPowerEnum? = null,
@@ -1050,6 +1067,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * RICOH THETA S firmware v01.82 or later
          */
         var compositeShootingTime: Int? = null,
+
+        /**
+         * @see ContinuousNumberEnum
+         */
+        var continuousNumber: ContinuousNumberEnum? = null,
 
         /**
          * Current system time of RICOH THETA. Setting another options will result in an error.
@@ -1272,6 +1294,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         constructor() : this(
             aiAutoThumbnail = null,
             aperture = null,
+            bitrate = null,
             bluetoothPower = null,
             burstMode = null,
             burstOption = null,
@@ -1283,6 +1306,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             colorTemperature = null,
             compositeShootingOutputInterval = null,
             compositeShootingTime = null,
+            continuousNumber = null,
             dateTimeZone = null,
             exposureCompensation = null,
             exposureDelay = null,
@@ -1320,6 +1344,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         constructor(options: com.ricoh360.thetaclient.transferred.Options) : this(
             aiAutoThumbnail = options._aiAutoThumbnail?.let { AiAutoThumbnailEnum.get(it) },
             aperture = options.aperture?.let { ApertureEnum.get(it) },
+            bitrate = options._bitrate?.let { BitrateEnum.get(it) },
             bluetoothPower = options._bluetoothPower?.let { BluetoothPowerEnum.get(it) },
             burstMode = options._burstMode?.let { BurstModeEnum.get(it) },
             burstOption = options._burstOption?.let { BurstOption(it) },
@@ -1331,6 +1356,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             colorTemperature = options._colorTemperature,
             compositeShootingOutputInterval = options._compositeShootingOutputInterval,
             compositeShootingTime = options._compositeShootingTime,
+            continuousNumber = options.continuousNumber?.let { ContinuousNumberEnum.get(it) },
             dateTimeZone = options.dateTimeZone,
             exposureCompensation = options.exposureCompensation?.let {
                 ExposureCompensationEnum.get(
@@ -1377,6 +1403,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             return Options(
                 _aiAutoThumbnail = aiAutoThumbnail?.value,
                 aperture = aperture?.value,
+                _bitrate = bitrate?.rawValue,
                 _bluetoothPower = bluetoothPower?.value,
                 _burstMode = burstMode?.value,
                 _burstOption = burstOption?.toTransferredBurstOption(),
@@ -1388,6 +1415,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _colorTemperature = colorTemperature,
                 _compositeShootingOutputInterval = compositeShootingOutputInterval,
                 _compositeShootingTime = compositeShootingTime,
+                continuousNumber = continuousNumber?.value,
                 dateTimeZone = dateTimeZone,
                 exposureCompensation = exposureCompensation?.value,
                 exposureDelay = exposureDelay?.sec,
@@ -1437,6 +1465,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             return when (name) {
                 OptionNameEnum.AiAutoThumbnail -> aiAutoThumbnail
                 OptionNameEnum.Aperture -> aperture
+                OptionNameEnum.Bitrate -> bitrate
                 OptionNameEnum.BluetoothPower -> bluetoothPower
                 OptionNameEnum.BurstMode -> burstMode
                 OptionNameEnum.BurstOption -> burstOption
@@ -1448,6 +1477,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.ColorTemperature -> colorTemperature
                 OptionNameEnum.CompositeShootingOutputInterval -> compositeShootingOutputInterval
                 OptionNameEnum.CompositeShootingTime -> compositeShootingTime
+                OptionNameEnum.ContinuousNumber -> continuousNumber
                 OptionNameEnum.DateTimeZone -> dateTimeZone
                 OptionNameEnum.ExposureCompensation -> exposureCompensation
                 OptionNameEnum.ExposureDelay -> exposureDelay
@@ -1498,6 +1528,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             when (name) {
                 OptionNameEnum.AiAutoThumbnail -> aiAutoThumbnail = value as AiAutoThumbnailEnum
                 OptionNameEnum.Aperture -> aperture = value as ApertureEnum
+                OptionNameEnum.Bitrate -> bitrate = value as Bitrate
                 OptionNameEnum.BluetoothPower -> bluetoothPower = value as BluetoothPowerEnum
                 OptionNameEnum.BurstMode -> burstMode = value as BurstModeEnum
                 OptionNameEnum.BurstOption -> burstOption = value as BurstOption
@@ -1509,6 +1540,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.ColorTemperature -> colorTemperature = value as Int
                 OptionNameEnum.CompositeShootingOutputInterval -> compositeShootingOutputInterval = value as Int
                 OptionNameEnum.CompositeShootingTime -> compositeShootingTime = value as Int
+                OptionNameEnum.ContinuousNumber -> continuousNumber = value as ContinuousNumberEnum
                 OptionNameEnum.DateTimeZone -> dateTimeZone = value as String
                 OptionNameEnum.ExposureCompensation -> exposureCompensation = value as ExposureCompensationEnum
                 OptionNameEnum.ExposureDelay -> exposureDelay = value as ExposureDelayEnum
@@ -1631,6 +1663,124 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              */
             fun get(value: Float): ApertureEnum? {
                 return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Movie bit rate.
+     *
+     * ### Support value
+     * The supported value depends on the shooting mode [CaptureMode].
+     *
+     * | Shooting mode | Supported value |
+     * | ------------- | --------------- |
+     * |         video | "Fine", "Normal", "Economy"(RICOH THETA X or later) <br/>"2000000"-"120000000" (RICOH THETA X v1.20 or later) |
+     * |         image | "Auto", "1048576"-"20971520" (RICOH THETA X v1.20 or later) |
+     * | _liveStreaming |         "Auto" |
+     *
+     * #### RICOH THETA X
+     * | Video mode | Fine<br/>[Mbps] | Normal<br/>[Mbps] | Economy<br/>[Mbps] | Remark |
+     * |------------| --------------- | ------------------| ------------------ | ------ |
+     * |   2K 30fps |              32 |                16 |                  8 |        |
+     * |   2K 60fps |              64 |                32 |                 16 |        |
+     * |   4K 10fps |              48 |                24 |                 12 |        |
+     * |   4K 15fps |              64 |                32 |                 16 |        |
+     * |   4K 30fps |             100 |                54 |                 32 |        |
+     * |   4K 60fps |             120 |                64 |                 32 |        |
+     * | 5.7K  2fps |              16 |                12 |                  8 | firmware v2.00.0 or later   |
+     * |            |              64 |                32 |                 16 | firmware v1.40.0 or later   (I-frame only)|
+     * |            |              16 |                 8 |                  4 | firmware v1.30.0 or earlier |
+     * | 5.7K  5fps |              40 |                30 |                 20 | firmware v2.00.0 or later   |
+     * |            |             120 |                80 |                 40 | firmware v1.40.0 or later   (I-frame only)|
+     * |            |              32 |                16 |                  8 | firmware v1.30.0 or earlier |
+     * | 5.7K 10fps |              80 |                60 |                 40 | firmware v2.00.0 or later   |
+     * |            |              64 |                40 |                 20 | firmware v1.40.0 or later   |
+     * |            |              48 |                24 |                 12 | firmware v1.30.0 or earlier |
+     * | 5.7K 15fps |              64 |                32 |                 16 |        |
+     * | 5.7K 30fps |             120 |                64 |                 32 |        |
+     * |   8K  2fps |              64 |                32 |                 16 | firmware v1.40.0 or later   (I-frame only)|
+     * |            |              32 |                16 |                  8 | firmware v1.30.0 or earlier (I-frame only)|
+     * |   8K  5fps |             120 |                96 |                 40 | firmware v1.40.0 or later   (I-frame only)|
+     * |            |              64 |                32 |                 16 | firmware v1.30.0 or earlier (I-frame only)|
+     * |   8K 10fps |             120 |                96 |                 40 | firmware v1.40.0 or later   (I-frame only)|
+     * |            |             120 |                64 |                 32 | firmware v1.30.0 or earlier (I-frame only)|
+     *
+     * For
+     * - RICOH THETA X
+     * - RICOH THETA Z1
+     * - RICOH THETA V firmware v2.50.1 or later
+     */
+    interface Bitrate {
+        val rawValue: String
+    }
+
+    /**
+     * Movie bit rate value of number.
+     */
+    class BitrateNumber(val value: Int) : Bitrate {
+        override val rawValue: String
+            get() = value.toString()
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other is Bitrate) {
+                return other.rawValue == rawValue
+            }
+            return false
+        }
+
+        override fun hashCode(): Int {
+            return rawValue.hashCode()
+        }
+
+        companion object {
+            /**
+             * Convert string to BitrateNumber
+             *
+             * @return [BitrateNumber]
+             */
+            fun get(str: String): BitrateNumber? {
+                return (str.toIntOrNull())?.let { BitrateNumber(it) }
+            }
+        }
+    }
+
+    /**
+     * Movie bit rate value of string.
+     */
+    enum class BitrateEnum(val value: String) : Bitrate {
+        /**
+         * Auto
+         */
+        AUTO("Auto"),
+
+        /**
+         * Fine
+         */
+        FINE("Fine"),
+
+        /**
+         * Normal
+         */
+        NORMAL("Normal"),
+
+        /**
+         * Economy
+         */
+        ECONOMY("Economy");
+
+        override val rawValue: String
+            get() = value
+
+        companion object {
+            /**
+             * Convert string to BitrateEnum
+             *
+             * @return [BitrateEnum]
+             */
+            fun get(str: String): Bitrate? {
+                return BitrateEnum.values().firstOrNull { it.value == str } ?: BitrateNumber.get(str)
             }
         }
     }
@@ -2119,6 +2269,144 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              */
             fun get(value: CaptureMode): CaptureModeEnum? {
                 return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Number of shots for continuous shooting.
+     * It can be acquired by camera.getOptions.
+     *
+     * For RICOH THETA X
+     * - 11k image: Maximum value 8
+     * - 5.5k image: Maximum value 20
+     *
+     * Depending on available storage capacity, the value may be less than maximum.
+     */
+    enum class ContinuousNumberEnum(val value: Int) {
+        /**
+         * Disable continuous shooting.
+         */
+        OFF(0),
+
+        /**
+         * Maximum value 1
+         */
+        MAX_1(1),
+
+        /**
+         * Maximum value 2
+         */
+        MAX_2(2),
+
+        /**
+         * Maximum value 3
+         */
+        MAX_3(3),
+
+        /**
+         * Maximum value 4
+         */
+        MAX_4(4),
+
+        /**
+         * Maximum value 5
+         */
+        MAX_5(5),
+
+        /**
+         * Maximum value 6
+         */
+        MAX_6(6),
+
+        /**
+         * Maximum value 7
+         */
+        MAX_7(7),
+
+        /**
+         * Maximum value 8
+         */
+        MAX_8(8),
+
+        /**
+         * Maximum value 9
+         */
+        MAX_9(9),
+
+        /**
+         * Maximum value 10
+         */
+        MAX_10(10),
+
+        /**
+         * Maximum value 11
+         */
+        MAX_11(11),
+
+        /**
+         * Maximum value 12
+         */
+        MAX_12(12),
+
+        /**
+         * Maximum value 13
+         */
+        MAX_13(13),
+
+        /**
+         * Maximum value 14
+         */
+        MAX_14(14),
+
+        /**
+         * Maximum value 15
+         */
+        MAX_15(15),
+
+        /**
+         * Maximum value 16
+         */
+        MAX_16(16),
+
+        /**
+         * Maximum value 17
+         */
+        MAX_17(17),
+
+        /**
+         * Maximum value 18
+         */
+        MAX_18(18),
+
+        /**
+         * Maximum value 19
+         */
+        MAX_19(19),
+
+        /**
+         * Maximum value 20
+         */
+        MAX_20(20),
+
+        /**
+         * Unsupported value
+         *
+         * If camera.getOptions returns the number other than 0 to 20, this value is set.
+         * Do not use this value to setOptions().
+         */
+        UNSUPPORTED(-1),
+        ;
+
+        companion object {
+            /**
+             * Convert value to ContinuousNumberEnum
+             *
+             * @param value continuous number value.
+             * @return ContinuousNumberEnum
+             */
+            fun get(value: Int): ContinuousNumberEnum {
+                return values().firstOrNull { it.value == value } ?: UNSUPPORTED
             }
         }
     }
@@ -4359,24 +4647,34 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     enum class TimeShiftIntervalEnum(val sec: Int) {
         /** 0 second */
         INTERVAL_0(0),
+
         /** 1 second */
         INTERVAL_1(1),
+
         /** 2 seconds */
         INTERVAL_2(2),
+
         /** 3 seconds */
         INTERVAL_3(3),
+
         /** 4 seconds */
         INTERVAL_4(4),
+
         /** 5 seconds */
         INTERVAL_5(5),
+
         /** 6 seconds */
         INTERVAL_6(6),
+
         /** 7 seconds */
         INTERVAL_7(7),
+
         /** 8 seconds */
         INTERVAL_8(8),
+
         /** 9 seconds */
         INTERVAL_9(9),
+
         /** 10 seconds */
         INTERVAL_10(10);
 

@@ -172,6 +172,37 @@ void main() {
     }
   });
 
+  test('ContinuousNumberEnum', () async {
+    List<List<dynamic>> data = [
+      [ContinuousNumberEnum.off, 'OFF'],
+      [ContinuousNumberEnum.max1, 'MAX_1'],
+      [ContinuousNumberEnum.max2, 'MAX_2'],
+      [ContinuousNumberEnum.max3, 'MAX_3'],
+      [ContinuousNumberEnum.max4, 'MAX_4'],
+      [ContinuousNumberEnum.max5, 'MAX_5'],
+      [ContinuousNumberEnum.max6, 'MAX_6'],
+      [ContinuousNumberEnum.max7, 'MAX_7'],
+      [ContinuousNumberEnum.max8, 'MAX_8'],
+      [ContinuousNumberEnum.max9, 'MAX_9'],
+      [ContinuousNumberEnum.max10, 'MAX_10'],
+      [ContinuousNumberEnum.max11, 'MAX_11'],
+      [ContinuousNumberEnum.max12, 'MAX_12'],
+      [ContinuousNumberEnum.max13, 'MAX_13'],
+      [ContinuousNumberEnum.max14, 'MAX_14'],
+      [ContinuousNumberEnum.max15, 'MAX_15'],
+      [ContinuousNumberEnum.max16, 'MAX_16'],
+      [ContinuousNumberEnum.max17, 'MAX_17'],
+      [ContinuousNumberEnum.max18, 'MAX_18'],
+      [ContinuousNumberEnum.max19, 'MAX_19'],
+      [ContinuousNumberEnum.max20, 'MAX_20'],
+      [ContinuousNumberEnum.unsupported, 'UNSUPPORTED'],
+    ];
+    expect(data.length, ContinuousNumberEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
   test('ShootingFunctionEnum', () async {
     List<List<dynamic>> data = [
       [ShootingFunctionEnum.normal, 'NORMAL'],
@@ -593,7 +624,7 @@ void main() {
     }
   });
 
-test('PresetEnum', () async {
+  test('PresetEnum', () async {
     List<List<dynamic>> data = [
       [PresetEnum.face, 'FACE'],
       [PresetEnum.nightView, 'NIGHT_VIEW'],

@@ -1,10 +1,12 @@
 export * from './options';
 export * from './option-ai-auto-thumbnail';
+export * from './option-bitrate';
 export * from './option-burst-mode';
 export * from './option-burst-option';
 export * from './option-camera-control-source';
 export * from './option-camera-mode';
 export * from './option-capture-mode';
+export * from './option-continuous-number';
 export * from './option-filter';
 export * from './option-network-type';
 export * from './option-power-saving';
@@ -16,4 +18,3 @@ export * from './option-shutter-speed';
 export * from './option-time-shift';
 export * from './option-white-balance-auto-strength';
 export * from './option-wlan-frequency';
-

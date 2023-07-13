@@ -10,7 +10,7 @@ export const ChargingStateEnum = {
 
 /** type definition of ChargingStateEnum */
 export type ChargingStateEnum =
-  typeof ChargingStateEnum[keyof typeof ChargingStateEnum];
+  (typeof ChargingStateEnum)[keyof typeof ChargingStateEnum];
 
 /** Capture Status constants */
 export const CaptureStatusEnum = {
@@ -34,7 +34,7 @@ export const CaptureStatusEnum = {
 
 /** type definition of CaptureStatusEnum */
 export type CaptureStatusEnum =
-  typeof CaptureStatusEnum[keyof typeof CaptureStatusEnum];
+  (typeof CaptureStatusEnum)[keyof typeof CaptureStatusEnum];
 
 /** Shooting function status constants */
 export const ShootingFunctionEnum = {
@@ -48,7 +48,7 @@ export const ShootingFunctionEnum = {
 
 /** type definition of ShootingFunctionEnum */
 export type ShootingFunctionEnum =
-  typeof ShootingFunctionEnum[keyof typeof ShootingFunctionEnum];
+  (typeof ShootingFunctionEnum)[keyof typeof ShootingFunctionEnum];
 
 /** Microphone option constants */
 export const MicrophoneOptionEnum = {
@@ -62,7 +62,7 @@ export const MicrophoneOptionEnum = {
 
 /** type definition of MicrophoneOptionEnum */
 export type MicrophoneOptionEnum =
-  typeof MicrophoneOptionEnum[keyof typeof MicrophoneOptionEnum];
+  (typeof MicrophoneOptionEnum)[keyof typeof MicrophoneOptionEnum];
 
 /** Camera error constants */
 export const CameraErrorEnum = {
@@ -117,7 +117,7 @@ export const CameraErrorEnum = {
 
 /** type definition of CameraErrorEnum */
 export type CameraErrorEnum =
-  typeof CameraErrorEnum[keyof typeof CameraErrorEnum];
+  (typeof CameraErrorEnum)[keyof typeof CameraErrorEnum];
 
 /** Mutable values representing Theta status. */
 export type ThetaState = {

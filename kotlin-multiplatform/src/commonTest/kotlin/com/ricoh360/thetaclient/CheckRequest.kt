@@ -37,6 +37,7 @@ class CheckRequest {
             request: HttpRequestData,
             aiAutoThumbnail: AiAutoThumbnail? = null,
             aperture: Float? = null,
+            bitrate: String? = null,
             bluetoothPower: BluetoothPower? = null,
             burstMode: BurstMode? = null,
             burstOption: BurstOption? = null,
@@ -45,6 +46,8 @@ class CheckRequest {
             captureInterval: Int? = null,
             captureMode: CaptureMode? = null,
             captureNumber: Int? = null,
+            compositeShootingOutputInterval: Int? = null,
+            compositeShootingTime: Int? = null,
             clientVersion: Int? = null,
             colorTemperature: Int? = null,
             dateTimeZone: String? = null,
@@ -90,6 +93,9 @@ class CheckRequest {
             aperture?.let {
                 assertEquals(optionsRequest.parameters.options.aperture, it, "setOptions aperture")
             }
+            bitrate?.let {
+                assertEquals(optionsRequest.parameters.options._bitrate, it, "setOptions bitrate")
+            }
             bluetoothPower?.let {
                 assertEquals(optionsRequest.parameters.options._bluetoothPower, it, "setOptions bluetoothPower")
             }
@@ -113,6 +119,12 @@ class CheckRequest {
             }
             captureNumber?.let {
                 assertEquals(optionsRequest.parameters.options.captureNumber, it, "setOptions captureNumber")
+            }
+            compositeShootingOutputInterval?.let {
+                assertEquals(optionsRequest.parameters.options._compositeShootingOutputInterval, it, "setOptions compositeShootingOutputInterval")
+            }
+            compositeShootingTime?.let {
+                assertEquals(optionsRequest.parameters.options._compositeShootingTime, it, "setOptions compositeShootingTime")
             }
             clientVersion?.let {
                 assertEquals(optionsRequest.parameters.options.clientVersion, it, "setOptions clientVersion")

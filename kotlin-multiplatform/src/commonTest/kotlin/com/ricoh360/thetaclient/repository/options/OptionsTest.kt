@@ -20,6 +20,7 @@ class OptionsTest {
     fun optionsPrimaryConstructorTest() {
         val aiAutoThumbnail = ThetaRepository.AiAutoThumbnailEnum.ON
         val aperture = ThetaRepository.ApertureEnum.APERTURE_2_1
+        val bitrate = ThetaRepository.BitrateEnum.FINE
         val bluetoothPower = ThetaRepository.BluetoothPowerEnum.ON
         val burstMode = ThetaRepository.BurstModeEnum.ON
         val burstOption = ThetaRepository.BurstOption(
@@ -38,6 +39,7 @@ class OptionsTest {
         val colorTemperature = 10
         val compositeShootingOutputInterval = 60
         val compositeShootingTime = 600
+        val continuousNumber = ThetaRepository.ContinuousNumberEnum.MAX_1
         val dateTimeZone = "2014:05:18 01:04:29+08:00"
         val exposureCompensation = ThetaRepository.ExposureCompensationEnum.M0_3
         val exposureDelay = ThetaRepository.ExposureDelayEnum.DELAY_10
@@ -78,6 +80,7 @@ class OptionsTest {
         val options = ThetaRepository.Options(
             aiAutoThumbnail = aiAutoThumbnail,
             aperture = aperture,
+            bitrate = bitrate,
             bluetoothPower = bluetoothPower,
             burstMode = burstMode,
             burstOption = burstOption,
@@ -89,6 +92,7 @@ class OptionsTest {
             colorTemperature = colorTemperature,
             compositeShootingOutputInterval = compositeShootingOutputInterval,
             compositeShootingTime = compositeShootingTime,
+            continuousNumber = continuousNumber,
             dateTimeZone = dateTimeZone,
             exposureCompensation = exposureCompensation,
             exposureDelay = exposureDelay,
@@ -129,6 +133,7 @@ class OptionsTest {
 
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.AiAutoThumbnail), aiAutoThumbnail, "aiAutoThumbnail")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Aperture), aperture, "aperture")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Bitrate), bitrate, "bitrate")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.BluetoothPower), bluetoothPower, "bluetoothPower")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.BurstMode), burstMode, "burstMode")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.BurstOption), burstOption, "burstOption")
@@ -140,6 +145,7 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ColorTemperature), colorTemperature, "colorTemperature")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CompositeShootingOutputInterval), compositeShootingOutputInterval, "compositeShootingOutputInterval")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CompositeShootingTime), compositeShootingTime, "compositeShootingTime")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ContinuousNumber), continuousNumber, "continuousNumber")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.DateTimeZone), dateTimeZone, "dateTimeZone")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ExposureCompensation), exposureCompensation, "exposureCompensation")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ExposureDelay), exposureDelay, "exposureDelay")
@@ -182,6 +188,7 @@ class OptionsTest {
         val values = listOf(
             Pair(ThetaRepository.OptionNameEnum.AiAutoThumbnail, ThetaRepository.AiAutoThumbnailEnum.OFF),
             Pair(ThetaRepository.OptionNameEnum.Aperture, ThetaRepository.ApertureEnum.APERTURE_2_1),
+            Pair(ThetaRepository.OptionNameEnum.Bitrate, ThetaRepository.BitrateEnum.FINE),
             Pair(ThetaRepository.OptionNameEnum.BluetoothPower, ThetaRepository.BluetoothPowerEnum.ON),
             Pair(ThetaRepository.OptionNameEnum.BurstMode, ThetaRepository.BurstModeEnum.ON),
             Pair(
@@ -255,6 +262,7 @@ class OptionsTest {
     fun optionsSecondaryConstructorTest() {
         val aiAutoThumbnail = Pair(AiAutoThumbnail.OFF, ThetaRepository.AiAutoThumbnailEnum.OFF)
         val aperture = Pair(2.1f, ThetaRepository.ApertureEnum.APERTURE_2_1)
+        val bitrate = Pair("Fine", ThetaRepository.BitrateEnum.FINE)
         val bluetoothPower = Pair(BluetoothPower.ON, ThetaRepository.BluetoothPowerEnum.ON)
         val burstMode = Pair(BurstMode.ON, ThetaRepository.BurstModeEnum.ON)
         val burstOption = Pair(
@@ -323,6 +331,7 @@ class OptionsTest {
         val orgOptions = Options(
             _aiAutoThumbnail = aiAutoThumbnail.first,
             aperture = aperture.first,
+            _bitrate = bitrate.first,
             _bluetoothPower = bluetoothPower.first,
             _burstMode = burstMode.first,
             _burstOption = burstOption.first,
@@ -370,6 +379,7 @@ class OptionsTest {
 
         assertEquals(options.aiAutoThumbnail, aiAutoThumbnail.second, "aiAutoThumbnail")
         assertEquals(options.aperture, aperture.second, "aperture")
+        assertEquals(options.bitrate, bitrate.second, "bitrate")
         assertEquals(options.bluetoothPower, bluetoothPower.second, "bluetoothPower")
         assertEquals(options.burstMode, burstMode.second, "burstMode")
         assertEquals(options.burstOption, burstOption.second, "burstOption")
@@ -418,6 +428,7 @@ class OptionsTest {
     fun optionsConvertTest() {
         val aiAutoThumbnail = Pair(AiAutoThumbnail.ON, ThetaRepository.AiAutoThumbnailEnum.ON)
         val aperture = Pair(2.1f, ThetaRepository.ApertureEnum.APERTURE_2_1)
+        val bitrate = Pair("Fine", ThetaRepository.BitrateEnum.FINE)
         val bluetoothPower = Pair(BluetoothPower.ON, ThetaRepository.BluetoothPowerEnum.ON)
         val burstMode = Pair(BurstMode.ON, ThetaRepository.BurstModeEnum.ON)
         val burstOption = Pair(
@@ -489,6 +500,7 @@ class OptionsTest {
         val orgOptions = ThetaRepository.Options(
             aiAutoThumbnail = aiAutoThumbnail.second,
             aperture = aperture.second,
+            bitrate = bitrate.second,
             bluetoothPower = bluetoothPower.second,
             burstMode = burstMode.second,
             burstOption = burstOption.second,
@@ -536,6 +548,7 @@ class OptionsTest {
 
         assertEquals(options._aiAutoThumbnail, aiAutoThumbnail.first, "aiAutoThumbnail")
         assertEquals(options.aperture, aperture.first, "aperture")
+        assertEquals(options._bitrate, bitrate.first, "bitrate")
         assertEquals(options._bluetoothPower, bluetoothPower.first, "bluetoothPower")
         assertEquals(options._burstMode, burstMode.first, "burstMode")
         assertEquals(options._burstOption, burstOption.first, "burstOption")

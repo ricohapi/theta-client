@@ -2,12 +2,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
 void main() {
-  setUp(() {
-  });
+  setUp(() {});
 
-  tearDown(() {
-
-  });
+  tearDown(() {});
 
   test('ShutterSpeedEnum', () async {
     List<List<dynamic>> data = [
