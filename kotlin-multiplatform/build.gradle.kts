@@ -1,4 +1,6 @@
 import java.util.*
+import org.jetbrains.dokka.versioning.VersioningPlugin
+import org.jetbrains.dokka.versioning.VersioningConfiguration
 
 plugins {
     kotlin("multiplatform")
@@ -8,9 +10,14 @@ plugins {
     id("org.jetbrains.dokka")
     kotlin("native.cocoapods")
     signing
+    id("io.gitlab.arturbosch.detekt").version("1.19.0")
 }
 
-val theta_client_version = "1.2.0"
+dependencies {
+    dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.8.20")
+}
+
+val theta_client_version = "1.3.0"
 // Init publish property
 initProp()
 
@@ -40,7 +47,6 @@ kotlin {
         val coroutines_version = "1.6.4"
         val coroutines_mtversion = "1.6.4-native-mt"
         val ktor_version = "2.1.2"
-        val logback_version = "1.4.4"
         val kryptoVersion = "3.4.0"
 
         val commonMain by getting {
@@ -169,6 +175,19 @@ signing {
     }
 }
 
+detekt {
+    ignoreFailures = false
+    buildUponDefaultConfig = true // preconfigure defaults
+    allRules = false // activate all available (even unstable) rules.
+    config = files("$rootDir/config/detekt.yml") // config file
+    baseline = file("$rootDir/config/baseline.xml")
+    source = files(
+        "$rootDir/kotlin-multiplatform/src/commonMain/",
+        "$rootDir/flutter/android/src/",
+        "$rootDir/react-native/android/src/"
+    ) // the folders to be checked
+}
+
 ext["signing.keyId"] = null
 ext["signing.key"] = null
 ext["signing.password"] = null
@@ -199,4 +218,29 @@ fun getExtraString(name: String): String? {
         return ext[name]?.toString()
     }
     return null
+}
+
+tasks.dokkaHtml.configure {
+    moduleName.set("theta-client")
+
+    if(project.properties["version"].toString() != theta_client_version) {
+        throw GradleException("The release version does not match the version defined in Gradle.")
+    }
+
+    val pagesDir = file(project.properties["workspace"].toString()).resolve("gh-pages")
+    val currentVersion = theta_client_version
+    val currentDocsDir = pagesDir.resolve("docs")
+    val docVersionsDir = pagesDir.resolve("version")
+    outputDirectory.set(currentDocsDir)
+
+    pluginConfiguration<VersioningPlugin, VersioningConfiguration> {
+        version = currentVersion
+        olderVersionsDir = docVersionsDir
+    }
+
+    doLast {
+        val storedDir = docVersionsDir.resolve(currentVersion)
+        currentDocsDir.copyRecursively(storedDir)
+        storedDir.resolve("older").deleteRecursively()
+    }
 }

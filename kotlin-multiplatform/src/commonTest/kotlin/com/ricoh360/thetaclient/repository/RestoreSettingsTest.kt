@@ -66,7 +66,7 @@ class RestoreSettingsTest {
 
         val thetaRepository = ThetaRepository(endpoint)
         ThetaRepository.restoreConfig = config
-        thetaRepository.cameraModel = "RICOH THETA Z1"
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_Z1
         thetaRepository.restoreSettings()
         assertEquals(counter, 2, "call restoreSettings")
     }
@@ -111,7 +111,7 @@ class RestoreSettingsTest {
 
         val thetaRepository = ThetaRepository(endpoint)
         ThetaRepository.restoreConfig = config
-        thetaRepository.cameraModel = "RICOH THETA S"
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_S
         thetaRepository.restoreSettings()
         assertEquals(counter, 2, "call restoreSettings")
     }
@@ -151,7 +151,7 @@ class RestoreSettingsTest {
 
         val thetaRepository = ThetaRepository(endpoint)
         ThetaRepository.restoreConfig = config
-        thetaRepository.cameraModel = "RICOH THETA Z1"
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_Z1
         thetaRepository.restoreSettings()
         assertEquals(counter, 1, "call restoreSettings")
     }
@@ -175,7 +175,7 @@ class RestoreSettingsTest {
                 shutterVolume = 100
             )
             ThetaRepository.restoreConfig = config
-            thetaRepository.cameraModel = "RICOH THETA Z1"
+            thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_Z1
             thetaRepository.restoreSettings()
             assertTrue(false, "response is normal.")
         } catch (e: ThetaRepository.ThetaWebApiException) {
@@ -206,7 +206,7 @@ class RestoreSettingsTest {
                 shutterVolume = 100
             )
             ThetaRepository.restoreConfig = config
-            thetaRepository.cameraModel = "RICOH THETA Z1"
+            thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_Z1
             thetaRepository.restoreSettings()
             assertTrue(false, "response is normal.")
         } catch (e: ThetaRepository.ThetaWebApiException) {
@@ -234,7 +234,7 @@ class RestoreSettingsTest {
                 shutterVolume = 100
             )
             ThetaRepository.restoreConfig = config
-            thetaRepository.cameraModel = "RICOH THETA Z1"
+            thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_Z1
             thetaRepository.restoreSettings()
             assertTrue(false, "response is normal.")
         } catch (e: ThetaRepository.ThetaWebApiException) {
@@ -262,7 +262,7 @@ class RestoreSettingsTest {
                 shutterVolume = 100
             )
             ThetaRepository.restoreConfig = config
-            thetaRepository.cameraModel = "RICOH THETA Z1"
+            thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_Z1
             thetaRepository.restoreSettings()
             assertTrue(false, "response is normal.")
         } catch (e: ThetaRepository.ThetaWebApiException) {
@@ -289,7 +289,7 @@ class RestoreSettingsTest {
                 shutterVolume = 100
             )
             ThetaRepository.restoreConfig = config
-            thetaRepository.cameraModel = "RICOH THETA Z1"
+            thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_Z1
             thetaRepository.restoreSettings()
             assertTrue(false, "response is normal.")
         } catch (e: ThetaRepository.NotConnectedException) {

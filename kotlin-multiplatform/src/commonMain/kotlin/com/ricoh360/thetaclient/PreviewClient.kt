@@ -64,10 +64,13 @@ class PreviewClientImpl : PreviewClient {
     class URL(url: String) {
         /** protocol, only http or https */
         private var protocol: String = "http"
+
         /** host string */
         var host: String = "localhost"
+
         /** port number */
         var port: Int = 80
+
         /** path and query expression */
         var path: String = "/"
 
@@ -92,42 +95,59 @@ class PreviewClientImpl : PreviewClient {
     companion object {
         /** receive buffer */
         val buffer: ByteArray = ByteArray(10 * 1024)
+
         /** part buffer */
         var parts: ByteArray = ByteArray(100 * 1024)
+
         /** line buffer for headers */
         val lineBuffer: ByteArray = ByteArray(1024)
+
         /** connection timeout (ms) */
         const val connectionTimeout: Long = 20_000
+
         /** read/write timeout (ms) */
         const val socketTimeout: Long = 30_000
     }
 
     /** input channel */
     private var input: ByteReadChannel? = null
+
     /** output channel */
     private var output: ByteWriteChannel? = null
+
     /** socket connected to endpoint */
     private var socket: ASocket? = null
+
     /** parsed endpoint */
     private var endpoint: URL? = null
+
     /** io selector manager */
     private var selector: SelectorManager? = null
+
     /** current buffer filled position */
     private var curr: Int = 0
+
     /** current read position in buffer */
     private var pos: Int = 0
+
     /** chunked transfer encoding or not */
     private var chunked: Boolean = false
+
     /** current chunk size in chunked transfer encoding */
     private var chunkSize: Int = -1
+
     /** content-length header value if exists */
     private var contentLength: Int? = null
+
     /** boundary marker for multipart */
     private var boundary: String? = null
+
     /** content-length of current part */
     private var partLength: Int = 0
+
     /** http response status */
     private var status: Int = 0
+
     /** http response status message */
     private var statusMessage: String? = null
     private var responseHeaders: Map<String, String>? = null
@@ -215,7 +235,7 @@ class PreviewClientImpl : PreviewClient {
     private suspend fun write(line: String) {
         write(line.toByteArray())
     }
-    
+
     /**
      * fill buffer from endpoint
      */
@@ -374,7 +394,7 @@ class PreviewClientImpl : PreviewClient {
             } else if (name == "content-type") {
                 // RFC1341 7.2
                 val match0 = Regex("boundary=\"?([0-9a-zA-Z'()+_,-./:=? ]+)\"?")
-                  .find(value)
+                    .find(value)
                 boundary = match0?.groups?.get(1)?.value
             }
             headers[name] = value

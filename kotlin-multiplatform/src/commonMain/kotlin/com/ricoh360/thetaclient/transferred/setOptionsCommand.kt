@@ -3,6 +3,7 @@
  */
 package com.ricoh360.thetaclient.transferred
 
+import com.ricoh360.thetaclient.ThetaRepository.ContinuousNumberEnum
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -96,6 +97,7 @@ data class ResultSetOptions(
  * option key value pair
  */
 @Serializable
+@Suppress("ConstructorParameterNaming")
 data class Options(
     /**
      * Turns the AI auto setting ON/OFF.
@@ -118,11 +120,35 @@ data class Options(
     var apertureSupport: List<Float>? = null,
 
     /**
+     * Movie bit rate.
+     */
+    var _bitrate: String? = null,
+
+    /**
+     * Movie bit rate support.
+     */
+    var _bitrateSupport: List<String>? = null,
+
+    /**
      * bluetooth power
      *
      * @see BluetoothPower
      */
     var _bluetoothPower: BluetoothPower? = null,
+
+    /**
+     * burst mode
+     *
+     * @see BurstMode
+     */
+    var _burstMode: BurstMode? = null,
+
+    /**
+     * burst option
+     *
+     * @see BurstOption
+     */
+    var _burstOption: BurstOption? = null,
 
     /**
      * camera control source
@@ -146,12 +172,22 @@ data class Options(
     var _cameraMode: CameraMode? = null,
 
     /**
+     * Shooting interval (sec.) for interval shooting.
+     */
+    var captureInterval: Int? = null,
+
+    /**
+     * supported capture interval.
+     */
+    var captureIntervalSupport: CaptureIntervalSupport? = null,
+
+    /**
      * Shooting mode.
      *
      * The current setting can be acquired by camera.getOptions, and
      * it can be changed by camera.setOptions.
      *
-     * Swithcing modes may take time. Wait a while to send the command
+     * Switching modes may take time. Wait a while to send the command
      * that takes place after switching the mode.
      *
      * Live streaming mode is supported by only RICOH THETA S.
@@ -162,6 +198,16 @@ data class Options(
      * supported shooting mode.
      */
     var captureModeSupport: List<CaptureMode>? = null,
+
+    /**
+     * Number of shots for interval shooting.
+     */
+    var captureNumber: Int? = null,
+
+    /**
+     * supported capture number.
+     */
+    var captureNumberSupport: CaptureNumberSupport? = null,
 
     /**
      * API version of the camera. (RICOH THETA S firmware version
@@ -187,6 +233,52 @@ data class Options(
      * 2500 to 10000. In 100-Kelvin units.
      */
     var _colorTemperature: Int? = null,
+
+    /**
+     * In-progress save interval for interval composite shooting (sec).
+     *
+     * 0 (no saving), 60 to 600. In 60-second units.
+     *
+     * For
+     * RICOH THETA Z1
+     * RICOH THETA SC firmware v1.10 or later
+     * RICOH THETA S firmware v01.82 or later
+     */
+    var _compositeShootingOutputInterval: Int? = null,
+
+    /**
+     * Supported in-progress save interval for interval composite shooting (sec).
+     */
+    var _compositeShootingOutputIntervalSupport: List<Int>? = null,
+
+    /**
+     * Shooting time for interval composite shooting (sec).
+     *
+     * 600 to 86400. In 600-second units.
+     *
+     * For
+     * RICOH THETA Z1
+     * RICOH THETA SC firmware v1.10 or later
+     * RICOH THETA S firmware v01.82 or later
+     */
+    var _compositeShootingTime: Int? = null,
+
+    /**
+     * Supported shooting time for interval composite shooting (sec
+     */
+    var _compositeShootingTimeSupport: List<Int>? = null,
+
+    /**
+     * Number of shots for continuous shooting.
+     * It can be acquired by camera.getOptions.
+     *
+     * For RICOH THETA X
+     * - 11k image: Maximum value 8
+     * - 5.5k image: Maximum value 20
+     *
+     * Depending on available storage capacity, the value may be less than maximum.
+     */
+    var continuousNumber: Int? = null,
 
     /**
      * Current system time of RICOH THETA. Setting another options
@@ -460,6 +552,16 @@ data class Options(
     var previewFormatSupport: List<PreviewFormat>? = null,
 
     /**
+     * Preset mode for Theta SC2
+     */
+    var _preset: Preset? = null,
+
+    /**
+     * Supported Preset.
+     */
+    var _presetSupport: List<Preset>? = null,
+
+    /**
      * @see Proxy
      */
     var _proxy: Proxy? = null,
@@ -507,7 +609,7 @@ data class Options(
     var shutterSpeed: Double? = null,
 
     /**
-     * Supported shutter spped.
+     * Supported shutter speed.
      */
     var shutterSpeedSupport: List<Double>? = null,
 
@@ -654,6 +756,325 @@ enum class BluetoothPower {
 }
 
 /**
+ * BurstMode setting.
+ * When this is set to ON, burst shooting is enabled,
+ * and a screen dedicated to burst shooting is displayed in Live View.
+ *
+ * only For RICOH THETA Z1 firmware v2.10.1 or later
+ */
+@Serializable
+enum class BurstMode {
+    /**
+     * BurstMode ON
+     */
+    @SerialName("ON")
+    ON,
+
+    /**
+     * BurstMode OFF
+     */
+    @SerialName("OFF")
+    OFF,
+}
+
+/**
+ * Burst shooting setting.
+ *
+ * only For RICOH THETA Z1 firmware v2.10.1 or later
+ */
+@Serializable
+data class BurstOption(
+    /**
+     * @see BurstCaptureNum
+     */
+    val _burstCaptureNum: BurstCaptureNum? = null,
+
+    /**
+     * @see BurstBracketStep
+     */
+    val _burstBracketStep: BurstBracketStep? = null,
+
+    /**
+     * @see BurstCompensation
+     */
+    val _burstCompensation: BurstCompensation? = null,
+
+    /**
+     * @see BurstMaxExposureTime
+     */
+    val _burstMaxExposureTime: BurstMaxExposureTime? = null,
+
+    /**
+     * @see BurstEnableIsoControl
+     */
+    val _burstEnableIsoControl: BurstEnableIsoControl? = null,
+
+    /**
+     * @see BurstOrder
+     */
+    val _burstOrder: BurstOrder? = null
+)
+
+/**
+ * Number of shots for burst shooting
+ * 1, 3, 5, 7, 9
+ */
+@Serializable(with = BurstCaptureNumSerializer::class)
+enum class BurstCaptureNum(val value: Int) {
+    BURST_CAPTURE_NUM_1(1),
+    BURST_CAPTURE_NUM_3(3),
+    BURST_CAPTURE_NUM_5(5),
+    BURST_CAPTURE_NUM_7(7),
+    BURST_CAPTURE_NUM_9(9);
+
+    companion object {
+        fun getDefault(): BurstCaptureNum {
+            return BURST_CAPTURE_NUM_1
+        }
+
+        fun getFromValue(value: Int?): BurstCaptureNum? {
+            return values().firstOrNull { it.value == value }
+        }
+    }
+}
+
+object BurstCaptureNumSerializer : KSerializer<BurstCaptureNum> {
+    override val descriptor: SerialDescriptor
+        get() = PrimitiveSerialDescriptor("_burstCaptureNum", PrimitiveKind.INT)
+
+    override fun serialize(encoder: Encoder, value: BurstCaptureNum) {
+        encoder.encodeInt(value.value)
+    }
+
+    override fun deserialize(decoder: Decoder): BurstCaptureNum {
+        return BurstCaptureNum.getFromValue(value = decoder.decodeInt()) ?: BurstCaptureNum.getDefault()
+    }
+}
+
+/**
+ * Bracket value range between each shot for burst shooting
+ * 0.0, 0.3, 0.7, 1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0
+ */
+@Serializable(with = BurstBracketStepSerializer::class)
+enum class BurstBracketStep(val value: Float) {
+    BRACKET_STEP_0_0(0.0F),
+    BRACKET_STEP_0_3(0.3F),
+    BRACKET_STEP_0_7(0.7F),
+    BRACKET_STEP_1_0(1.0F),
+    BRACKET_STEP_1_3(1.3F),
+    BRACKET_STEP_1_7(1.7F),
+    BRACKET_STEP_2_0(2.0F),
+    BRACKET_STEP_2_3(2.3F),
+    BRACKET_STEP_2_7(2.7F),
+    BRACKET_STEP_3_0(3.0F);
+
+    companion object {
+        fun getDefault(): BurstBracketStep {
+            return BRACKET_STEP_1_0
+        }
+
+        fun getFromValue(value: Float?): BurstBracketStep? {
+            return BurstBracketStep.values().firstOrNull { it.value == value }
+        }
+    }
+}
+
+object BurstBracketStepSerializer : KSerializer<BurstBracketStep> {
+    override val descriptor: SerialDescriptor
+        get() = PrimitiveSerialDescriptor("_burstBracketStep", PrimitiveKind.FLOAT)
+
+    override fun serialize(encoder: Encoder, value: BurstBracketStep) {
+        encoder.encodeFloat(value.value)
+    }
+
+    override fun deserialize(decoder: Decoder): BurstBracketStep {
+        return BurstBracketStep.getFromValue(value = decoder.decodeFloat()) ?: BurstBracketStep.getDefault()
+    }
+}
+
+/**
+ * Exposure compensation for the base image and entire shooting for burst shooting
+ * -5.0, -4.7, -4,3, -4.0, -3.7, -3,3, -3.0, -2.7, -2,3, -2.0, -1.7, -1,3, -1.0, -0.7, -0,3,
+ * 0.0, 0.3, 0.7, 1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 4.3, 4.7, 5.0
+ */
+@Serializable(with = BurstCompensationSerializer::class)
+enum class BurstCompensation(val value: Float) {
+    BURST_COMPENSATION_DOWN_5_0(-5.0f),
+    BURST_COMPENSATION_DOWN_4_7(-4.7f),
+    BURST_COMPENSATION_DOWN_4_3(-4.3f),
+    BURST_COMPENSATION_DOWN_4_0(-4.0f),
+    BURST_COMPENSATION_DOWN_3_7(-3.7f),
+    BURST_COMPENSATION_DOWN_3_3(-3.3f),
+    BURST_COMPENSATION_DOWN_3_0(-3.0f),
+    BURST_COMPENSATION_DOWN_2_7(-2.7f),
+    BURST_COMPENSATION_DOWN_2_3(-2.3f),
+    BURST_COMPENSATION_DOWN_2_0(-2.0f),
+    BURST_COMPENSATION_DOWN_1_7(-1.7f),
+    BURST_COMPENSATION_DOWN_1_3(-1.3f),
+    BURST_COMPENSATION_DOWN_1_0(-1.0f),
+    BURST_COMPENSATION_DOWN_0_7(-0.7f),
+    BURST_COMPENSATION_DOWN_0_3(-0.3f),
+    BURST_COMPENSATION_0_0(0.0f),
+    BURST_COMPENSATION_UP_0_3(0.3f),
+    BURST_COMPENSATION_UP_0_7(0.7f),
+    BURST_COMPENSATION_UP_1_0(1.0f),
+    BURST_COMPENSATION_UP_1_3(1.3f),
+    BURST_COMPENSATION_UP_1_7(1.7f),
+    BURST_COMPENSATION_UP_2_0(2.0f),
+    BURST_COMPENSATION_UP_2_3(2.3f),
+    BURST_COMPENSATION_UP_2_7(2.7f),
+    BURST_COMPENSATION_UP_3_0(3.0f),
+    BURST_COMPENSATION_UP_3_3(3.3f),
+    BURST_COMPENSATION_UP_3_7(3.7f),
+    BURST_COMPENSATION_UP_4_0(4.0f),
+    BURST_COMPENSATION_UP_4_3(4.3f),
+    BURST_COMPENSATION_UP_4_7(4.7f),
+    BURST_COMPENSATION_UP_5_0(5.0f);
+
+    companion object {
+        fun getDefault(): BurstCompensation {
+            return BURST_COMPENSATION_0_0
+        }
+
+        fun getFromValue(value: Float?): BurstCompensation? {
+            return BurstCompensation.values().firstOrNull { it.value == value }
+        }
+    }
+}
+
+object BurstCompensationSerializer : KSerializer<BurstCompensation> {
+    override val descriptor: SerialDescriptor
+        get() = PrimitiveSerialDescriptor("_burstCompensation", PrimitiveKind.FLOAT)
+
+    override fun serialize(encoder: Encoder, value: BurstCompensation) {
+        encoder.encodeFloat(value.value)
+    }
+
+    override fun deserialize(decoder: Decoder): BurstCompensation {
+        return BurstCompensation.getFromValue(value = decoder.decodeFloat()) ?: BurstCompensation.getDefault()
+    }
+}
+
+/**
+ * Maximum exposure time for burst shooting
+ * 0.5, 0.625, 0.76923076, 1, 1.3, 1.6, 2, 2.5, 3.2, 4, 5, 6, 8, 10, 13, 15, 20, 25, 30, 40, 50, 60
+ */
+@Serializable(with = BurstMaxExposureTimeSerializer::class)
+enum class BurstMaxExposureTime(val value: Double) {
+    MAX_EXPOSURE_TIME_0_5(0.5),
+    MAX_EXPOSURE_TIME_0_625(0.625),
+    MAX_EXPOSURE_TIME_0_76923076(0.76923076),
+    MAX_EXPOSURE_TIME_1(1.0),
+    MAX_EXPOSURE_TIME_1_3(1.3),
+    MAX_EXPOSURE_TIME_1_6(1.6),
+    MAX_EXPOSURE_TIME_2(2.0),
+    MAX_EXPOSURE_TIME_2_5(2.5),
+    MAX_EXPOSURE_TIME_3_2(3.2),
+    MAX_EXPOSURE_TIME_4(4.0),
+    MAX_EXPOSURE_TIME_5(5.0),
+    MAX_EXPOSURE_TIME_6(6.0),
+    MAX_EXPOSURE_TIME_8(8.0),
+    MAX_EXPOSURE_TIME_10(10.0),
+    MAX_EXPOSURE_TIME_13(13.0),
+    MAX_EXPOSURE_TIME_15(15.0),
+    MAX_EXPOSURE_TIME_20(20.0),
+    MAX_EXPOSURE_TIME_25(25.0),
+    MAX_EXPOSURE_TIME_30(30.0),
+    MAX_EXPOSURE_TIME_40(40.0),
+    MAX_EXPOSURE_TIME_50(50.0),
+    MAX_EXPOSURE_TIME_60(60.0);
+
+    companion object {
+        fun getDefault(): BurstMaxExposureTime {
+            return MAX_EXPOSURE_TIME_15
+        }
+
+        fun getFromValue(value: Double?): BurstMaxExposureTime? {
+            return BurstMaxExposureTime.values().firstOrNull { it.value == value }
+        }
+    }
+}
+
+object BurstMaxExposureTimeSerializer : KSerializer<BurstMaxExposureTime> {
+    override val descriptor: SerialDescriptor
+        get() = PrimitiveSerialDescriptor("_burstMaxExposureTime", PrimitiveKind.DOUBLE)
+
+    override fun serialize(encoder: Encoder, value: BurstMaxExposureTime) {
+        encoder.encodeDouble(value.value)
+    }
+
+    override fun deserialize(decoder: Decoder): BurstMaxExposureTime {
+        return BurstMaxExposureTime.getFromValue(value = decoder.decodeDouble()) ?: BurstMaxExposureTime.getDefault()
+    }
+}
+
+/**
+ * Adjustment with ISO sensitivity for burst shooting
+ * 0: Do not adjust with ISO sensitivity, 1: Adjust with ISO sensitivity
+ */
+@Serializable(with = BurstEnableIsoControlSerializer::class)
+enum class BurstEnableIsoControl(val value: Int) {
+    OFF(0),
+    ON(1);
+
+    companion object {
+        fun getDefault(): BurstEnableIsoControl {
+            return OFF
+        }
+
+        fun getFromValue(value: Int?): BurstEnableIsoControl? {
+            return BurstEnableIsoControl.values().firstOrNull { it.value == value }
+        }
+    }
+}
+
+object BurstEnableIsoControlSerializer : KSerializer<BurstEnableIsoControl> {
+    override val descriptor: SerialDescriptor
+        get() = PrimitiveSerialDescriptor("_burstEnableIsoControl", PrimitiveKind.INT)
+
+    override fun serialize(encoder: Encoder, value: BurstEnableIsoControl) {
+        encoder.encodeInt(value.value)
+    }
+
+    override fun deserialize(decoder: Decoder): BurstEnableIsoControl {
+        return BurstEnableIsoControl.getFromValue(value = decoder.decodeInt()) ?: BurstEnableIsoControl.getDefault()
+    }
+}
+
+/**
+ * Shooting order for burst shooting
+ * 0: '0' → '-' → '+', 1: '-' → '0' → '+'
+ */
+@Serializable(with = BurstOrderSerializer::class)
+enum class BurstOrder(val value: Int) {
+    BURST_BRACKET_ORDER_0(0),
+    BURST_BRACKET_ORDER_1(1);
+
+    companion object {
+        fun getDefault(): BurstOrder {
+            return BURST_BRACKET_ORDER_0
+        }
+
+        fun getFromValue(value: Int?): BurstOrder? {
+            return BurstOrder.values().firstOrNull { it.value == value }
+        }
+    }
+}
+
+object BurstOrderSerializer : KSerializer<BurstOrder> {
+    override val descriptor: SerialDescriptor
+        get() = PrimitiveSerialDescriptor("_burstOrder", PrimitiveKind.INT)
+
+    override fun serialize(encoder: Encoder, value: BurstOrder) {
+        encoder.encodeInt(value.value)
+    }
+
+    override fun deserialize(decoder: Decoder): BurstOrder {
+        return BurstOrder.getFromValue(value = decoder.decodeInt()) ?: BurstOrder.getDefault()
+    }
+}
+
+/**
  * camera control source
  * Sets whether to lock/unlock the camera UI.
  * The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
@@ -731,7 +1152,19 @@ enum class CaptureMode {
      * Live streaming mode
      */
     @SerialName("_liveStreaming")
-    LIVESTREAMING,
+    LIVE_STREAMING,
+
+    /**
+     * Interval mode of Theta SC2.
+     */
+    @SerialName("interval")
+    INTERVAL,
+
+    /**
+     * Preset mode of Theta SC2.
+     */
+    @SerialName("_preset")
+    PRESET,
 }
 
 /**
@@ -880,6 +1313,52 @@ enum class ShootingMethod {
 }
 
 /**
+ * Preset mode for Theta SC2 and Theta SC2 for business.
+ */
+@Serializable
+enum class Preset {
+    /**
+     * Preset "Face" mode suitable for portrait shooting just for Theta SC2.
+     *
+     * A person’s face is detected and its position is adjusted to the center of the image
+     * to obtain a clear image of the person.
+     */
+    @SerialName("face")
+    FACE,
+
+    /**
+     * Preset "Night View" mode just for Theta SC2.
+     *
+     * The dynamic range of bright areas is expanded to reduce noise.
+     * In addition, a person’s face is detected to obtain a clear image of the person.
+     */
+    @SerialName("nightView")
+    NIGHT_VIEW,
+
+    /**
+     * Preset "Lens-by-Lens Exposure" mode just for Theta SC2.
+     *
+     * Image processing such as exposure adjustment and white balance adjustment is performed
+     * individually for each image captured with the front and rear lenses.
+     * This mode is suitable for capturing scenes with significantly different brightness conditions
+     * between the camera front side and the camera rear side.
+     * Images captured with the front and rear lenses are displayed side by side
+     */
+    @SerialName("lensbylensExposure")
+    LENS_BY_LENS_EXPOSURE,
+
+    /**
+     * Preset "Room" mode just for SC2 for business.
+     *
+     * Suitable for indoor shooting where there is gap in brightness between outdoors and indoors.
+     * Also, the self-timer function enables time shift between shooting with the front lens
+     * and rear lens making it possible for the photographer not to be captured in the image.
+     */
+    @SerialName("room")
+    ROOM,
+}
+
+/**
  * preview format
  */
 @Serializable
@@ -954,19 +1433,19 @@ data class TimeShift(
      * "front": first shoot the front side (side with Theta logo) then shoot the rear side (side with monitor).
      * "rear" first shoot the rear side then shoot the front side.
      */
-    val firstShooting: FirstShootingEnum? = null,
+    var firstShooting: FirstShootingEnum? = null,
 
     /**
      * Time (sec) before 1st lens shooting.
      * 0 to 10.  For V or Z1, default is 5. For X, default is 2.
      */
-    val firstInterval: Int? = null,
+    var firstInterval: Int? = null,
 
     /**
      * Time (sec) from 1st lens shooting until start of 2nd lens shooting.
      * 0 to 10.  Default is 5.
      */
-    val secondInterval: Int? = null,
+    var secondInterval: Int? = null,
 )
 
 /**
@@ -1119,7 +1598,7 @@ object WlanFrequencySerializer : KSerializer<WlanFrequency> {
 
     override fun deserialize(decoder: Decoder): WlanFrequency {
         val frequency = decoder.decodeDouble()
-        return if(frequency < 5) WlanFrequency.GHZ_2_4 else WlanFrequency.GHZ_5
+        return if (frequency < 5) WlanFrequency.GHZ_2_4 else WlanFrequency.GHZ_5
     }
 }
 
@@ -1256,7 +1735,7 @@ enum class Language {
     TW,
 
     /**
-     * Chineses: zh-CN
+     * Chinese: zh-CN
      */
     @SerialName("zh-CN")
     CN,
@@ -1541,3 +2020,45 @@ enum class ImageStitching {
     @SerialName("none")
     NONE,
 }
+
+/**
+ * Capture interval support
+ */
+@Serializable
+data class CaptureIntervalSupport(
+    /**
+     * minimum interval
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    val minInterval: Int? = null,
+
+    /**
+     * maximum interval
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    val maxInterval: Int? = null,
+)
+
+/**
+ * Capture number support
+ */
+@Serializable
+data class CaptureNumberSupport(
+    /**
+     * Unlimited
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    val _limitless: Int? = null,
+
+    /**
+     * minimum value
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    val minNumber: Int? = null,
+
+    /**
+     * maximum value
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    val maxNumber: Int? = null,
+)

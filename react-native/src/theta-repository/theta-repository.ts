@@ -1,7 +1,7 @@
 import { AccessPoint, AuthModeEnum } from './access-point';
 import type { FileTypeEnum, StorageEnum, ThetaFiles } from './theta-files';
 import type { ThetaState } from './theta-state';
-import type { ThetaInfo } from './theta-info';
+import type { ThetaInfo, ThetaModel } from './theta-info';
 import type { MetaInfo } from './theta-meta';
 import type { PluginInfo } from './theta-plugin';
 
@@ -187,6 +187,24 @@ export function finishWlan(): Promise<boolean> {
  */
 export function setBluetoothDevice(uuid: string): Promise<String> {
   return ThetaClientReactNative.setBluetoothDevice(uuid);
+}
+
+/**
+ * Returns the connected THETA model.
+ *
+ * @function getThetaModel
+ * @return promise of THETA model
+ **/
+export function getThetaModel(): Promise<ThetaModel | undefined> {
+  return new Promise<ThetaModel | undefined>(async (resolve, reject) => {
+    await ThetaClientReactNative.getThetaModel()
+      .then((result?: string) => {
+        resolve((result as ThetaModel) ?? undefined);
+      })
+      .catch((error: any) => {
+        reject(error);
+      });
+  });
 }
 
 /**

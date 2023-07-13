@@ -1,7 +1,15 @@
+import type { AiAutoThumbnailEnum } from './option-ai-auto-thumbnail';
+import type { BitrateEnum } from './option-bitrate';
+import type { BurstModeEnum } from './option-burst-mode';
+import type { BurstOption } from './option-burst-option';
 import type { CameraControlSourceEnum } from './option-camera-control-source';
 import type { CameraModeEnum } from './option-camera-mode';
+import type { CaptureModeEnum } from './option-capture-mode';
+import type { ContinuousNumberEnum } from './option-continuous-number';
+import type { FilterEnum } from './option-filter';
 import type { NetworkTypeEnum } from './option-network-type';
 import type { PowerSavingEnum } from './option-power-saving';
+import type { PresetEnum } from './option-preset';
 import type { PreviewFormatEnum } from './option-preview-format';
 import type { Proxy } from './option-proxy';
 import type { ShootingMethodEnum } from './option-shooting-method';
@@ -27,7 +35,7 @@ export const ApertureEnum = {
 } as const;
 
 /** type definition of ApertureEnum */
-export type ApertureEnum = typeof ApertureEnum[keyof typeof ApertureEnum];
+export type ApertureEnum = (typeof ApertureEnum)[keyof typeof ApertureEnum];
 
 /** BluetoothPower value. */
 export const BluetoothPowerEnum = {
@@ -39,19 +47,7 @@ export const BluetoothPowerEnum = {
 
 /** type definition of BluetoothPowerEnum */
 export type BluetoothPowerEnum =
-  typeof BluetoothPowerEnum[keyof typeof BluetoothPowerEnum];
-
-/** Shooting mode. */
-export const CaptureModeEnum = {
-  /** Still image capture mode */
-  IMAGE: 'IMAGE',
-  /** Video capture mode */
-  VIDEO: 'VIDEO',
-} as const;
-
-/** type definition of CaptureModeEnum */
-export type CaptureModeEnum =
-  typeof CaptureModeEnum[keyof typeof CaptureModeEnum];
+  (typeof BluetoothPowerEnum)[keyof typeof BluetoothPowerEnum];
 
 /** Exposure compensation (EV). */
 export const ExposureCompensationEnum = {
@@ -85,7 +81,7 @@ export const ExposureCompensationEnum = {
 
 /** type definition of ExposureCompensationEnum */
 export type ExposureCompensationEnum =
-  typeof ExposureCompensationEnum[keyof typeof ExposureCompensationEnum];
+  (typeof ExposureCompensationEnum)[keyof typeof ExposureCompensationEnum];
 
 /** Operating time (sec.) of the self-timer. */
 export const ExposureDelayEnum = {
@@ -115,7 +111,7 @@ export const ExposureDelayEnum = {
 
 /** type definition of ExposureDelayEnum */
 export type ExposureDelayEnum =
-  typeof ExposureDelayEnum[keyof typeof ExposureDelayEnum];
+  (typeof ExposureDelayEnum)[keyof typeof ExposureDelayEnum];
 
 /** Exposure program. The exposure settings that take priority can be selected. */
 export const ExposureProgramEnum = {
@@ -133,7 +129,7 @@ export const ExposureProgramEnum = {
 
 /** type definition of ExposureProgramEnum */
 export type ExposureProgramEnum =
-  typeof ExposureProgramEnum[keyof typeof ExposureProgramEnum];
+  (typeof ExposureProgramEnum)[keyof typeof ExposureProgramEnum];
 
 /** file format type in theta */
 export const FileFormatTypeEnum = {
@@ -147,7 +143,7 @@ export const FileFormatTypeEnum = {
 
 /** type definition of FileFormatTypeEnum */
 export type FileFormatTypeEnum =
-  typeof FileFormatTypeEnum[keyof typeof FileFormatTypeEnum];
+  (typeof FileFormatTypeEnum)[keyof typeof FileFormatTypeEnum];
 
 /** Photo image format */
 export const PhotoFileFormatEnum = {
@@ -199,24 +195,11 @@ export const VideoFileFormatEnum = {
 
 /** type definition of PhotoFileFormatEnum */
 export type PhotoFileFormatEnum =
-  typeof PhotoFileFormatEnum[keyof typeof PhotoFileFormatEnum];
+  (typeof PhotoFileFormatEnum)[keyof typeof PhotoFileFormatEnum];
 
 /** type definition of VideoFileFormatEnum */
 export type VideoFileFormatEnum =
-  typeof VideoFileFormatEnum[keyof typeof VideoFileFormatEnum];
-
-/** Image processing filter. */
-export const FilterEnum = {
-  /** No filter. */
-  OFF: 'OFF',
-  /** Noise reduction. */
-  NOISE_REDUCTION: 'NOISE_REDUCTION',
-  /** HDR. */
-  HDR: 'HDR',
-} as const;
-
-/** type definition of FilterEnum */
-export type FilterEnum = typeof FilterEnum[keyof typeof FilterEnum];
+  (typeof VideoFileFormatEnum)[keyof typeof VideoFileFormatEnum];
 
 /** GPS information */
 export type GpsInfo = {
@@ -240,7 +223,7 @@ export const GpsTagRecordingEnum = {
 
 /** type definition of GpsTagRecordingEnum */
 export type GpsTagRecordingEnum =
-  typeof GpsTagRecordingEnum[keyof typeof GpsTagRecordingEnum];
+  (typeof GpsTagRecordingEnum)[keyof typeof GpsTagRecordingEnum];
 
 /** ISO sensitivity. */
 export const IsoEnum = {
@@ -293,7 +276,7 @@ export const IsoEnum = {
 } as const;
 
 /** type definition IsoEnum */
-export type IsoEnum = typeof IsoEnum[keyof typeof IsoEnum];
+export type IsoEnum = (typeof IsoEnum)[keyof typeof IsoEnum];
 
 /** ISO sensitivity upper limit when ISO sensitivity is set to automatic. */
 export const IsoAutoHighLimitEnum = {
@@ -339,7 +322,7 @@ export const IsoAutoHighLimitEnum = {
 
 /** type definition of IsoAutoHighLimitEnum */
 export type IsoAutoHighLimitEnum =
-  typeof IsoAutoHighLimitEnum[keyof typeof IsoAutoHighLimitEnum];
+  (typeof IsoAutoHighLimitEnum)[keyof typeof IsoAutoHighLimitEnum];
 
 /** language */
 export const LanguageEnum = {
@@ -364,7 +347,7 @@ export const LanguageEnum = {
 } as const;
 
 /** type definition of LanguageEnum */
-export type LanguageEnum = typeof LanguageEnum[keyof typeof LanguageEnum];
+export type LanguageEnum = (typeof LanguageEnum)[keyof typeof LanguageEnum];
 
 /** Maximum recordable time (in seconds) of the camera */
 export const MaxRecordableTimeEnum = {
@@ -377,12 +360,12 @@ export const MaxRecordableTimeEnum = {
   /** 7200 seconds for Theta X only */
   RECORDABLE_TIME_7200: 'RECORDABLE_TIME_7200',
   /** Just used by getMySetting/setMySetting command */
-  DO_NOT_UPDATE_MY_SETTING_CONDITION: 'DO_NOT_UPDATE_MY_SETTING_CONDITION'
+  DO_NOT_UPDATE_MY_SETTING_CONDITION: 'DO_NOT_UPDATE_MY_SETTING_CONDITION',
 } as const;
 
 /** type definition of MaxRecordableTimeEnum */
 export type MaxRecordableTimeEnum =
-  typeof MaxRecordableTimeEnum[keyof typeof MaxRecordableTimeEnum];
+  (typeof MaxRecordableTimeEnum)[keyof typeof MaxRecordableTimeEnum];
 
 /** Length of standby time before the camera automatically powers OFF. */
 export const OffDelayEnum = {
@@ -400,7 +383,7 @@ export const OffDelayEnum = {
 
 /** type definition of OffDelayEnum */
 export type OffDelayEnum =
-  | typeof OffDelayEnum[keyof typeof OffDelayEnum]
+  | (typeof OffDelayEnum)[keyof typeof OffDelayEnum]
   | number;
 
 /** Length of standby time before the camera enters the sleep mode. */
@@ -419,7 +402,7 @@ export const SleepDelayEnum = {
 
 /** type definition of SleepDelayEnum */
 export type SleepDelayEnum =
-  | typeof SleepDelayEnum[keyof typeof SleepDelayEnum]
+  | (typeof SleepDelayEnum)[keyof typeof SleepDelayEnum]
   | number;
 
 /** White balance. */
@@ -456,18 +439,36 @@ export type WhiteBalanceEnum =
 
 /** Camera setting options name. */
 export const OptionNameEnum = {
+  /** _aiAutoThumbnail */
+  AiAutoThumbnail: 'AiAutoThumbnail',
   /** aperture */
   Aperture: 'Aperture',
+  /** _bitrate*/
+  Bitrate: 'Bitrate',
   /** _bluetoothPower*/
   BluetoothPower: 'BluetoothPower',
+  /** _burstMode*/
+  BurstMode: 'BurstMode',
+  /** _burstOption*/
+  BurstOption: 'BurstOption',
   /** _cameraControlSource */
   CameraControlSource: 'CameraControlSource',
   /** cameraMode */
   CameraMode: 'CameraMode',
+  /** captureInterval */
+  CaptureInterval: 'CaptureInterval',
   /** captureMode */
   CaptureMode: 'CaptureMode',
+  /** captureNumber */
+  CaptureNumber: 'CaptureNumber',
   /** colorTemperature */
   ColorTemperature: 'ColorTemperature',
+  /** _compositeShootingOutputInterval */
+  CompositeShootingOutputInterval: 'CompositeShootingOutputInterval',
+  /** _compositeShootingTime */
+  CompositeShootingTime: 'CompositeShootingTime',
+  /** continuousNumber */
+  ContinuousNumber: 'ContinuousNumber',
   /** dateTimeZone */
   DateTimeZone: 'DateTimeZone',
   /** exposureCompensation */
@@ -500,6 +501,8 @@ export const OptionNameEnum = {
   Password: 'Password',
   /** powerSaving */
   PowerSaving: 'PowerSaving',
+  /** preset */
+  Preset: 'Preset',
   /** previewFormat */
   PreviewFormat: 'PreviewFormat',
   /** proxy */
@@ -538,18 +541,87 @@ export type OptionNameEnum =
 
 /** camera setting options */
 export type Options = {
+  /** AI auto thumbnail setting. */
+  aiAutoThumbnail?: AiAutoThumbnailEnum;
   /** Aperture value. */
   aperture?: ApertureEnum;
+  /** Bitrate */
+  bitrate?: BitrateEnum;
   /** BluetoothPower */
   bluetoothPower?: BluetoothPowerEnum;
+  /** BurstMode */
+  burstMode?: BurstModeEnum;
+  /** BurstOption */
+  burstOption?: BurstOption;
   /** camera control source. */
   cameraControlSource?: CameraControlSourceEnum;
   /** Camera mode. */
   cameraMode?: CameraModeEnum;
+  /**
+   * Shooting interval (sec.) for interval shooting.
+   *
+   * ### Support value
+   * The value that can be set differs depending on the image format ([fileFormat]) to be shot.
+   * #### For RICOH THETA X or later
+   * | Image format | Image size  | Support value |
+   * | ------------ | ----------- | ------------- |
+   * | JPEG         | 11008 x 5504 <br>5504 x 2752 | Minimum value(minInterval):6 <br>Maximum value(maxInterval):3600 |
+   *
+   * #### For RICOH THETA Z1
+   * | Image format | Image size  | Support value |
+   * | ------------ | ----------- | ------------- |
+   * | JPEG         | 6720 x 3360 | Minimum value(minInterval):6 <br>Maximum value(maxInterval):3600 |
+   * | RAW+         | 6720 x 3360 | Minimum value(minInterval):10 <br>Maximum value(maxInterval):3600 |
+   *
+   * #### For RICOH THETA V
+   * | Image format | Image size  | Support value |
+   * | ------------ | ----------- | ------------- |
+   * | JPEG         | 5376 x 2688 | Minimum value(minInterval):4 <br>Maximum value(maxInterval):3600 |
+   *
+   * #### For RICOH THETA S or SC
+   * | Image format | Image size  | Support value |
+   * | ------------ | ----------- | ------------- |
+   * | JPEG         | 5376 x 2688 | Minimum value(minInterval):8 <br>Maximum value(maxInterval):3600 |
+   * | JPEG         | 2048 x 1024 | Minimum value(minInterval):5 <br>Maximum value(maxInterval):3600 |
+   */
+  captureInterval?: number;
   /** Shooting mode. */
   captureMode?: CaptureModeEnum;
+  /**
+   * Number of shots for interval shooting.
+   *
+   * ### Support value
+   * - 0: Unlimited (_limitless)
+   * - 2: Minimum value (minNumber)
+   * - 9999: Maximum value (maxNumber)
+   */
+  captureNumber?: number;
   /** Color temperature of the camera (Kelvin). */
   colorTemperature?: number;
+  /**
+   * In-progress save interval for interval composite shooting (sec).
+   *
+   * 0 (no saving), 60 to 600. In 60-second units.
+   *
+   * For
+   * RICOH THETA Z1
+   * RICOH THETA SC firmware v1.10 or later
+   * RICOH THETA S firmware v01.82 or later
+   */
+  compositeShootingOutputInterval?: number;
+  /**
+   * Shooting time for interval composite shooting (sec).
+   *
+   * 600 to 86400. In 600-second units.
+   *
+   * For
+   * RICOH THETA Z1
+   * RICOH THETA SC firmware v1.10 or later
+   * RICOH THETA S firmware v01.82 or later
+   */
+  compositeShootingTime?: number;
+  /** Number of shots for continuous shooting. */
+  continuousNumber?: ContinuousNumberEnum;
   /** Current system time of RICOH THETA. Setting another options will result in an error. */
   dateTimeZone?: string;
   /** Exposure compensation (EV). */
@@ -582,6 +654,8 @@ export type Options = {
   password?: String;
   /** Power saving mode */
   powerSaving?: PowerSavingEnum;
+  /** Preset mode */
+  preset?: PresetEnum;
   /** Format of live view  */
   previewFormat?: PreviewFormatEnum;
   /** Proxy information to be used when wired LAN is enabled. */

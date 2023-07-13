@@ -22,11 +22,59 @@ func convertResult(fileInfoList: [ThetaRepository.FileInfo]) -> [[String: Any]] 
     fileInfoList.forEach({ fileInfo in
         var item = [
             "name": fileInfo.name,
+            "fileUrl": fileInfo.fileUrl,
             "size": fileInfo.size,
             "dateTime": fileInfo.dateTime,
-            "fileUrl": fileInfo.fileUrl,
             "thumbnailUrl": fileInfo.thumbnailUrl,
         ]
+        if let lat = fileInfo.lat {
+            item["lat"] = lat.floatValue
+        }
+        if let lng = fileInfo.lng {
+            item["lng"] = lng.floatValue
+        }
+        if let width = fileInfo.width {
+            item["width"] = width.intValue
+        }
+        if let height = fileInfo.height {
+            item["height"] = height.intValue
+        }
+        if let intervalCaptureGroupId = fileInfo.intervalCaptureGroupId {
+            item["intervalCaptureGroupId"] = intervalCaptureGroupId
+        }
+        if let compositeShootingGroupId = fileInfo.compositeShootingGroupId {
+            item["compositeShootingGroupId"] = compositeShootingGroupId
+        }
+        if let autoBracketGroupId = fileInfo.autoBracketGroupId {
+            item["autoBracketGroupId"] = autoBracketGroupId
+        }
+        if let recordTime = fileInfo.recordTime {
+            item["recordTime"] = recordTime.intValue
+        }
+        if let isProcessed = fileInfo.isProcessed {
+            item["isProcessed"] = isProcessed.boolValue
+        }
+        if let previewUrl = fileInfo.previewUrl {
+            item["previewUrl"] = previewUrl
+        }
+        if let codec = fileInfo.codec {
+            item["codec"] = codec.name
+        }
+        if let projectionType = fileInfo.projectionType {
+            item["projectionType"] = projectionType.name
+        }
+        if let continuousShootingGroupId = fileInfo.continuousShootingGroupId {
+            item["continuousShootingGroupId"] = continuousShootingGroupId
+        }
+        if let frameRate = fileInfo.frameRate {
+            item["frameRate"] = frameRate.intValue
+        }
+        if let favorite = fileInfo.favorite {
+            item["favorite"] = favorite.boolValue
+        }
+        if let imageDescription = fileInfo.imageDescription {
+            item["imageDescription"] = imageDescription
+        }
         if let storageID = fileInfo.storageID {
             item["storageID"] = storageID
         }
@@ -167,6 +215,70 @@ func setVideoCaptureBuilderParams(params: [String : Any], builder: VideoCapture.
     }
 }
 
+func toBitrate(value: Any) -> ThetaRepositoryBitrate? {
+    if value is NSNumber, let intVal = value as? Int32 {
+        return ThetaRepository.BitrateNumber(value: intVal)
+    } else if let name = value as? String, let enumValue = getEnumValue(values: ThetaRepository.BitrateEnum.values(), name: name) {
+        return enumValue
+    } else if let str = value as? String {
+        return ThetaRepository.BitrateEnum.companion.get(str: str)
+    } else {
+        return nil
+    }
+}
+
+func toBurstOption(params: [String : Any]) -> ThetaRepository.BurstOption {
+    var burstCaptureNum: ThetaRepository.BurstCaptureNumEnum? = nil;
+    if let name = params["burstCaptureNum"] as? String {
+        burstCaptureNum = getEnumValue(values: ThetaRepository.BurstCaptureNumEnum.values(), name: name)
+    }
+    
+    var burstBracketStep: ThetaRepository.BurstBracketStepEnum? = nil;
+    if let name = params["burstBracketStep"] as? String {
+        burstBracketStep = getEnumValue(values: ThetaRepository.BurstBracketStepEnum.values(), name: name)
+    }
+    
+    var burstCompensation: ThetaRepository.BurstCompensationEnum? = nil;
+    if let name = params["burstCompensation"] as? String {
+        burstCompensation = getEnumValue(values: ThetaRepository.BurstCompensationEnum.values(), name: name)
+    }
+    
+    var burstMaxExposureTime: ThetaRepository.BurstMaxExposureTimeEnum? = nil;
+    if let name = params["burstMaxExposureTime"] as? String {
+        burstMaxExposureTime = getEnumValue(values: ThetaRepository.BurstMaxExposureTimeEnum.values(), name: name)
+    }
+    
+    var burstEnableIsoControl: ThetaRepository.BurstEnableIsoControlEnum? = nil;
+    if let name = params["burstEnableIsoControl"] as? String {
+        burstEnableIsoControl = getEnumValue(values: ThetaRepository.BurstEnableIsoControlEnum.values(), name: name)
+    }
+    
+    var burstOrder: ThetaRepository.BurstOrderEnum? = nil;
+    if let name = params["burstOrder"] as? String {
+        burstOrder = getEnumValue(values: ThetaRepository.BurstOrderEnum.values(), name: name)
+    }
+    
+    return ThetaRepository.BurstOption(
+        burstCaptureNum: burstCaptureNum,
+        burstBracketStep: burstBracketStep,
+        burstCompensation: burstCompensation,
+        burstMaxExposureTime: burstMaxExposureTime,
+        burstEnableIsoControl: burstEnableIsoControl,
+        burstOrder: burstOrder
+    )
+}
+
+func convertResult(burstOption: ThetaRepository.BurstOption) -> [String: Any] {
+    return [
+        "burstCaptureNum": burstOption.burstCaptureNum?.value.name,
+        "burstBracketStep": burstOption.burstBracketStep?.value.name,
+        "burstCompensation": burstOption.burstCompensation?.value.name,
+        "burstMaxExposureTime": burstOption.burstEnableIsoControl?.value.name,
+        "burstEnableIsoControl": burstOption.burstEnableIsoControl?.value.name,
+        "burstOrder": burstOption.burstOrder?.value.name,
+    ]
+}
+
 func toGpsInfo(params: [String : Any]) -> ThetaRepository.GpsInfo {
     return ThetaRepository.GpsInfo(
         latitude: params["latitude"] as! Float,
@@ -191,12 +303,12 @@ func toTimeShift(params: [String : Any]) -> ThetaRepository.TimeShiftSetting {
     if let name = params["firstInterval"] as? String {
         firstInterval = getEnumValue(values: ThetaRepository.TimeShiftIntervalEnum.values(), name: name)
     }
-
+    
     var secondInterval: ThetaRepository.TimeShiftIntervalEnum? = nil;
     if let name = params["secondInterval"] as? String {
         secondInterval = getEnumValue(values: ThetaRepository.TimeShiftIntervalEnum.values(), name: name)
     }
-
+    
     return ThetaRepository.TimeShiftSetting(
         isFrontFirst: toKotlinBoolean(value: params["isFrontFirst"]),
         firstInterval: firstInterval,
@@ -253,7 +365,11 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                 result[name.name] = value as! Bool ? true: false
             } else if value is NSNumber || value is String {
                 result[name.name] = value
-            } else if value is ThetaRepository.GpsInfo {
+            } else if let bitrate = value as? ThetaRepository.BitrateNumber {
+                result[name.name] = bitrate.value
+            } else if value is ThetaRepository.BurstOption, let burstOption = value as? ThetaRepository.BurstOption {
+                result[name.name] = convertResult(burstOption: burstOption)
+            }  else if value is ThetaRepository.GpsInfo {
                 let gpsInfo = value as! ThetaRepository.GpsInfo
                 result[name.name] = convertResult(gpsInfo: gpsInfo)
             } else if value is ThetaRepository.Proxy, let proxy = value as? ThetaRepository.Proxy {
@@ -269,7 +385,7 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
 func convertKotlinBooleanToBool(value: Any?) -> Bool? {
     guard let value = value else { return nil }
     guard value is KotlinBoolean, let numVal = value as? NSNumber else { return false }
-
+    
     return numVal.boolValue
 }
 
@@ -297,8 +413,22 @@ func convertSetOptionsParam(params: [String: Any]) -> ThetaRepository.Options {
 
 func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any) {
     switch (name) {
+    case ThetaRepository.OptionNameEnum.aiautothumbnail.name:
+        options.aiAutoThumbnail = getEnumValue(values: ThetaRepository.AiAutoThumbnailEnum.values(), name: value as! String)!
+        break
     case ThetaRepository.OptionNameEnum.aperture.name:
         options.aperture = getEnumValue(values: ThetaRepository.ApertureEnum.values(), name: value as! String)!
+        break
+    case ThetaRepository.OptionNameEnum.bitrate.name:
+        options.bitrate = toBitrate(value: value)
+        break
+    case ThetaRepository.OptionNameEnum.burstmode.name:
+        options.burstMode = getEnumValue(values: ThetaRepository.BurstModeEnum.values(), name: value as! String)!
+        break
+    case ThetaRepository.OptionNameEnum.burstoption.name:
+        if let params = value as? [String : Any] {
+            options.burstOption = toBurstOption(params: params)
+        }
         break
     case ThetaRepository.OptionNameEnum.cameracontrolsource.name:
         options.cameraControlSource = getEnumValue(values: ThetaRepository.CameraControlSourceEnum.values(), name: value as! String)!
@@ -306,11 +436,26 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.cameramode.name:
         options.cameraMode = getEnumValue(values: ThetaRepository.CameraModeEnum.values(), name: value as! String)!
         break
+    case ThetaRepository.OptionNameEnum.captureinterval.name:
+        options.captureInterval = KotlinInt(integerLiteral: value as! Int)
+        break
     case ThetaRepository.OptionNameEnum.capturemode.name:
         options.captureMode = getEnumValue(values: ThetaRepository.CaptureModeEnum.values(), name: value as! String)!
         break
+    case ThetaRepository.OptionNameEnum.capturenumber.name:
+        options.captureNumber = KotlinInt(integerLiteral: value as! Int)
+        break
     case ThetaRepository.OptionNameEnum.colortemperature.name:
         options.colorTemperature = KotlinInt(integerLiteral: value as! Int)
+        break
+    case ThetaRepository.OptionNameEnum.compositeshootingoutputinterval.name:
+        options.compositeShootingOutputInterval = KotlinInt(integerLiteral: value as! Int)
+        break
+    case ThetaRepository.OptionNameEnum.compositeshootingtime.name:
+        options.compositeShootingTime = KotlinInt(integerLiteral: value as! Int)
+        break
+    case ThetaRepository.OptionNameEnum.continuousnumber.name:
+        options.continuousNumber = getEnumValue(values: ThetaRepository.ContinuousNumberEnum.values(), name: value as! String)!
         break
     case ThetaRepository.OptionNameEnum.datetimezone.name:
         options.dateTimeZone = value as? String
@@ -359,6 +504,9 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         break;
     case ThetaRepository.OptionNameEnum.powersaving.name:
         options.powerSaving = getEnumValue(values: ThetaRepository.PowerSavingEnum.values(), name: value as! String)!
+        break;
+    case ThetaRepository.OptionNameEnum.preset.name:
+        options.preset = getEnumValue(values: ThetaRepository.PresetEnum.values(), name: value as! String)!
         break;
     case ThetaRepository.OptionNameEnum.previewformat.name:
         options.previewFormat = getEnumValue(values: ThetaRepository.PreviewFormatEnum.values(), name: value as! String)!

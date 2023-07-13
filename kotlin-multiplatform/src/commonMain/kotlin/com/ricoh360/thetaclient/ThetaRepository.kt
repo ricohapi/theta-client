@@ -149,7 +149,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     internal suspend fun init() {
         try {
             val info = ThetaApi.callInfoApi(endpoint)
-            cameraModel = info.model
+            cameraModel = ThetaModel.get(info.model, info.serialNumber)
+            println("init camera model: ${cameraModel?.name}")
             if (checkChangedApi2(info.model, info.firmwareVersion)) {
                 val state = ThetaApi.callStateApi(endpoint)
                 if (state.state._apiVersion == 1) {
@@ -220,8 +221,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     @Throws(Throwable::class)
     internal suspend fun setConfigSettings(config: Config) {
         val options = config.getOptions()
-        ThetaModel.get(cameraModel)?.let {
-            if (it == ThetaModel.THETA_S || it == ThetaModel.THETA_SC || it == ThetaModel.THETA_SC2) {
+        cameraModel?.let {
+            if (ThetaModel.isBeforeThetaV(it)) {
                 // _language is THETA V or later
                 options._language = null
             }
@@ -250,12 +251,10 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @exception ThetaWebApiException If an error occurs in THETA.
      */
     @Throws(Throwable::class)
-    internal suspend fun getConfigSetting(config: Config, model: String) {
+    internal suspend fun getConfigSetting(config: Config, model: ThetaModel) {
         val optionNameList = listOfNotNull(
             OptionNameEnum.DateTimeZone.value,
-            // For THETA V or later
-            ThetaModel.get(model)
-                ?.let { if (it != ThetaModel.THETA_S && it != ThetaModel.THETA_SC && it != ThetaModel.THETA_SC2) OptionNameEnum.Language.value else null },
+            if (ThetaModel.isBeforeThetaV(model)) null else OptionNameEnum.Language.value,
             OptionNameEnum.OffDelay.value,
             OptionNameEnum.SleepDelay.value,
             OptionNameEnum.ShutterVolume.value
@@ -290,13 +289,16 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Camera model.
      */
-    var cameraModel: String? = null
+    var cameraModel: ThetaModel? = null
         internal set
 
     /**
      * Support THETA model
+     *
+     * @param value Theta model got by [getThetaInfo]
+     * @param firstCharOfSerialNumber First character of serialNumber got by [getThetaInfo]. Needed just for Theta SC2 or SC2 for business.
      */
-    enum class ThetaModel(val value: String) {
+    enum class ThetaModel(val value: String, val firstCharOfSerialNumber: Char? = null) {
         /**
          * THETA S
          */
@@ -323,21 +325,49 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         THETA_X("RICOH THETA X"),
 
         /**
-         * THETA SC2
+         * THETA SC2, the 1st character of which serial number is always other than
+         * FIRST_CHAR_OF_SERIAL_NUMBER_SC2_B.
          */
-        THETA_SC2("RICOH THETA SC2");
+        THETA_SC2("RICOH THETA SC2"),
+
+        /**
+         * THETA SC2 for business, the first character of which serial number is always
+         * FIRST_CHAR_OF_SERIAL_NUMBER_SC2_B.
+         */
+        THETA_SC2_B("RICOH THETA SC2", FIRST_CHAR_OF_SERIAL_NUMBER_SC2_B);
 
         companion object {
             /**
              * Get THETA model
              *
-             * @param model Camera model
+             * @param model Theta model got by [getThetaInfo]
+             * @param serialNumber serial number got by [getThetaInfo], needed just for Theta SC2 and SC2 for business.
              * @return ThetaModel
              */
-            fun get(model: String?): ThetaModel? {
-                return values().firstOrNull {
-                    it.value == model
+            fun get(model: String?, serialNumber: String? = null): ThetaModel? {
+                return serialNumber?.first()?.let { firstChar ->
+                    values().filter { it.firstCharOfSerialNumber != null }.firstOrNull {
+                        it.value == model && it.firstCharOfSerialNumber == firstChar
+                    }
+                } ?: run { // In case of serialNumber is null or either model or serialNumber is not matched.
+                    values().sortedWith(compareBy<ThetaModel> { it.value }.thenBy { it.firstCharOfSerialNumber })
+                        .firstOrNull { it.value == model }
                 }
+            }
+
+            /**
+             * Distinguish models older than Theta V
+             *
+             * @param model
+             * @return true if the model is older than Theta V
+             */
+            fun isBeforeThetaV(model: ThetaModel?): Boolean {
+                return listOf(
+                    THETA_S,
+                    THETA_SC,
+                    THETA_SC2,
+                    THETA_SC2_B,
+                ).contains(model)
             }
         }
     }
@@ -353,7 +383,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     suspend fun getThetaInfo(): ThetaInfo {
         try {
             val response = ThetaApi.callInfoApi(endpoint)
-            cameraModel = response.model
+            cameraModel = ThetaModel.get(response.model, response.serialNumber)
             return ThetaInfo(response)
         } catch (e: JsonConvertException) {
             throw ThetaWebApiException(e.message ?: e.toString())
@@ -594,15 +624,38 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     enum class OptionNameEnum(val value: String, val valueType: KClass<*>) {
         /**
          * Option name
+         * _aiAutoThumbnail
+         */
+        AiAutoThumbnail("_aiAutoThumbnail", AiAutoThumbnailEnum::class),
+
+        /**
+         * Option name
          * aperture
          */
         Aperture("aperture", ApertureEnum::class),
 
         /**
          * Option name
+         * _bitrate
+         */
+        Bitrate("_bitrate", ThetaRepository.Bitrate::class),
+
+        /**
+         * Option name
          * _bluetoothPower
          */
         BluetoothPower("_bluetoothPower", BluetoothPowerEnum::class),
+
+        /**
+         * _burstMode
+         */
+        BurstMode("_burstMode", BurstModeEnum::class),
+
+        /**
+         * Option name
+         * _burstOption
+         */
+        BurstOption("_burstOption", ThetaRepository.BurstOption::class),
 
         /**
          * Option name
@@ -618,15 +671,55 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * captureInterval
+         */
+        CaptureInterval("captureInterval", Int::class),
+
+        /**
+         * Option name
          * captureMode
          */
         CaptureMode("captureMode", CaptureModeEnum::class),
 
         /**
          * Option name
+         * captureNumber
+         */
+        CaptureNumber("captureNumber", Int::class),
+
+        /**
+         * Option name
          * _colorTemperature
          */
         ColorTemperature("_colorTemperature", Int::class),
+
+        /**
+         * Option name
+         * _compositeShootingOutputInterval
+         *
+         * For
+         * RICOH THETA Z1
+         * RICOH THETA SC firmware v1.10 or later
+         * RICOH THETA S firmware v01.82 or later
+         */
+        CompositeShootingOutputInterval("_compositeShootingOutputInterval", Int::class),
+
+        /**
+         * Option name
+         * _compositeShootingTime
+         *
+         * For
+         * RICOH THETA Z1
+         * RICOH THETA SC firmware v1.10 or later
+         * RICOH THETA S firmware v01.82 or later
+         */
+        CompositeShootingTime("_compositeShootingTime", Int::class),
+
+        /**
+         * Option name
+         * continuousNumber
+         */
+        ContinuousNumber("continuousNumber", ContinuousNumberEnum::class),
 
         /**
          * Option name
@@ -728,6 +821,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _preset
+         */
+        Preset("_preset", PresetEnum::class),
+
+        /**
+         * Option name
          * previewFormat
          */
         PreviewFormat("previewFormat", PreviewFormatEnum::class),
@@ -823,14 +922,34 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     data class Options(
         /**
+         * AI auto thumbnail setting.
+         */
+        var aiAutoThumbnail: AiAutoThumbnailEnum? = null,
+
+        /**
          * Aperture value.
          */
         var aperture: ApertureEnum? = null,
 
         /**
+         * @see Bitrate
+         */
+        var bitrate: Bitrate? = null,
+
+        /**
          * Bluetooth power.
          */
         var bluetoothPower: BluetoothPowerEnum? = null,
+
+        /**
+         * @see BurstModeEnum
+         */
+        var burstMode: BurstModeEnum? = null,
+
+        /**
+         * @see BurstOption
+         */
+        var burstOption: BurstOption? = null,
 
         /**
          * @see CameraControlSourceEnum
@@ -843,9 +962,48 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var cameraMode: CameraModeEnum? = null,
 
         /**
+         * Shooting interval (sec.) for interval shooting.
+         *
+         * ### Support value
+         * The value that can be set differs depending on the image format ([fileFormat]) to be shot.
+         * #### For RICOH THETA X or later
+         * | Image format | Image size  | Support value |
+         * | ------------ | ----------- | ------------- |
+         * | JPEG         | 11008 x 5504 <br>5504 x 2752 | Minimum value(minInterval):6 <br>Maximum value(maxInterval):3600 |
+         *
+         * #### For RICOH THETA Z1
+         * | Image format | Image size  | Support value |
+         * | ------------ | ----------- | ------------- |
+         * | JPEG         | 6720 x 3360 | Minimum value(minInterval):6 <br>Maximum value(maxInterval):3600 |
+         * | RAW+         | 6720 x 3360 | Minimum value(minInterval):10 <br>Maximum value(maxInterval):3600 |
+         *
+         * #### For RICOH THETA V
+         * | Image format | Image size  | Support value |
+         * | ------------ | ----------- | ------------- |
+         * | JPEG         | 5376 x 2688 | Minimum value(minInterval):4 <br>Maximum value(maxInterval):3600 |
+         *
+         * #### For RICOH THETA S or SC
+         * | Image format | Image size  | Support value |
+         * | ------------ | ----------- | ------------- |
+         * | JPEG         | 5376 x 2688 | Minimum value(minInterval):8 <br>Maximum value(maxInterval):3600 |
+         * | JPEG         | 2048 x 1024 | Minimum value(minInterval):5 <br>Maximum value(maxInterval):3600 |
+         */
+        var captureInterval: Int? = null,
+
+        /**
          * Shooting mode.
          */
         var captureMode: CaptureModeEnum? = null,
+
+        /**
+         * Number of shots for interval shooting.
+         *
+         * ### Support value
+         * - 0: Unlimited (_limitless)
+         * - 2: Minimum value (minNumber)
+         * - 9999: Maximum value (maxNumber)
+         */
+        var captureNumber: Int? = null,
 
         /**
          * Color temperature of the camera (Kelvin).
@@ -857,6 +1015,35 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * 2500 to 10000. In 100-Kelvin units.
          */
         var colorTemperature: Int? = null,
+
+        /**
+         * In-progress save interval for interval composite shooting (sec).
+         *
+         * 0 (no saving), 60 to 600. In 60-second units.
+         *
+         * For
+         * RICOH THETA Z1
+         * RICOH THETA SC firmware v1.10 or later
+         * RICOH THETA S firmware v01.82 or later
+         */
+        var compositeShootingOutputInterval: Int? = null,
+
+        /**
+         * Shooting time for interval composite shooting (sec).
+         *
+         * 600 to 86400. In 600-second units.
+         *
+         * For
+         * RICOH THETA Z1
+         * RICOH THETA SC firmware v1.10 or later
+         * RICOH THETA S firmware v01.82 or later
+         */
+        var compositeShootingTime: Int? = null,
+
+        /**
+         * @see ContinuousNumberEnum
+         */
+        var continuousNumber: ContinuousNumberEnum? = null,
 
         /**
          * Current system time of RICOH THETA. Setting another options will result in an error.
@@ -982,6 +1169,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var powerSaving: PowerSavingEnum? = null,
 
         /**
+         * Preset mode of Theta SC2 and Theta SC2 for business.
+         */
+        var preset: PresetEnum? = null,
+
+        /**
          * Format of live view.
          */
         var previewFormat: PreviewFormatEnum? = null,
@@ -1072,12 +1264,21 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var wlanFrequency: WlanFrequencyEnum? = null,
     ) {
         constructor() : this(
+            aiAutoThumbnail = null,
             aperture = null,
+            bitrate = null,
             bluetoothPower = null,
+            burstMode = null,
+            burstOption = null,
             cameraControlSource = null,
             cameraMode = null,
+            captureInterval = null,
             captureMode = null,
+            captureNumber = null,
             colorTemperature = null,
+            compositeShootingOutputInterval = null,
+            compositeShootingTime = null,
+            continuousNumber = null,
             dateTimeZone = null,
             exposureCompensation = null,
             exposureDelay = null,
@@ -1094,6 +1295,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             offDelay = null,
             password = null,
             powerSaving = null,
+            preset = null,
             previewFormat = null,
             proxy = null,
             shootingMethod = null,
@@ -1112,12 +1314,21 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         )
 
         constructor(options: com.ricoh360.thetaclient.transferred.Options) : this(
+            aiAutoThumbnail = options._aiAutoThumbnail?.let { AiAutoThumbnailEnum.get(it) },
             aperture = options.aperture?.let { ApertureEnum.get(it) },
+            bitrate = options._bitrate?.let { BitrateEnum.get(it) },
             bluetoothPower = options._bluetoothPower?.let { BluetoothPowerEnum.get(it) },
+            burstMode = options._burstMode?.let { BurstModeEnum.get(it) },
+            burstOption = options._burstOption?.let { BurstOption(it) },
             cameraControlSource = options._cameraControlSource?.let { CameraControlSourceEnum.get(it) },
             cameraMode = options._cameraMode?.let { CameraModeEnum.get(it) },
+            captureInterval = options.captureInterval,
             captureMode = options.captureMode?.let { CaptureModeEnum.get(it) },
+            captureNumber = options.captureNumber,
             colorTemperature = options._colorTemperature,
+            compositeShootingOutputInterval = options._compositeShootingOutputInterval,
+            compositeShootingTime = options._compositeShootingTime,
+            continuousNumber = options.continuousNumber?.let { ContinuousNumberEnum.get(it) },
             dateTimeZone = options.dateTimeZone,
             exposureCompensation = options.exposureCompensation?.let {
                 ExposureCompensationEnum.get(
@@ -1138,6 +1349,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             offDelay = options.offDelay?.let { OffDelayEnum.get(it) },
             password = options._password,
             powerSaving = options._powerSaving?.let { PowerSavingEnum.get(it) },
+            preset = options._preset?.let { PresetEnum.get(it) },
             previewFormat = options.previewFormat?.let { PreviewFormatEnum.get(it) },
             proxy = options._proxy?.let { Proxy(it) },
             shootingMethod = options._shootingMethod?.let { ShootingMethodEnum.get(it) },
@@ -1161,12 +1373,21 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          */
         fun toOptions(): com.ricoh360.thetaclient.transferred.Options {
             return Options(
+                _aiAutoThumbnail = aiAutoThumbnail?.value,
                 aperture = aperture?.value,
+                _bitrate = bitrate?.rawValue,
                 _bluetoothPower = bluetoothPower?.value,
+                _burstMode = burstMode?.value,
+                _burstOption = burstOption?.toTransferredBurstOption(),
                 _cameraControlSource = cameraControlSource?.value,
                 _cameraMode = cameraMode?.value,
+                captureInterval = captureInterval,
                 captureMode = captureMode?.value,
+                captureNumber = captureNumber,
                 _colorTemperature = colorTemperature,
+                _compositeShootingOutputInterval = compositeShootingOutputInterval,
+                _compositeShootingTime = compositeShootingTime,
+                continuousNumber = continuousNumber?.value,
                 dateTimeZone = dateTimeZone,
                 exposureCompensation = exposureCompensation?.value,
                 exposureDelay = exposureDelay?.sec,
@@ -1183,6 +1404,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 offDelay = offDelay?.sec,
                 _password = password,
                 _powerSaving = powerSaving?.value,
+                _preset = preset?.value,
                 previewFormat = previewFormat?.toPreviewFormat(),
                 _proxy = proxy?.toTransferredProxy(),
                 sleepDelay = sleepDelay?.sec,
@@ -1213,12 +1435,21 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         fun <T> getValue(name: OptionNameEnum): T? {
             @Suppress("UNCHECKED_CAST")
             return when (name) {
+                OptionNameEnum.AiAutoThumbnail -> aiAutoThumbnail
                 OptionNameEnum.Aperture -> aperture
+                OptionNameEnum.Bitrate -> bitrate
                 OptionNameEnum.BluetoothPower -> bluetoothPower
+                OptionNameEnum.BurstMode -> burstMode
+                OptionNameEnum.BurstOption -> burstOption
                 OptionNameEnum.CameraControlSource -> cameraControlSource
                 OptionNameEnum.CameraMode -> cameraMode
+                OptionNameEnum.CaptureInterval -> captureInterval
                 OptionNameEnum.CaptureMode -> captureMode
+                OptionNameEnum.CaptureNumber -> captureNumber
                 OptionNameEnum.ColorTemperature -> colorTemperature
+                OptionNameEnum.CompositeShootingOutputInterval -> compositeShootingOutputInterval
+                OptionNameEnum.CompositeShootingTime -> compositeShootingTime
+                OptionNameEnum.ContinuousNumber -> continuousNumber
                 OptionNameEnum.DateTimeZone -> dateTimeZone
                 OptionNameEnum.ExposureCompensation -> exposureCompensation
                 OptionNameEnum.ExposureDelay -> exposureDelay
@@ -1235,6 +1466,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.OffDelay -> offDelay
                 OptionNameEnum.Password -> password
                 OptionNameEnum.PowerSaving -> powerSaving
+                OptionNameEnum.Preset -> preset
                 OptionNameEnum.PreviewFormat -> previewFormat
                 OptionNameEnum.Proxy -> proxy
                 OptionNameEnum.RemainingPictures -> remainingPictures
@@ -1266,12 +1498,21 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 throw ThetaWebApiException("Invalid value type")
             }
             when (name) {
+                OptionNameEnum.AiAutoThumbnail -> aiAutoThumbnail = value as AiAutoThumbnailEnum
                 OptionNameEnum.Aperture -> aperture = value as ApertureEnum
+                OptionNameEnum.Bitrate -> bitrate = value as Bitrate
                 OptionNameEnum.BluetoothPower -> bluetoothPower = value as BluetoothPowerEnum
+                OptionNameEnum.BurstMode -> burstMode = value as BurstModeEnum
+                OptionNameEnum.BurstOption -> burstOption = value as BurstOption
                 OptionNameEnum.CameraControlSource -> cameraControlSource = value as CameraControlSourceEnum
                 OptionNameEnum.CameraMode -> cameraMode = value as CameraModeEnum
+                OptionNameEnum.CaptureInterval -> captureInterval = value as Int
                 OptionNameEnum.CaptureMode -> captureMode = value as CaptureModeEnum
+                OptionNameEnum.CaptureNumber -> captureNumber = value as Int
                 OptionNameEnum.ColorTemperature -> colorTemperature = value as Int
+                OptionNameEnum.CompositeShootingOutputInterval -> compositeShootingOutputInterval = value as Int
+                OptionNameEnum.CompositeShootingTime -> compositeShootingTime = value as Int
+                OptionNameEnum.ContinuousNumber -> continuousNumber = value as ContinuousNumberEnum
                 OptionNameEnum.DateTimeZone -> dateTimeZone = value as String
                 OptionNameEnum.ExposureCompensation -> exposureCompensation = value as ExposureCompensationEnum
                 OptionNameEnum.ExposureDelay -> exposureDelay = value as ExposureDelayEnum
@@ -1288,6 +1529,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.OffDelay -> offDelay = value as OffDelay
                 OptionNameEnum.Password -> password = value as String
                 OptionNameEnum.PowerSaving -> powerSaving = value as PowerSavingEnum
+                OptionNameEnum.Preset -> preset = value as PresetEnum
                 OptionNameEnum.PreviewFormat -> previewFormat = value as PreviewFormatEnum
                 OptionNameEnum.Proxy -> proxy = value as Proxy
                 OptionNameEnum.ShootingMethod -> shootingMethod = value as ShootingMethodEnum
@@ -1303,6 +1545,33 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.WhiteBalance -> whiteBalance = value as WhiteBalanceEnum
                 OptionNameEnum.WhiteBalanceAutoStrength -> whiteBalanceAutoStrength = value as WhiteBalanceAutoStrengthEnum
                 OptionNameEnum.WlanFrequency -> wlanFrequency = value as WlanFrequencyEnum
+            }
+        }
+    }
+
+    /**
+     * AI auto thumbnail setting.
+     */
+    enum class AiAutoThumbnailEnum(val value: AiAutoThumbnail) {
+        /**
+         * AI auto setting ON
+         */
+        ON(AiAutoThumbnail.ON),
+
+        /**
+         * AI auto setting OFF
+         */
+        OFF(AiAutoThumbnail.OFF);
+
+        companion object {
+            /**
+             * Convert AiAutoThumbnail to AiAutoThumbnailEnum
+             *
+             * @param value AI auto thumbnail setting.
+             * @return AiAutoThumbnailEnum
+             */
+            fun get(value: AiAutoThumbnail): AiAutoThumbnailEnum? {
+                return values().firstOrNull { it.value == value }
             }
         }
     }
@@ -1371,6 +1640,124 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Movie bit rate.
+     *
+     * ### Support value
+     * The supported value depends on the shooting mode [CaptureMode].
+     *
+     * | Shooting mode | Supported value |
+     * | ------------- | --------------- |
+     * |         video | "Fine", "Normal", "Economy"(RICOH THETA X or later) <br/>"2000000"-"120000000" (RICOH THETA X v1.20 or later) |
+     * |         image | "Auto", "1048576"-"20971520" (RICOH THETA X v1.20 or later) |
+     * | _liveStreaming |         "Auto" |
+     *
+     * #### RICOH THETA X
+     * | Video mode | Fine<br/>[Mbps] | Normal<br/>[Mbps] | Economy<br/>[Mbps] | Remark |
+     * |------------| --------------- | ------------------| ------------------ | ------ |
+     * |   2K 30fps |              32 |                16 |                  8 |        |
+     * |   2K 60fps |              64 |                32 |                 16 |        |
+     * |   4K 10fps |              48 |                24 |                 12 |        |
+     * |   4K 15fps |              64 |                32 |                 16 |        |
+     * |   4K 30fps |             100 |                54 |                 32 |        |
+     * |   4K 60fps |             120 |                64 |                 32 |        |
+     * | 5.7K  2fps |              16 |                12 |                  8 | firmware v2.00.0 or later   |
+     * |            |              64 |                32 |                 16 | firmware v1.40.0 or later   (I-frame only)|
+     * |            |              16 |                 8 |                  4 | firmware v1.30.0 or earlier |
+     * | 5.7K  5fps |              40 |                30 |                 20 | firmware v2.00.0 or later   |
+     * |            |             120 |                80 |                 40 | firmware v1.40.0 or later   (I-frame only)|
+     * |            |              32 |                16 |                  8 | firmware v1.30.0 or earlier |
+     * | 5.7K 10fps |              80 |                60 |                 40 | firmware v2.00.0 or later   |
+     * |            |              64 |                40 |                 20 | firmware v1.40.0 or later   |
+     * |            |              48 |                24 |                 12 | firmware v1.30.0 or earlier |
+     * | 5.7K 15fps |              64 |                32 |                 16 |        |
+     * | 5.7K 30fps |             120 |                64 |                 32 |        |
+     * |   8K  2fps |              64 |                32 |                 16 | firmware v1.40.0 or later   (I-frame only)|
+     * |            |              32 |                16 |                  8 | firmware v1.30.0 or earlier (I-frame only)|
+     * |   8K  5fps |             120 |                96 |                 40 | firmware v1.40.0 or later   (I-frame only)|
+     * |            |              64 |                32 |                 16 | firmware v1.30.0 or earlier (I-frame only)|
+     * |   8K 10fps |             120 |                96 |                 40 | firmware v1.40.0 or later   (I-frame only)|
+     * |            |             120 |                64 |                 32 | firmware v1.30.0 or earlier (I-frame only)|
+     *
+     * For
+     * - RICOH THETA X
+     * - RICOH THETA Z1
+     * - RICOH THETA V firmware v2.50.1 or later
+     */
+    interface Bitrate {
+        val rawValue: String
+    }
+
+    /**
+     * Movie bit rate value of number.
+     */
+    class BitrateNumber(val value: Int) : Bitrate {
+        override val rawValue: String
+            get() = value.toString()
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other is Bitrate) {
+                return other.rawValue == rawValue
+            }
+            return false
+        }
+
+        override fun hashCode(): Int {
+            return rawValue.hashCode()
+        }
+
+        companion object {
+            /**
+             * Convert string to BitrateNumber
+             *
+             * @return [BitrateNumber]
+             */
+            fun get(str: String): BitrateNumber? {
+                return (str.toIntOrNull())?.let { BitrateNumber(it) }
+            }
+        }
+    }
+
+    /**
+     * Movie bit rate value of string.
+     */
+    enum class BitrateEnum(val value: String) : Bitrate {
+        /**
+         * Auto
+         */
+        AUTO("Auto"),
+
+        /**
+         * Fine
+         */
+        FINE("Fine"),
+
+        /**
+         * Normal
+         */
+        NORMAL("Normal"),
+
+        /**
+         * Economy
+         */
+        ECONOMY("Economy");
+
+        override val rawValue: String
+            get() = value
+
+        companion object {
+            /**
+             * Convert string to BitrateEnum
+             *
+             * @return [BitrateEnum]
+             */
+            fun get(str: String): Bitrate? {
+                return BitrateEnum.values().firstOrNull { it.value == str } ?: BitrateNumber.get(str)
+            }
+        }
+    }
+
+    /**
      * bluetooth power.
      */
     enum class BluetoothPowerEnum(val value: BluetoothPower) {
@@ -1393,6 +1780,346 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              */
             fun get(value: BluetoothPower): BluetoothPowerEnum? {
                 return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * BurstMode setting.
+     * When this is set to ON, burst shooting is enabled,
+     * and a screen dedicated to burst shooting is displayed in Live View.
+     *
+     * only For RICOH THETA Z1 firmware v2.10.1 or later
+     */
+    enum class BurstModeEnum(val value: BurstMode) {
+        /**
+         * BurstMode ON
+         */
+        ON(BurstMode.ON),
+
+        /**
+         * BurstMode OFF
+         */
+        OFF(BurstMode.OFF);
+
+        companion object {
+            /**
+             * Convert BurstMode to BurstModeEnum
+             *
+             * @param value BurstMode
+             * @return BluetoothPowerEnum
+             */
+            fun get(value: BurstMode): BurstModeEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Burst shooting setting.
+     *
+     * only For RICOH THETA Z1 firmware v2.10.1 or later
+     */
+    data class BurstOption(
+        /**
+         * @see BurstCaptureNumEnum
+         */
+        val burstCaptureNum: BurstCaptureNumEnum? = null,
+
+        /**
+         * @see BurstBracketStepEnum
+         */
+        val burstBracketStep: BurstBracketStepEnum? = null,
+
+        /**
+         * @see BurstCompensationEnum
+         */
+        val burstCompensation: BurstCompensationEnum? = null,
+
+        /**
+         * @see BurstMaxExposureTimeEnum
+         */
+        val burstMaxExposureTime: BurstMaxExposureTimeEnum? = null,
+
+        /**
+         * @see BurstEnableIsoControlEnum
+         */
+        val burstEnableIsoControl: BurstEnableIsoControlEnum? = null,
+
+        /**
+         * @see BurstOrderEnum
+         */
+        val burstOrder: BurstOrderEnum? = null
+    ) {
+        constructor(option: com.ricoh360.thetaclient.transferred.BurstOption) : this(
+            burstCaptureNum = option._burstCaptureNum?.let { BurstCaptureNumEnum.get(value = it) },
+            burstBracketStep = option._burstBracketStep?.let { BurstBracketStepEnum.get(value = it) },
+            burstCompensation = option._burstCompensation?.let { BurstCompensationEnum.get(value = it) },
+            burstMaxExposureTime = option._burstMaxExposureTime?.let { BurstMaxExposureTimeEnum.get(value = it) },
+            burstEnableIsoControl = option._burstEnableIsoControl?.let { BurstEnableIsoControlEnum.get(value = it) },
+            burstOrder = option._burstOrder?.let { BurstOrderEnum.get(value = it) }
+        )
+
+        /**
+         * Convert Proxy to transferred.BurstOption
+         *
+         * @return transferred.BurstOption
+         */
+        fun toTransferredBurstOption(): com.ricoh360.thetaclient.transferred.BurstOption {
+            return BurstOption(
+                _burstCaptureNum = burstCaptureNum?.value,
+                _burstBracketStep = burstBracketStep?.value,
+                _burstCompensation = burstCompensation?.value,
+                _burstMaxExposureTime = burstMaxExposureTime?.value,
+                _burstEnableIsoControl = burstEnableIsoControl?.value,
+                _burstOrder = burstOrder?.value
+            )
+        }
+    }
+
+    /**
+     * Number of shots for burst shooting
+     * 1, 3, 5, 7, 9
+     */
+    enum class BurstCaptureNumEnum(val value: BurstCaptureNum) {
+        BURST_CAPTURE_NUM_1(BurstCaptureNum.BURST_CAPTURE_NUM_1),
+        BURST_CAPTURE_NUM_3(BurstCaptureNum.BURST_CAPTURE_NUM_3),
+        BURST_CAPTURE_NUM_5(BurstCaptureNum.BURST_CAPTURE_NUM_5),
+        BURST_CAPTURE_NUM_7(BurstCaptureNum.BURST_CAPTURE_NUM_7),
+        BURST_CAPTURE_NUM_9(BurstCaptureNum.BURST_CAPTURE_NUM_9);
+
+        companion object {
+            /**
+             * Convert BurstCaptureNum to BurstCaptureNumEnum
+             *
+             * @param value BurstCaptureNum
+             * @return BurstCaptureNumEnum
+             */
+            fun get(value: BurstCaptureNum): BurstCaptureNumEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+
+            /**
+             * Convert Int to BurstCaptureNumEnum
+             *
+             * @param value Int
+             * @return BurstCaptureNumEnum
+             */
+            fun get(value: Int): BurstCaptureNumEnum? {
+                return values().firstOrNull { it.value.value == value }
+            }
+        }
+    }
+
+    /**
+     * Bracket value range between each shot for burst shooting
+     * 0.0, 0.3, 0.7, 1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0
+     */
+    enum class BurstBracketStepEnum(val value: BurstBracketStep) {
+        BRACKET_STEP_0_0(BurstBracketStep.BRACKET_STEP_0_0),
+        BRACKET_STEP_0_3(BurstBracketStep.BRACKET_STEP_0_3),
+        BRACKET_STEP_0_7(BurstBracketStep.BRACKET_STEP_0_7),
+        BRACKET_STEP_1_0(BurstBracketStep.BRACKET_STEP_1_0),
+        BRACKET_STEP_1_3(BurstBracketStep.BRACKET_STEP_1_3),
+        BRACKET_STEP_1_7(BurstBracketStep.BRACKET_STEP_1_7),
+        BRACKET_STEP_2_0(BurstBracketStep.BRACKET_STEP_2_0),
+        BRACKET_STEP_2_3(BurstBracketStep.BRACKET_STEP_2_3),
+        BRACKET_STEP_2_7(BurstBracketStep.BRACKET_STEP_2_7),
+        BRACKET_STEP_3_0(BurstBracketStep.BRACKET_STEP_3_0);
+
+        companion object {
+            /**
+             * Convert BurstBracketStep to BurstBracketStepEnum
+             *
+             * @param value BurstBracketStep
+             * @return BurstBracketStepEnum
+             */
+            fun get(value: BurstBracketStep): BurstBracketStepEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+
+            /**
+             * Convert Int to BurstCaptureNumEnum
+             *
+             * @param value Float
+             * @return BurstCaptureNumEnum
+             */
+            fun get(value: Float): BurstBracketStepEnum? {
+                return values().firstOrNull { it.value.value == value }
+            }
+        }
+    }
+
+    /**
+     * Exposure compensation for the base image and entire shooting for burst shooting
+     * -5.0, -4.7, -4,3, -4.0, -3.7, -3,3, -3.0, -2.7, -2,3, -2.0, -1.7, -1,3, -1.0, -0.7, -0,3,
+     * 0.0, 0.3, 0.7, 1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 4.3, 4.7, 5.0
+     */
+    enum class BurstCompensationEnum(val value: BurstCompensation) {
+        BURST_COMPENSATION_DOWN_5_0(BurstCompensation.BURST_COMPENSATION_DOWN_5_0),
+        BURST_COMPENSATION_DOWN_4_7(BurstCompensation.BURST_COMPENSATION_DOWN_4_7),
+        BURST_COMPENSATION_DOWN_4_3(BurstCompensation.BURST_COMPENSATION_DOWN_4_3),
+        BURST_COMPENSATION_DOWN_4_0(BurstCompensation.BURST_COMPENSATION_DOWN_4_0),
+        BURST_COMPENSATION_DOWN_3_7(BurstCompensation.BURST_COMPENSATION_DOWN_3_7),
+        BURST_COMPENSATION_DOWN_3_3(BurstCompensation.BURST_COMPENSATION_DOWN_3_3),
+        BURST_COMPENSATION_DOWN_3_0(BurstCompensation.BURST_COMPENSATION_DOWN_3_0),
+        BURST_COMPENSATION_DOWN_2_7(BurstCompensation.BURST_COMPENSATION_DOWN_2_7),
+        BURST_COMPENSATION_DOWN_2_3(BurstCompensation.BURST_COMPENSATION_DOWN_2_3),
+        BURST_COMPENSATION_DOWN_2_0(BurstCompensation.BURST_COMPENSATION_DOWN_2_0),
+        BURST_COMPENSATION_DOWN_1_7(BurstCompensation.BURST_COMPENSATION_DOWN_1_7),
+        BURST_COMPENSATION_DOWN_1_3(BurstCompensation.BURST_COMPENSATION_DOWN_1_3),
+        BURST_COMPENSATION_DOWN_1_0(BurstCompensation.BURST_COMPENSATION_DOWN_1_0),
+        BURST_COMPENSATION_DOWN_0_7(BurstCompensation.BURST_COMPENSATION_DOWN_0_7),
+        BURST_COMPENSATION_DOWN_0_3(BurstCompensation.BURST_COMPENSATION_DOWN_0_3),
+        BURST_COMPENSATION_0_0(BurstCompensation.BURST_COMPENSATION_0_0),
+        BURST_COMPENSATION_UP_0_3(BurstCompensation.BURST_COMPENSATION_UP_0_3),
+        BURST_COMPENSATION_UP_0_7(BurstCompensation.BURST_COMPENSATION_UP_0_7),
+        BURST_COMPENSATION_UP_1_0(BurstCompensation.BURST_COMPENSATION_UP_1_0),
+        BURST_COMPENSATION_UP_1_3(BurstCompensation.BURST_COMPENSATION_UP_1_3),
+        BURST_COMPENSATION_UP_1_7(BurstCompensation.BURST_COMPENSATION_UP_1_7),
+        BURST_COMPENSATION_UP_2_0(BurstCompensation.BURST_COMPENSATION_UP_2_0),
+        BURST_COMPENSATION_UP_2_3(BurstCompensation.BURST_COMPENSATION_UP_2_3),
+        BURST_COMPENSATION_UP_2_7(BurstCompensation.BURST_COMPENSATION_UP_2_7),
+        BURST_COMPENSATION_UP_3_0(BurstCompensation.BURST_COMPENSATION_UP_3_0),
+        BURST_COMPENSATION_UP_3_3(BurstCompensation.BURST_COMPENSATION_UP_3_3),
+        BURST_COMPENSATION_UP_3_7(BurstCompensation.BURST_COMPENSATION_UP_3_7),
+        BURST_COMPENSATION_UP_4_0(BurstCompensation.BURST_COMPENSATION_UP_4_0),
+        BURST_COMPENSATION_UP_4_3(BurstCompensation.BURST_COMPENSATION_UP_4_3),
+        BURST_COMPENSATION_UP_4_7(BurstCompensation.BURST_COMPENSATION_UP_4_7),
+        BURST_COMPENSATION_UP_5_0(BurstCompensation.BURST_COMPENSATION_UP_5_0);
+
+        companion object {
+            /**
+             * Convert BurstCompensation to BurstCompensationEnum
+             *
+             * @param value BurstCompensation
+             * @return BurstCompensationEnum
+             */
+            fun get(value: BurstCompensation): BurstCompensationEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+
+            /**
+             * Convert Int to BurstCompensationEnum
+             *
+             * @param value Float
+             * @return BurstCompensationEnum
+             */
+            fun get(value: Float): BurstCompensationEnum? {
+                return values().firstOrNull { it.value.value == value }
+            }
+        }
+    }
+
+    /**
+     * Maximum exposure time for burst shooting
+     * 0.5, 0.625, 0.76923076, 1, 1.3, 1.6, 2, 2.5, 3.2, 4, 5, 6, 8, 10, 13, 15, 20, 25, 30, 40, 50, 60
+     */
+    enum class BurstMaxExposureTimeEnum(val value: BurstMaxExposureTime) {
+        MAX_EXPOSURE_TIME_0_5(BurstMaxExposureTime.MAX_EXPOSURE_TIME_0_5),
+        MAX_EXPOSURE_TIME_0_625(BurstMaxExposureTime.MAX_EXPOSURE_TIME_0_625),
+        MAX_EXPOSURE_TIME_0_76923076(BurstMaxExposureTime.MAX_EXPOSURE_TIME_0_76923076),
+        MAX_EXPOSURE_TIME_1(BurstMaxExposureTime.MAX_EXPOSURE_TIME_1),
+        MAX_EXPOSURE_TIME_1_3(BurstMaxExposureTime.MAX_EXPOSURE_TIME_1_3),
+        MAX_EXPOSURE_TIME_1_6(BurstMaxExposureTime.MAX_EXPOSURE_TIME_1_6),
+        MAX_EXPOSURE_TIME_2(BurstMaxExposureTime.MAX_EXPOSURE_TIME_2),
+        MAX_EXPOSURE_TIME_2_5(BurstMaxExposureTime.MAX_EXPOSURE_TIME_2_5),
+        MAX_EXPOSURE_TIME_3_2(BurstMaxExposureTime.MAX_EXPOSURE_TIME_3_2),
+        MAX_EXPOSURE_TIME_4(BurstMaxExposureTime.MAX_EXPOSURE_TIME_4),
+        MAX_EXPOSURE_TIME_5(BurstMaxExposureTime.MAX_EXPOSURE_TIME_5),
+        MAX_EXPOSURE_TIME_6(BurstMaxExposureTime.MAX_EXPOSURE_TIME_6),
+        MAX_EXPOSURE_TIME_8(BurstMaxExposureTime.MAX_EXPOSURE_TIME_8),
+        MAX_EXPOSURE_TIME_10(BurstMaxExposureTime.MAX_EXPOSURE_TIME_10),
+        MAX_EXPOSURE_TIME_13(BurstMaxExposureTime.MAX_EXPOSURE_TIME_13),
+        MAX_EXPOSURE_TIME_15(BurstMaxExposureTime.MAX_EXPOSURE_TIME_15),
+        MAX_EXPOSURE_TIME_20(BurstMaxExposureTime.MAX_EXPOSURE_TIME_20),
+        MAX_EXPOSURE_TIME_25(BurstMaxExposureTime.MAX_EXPOSURE_TIME_25),
+        MAX_EXPOSURE_TIME_30(BurstMaxExposureTime.MAX_EXPOSURE_TIME_30),
+        MAX_EXPOSURE_TIME_40(BurstMaxExposureTime.MAX_EXPOSURE_TIME_40),
+        MAX_EXPOSURE_TIME_50(BurstMaxExposureTime.MAX_EXPOSURE_TIME_50),
+        MAX_EXPOSURE_TIME_60(BurstMaxExposureTime.MAX_EXPOSURE_TIME_60);
+
+        companion object {
+            /**
+             * Convert BurstMaxExposureTime to BurstMaxExposureTimeEnum
+             *
+             * @param value BurstMaxExposureTime
+             * @return BurstMaxExposureTimeEnum
+             */
+            fun get(value: BurstMaxExposureTime): BurstMaxExposureTimeEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+
+            /**
+             * Convert Int to BurstMaxExposureTimeEnum
+             *
+             * @param value Double
+             * @return BurstMaxExposureTimeEnum
+             */
+            fun get(value: Double): BurstMaxExposureTimeEnum? {
+                return values().firstOrNull { it.value.value == value }
+            }
+        }
+    }
+
+    /**
+     * Adjustment with ISO sensitivity for burst shooting
+     * 0: Do not adjust with ISO sensitivity, 1: Adjust with ISO sensitivity
+     */
+    enum class BurstEnableIsoControlEnum(val value: BurstEnableIsoControl) {
+        OFF(BurstEnableIsoControl.OFF),
+        ON(BurstEnableIsoControl.ON);
+
+        companion object {
+            /**
+             * Convert BurstEnableIsoControl to BurstEnableIsoControlEnum
+             *
+             * @param value BurstEnableIsoControl
+             * @return BurstEnableIsoControlEnum
+             */
+            fun get(value: BurstEnableIsoControl): BurstEnableIsoControlEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+
+            /**
+             * Convert Int to BurstEnableIsoControlEnum
+             *
+             * @param value Int
+             * @return BurstEnableIsoControlEnum
+             */
+            fun get(value: Int): BurstEnableIsoControlEnum? {
+                return values().firstOrNull { it.value.value == value }
+            }
+        }
+    }
+
+    /**
+     * Shooting order for burst shooting
+     * 0: '0' → '-' → '+', 1: '-' → '0' → '+'
+     */
+    enum class BurstOrderEnum(val value: BurstOrder) {
+        BURST_BRACKET_ORDER_0(BurstOrder.BURST_BRACKET_ORDER_0),
+        BURST_BRACKET_ORDER_1(BurstOrder.BURST_BRACKET_ORDER_1);
+
+        companion object {
+            /**
+             * Convert BurstOrder to BurstOrderEnum
+             *
+             * @param value BurstOrder
+             * @return BurstOrderEnum
+             */
+            fun get(value: BurstOrder): BurstOrderEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+
+            /**
+             * Convert Int to BurstOrderEnum
+             *
+             * @param value Int
+             * @return BurstOrderEnum
+             */
+            fun get(value: Int): BurstOrderEnum? {
+                return values().firstOrNull { it.value.value == value }
             }
         }
     }
@@ -1484,7 +2211,26 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Shooting mode.
          * Video capture mode
          */
-        VIDEO(CaptureMode.VIDEO);
+        VIDEO(CaptureMode.VIDEO),
+
+        /**
+         * Shooting mode.
+         * Live streaming mode just for Theta S.
+         * This mode can not be set.
+         */
+        LIVE_STREAMING(CaptureMode.LIVE_STREAMING),
+
+        /**
+         * Shooting mode.
+         * Interval still image capture mode just for Theta SC2 and Theta SC2 for business.
+         */
+        INTERVAL(CaptureMode.INTERVAL),
+
+        /**
+         * Shooting mode.
+         * Preset mode just for Theta SC2 and Theta SC2 for business.
+         */
+        PRESET(CaptureMode.PRESET);
 
         companion object {
             /**
@@ -1495,6 +2241,144 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              */
             fun get(value: CaptureMode): CaptureModeEnum? {
                 return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Number of shots for continuous shooting.
+     * It can be acquired by camera.getOptions.
+     *
+     * For RICOH THETA X
+     * - 11k image: Maximum value 8
+     * - 5.5k image: Maximum value 20
+     *
+     * Depending on available storage capacity, the value may be less than maximum.
+     */
+    enum class ContinuousNumberEnum(val value: Int) {
+        /**
+         * Disable continuous shooting.
+         */
+        OFF(0),
+
+        /**
+         * Maximum value 1
+         */
+        MAX_1(1),
+
+        /**
+         * Maximum value 2
+         */
+        MAX_2(2),
+
+        /**
+         * Maximum value 3
+         */
+        MAX_3(3),
+
+        /**
+         * Maximum value 4
+         */
+        MAX_4(4),
+
+        /**
+         * Maximum value 5
+         */
+        MAX_5(5),
+
+        /**
+         * Maximum value 6
+         */
+        MAX_6(6),
+
+        /**
+         * Maximum value 7
+         */
+        MAX_7(7),
+
+        /**
+         * Maximum value 8
+         */
+        MAX_8(8),
+
+        /**
+         * Maximum value 9
+         */
+        MAX_9(9),
+
+        /**
+         * Maximum value 10
+         */
+        MAX_10(10),
+
+        /**
+         * Maximum value 11
+         */
+        MAX_11(11),
+
+        /**
+         * Maximum value 12
+         */
+        MAX_12(12),
+
+        /**
+         * Maximum value 13
+         */
+        MAX_13(13),
+
+        /**
+         * Maximum value 14
+         */
+        MAX_14(14),
+
+        /**
+         * Maximum value 15
+         */
+        MAX_15(15),
+
+        /**
+         * Maximum value 16
+         */
+        MAX_16(16),
+
+        /**
+         * Maximum value 17
+         */
+        MAX_17(17),
+
+        /**
+         * Maximum value 18
+         */
+        MAX_18(18),
+
+        /**
+         * Maximum value 19
+         */
+        MAX_19(19),
+
+        /**
+         * Maximum value 20
+         */
+        MAX_20(20),
+
+        /**
+         * Unsupported value
+         *
+         * If camera.getOptions returns the number other than 0 to 20, this value is set.
+         * Do not use this value to setOptions().
+         */
+        UNSUPPORTED(-1),
+        ;
+
+        companion object {
+            /**
+             * Convert value to ContinuousNumberEnum
+             *
+             * @param value continuous number value.
+             * @return ContinuousNumberEnum
+             */
+            fun get(value: Int): ContinuousNumberEnum {
+                return values().firstOrNull { it.value == value } ?: UNSUPPORTED
             }
         }
     }
@@ -2272,6 +3156,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         OFF(ImageFilter.OFF),
 
         /**
+         * Image processing filter. DR compensation.
+         *
+         * RICOH THETA X is not supported
+         */
+        DR_COMP(ImageFilter.DR_COMP),
+
+        /**
          * Image processing filter. Noise reduction.
          */
         NOISE_REDUCTION(ImageFilter.NOISE_REDUCTION),
@@ -2279,7 +3170,15 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         /**
          * Image processing filter. HDR.
          */
-        HDR(ImageFilter.HDR);
+        HDR(ImageFilter.HDR),
+
+        /**
+         * Image processing filter. Handheld HDR.
+         *
+         * RICOH THETA Z1 firmware v1.20.1 or later and RICOH THETA V firmware v3.10.1 or later.
+         * RICOH THETA X is not supported
+         */
+        HH_HDR(ImageFilter.HH_HDR);
 
         companion object {
             /**
@@ -2995,6 +3894,59 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Preset mode of Theta SC2 and Theta SC2 for business.
+     */
+    enum class PresetEnum(val value: Preset) {
+        /**
+         * Preset "Face" mode suitable for portrait shooting just for Theta SC2.
+         *
+         * A person’s face is detected and its position is adjusted to the center of the image
+         * to obtain a clear image of the person.
+         */
+        FACE(Preset.FACE),
+
+        /**
+         * Preset "Night View" mode just for Theta SC2.
+         *
+         * The dynamic range of bright areas is expanded to reduce noise.
+         * In addition, a person’s face is detected to obtain a clear image of the person.
+         */
+        NIGHT_VIEW(Preset.NIGHT_VIEW),
+
+        /**
+         * Preset "Lens-by-Lens Exposure" mode just for Theta SC2.
+         *
+         * Image processing such as exposure adjustment and white balance adjustment is performed
+         * individually for each image captured with the front and rear lenses.
+         * This mode is suitable for capturing scenes with significantly different brightness conditions
+         * between the camera front side and the camera rear side.
+         * Images captured with the front and rear lenses are displayed side by side
+         */
+        LENS_BY_LENS_EXPOSURE(Preset.LENS_BY_LENS_EXPOSURE),
+
+        /**
+         * Preset "Room" mode just for SC2 for business.
+         *
+         * Suitable for indoor shooting where there is gap in brightness between outdoors and indoors.
+         * Also, the self-timer function enables time shift between shooting with the front lens
+         * and rear lens making it possible for the photographer not to be captured in the image.
+         */
+        ROOM(Preset.ROOM);
+
+        companion object {
+            /**
+             * Convert Preset to PresetEnum
+             *
+             * @param value
+             * @return PresetEnum
+             */
+            fun get(value: Preset): PresetEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
      * Format of live view
      */
     enum class PreviewFormatEnum(val width: Int, val height: Int, val framerate: Int) {
@@ -3667,24 +4619,34 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     enum class TimeShiftIntervalEnum(val sec: Int) {
         /** 0 second */
         INTERVAL_0(0),
+
         /** 1 second */
         INTERVAL_1(1),
+
         /** 2 seconds */
         INTERVAL_2(2),
+
         /** 3 seconds */
         INTERVAL_3(3),
+
         /** 4 seconds */
         INTERVAL_4(4),
+
         /** 5 seconds */
         INTERVAL_5(5),
+
         /** 6 seconds */
         INTERVAL_6(6),
+
         /** 7 seconds */
         INTERVAL_7(7),
+
         /** 8 seconds */
         INTERVAL_8(8),
+
         /** 9 seconds */
         INTERVAL_9(9),
+
         /** 10 seconds */
         INTERVAL_10(10);
 
@@ -3906,28 +4868,132 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * THETA projection type
+     */
+    enum class ProjectionTypeEnum(val value: _ProjectionType) {
+        /**
+         * Equirectangular type
+         */
+        EQUIRECTANGULAR(_ProjectionType.EQUIRECTANGULAR),
+
+        /**
+         * Dual Fisheye type
+         */
+        DUAL_FISHEYE(_ProjectionType.DUAL_FISHEYE),
+
+        /**
+         * Fisheye type
+         */
+        FISHEYE(_ProjectionType.FISHEYE),
+        ;
+
+        companion object {
+            /**
+             * Convert _ProjectionType to ProjectionTypeEnum
+             *
+             * @param value projection type
+             * @return ProjectionTypeEnum
+             */
+            fun get(value: _ProjectionType): ProjectionTypeEnum? {
+                return ProjectionTypeEnum.values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Video codec
+     */
+    enum class CodecEnum(val value: String) {
+        /**
+         * codec H.264/MPEG-4 AVC
+         */
+        H264MP4AVC("H.264/MPEG-4 AVC"),
+        ;
+
+        companion object {
+            /**
+             * Convert codec to CodecEnum
+             *
+             * @param value codec
+             * @return CodecEnum
+             */
+            fun get(value: String): CodecEnum? {
+                return CodecEnum.values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
      * File information in Theta.
      * @property name File name.
+     * @property fileUrl You can get a file using HTTP GET to [fileUrl].
      * @property size File size in bytes.
      * @property dateTime File creation time in the format "YYYY:MM:DD HH:MM:SS".
-     * @property fileUrl You can get a file using HTTP GET to [fileUrl].
+     * @property lat Latitude.
+     * @property lng Longitude.
+     * @property width Horizontal size of image (pixels).
+     * @property height Vertical size of image (pixels).
      * @property thumbnailUrl You can get a thumbnail image using HTTP GET to [thumbnailUrl].
+     * @property intervalCaptureGroupId Group ID of a still image shot by interval shooting.
+     * @property compositeShootingGroupId Group ID of a still image shot by interval composite shooting.
+     * @property autoBracketGroupId Group ID of a still image shot by multi bracket shooting.
+     * @property recordTime Video shooting time (sec).
+     * @property isProcessed Whether or not image processing has been completed.
+     * @property previewUrl URL of the file being processed.
+     * @property codec Codec. (RICOH THETA V or later)
+     * @property projectionType Projection type of movie file. (RICOH THETA V or later)
+     * @property continuousShootingGroupId Group ID of continuous shooting.  (RICOH THETA X or later)
+     * @property frameRate Frame rate.  (RICOH THETA X or later)
+     * @property favorite Favorite.  (RICOH THETA X or later)
+     * @property imageDescription Image description.  (RICOH THETA X or later)
      * @property storageID Storage ID. (RICOH THETA X Version 2.00.0 or later)
      */
     data class FileInfo(
         val name: String,
+        val fileUrl: String,
         val size: Long,
         val dateTime: String,
-        val fileUrl: String,
+        val lat: Float?,
+        val lng: Float?,
+        val width: Int?,
+        val height: Int?,
         val thumbnailUrl: String,
+        val intervalCaptureGroupId: String?,
+        val compositeShootingGroupId: String?,
+        val autoBracketGroupId: String?,
+        val recordTime: Int?,
+        val isProcessed: Boolean?,
+        val previewUrl: String?,
+        val codec: CodecEnum?,
+        val projectionType: ProjectionTypeEnum?,
+        val continuousShootingGroupId: String?,
+        val frameRate: Int?,
+        val favorite: Boolean?,
+        val imageDescription: String?,
         val storageID: String?,
     ) {
         constructor(cameraFileInfo: CameraFileInfo) : this(
             cameraFileInfo.name,
+            cameraFileInfo.fileUrl,
             cameraFileInfo.size,
             cameraFileInfo.dateTimeZone!!.take(16), // Delete timezone
-            cameraFileInfo.fileUrl,
+            cameraFileInfo.lat,
+            cameraFileInfo.lng,
+            cameraFileInfo.width,
+            cameraFileInfo.height,
             thumbnailUrl = cameraFileInfo.getThumbnailUrl(),
+            cameraFileInfo._intervalCaptureGroupId,
+            cameraFileInfo._compositeShootingGroupId,
+            cameraFileInfo._autoBracketGroupId,
+            cameraFileInfo._recordTime,
+            cameraFileInfo.isProcessed,
+            cameraFileInfo.previewUrl,
+            cameraFileInfo._codec?.let { CodecEnum.get(it) },
+            cameraFileInfo._projectionType?.let { ProjectionTypeEnum.get(it) },
+            cameraFileInfo._continuousShootingGroupId,
+            cameraFileInfo._frameRate,
+            cameraFileInfo._favorite,
+            cameraFileInfo._imageDescription,
             cameraFileInfo._storageID,
         )
     }
@@ -4665,8 +5731,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     @Throws(Throwable::class)
     suspend fun convertVideoFormats(fileUrl: String, toLowResolution: Boolean, applyTopBottomCorrection: Boolean = true): String {
-        val params = when (ThetaModel.get(cameraModel)) {
-            ThetaModel.THETA_X -> {
+        val params = when {
+            cameraModel == ThetaModel.THETA_X -> {
                 if (!toLowResolution) {
                     return fileUrl
                 }
@@ -4675,7 +5741,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                     size = VideoFormat.VIDEO_4K
                 )
             }
-            ThetaModel.THETA_S, ThetaModel.THETA_SC, ThetaModel.THETA_SC2 -> {
+            ThetaModel.isBeforeThetaV(cameraModel) -> {
                 return fileUrl
             }
             else -> {
@@ -5359,7 +6425,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     @Throws(Throwable::class)
     suspend fun setPluginOrders(plugins: List<String>) {
         val plugins = plugins.toMutableList()
-        if (ThetaModel.get(cameraModel) == ThetaModel.THETA_Z1) {
+        if (cameraModel == ThetaModel.THETA_Z1) {
             when {
                 plugins.size > SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 -> {
                     throw ArgumentException("Argument list must have $SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 or less elements for RICOH THETA Z1")
@@ -5433,3 +6499,9 @@ const val CHECK_COMMAND_STATUS_INTERVAL = 1000L
  * The size of setPluginOrders()'s argument list for Z1
  */
 const val SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 = 3
+
+/**
+ * The first character of the serial number of the SC2 for business.
+ * Other characters are used to SC2.
+ */
+const val FIRST_CHAR_OF_SERIAL_NUMBER_SC2_B = '4'

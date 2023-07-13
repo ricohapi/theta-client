@@ -81,7 +81,9 @@ class CaptureModeTest {
         val values = listOf(
             Pair(ThetaRepository.CaptureModeEnum.IMAGE, CaptureMode.IMAGE),
             Pair(ThetaRepository.CaptureModeEnum.VIDEO, CaptureMode.VIDEO),
-            Pair(null, CaptureMode.LIVESTREAMING)
+            Pair(ThetaRepository.CaptureModeEnum.LIVE_STREAMING, CaptureMode.LIVE_STREAMING),
+            Pair(ThetaRepository.CaptureModeEnum.INTERVAL, CaptureMode.INTERVAL),
+            Pair(ThetaRepository.CaptureModeEnum.PRESET, CaptureMode.PRESET),
         )
 
         values.forEach {

@@ -44,6 +44,23 @@ interface OptionConverter {
 }
 
 /**
+ * AiAutoThumbnailConverter
+ */
+class AiAutoThumbnailConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("aiAutoThumbnail")?.let {
+      options.aiAutoThumbnail = ThetaRepository.AiAutoThumbnailEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.aiAutoThumbnail?.let {
+      objects.putString("aiAutoThumbnail", it.toString())
+    }
+  }
+}
+
+/**
  * ApertureConverter
  */
 class ApertureConverter : OptionConverter {
@@ -79,6 +96,32 @@ class ApertureConverter : OptionConverter {
 }
 
 /**
+ * BitrateConverter
+ */
+class BitrateConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    val type = objects.getType("bitrate")
+    if (type == ReadableType.Number) {
+      options.bitrate = ThetaRepository.BitrateNumber(objects.getInt("bitrate"));
+    } else if (type == ReadableType.String) {
+      objects.getString("bitrate")?.let { rateStr ->
+        options.bitrate = ThetaRepository.BitrateEnum.valueOf(rateStr)
+      }
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.bitrate?.let {
+      if (it is ThetaRepository.BitrateEnum) {
+        objects.putString("bitrate", it.toString())
+      } else if (it is ThetaRepository.BitrateNumber) {
+        objects.putInt("bitrate", it.value)
+      }
+    }
+  }
+}
+
+/**
  * BluetoothPowerConverter
  */
 class BluetoothPowerConverter : OptionConverter {
@@ -91,6 +134,66 @@ class BluetoothPowerConverter : OptionConverter {
   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
     options.bluetoothPower?.let {
       objects.putString("bluetoothPower", it.toString())
+    }
+  }
+}
+
+/**
+ * BurstModeConverter
+ */
+class BurstModeConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("burstMode")?.let {
+      options.burstMode = ThetaRepository.BurstModeEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.burstMode?.let {
+      objects.putString("burstMode", it.toString())
+    }
+  }
+}
+
+/**
+ * BurstOptionConverter
+ */
+class BurstOptionConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getMap("burstOption")?.let { map ->
+      options.burstOption = ThetaRepository.BurstOption(
+        burstCaptureNum = map.getString("burstCaptureNum")?.let { ThetaRepository.BurstCaptureNumEnum.valueOf(it) },
+        burstBracketStep = map.getString("burstBracketStep")?.let { ThetaRepository.BurstBracketStepEnum.valueOf(it) },
+        burstCompensation = map.getString("burstCompensation")?.let { ThetaRepository.BurstCompensationEnum.valueOf(it) },
+        burstMaxExposureTime = map.getString("burstMaxExposureTime")?.let { ThetaRepository.BurstMaxExposureTimeEnum.valueOf(it) },
+        burstEnableIsoControl = map.getString("burstEnableIsoControl")?.let { ThetaRepository.BurstEnableIsoControlEnum.valueOf(it) },
+        burstOrder = map.getString("burstOrder")?.let { ThetaRepository.BurstOrderEnum.valueOf(it) }
+      )
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.burstOption?.let {
+      val burstOption = Arguments.createMap()
+      it.burstCaptureNum?.value?.name?.let { name ->
+        burstOption.putString("burstCaptureNum", name)
+      }
+      it.burstBracketStep?.value?.name?.let { name ->
+        burstOption.putString("burstBracketStep", name)
+      }
+      it.burstCompensation?.value?.name?.let { name ->
+        burstOption.putString("burstCompensation", name)
+      }
+      it.burstMaxExposureTime?.value?.name?.let { name ->
+        burstOption.putString("burstMaxExposureTime", name)
+      }
+      it.burstEnableIsoControl?.value?.name?.let { name ->
+        burstOption.putString("burstEnableIsoControl", name)
+      }
+      it.burstOrder?.value?.name?.let { name ->
+        burstOption.putString("burstOrder", name)
+      }
+      objects.putMap("burstOption", burstOption)
     }
   }
 }
@@ -130,6 +233,21 @@ class CameraModeConverter : OptionConverter {
 }
 
 /**
+ * CaptureIntervalConverter
+ */
+class CaptureIntervalConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    options.captureInterval = objects.getInt("captureInterval")
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.captureInterval?.let {
+      objects.putInt("captureInterval", it)
+    }
+  }
+}
+
+/**
  * CaptureModeConverter
  */
 class CaptureModeConverter : OptionConverter {
@@ -142,6 +260,38 @@ class CaptureModeConverter : OptionConverter {
   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
     options.captureMode?.let {
       objects.putString("captureMode", it.toString())
+    }
+  }
+}
+
+/**
+ * CaptureNumberConverter
+ */
+class CaptureNumberConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    options.captureNumber = objects.getInt("captureNumber")
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.captureNumber?.let {
+      objects.putInt("captureNumber", it)
+    }
+  }
+}
+
+/**
+ * ContinuousNumberConverter
+ */
+class ContinuousNumberConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("continuousNumber")?.let {
+      options.continuousNumber = ThetaRepository.ContinuousNumberEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.continuousNumber?.let {
+      objects.putString("continuousNumber", it.toString())
     }
   }
 }
@@ -489,12 +639,29 @@ class PowerSavingConverter : OptionConverter {
     }
   }
 
-   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
     options.powerSaving?.let {
       objects.putString("powerSaving", it.toString())
     }
   }
- }
+}
+
+/**
+ * PresetConverter
+ */
+class PresetConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("preset")?.let {
+      options.preset = ThetaRepository.PresetEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.preset?.let {
+      objects.putString("preset", it.toString())
+    }
+  }
+}
 
 /**
  * PreviewFormatConverter
@@ -506,12 +673,12 @@ class PreviewFormatConverter : OptionConverter {
     }
   }
 
-   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
     options.previewFormat?.let {
       objects.putString("previewFormat", it.toString())
     }
   }
- }
+}
 
 /**
  * ProxyConverter
@@ -585,7 +752,21 @@ class TimeShiftConverter : OptionConverter {
       objects.putMap("timeShift", timeShift)
     }
   }
- }
+
+  override fun setTimeShiftOption(objects: ReadableMap, builder: TimeShiftCapture.Builder) {
+    objects.getMap("timeShift")?.let { timeShiftMap ->
+      if (timeShiftMap.hasKey("isFrontFirst")) {
+        builder.setIsFrontFirst(timeShiftMap.getBoolean("isFrontFirst"))
+      }
+      timeShiftMap.getString("firstInterval")?.let {
+        builder.setFirstInterval(ThetaRepository.TimeShiftIntervalEnum.valueOf(it))
+      }
+      timeShiftMap.getString("secondInterval")?.let {
+        builder.setSecondInterval(ThetaRepository.TimeShiftIntervalEnum.valueOf(it))
+      }
+    }
+  }
+}
 
 /**
  * ShootingMethodConverter
@@ -597,12 +778,12 @@ class ShootingMethodConverter : OptionConverter {
     }
   }
 
-   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
     options.shootingMethod?.let {
       objects.putString("shootingMethod", it.toString())
     }
   }
- }
+}
 
 /**
  * WhiteBalanceConverter
@@ -698,6 +879,36 @@ class ColorTemperatureConverter : OptionConverter {
 
   override fun setVideoOption(objects: ReadableMap, builder: VideoCapture.Builder) {
     builder.setColorTemperature(objects.getInt("colorTemperature"))
+  }
+}
+
+/**
+ * CompositeShootingOutputIntervalConverter
+ */
+class CompositeShootingOutputIntervalConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    options.compositeShootingOutputInterval = objects.getInt("compositeShootingOutputInterval")
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.compositeShootingOutputInterval?.let {
+      objects.putInt("compositeShootingOutputInterval", it)
+    }
+  }
+}
+
+/**
+ * CompositeShootingTimeConverter
+ */
+class CompositeShootingTimeConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    options.compositeShootingTime = objects.getInt("compositeShootingTime")
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.compositeShootingTime?.let {
+      objects.putInt("compositeShootingTime", it)
+    }
   }
 }
 
@@ -963,4 +1174,65 @@ fun timeoutToTheta(objects: ReadableMap): ThetaRepository.Timeout {
     objects.getInt("requestTimeout").toLong(),
     objects.getInt("socketTimeout").toLong(),
   )
+}
+
+fun fileInfoFromTheta(fileInfo: ThetaRepository.FileInfo): ReadableMap {
+  val result = Arguments.createMap()
+  result.putString("name", fileInfo.name)
+  result.putString("fileUrl", fileInfo.fileUrl)
+  result.putDouble("size", fileInfo.size.toDouble())
+  result.putString("dateTime", fileInfo.dateTime)
+  fileInfo.lat?.let {
+    result.putDouble("lat", it.toDouble())
+  }
+  fileInfo.lng?.let {
+    result.putDouble("lng", it.toDouble())
+  }
+  fileInfo.width?.let {
+    result.putInt("width", it)
+  }
+  fileInfo.height?.let {
+    result.putInt("height", it)
+  }
+  result.putString("thumbnailUrl", fileInfo.thumbnailUrl)
+  fileInfo.intervalCaptureGroupId?.let {
+    result.putString("intervalCaptureGroupId", it)
+  }
+  fileInfo.compositeShootingGroupId?.let {
+    result.putString("compositeShootingGroupId", it)
+  }
+  fileInfo.autoBracketGroupId?.let {
+    result.putString("autoBracketGroupId", it)
+  }
+  fileInfo.recordTime?.let {
+    result.putInt("recordTime", it)
+  }
+  fileInfo.isProcessed?.let {
+    result.putBoolean("isProcessed", it)
+  }
+  fileInfo.previewUrl?.let {
+    result.putString("previewUrl", it)
+  }
+  fileInfo.codec?.let {
+    result.putString("codec", it.name)
+  }
+  fileInfo.projectionType?.let {
+    result.putString("projectionType", it.name)
+  }
+  fileInfo.continuousShootingGroupId?.let {
+    result.putString("continuousShootingGroupId", it)
+  }
+  fileInfo.frameRate?.let {
+    result.putInt("frameRate", it)
+  }
+  fileInfo.favorite?.let {
+    result.putBoolean("favorite", it)
+  }
+  fileInfo.imageDescription?.let {
+    result.putString("imageDescription", it)
+  }
+  fileInfo.storageID?.let {
+    result.putString("storageID", it)
+  }
+  return result
 }

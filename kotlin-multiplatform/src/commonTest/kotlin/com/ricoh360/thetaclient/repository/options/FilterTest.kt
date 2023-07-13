@@ -80,11 +80,13 @@ class FilterTest {
     fun convertOptionFilterTest() = runTest {
         val values = listOf(
             Pair(ThetaRepository.FilterEnum.OFF, ImageFilter.OFF),
+            Pair(ThetaRepository.FilterEnum.DR_COMP, ImageFilter.DR_COMP),
             Pair(ThetaRepository.FilterEnum.NOISE_REDUCTION, ImageFilter.NOISE_REDUCTION),
             Pair(ThetaRepository.FilterEnum.HDR, ImageFilter.HDR),
-            Pair(null, ImageFilter.DR_COMP),
-            Pair(null, ImageFilter.HH_HDR)
+            Pair(ThetaRepository.FilterEnum.HH_HDR, ImageFilter.HH_HDR)
         )
+
+        assertEquals(values.size, ThetaRepository.FilterEnum.values().size)
 
         values.forEach {
             val orgOptions = Options(

@@ -20,7 +20,7 @@ class MultipartReader(headers: Headers, val readChannel: ByteReadChannel) {
     val lineBuffer = StringBuilder(BUFFER_SIZE)
 
     init {
-        val contentType = headers.get(HttpHeaders.ContentType)?: ""
+        val contentType = headers.get(HttpHeaders.ContentType) ?: ""
         val match = Regex("\"(.*)\"").find(contentType) // retrieve boundary parameter
         boundary = match?.groups?.get(1)?.value
         if (boundary == null) {
@@ -34,27 +34,27 @@ class MultipartReader(headers: Headers, val readChannel: ByteReadChannel) {
      * get next part
      * if next part doesn't found, returns null
      */
-    suspend fun nextPart() : ByteReadPacket? {
+    suspend fun nextPart(): ByteReadPacket? {
         if (boundary == null) return null
         var line: String?
 
         // skip to the next boundary
         do {
             line = readTextLine(lineBuffer, BUFFER_SIZE)
-            if(line == null) return null
-        } while(line != boundary)
+            if (line == null) return null
+        } while (line != boundary)
 
         // read part headers
         var contentLength = 0
         do {
             line = readTextLine(lineBuffer, BUFFER_SIZE)
-            if(line == null) return null
+            if (line == null) return null
             val match = contentLengthRegex.find(line)
             match?.groups?.get(1)?.value?.let {
                 contentLength = it.toInt()
             }
-        } while(line!!.length > 0)
-        if(contentLength == 0) {
+        } while (line!!.length > 0)
+        if (contentLength == 0) {
             println("No Content-Length header")
             return null
         }
@@ -80,7 +80,7 @@ class MultipartReader(headers: Headers, val readChannel: ByteReadChannel) {
     private suspend inline fun readTextLine(buffer: StringBuilder, size: Int): String? {
         buffer.clear()
         kotlin.runCatching {
-            if(!readChannel.readUTF8LineTo(buffer, size)) {
+            if (!readChannel.readUTF8LineTo(buffer, size)) {
                 println("Can't read a text line")
                 return null
             }

@@ -15,4 +15,4 @@ export const PowerSavingEnum = {
 
 /** Type definition of PowerSavingEnum */
 export type PowerSavingEnum =
- (typeof PowerSavingEnum)[keyof typeof PowerSavingEnum];
+  (typeof PowerSavingEnum)[keyof typeof PowerSavingEnum];

@@ -41,6 +41,10 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('restoreSettings() has not been implemented.');
   }
 
+  Future<ThetaModel?> getThetaModel() {
+    throw UnimplementedError('getThetaModel() has not been implemented.');
+  }
+
   Future<ThetaInfo> getThetaInfo() {
     throw UnimplementedError('getThetaInfo() has not been implemented.');
   }
@@ -53,7 +57,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('getLivePreview() has not been implemented.');
   }
 
-  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, int startPosition, StorageEnum? storage) {
+  Future<ThetaFiles> listFiles(
+      FileTypeEnum fileType, int entryCount, int startPosition, StorageEnum? storage) {
     throw UnimplementedError('listFiles() has not been implemented.');
   }
 
@@ -124,7 +129,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('stopSelfTimer() has not been implemented.');
   }
 
-  Future<String> convertVideoFormats(String fileUrl, bool toLowResolution, bool applyTopBottomCorrection) {
+  Future<String> convertVideoFormats(
+      String fileUrl, bool toLowResolution, bool applyTopBottomCorrection) {
     throw UnimplementedError('convertVideoFormats() has not been implemented.');
   }
 
@@ -140,13 +146,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('listAccessPoints() has not been implemented.');
   }
 
-  Future<void> setAccessPointDynamically(
-      String ssid,
-      bool ssidStealth,
-      AuthModeEnum authMode,
-      String password,
-      int connectionPriority,
-      Proxy? proxy) {
+  Future<void> setAccessPointDynamically(String ssid, bool ssidStealth, AuthModeEnum authMode,
+      String password, int connectionPriority, Proxy? proxy) {
     throw UnimplementedError('setAccessPointDynamically() has not been implemented.');
   }
 

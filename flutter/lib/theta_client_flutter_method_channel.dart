@@ -12,27 +12,24 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting
   final methodChannel = const MethodChannel('theta_client_flutter');
-  final stream  = const EventChannel('theta_client_flutter/live_preview');
+  final stream = const EventChannel('theta_client_flutter/live_preview');
   StreamSubscription? streamSubscription;
   bool Function(Uint8List)? frameHandler;
 
-void enableEventReceiver() {
-    streamSubscription = stream.receiveBroadcastStream().listen(
-        (dynamic event) {
-          if (frameHandler != null) {
-            if (!frameHandler!(event)) {
-              disableEventReceiver();
-              methodChannel.invokeMethod<String>('stopLivePreview');
-            }
-          } else {
-            disableEventReceiver();
-            methodChannel.invokeMethod<String>('stopLivePreview');
-          }
-        },
-        onError: (dynamic error) {
-          debugPrint('Received error: ${error.message}');
-        },
-        cancelOnError: true);
+  void enableEventReceiver() {
+    streamSubscription = stream.receiveBroadcastStream().listen((dynamic event) {
+      if (frameHandler != null) {
+        if (!frameHandler!(event)) {
+          disableEventReceiver();
+          methodChannel.invokeMethod<String>('stopLivePreview');
+        }
+      } else {
+        disableEventReceiver();
+        methodChannel.invokeMethod<String>('stopLivePreview');
+      }
+    }, onError: (dynamic error) {
+      debugPrint('Received error: ${error.message}');
+    }, cancelOnError: true);
   }
 
   void disableEventReceiver() {
@@ -52,7 +49,7 @@ void enableEventReceiver() {
   Future<void> initialize(String endpoint, ThetaConfig? config, ThetaTimeout? timeout) async {
     var completer = Completer<void>();
     try {
-      final Map params = <String, dynamic> {
+      final Map params = <String, dynamic>{
         'endpoint': endpoint,
       };
       if (config != null) {
@@ -63,7 +60,7 @@ void enableEventReceiver() {
       }
       await methodChannel.invokeMethod<void>('initialize', params);
       completer.complete();
-    } catch(e) {
+    } catch (e) {
       completer.completeError(e);
     }
     return completer.future;
@@ -71,7 +68,7 @@ void enableEventReceiver() {
 
   @override
   Future<bool> isInitialized() async {
-    var isInit =  await methodChannel.invokeMethod<bool?>('isInitialized');
+    var isInit = await methodChannel.invokeMethod<bool?>('isInitialized');
     return Future.value(isInit != null && isInit);
   }
 
@@ -81,31 +78,41 @@ void enableEventReceiver() {
   }
 
   @override
+  Future<ThetaModel?> getThetaModel() async {
+    var completer = Completer<ThetaModel?>();
+    final thetaModel = await methodChannel.invokeMethod<String?>('getThetaModel');
+    completer.complete(ThetaModel.getValue(thetaModel));
+    return completer.future;
+  }
+
+  @override
   Future<ThetaInfo> getThetaInfo() async {
-      var completer = Completer<ThetaInfo>();
-      try {
-        debugPrint('call getThetaInfo');
-        var result = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('getThetaInfo') as Map<dynamic, dynamic>;
-        var thetaInfo = ConvertUtils.convertThetaInfo(result);
-        completer.complete(thetaInfo);
-      } catch(e) {
-        completer.completeError(e);
-      }
-      return completer.future;
+    var completer = Completer<ThetaInfo>();
+    try {
+      debugPrint('call getThetaInfo');
+      var result = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('getThetaInfo')
+          as Map<dynamic, dynamic>;
+      var thetaInfo = ConvertUtils.convertThetaInfo(result);
+      completer.complete(thetaInfo);
+    } catch (e) {
+      completer.completeError(e);
+    }
+    return completer.future;
   }
 
   @override
   Future<ThetaState> getThetaState() async {
-      var completer = Completer<ThetaState>();
-      try {
-        debugPrint('call getThetaState');
-        var result = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('getThetaState') as Map<dynamic, dynamic>;
-        var thetaState = ConvertUtils.convertThetaState(result);
-        completer.complete(thetaState);
-      } catch(e) {
-        completer.completeError(e);
-      }
-      return completer.future;
+    var completer = Completer<ThetaState>();
+    try {
+      debugPrint('call getThetaState');
+      var result = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('getThetaState')
+          as Map<dynamic, dynamic>;
+      var thetaState = ConvertUtils.convertThetaState(result);
+      completer.complete(thetaState);
+    } catch (e) {
+      completer.completeError(e);
+    }
+    return completer.future;
   }
 
   @override
@@ -116,7 +123,7 @@ void enableEventReceiver() {
       this.frameHandler = frameHandler;
       await methodChannel.invokeMethod<void>('getLivePreview');
       completer.complete(null);
-    } catch(e) {
+    } catch (e) {
       this.frameHandler = null;
       disableEventReceiver();
       completer.completeError(e);
@@ -125,11 +132,12 @@ void enableEventReceiver() {
   }
 
   @override
-  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, int startPosition, StorageEnum? storage) async {
+  Future<ThetaFiles> listFiles(
+      FileTypeEnum fileType, int entryCount, int startPosition, StorageEnum? storage) async {
     var completer = Completer<ThetaFiles>();
     try {
       debugPrint('call listFiles');
-      final Map params = <String, dynamic> {
+      final Map params = <String, dynamic>{
         'fileType': fileType.rawValue,
         'entryCount': entryCount,
         'startPosition': startPosition,
@@ -138,10 +146,11 @@ void enableEventReceiver() {
       if (storage != null) {
         params['storage'] = storage.rawValue;
       }
-      var result = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('listFiles', params) as Map<dynamic, dynamic>;
+      var result = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('listFiles', params)
+          as Map<dynamic, dynamic>;
       var thetaFiles = ConvertUtils.convertThetaFiles(result);
       completer.complete(thetaFiles);
-    } catch(e) {
+    } catch (e) {
       completer.completeError(e);
     }
     return completer.future;
@@ -174,7 +183,8 @@ void enableEventReceiver() {
 
   @override
   Future<void> buildPhotoCapture(Map<String, dynamic> options) async {
-    return methodChannel.invokeMethod<void>('buildPhotoCapture', ConvertUtils.convertCaptureParams(options));
+    return methodChannel.invokeMethod<void>(
+        'buildPhotoCapture', ConvertUtils.convertCaptureParams(options));
   }
 
   @override
@@ -189,7 +199,8 @@ void enableEventReceiver() {
 
   @override
   Future<void> buildVideoCapture(Map<String, dynamic> options) async {
-    return methodChannel.invokeMethod<void>('buildVideoCapture', ConvertUtils.convertCaptureParams(options));
+    return methodChannel.invokeMethod<void>(
+        'buildVideoCapture', ConvertUtils.convertCaptureParams(options));
   }
 
   @override
@@ -206,10 +217,11 @@ void enableEventReceiver() {
   Future<Options> getOptions(List<OptionNameEnum> optionNames) async {
     var completer = Completer<Options>();
     try {
-      var options = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('getOptions', ConvertUtils.convertGetOptionsParam(optionNames));
+      var options = await methodChannel.invokeMethod<Map<dynamic, dynamic>>(
+          'getOptions', ConvertUtils.convertGetOptionsParam(optionNames));
       completer.complete(ConvertUtils.convertOptions(options!));
     } catch (e) {
-      completer.completeError(e); 
+      completer.completeError(e);
     }
     return completer.future;
   }
@@ -218,10 +230,11 @@ void enableEventReceiver() {
   Future<void> setOptions(Options options) async {
     var completer = Completer<void>();
     try {
-      await methodChannel.invokeMethod<void>('setOptions', ConvertUtils.convertSetOptionsParam(options));
+      await methodChannel.invokeMethod<void>(
+          'setOptions', ConvertUtils.convertSetOptionsParam(options));
       completer.complete();
     } catch (e) {
-      completer.completeError(e); 
+      completer.completeError(e);
     }
     return completer.future;
   }
@@ -233,7 +246,7 @@ void enableEventReceiver() {
       var data = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('getMetadata', fileUrl);
       completer.complete(ConvertUtils.convertMetadata(data!));
     } catch (e) {
-      completer.completeError(e); 
+      completer.completeError(e);
     }
     return completer.future;
   }
@@ -244,22 +257,23 @@ void enableEventReceiver() {
   }
 
   @override
-  Future<void> stopSelfTimer() async{
+  Future<void> stopSelfTimer() async {
     return methodChannel.invokeMethod<void>('stopSelfTimer');
   }
 
   @override
-  Future<String> convertVideoFormats(String fileUrl, bool toLowResolution, bool applyTopBottomCorrection) async {
+  Future<String> convertVideoFormats(
+      String fileUrl, bool toLowResolution, bool applyTopBottomCorrection) async {
     var completer = Completer<String>();
     try {
-      final Map params = <String, dynamic> {
+      final Map params = <String, dynamic>{
         'fileUrl': fileUrl,
         'toLowResolution': toLowResolution,
         'applyTopBottomCorrection': applyTopBottomCorrection,
       };
       var result = await methodChannel.invokeMethod<String>('convertVideoFormats', params);
       completer.complete(result);
-    } catch(e) {
+    } catch (e) {
       completer.completeError(e);
     }
     return completer.future;
@@ -279,12 +293,12 @@ void enableEventReceiver() {
   Future<List<AccessPoint>> listAccessPoints() async {
     var completer = Completer<List<AccessPoint>>();
     try {
-      var result = await methodChannel.invokeMethod<List<dynamic>>('listAccessPoints') as List<dynamic>;
+      var result =
+          await methodChannel.invokeMethod<List<dynamic>>('listAccessPoints') as List<dynamic>;
       var fileInfoList = ConvertUtils.toAccessPointList(result.cast<Map<dynamic, dynamic>>());
       completer.complete(fileInfoList);
-
     } catch (e) {
-      completer.completeError(e); 
+      completer.completeError(e);
     }
     return completer.future;
   }
@@ -361,7 +375,8 @@ void enableEventReceiver() {
       final Map params = <String, dynamic>{
         'optionNames': ConvertUtils.convertGetOptionsParam(optionNames),
       };
-      var options = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('getMySettingFromOldModel', params);
+      var options = await methodChannel.invokeMethod<Map<dynamic, dynamic>>(
+          'getMySettingFromOldModel', params);
 
       if (options != null) {
         completer.complete(ConvertUtils.convertOptions(options));
@@ -448,7 +463,8 @@ void enableEventReceiver() {
   Future<List<String>> getPluginOrders() async {
     var completer = Completer<List<String>>();
     try {
-      var result = await methodChannel.invokeMethod<List<dynamic>>('getPluginOrders') as List<dynamic>;
+      var result =
+          await methodChannel.invokeMethod<List<dynamic>>('getPluginOrders') as List<dynamic>;
       completer.complete(ConvertUtils.convertStringList(result));
     } catch (e) {
       completer.completeError(e);

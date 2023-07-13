@@ -51,6 +51,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 override fun onListen(arguments: Any?, events: EventChannel.EventSink) {
                     eventSink = events
                 }
+
                 override fun onCancel(arguments: Any?) {
                     Log.w("Android", "EventChannel onCancel called")
                 }
@@ -75,6 +76,9 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 scope.launch {
                     restoreSettings(result)
                 }
+            }
+            "getThetaModel" -> {
+                getThetaModel(result)
             }
             "getThetaInfo" -> {
                 scope.launch {
@@ -315,6 +319,14 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
+    fun getThetaModel(result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        result.success(thetaRepository?.cameraModel?.name)
+    }
+
     suspend fun getThetaInfo(result: Result) {
         if (thetaRepository == null) {
             result.error(errorCode, messageNotInit, null)
@@ -322,7 +334,11 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         }
         try {
             val response = thetaRepository!!.getThetaInfo()
-            result.success(toResult(response))
+            val thetaInfoMap = toResult(response).toMutableMap()
+            thetaRepository?.cameraModel?.let {
+                thetaInfoMap.put("thetaModel", it.name)
+            }
+            result.success(thetaInfoMap)
         } catch (e: Exception) {
             result.error(e.javaClass.simpleName, e.message, null)
         }
@@ -405,6 +421,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             override fun onSuccess(fileUrl: String) {
                 result.success(fileUrl)
             }
+
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
                 result.error(exception.javaClass.simpleName, exception.message, null)
             }
@@ -444,6 +461,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             override fun onSuccess(fileUrl: String) {
                 result.success(fileUrl)
             }
+
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
                 result.error(exception.javaClass.simpleName, exception.message, null)
             }

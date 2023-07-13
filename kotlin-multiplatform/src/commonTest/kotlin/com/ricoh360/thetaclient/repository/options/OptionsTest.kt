@@ -18,12 +18,28 @@ class OptionsTest {
      */
     @Test
     fun optionsPrimaryConstructorTest() {
+        val aiAutoThumbnail = ThetaRepository.AiAutoThumbnailEnum.ON
         val aperture = ThetaRepository.ApertureEnum.APERTURE_2_1
+        val bitrate = ThetaRepository.BitrateEnum.FINE
         val bluetoothPower = ThetaRepository.BluetoothPowerEnum.ON
+        val burstMode = ThetaRepository.BurstModeEnum.ON
+        val burstOption = ThetaRepository.BurstOption(
+            burstCaptureNum = ThetaRepository.BurstCaptureNumEnum.BURST_CAPTURE_NUM_1,
+            burstBracketStep = ThetaRepository.BurstBracketStepEnum.BRACKET_STEP_0_0,
+            burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_0_0,
+            burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_15,
+            burstEnableIsoControl = ThetaRepository.BurstEnableIsoControlEnum.OFF,
+            burstOrder = ThetaRepository.BurstOrderEnum.BURST_BRACKET_ORDER_0
+        )
         val cameraControlSource = ThetaRepository.CameraControlSourceEnum.CAMERA
         val cameraMode = ThetaRepository.CameraModeEnum.CAPTURE
+        val captureInterval = 6
         val captureMode = ThetaRepository.CaptureModeEnum.IMAGE
+        val captureNumber = 0
         val colorTemperature = 10
+        val compositeShootingOutputInterval = 60
+        val compositeShootingTime = 600
+        val continuousNumber = ThetaRepository.ContinuousNumberEnum.MAX_1
         val dateTimeZone = "2014:05:18 01:04:29+08:00"
         val exposureCompensation = ThetaRepository.ExposureCompensationEnum.M0_3
         val exposureDelay = ThetaRepository.ExposureDelayEnum.DELAY_10
@@ -40,6 +56,7 @@ class OptionsTest {
         val offDelay = ThetaRepository.OffDelayEnum.OFF_DELAY_10M
         val password = "password"
         val powerSaving = ThetaRepository.PowerSavingEnum.ON
+        val preset = ThetaRepository.PresetEnum.FACE
         val previewFormat = ThetaRepository.PreviewFormatEnum.W1024_H512_F30
         val proxy = ThetaRepository.Proxy(use = false, url = "", port = 8080)
         val remainingPictures = 100
@@ -61,12 +78,21 @@ class OptionsTest {
         val wlanFrequency = ThetaRepository.WlanFrequencyEnum.GHZ_2_4
 
         val options = ThetaRepository.Options(
+            aiAutoThumbnail = aiAutoThumbnail,
             aperture = aperture,
+            bitrate = bitrate,
             bluetoothPower = bluetoothPower,
+            burstMode = burstMode,
+            burstOption = burstOption,
             cameraControlSource = cameraControlSource,
             cameraMode = cameraMode,
+            captureInterval = captureInterval,
             captureMode = captureMode,
+            captureNumber = captureNumber,
             colorTemperature = colorTemperature,
+            compositeShootingOutputInterval = compositeShootingOutputInterval,
+            compositeShootingTime = compositeShootingTime,
+            continuousNumber = continuousNumber,
             dateTimeZone = dateTimeZone,
             exposureCompensation = exposureCompensation,
             exposureDelay = exposureDelay,
@@ -83,6 +109,7 @@ class OptionsTest {
             offDelay = offDelay,
             password = password,
             powerSaving = powerSaving,
+            preset = preset,
             previewFormat = previewFormat,
             proxy = proxy,
             remainingPictures = remainingPictures,
@@ -104,12 +131,21 @@ class OptionsTest {
             assertNotNull(options.getValue(it), "option: ${it.value}")
         }
 
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.AiAutoThumbnail), aiAutoThumbnail, "aiAutoThumbnail")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Aperture), aperture, "aperture")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Bitrate), bitrate, "bitrate")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.BluetoothPower), bluetoothPower, "bluetoothPower")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.BurstMode), burstMode, "burstMode")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.BurstOption), burstOption, "burstOption")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CameraControlSource), cameraControlSource, "cameraControlSource")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CameraMode), cameraMode, "cameraMode")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CaptureInterval), captureInterval, "captureInterval")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CaptureMode), captureMode, "captureMode")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CaptureNumber), captureNumber, "captureNumber")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ColorTemperature), colorTemperature, "colorTemperature")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CompositeShootingOutputInterval), compositeShootingOutputInterval, "compositeShootingOutputInterval")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CompositeShootingTime), compositeShootingTime, "compositeShootingTime")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ContinuousNumber), continuousNumber, "continuousNumber")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.DateTimeZone), dateTimeZone, "dateTimeZone")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ExposureCompensation), exposureCompensation, "exposureCompensation")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ExposureDelay), exposureDelay, "exposureDelay")
@@ -126,6 +162,7 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.OffDelay), offDelay, "offDelay")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Password), password, "password")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.PowerSaving), powerSaving, "powerSaving")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Preset), preset, "preset")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.PreviewFormat), previewFormat, "previewFormat")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Proxy), proxy, "proxy")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.RemainingPictures), remainingPictures, "remainingPictures")
@@ -149,12 +186,29 @@ class OptionsTest {
     @Test
     fun optionsSetValueTest() {
         val values = listOf(
+            Pair(ThetaRepository.OptionNameEnum.AiAutoThumbnail, ThetaRepository.AiAutoThumbnailEnum.OFF),
             Pair(ThetaRepository.OptionNameEnum.Aperture, ThetaRepository.ApertureEnum.APERTURE_2_1),
+            Pair(ThetaRepository.OptionNameEnum.Bitrate, ThetaRepository.BitrateEnum.FINE),
             Pair(ThetaRepository.OptionNameEnum.BluetoothPower, ThetaRepository.BluetoothPowerEnum.ON),
+            Pair(ThetaRepository.OptionNameEnum.BurstMode, ThetaRepository.BurstModeEnum.ON),
+            Pair(
+                ThetaRepository.OptionNameEnum.BurstOption, ThetaRepository.BurstOption(
+                    burstCaptureNum = ThetaRepository.BurstCaptureNumEnum.BURST_CAPTURE_NUM_1,
+                    burstBracketStep = ThetaRepository.BurstBracketStepEnum.BRACKET_STEP_0_0,
+                    burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_0_0,
+                    burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_15,
+                    burstEnableIsoControl = ThetaRepository.BurstEnableIsoControlEnum.OFF,
+                    burstOrder = ThetaRepository.BurstOrderEnum.BURST_BRACKET_ORDER_0
+                )
+            ),
             Pair(ThetaRepository.OptionNameEnum.CameraControlSource, ThetaRepository.CameraControlSourceEnum.CAMERA),
             Pair(ThetaRepository.OptionNameEnum.CameraMode, ThetaRepository.CameraModeEnum.CAPTURE),
+            Pair(ThetaRepository.OptionNameEnum.CaptureInterval, 4),
             Pair(ThetaRepository.OptionNameEnum.CaptureMode, ThetaRepository.CaptureModeEnum.IMAGE),
+            Pair(ThetaRepository.OptionNameEnum.CaptureNumber, 0),
             Pair(ThetaRepository.OptionNameEnum.ColorTemperature, 10),
+            Pair(ThetaRepository.OptionNameEnum.CompositeShootingOutputInterval, 60),
+            Pair(ThetaRepository.OptionNameEnum.CompositeShootingTime, 600),
             Pair(ThetaRepository.OptionNameEnum.DateTimeZone, "2014:05:18 01:04:29+08:00"),
             Pair(ThetaRepository.OptionNameEnum.ExposureCompensation, ThetaRepository.ExposureCompensationEnum.M0_3),
             Pair(ThetaRepository.OptionNameEnum.ExposureDelay, ThetaRepository.ExposureDelayEnum.DELAY_10),
@@ -171,6 +225,7 @@ class OptionsTest {
             Pair(ThetaRepository.OptionNameEnum.OffDelay, ThetaRepository.OffDelayEnum.OFF_DELAY_10M),
             Pair(ThetaRepository.OptionNameEnum.Password, "password"),
             Pair(ThetaRepository.OptionNameEnum.PowerSaving, ThetaRepository.PowerSavingEnum.OFF),
+            Pair(ThetaRepository.OptionNameEnum.Preset, ThetaRepository.PresetEnum.NIGHT_VIEW),
             Pair(ThetaRepository.OptionNameEnum.PreviewFormat, ThetaRepository.PreviewFormatEnum.W1024_H512_F30),
             Pair(ThetaRepository.OptionNameEnum.Proxy, ThetaRepository.Proxy(use = false, url = "", port = 8080)),
             Pair(ThetaRepository.OptionNameEnum.RemainingPictures, 101),
@@ -205,12 +260,36 @@ class OptionsTest {
      */
     @Test
     fun optionsSecondaryConstructorTest() {
+        val aiAutoThumbnail = Pair(AiAutoThumbnail.OFF, ThetaRepository.AiAutoThumbnailEnum.OFF)
         val aperture = Pair(2.1f, ThetaRepository.ApertureEnum.APERTURE_2_1)
+        val bitrate = Pair("Fine", ThetaRepository.BitrateEnum.FINE)
         val bluetoothPower = Pair(BluetoothPower.ON, ThetaRepository.BluetoothPowerEnum.ON)
+        val burstMode = Pair(BurstMode.ON, ThetaRepository.BurstModeEnum.ON)
+        val burstOption = Pair(
+            BurstOption(
+                _burstCaptureNum = BurstCaptureNum.BURST_CAPTURE_NUM_1,
+                _burstBracketStep = BurstBracketStep.BRACKET_STEP_0_0,
+                _burstCompensation = BurstCompensation.BURST_COMPENSATION_0_0,
+                _burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_15,
+                _burstEnableIsoControl = BurstEnableIsoControl.OFF,
+                _burstOrder = BurstOrder.BURST_BRACKET_ORDER_0
+            ), ThetaRepository.BurstOption(
+                burstCaptureNum = ThetaRepository.BurstCaptureNumEnum.BURST_CAPTURE_NUM_1,
+                burstBracketStep = ThetaRepository.BurstBracketStepEnum.BRACKET_STEP_0_0,
+                burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_0_0,
+                burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_15,
+                burstEnableIsoControl = ThetaRepository.BurstEnableIsoControlEnum.OFF,
+                burstOrder = ThetaRepository.BurstOrderEnum.BURST_BRACKET_ORDER_0
+            )
+        )
         val cameraControlSource = Pair(CameraControlSource.CAMERA, ThetaRepository.CameraControlSourceEnum.CAMERA)
         val cameraMode = Pair(CameraMode.CAPTURE, ThetaRepository.CameraModeEnum.CAPTURE)
+        val captureInterval = Pair(5, 5)
         val captureMode = Pair(CaptureMode.IMAGE, ThetaRepository.CaptureModeEnum.IMAGE)
+        val captureNumber = Pair(9999, 9999)
         val colorTemperature = Pair(10, 10)
+        val compositeShootingOutputInterval = Pair(60, 60)
+        val compositeShootingTime = Pair(600, 600)
         val dateTimeZone = Pair("2014:05:18 01:04:29+08:00", "2014:05:18 01:04:29+08:00")
         val exposureCompensation = Pair(-0.3f, ThetaRepository.ExposureCompensationEnum.M0_3)
         val exposureDelay = Pair(10, ThetaRepository.ExposureDelayEnum.DELAY_10)
@@ -230,6 +309,7 @@ class OptionsTest {
         val offDelay = Pair(600, ThetaRepository.OffDelayEnum.OFF_DELAY_10M)
         val password = Pair("password", "password")
         val powerSaving = Pair(PowerSaving.OFF, ThetaRepository.PowerSavingEnum.OFF)
+        val preset = Pair(Preset.LENS_BY_LENS_EXPOSURE, ThetaRepository.PresetEnum.LENS_BY_LENS_EXPOSURE)
         val previewFormat = Pair(PreviewFormat(1024, 512, 30), ThetaRepository.PreviewFormatEnum.W1024_H512_F30)
         val proxy = Pair(Proxy(use = false, url = "", port = 8080), ThetaRepository.Proxy(use = false, url = "", port = 8080))
         val remainingPictures = Pair(101, 101)
@@ -249,12 +329,20 @@ class OptionsTest {
         val whiteBalanceAutoStrength = Pair(WhiteBalanceAutoStrength.OFF, ThetaRepository.WhiteBalanceAutoStrengthEnum.OFF)
 
         val orgOptions = Options(
+            _aiAutoThumbnail = aiAutoThumbnail.first,
             aperture = aperture.first,
+            _bitrate = bitrate.first,
             _bluetoothPower = bluetoothPower.first,
+            _burstMode = burstMode.first,
+            _burstOption = burstOption.first,
             _cameraControlSource = cameraControlSource.first,
             _cameraMode = cameraMode.first,
+            captureInterval = captureInterval.first,
             captureMode = captureMode.first,
+            captureNumber = captureNumber.first,
             _colorTemperature = colorTemperature.first,
+            _compositeShootingOutputInterval = compositeShootingOutputInterval.first,
+            _compositeShootingTime = compositeShootingTime.first,
             dateTimeZone = dateTimeZone.first,
             exposureCompensation = exposureCompensation.first,
             exposureDelay = exposureDelay.first,
@@ -271,6 +359,7 @@ class OptionsTest {
             offDelay = offDelay.first,
             _password = password.first,
             _powerSaving = powerSaving.first,
+            _preset = preset.first,
             previewFormat = previewFormat.first,
             _proxy = proxy.first,
             remainingPictures = remainingPictures.first,
@@ -288,12 +377,20 @@ class OptionsTest {
         )
         val options = ThetaRepository.Options(orgOptions)
 
+        assertEquals(options.aiAutoThumbnail, aiAutoThumbnail.second, "aiAutoThumbnail")
         assertEquals(options.aperture, aperture.second, "aperture")
+        assertEquals(options.bitrate, bitrate.second, "bitrate")
         assertEquals(options.bluetoothPower, bluetoothPower.second, "bluetoothPower")
+        assertEquals(options.burstMode, burstMode.second, "burstMode")
+        assertEquals(options.burstOption, burstOption.second, "burstOption")
         assertEquals(options.cameraControlSource, cameraControlSource.second, "cameraControlSource")
         assertEquals(options.cameraMode, cameraMode.second, "cameraMode")
+        assertEquals(options.captureInterval, captureInterval.second, "captureInterval")
         assertEquals(options.captureMode, captureMode.second, "captureMode")
+        assertEquals(options.captureNumber, captureNumber.second, "captureNumber")
         assertEquals(options.colorTemperature, colorTemperature.second, "colorTemperature")
+        assertEquals(options.compositeShootingOutputInterval, compositeShootingOutputInterval.second, "compositeShootingOutputInterval")
+        assertEquals(options.compositeShootingTime, compositeShootingTime.second, "compositeShootingTime")
         assertEquals(options.dateTimeZone, dateTimeZone.second, "dateTimeZone")
         assertEquals(options.exposureCompensation, exposureCompensation.second, "exposureCompensation")
         assertEquals(options.exposureDelay, exposureDelay.second, "exposureDelay")
@@ -310,6 +407,7 @@ class OptionsTest {
         assertEquals(options.offDelay, offDelay.second, "offDelay")
         assertEquals(options.password, password.second, "password")
         assertEquals(options.powerSaving, powerSaving.second, "powerSaving")
+        assertEquals(options.preset, preset.second, "preset")
         assertEquals(options.previewFormat, previewFormat.second, "previewFormat")
         assertEquals(options.proxy, proxy.second, "proxy")
         assertEquals(options.remainingPictures, remainingPictures.second, "remainingPictures")
@@ -328,12 +426,36 @@ class OptionsTest {
 
     @Test
     fun optionsConvertTest() {
+        val aiAutoThumbnail = Pair(AiAutoThumbnail.ON, ThetaRepository.AiAutoThumbnailEnum.ON)
         val aperture = Pair(2.1f, ThetaRepository.ApertureEnum.APERTURE_2_1)
+        val bitrate = Pair("Fine", ThetaRepository.BitrateEnum.FINE)
         val bluetoothPower = Pair(BluetoothPower.ON, ThetaRepository.BluetoothPowerEnum.ON)
+        val burstMode = Pair(BurstMode.ON, ThetaRepository.BurstModeEnum.ON)
+        val burstOption = Pair(
+            BurstOption(
+                _burstCaptureNum = BurstCaptureNum.BURST_CAPTURE_NUM_1,
+                _burstBracketStep = BurstBracketStep.BRACKET_STEP_0_0,
+                _burstCompensation = BurstCompensation.BURST_COMPENSATION_0_0,
+                _burstMaxExposureTime = BurstMaxExposureTime.MAX_EXPOSURE_TIME_15,
+                _burstEnableIsoControl = BurstEnableIsoControl.OFF,
+                _burstOrder = BurstOrder.BURST_BRACKET_ORDER_0
+            ), ThetaRepository.BurstOption(
+                burstCaptureNum = ThetaRepository.BurstCaptureNumEnum.BURST_CAPTURE_NUM_1,
+                burstBracketStep = ThetaRepository.BurstBracketStepEnum.BRACKET_STEP_0_0,
+                burstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_0_0,
+                burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_15,
+                burstEnableIsoControl = ThetaRepository.BurstEnableIsoControlEnum.OFF,
+                burstOrder = ThetaRepository.BurstOrderEnum.BURST_BRACKET_ORDER_0
+            )
+        )
         val cameraControlSource = Pair(CameraControlSource.CAMERA, ThetaRepository.CameraControlSourceEnum.CAMERA)
         val cameraMode = Pair(CameraMode.CAPTURE, ThetaRepository.CameraModeEnum.CAPTURE)
+        val captureInterval = Pair(20, 20)
         val captureMode = Pair(CaptureMode.IMAGE, ThetaRepository.CaptureModeEnum.IMAGE)
+        val captureNumber = Pair(30, 30)
         val colorTemperature = Pair(10, 10)
+        val compositeShootingOutputInterval = Pair(60, 60)
+        val compositeShootingTime = Pair(600, 600)
         val dateTimeZone = Pair("2014:05:18 01:04:29+08:00", "2014:05:18 01:04:29+08:00")
         val exposureCompensation = Pair(-0.3f, ThetaRepository.ExposureCompensationEnum.M0_3)
         val exposureDelay = Pair(10, ThetaRepository.ExposureDelayEnum.DELAY_10)
@@ -356,6 +478,7 @@ class OptionsTest {
         val offDelay = Pair(600, ThetaRepository.OffDelayEnum.OFF_DELAY_10M)
         val password = Pair("password", "password")
         val powerSaving = Pair(PowerSaving.OFF, ThetaRepository.PowerSavingEnum.OFF)
+        val preset = Pair(Preset.FACE, ThetaRepository.PresetEnum.FACE)
         val previewFormat = Pair(PreviewFormat(640, 320, 30), ThetaRepository.PreviewFormatEnum.W640_H320_F30)
         val proxy = Pair(Proxy(use = false, url = "", port = 8080), ThetaRepository.Proxy(use = false, url = "", port = 8080))
         val remainingPictures = Pair(101, 101)
@@ -375,12 +498,20 @@ class OptionsTest {
         val whiteBalanceAutoStrength = Pair(WhiteBalanceAutoStrength.ON, ThetaRepository.WhiteBalanceAutoStrengthEnum.ON)
 
         val orgOptions = ThetaRepository.Options(
+            aiAutoThumbnail = aiAutoThumbnail.second,
             aperture = aperture.second,
+            bitrate = bitrate.second,
             bluetoothPower = bluetoothPower.second,
+            burstMode = burstMode.second,
+            burstOption = burstOption.second,
             cameraControlSource = cameraControlSource.second,
             cameraMode = cameraMode.second,
+            captureInterval = captureInterval.second,
             captureMode = captureMode.second,
+            captureNumber = captureNumber.second,
             colorTemperature = colorTemperature.second,
+            compositeShootingOutputInterval = compositeShootingOutputInterval.second,
+            compositeShootingTime = compositeShootingTime.second,
             dateTimeZone = dateTimeZone.second,
             exposureCompensation = exposureCompensation.second,
             exposureDelay = exposureDelay.second,
@@ -397,6 +528,7 @@ class OptionsTest {
             offDelay = offDelay.second,
             password = password.second,
             powerSaving = powerSaving.second,
+            preset = preset.second,
             previewFormat = previewFormat.second,
             proxy = proxy.second,
             remainingPictures = remainingPictures.second,
@@ -414,12 +546,20 @@ class OptionsTest {
         )
         val options = orgOptions.toOptions()
 
+        assertEquals(options._aiAutoThumbnail, aiAutoThumbnail.first, "aiAutoThumbnail")
         assertEquals(options.aperture, aperture.first, "aperture")
+        assertEquals(options._bitrate, bitrate.first, "bitrate")
         assertEquals(options._bluetoothPower, bluetoothPower.first, "bluetoothPower")
+        assertEquals(options._burstMode, burstMode.first, "burstMode")
+        assertEquals(options._burstOption, burstOption.first, "burstOption")
         assertEquals(options._cameraControlSource, cameraControlSource.first, "cameraControlSource")
         assertEquals(options._cameraMode, cameraMode.first, "cameraMode")
+        assertEquals(options.captureInterval, captureInterval.first, "captureInterval")
         assertEquals(options.captureMode, captureMode.first, "captureMode")
+        assertEquals(options.captureNumber, captureNumber.first, "captureNumber")
         assertEquals(options._colorTemperature, colorTemperature.first, "colorTemperature")
+        assertEquals(options._compositeShootingOutputInterval, compositeShootingOutputInterval.first, "compositeShootingOutputInterval")
+        assertEquals(options._compositeShootingTime, compositeShootingTime.first, "compositeShootingTime")
         assertEquals(options.dateTimeZone, dateTimeZone.first, "dateTimeZone")
         assertEquals(options.exposureCompensation, exposureCompensation.first, "exposureCompensation")
         assertEquals(options.exposureDelay, exposureDelay.first, "exposureDelay")
@@ -436,6 +576,7 @@ class OptionsTest {
         assertEquals(options.offDelay, offDelay.first, "offDelay")
         assertEquals(options._password, password.first, "password")
         assertEquals(options._powerSaving, powerSaving.first, "powerSaving")
+        assertEquals(options._preset, preset.first, "preset")
         assertEquals(options.previewFormat, previewFormat.first, "previewFormat")
         assertEquals(options._proxy, proxy.first, "proxy")
         assertEquals(options.remainingPictures, remainingPictures.first, "remainingPictures")

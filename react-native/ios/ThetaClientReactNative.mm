@@ -278,9 +278,224 @@ typedef struct _convert_t {
     SetToTheta setToTheta; ///< option setter react to theta
     SetFromTheta setFromTheta; ///< option setter theta to react
     SetPhotoOption setPhotoOption; ///< photo option setter
-    SetTimeShiftOption setTimeShiftOption; ///< photo option setter
+    SetTimeShiftOption setTimeShiftOption; ///< time-shift option setter
     SetVideoOption setVideoOption; ///< video option setter
 } convert_t;
+
+/**
+ * BitrateEnum converter
+ */
+static convert_t BitrateEnum = {
+    .toTheta = nil,
+    .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+        if (!BitrateEnum.toTheta) {
+            NSMutableDictionary* dictionary = [NSMutableDictionary dictionary];
+            THETACKotlinArray* array = THETACThetaRepositoryBitrateEnum.values;
+            for (int i = 0; i < array.size; i++) {
+                THETACThetaRepositoryBitrateEnum* item = [array getIndex:i];
+                [dictionary setObject:item forKey:item.name];
+            }
+            BitrateEnum.toTheta = dictionary;
+        }
+
+        id rv = [rct objectForKey:@"bitrate"];
+        if (rv) {
+            if ([rv isKindOfClass:NSString.class]) {
+                opt.bitrate = [BitrateEnum.toTheta objectForKey:rv];
+            } else if ([rv isKindOfClass:NSNumber.class]) {
+                id val = [[THETACThetaRepositoryBitrateNumber alloc] initWithValue:[rv intValue]];
+                opt.bitrate = val;
+            }
+        }
+    },
+    .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+        if ([((id)opt.bitrate) isKindOfClass:THETACThetaRepositoryBitrateEnum.class]) {
+            THETACThetaRepositoryBitrateEnum* bitrateEnum = (THETACThetaRepositoryBitrateEnum*)opt.bitrate;
+            [rct setObject:bitrateEnum.name forKey:@"bitrate"];
+        } else if ([((id)opt.bitrate) isKindOfClass:THETACThetaRepositoryBitrateNumber.class]) {
+            THETACThetaRepositoryBitrateNumber* bitrateNumber = (THETACThetaRepositoryBitrateNumber*)opt.bitrate;
+            [rct setObject:[NSNumber numberWithInt:bitrateNumber.value] forKey:@"bitrate"];
+        }
+    }
+};
+
+/**
+ * BurstModeEnum converter
+ */
+static convert_t BurstModeEnum = {
+    .toTheta = @{
+        @"ON": THETACThetaRepositoryBurstModeEnum.on,
+        @"OFF": THETACThetaRepositoryBurstModeEnum.off
+    },
+    .fromTheta = @{
+        THETACThetaRepositoryBurstModeEnum.on: @"ON",
+        THETACThetaRepositoryBurstModeEnum.off: @"OFF"
+    },
+    .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+        id val = [BurstModeEnum.toTheta objectForKey:[rct objectForKey:@"burstMode"]];
+        if (val) {
+            opt.burstMode = val;
+        }
+    },
+    .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+        id val = [BurstModeEnum.fromTheta objectForKey:opt.burstMode];
+        if (val) {
+            [rct setObject:val forKey:@"burstMode"];
+        }
+    }
+};
+
+static convert_t BurstCaptureNumEnum = {
+    .toTheta = @{
+        @"BURST_CAPTURE_NUM_1": THETACThetaRepositoryBurstCaptureNumEnum.burstCaptureNum1,
+        @"BURST_CAPTURE_NUM_3": THETACThetaRepositoryBurstCaptureNumEnum.burstCaptureNum3,
+        @"BURST_CAPTURE_NUM_5": THETACThetaRepositoryBurstCaptureNumEnum.burstCaptureNum5,
+        @"BURST_CAPTURE_NUM_7": THETACThetaRepositoryBurstCaptureNumEnum.burstCaptureNum7,
+        @"BURST_CAPTURE_NUM_9": THETACThetaRepositoryBurstCaptureNumEnum.burstCaptureNum9
+    }
+};
+
+static convert_t BurstBracketStepEnum = {
+    .toTheta = @{
+        @"BRACKET_STEP_0_0": THETACThetaRepositoryBurstBracketStepEnum.bracketStep00,
+        @"BRACKET_STEP_0_3": THETACThetaRepositoryBurstBracketStepEnum.bracketStep03,
+        @"BRACKET_STEP_0_7": THETACThetaRepositoryBurstBracketStepEnum.bracketStep07,
+        @"BRACKET_STEP_1_0": THETACThetaRepositoryBurstBracketStepEnum.bracketStep10,
+        @"BRACKET_STEP_1_3": THETACThetaRepositoryBurstBracketStepEnum.bracketStep13,
+        @"BRACKET_STEP_1_7": THETACThetaRepositoryBurstBracketStepEnum.bracketStep17,
+        @"BRACKET_STEP_2_0": THETACThetaRepositoryBurstBracketStepEnum.bracketStep20,
+        @"BRACKET_STEP_2_3": THETACThetaRepositoryBurstBracketStepEnum.bracketStep23,
+        @"BRACKET_STEP_2_7": THETACThetaRepositoryBurstBracketStepEnum.bracketStep27,
+        @"BRACKET_STEP_3_0": THETACThetaRepositoryBurstBracketStepEnum.bracketStep30
+    }
+};
+
+static convert_t BurstCompensationEnum = {
+    .toTheta = @{
+        @"BURST_COMPENSATION_DOWN_5_0": THETACThetaRepositoryBurstCompensationEnum.burstCompensationDown50,
+        @"BURST_COMPENSATION_DOWN_4_7": THETACThetaRepositoryBurstCompensationEnum.burstCompensationDown47,
+        @"BURST_COMPENSATION_DOWN_4_3": THETACThetaRepositoryBurstCompensationEnum.burstCompensationDown43,
+        @"BURST_COMPENSATION_DOWN_4_0": THETACThetaRepositoryBurstCompensationEnum.burstCompensationDown40,
+        @"BURST_COMPENSATION_DOWN_3_7": THETACThetaRepositoryBurstCompensationEnum.burstCompensationDown37,
+        @"BURST_COMPENSATION_DOWN_3_3": THETACThetaRepositoryBurstCompensationEnum.burstCompensationDown33,
+        @"BURST_COMPENSATION_DOWN_3_0": THETACThetaRepositoryBurstCompensationEnum.burstCompensationDown30,
+        @"BURST_COMPENSATION_DOWN_2_7": THETACThetaRepositoryBurstCompensationEnum.burstCompensationDown27,
+        @"BURST_COMPENSATION_DOWN_2_3": THETACThetaRepositoryBurstCompensationEnum.burstCompensationDown23,
+        @"BURST_COMPENSATION_DOWN_2_0": THETACThetaRepositoryBurstCompensationEnum.burstCompensationDown20,
+        @"BURST_COMPENSATION_DOWN_1_7": THETACThetaRepositoryBurstCompensationEnum.burstCompensationDown17,
+        @"BURST_COMPENSATION_DOWN_1_3": THETACThetaRepositoryBurstCompensationEnum.burstCompensationDown13,
+        @"BURST_COMPENSATION_DOWN_1_0": THETACThetaRepositoryBurstCompensationEnum.burstCompensationDown10,
+        @"BURST_COMPENSATION_DOWN_0_7": THETACThetaRepositoryBurstCompensationEnum.burstCompensationDown07,
+        @"BURST_COMPENSATION_DOWN_0_3": THETACThetaRepositoryBurstCompensationEnum.burstCompensationDown03,
+        @"BURST_COMPENSATION_0_0": THETACThetaRepositoryBurstCompensationEnum.burstCompensation00,
+        @"BURST_COMPENSATION_UP_0_3": THETACThetaRepositoryBurstCompensationEnum.burstCompensationUp03,
+        @"BURST_COMPENSATION_UP_0_7": THETACThetaRepositoryBurstCompensationEnum.burstCompensationUp07,
+        @"BURST_COMPENSATION_UP_1_0": THETACThetaRepositoryBurstCompensationEnum.burstCompensationUp10,
+        @"BURST_COMPENSATION_UP_1_3": THETACThetaRepositoryBurstCompensationEnum.burstCompensationUp13,
+        @"BURST_COMPENSATION_UP_1_7": THETACThetaRepositoryBurstCompensationEnum.burstCompensationUp17,
+        @"BURST_COMPENSATION_UP_2_0": THETACThetaRepositoryBurstCompensationEnum.burstCompensationUp20,
+        @"BURST_COMPENSATION_UP_2_3": THETACThetaRepositoryBurstCompensationEnum.burstCompensationUp23,
+        @"BURST_COMPENSATION_UP_2_7": THETACThetaRepositoryBurstCompensationEnum.burstCompensationUp27,
+        @"BURST_COMPENSATION_UP_3_0": THETACThetaRepositoryBurstCompensationEnum.burstCompensationUp30,
+        @"BURST_COMPENSATION_UP_3_3": THETACThetaRepositoryBurstCompensationEnum.burstCompensationUp33,
+        @"BURST_COMPENSATION_UP_3_7": THETACThetaRepositoryBurstCompensationEnum.burstCompensationUp37,
+        @"BURST_COMPENSATION_UP_4_0": THETACThetaRepositoryBurstCompensationEnum.burstCompensationUp40,
+        @"BURST_COMPENSATION_UP_4_3": THETACThetaRepositoryBurstCompensationEnum.burstCompensationUp43,
+        @"BURST_COMPENSATION_UP_4_7": THETACThetaRepositoryBurstCompensationEnum.burstCompensationUp47,
+        @"BURST_COMPENSATION_UP_5_0": THETACThetaRepositoryBurstCompensationEnum.burstCompensationUp50
+    }
+};
+
+static convert_t BurstMaxExposureTimeEnum = {
+    .toTheta = @{
+        @"MAX_EXPOSURE_TIME_0_5": THETACThetaRepositoryBurstMaxExposureTimeEnum.maxExposureTime05,
+        @"MAX_EXPOSURE_TIME_0_625": THETACThetaRepositoryBurstMaxExposureTimeEnum.maxExposureTime0625,
+        @"MAX_EXPOSURE_TIME_0_76923076": THETACThetaRepositoryBurstMaxExposureTimeEnum.maxExposureTime076923076,
+        @"MAX_EXPOSURE_TIME_1": THETACThetaRepositoryBurstMaxExposureTimeEnum.maxExposureTime1,
+        @"MAX_EXPOSURE_TIME_1_3": THETACThetaRepositoryBurstMaxExposureTimeEnum.maxExposureTime13,
+        @"MAX_EXPOSURE_TIME_1_6": THETACThetaRepositoryBurstMaxExposureTimeEnum.maxExposureTime16,
+        @"MAX_EXPOSURE_TIME_2": THETACThetaRepositoryBurstMaxExposureTimeEnum.maxExposureTime2,
+        @"MAX_EXPOSURE_TIME_2_5": THETACThetaRepositoryBurstMaxExposureTimeEnum.maxExposureTime25,
+        @"MAX_EXPOSURE_TIME_3_2": THETACThetaRepositoryBurstMaxExposureTimeEnum.maxExposureTime32,
+        @"MAX_EXPOSURE_TIME_4": THETACThetaRepositoryBurstMaxExposureTimeEnum.maxExposureTime4,
+        @"MAX_EXPOSURE_TIME_5": THETACThetaRepositoryBurstMaxExposureTimeEnum.maxExposureTime5,
+        @"MAX_EXPOSURE_TIME_6": THETACThetaRepositoryBurstMaxExposureTimeEnum.maxExposureTime6,
+        @"MAX_EXPOSURE_TIME_8": THETACThetaRepositoryBurstMaxExposureTimeEnum.maxExposureTime8,
+        @"MAX_EXPOSURE_TIME_10": THETACThetaRepositoryBurstMaxExposureTimeEnum.maxExposureTime10,
+        @"MAX_EXPOSURE_TIME_13": THETACThetaRepositoryBurstMaxExposureTimeEnum.maxExposureTime13_,
+        @"MAX_EXPOSURE_TIME_15": THETACThetaRepositoryBurstMaxExposureTimeEnum.maxExposureTime15,
+        @"MAX_EXPOSURE_TIME_20": THETACThetaRepositoryBurstMaxExposureTimeEnum.maxExposureTime20,
+        @"MAX_EXPOSURE_TIME_25": THETACThetaRepositoryBurstMaxExposureTimeEnum.maxExposureTime25_,
+        @"MAX_EXPOSURE_TIME_30": THETACThetaRepositoryBurstMaxExposureTimeEnum.maxExposureTime30,
+        @"MAX_EXPOSURE_TIME_40": THETACThetaRepositoryBurstMaxExposureTimeEnum.maxExposureTime40,
+        @"MAX_EXPOSURE_TIME_50": THETACThetaRepositoryBurstMaxExposureTimeEnum.maxExposureTime50,
+        @"MAX_EXPOSURE_TIME_60": THETACThetaRepositoryBurstMaxExposureTimeEnum.maxExposureTime60
+    }
+};
+
+static convert_t BurstEnableIsoControlEnum = {
+    .toTheta = @{
+        @"OFF": THETACThetaRepositoryBurstEnableIsoControlEnum.off,
+        @"ON": THETACThetaRepositoryBurstEnableIsoControlEnum.on
+    }
+};
+
+static convert_t BurstOrderEnum = {
+    .toTheta = @{
+        @"BURST_BRACKET_ORDER_0": THETACThetaRepositoryBurstOrderEnum.burstBracketOrder0,
+        @"BURST_BRACKET_ORDER_1": THETACThetaRepositoryBurstOrderEnum.burstBracketOrder1
+    }
+};
+
+/**
+ * BurstOption converter
+ */
+static convert_t BurstOptionCvt = {
+    .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+        NSDictionary *dic = [rct objectForKey:@"burstOption"];
+        if (dic) {
+            opt.burstOption = [[THETACThetaRepositoryBurstOption alloc]
+                               initWithBurstCaptureNum:!isNull([dic objectForKey:@"burstCaptureNum"]) ? [BurstCaptureNumEnum.toTheta objectForKey:[dic objectForKey:@"burstCaptureNum"]] : nil
+                               burstBracketStep:!isNull([dic objectForKey:@"burstBracketStep"]) ? [BurstBracketStepEnum.toTheta objectForKey:[dic objectForKey:@"burstBracketStep"]] : nil
+                               burstCompensation:!isNull([dic objectForKey:@"burstCompensation"]) ? [BurstCompensationEnum.toTheta objectForKey:[dic objectForKey:@"burstCompensation"]] : nil
+                               burstMaxExposureTime:!isNull([dic objectForKey:@"burstMaxExposureTime"]) ? [BurstMaxExposureTimeEnum.toTheta objectForKey:[dic objectForKey:@"burstMaxExposureTime"]] : nil
+                               burstEnableIsoControl:!isNull([dic objectForKey:@"burstEnableIsoControl"]) ? [BurstEnableIsoControlEnum.toTheta objectForKey:[dic objectForKey:@"burstEnableIsoControl"]] : nil
+                               burstOrder:!isNull([dic objectForKey:@"burstOrder"]) ? [BurstOrderEnum.toTheta objectForKey:[dic objectForKey:@"burstOrder"]] : nil];
+        }
+    },
+
+        .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+            if (opt.burstOption) {
+                NSMutableDictionary *burstOption = [NSMutableDictionary dictionary];
+
+                if (opt.burstOption.burstCaptureNum) {
+                    [burstOption setObject:opt.burstOption.burstCaptureNum.name forKey:@"burstCaptureNum"];
+                }
+
+                if (opt.burstOption.burstBracketStep) {
+                    [burstOption setObject:opt.burstOption.burstBracketStep.name forKey:@"burstBracketStep"];
+                }
+
+                if (opt.burstOption.burstCompensation) {
+                    [burstOption setObject:opt.burstOption.burstCompensation.name forKey:@"burstCompensation"];
+                }
+
+                if (opt.burstOption.burstMaxExposureTime) {
+                    [burstOption setObject:opt.burstOption.burstMaxExposureTime.name forKey:@"burstMaxExposureTime"];
+                }
+
+                if (opt.burstOption.burstEnableIsoControl) {
+                    [burstOption setObject:opt.burstOption.burstEnableIsoControl.name forKey:@"burstEnableIsoControl"];
+                }
+
+                if (opt.burstOption.burstOrder) {
+                    [burstOption setObject:opt.burstOption.burstOrder.name forKey:@"burstOrder"];
+                }
+
+                [rct setObject:burstOption forKey:@"burstOption"];
+            }
+        }
+};
 
 /**
  * ChargingStateEnum converter
@@ -384,6 +599,32 @@ static convert_t AuthModeEnum = {
     THETACThetaRepositoryAuthModeEnum.none: @"NONE",
     THETACThetaRepositoryAuthModeEnum.wep: @"WEP",
     THETACThetaRepositoryAuthModeEnum.wpa: @"WPA"
+  }
+};
+
+/**
+ * AiAutoThumbnailEnum converter
+ */
+static convert_t AiAutoThumbnailEnum = {
+  .toTheta = @{
+    @"ON": THETACThetaRepositoryAiAutoThumbnailEnum.on,
+    @"OFF": THETACThetaRepositoryAiAutoThumbnailEnum.off
+  },
+  .fromTheta = @{
+      THETACThetaRepositoryAiAutoThumbnailEnum.on: @"ON",
+      THETACThetaRepositoryAiAutoThumbnailEnum.off: @"OFF"
+  },
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [AiAutoThumbnailEnum.toTheta objectForKey:[rct objectForKey:@"aiAutoThumbnail"]];
+    if (val) {
+      opt.aiAutoThumbnail = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [AiAutoThumbnailEnum.fromTheta objectForKey:opt.aiAutoThumbnail];
+    if (val) {
+      [rct setObject:val forKey:@"aiAutoThumbnail"];
+    }
   }
 };
 
@@ -522,16 +763,39 @@ static convert_t CameraModeEnum = {
 };
 
 /**
+ * CaptureInterval converter
+ */
+static convert_t CaptureIntervalConverter = {
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    NSNumber* val = [rct objectForKey:@"captureInterval"];
+    if (val) {
+      opt.captureInterval = [THETACInt numberWithInt:[val intValue]];
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    if (opt.captureInterval) {
+      [rct setObject:opt.captureInterval forKey:@"captureInterval"];
+    }
+  },
+};
+
+/**
  * CaptureModeEnum converter
  */
 static convert_t CaptureModeEnum = {
   .toTheta = @{
     @"IMAGE": THETACThetaRepositoryCaptureModeEnum.image,
-    @"VIDEO": THETACThetaRepositoryCaptureModeEnum.video
+    @"VIDEO": THETACThetaRepositoryCaptureModeEnum.video,
+    @"LIVE_STREAMING": THETACThetaRepositoryCaptureModeEnum.liveStreaming,
+    @"INTERVAL": THETACThetaRepositoryCaptureModeEnum.interval,
+    @"PRESET": THETACThetaRepositoryCaptureModeEnum.preset
   },
   .fromTheta = @{
     THETACThetaRepositoryCaptureModeEnum.image: @"IMAGE",
-    THETACThetaRepositoryCaptureModeEnum.video: @"VIDEO"
+    THETACThetaRepositoryCaptureModeEnum.video: @"VIDEO",
+    THETACThetaRepositoryCaptureModeEnum.liveStreaming: @"LIVE_STREAMING",
+    THETACThetaRepositoryCaptureModeEnum.interval: @"INTERVAL",
+    THETACThetaRepositoryCaptureModeEnum.preset: @"PRESET"
   },
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     id val = [CaptureModeEnum.toTheta objectForKey:[rct objectForKey:@"captureMode"]];
@@ -543,6 +807,61 @@ static convert_t CaptureModeEnum = {
     id val = [CaptureModeEnum.fromTheta objectForKey:opt.captureMode];
     if (val) {
       [rct setObject:val forKey:@"captureMode"];
+    }
+  }
+};
+
+/**
+ * CaptureNumber converter
+ */
+static convert_t CaptureNumberConverter = {
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    NSNumber* val = [rct objectForKey:@"captureNumber"];
+    if (val) {
+      opt.captureNumber = [THETACInt numberWithInt:[val intValue]];
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    if (opt.captureNumber) {
+      [rct setObject:opt.captureNumber forKey:@"captureNumber"];
+    }
+  },
+};
+
+/**
+ * ContinuousNumberEnum converter
+ */
+static convert_t ContinuousNumberEnum = {
+  .toTheta = nil,
+  .fromTheta = nil,
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    if (!ContinuousNumberEnum.toTheta) {
+      NSMutableDictionary* dictionary = [[NSMutableDictionary alloc] init];
+      THETACKotlinArray* array = THETACThetaRepositoryContinuousNumberEnum.values;
+      for (int i = 0; i < array.size; i++) {
+        THETACThetaRepositoryContinuousNumberEnum* item = [array getIndex:i];
+        [dictionary setObject:item forKey:item.name];
+      }
+      ContinuousNumberEnum.toTheta = dictionary;
+    }
+    id val = [ContinuousNumberEnum.toTheta objectForKey:[rct objectForKey:@"continuousNumber"]];
+    if (val) {
+      opt.continuousNumber = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    if (!ContinuousNumberEnum.fromTheta) {
+      NSMutableDictionary* dictionary = [[NSMutableDictionary alloc] init];
+      THETACKotlinArray* array = THETACThetaRepositoryContinuousNumberEnum.values;
+      for (int i = 0; i < array.size; i++) {
+        THETACThetaRepositoryContinuousNumberEnum* item = [array getIndex:i];
+        [dictionary setObject:item.name forKey:item];
+      }
+      ContinuousNumberEnum.fromTheta = dictionary;
+    }
+    id val = [ContinuousNumberEnum.fromTheta objectForKey:opt.continuousNumber];
+    if (val) {
+      [rct setObject:val forKey:@"continuousNumber"];
     }
   }
 };
@@ -851,13 +1170,17 @@ static convert_t FileFormatEnum = {
 static convert_t FilterEnum = {
   .toTheta = @{
     @"OFF": THETACThetaRepositoryFilterEnum.off,
+    @"DR_COMP": THETACThetaRepositoryFilterEnum.drComp,
     @"NOISE_REDUCTION": THETACThetaRepositoryFilterEnum.noiseReduction,
-    @"HDR": THETACThetaRepositoryFilterEnum.hdr
+    @"HDR": THETACThetaRepositoryFilterEnum.hdr,
+    @"HH_HDR": THETACThetaRepositoryFilterEnum.hhHdr
   },
   .fromTheta = @{
     THETACThetaRepositoryFilterEnum.off: @"OFF",
+    THETACThetaRepositoryFilterEnum.drComp: @"DR_COMP",
     THETACThetaRepositoryFilterEnum.noiseReduction: @"NOISE_REDUCTION",
-    THETACThetaRepositoryFilterEnum.hdr: @"HDR"
+    THETACThetaRepositoryFilterEnum.hdr: @"HDR",
+    THETACThetaRepositoryFilterEnum.hhHdr: @"HH_HDR"
   },
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     id val = [FilterEnum.toTheta objectForKey:[rct objectForKey:@"filter"]];
@@ -1384,6 +1707,40 @@ static convert_t ColorTemperatureCvt = {
 };
 
 /**
+ * CompositeShootingOutputInterval  converter
+ */
+static convert_t CompositeShootingOutputIntervalCvt = {
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    NSNumber* val = [rct objectForKey:@"compositeShootingOutputInterval"];
+    if (val) {
+      opt.compositeShootingOutputInterval = [THETACInt numberWithInt:[val intValue]];
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    if (opt.compositeShootingOutputInterval) {
+      [rct setObject:opt.compositeShootingOutputInterval forKey:@"compositeShootingOutputInterval"];
+    }
+  },
+};
+
+/**
+ * CompositeShootingTime  converter
+ */
+static convert_t CompositeShootingTimeCvt = {
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    NSNumber* val = [rct objectForKey:@"compositeShootingTime"];
+    if (val) {
+      opt.compositeShootingTime = [THETACInt numberWithInt:[val intValue]];
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    if (opt.compositeShootingTime) {
+      [rct setObject:opt.compositeShootingTime forKey:@"compositeShootingTime"];
+    }
+  },
+};
+
+/**
  * DateTimeZone converter
  */
 static convert_t DateTimeZoneCvt = {
@@ -1651,7 +2008,7 @@ static convert_t WlanFrequencyEnum = {
   },
   .fromTheta = @{
     THETACThetaRepositoryWlanFrequencyEnum.ghz24: @"GHZ_2_4",
-    THETACThetaRepositoryWlanFrequencyEnum.ghz5: @"GHZ_5",
+    THETACThetaRepositoryWlanFrequencyEnum.ghz5: @"GHZ_5"
   },
   .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
     id val = [WlanFrequencyEnum.toTheta objectForKey:[rct objectForKey:@"wlanFrequency"]];
@@ -1685,6 +2042,37 @@ static convert_t PasswordCvt = {
 };
 
 /**
+ * Preset convertor
+ */
+static convert_t PresetEnum = {
+  .toTheta = @{
+    @"FACE": THETACThetaRepositoryPresetEnum.face,
+    @"NIGHT_VIEW": THETACThetaRepositoryPresetEnum.nightView,
+    @"LENS_BY_LENS_EXPOSURE": THETACThetaRepositoryPresetEnum.lensByLensExposure,
+    @"ROOM": THETACThetaRepositoryPresetEnum.room
+  },
+  .fromTheta = @{
+    THETACThetaRepositoryPresetEnum.face: @"FACE",
+    THETACThetaRepositoryPresetEnum.nightView: @"NIGHT_VIEW",
+    THETACThetaRepositoryPresetEnum.lensByLensExposure: @"LENS_BY_LENS_EXPOSURE",
+    THETACThetaRepositoryPresetEnum.room: @"ROOM"
+  },
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [PresetEnum.toTheta objectForKey:[rct objectForKey:@"preset"]];
+    if (val) {
+      opt.preset = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [PresetEnum.fromTheta objectForKey:opt.preset];
+    if (val) {
+      [rct setObject:val forKey:@"preset"];
+    }
+  }
+};
+
+
+/**
  * Proxy converter
  */
 static convert_t ProxyCvt = {
@@ -1699,7 +2087,7 @@ static convert_t ProxyCvt = {
                          password:!isNull([proxyDic objectForKey:@"password"]) ? [proxyDic objectForKey:@"password"] : nil];
         }
     },
-    
+
     .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
         if (opt.proxy) {
             NSMutableDictionary *proxy = [NSMutableDictionary dictionary];
@@ -1709,19 +2097,19 @@ static convert_t ProxyCvt = {
             if (opt.proxy.url) {
                 [proxy setObject:opt.proxy.url forKey:@"url"];
             }
-            
+
             if (opt.proxy.port) {
                 [proxy setObject:@(opt.proxy.port.intValue) forKey:@"port"];
             }
-            
+
             if (opt.proxy.userid) {
                 [proxy setObject:opt.proxy.userid forKey:@"userid"];
             }
-            
+
             if (opt.proxy.password) {
                 [proxy setObject:opt.proxy.password forKey:@"password"];
             }
-            
+
             [rct setObject:proxy forKey:@"proxy"];
         }
     }
@@ -1769,22 +2157,30 @@ static convert_t TimeShiftCvt = {
   .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
     if (opt.timeShift) {
       NSMutableDictionary *timeshift = [NSMutableDictionary dictionary];
-      
+
       if (opt.timeShift.isFrontFirst) {
         [timeshift setObject:@(((NSNumber *) opt.timeShift.isFrontFirst).boolValue) forKey:@"isFrontFirst"];
       }
-      
+
       if (opt.timeShift.firstInterval) {
         [timeshift setObject:[TimeShiftCvt.fromTheta objectForKey:opt.timeShift.firstInterval] forKey:@"firstInterval"];
       }
-      
+
       if (opt.timeShift.secondInterval) {
         [timeshift setObject:[TimeShiftCvt.fromTheta objectForKey:opt.timeShift.secondInterval] forKey:@"secondInterval"];
       }
-      
+
       [rct setObject:timeshift forKey:@"timeShift"];
     }
-  }
+  },
+  .setTimeShiftOption = ^(NSDictionary* rct, THETACTimeShiftCaptureBuilder *builder) {
+    NSDictionary *timeshiftDic = [rct objectForKey:@"timeShift"];
+    if (timeshiftDic) {
+      [builder setIsFrontFirstIsFrontFirst:!isNull([timeshiftDic objectForKey:@"isFrontFirst"]) ? [THETACBoolean numberWithBool:((NSNumber*) [timeshiftDic objectForKey:@"isFrontFirst"]).boolValue] : nil];
+      [builder setFirstIntervalInterval:!isNull([timeshiftDic objectForKey:@"firstInterval"]) ? [TimeShiftCvt.toTheta objectForKey:[timeshiftDic objectForKey:@"firstInterval"]] : nil];
+      [builder setSecondIntervalInterval:!isNull([timeshiftDic objectForKey:@"secondInterval"]) ? [TimeShiftCvt.toTheta objectForKey:[timeshiftDic objectForKey:@"secondInterval"]] : nil];
+    }
+  },
 };
 
 /**
@@ -1854,12 +2250,21 @@ static convert_t UsernameCvt = {
  * OptionNames converter
  */
 static NSDictionary *NameToOptionEnum = @{
+  @"AiAutoThumbnail": THETACThetaRepositoryOptionNameEnum.aiautothumbnail,
   @"Aperture": THETACThetaRepositoryOptionNameEnum.aperture,
+  @"Bitrate": THETACThetaRepositoryOptionNameEnum.bitrate,
   @"BluetoothPower": THETACThetaRepositoryOptionNameEnum.bluetoothpower,
+  @"BurstMode": THETACThetaRepositoryOptionNameEnum.burstmode,
+  @"BurstOption": THETACThetaRepositoryOptionNameEnum.burstoption,
   @"CameraControlSource": THETACThetaRepositoryOptionNameEnum.cameracontrolsource,
   @"CameraMode": THETACThetaRepositoryOptionNameEnum.cameramode,
+  @"CaptureInterval": THETACThetaRepositoryOptionNameEnum.captureinterval,
   @"CaptureMode": THETACThetaRepositoryOptionNameEnum.capturemode,
+  @"CaptureNumber": THETACThetaRepositoryOptionNameEnum.capturenumber,
   @"ColorTemperature": THETACThetaRepositoryOptionNameEnum.colortemperature,
+  @"CompositeShootingOutputInterval": THETACThetaRepositoryOptionNameEnum.compositeshootingoutputinterval,
+  @"CompositeShootingTime": THETACThetaRepositoryOptionNameEnum.compositeshootingtime,
+  @"ContinuousNumber": THETACThetaRepositoryOptionNameEnum.continuousnumber,
   @"DateTimeZone": THETACThetaRepositoryOptionNameEnum.datetimezone,
   @"ExposureCompensation": THETACThetaRepositoryOptionNameEnum.exposurecompensation,
   @"ExposureDelay": THETACThetaRepositoryOptionNameEnum.exposuredelay,
@@ -1876,6 +2281,7 @@ static NSDictionary *NameToOptionEnum = @{
   @"OffDelay": THETACThetaRepositoryOptionNameEnum.offdelay,
   @"Password": THETACThetaRepositoryOptionNameEnum.password,
   @"PowerSaving": THETACThetaRepositoryOptionNameEnum.powersaving,
+  @"Preset": THETACThetaRepositoryOptionNameEnum.preset,
   @"PreviewFormat": THETACThetaRepositoryOptionNameEnum.previewformat,
   @"Proxy": THETACThetaRepositoryOptionNameEnum.proxy,
   @"ShootingMethod": THETACThetaRepositoryOptionNameEnum.shootingmethod,
@@ -1897,12 +2303,21 @@ static NSDictionary *NameToOptionEnum = @{
  * OptionNameEnum to OptionName
  */
 static NSDictionary *OptionEnumToOption = @{
+  @"AiAutoThumbnail": @"aiAutoThumbnail",
   @"Aperture": @"aperture",
+  @"Bitrate": @"bitrate",
   @"BluetoothPower": @"bluetoothPower",
+  @"BurstMode": @"burstMode",
+  @"BurstOption": @"burstOption",
   @"CameraControlSource": @"cameraControlSource",
   @"CameraMode": @"cameraMode",
+  @"CaptureInterval": @"captureInterval",
   @"CaptureMode": @"captureMode",
+  @"CaptureNumber": @"captureNumber",
   @"ColorTemperature": @"colorTemperature",
+  @"CompositeShootingOutputInterval": @"compositeShootingOutputInterval",
+  @"CompositeShootingTime": @"compositeShootingTime",
+  @"ContinuousNumber": @"continuousNumber",
   @"DateTimeZone": @"dateTimeZone",
   @"ExposureCompensation": @"exposureCompensation",
   @"ExposureDelay": @"exposureDelay",
@@ -1919,6 +2334,7 @@ static NSDictionary *OptionEnumToOption = @{
   @"OffDelay": @"offDelay",
   @"Password": @"password",
   @"PowerSaving": @"powerSaving",
+  @"Preset": @"preset",
   @"PreviewFormat": @"previewFormat",
   @"Proxy": @"proxy",
   @"ShootingMethod": @"shootingMethod",
@@ -1943,12 +2359,21 @@ typedef convert_t * (^OptionConverter)();
  * option converter tables
  */
 static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
+  @"aiAutoThumbnail": ^{return &AiAutoThumbnailEnum;},
   @"aperture": ^{return &ApertureEnum;},
+  @"bitrate": ^{return &BitrateEnum;},
   @"bluetoothPower": ^{return &BluetoothPowerEnum;},
+  @"burstMode": ^{return &BurstModeEnum;},
+  @"burstOption": ^{return &BurstOptionCvt;},
   @"cameraControlSource": ^{return &CameraControlSourceEnum;},
   @"cameraMode": ^{return &CameraModeEnum;},
+  @"captureInterval": ^{return &CaptureIntervalConverter;},
   @"captureMode": ^{return &CaptureModeEnum;},
+  @"captureNumber": ^{return &CaptureNumberConverter;},
   @"colorTemperature": ^{return &ColorTemperatureCvt;},
+  @"compositeShootingOutputInterval": ^{return &CompositeShootingOutputIntervalCvt;},
+  @"compositeShootingTime": ^{return &CompositeShootingTimeCvt;},
+  @"continuousNumber": ^{return &ContinuousNumberEnum;},
   @"dateTimeZone": ^{return &DateTimeZoneCvt;},
   @"exposureCompensation": ^{return &ExposureCompensationEnum;},
   @"exposureDelay": ^{return &ExposureDelayEnum;},
@@ -1965,6 +2390,7 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"offDelay": ^{return &OffDelayEnum;},
   @"password": ^{return &PasswordCvt;},
   @"powerSaving": ^{return &PowerSavingEnum;},
+  @"preset": ^{return &PresetEnum;},
   @"previewFormat": ^{return &PreviewFormatEnum;},
   @"proxy": ^{return &ProxyCvt;},
   @"shootingMethod": ^{return &ShootingMethodEnum;},
@@ -2048,6 +2474,69 @@ THETACThetaRepositoryTimeout* timeoutToTheta(NSDictionary* objects)
                                             requestTimeout:[requestTimeout longLongValue]
                                             socketTimeout:[socketTimeout longLongValue]];
   return timeout;
+}
+
+NSDictionary* fileInfoFromTheta(THETACThetaRepositoryFileInfo* fileInfo) {
+  NSMutableDictionary *fileInfoObject = [NSMutableDictionary dictionaryWithDictionary:@{
+    @"name":fileInfo.name,
+    @"fileUrl":fileInfo.fileUrl,
+    @"size":@(fileInfo.size),
+    @"dateTime":fileInfo.dateTime,
+    @"thumbnailUrl":fileInfo.thumbnailUrl
+  }];
+  if (fileInfo.lat) {
+    [fileInfoObject setObject:@(fileInfo.lat.floatValue) forKey:@"lat"];
+  }
+  if (fileInfo.lng) {
+    [fileInfoObject setObject:@(fileInfo.lng.floatValue) forKey:@"lng"];
+  }
+  if (fileInfo.width) {
+    [fileInfoObject setObject:@(fileInfo.width.intValue) forKey:@"width"];
+  }
+  if (fileInfo.height) {
+    [fileInfoObject setObject:@(fileInfo.height.intValue) forKey:@"height"];
+  }
+  if (fileInfo.intervalCaptureGroupId) {
+    [fileInfoObject setObject:fileInfo.intervalCaptureGroupId forKey:@"intervalCaptureGroupId"];
+  }
+  if (fileInfo.compositeShootingGroupId) {
+    [fileInfoObject setObject:fileInfo.compositeShootingGroupId forKey:@"compositeShootingGroupId"];
+  }
+  if (fileInfo.autoBracketGroupId) {
+    [fileInfoObject setObject:fileInfo.autoBracketGroupId forKey:@"autoBracketGroupId"];
+  }
+  if (fileInfo.recordTime) {
+    [fileInfoObject setObject:@(fileInfo.recordTime.intValue) forKey:@"recordTime"];
+  }
+  if (fileInfo.isProcessed) {
+    [fileInfoObject setObject:@(fileInfo.isProcessed.boolValue) forKey:@"isProcessed"];
+  }
+  if (fileInfo.previewUrl) {
+    [fileInfoObject setObject:fileInfo.previewUrl forKey:@"previewUrl"];
+  }
+  if (fileInfo.codec) {
+    [fileInfoObject setObject:fileInfo.codec.name forKey:@"codec"];
+  }
+  if (fileInfo.projectionType) {
+    [fileInfoObject setObject:fileInfo.projectionType.name forKey:@"projectionType"];
+  }
+  if (fileInfo.continuousShootingGroupId) {
+    [fileInfoObject setObject:fileInfo.continuousShootingGroupId forKey:@"continuousShootingGroupId"];
+  }
+  if (fileInfo.frameRate) {
+    [fileInfoObject setObject:@(fileInfo.frameRate.intValue) forKey:@"frameRate"];
+  }
+  if (fileInfo.favorite) {
+    [fileInfoObject setObject:@(fileInfo.favorite.boolValue) forKey:@"favorite"];
+  }
+  if (fileInfo.imageDescription) {
+    [fileInfoObject setObject:fileInfo.imageDescription forKey:@"imageDescription"];
+  }
+  if (fileInfo.storageID) {
+    [fileInfoObject setObject:fileInfo.storageID forKey:@"storageID"];
+  }
+
+  return fileInfoObject;
 }
 
 /**
@@ -2165,6 +2654,22 @@ RCT_REMAP_METHOD(isInitialized,
 }
 
 /**
+ * getThetaModel  -  Returns the connected THETA model.
+ * @param resolve for getThetaModel
+ * @param rejecter
+ */
+RCT_REMAP_METHOD(getThetaModel,
+                 getThetaModelWithResolver:(RCTPromiseResolveBlock)resolve
+                 withRejecter:(RCTPromiseRejectBlock)reject)
+{
+  if (!_theta) {
+    reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil);
+    return;
+  }
+  resolve(self.theta.cameraModel ? self.theta.cameraModel.name : nil);
+}
+
+/**
  * getThetaInfo  -  retrieve ThetaInfo from THETA via repository
  * @param resolve resolver for getThetaInfo
  * @param rejecter rejecter for getThetaInfo
@@ -2186,22 +2691,28 @@ RCT_REMAP_METHOD(getThetaInfo,
       for (THETACInt *element in info.apiLevel) {
         [apiLevelList addObject:@([element intValue])];
       }
-      resolve(@{@"manufacturer": info.manufacturer,
-                @"model": info.model,
-                @"serialNumber": info.serialNumber,
-                @"wlanMacAddress": info.wlanMacAddress != nil ? info.wlanMacAddress : [NSNull null],
-                @"bluetoothMacAddress": info.bluetoothMacAddress != nil ? info.bluetoothMacAddress : [NSNull null],
-                @"firmwareVersion": info.firmwareVersion,
-                @"supportUrl": info.supportUrl,
-                @"hasGps": @(info.hasGps),
-                @"hasGyro": @(info.hasGyro),
-                @"uptime": @(info.uptime),
-                @"api": info.api,
-                @"endpoints": @{
-                  @"httpPort": @(info.endpoints.httpPort),
-                  @"httpUpdatesPort": @(info.endpoints.httpUpdatesPort),
-                },
-                @"apiLevel": apiLevelList});
+      NSMutableDictionary *thetaInfoObject = [NSMutableDictionary dictionaryWithDictionary:@{
+        @"manufacturer": info.manufacturer,
+        @"model": info.model,
+        @"serialNumber": info.serialNumber,
+        @"wlanMacAddress": info.wlanMacAddress != nil ? info.wlanMacAddress : [NSNull null],
+        @"bluetoothMacAddress": info.bluetoothMacAddress != nil ? info.bluetoothMacAddress : [NSNull null],
+        @"firmwareVersion": info.firmwareVersion,
+        @"supportUrl": info.supportUrl,
+        @"hasGps": @(info.hasGps),
+        @"hasGyro": @(info.hasGyro),
+        @"uptime": @(info.uptime),
+        @"api": info.api,
+        @"endpoints": @{
+          @"httpPort": @(info.endpoints.httpPort),
+          @"httpUpdatesPort": @(info.endpoints.httpUpdatesPort),
+        },
+        @"apiLevel": apiLevelList
+      }];
+      if (self.theta.cameraModel) {
+        [thetaInfoObject setObject:self.theta.cameraModel.name forKey:@"thetaModel"];
+      }
+      resolve(thetaInfoObject);
     } else {
       reject(ERROR_CODE_ERROR, @"no info", nil);
     }
@@ -2291,17 +2802,7 @@ RCT_REMAP_METHOD(listFiles,
         NSMutableArray *ary = [[NSMutableArray alloc] init];
         for (int i = 0; i < items.fileList.count; i++) {
           THETACThetaRepositoryFileInfo *finfo = items.fileList[i];
-          NSMutableDictionary *fileInfoObject = [[NSMutableDictionary alloc] initWithDictionary:@{
-            @"name":finfo.name,
-            @"size":@(finfo.size),
-            @"dateTime":finfo.dateTime,
-            @"thumbnailUrl":finfo.thumbnailUrl,
-            @"fileUrl":finfo.fileUrl
-          }];
-          if (finfo.storageID) {
-            [fileInfoObject setObject:finfo.storageID forKey:@"storageID"];
-          }
-          [ary addObject:fileInfoObject];
+          [ary addObject:fileInfoFromTheta(finfo)];
         }
         resolve(@{@"fileList":ary,
               @"totalEntries": @(items.totalEntries)});
@@ -2648,7 +3149,7 @@ RCT_REMAP_METHOD(buildTimeShiftCapture,
         reject(@"error", @"no time-shift capture pbuilder", nil);
         return;
     }
-    
+
     for (id option in [options allKeys]) {
         convert_t *convert = [NameToConverter objectForKey:option]();
         if (convert && convert->setTimeShiftOption) {
@@ -2692,7 +3193,7 @@ RCT_REMAP_METHOD(startTimeShiftCapture,
         reject(@"error", @"no timeShiftCapture", nil);
         return;
     }
-    
+
     TimeShiftStartCallback *callback = [[TimeShiftStartCallback alloc] initWith:self
                                                                    withProgress:^(float completion) {
         [self sendEventWithName:EVENT_NOTIFY
@@ -3439,7 +3940,7 @@ RCT_REMAP_METHOD(startPlugin,
                completionHandler:^(NSError *error) {
     if (error) {
       reject(ERROR_CODE_ERROR, [error localizedDescription], error);
-      
+
     } else {
       resolve(@(YES));
     }
@@ -3462,7 +3963,7 @@ RCT_REMAP_METHOD(stopPlugin,
   [_theta stopPluginWithCompletionHandler:^(NSError *error) {
     if (error) {
       reject(ERROR_CODE_ERROR, [error localizedDescription], error);
-      
+
     } else {
       resolve(@(YES));
     }
@@ -3488,7 +3989,7 @@ RCT_REMAP_METHOD(getPluginLicense,
                     completionHandler:^(NSString *pluginLicense, NSError *error) {
     if (error) {
       reject(ERROR_CODE_ERROR, [error localizedDescription], error);
-      
+
     } else if (pluginLicense) {
       resolve(pluginLicense);
     } else {

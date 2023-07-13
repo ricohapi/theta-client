@@ -2,11 +2,145 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
 void main() {
-  setUp(() {
+  setUp(() {});
+
+  tearDown(() {});
+
+  test('BurstModeEnum', () async {
+    List<List<dynamic>> data = [
+      [BurstModeEnum.on, 'ON'],
+      [BurstModeEnum.off, 'OFF'],
+    ];
+    expect(data.length, BurstModeEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
   });
 
-  tearDown(() {
+  test('BurstCaptureNumEnum', () async {
+    List<List<dynamic>> data = [
+      [BurstCaptureNumEnum.burstCaptureNum_1, 'BURST_CAPTURE_NUM_1'],
+      [BurstCaptureNumEnum.burstCaptureNum_3, 'BURST_CAPTURE_NUM_3'],
+      [BurstCaptureNumEnum.burstCaptureNum_5, 'BURST_CAPTURE_NUM_5'],
+      [BurstCaptureNumEnum.burstCaptureNum_7, 'BURST_CAPTURE_NUM_7'],
+      [BurstCaptureNumEnum.burstCaptureNum_9, 'BURST_CAPTURE_NUM_9'],
+    ];
+    expect(data.length, BurstCaptureNumEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
 
+  test('BurstBracketStepEnum', () async {
+    List<List<dynamic>> data = [
+      [BurstBracketStepEnum.bracketStep_0_0, 'BRACKET_STEP_0_0'],
+      [BurstBracketStepEnum.bracketStep_0_3, 'BRACKET_STEP_0_3'],
+      [BurstBracketStepEnum.bracketStep_0_7, 'BRACKET_STEP_0_7'],
+      [BurstBracketStepEnum.bracketStep_1_0, 'BRACKET_STEP_1_0'],
+      [BurstBracketStepEnum.bracketStep_1_3, 'BRACKET_STEP_1_3'],
+      [BurstBracketStepEnum.bracketStep_1_7, 'BRACKET_STEP_1_7'],
+      [BurstBracketStepEnum.bracketStep_2_0, 'BRACKET_STEP_2_0'],
+      [BurstBracketStepEnum.bracketStep_2_3, 'BRACKET_STEP_2_3'],
+      [BurstBracketStepEnum.bracketStep_2_7, 'BRACKET_STEP_2_7'],
+      [BurstBracketStepEnum.bracketStep_3_0, 'BRACKET_STEP_3_0'],
+    ];
+    expect(data.length, BurstBracketStepEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('BurstCompensationEnum', () async {
+    List<List<dynamic>> data = [
+      [BurstCompensationEnum.burstCompensationDown_5_0, 'BURST_COMPENSATION_DOWN_5_0'],
+      [BurstCompensationEnum.burstCompensationDown_4_7, 'BURST_COMPENSATION_DOWN_4_7'],
+      [BurstCompensationEnum.burstCompensationDown_4_3, 'BURST_COMPENSATION_DOWN_4_3'],
+      [BurstCompensationEnum.burstCompensationDown_4_0, 'BURST_COMPENSATION_DOWN_4_0'],
+      [BurstCompensationEnum.burstCompensationDown_3_7, 'BURST_COMPENSATION_DOWN_3_7'],
+      [BurstCompensationEnum.burstCompensationDown_3_3, 'BURST_COMPENSATION_DOWN_3_3'],
+      [BurstCompensationEnum.burstCompensationDown_3_0, 'BURST_COMPENSATION_DOWN_3_0'],
+      [BurstCompensationEnum.burstCompensationDown_2_7, 'BURST_COMPENSATION_DOWN_2_7'],
+      [BurstCompensationEnum.burstCompensationDown_2_3, 'BURST_COMPENSATION_DOWN_2_3'],
+      [BurstCompensationEnum.burstCompensationDown_2_0, 'BURST_COMPENSATION_DOWN_2_0'],
+      [BurstCompensationEnum.burstCompensationDown_1_7, 'BURST_COMPENSATION_DOWN_1_7'],
+      [BurstCompensationEnum.burstCompensationDown_1_3, 'BURST_COMPENSATION_DOWN_1_3'],
+      [BurstCompensationEnum.burstCompensationDown_1_0, 'BURST_COMPENSATION_DOWN_1_0'],
+      [BurstCompensationEnum.burstCompensationDown_0_7, 'BURST_COMPENSATION_DOWN_0_7'],
+      [BurstCompensationEnum.burstCompensationDown_0_3, 'BURST_COMPENSATION_DOWN_0_3'],
+      [BurstCompensationEnum.burstCompensation_0_0, 'BURST_COMPENSATION_0_0'],
+      [BurstCompensationEnum.burstCompensationUp_0_3, 'BURST_COMPENSATION_UP_0_3'],
+      [BurstCompensationEnum.burstCompensationUp_0_7, 'BURST_COMPENSATION_UP_0_7'],
+      [BurstCompensationEnum.burstCompensationUp_1_0, 'BURST_COMPENSATION_UP_1_0'],
+      [BurstCompensationEnum.burstCompensationUp_1_3, 'BURST_COMPENSATION_UP_1_3'],
+      [BurstCompensationEnum.burstCompensationUp_1_7, 'BURST_COMPENSATION_UP_1_7'],
+      [BurstCompensationEnum.burstCompensationUp_2_0, 'BURST_COMPENSATION_UP_2_0'],
+      [BurstCompensationEnum.burstCompensationUp_2_3, 'BURST_COMPENSATION_UP_2_3'],
+      [BurstCompensationEnum.burstCompensationUp_2_7, 'BURST_COMPENSATION_UP_2_7'],
+      [BurstCompensationEnum.burstCompensationUp_3_0, 'BURST_COMPENSATION_UP_3_0'],
+      [BurstCompensationEnum.burstCompensationUp_3_3, 'BURST_COMPENSATION_UP_3_3'],
+      [BurstCompensationEnum.burstCompensationUp_3_7, 'BURST_COMPENSATION_UP_3_7'],
+      [BurstCompensationEnum.burstCompensationUp_4_0, 'BURST_COMPENSATION_UP_4_0'],
+      [BurstCompensationEnum.burstCompensationUp_4_3, 'BURST_COMPENSATION_UP_4_3'],
+      [BurstCompensationEnum.burstCompensationUp_4_7, 'BURST_COMPENSATION_UP_4_7'],
+      [BurstCompensationEnum.burstCompensationUp_5_0, 'BURST_COMPENSATION_UP_5_0'],
+    ];
+    expect(data.length, BurstCompensationEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('BurstMaxExposureTimeEnum', () async {
+    List<List<dynamic>> data = [
+      [BurstMaxExposureTimeEnum.maxExposureTime_0_5, 'MAX_EXPOSURE_TIME_0_5'],
+      [BurstMaxExposureTimeEnum.maxExposureTime_0_625, 'MAX_EXPOSURE_TIME_0_625'],
+      [BurstMaxExposureTimeEnum.maxExposureTime_0_76923076, 'MAX_EXPOSURE_TIME_0_76923076'],
+      [BurstMaxExposureTimeEnum.maxExposureTime_1, 'MAX_EXPOSURE_TIME_1'],
+      [BurstMaxExposureTimeEnum.maxExposureTime_1_3, 'MAX_EXPOSURE_TIME_1_3'],
+      [BurstMaxExposureTimeEnum.maxExposureTime_1_6, 'MAX_EXPOSURE_TIME_1_6'],
+      [BurstMaxExposureTimeEnum.maxExposureTime_2, 'MAX_EXPOSURE_TIME_2'],
+      [BurstMaxExposureTimeEnum.maxExposureTime_2_5, 'MAX_EXPOSURE_TIME_2_5'],
+      [BurstMaxExposureTimeEnum.maxExposureTime_3_2, 'MAX_EXPOSURE_TIME_3_2'],
+      [BurstMaxExposureTimeEnum.maxExposureTime_4, 'MAX_EXPOSURE_TIME_4'],
+      [BurstMaxExposureTimeEnum.maxExposureTime_5, 'MAX_EXPOSURE_TIME_5'],
+      [BurstMaxExposureTimeEnum.maxExposureTime_6, 'MAX_EXPOSURE_TIME_6'],
+      [BurstMaxExposureTimeEnum.maxExposureTime_8, 'MAX_EXPOSURE_TIME_8'],
+      [BurstMaxExposureTimeEnum.maxExposureTime_10, 'MAX_EXPOSURE_TIME_10'],
+      [BurstMaxExposureTimeEnum.maxExposureTime_13, 'MAX_EXPOSURE_TIME_13'],
+      [BurstMaxExposureTimeEnum.maxExposureTime_15, 'MAX_EXPOSURE_TIME_15'],
+      [BurstMaxExposureTimeEnum.maxExposureTime_20, 'MAX_EXPOSURE_TIME_20'],
+      [BurstMaxExposureTimeEnum.maxExposureTime_25, 'MAX_EXPOSURE_TIME_25'],
+      [BurstMaxExposureTimeEnum.maxExposureTime_30, 'MAX_EXPOSURE_TIME_30'],
+      [BurstMaxExposureTimeEnum.maxExposureTime_40, 'MAX_EXPOSURE_TIME_40'],
+      [BurstMaxExposureTimeEnum.maxExposureTime_50, 'MAX_EXPOSURE_TIME_50'],
+      [BurstMaxExposureTimeEnum.maxExposureTime_60, 'MAX_EXPOSURE_TIME_60'],
+    ];
+    expect(data.length, BurstMaxExposureTimeEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('BurstEnableIsoControlEnum', () async {
+    List<List<dynamic>> data = [
+      [BurstEnableIsoControlEnum.off, 'OFF'],
+      [BurstEnableIsoControlEnum.on, 'ON'],
+    ];
+    expect(data.length, BurstEnableIsoControlEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('BurstOrderEnum', () async {
+    List<List<dynamic>> data = [
+      [BurstOrderEnum.burstBracketOrder_0, 'BURST_BRACKET_ORDER_0'],
+      [BurstOrderEnum.burstBracketOrder_1, 'BURST_BRACKET_ORDER_1'],
+    ];
+    expect(data.length, BurstOrderEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
   });
 
   test('CaptureStatusEnum', () async {
@@ -33,6 +167,37 @@ void main() {
       [ChargingStateEnum.notCharging, 'NOT_CHARGING'],
     ];
     expect(data.length, ChargingStateEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('ContinuousNumberEnum', () async {
+    List<List<dynamic>> data = [
+      [ContinuousNumberEnum.off, 'OFF'],
+      [ContinuousNumberEnum.max1, 'MAX_1'],
+      [ContinuousNumberEnum.max2, 'MAX_2'],
+      [ContinuousNumberEnum.max3, 'MAX_3'],
+      [ContinuousNumberEnum.max4, 'MAX_4'],
+      [ContinuousNumberEnum.max5, 'MAX_5'],
+      [ContinuousNumberEnum.max6, 'MAX_6'],
+      [ContinuousNumberEnum.max7, 'MAX_7'],
+      [ContinuousNumberEnum.max8, 'MAX_8'],
+      [ContinuousNumberEnum.max9, 'MAX_9'],
+      [ContinuousNumberEnum.max10, 'MAX_10'],
+      [ContinuousNumberEnum.max11, 'MAX_11'],
+      [ContinuousNumberEnum.max12, 'MAX_12'],
+      [ContinuousNumberEnum.max13, 'MAX_13'],
+      [ContinuousNumberEnum.max14, 'MAX_14'],
+      [ContinuousNumberEnum.max15, 'MAX_15'],
+      [ContinuousNumberEnum.max16, 'MAX_16'],
+      [ContinuousNumberEnum.max17, 'MAX_17'],
+      [ContinuousNumberEnum.max18, 'MAX_18'],
+      [ContinuousNumberEnum.max19, 'MAX_19'],
+      [ContinuousNumberEnum.max20, 'MAX_20'],
+      [ContinuousNumberEnum.unsupported, 'UNSUPPORTED'],
+    ];
+    expect(data.length, ContinuousNumberEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -105,6 +270,17 @@ void main() {
     }
   });
 
+  test('AiAutoThumbnailEnum', () async {
+    List<List<dynamic>> data = [
+      [AiAutoThumbnailEnum.on, 'ON'],
+      [AiAutoThumbnailEnum.off, 'OFF'],
+    ];
+    expect(data.length, AiAutoThumbnailEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
   test('ApertureEnum', () async {
     List<List<dynamic>> data = [
       [ApertureEnum.apertureAuto, 'APERTURE_AUTO'],
@@ -148,6 +324,9 @@ void main() {
     List<List<dynamic>> data = [
       [CaptureModeEnum.image, 'IMAGE'],
       [CaptureModeEnum.video, 'VIDEO'],
+      [CaptureModeEnum.liveStreaming, 'LIVE_STREAMING'],
+      [CaptureModeEnum.interval, 'INTERVAL'],
+      [CaptureModeEnum.preset, 'PRESET'],
     ];
     expect(data.length, CaptureModeEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
@@ -293,8 +472,10 @@ void main() {
   test('FilterEnum', () async {
     List<List<dynamic>> data = [
       [FilterEnum.off, 'OFF'],
+      [FilterEnum.drComp, 'DR_COMP'],
       [FilterEnum.noiseReduction, 'NOISE_REDUCTION'],
       [FilterEnum.hdr, 'HDR'],
+      [FilterEnum.hhHdr, 'HH_HDR'],
     ];
     expect(data.length, FilterEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
@@ -443,6 +624,19 @@ void main() {
     }
   });
 
+  test('PresetEnum', () async {
+    List<List<dynamic>> data = [
+      [PresetEnum.face, 'FACE'],
+      [PresetEnum.nightView, 'NIGHT_VIEW'],
+      [PresetEnum.lensByLensExposure, 'LENS_BY_LENS_EXPOSURE'],
+      [PresetEnum.room, 'ROOM'],
+    ];
+    expect(data.length, PresetEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
   test('PreviewFormatEnum', () async {
     List<List<dynamic>> data = [
       [PreviewFormatEnum.w1024_h512_f30, 'W1024_H512_F30'],
@@ -504,6 +698,22 @@ void main() {
     }
   });
 
+  test('ThetaModel', () async {
+    List<List<dynamic>> data = [
+      [ThetaModel.thetaS, 'THETA_S'],
+      [ThetaModel.thetaSC, 'THETA_SC'],
+      [ThetaModel.thetaV, 'THETA_V'],
+      [ThetaModel.thetaZ1, 'THETA_Z1'],
+      [ThetaModel.thetaX, 'THETA_X'],
+      [ThetaModel.thetaSC2, 'THETA_SC2'],
+      [ThetaModel.thetaSC2B, 'THETA_SC2_B'],
+    ];
+    expect(data.length, ThetaModel.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
   test('TimeShiftIntervalEnum', () async {
     List<List<dynamic>> data = [
       [TimeShiftIntervalEnum.interval_0, 'INTERVAL_0'],
@@ -523,7 +733,6 @@ void main() {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
   });
-
 
   test('WhiteBalanceEnum', () async {
     List<List<dynamic>> data = [

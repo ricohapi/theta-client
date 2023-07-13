@@ -675,4 +675,27 @@ class ThetaRepositoryTest {
             assertTrue(e.message!!.indexOf("503", 0, true) >= 0, "status error")
         }
     }
+
+    /**
+     * Check Theta models
+     */
+    @Test
+    fun thetaModelTest() = runTest {
+        val data = arrayOf(
+            arrayOf("RICOH THETA SC2", "12345", ThetaRepository.ThetaModel.THETA_SC2),
+            arrayOf("RICOH THETA SC2", "42345", ThetaRepository.ThetaModel.THETA_SC2_B),
+            arrayOf("RICOH THETA SC2", null, ThetaRepository.ThetaModel.THETA_SC2),
+            arrayOf("RICOH THETA X", null, ThetaRepository.ThetaModel.THETA_X),
+            arrayOf("RICOH THETA X", "2222222", ThetaRepository.ThetaModel.THETA_X),
+            arrayOf("RICOH THETA Z1", null, ThetaRepository.ThetaModel.THETA_Z1),
+            arrayOf("RICOH THETA Z1","4444444", ThetaRepository.ThetaModel.THETA_Z1),
+            arrayOf("RICOH THETA V", null, ThetaRepository.ThetaModel.THETA_V),
+            arrayOf("RICOH THETA S", null, ThetaRepository.ThetaModel.THETA_S),
+            arrayOf("RICOH THETA SC", null, ThetaRepository.ThetaModel.THETA_SC),
+        )
+        for (item in data) {
+            assertEquals(ThetaRepository.ThetaModel.get(item[0] as String, item[1] as? String), item[2], (item[2] as? ThetaRepository.ThetaModel)?.name ?: "null")
+        }
+    }
+
 }

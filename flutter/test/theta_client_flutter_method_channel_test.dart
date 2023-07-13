@@ -25,6 +25,25 @@ void main() {
     expect(await platform.getPlatformVersion(), '42');
   });
 
+  test('getThetaModel', () async {
+    const thetaModel = ThetaModel.thetaZ1;
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      return thetaModel.rawValue;
+    });
+
+    var model = await platform.getThetaModel();
+    expect(model, thetaModel);
+  });
+
+  test('getThetaModel null', () async {
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      return null;
+    });
+
+    var model = await platform.getThetaModel();
+    expect(model, null);
+  });
+
   test('getThetaInfo', () async {
     const manufacturer = 'RICOH';
     const model = 'RICOH THETA Z1';
@@ -36,12 +55,18 @@ void main() {
     const hasGps = true;
     const hasGyro = true;
     const uptime = 142;
-    const api = ['/osc/info', '/osc/state', '/osc/checkForUpdates',
-      '/osc/commands/execute','/osc/commands/status'];
+    const api = [
+      '/osc/info',
+      '/osc/state',
+      '/osc/checkForUpdates',
+      '/osc/commands/execute',
+      '/osc/commands/status'
+    ];
     var endpoints = <String, int>{'httpPort': 80, 'httpUpdatesPort': 80};
     const apiLevel = [2];
+    const thetaModel = ThetaModel.thetaZ1;
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      final Map info = <String, dynamic> {
+      final Map info = <String, dynamic>{
         'manufacturer': manufacturer,
         'model': model,
         'serialNumber': serialNumber,
@@ -55,6 +80,7 @@ void main() {
         'api': api,
         'endpoints': endpoints,
         'apiLevel': apiLevel,
+        'thetaModel': thetaModel.rawValue,
       };
       return info;
     });
@@ -74,6 +100,7 @@ void main() {
     expect(thetaInfo.endpoints.httpPort, 80);
     expect(thetaInfo.endpoints.httpUpdatesPort, 80);
     expect(thetaInfo.apiLevel, apiLevel);
+    expect(thetaInfo.thetaModel, thetaModel);
   });
 
   test('getThetaState', () async {
@@ -107,7 +134,7 @@ void main() {
     }
 
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      final Map state = <String, dynamic> {
+      final Map state = <String, dynamic>{
         'fingerprint': fingerprint,
         'batteryLevel': batteryLevel,
         'storageUri': storageUri,
@@ -168,7 +195,7 @@ void main() {
     const isSdCard = true;
 
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      final Map state = <String, dynamic> {
+      final Map state = <String, dynamic>{
         'fingerprint': fingerprint,
         'batteryLevel': batteryLevel,
         'captureStatus': captureStatus.rawValue,
@@ -213,8 +240,10 @@ void main() {
     const name = 'R0013336.JPG';
     const size = 100;
     const dateTime = '2022:11:15 14:00:15';
-    const fileUrl = 'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG';
-    const thumbnailUrl = 'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG?type=thumb';
+    const fileUrl =
+        'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG';
+    const thumbnailUrl =
+        'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG?type=thumb';
 
     int index = 0;
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
@@ -224,16 +253,18 @@ void main() {
       expect(arguments['startPosition'], startPosition);
 
       final List fileList = List<dynamic>.empty(growable: true);
-      final Map info = <String, dynamic> {
+      final Map info = <String, dynamic>{
         'name': name,
         'size': size,
         'dateTime': dateTime,
         'fileUrl': fileUrl,
         'thumbnailUrl': thumbnailUrl,
+        'codec': 'H264MP4AVC',
+        'projectionType': 'DUAL_FISHEYE',
       };
       fileList.add(info);
       fileList.add(info);
-      final Map thetaFiles = <String, dynamic> {
+      final Map thetaFiles = <String, dynamic>{
         'fileList': fileList,
         'totalEntries': 10,
       };
@@ -242,7 +273,8 @@ void main() {
 
     for (int i = 0; i < fileTypes.length; i++) {
       index = i;
-      var thetaFiles = await platform.listFiles(fileTypes[i], entryCount, startPosition, StorageEnum.current);
+      var thetaFiles =
+          await platform.listFiles(fileTypes[i], entryCount, startPosition, StorageEnum.current);
       expect(thetaFiles.fileList.length, 2);
       var fileInfo = thetaFiles.fileList[0];
       expect(fileInfo.name, name);
@@ -250,6 +282,8 @@ void main() {
       expect(fileInfo.dateTime, dateTime);
       expect(fileInfo.fileUrl, fileUrl);
       expect(fileInfo.thumbnailUrl, thumbnailUrl);
+      expect(fileInfo.codec, CodecEnum.h264mp4avc);
+      expect(fileInfo.projectionType, ProjectionTypeEnum.dualFisheye);
       expect(fileInfo.storageID, null);
       expect(thetaFiles.totalEntries, 10);
     }
@@ -262,8 +296,10 @@ void main() {
     const name = 'R0013336.JPG';
     const size = 100;
     const dateTime = '2022:11:15 14:00:15';
-    const fileUrl = 'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG';
-    const thumbnailUrl = 'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG?type=thumb';
+    const fileUrl =
+        'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG';
+    const thumbnailUrl =
+        'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG?type=thumb';
     const storageID = 'a0123456789';
 
     int index = 0;
@@ -275,7 +311,7 @@ void main() {
       expect(arguments['storage'], storages[index].rawValue);
 
       final List fileList = List<dynamic>.empty(growable: true);
-      final Map info = <String, dynamic> {
+      final Map info = <String, dynamic>{
         'name': name,
         'size': size,
         'dateTime': dateTime,
@@ -285,7 +321,7 @@ void main() {
       };
       fileList.add(info);
       fileList.add(info);
-      final Map thetaFiles = <String, dynamic> {
+      final Map thetaFiles = <String, dynamic>{
         'fileList': fileList,
         'totalEntries': 10,
       };
@@ -294,7 +330,8 @@ void main() {
 
     for (int i = 0; i < storages.length; i++) {
       index = i;
-      var thetaFiles = await platform.listFiles(FileTypeEnum.image, entryCount, startPosition, storages[index]);
+      var thetaFiles =
+          await platform.listFiles(FileTypeEnum.image, entryCount, startPosition, storages[index]);
       expect(thetaFiles.fileList.length, 2);
       var fileInfo = thetaFiles.fileList[0];
       expect(fileInfo.name, name);
@@ -309,7 +346,10 @@ void main() {
 
   test('buildPhotoCapture', () async {
     Map<String, dynamic> gpsInfoMap = {
-      'latitude': 1.0, 'longitude': 2.0, 'altitude': 3.0, 'dateTimeZone': '2022:01:01 00:01:00+09:00'
+      'latitude': 1.0,
+      'longitude': 2.0,
+      'altitude': 3.0,
+      'dateTimeZone': '2022:01:01 00:01:00+09:00'
     };
     List<List<dynamic>> data = [
       ['Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
@@ -343,7 +383,8 @@ void main() {
   });
 
   test('takePicture', () async {
-    const fileUrl = 'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG';
+    const fileUrl =
+        'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG';
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       return fileUrl;
     });
@@ -352,7 +393,10 @@ void main() {
 
   test('buildVideoCapture', () async {
     Map<String, dynamic> gpsInfoMap = {
-      'latitude': 1.0, 'longitude': 2.0, 'altitude': 3.0, 'dateTimeZone': '2022:01:01 00:01:00+09:00'
+      'latitude': 1.0,
+      'longitude': 2.0,
+      'altitude': 3.0,
+      'dateTimeZone': '2022:01:01 00:01:00+09:00'
     };
     List<List<dynamic>> data = [
       ['Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
@@ -386,7 +430,8 @@ void main() {
   });
 
   test('startVideoCapture', () async {
-    const fileUrl = 'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.MP4';
+    const fileUrl =
+        'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.MP4';
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       return fileUrl;
     });
@@ -395,48 +440,126 @@ void main() {
 
   test('getOptions', () async {
     Map<String, dynamic> gpsInfoMap = {
-      'latitude': 1.0, 'longitude': 2.0, 'altitude': 3.0, 'dateTimeZone': '2022:01:01 00:01:00+09:00'
+      'latitude': 1.0,
+      'longitude': 2.0,
+      'altitude': 3.0,
+      'dateTimeZone': '2022:01:01 00:01:00+09:00'
     };
-    Map<String, dynamic> proxyMap = {'use': false, 'url': '', 'port': 8081, 'userid': '', 'password': ''};
+    Map<String, dynamic> proxyMap = {
+      'use': false,
+      'url': '',
+      'port': 8081,
+      'userid': '',
+      'password': ''
+    };
     Map<String, dynamic> timeShiftMap = {
-      'isFrontFirst': true, 'firstInterval': TimeShiftIntervalEnum.interval_5.toString(), 'secondInterval': TimeShiftIntervalEnum.interval_10.toString()
+      'isFrontFirst': true,
+      'firstInterval': TimeShiftIntervalEnum.interval_5.toString(),
+      'secondInterval': TimeShiftIntervalEnum.interval_10.toString()
     };
     List<List<dynamic>> data = [
+      [OptionNameEnum.aiAutoThumbnail, 'AiAutoThumbnail', AiAutoThumbnailEnum.off, 'OFF'],
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
-      [OptionNameEnum.cameraControlSource, 'CameraControlSource', CameraControlSourceEnum.camera, 'CAMERA'],
+      [OptionNameEnum.bitrate, 'Bitrate', Bitrate.fine, 'FINE'],
+      [OptionNameEnum.burstMode, 'BurstMode', BurstModeEnum.on, 'ON'],
+      [
+        OptionNameEnum.cameraControlSource,
+        'CameraControlSource',
+        CameraControlSourceEnum.camera,
+        'CAMERA'
+      ],
       [OptionNameEnum.cameraMode, 'CameraMode', CameraModeEnum.capture, 'CAPTURE'],
       [OptionNameEnum.captureMode, 'CaptureMode', CaptureModeEnum.image, 'IMAGE'],
+      [OptionNameEnum.captureInterval, 'CaptureInterval', 6, 6],
+      [OptionNameEnum.captureNumber, 'CaptureNumber', 0, 0],
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 2, 2],
-      [OptionNameEnum.dateTimeZone, 'DateTimeZone', '2022:01:01 00:01:00+09:00', '2022:01:01 00:01:00+09:00'],
-      [OptionNameEnum.exposureCompensation, 'ExposureCompensation', ExposureCompensationEnum.m0_3, 'M0_3'],
+      [OptionNameEnum.compositeShootingOutputInterval, 'CompositeShootingOutputInterval', 60, 60],
+      [OptionNameEnum.compositeShootingTime, 'CompositeShootingTime', 600, 600],
+      [OptionNameEnum.continuousNumber, 'ContinuousNumber', ContinuousNumberEnum.max11, 'MAX_11'],
+      [
+        OptionNameEnum.dateTimeZone,
+        'DateTimeZone',
+        '2022:01:01 00:01:00+09:00',
+        '2022:01:01 00:01:00+09:00'
+      ],
+      [
+        OptionNameEnum.exposureCompensation,
+        'ExposureCompensation',
+        ExposureCompensationEnum.m0_3,
+        'M0_3'
+      ],
       [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delay1, 'DELAY_1'],
-      [OptionNameEnum.exposureProgram, 'ExposureProgram', ExposureProgramEnum.aperturePriority, 'APERTURE_PRIORITY'],
+      [
+        OptionNameEnum.exposureProgram,
+        'ExposureProgram',
+        ExposureProgramEnum.aperturePriority,
+        'APERTURE_PRIORITY'
+      ],
       [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_2K, 'IMAGE_2K'],
       [OptionNameEnum.filter, 'Filter', FilterEnum.hdr, 'HDR'],
-      [OptionNameEnum.gpsInfo, 'GpsInfo', GpsInfo(1.0, 2.0, 3.0, '2022:01:01 00:01:00+09:00'), gpsInfoMap],
+      [
+        OptionNameEnum.gpsInfo,
+        'GpsInfo',
+        GpsInfo(1.0, 2.0, 3.0, '2022:01:01 00:01:00+09:00'),
+        gpsInfoMap
+      ],
       [OptionNameEnum.isGpsOn, 'IsGpsOn', true, true],
       [OptionNameEnum.iso, 'Iso', IsoEnum.iso50, 'ISO_50'],
       [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso200, 'ISO_200'],
       [OptionNameEnum.language, 'Language', LanguageEnum.de, 'DE'],
-      [OptionNameEnum.maxRecordableTime, 'MaxRecordableTime', MaxRecordableTimeEnum.time_1500, 'RECORDABLE_TIME_1500'],
+      [
+        OptionNameEnum.maxRecordableTime,
+        'MaxRecordableTime',
+        MaxRecordableTimeEnum.time_1500,
+        'RECORDABLE_TIME_1500'
+      ],
       [OptionNameEnum.networkType, 'NetworkType', NetworkTypeEnum.client, 'CLIENT'],
       [OptionNameEnum.offDelay, 'OffDelay', OffDelayEnum.offDelay_10m, 'OFF_DELAY_10M'],
       [OptionNameEnum.password, 'Password', 'password', 'password'],
       [OptionNameEnum.powerSaving, 'PowerSaving', PowerSavingEnum.on, 'ON'],
-      [OptionNameEnum.previewFormat, 'PreviewFormat', PreviewFormatEnum.w1024_h512_f30, 'W1024_H512_F30'],
+      [OptionNameEnum.preset, 'Preset', PresetEnum.room, 'ROOM'],
+      [
+        OptionNameEnum.previewFormat,
+        'PreviewFormat',
+        PreviewFormatEnum.w1024_h512_f30,
+        'W1024_H512_F30'
+      ],
       [OptionNameEnum.proxy, 'Proxy', Proxy(false, '', 8081, '', ''), proxyMap],
       [OptionNameEnum.remainingPictures, 'RemainingPictures', 3, 3],
       [OptionNameEnum.remainingVideoSeconds, 'RemainingVideoSeconds', 4, 4],
       [OptionNameEnum.remainingSpace, 'RemainingSpace', 5, 5],
       [OptionNameEnum.shootingMethod, 'ShootingMethod', ShootingMethodEnum.normal, 'NORMAL'],
-      [OptionNameEnum.shutterSpeed, 'ShutterSpeed', ShutterSpeedEnum.shutterSpeedOneOver_10, 'SHUTTER_SPEED_ONE_OVER_10'],
+      [
+        OptionNameEnum.shutterSpeed,
+        'ShutterSpeed',
+        ShutterSpeedEnum.shutterSpeedOneOver_10,
+        'SHUTTER_SPEED_ONE_OVER_10'
+      ],
       [OptionNameEnum.shutterVolume, 'ShutterVolume', 7, 7],
       [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
-      [OptionNameEnum.timeShift, 'TimeShift', TimeShift(isFrontFirst: true, firstInterval: TimeShiftIntervalEnum.interval_5, secondInterval: TimeShiftIntervalEnum.interval_10), timeShiftMap],
+      [
+        OptionNameEnum.timeShift,
+        'TimeShift',
+        TimeShift(
+            isFrontFirst: true,
+            firstInterval: TimeShiftIntervalEnum.interval_5,
+            secondInterval: TimeShiftIntervalEnum.interval_10),
+        timeShiftMap
+      ],
       [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
       [OptionNameEnum.username, 'Username', 'username', 'username'],
-      [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
-      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
+      [
+        OptionNameEnum.whiteBalance,
+        'WhiteBalance',
+        WhiteBalanceEnum.bulbFluorescent,
+        'BULB_FLUORESCENT'
+      ],
+      [
+        OptionNameEnum.whiteBalanceAutoStrength,
+        'WhiteBalanceAutoStrength',
+        WhiteBalanceAutoStrengthEnum.off,
+        'OFF'
+      ],
       [OptionNameEnum.wlanFrequency, 'WlanFrequency', WlanFrequencyEnum.ghz_2_4, 'GHZ_2_4'],
     ];
 
@@ -458,10 +581,10 @@ void main() {
     Options options = await platform.getOptions(optionNames);
 
     expect(options, isNotNull);
-    expect(options.aperture, data[0][2]);
-    expect(options.cameraControlSource, data[1][2]);
-    expect(options.cameraMode, data[2][2]);
-    expect(options.captureMode, data[3][2]);
+    expect(options.aperture, data[1][2]);
+    expect(options.cameraControlSource, data[4][2]);
+    expect(options.cameraMode, data[5][2]);
+    expect(options.captureMode, data[6][2]);
     for (int i = 0; i < data.length; i++) {
       expect(options.getValue(data[i][0]), data[i][2], reason: data[i][1]);
     }
@@ -469,48 +592,120 @@ void main() {
 
   test('setOptions', () async {
     Map<String, dynamic> gpsInfoMap = {
-      'latitude': 1.0, 'longitude': 2.0, 'altitude': 3.0, 'dateTimeZone': '2022:01:01 00:01:00+09:00'
+      'latitude': 1.0,
+      'longitude': 2.0,
+      'altitude': 3.0,
+      'dateTimeZone': '2022:01:01 00:01:00+09:00'
     };
-    Map<String, dynamic> proxyMap = {'use': false, 'url': '', 'port': 8081, 'userid': '', 'password': ''};
+    Map<String, dynamic> proxyMap = {
+      'use': false,
+      'url': '',
+      'port': 8081,
+      'userid': '',
+      'password': ''
+    };
     Map<String, dynamic> timeShiftMap = {
-      'isFrontFirst': true, 'firstInterval': TimeShiftIntervalEnum.interval_5.toString(), 'secondInterval': TimeShiftIntervalEnum.interval_10.toString()
+      'isFrontFirst': true,
+      'firstInterval': TimeShiftIntervalEnum.interval_5.toString(),
+      'secondInterval': TimeShiftIntervalEnum.interval_10.toString()
     };
     List<List<dynamic>> data = [
+      [OptionNameEnum.aiAutoThumbnail, 'AiAutoThumbnail', AiAutoThumbnailEnum.on, 'ON'],
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
+      [OptionNameEnum.bitrate, 'Bitrate', Bitrate.fine, 'FINE'],
+      [OptionNameEnum.burstMode, 'BurstMode', BurstModeEnum.on, 'ON'],
       [OptionNameEnum.cameraMode, 'CameraMode', CameraModeEnum.capture, 'CAPTURE'],
       [OptionNameEnum.captureMode, 'CaptureMode', CaptureModeEnum.image, 'IMAGE'],
+      [OptionNameEnum.captureInterval, 'CaptureInterval', 4, 4],
+      [OptionNameEnum.captureNumber, 'CaptureNumber', 2, 2],
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 2, 2],
-      [OptionNameEnum.dateTimeZone, 'DateTimeZone', '2022:01:01 00:01:00+09:00', '2022:01:01 00:01:00+09:00'],
-      [OptionNameEnum.exposureCompensation, 'ExposureCompensation', ExposureCompensationEnum.m0_3, 'M0_3'],
+      [OptionNameEnum.compositeShootingOutputInterval, 'CompositeShootingOutputInterval', 60, 60],
+      [OptionNameEnum.compositeShootingTime, 'CompositeShootingTime', 600, 600],
+      [
+        OptionNameEnum.dateTimeZone,
+        'DateTimeZone',
+        '2022:01:01 00:01:00+09:00',
+        '2022:01:01 00:01:00+09:00'
+      ],
+      [
+        OptionNameEnum.exposureCompensation,
+        'ExposureCompensation',
+        ExposureCompensationEnum.m0_3,
+        'M0_3'
+      ],
       [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delay1, 'DELAY_1'],
-      [OptionNameEnum.exposureProgram, 'ExposureProgram', ExposureProgramEnum.aperturePriority, 'APERTURE_PRIORITY'],
+      [
+        OptionNameEnum.exposureProgram,
+        'ExposureProgram',
+        ExposureProgramEnum.aperturePriority,
+        'APERTURE_PRIORITY'
+      ],
       [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_2K, 'IMAGE_2K'],
       [OptionNameEnum.filter, 'Filter', FilterEnum.hdr, 'HDR'],
-      [OptionNameEnum.gpsInfo, 'GpsInfo', GpsInfo(1.0, 2.0, 3.0, '2022:01:01 00:01:00+09:00'), gpsInfoMap],
+      [
+        OptionNameEnum.gpsInfo,
+        'GpsInfo',
+        GpsInfo(1.0, 2.0, 3.0, '2022:01:01 00:01:00+09:00'),
+        gpsInfoMap
+      ],
       [OptionNameEnum.isGpsOn, 'IsGpsOn', true, true],
       [OptionNameEnum.iso, 'Iso', IsoEnum.iso50, 'ISO_50'],
       [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso200, 'ISO_200'],
       [OptionNameEnum.language, 'Language', LanguageEnum.de, 'DE'],
-      [OptionNameEnum.maxRecordableTime, 'MaxRecordableTime', MaxRecordableTimeEnum.time_1500, 'RECORDABLE_TIME_1500'],
+      [
+        OptionNameEnum.maxRecordableTime,
+        'MaxRecordableTime',
+        MaxRecordableTimeEnum.time_1500,
+        'RECORDABLE_TIME_1500'
+      ],
       [OptionNameEnum.networkType, 'NetworkType', NetworkTypeEnum.client, 'CLIENT'],
       [OptionNameEnum.offDelay, 'OffDelay', OffDelayEnum.offDelay_15m, 'OFF_DELAY_15M'],
       [OptionNameEnum.password, 'Password', 'password', 'password'],
       [OptionNameEnum.powerSaving, 'PowerSaving', PowerSavingEnum.on, 'ON'],
-      [OptionNameEnum.previewFormat, 'PreviewFormat', PreviewFormatEnum.w1024_h512_f30, 'W1024_H512_F30'],
+      [OptionNameEnum.preset, 'Preset', PresetEnum.room, 'ROOM'],
+      [
+        OptionNameEnum.previewFormat,
+        'PreviewFormat',
+        PreviewFormatEnum.w1024_h512_f30,
+        'W1024_H512_F30'
+      ],
       [OptionNameEnum.proxy, 'Proxy', Proxy(false, '', 8081, '', ''), proxyMap],
       [OptionNameEnum.remainingPictures, 'RemainingPictures', 3, 3],
       [OptionNameEnum.remainingVideoSeconds, 'RemainingVideoSeconds', 4, 4],
       [OptionNameEnum.remainingSpace, 'RemainingSpace', 5, 5],
       [OptionNameEnum.shootingMethod, 'ShootingMethod', ShootingMethodEnum.normal, 'NORMAL'],
-      [OptionNameEnum.shutterSpeed, 'ShutterSpeed', ShutterSpeedEnum.shutterSpeedOneOver_20, 'SHUTTER_SPEED_ONE_OVER_20'],
+      [
+        OptionNameEnum.shutterSpeed,
+        'ShutterSpeed',
+        ShutterSpeedEnum.shutterSpeedOneOver_20,
+        'SHUTTER_SPEED_ONE_OVER_20'
+      ],
       [OptionNameEnum.shutterVolume, 'ShutterVolume', 7, 7],
       [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
-      [OptionNameEnum.timeShift, 'TimeShift', TimeShift(isFrontFirst: true, firstInterval: TimeShiftIntervalEnum.interval_5, secondInterval: TimeShiftIntervalEnum.interval_10), timeShiftMap],
+      [
+        OptionNameEnum.timeShift,
+        'TimeShift',
+        TimeShift(
+            isFrontFirst: true,
+            firstInterval: TimeShiftIntervalEnum.interval_5,
+            secondInterval: TimeShiftIntervalEnum.interval_10),
+        timeShiftMap
+      ],
       [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
       [OptionNameEnum.username, 'Username', 'username', 'username'],
-      [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
-      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.on, 'ON'],
-      [OptionNameEnum.wlanFrequency, 'WlanFrequency', WlanFrequencyEnum.ghz_2_4,'GHZ_2_4'],
+      [
+        OptionNameEnum.whiteBalance,
+        'WhiteBalance',
+        WhiteBalanceEnum.bulbFluorescent,
+        'BULB_FLUORESCENT'
+      ],
+      [
+        OptionNameEnum.whiteBalanceAutoStrength,
+        'WhiteBalanceAutoStrength',
+        WhiteBalanceAutoStrengthEnum.on,
+        'ON'
+      ],
+      [OptionNameEnum.wlanFrequency, 'WlanFrequency', WlanFrequencyEnum.ghz_2_4, 'GHZ_2_4'],
     ];
 
     Map<String, dynamic> optionMap = {};
@@ -768,7 +963,8 @@ void main() {
       expect(arguments['applyTopBottomCorrection'], applyTopBottomCorrection);
       return Future.value(result);
     });
-    expect(await platform.convertVideoFormats(fileUrl, toLowResolution, applyTopBottomCorrection), result);
+    expect(await platform.convertVideoFormats(fileUrl, toLowResolution, applyTopBottomCorrection),
+        result);
   });
 
   test('cancelVideoConvert', () async {
@@ -795,12 +991,7 @@ void main() {
         'authMode': 'NONE',
         'connectionPriority': 1,
         'usingDhcp': true,
-        'proxy': {
-          'use': true,
-          'url': 'xxx',
-          'port': 8081,
-          'userid': 'abc'
-        },
+        'proxy': {'use': true, 'url': 'xxx', 'port': 8081, 'userid': 'abc'},
       },
       {
         'ssid': 'ssid_test2',
@@ -811,12 +1002,7 @@ void main() {
         'ipAddress': '192.168.1.2',
         'subnetMask': '255.255.255.0',
         'defaultGateway': '192.168.1.100',
-        'proxy': {
-          'use': false,
-          'url': '',
-          'port': 0,
-          'userid': ''
-        },
+        'proxy': {'use': false, 'url': '', 'port': 0, 'userid': ''},
       },
       {
         'ssid': 'ssid_test3',
@@ -827,12 +1013,7 @@ void main() {
         'ipAddress': '192.168.1.3',
         'subnetMask': '255.255.255.0',
         'defaultGateway': '192.168.1.101',
-        'proxy': {
-          'use': true,
-          'url': 'xxx',
-          'port': 8081,
-          'userid': 'abc'
-        },
+        'proxy': {'use': true, 'url': 'xxx', 'port': 8081, 'userid': 'abc'},
       },
     ];
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
@@ -880,7 +1061,8 @@ void main() {
       expect(arguments['proxy']['password'], proxy.password);
       return Future.value();
     });
-    await platform.setAccessPointDynamically(ssid, ssidStealth, authMode, password, connectionPriority, proxy);
+    await platform.setAccessPointDynamically(
+        ssid, ssidStealth, authMode, password, connectionPriority, proxy);
   });
 
   test('setAccessPointStatically', () async {
@@ -913,7 +1095,8 @@ void main() {
       expect(arguments['proxy']['password'], proxy.password);
       return Future.value();
     });
-    await platform.setAccessPointStatically(ssid, ssidStealth, authMode, password, connectionPriority, ipAddress, subnetMask, defaultGateway, proxy);
+    await platform.setAccessPointStatically(ssid, ssidStealth, authMode, password,
+        connectionPriority, ipAddress, subnetMask, defaultGateway, proxy);
   });
 
   test('deleteAccessPoint', () async {
@@ -930,15 +1113,35 @@ void main() {
     List<List<dynamic>> data = [
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.apertureAuto, 'APERTURE_AUTO'],
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 5000, 5000],
-      [OptionNameEnum.exposureCompensation, 'ExposureCompensation', ExposureCompensationEnum.zero, 'ZERO'],
+      [
+        OptionNameEnum.exposureCompensation,
+        'ExposureCompensation',
+        ExposureCompensationEnum.zero,
+        'ZERO'
+      ],
       [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delayOff, 'DELAY_OFF'],
-      [OptionNameEnum.exposureProgram, 'ExposureProgram', ExposureProgramEnum.normalProgram, 'NORMAL_PROGRAM'],
+      [
+        OptionNameEnum.exposureProgram,
+        'ExposureProgram',
+        ExposureProgramEnum.normalProgram,
+        'NORMAL_PROGRAM'
+      ],
       [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_6_7K, 'IMAGE_6_7K'],
       [OptionNameEnum.filter, 'Filter', FilterEnum.off, 'OFF'],
       [OptionNameEnum.iso, 'Iso', IsoEnum.isoAuto, 'ISO_AUTO'],
-      [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso6400, 'ISO_6400'],
+      [
+        OptionNameEnum.isoAutoHighLimit,
+        'IsoAutoHighLimit',
+        IsoAutoHighLimitEnum.iso6400,
+        'ISO_6400'
+      ],
       [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.auto, 'AUTO'],
-      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
+      [
+        OptionNameEnum.whiteBalanceAutoStrength,
+        'WhiteBalanceAutoStrength',
+        WhiteBalanceAutoStrengthEnum.off,
+        'OFF'
+      ],
     ];
 
     Map<String, dynamic> optionMap = {};
@@ -968,15 +1171,35 @@ void main() {
     List<List<dynamic>> data = [
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.apertureAuto, 'APERTURE_AUTO'],
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 5000, 5000],
-      [OptionNameEnum.exposureCompensation, 'ExposureCompensation', ExposureCompensationEnum.zero, 'ZERO'],
+      [
+        OptionNameEnum.exposureCompensation,
+        'ExposureCompensation',
+        ExposureCompensationEnum.zero,
+        'ZERO'
+      ],
       [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delayOff, 'DELAY_OFF'],
-      [OptionNameEnum.exposureProgram, 'ExposureProgram', ExposureProgramEnum.normalProgram, 'NORMAL_PROGRAM'],
+      [
+        OptionNameEnum.exposureProgram,
+        'ExposureProgram',
+        ExposureProgramEnum.normalProgram,
+        'NORMAL_PROGRAM'
+      ],
       [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_6_7K, 'IMAGE_6_7K'],
       [OptionNameEnum.filter, 'Filter', FilterEnum.off, 'OFF'],
       [OptionNameEnum.iso, 'Iso', IsoEnum.isoAuto, 'ISO_AUTO'],
-      [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso6400, 'ISO_6400'],
+      [
+        OptionNameEnum.isoAutoHighLimit,
+        'IsoAutoHighLimit',
+        IsoAutoHighLimitEnum.iso6400,
+        'ISO_6400'
+      ],
       [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.auto, 'AUTO'],
-      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
+      [
+        OptionNameEnum.whiteBalanceAutoStrength,
+        'WhiteBalanceAutoStrength',
+        WhiteBalanceAutoStrengthEnum.off,
+        'OFF'
+      ],
     ];
 
     Map<String, dynamic> optionMap = {};
@@ -1008,15 +1231,35 @@ void main() {
     List<List<dynamic>> data = [
       [OptionNameEnum.aperture, 'Aperture', ApertureEnum.apertureAuto, 'APERTURE_AUTO'],
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 100, 100],
-      [OptionNameEnum.exposureCompensation, 'ExposureCompensation', ExposureCompensationEnum.p0_3, 'P0_3'],
+      [
+        OptionNameEnum.exposureCompensation,
+        'ExposureCompensation',
+        ExposureCompensationEnum.p0_3,
+        'P0_3'
+      ],
       [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delay2, 'DELAY_2'],
-      [OptionNameEnum.exposureProgram, 'ExposureProgram', ExposureProgramEnum.shutterPriority, 'SHUTTER_PRIORITY'],
+      [
+        OptionNameEnum.exposureProgram,
+        'ExposureProgram',
+        ExposureProgramEnum.shutterPriority,
+        'SHUTTER_PRIORITY'
+      ],
       [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_2K, 'IMAGE_2K'],
       [OptionNameEnum.filter, 'Filter', FilterEnum.hdr, 'HDR'],
       [OptionNameEnum.iso, 'Iso', IsoEnum.iso100, 'ISO_100'],
-      [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso1250, 'ISO_1250'],
+      [
+        OptionNameEnum.isoAutoHighLimit,
+        'IsoAutoHighLimit',
+        IsoAutoHighLimitEnum.iso1250,
+        'ISO_1250'
+      ],
       [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.auto, 'AUTO'],
-      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
+      [
+        OptionNameEnum.whiteBalanceAutoStrength,
+        'WhiteBalanceAutoStrength',
+        WhiteBalanceAutoStrengthEnum.off,
+        'OFF'
+      ],
     ];
 
     Map<String, dynamic> optionMap = {};
@@ -1176,7 +1419,11 @@ void main() {
   });
 
   test('getPluginOrders', () async {
-    const plugins = ["com.theta360.usbstorage", "com.theta.remoteplayback", "com.theta360.undersidecover"];
+    const plugins = [
+      "com.theta360.usbstorage",
+      "com.theta.remoteplayback",
+      "com.theta360.undersidecover"
+    ];
 
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       expect(methodCall.method, 'getPluginOrders');

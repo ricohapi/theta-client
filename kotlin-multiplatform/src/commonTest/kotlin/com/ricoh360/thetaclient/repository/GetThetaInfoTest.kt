@@ -43,7 +43,7 @@ class GetThetaInfoTest {
         val thetaInfo = thetaRepository.getThetaInfo()
 
         // check
-        assertTrue(thetaRepository.cameraModel == "RICOH THETA Z1", "ThetaRepository cameraModel")
+        assertTrue(thetaRepository.cameraModel == ThetaRepository.ThetaModel.THETA_Z1, "ThetaRepository cameraModel")
         assertTrue(thetaInfo.manufacturer == "RICOH", "info manufacturer")
         assertTrue(thetaInfo.model == "RICOH THETA Z1", "info model")
         assertTrue(thetaInfo.serialNumber.length > 1, "info serialNumber")
@@ -77,7 +77,7 @@ class GetThetaInfoTest {
         val thetaInfo = thetaRepository.getThetaInfo()
 
         // check
-        assertTrue(thetaRepository.cameraModel == "RICOH THETA S", "ThetaRepository cameraModel")
+        assertTrue(thetaRepository.cameraModel == ThetaRepository.ThetaModel.THETA_S, "ThetaRepository cameraModel")
         assertTrue(thetaInfo.manufacturer == "RICOH", "info manufacturer")
         assertTrue(thetaInfo.model == "RICOH THETA S", "info model")
         assertTrue(thetaInfo.serialNumber.length > 1, "info serialNumber")
@@ -111,7 +111,7 @@ class GetThetaInfoTest {
         val thetaInfo = thetaRepository.getThetaInfo()
 
         // check
-        assertTrue(thetaRepository.cameraModel == "RICOH THETA X", "ThetaRepository cameraModel")
+        assertTrue(thetaRepository.cameraModel == ThetaRepository.ThetaModel.THETA_X, "ThetaRepository cameraModel")
         assertTrue(thetaInfo.manufacturer == "RICOH", "info manufacturer")
         assertTrue(thetaInfo.model == "RICOH THETA X", "info model")
         assertTrue(thetaInfo.serialNumber.length > 1, "info serialNumber")
@@ -145,13 +145,53 @@ class GetThetaInfoTest {
         val thetaInfo = thetaRepository.getThetaInfo()
 
         // check
-        assertTrue(thetaRepository.cameraModel == "RICOH THETA SC2", "ThetaRepository cameraModel")
+        assertTrue(thetaRepository.cameraModel == ThetaRepository.ThetaModel.THETA_SC2, "ThetaRepository cameraModel")
         assertTrue(thetaInfo.manufacturer == "RICOH", "info manufacturer")
         assertTrue(thetaInfo.model == "RICOH THETA SC2", "info model")
         assertTrue(thetaInfo.serialNumber.length > 1, "info serialNumber")
         assertNotNull(thetaInfo.wlanMacAddress, "info wlanMacAddress")
         assertNotNull(thetaInfo.bluetoothMacAddress, "info bluetoothMacAddress")
         assertTrue(thetaInfo.firmwareVersion.length > 1, "info firmwareVersion")
+        val result = Regex("^\\d+").find(thetaInfo.firmwareVersion)
+        assertNotNull(result)
+        result.value.toIntOrNull()?.let { assertTrue(it <= 5)} ?: assertTrue(false, "firmware version")
+        assertTrue(thetaInfo.supportUrl == "https://theta360.com/en/support/", "info supportUrl")
+        assertTrue(!thetaInfo.hasGps, "info hasGps")
+        assertTrue(thetaInfo.hasGyro, "info hasGyro")
+        assertTrue(thetaInfo.uptime > 0, "info uptime")
+        assertTrue(thetaInfo.api == listOf("/osc/info", "/osc/state", "/osc/checkForUpdates",
+            "/osc/commands/execute", "/osc/commands/status"), "info api")
+        assertTrue(thetaInfo.endpoints == EndPoint(80, 80), "info endpoints")
+        assertTrue(thetaInfo.apiLevel == listOf(2), "info apiLevel")
+    }
+
+    /**
+     * call getThetaInfo for THETA SC2 for business.
+     */
+    @Test
+    fun getThetaInfoForSC2BusinessTest() = runTest {
+        // setup
+        val jsonString = Resource("src/commonTest/resources/info/info_sc2_business.json").readText()
+        MockApiClient.onRequest = { request ->
+            assertEquals(request.url.encodedPath, "/osc/info", "request path")
+            ByteReadChannel(jsonString)
+        }
+
+        // test
+        val thetaRepository = ThetaRepository(endpoint)
+        val thetaInfo = thetaRepository.getThetaInfo()
+
+        // check
+        assertTrue(thetaRepository.cameraModel == ThetaRepository.ThetaModel.THETA_SC2_B, "ThetaRepository cameraModel")
+        assertTrue(thetaInfo.manufacturer == "RICOH", "info manufacturer")
+        assertTrue(thetaInfo.model == "RICOH THETA SC2", "info model")
+        assertTrue(thetaInfo.serialNumber.length > 1, "info serialNumber")
+        assertNotNull(thetaInfo.wlanMacAddress, "info wlanMacAddress")
+        assertNotNull(thetaInfo.bluetoothMacAddress, "info bluetoothMacAddress")
+        assertTrue(thetaInfo.firmwareVersion.length > 1, "info firmwareVersion")
+        val result = Regex("^\\d+").find(thetaInfo.firmwareVersion)
+        assertNotNull(result)
+        result.value.toIntOrNull()?.let { assertTrue(it >= 6)} ?: assertTrue(false, "firmware version")
         assertTrue(thetaInfo.supportUrl == "https://theta360.com/en/support/", "info supportUrl")
         assertTrue(!thetaInfo.hasGps, "info hasGps")
         assertTrue(thetaInfo.hasGyro, "info hasGyro")
@@ -237,16 +277,20 @@ class GetThetaInfoTest {
         val modelEnumArray = arrayOf(
             ThetaRepository.ThetaModel.THETA_S,
             ThetaRepository.ThetaModel.THETA_SC,
+            ThetaRepository.ThetaModel.THETA_SC2,
+            ThetaRepository.ThetaModel.THETA_SC2_B,
             ThetaRepository.ThetaModel.THETA_V,
             ThetaRepository.ThetaModel.THETA_Z1,
-            ThetaRepository.ThetaModel.THETA_X
+            ThetaRepository.ThetaModel.THETA_X,
         )
         val modelNameArray = arrayOf(
             "RICOH THETA S",
             "RICOH THETA SC",
+            "RICOH THETA SC2",
+            "RICOH THETA SC2", // SC2 for business
             "RICOH THETA V",
             "RICOH THETA Z1",
-            "RICOH THETA X"
+            "RICOH THETA X",
         )
 
         modelEnumArray.forEachIndexed { index, it ->
@@ -254,7 +298,14 @@ class GetThetaInfoTest {
         }
 
         modelNameArray.forEachIndexed { index, it ->
-            assertEquals(ThetaRepository.ThetaModel.get(it), modelEnumArray[index], "Name: $it ThetaModel: $modelEnumArray[index].value")
+            when (index) {
+                // SC2
+                2 -> assertEquals(ThetaRepository.ThetaModel.get(it, "00118200"), modelEnumArray[index], "Name: $it ThetaModel: $modelEnumArray[index].value")
+                // SC2 for business
+                3 -> assertEquals(ThetaRepository.ThetaModel.get(it, "40118200"), modelEnumArray[index], "Name: $it ThetaModel: $modelEnumArray[index].value")
+                // other models
+                else -> assertEquals(ThetaRepository.ThetaModel.get(it), modelEnumArray[index], "Name: $it ThetaModel: $modelEnumArray[index].value")
+            }
         }
 
         assertNull(ThetaRepository.ThetaModel.get("Other camera"), "Other camera enum")

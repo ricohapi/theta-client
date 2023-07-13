@@ -69,4 +69,4 @@ data class SetMySettingResponse(
      */
     override val progress: CommandProgress? = null,
 
-) : CommandApiResponse
+    ) : CommandApiResponse

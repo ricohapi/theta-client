@@ -10,13 +10,17 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 class MockThetaClientFlutterPlatform
     with MockPlatformInterfaceMixin
     implements ThetaClientFlutterPlatform {
-
   @override
   Future<String?> getPlatformVersion() => Future.value('42');
 
   @override
   Future<void> getLivePreview(bool Function(Uint8List p1) frameHandler) {
     return onCallGetLivePreview();
+  }
+
+  @override
+  Future<ThetaModel?> getThetaModel() {
+    return onGetThetaModel();
   }
 
   @override
@@ -40,7 +44,8 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
-  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, int startPosition, StorageEnum? storage) {
+  Future<ThetaFiles> listFiles(
+      FileTypeEnum fileType, int entryCount, int startPosition, StorageEnum? storage) {
     return onCallListFiles();
   }
 
@@ -58,7 +63,7 @@ class MockThetaClientFlutterPlatform
   Future<String?> takePicture() {
     return onCallTakePicture();
   }
-  
+
   @override
   Future<void> getVideoCaptureBuilder() {
     return onCallGetVideoCaptureBuilder();
@@ -68,100 +73,108 @@ class MockThetaClientFlutterPlatform
   Future<void> buildVideoCapture(Map<String, dynamic> options) {
     return onCallBuildVideoCapture(options);
   }
-  
+
   @override
   Future<String?> startVideoCapture() {
     return onCallStartVideoCapture();
   }
-  
+
   @override
   Future<void> stopVideoCapture() {
     return onCallStopVideoCapture();
   }
-  
+
   @override
   Future<Options> getOptions(List<OptionNameEnum> optionNames) {
     return onCallGetOptions(optionNames);
   }
-  
+
   @override
   Future<void> setOptions(Options options) {
     return onCallSetOptions(options);
   }
-  
+
   @override
   Future<void> restoreSettings() {
     return onCallRestoreSettings();
   }
-  
+
   @override
   Future<void> deleteAllFiles() {
     return Future.value();
   }
-  
+
   @override
   Future<void> deleteAllImageFiles() {
     return Future.value();
   }
-  
+
   @override
   Future<void> deleteAllVideoFiles() {
     return Future.value();
   }
-  
+
   @override
   Future<void> deleteFiles(List<String> fileUrls) {
     return Future.value();
   }
-  
+
   @override
   Future<Metadata> getMetadata(String fileUrl) {
-    return Future.value(Metadata(
-      Exif('', '', 0, 0, 0.0, 0.0),
-      Xmp(0.0, 0, 0)
-    ));
+    return Future.value(Metadata(Exif('', '', 0, 0, 0.0, 0.0), Xmp(0.0, 0, 0)));
   }
-  
+
   @override
   Future<void> reset() {
     return Future.value();
   }
-  
+
   @override
   Future<void> stopSelfTimer() {
     return Future.value();
   }
-  
+
   @override
-  Future<String> convertVideoFormats(String fileUrl, bool toLowResolution, bool applyTopBottomCorrection) {
+  Future<String> convertVideoFormats(
+      String fileUrl, bool toLowResolution, bool applyTopBottomCorrection) {
     return Future.value('');
   }
-  
+
   @override
   Future<void> cancelVideoConvert() {
     return Future.value();
   }
-  
+
   @override
   Future<void> finishWlan() {
     return Future.value();
   }
-  
+
   @override
   Future<List<AccessPoint>> listAccessPoints() {
     return Future.value([]);
   }
-  
+
   @override
-  Future<void> setAccessPointDynamically(String ssid, bool ssidStealth, AuthModeEnum authMode, String password, int connectionPriority, Proxy? proxy) {
+  Future<void> setAccessPointDynamically(String ssid, bool ssidStealth, AuthModeEnum authMode,
+      String password, int connectionPriority, Proxy? proxy) {
     return Future.value();
   }
-  
+
   @override
-  Future<void> setAccessPointStatically(String ssid, bool ssidStealth, AuthModeEnum authMode, String password, int connectionPriority, String ipAddress, String subnetMask, String defaultGateway, Proxy? proxy) {
+  Future<void> setAccessPointStatically(
+      String ssid,
+      bool ssidStealth,
+      AuthModeEnum authMode,
+      String password,
+      int connectionPriority,
+      String ipAddress,
+      String subnetMask,
+      String defaultGateway,
+      Proxy? proxy) {
     return Future.value();
   }
-  
+
   @override
   Future<void> deleteAccessPoint(String ssid) {
     return Future.value();
@@ -230,6 +243,7 @@ class MockThetaClientFlutterPlatform
 
 Future<void> Function() onCallInitialize = Future.value;
 Future<bool> Function() onCallIsInitialized = Future.value;
+Future<ThetaModel?> Function() onGetThetaModel = Future.value;
 Future<ThetaInfo> Function() onGetThetaInfo = Future.value;
 Future<ThetaState> Function() onGetThetaState = Future.value;
 Future<void> Function() onCallGetLivePreview = Future.value;
@@ -241,7 +255,8 @@ Future<void> Function() onCallGetVideoCaptureBuilder = Future.value;
 Future<void> Function(Map<String, dynamic> options) onCallBuildVideoCapture = Future.value;
 Future<String?> Function() onCallStartVideoCapture = Future.value;
 Future<void> Function() onCallStopVideoCapture = Future.value;
-Future<Options> Function(List<OptionNameEnum> optionNames) onCallGetOptions = (optionNames) => Future.value(Options());
+Future<Options> Function(List<OptionNameEnum> optionNames) onCallGetOptions =
+    (optionNames) => Future.value(Options());
 Future<void> Function(Options options) onCallSetOptions = Future.value;
 Future<void> Function() onCallRestoreSettings = Future.value;
 Future<List<PluginInfo>> Function() onCallGetPluginInfos = Future.value;
@@ -285,22 +300,38 @@ void main() {
     expect(await thetaClientPlugin.isInitialized(), isTrue);
   });
 
+  test('getThetaModel', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    const thetaModel = ThetaModel.thetaZ1;
+    onGetThetaModel = () {
+      return Future.value(thetaModel);
+    };
+
+    var model = await thetaClientPlugin.getThetaModel();
+    expect(model, thetaModel);
+  });
+
   test('getThetaInfo', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
     MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     const model = 'RICOH THETA Z1';
+    const thetaModel = ThetaModel.thetaZ1;
     const api = ['a', 'b'];
     const apiLevel = [2];
     var endpoints = Endpoints(80, 80);
     onGetThetaInfo = () {
-      return Future.value(ThetaInfo('RICOH', model, 'serialNo', 'wlanMac', 'blMac',
-      'firmVersion', 'supportUrl', true, true, 1, api, endpoints, apiLevel));
+      return Future.value(ThetaInfo('RICOH', model, 'serialNo', 'wlanMac', 'blMac', 'firmVersion',
+          'supportUrl', true, true, 1, api, endpoints, apiLevel, thetaModel));
     };
 
     var thetaInfo = await thetaClientPlugin.getThetaInfo();
     expect(thetaInfo.model, model);
+    expect(thetaInfo.thetaModel, thetaModel);
   });
 
   test('getThetaState', () async {
@@ -330,28 +361,26 @@ void main() {
     const isBatteryInsert = false;
     onGetThetaState = () {
       return Future.value(ThetaState(
-        fingerprint,
-        batteryLevel,
-        storageUri,
-        storageID,
-        captureStatus,
-        recordedTime,
-        recordableTime,
-        capturedPictures,
-        compositeShootingElapsedTime,
-        latestFileUrl,
-        chargingState,
-        apiVersion,
-        isPluginRunning,
-        isPluginWebServer,
-        function,
-        isMySettingChanged,
-        currentMicrophone,
-        isSdCard,
-        cameraError,
-        isBatteryInsert
-        )
-      );
+          fingerprint,
+          batteryLevel,
+          storageUri,
+          storageID,
+          captureStatus,
+          recordedTime,
+          recordableTime,
+          capturedPictures,
+          compositeShootingElapsedTime,
+          latestFileUrl,
+          chargingState,
+          apiVersion,
+          isPluginRunning,
+          isPluginWebServer,
+          function,
+          isMySettingChanged,
+          currentMicrophone,
+          isSdCard,
+          cameraError,
+          isBatteryInsert));
     };
 
     var thetaState = await thetaClientPlugin.getThetaState();
@@ -376,32 +405,6 @@ void main() {
     expect(thetaState.isSdCard, isSdCard);
     expect(thetaState.cameraError, cameraError);
     expect(thetaState.isBatteryInsert, isBatteryInsert);
-  });
-
-  test('listFiles', () async {
-    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
-    ThetaClientFlutterPlatform.instance = fakePlatform;
-
-    const name = 'R0013336.JPG';
-    var infoList = List<FileInfo>.empty(growable: true);
-    infoList.add(
-      FileInfo(
-        name,
-        100,
-        '2022:11:15 14:00:15',
-        'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG',
-        'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG?type=thumb',
-        '01234567890',
-      )
-    );
-    var input = ThetaFiles(infoList, 10);
-    onCallListFiles = () {
-      return Future.value(input);
-    };
-
-    var result = await thetaClientPlugin.listFiles(FileTypeEnum.image, 10, 10, StorageEnum.current);
-    expect(result, input);
   });
 
   test('getPhotoCaptureBuilder', () async {
@@ -497,13 +500,13 @@ void main() {
     var builder = thetaClientPlugin.getPhotoCaptureBuilder();
     var capture = await builder.build();
     String? fileUrl;
-    capture.takePicture((value) { 
+    capture.takePicture((value) {
       expect(value, imageUrl);
       fileUrl = value;
     }, (exception) {
       expect(false, isTrue, reason: 'Error. takePicture');
     });
-    await Future.delayed(const Duration(milliseconds: 10), (){});
+    await Future.delayed(const Duration(milliseconds: 10), () {});
     expect(fileUrl, imageUrl);
     expect(capture.getAperture(), isNull);
   });
@@ -523,14 +526,14 @@ void main() {
     var capture = await builder.build();
     String? fileUrl;
     dynamic error;
-    capture.takePicture((value) { 
+    capture.takePicture((value) {
       fileUrl = value;
       expect(false, isTrue, reason: 'Error. takePicture');
     }, (exception) {
       error = exception;
       expect(exception, isNotNull);
     });
-    await Future.delayed(const Duration(milliseconds: 10), (){});
+    await Future.delayed(const Duration(milliseconds: 10), () {});
     expect(fileUrl, isNull);
     expect(error, isNotNull);
   });
@@ -628,13 +631,13 @@ void main() {
     var builder = thetaClientPlugin.getVideoCaptureBuilder();
     var capture = await builder.build();
     String? fileUrl;
-    capture.startCapture((value) { 
+    capture.startCapture((value) {
       expect(value, imageUrl);
       fileUrl = value;
     }, (exception) {
       expect(false, isTrue, reason: 'Error. startCapture');
     });
-    await Future.delayed(const Duration(milliseconds: 10), (){});
+    await Future.delayed(const Duration(milliseconds: 10), () {});
     expect(fileUrl, imageUrl);
     expect(capture.getAperture(), isNull);
   });
@@ -657,13 +660,13 @@ void main() {
 
     var builder = thetaClientPlugin.getVideoCaptureBuilder();
     var capture = await builder.build();
-    var capturing = capture.startCapture((value) { 
+    var capturing = capture.startCapture((value) {
       expect(false, isTrue, reason: 'startCapture');
     }, (exception) {
       expect(exception, isNotNull, reason: 'Error. startCapture');
     });
     capturing.stopCapture();
-    await Future.delayed(const Duration(milliseconds: 10), (){});
+    await Future.delayed(const Duration(milliseconds: 10), () {});
     expect(capture.getAperture(), isNull);
   });
 
@@ -688,14 +691,14 @@ void main() {
     var builder = thetaClientPlugin.getVideoCaptureBuilder();
     var capture = await builder.build();
     String? fileUrl;
-    var capturing = capture.startCapture((value) { 
+    var capturing = capture.startCapture((value) {
       expect(value, imageUrl);
       fileUrl = value;
     }, (exception) {
       expect(false, isTrue, reason: 'Error. startCapture');
     });
     capturing.stopCapture();
-    await Future.delayed(const Duration(milliseconds: 10), (){});
+    await Future.delayed(const Duration(milliseconds: 10), () {});
     expect(fileUrl, imageUrl);
     expect(capture.getAperture(), isNull);
   });

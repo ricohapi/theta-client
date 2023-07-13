@@ -35,11 +35,19 @@ class CheckRequest {
 
         fun checkSetOptions(
             request: HttpRequestData,
+            aiAutoThumbnail: AiAutoThumbnail? = null,
             aperture: Float? = null,
+            bitrate: String? = null,
             bluetoothPower: BluetoothPower? = null,
+            burstMode: BurstMode? = null,
+            burstOption: BurstOption? = null,
             cameraControlSource: CameraControlSource? = null,
             cameraMode: CameraMode? = null,
+            captureInterval: Int? = null,
             captureMode: CaptureMode? = null,
+            captureNumber: Int? = null,
+            compositeShootingOutputInterval: Int? = null,
+            compositeShootingTime: Int? = null,
             clientVersion: Int? = null,
             colorTemperature: Int? = null,
             dateTimeZone: String? = null,
@@ -57,6 +65,7 @@ class CheckRequest {
             networkType: NetworkType? = null,
             offDelay: Int? = null,
             powerSaving: PowerSaving? = null,
+            preset: Preset? = null,
             previewFormat: PreviewFormat? = null,
             proxy: Proxy? = null,
             shootingMethod: ShootingMethod? = null,
@@ -78,11 +87,23 @@ class CheckRequest {
             }
             val optionsRequest = js.decodeFromString<SetOptionsRequest>(body.text)
 
+            aiAutoThumbnail?.let {
+                assertEquals(optionsRequest.parameters.options._aiAutoThumbnail, it, "setOptions _aiAutoThumbnail")
+            }
             aperture?.let {
                 assertEquals(optionsRequest.parameters.options.aperture, it, "setOptions aperture")
             }
+            bitrate?.let {
+                assertEquals(optionsRequest.parameters.options._bitrate, it, "setOptions bitrate")
+            }
             bluetoothPower?.let {
                 assertEquals(optionsRequest.parameters.options._bluetoothPower, it, "setOptions bluetoothPower")
+            }
+            burstMode?.let {
+                assertEquals(optionsRequest.parameters.options._burstMode, it, "setOptions burstMode")
+            }
+            burstOption?.let {
+                assertEquals(optionsRequest.parameters.options._burstOption, it, "setOptions burstOption")
             }
             cameraControlSource?.let {
                 assertEquals(optionsRequest.parameters.options._cameraControlSource, it, "setOptions cameraControlSource")
@@ -90,8 +111,20 @@ class CheckRequest {
             cameraMode?.let {
                 assertEquals(optionsRequest.parameters.options._cameraMode, it, "setOptions cameraMode")
             }
+            captureInterval?.let {
+                assertEquals(optionsRequest.parameters.options.captureInterval, it, "setOptions captureInterval")
+            }
             captureMode?.let {
                 assertEquals(optionsRequest.parameters.options.captureMode, it, "setOptions captureMode")
+            }
+            captureNumber?.let {
+                assertEquals(optionsRequest.parameters.options.captureNumber, it, "setOptions captureNumber")
+            }
+            compositeShootingOutputInterval?.let {
+                assertEquals(optionsRequest.parameters.options._compositeShootingOutputInterval, it, "setOptions compositeShootingOutputInterval")
+            }
+            compositeShootingTime?.let {
+                assertEquals(optionsRequest.parameters.options._compositeShootingTime, it, "setOptions compositeShootingTime")
             }
             clientVersion?.let {
                 assertEquals(optionsRequest.parameters.options.clientVersion, it, "setOptions clientVersion")
@@ -143,6 +176,9 @@ class CheckRequest {
             }
             powerSaving?.let {
                 assertEquals(optionsRequest.parameters.options._powerSaving, it, "setOptions powerSaving")
+            }
+            preset?.let {
+                assertEquals(optionsRequest.parameters.options._preset, it, "setOptions preset")
             }
             previewFormat?.let {
                 assertEquals(optionsRequest.parameters.options.previewFormat, it, "setOptions previewFormat")
