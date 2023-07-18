@@ -73,7 +73,7 @@ class UpdateFirmwareOnActualTheta {
 
     /**
      * Test for Theta X
-     *
+     * Connect Theta with client mode, then set X_SERIAL_NUMBER and URL_CL.
      */
     @Test
     fun updateFirmwareXTest() = runTest(dispatchTimeoutMs = TIMEOUT) {
@@ -84,7 +84,13 @@ class UpdateFirmwareOnActualTheta {
 
         val thetaRepository = kotlin.runCatching {
             ThetaRepository.newInstance(
-                endpoint,
+                URL_CL,
+                config = ThetaRepository.Config(
+                    clientMode = DigestAuth(
+                        USERNAME_PREFIX + X_SERIAL_NUMBER,
+                        X_SERIAL_NUMBER.substring(PASSWORD_START_POSITION)
+                    )
+                ),
                 timeout = ThetaRepository.Timeout(requestTimeout = TIMEOUT, socketTimeout = TIMEOUT)
             )
         }.onFailure {
@@ -148,9 +154,19 @@ class UpdateFirmwareOnActualTheta {
         // previous firmware file of SC2 for business
         const val SC2_B_FILE_PREVIOUS = "bx1_v641.frm"
         // lastest firmware version of X
-        const val X_VERSION_LATEST = "02.20.1"
+        const val X_VERSION_LATEST = "2.20.1"
         // latest firmware file of X
-        //const val X_FILE_LATEST = "cv1_v220.frm"
-        const val X_FILE_LATEST = "cv1_v220_v210.frm"
+        const val X_FILE_LATEST = "cv1_v220.frm"
+        //const val X_FILE_LATEST = "cv1_v220_v210.frm"
+
+        // User name of digest authentication is X_USERNAME_PREFIX + X_SERIAL_NUMBER
+        const val USERNAME_PREFIX = "THETA"
+        // Password of digest authentication is the characters from 3rd character of X_SERIAL_NUMBER
+        const val PASSWORD_START_POSITION = 2
+        // Serial number of Theta X. Password is assumed not to be changed.
+        //const val X_SERIAL_NUMBER = "YR15104645"
+        const val X_SERIAL_NUMBER = "YR13000011"
+        // IP address in client mode.
+        const val URL_CL = "http://192.168.1.12:80/"
     }
 }
