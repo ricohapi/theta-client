@@ -1,6 +1,5 @@
 package com.ricoh360.thetaclient
 
-import com.ricoh360.thetaclient.repository.UpdateFirmwareTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import java.nio.file.Files
@@ -56,9 +55,9 @@ class UpdateFirmwareOnActualTheta {
         println("Firmware size: ${firmware?.size}")
 
         val apiPath = kotlin.runCatching {
-            System.getenv(UpdateFirmwareTest.FIRMWARE_UPDATE_API_ENV_NAME)
+            System.getenv(UpdateFirmwareOnActualTheta.FIRMWARE_UPDATE_API_ENV_NAME)
         }.onFailure {
-            assertTrue(false, "${UpdateFirmwareTest.FIRMWARE_UPDATE_API_ENV_NAME} can not be accessed")
+            assertTrue(false, "${UpdateFirmwareOnActualTheta.FIRMWARE_UPDATE_API_ENV_NAME} can not be accessed")
         }.getOrNull()
         assertNotNull(apiPath, "API path is null")
         println("API path: $apiPath")
@@ -110,9 +109,9 @@ class UpdateFirmwareOnActualTheta {
         println("Firmware size: ${firmware?.size}")
 
         val apiPath = kotlin.runCatching {
-            System.getenv(UpdateFirmwareTest.FIRMWARE_UPDATE_API_ENV_NAME)
+            System.getenv(UpdateFirmwareOnActualTheta.FIRMWARE_UPDATE_API_ENV_NAME)
         }.onFailure {
-            assertTrue(false, "${UpdateFirmwareTest.FIRMWARE_UPDATE_API_ENV_NAME} can not be accessed")
+            assertTrue(false, "${UpdateFirmwareOnActualTheta.FIRMWARE_UPDATE_API_ENV_NAME} can not be accessed")
         }.getOrNull()
         assertNotNull(apiPath, "API path is null")
         println("API path: $apiPath")
@@ -151,6 +150,7 @@ class UpdateFirmwareOnActualTheta {
         // lastest firmware version of X
         const val X_VERSION_LATEST = "02.20.1"
         // latest firmware file of X
-        const val X_FILE_LATEST = "cv1_v220.frm"
+        //const val X_FILE_LATEST = "cv1_v220.frm"
+        const val X_FILE_LATEST = "cv1_v220_v210.frm"
     }
 }
