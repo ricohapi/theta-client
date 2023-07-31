@@ -47,7 +47,7 @@ class UpdateFirmwareTest {
         }
         println("apiPath: $apiPath")
         MockApiClient.onMultipartPostRequest = { _, _, _, _, ->
-            Resource("src/commonTest/resources/updateFirmware/update_firmware.done.json").readText()
+            Resource("src/commonTest/resources/updateFirmware/update_firmware.done.json").readText().toByteArray()
         }
 
         val thetaRepository = ThetaRepository(endpoint)

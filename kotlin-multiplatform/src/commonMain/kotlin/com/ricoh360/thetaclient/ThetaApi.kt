@@ -128,8 +128,7 @@ object ThetaApi {
         }
         //val responseBody = ApiClient.multipartPostClient.request(endpoint, apiPath, filePaths)
         val responseBody = multipartPostClient.request(endpoint, apiPath, filePaths)
-        println(responseBody)
-        return Json.decodeFromString<UpdateFirmwareApiResponse>(responseBody)
+        return Json.decodeFromString<UpdateFirmwareApiResponse>(String(responseBody))
     }
 
     /*

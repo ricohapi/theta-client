@@ -35,7 +35,7 @@ object MockApiClient {
             path: String,
             filePaths: List<String>,
             boundary: String
-        ) -> String
+        ) -> ByteArray
     )? = null
     val mockHttpClient = HttpClient(MockEngine) {
         expectSuccess = true
@@ -101,11 +101,11 @@ object MockApiClient {
             path: String,
             filePaths: List<String>,
             boundary: String
-        ): String {
+        ): ByteArray {
             onMultipartPostRequest?.let {
                 return it(endpoint, path, filePaths, boundary)
             }
-            return("")
+            return byteArrayOf()
         }
     }
 

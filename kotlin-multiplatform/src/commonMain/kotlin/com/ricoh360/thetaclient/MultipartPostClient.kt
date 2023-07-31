@@ -115,9 +115,6 @@ open class BaseHttpClient(connectionTimeout: Long = 20_000L, socketTimeout: Long
         /** receive buffer */
         val buffer: ByteArray = ByteArray(10 * 1024)
 
-        /** response part buffer */
-        var parts: ByteArray = ByteArray(100 * 1024)
-
         /** line buffer for response headers */
         val lineBuffer: ByteArray = ByteArray(1024)
     }
@@ -198,9 +195,8 @@ open class BaseHttpClient(connectionTimeout: Long = 20_000L, socketTimeout: Long
 
     /**
      * write a request line of http.
-     * http version if fixed to 1.1.
+     * http version is fixed to 1.1.
      *
-     * @param host host name or IP address of a HTTP server
      * @param path HTTP request target
      * @param method HTTP method
      */
@@ -428,6 +424,7 @@ class BaseHttpClientException(
 
 /**
  * HTTP client interface for update firmware
+ * This interface is used in unit tests.
  */
 interface MultipartPostClient  {
     companion object {
@@ -449,7 +446,7 @@ interface MultipartPostClient  {
         path: String,
         filePaths: List<String>,
         boundary: String = BOUNDARY,
-    ): String
+    ): ByteArray
 }
 
 /**
@@ -585,7 +582,7 @@ class MultipartPostClientImpl(connectionTimeout: Long = 30_000L, socketTimeout: 
         path: String,
         filePaths: List<String>,
         boundary: String,
-    ): String {
+    ): ByteArray {
         requestOnce(endpoint, path, filePaths, boundary)
         if(this.status == HttpStatusCode.Unauthorized.value) { // need digest authentication
             ApiClient.digestAuth?.let { digestAuth ->
@@ -600,7 +597,7 @@ class MultipartPostClientImpl(connectionTimeout: Long = 30_000L, socketTimeout: 
         }
         readBody()
         if(HttpStatusCode(this.status, this.statusMessage?: "").isSuccess()) {
-            return this.responseBody?.toString() ?: ""
+            return this.responseBody ?: byteArrayOf()
         } else {
             throw(BaseHttpClientException("${this.status} ${this.statusMessage} ${this.responseBody}"))
         }
