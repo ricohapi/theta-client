@@ -46,10 +46,8 @@ class UpdateFirmwareTest {
             return@runTest
         }
         println("apiPath: $apiPath")
-        MockApiClient.onRequest = { request ->
-            // check request
-            assertEquals(request.url.encodedPath, apiPath, "request path")
-            ByteReadChannel(Resource("src/commonTest/resources/updateFirmware/update_firmware.done.json").readText())
+        MockApiClient.onMultipartPostRequest = { _, _, _, _, ->
+            Resource("src/commonTest/resources/updateFirmware/update_firmware.done.json").readText()
         }
 
         val thetaRepository = ThetaRepository(endpoint)

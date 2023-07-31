@@ -29,7 +29,14 @@ object MockApiClient {
     var onPreviewClose: (() -> Unit)? = null
     var onPreviewHasNextPart: (() -> Boolean)? = null
     var onPreviewNextPart: (() -> Pair<ByteArray, Int>)? = null
-
+    var onMultipartPostRequest: (
+        (
+            endpoint: String,
+            path: String,
+            filePaths: List<String>,
+            boundary: String
+        ) -> String
+    )? = null
     val mockHttpClient = HttpClient(MockEngine) {
         expectSuccess = true
         engine {
@@ -88,6 +95,20 @@ object MockApiClient {
         }
     }
 
+    val mockMultipartPostClient = object : MultipartPostClient {
+        override suspend fun request(
+            endpoint: String,
+            path: String,
+            filePaths: List<String>,
+            boundary: String
+        ): String {
+            onMultipartPostRequest?.let {
+                return it(endpoint, path, filePaths, boundary)
+            }
+            return("")
+        }
+    }
+
     init {
         setupDigestAuth(mockHttpClient)
     }
@@ -100,5 +121,6 @@ object MockApiClient {
         onPreviewClose = null
         onPreviewHasNextPart = null
         onPreviewNextPart = null
+        onMultipartPostRequest = null
     }
 }

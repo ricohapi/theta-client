@@ -36,8 +36,7 @@ object ThetaApi {
         get() = getPreviewClient()
 
     val multipartPostClient: MultipartPostClient // just for updateFirmware protcol
-        //get() = getMultipartPostClient()
-        get() = ApiClient.multipartPostClient
+        get() = getMultipartPostClient()
 
     /**
      * Call [/osc/info](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/protocols/info.md)
@@ -129,6 +128,7 @@ object ThetaApi {
         }
         //val responseBody = ApiClient.multipartPostClient.request(endpoint, apiPath, filePaths)
         val responseBody = multipartPostClient.request(endpoint, apiPath, filePaths)
+        println(responseBody)
         return Json.decodeFromString<UpdateFirmwareApiResponse>(responseBody)
     }
 

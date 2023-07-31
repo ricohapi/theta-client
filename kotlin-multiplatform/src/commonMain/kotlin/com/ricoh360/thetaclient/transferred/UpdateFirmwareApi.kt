@@ -32,5 +32,5 @@ data class UpdateFirmwareApiResponse(
      *
      * @see CommandError
      */
-    val error: CommandError?
+    val error: CommandError? = null
 )

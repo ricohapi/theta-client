@@ -29,10 +29,23 @@ fun getHttpClient(): HttpClient {
  *
  * @return PreviewClient
  */
-fun getHPreviewClient(): PreviewClient {
+fun getPreviewClient(): PreviewClient {
     return if (MockApiClient.useMock) {
         MockApiClient.mockPreviewClient
     } else {
         ApiClient.previewClient
+    }
+}
+
+/**
+ * Return MultipartPostClient for updateFirmware unit test.
+ *
+ * @return mock MultipartPostClient when useMock is true.
+ */
+fun getMultipartPostClient(): MultipartPostClient {
+    return if (MockApiClient.useMock) {
+        MockApiClient.mockMultipartPostClient
+    } else {
+        ApiClient.multipartPostClient
     }
 }
