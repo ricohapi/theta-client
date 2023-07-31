@@ -56,6 +56,7 @@ internal object ApiClient {
     }
 
     internal val previewClient = PreviewClientImpl()
+    internal val multipartPostClient = MultipartPostClientImpl()
 }
 
 /**
@@ -81,6 +82,17 @@ fun getHttpClient(): HttpClient {
  *
  * @return PreviewClient
  */
-fun getHPreviewClient(): PreviewClient {
+fun getPreviewClient(): PreviewClient {
     return ApiClient.previewClient
+}
+
+/**
+ * Return default MultipartPostHttpClient for update firmware
+ *
+ * Override when unit test.
+ *
+ * @return MultipartPostHttpClient
+ */
+fun getMultipartPostClient(): MultipartPostClient {
+    return ApiClient.multipartPostClient
 }

@@ -43,16 +43,9 @@ class UpdateFirmwareOnActualTheta {
         }
 
         val firmFile = when (thetaRepository.getThetaInfo().firmwareVersion) {
-            SC2_B_VERSION_LATEST -> SC2_B_FILE_PREVIOUS
-            else -> SC2_B_FILE_LATEST
+            SC2_B_VERSION_LATEST -> DIR + SC2_B_FILE_PREVIOUS
+            else -> DIR + SC2_B_FILE_LATEST
         }
-
-        val firmware: ByteArray? = kotlin.runCatching {
-            readFile(DIR, firmFile)
-        }.onFailure {
-            assertTrue(false, it.toString())
-        }.getOrNull()
-        println("Firmware size: ${firmware?.size}")
 
         val apiPath = kotlin.runCatching {
             System.getenv(UpdateFirmwareOnActualTheta.FIRMWARE_UPDATE_API_ENV_NAME)
@@ -63,7 +56,7 @@ class UpdateFirmwareOnActualTheta {
         println("API path: $apiPath")
 
         kotlin.runCatching {
-            thetaRepository.updateFirmware(apiPath, listOf(firmware!!), listOf(firmFile))
+            thetaRepository.updateFirmware(apiPath, listOf(firmFile))
         }.onFailure {
             assertTrue(false, it.toString())
             return@runTest
@@ -107,13 +100,6 @@ class UpdateFirmwareOnActualTheta {
             return@runTest
         }
 
-        val firmware: ByteArray? = kotlin.runCatching {
-            readFile(DIR, X_FILE_LATEST)
-        }.onFailure {
-            assertTrue(false, it.toString())
-        }.getOrNull()
-        println("Firmware size: ${firmware?.size}")
-
         val apiPath = kotlin.runCatching {
             System.getenv(UpdateFirmwareOnActualTheta.FIRMWARE_UPDATE_API_ENV_NAME)
         }.onFailure {
@@ -123,7 +109,7 @@ class UpdateFirmwareOnActualTheta {
         println("API path: $apiPath")
 
         kotlin.runCatching {
-            thetaRepository.updateFirmware(apiPath, listOf(firmware!!), listOf(X_FILE_LATEST))
+            thetaRepository.updateFirmware(apiPath, listOf(DIR + X_FILE_LATEST))
         }.onFailure {
             assertTrue(false, it.toString())
             return@runTest

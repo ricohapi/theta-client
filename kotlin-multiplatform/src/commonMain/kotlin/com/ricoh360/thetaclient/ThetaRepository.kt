@@ -420,15 +420,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * In case of Theta SC2, power off and on by hand is needed after this command finishes.
      *
      * @param apiPath The path of firmware update API which is non-public.
-     * @param fileContents List of firmware binary.
-     * @param fileNames List of firmware file name.
+     * @param filePaths List of firmware file path.
      * @exception ThetaWebApiException If an error occurs in THETA.
      * @exception NotConnectedException
      */
     @Throws(Throwable::class)
-    suspend fun updateFirmware(apiPath: String, fileContents: List<ByteArray>, fileNames: List<String>) {
+    suspend fun updateFirmware(apiPath: String, filePaths: List<String>) {
         try {
-            val response = ThetaApi.callUpdateFirmwareApi(endpoint, apiPath, fileContents, fileNames)
+            val response = ThetaApi.callUpdateFirmwareApi(endpoint, apiPath, filePaths)
             response.error?.let {
                 throw ThetaWebApiException(it.message)
             }

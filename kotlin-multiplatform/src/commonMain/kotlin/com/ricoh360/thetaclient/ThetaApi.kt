@@ -11,12 +11,7 @@ import io.ktor.client.network.sockets.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
-import io.ktor.client.request.forms.MultiPartFormDataContent
-import io.ktor.client.request.forms.formData
-import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.statement.*
-import io.ktor.http.Headers
-import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.core.*
@@ -24,7 +19,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
+import kotlinx.io.files.*
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 /**
  * Http client using [Ktor](https://jp.ktor.work/clients/index.html)
@@ -35,7 +33,11 @@ object ThetaApi {
         get() = getHttpClient()
 
     val previewClient: PreviewClient // Just for getLivePreview command
-        get() = getHPreviewClient()
+        get() = getPreviewClient()
+
+    val multipartPostClient: MultipartPostClient // just for updateFirmware protcol
+        //get() = getMultipartPostClient()
+        get() = ApiClient.multipartPostClient
 
     /**
      * Call [/osc/info](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/protocols/info.md)
@@ -107,8 +109,7 @@ object ThetaApi {
      * to the path of firmware update API.
      * @param endpoint Endpoint of Theta web API
      * @param apiPath The path of firmware update API which is non-public.
-     * @param fileContents List of firmware binary
-     * @param fileNames List of firmware file name
+     * @param filePaths List of firmware file path
      * @return response of update firmware API
      *
      * @exception IllegalArgumentException The method has been passed an illegal or inappropriate argument
@@ -121,32 +122,14 @@ object ThetaApi {
     suspend fun callUpdateFirmwareApi(
         endpoint: String,
         apiPath: String,
-        fileContents: List<ByteArray>,
-        fileNames: List<String>,
+        filePaths: List<String>,
     ): UpdateFirmwareApiResponse {
-        if(fileContents.isEmpty()) {
-            throw IllegalArgumentException("Empty fileContents")
-        } else if(fileContents.size != fileNames.size) {
-            throw IllegalArgumentException("Different size of fileContents and fileNames")
+        if(filePaths.isEmpty()) {
+            throw IllegalArgumentException("Empty filePaths")
         }
-       return httpClient.post(getApiUrl(endpoint, apiPath)) {
-           headers {
-               append("Connection", "Keep-Alive") // theta app sends
-               append("Cache-Control", "no-cache") // theta app sends
-           }
-           setBody(MultiPartFormDataContent(
-               formData {
-                   for(i in fileContents.indices) {
-                       append(key = "\"firmware\"", value = fileContents[i], headers = Headers.build {
-                           append(HttpHeaders.ContentDisposition, "filename=\"${fileNames[i]}\"")
-                           append(HttpHeaders.ContentType, "application/octet-stream")
-                           append("Content-Transfer-Encoding", "binary") // not a http header but theta app sends
-                       })
-                   }
-               },
-               boundary = "b783d64f-a16c-4928-a718-94f027c35fe1" // any uuid can be used
-           ))
-       }.body()
+        //val responseBody = ApiClient.multipartPostClient.request(endpoint, apiPath, filePaths)
+        val responseBody = multipartPostClient.request(endpoint, apiPath, filePaths)
+        return Json.decodeFromString<UpdateFirmwareApiResponse>(responseBody)
     }
 
     /*

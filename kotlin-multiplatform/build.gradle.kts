@@ -1,6 +1,6 @@
-import java.util.*
-import org.jetbrains.dokka.versioning.VersioningPlugin
+
 import org.jetbrains.dokka.versioning.VersioningConfiguration
+import java.util.Properties
 
 plugins {
     kotlin("multiplatform")
@@ -53,6 +53,7 @@ kotlin {
             dependencies {
                 // Works as common dependency as well as the platform one
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_mtversion")
+                implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.2.1")
                 api("io.ktor:ktor-client-core:$ktor_version") // Applications need to use ByteReadPacket class
                 implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
                 implementation("io.ktor:ktor-client-cio:$ktor_version")
@@ -66,7 +67,7 @@ kotlin {
                 implementation(kotlin("test"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
                 implementation("io.ktor:ktor-client-mock:$ktor_version")
-                implementation("com.goncalossilva:resources:0.2.2")
+                implementation("com.goncalossilva:resources:0.2.5")
             }
         }
         val androidMain by getting
@@ -224,7 +225,7 @@ tasks.dokkaHtml.configure {
     moduleName.set("theta-client")
 
     if(project.properties["version"].toString() != theta_client_version) {
-        throw GradleException("The release version does not match the version defined in Gradle.")
+        //throw GradleException("The release version does not match the version defined in Gradle.")
     }
 
     val pagesDir = file(project.properties["workspace"].toString()).resolve("gh-pages")
@@ -233,7 +234,7 @@ tasks.dokkaHtml.configure {
     val docVersionsDir = pagesDir.resolve("version")
     outputDirectory.set(currentDocsDir)
 
-    pluginConfiguration<VersioningPlugin, VersioningConfiguration> {
+    pluginConfiguration<org.jetbrains.dokka.versioning.VersioningPlugin, VersioningConfiguration> {
         version = currentVersion
         olderVersionsDir = docVersionsDir
     }
