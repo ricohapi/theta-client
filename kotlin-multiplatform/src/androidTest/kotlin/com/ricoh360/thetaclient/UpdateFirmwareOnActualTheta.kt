@@ -132,7 +132,7 @@ class UpdateFirmwareOnActualTheta {
         // Timeout for socket and coroutine
         const val TIMEOUT = 300_000L
         // directory firmware files exist
-        val DIR = "/media/sf_vmshare/ex"
+        val DIR = "/media/sf_vmshare/ex/"
         // lastest firmware version of SC2 for business
         const val SC2_B_VERSION_LATEST = "06.52"
         // latest firmware file of SC2 for business

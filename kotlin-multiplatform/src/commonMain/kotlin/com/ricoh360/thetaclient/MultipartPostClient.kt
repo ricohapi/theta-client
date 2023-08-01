@@ -202,7 +202,7 @@ open class BaseHttpClient(connectionTimeout: Long = 20_000L, socketTimeout: Long
      */
     protected suspend fun writeRequestLine(path: String, method: HttpMethod) {
         write("${method.value} $path HTTP/1.1\r\n")
-        println("${method.value} $path HTTP/1.1\n")
+        print("${method.value} $path HTTP/1.1\n")
     }
 
     /**
@@ -214,10 +214,10 @@ open class BaseHttpClient(connectionTimeout: Long = 20_000L, socketTimeout: Long
     protected suspend fun writeHeaders(headers: List<Pair<String, String>>) {
         for ((name, value) in headers) {
             write("$name: $value\r\n")
-            println("$name: $value\r\n")
+            print("$name: $value\r\n")
         }
         write("\r\n")
-        println("\r\n")
+        print("\r\n")
     }
 
     /**
@@ -456,7 +456,7 @@ class MultipartPostClientImpl(connectionTimeout: Long = 30_000L, socketTimeout: 
 
     companion object {
         // read buffer size for reading firmware file
-        const val READ_BUFFER_SIZE = 4096
+        const val READ_BUFFER_SIZE = 1024 * 64
         // boundary, can be any uuid, which is constraint of Theta SC2
         //const val BOUNDARY = "ab0c85f4-6d89-4a7f-a0a5-115d7f43b5f1"
         // refular expression to get a file name from a file path
@@ -537,8 +537,9 @@ class MultipartPostClientImpl(connectionTimeout: Long = 30_000L, socketTimeout: 
             size += genBoundaryDelimiter(boundary).length
             val headers = genPartHeaders(fileName)
             headers.forEach {
-                size += it.first.length + it.second.length + ": ".length + "\r\n".length
+                size += it.first.length + ": ".length + it.second.length + "\r\n".length
             }
+            size += "\r\n".length
             return size + getFileSize(filePath)
         }
 
@@ -595,7 +596,7 @@ class MultipartPostClientImpl(connectionTimeout: Long = 30_000L, socketTimeout: 
                 throw(BaseHttpClientException("Failed daigest authentication"))
             }
         }
-        readBody()
+        close()
         if(HttpStatusCode(this.status, this.statusMessage?: "").isSuccess()) {
             return this.responseBody ?: byteArrayOf()
         } else {
@@ -633,11 +634,11 @@ class MultipartPostClientImpl(connectionTimeout: Long = 30_000L, socketTimeout: 
                 var count = 0
                 do {
                     write(buffer, count)
-                    println("count: $count")
-                    var s = ""
-                    for(i in 0..count-1) s += buffer.elementAt(i).toInt().toChar()
-                    println(s)
+                    //var s = ""
+                    //for(i in 0..count-1) s += buffer.elementAt(i).toInt().toChar()
+                    //print(s)
                     count = src.readAtMostTo(buffer, 0, READ_BUFFER_SIZE)
+                    //println("count: $count")
                 } while(count != -1)
             } finally {
                 src?.close()
@@ -667,13 +668,13 @@ class MultipartPostClientImpl(connectionTimeout: Long = 30_000L, socketTimeout: 
      */
     protected suspend fun writePartHeaders(boundary: String, headers: List<Pair<String, String>>) {
         write(genBoundaryDelimiter(boundary))
-        println(genBoundaryDelimiter(boundary))
+        print(genBoundaryDelimiter(boundary))
         for ((name, value) in headers) {
             write("$name: $value\r\n")
-            println("$name: $value\r\n")
+            print("$name: $value\r\n")
         }
         write("\r\n")
-        println("\r\n")
+        print("\r\n")
     }
 
     /**
@@ -684,7 +685,7 @@ class MultipartPostClientImpl(connectionTimeout: Long = 30_000L, socketTimeout: 
      */
     private suspend fun writeCloseDelimiter(boundary: String) {
         write(genCloseDelimiter(boundary))
-        println(genCloseDelimiter(boundary))
+        print(genCloseDelimiter(boundary))
     }
 
 }
