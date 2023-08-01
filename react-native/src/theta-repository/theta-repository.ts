@@ -19,6 +19,7 @@ import {
 } from '../capture';
 import type { ThetaConfig } from './theta-config';
 import type { ThetaTimeout } from './theta-timeout';
+import { NotifyController } from './notify-controller';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 /**
@@ -35,6 +36,8 @@ export function initialize(
   config?: ThetaConfig,
   timeout?: ThetaTimeout
 ): Promise<boolean> {
+  NotifyController.instance.init();
+
   return ThetaClientReactNative.initialize(endPoint, config, timeout);
 }
 

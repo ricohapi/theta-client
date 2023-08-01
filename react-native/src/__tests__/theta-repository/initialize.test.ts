@@ -6,7 +6,7 @@ import {
   SleepDelayEnum,
 } from '../../theta-repository/options';
 
-describe('Plugin Orders', () => {
+describe('initialize', () => {
   const defaultEndpoint = 'http://192.168.1.1';
   const thetaClient = NativeModules.ThetaClientReactNative;
 
