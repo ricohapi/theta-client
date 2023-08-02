@@ -93,6 +93,22 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('takePicture() has not been implemented.');
   }
 
+  Future<void> getTimeShiftCaptureBuilder() {
+    throw UnimplementedError('getTimeShiftCaptureBuilder() has not been implemented.');
+  }
+
+  Future<void> buildTimeShiftCapture(Map<String, dynamic> options, int interval) {
+    throw UnimplementedError('buildTimeShiftCapture() has not been implemented.');
+  }
+
+  Future<String?> startTimeShiftCapture(void Function(double)? onProgress) {
+    throw UnimplementedError('startTimeShiftCapture() has not been implemented.');
+  }
+
+  Future<void> stopTimeShiftCapture() {
+    throw UnimplementedError('stopTimeShiftCapture() has not been implemented.');
+  }
+
   Future<void> getVideoCaptureBuilder() {
     throw UnimplementedError('getVideoCaptureBuilder() has not been implemented.');
   }

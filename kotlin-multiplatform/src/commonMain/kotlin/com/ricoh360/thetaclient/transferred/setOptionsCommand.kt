@@ -1439,12 +1439,14 @@ data class TimeShift(
      * Time (sec) before 1st lens shooting.
      * 0 to 10.  For V or Z1, default is 5. For X, default is 2.
      */
+    @Serializable(with = NumberAsIntSerializer::class)
     var firstInterval: Int? = null,
 
     /**
      * Time (sec) from 1st lens shooting until start of 2nd lens shooting.
      * 0 to 10.  Default is 5.
      */
+    @Serializable(with = NumberAsIntSerializer::class)
     var secondInterval: Int? = null,
 )
 

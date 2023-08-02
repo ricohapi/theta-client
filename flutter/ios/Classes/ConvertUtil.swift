@@ -3,6 +3,10 @@ import UIKit
 import THETAClient
 
 let KEY_CLIENT_MODE = "clientMode"
+let KEY_NOTIFY_ID = "id"
+let KEY_NOTIFY_PARAMS = "params"
+let KEY_NOTIFY_PARAM_COMPLETION = "completion"
+let KEY_NOTIFY_PARAM_IMAGE = "image"
 
 public class ConvertUtil: NSObject {
 }
@@ -198,6 +202,25 @@ func setPhotoCaptureBuilderParams(params: [String : Any], builder: PhotoCapture.
     if let value = params["PhotoFileFormat"]  {
         if let enumValue = getEnumValue(values: ThetaRepository.PhotoFileFormatEnum.values(), name: value as! String) {
             builder.setFileFormat(fileFormat: enumValue)
+        }
+    }
+}
+
+func setTimeShiftCaptureBuilderParams(params: [String : Any], builder: TimeShiftCapture.Builder) {
+    if let interval = params["_capture_interval"] as? Int,
+       interval >= 0 {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
+    if let timeShiftParams = params[ThetaRepository.OptionNameEnum.timeshift.name] as? [String : Any] {
+        let timeShift = toTimeShift(params: timeShiftParams)
+        if let isFrontFirst = timeShift.isFrontFirst {
+            builder.setIsFrontFirst(isFrontFirst: isFrontFirst.boolValue)
+        }
+        if let firstInterval = timeShift.firstInterval {
+            builder.setFirstInterval(interval: firstInterval)
+        }
+        if let secondInterval = timeShift.secondInterval {
+            builder.setSecondInterval(interval: secondInterval)
         }
     }
 }
@@ -681,4 +704,26 @@ func toPluginInfosResult(pluginInfoList: [ThetaRepository.PluginInfo]) -> [[Stri
         resultList.append(item)
     })
     return resultList
+}
+
+func toNotify(id: Int, params: [String : Any]?) -> [String: Any] {
+    var result: [String: Any] = [
+        KEY_NOTIFY_ID: id
+    ]
+    if let params = params {
+        result[KEY_NOTIFY_PARAMS] = params
+    }
+    return result
+}
+
+func toCaptureProgressNotifyParam(value: Float) -> [String: Any] {
+    return [
+        KEY_NOTIFY_PARAM_COMPLETION: value
+    ]
+}
+
+func toPreviewNotifyParam(imageData: FlutterStandardTypedData) -> [String: Any] {
+    return [
+        KEY_NOTIFY_PARAM_IMAGE: imageData
+    ]
 }

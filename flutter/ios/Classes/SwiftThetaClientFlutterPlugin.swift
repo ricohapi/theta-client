@@ -2,6 +2,10 @@ import Flutter
 import UIKit
 import THETAClient
 
+let EVENT_NOTIFY = "theta_client_flutter/theta_notify"
+let NOTIFY_LIVE_PREVIEW = 10001
+let NOTIFY_TIME_SHIFT_PROGRESS = 10002
+
 public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
         self.eventSink = events
@@ -24,6 +28,9 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     
     var photoCaptureBuilder: PhotoCapture.Builder? = nil
     var photoCapture: PhotoCapture? = nil
+    var timeShiftCaptureBuilder: TimeShiftCapture.Builder? = nil
+    var timeShiftCapture: TimeShiftCapture? = nil
+    var timeShiftCapturing: TimeShiftCapturing? = nil
     var videoCaptureBuilder: VideoCapture.Builder? = nil
     var videoCapture: VideoCapture? = nil
     var videoCapturing: VideoCapturing? = nil
@@ -33,10 +40,16 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         let instance = SwiftThetaClientFlutterPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
         
-        let eventChannel = FlutterEventChannel(name: "theta_client_flutter/live_preview", binaryMessenger: registrar.messenger())
+      let eventChannel = FlutterEventChannel(name: EVENT_NOTIFY, binaryMessenger: registrar.messenger())
         eventChannel.setStreamHandler(instance)
     }
-    
+
+    func sendNotifyEvent(id: Int, params: [String : Any]?) {
+        if let eventSink = eventSink {
+            eventSink(toNotify(id: id, params: params))
+        }
+    }
+
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
         case "getPlatformVersion":
@@ -75,6 +88,14 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             buildPhotoCapture(call: call, result: result)
         case "takePicture":
             takePicture(result: result)
+        case "getTimeShiftCaptureBuilder":
+            getTimeShiftCaptureBuilder(result: result)
+        case "buildTimeShiftCapture":
+            buildTimeShiftCapture(call: call, result: result)
+        case "startTimeShiftCapture":
+            startTimeShiftCapture(result: result)
+        case "stopTimeShiftCapture":
+            stopTimeShiftCapture(result: result)
         case "getVideoCaptureBuilder":
             getVideoCaptureBuilder(result: result)
         case "buildVideoCapture":
@@ -140,6 +161,9 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         thetaRepository = nil
         photoCaptureBuilder = nil
         photoCapture = nil
+        timeShiftCaptureBuilder = nil
+        timeShiftCapture = nil
+        timeShiftCapturing = nil
         videoCaptureBuilder = nil
         videoCapture = nil
         videoCapturing = nil
@@ -256,10 +280,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                     packet: p1 as! KotlinPair
                 )
                 let data = FlutterStandardTypedData.init(bytes: nsData)
-                
-                if let eventSink = plugin?.eventSink {
-                    eventSink(data)
-                }
+                plugin?.sendNotifyEvent(id: NOTIFY_LIVE_PREVIEW, params: toPreviewNotifyParam(imageData: data))
                 completionHandler(plugin?.previewing, nil)
             }
         }
@@ -439,7 +460,86 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             }
         )
     }
-    
+
+    func getTimeShiftCaptureBuilder(result: @escaping FlutterResult) {
+        guard let thetaRepository else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        timeShiftCaptureBuilder = thetaRepository.getTimeShiftCaptureBuilder()
+        result(nil)
+    }
+
+    func buildTimeShiftCapture(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let _ = thetaRepository, let builder = timeShiftCaptureBuilder else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        let arguments = call.arguments as! [String : Any]
+        setCaptureBuilderParams(params: arguments, builder: builder)
+        setTimeShiftCaptureBuilderParams(params: arguments, builder: builder)
+        builder.build(completionHandler: { capture, error in
+            if let thetaError = error {
+                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                result(flutterError)
+            } else {
+                self.timeShiftCapture = capture
+                result(nil)
+            }
+        })
+    }
+
+    func startTimeShiftCapture(result: @escaping FlutterResult) {
+        guard let _ = thetaRepository, let capture = timeShiftCapture else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        class Callback: TimeShiftCaptureStartCaptureCallback {
+            let callback: (_ url: String?, _ error: Error?) -> Void
+            weak var plugin: SwiftThetaClientFlutterPlugin?
+            init(_ callback: @escaping (_ url: String?, _ error: Error?) -> Void, plugin: SwiftThetaClientFlutterPlugin) {
+                self.callback = callback
+                self.plugin = plugin
+            }
+            func onError(exception: ThetaRepository.ThetaRepositoryException) {
+                callback(nil, exception as? Error)
+            }
+            
+            func onProgress(completion: Float) {
+                plugin?.sendNotifyEvent(id: NOTIFY_TIME_SHIFT_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
+            }
+            
+            func onSuccess(fileUrl_ fileUrl: String?) {
+                callback(fileUrl, nil)
+            }
+        }
+
+        timeShiftCapturing = capture.startCapture(
+            callback: Callback({ fileUrl, error in
+                if let thetaError = error {
+                    let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                    result(flutterError)
+                } else {
+                    result(fileUrl)
+                }
+            },
+            plugin: self)
+        )
+    }
+
+    func stopTimeShiftCapture(result: @escaping FlutterResult) {
+        guard let _ = thetaRepository, let capturing = timeShiftCapturing else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        capturing.stopCapture()
+        result(nil)
+    }
+
     func getVideoCaptureBuilder(result: @escaping FlutterResult) {
         if (thetaRepository == nil) {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)

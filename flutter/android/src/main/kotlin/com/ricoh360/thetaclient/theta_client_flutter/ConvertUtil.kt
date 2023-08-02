@@ -4,10 +4,15 @@ import com.ricoh360.thetaclient.DigestAuth
 import com.ricoh360.thetaclient.ThetaRepository.*
 import com.ricoh360.thetaclient.capture.Capture
 import com.ricoh360.thetaclient.capture.PhotoCapture
+import com.ricoh360.thetaclient.capture.TimeShiftCapture
 import com.ricoh360.thetaclient.capture.VideoCapture
 import io.flutter.plugin.common.MethodCall
 
 const val KEY_CLIENT_MODE = "clientMode"
+const val KEY_NOTIFY_ID = "id"
+const val KEY_NOTIFY_PARAMS = "params"
+const val KEY_NOTIFY_PARAM_COMPLETION = "completion"
+const val KEY_NOTIFY_PARAM_IMAGE = "image"
 
 fun toResult(thetaInfo: ThetaInfo): Map<String, Any?> {
     return mapOf<String, Any?>(
@@ -140,7 +145,7 @@ fun toProxy(map: Map<String, Any>): Proxy {
 }
 
 fun toTimeShift(map: Map<String, Any>): TimeShiftSetting {
-    var timeShift = TimeShiftSetting()
+    val timeShift = TimeShiftSetting()
     map["isFrontFirst"]?.let {
         timeShift.isFrontFirst = it as Boolean
     }
@@ -206,6 +211,26 @@ fun setPhotoCaptureBuilderParams(call: MethodCall, builder: PhotoCapture.Builder
     call.argument<String>("PhotoFileFormat")?.let { enumName ->
         PhotoFileFormatEnum.values().find { it.name == enumName }?.let {
             builder.setFileFormat(it)
+        }
+    }
+}
+
+fun setTimeShiftCaptureBuilderParams(call: MethodCall, builder: TimeShiftCapture.Builder) {
+    call.argument<Int>("_capture_interval")?.let {
+        if (it >= 0) {
+            builder.setCheckStatusCommandInterval(it.toLong())
+        }
+    }
+    call.argument<Map<String, Any>>(OptionNameEnum.TimeShift.name)?.let { timeShiftMap ->
+        val timeShift = toTimeShift(timeShiftMap)
+        timeShift.isFrontFirst?.let {
+            builder.setIsFrontFirst(it)
+        }
+        timeShift.firstInterval?.let {
+            builder.setFirstInterval(it)
+        }
+        timeShift.secondInterval?.let {
+            builder.setSecondInterval(it)
         }
     }
 }
@@ -536,4 +561,29 @@ fun toPluginInfosResult(pluginInfoList: List<PluginInfo>): List<Map<String, Any>
         resultList.add(result)
     }
     return resultList
+}
+
+fun toNotify(
+    id: Int,
+    params: Map<String, Any?>?,
+): Map<String, Any> {
+    val objects = mutableMapOf<String, Any>(
+        KEY_NOTIFY_ID to id,
+    )
+    params?.run {
+        objects[KEY_NOTIFY_PARAMS] = params
+    }
+    return objects
+}
+
+fun toCaptureProgressNotifyParam(value: Float): Map<String, Any> {
+    return mapOf<String, Any>(
+        KEY_NOTIFY_PARAM_COMPLETION to value
+    )
+}
+
+fun toPreviewNotifyParam(imageData: ByteArray): Map<String, Any> {
+    return mapOf<String, Any>(
+        KEY_NOTIFY_PARAM_IMAGE to imageData
+    )
 }

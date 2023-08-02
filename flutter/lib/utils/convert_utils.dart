@@ -135,6 +135,8 @@ class ConvertUtils {
     for (var entry in data.entries) {
       if (entry.value.runtimeType == GpsInfo) {
         result[entry.key] = convertGpsInfoParam(entry.value);
+      } else if (entry.value.runtimeType == TimeShift) {
+        result[entry.key] = convertTimeShiftParam(entry.value);
       } else if (entry.value.runtimeType == int || entry.value.runtimeType == double) {
         result[entry.key] = entry.value;
       } else {
@@ -174,20 +176,31 @@ class ConvertUtils {
 
   static Map<String, dynamic> convertTimeShiftParam(TimeShift timeShift) {
     var map = <String, dynamic>{};
-    if (timeShift.isFrontFirst != null) map['isFrontFirst'] = timeShift.isFrontFirst;
-    if (timeShift.firstInterval != null) map['firstInterval'] = timeShift.firstInterval.toString();
-    if (timeShift.secondInterval != null)
+    if (timeShift.isFrontFirst != null) {
+      map['isFrontFirst'] = timeShift.isFrontFirst;
+    }
+    if (timeShift.firstInterval != null) {
+      map['firstInterval'] = timeShift.firstInterval.toString();
+    }
+    if (timeShift.secondInterval != null) {
       map['secondInterval'] = timeShift.secondInterval.toString();
+    }
     return map;
   }
 
   static TimeShift convertTimeShift(Map<dynamic, dynamic> data) {
     var timeShift = TimeShift();
-    if (data['isFrontFirst'] != null) timeShift.isFrontFirst = data['isFrontFirst'];
-    if (data['firstInterval'] != null)
-      timeShift.firstInterval = TimeShiftIntervalEnum.getValue(data['firstInterval']);
-    if (data['secondInterval'] != null)
-      timeShift.secondInterval = TimeShiftIntervalEnum.getValue(data['secondInterval']);
+    if (data['isFrontFirst'] != null) {
+      timeShift.isFrontFirst = data['isFrontFirst'];
+    }
+    if (data['firstInterval'] != null) {
+      timeShift.firstInterval =
+          TimeShiftIntervalEnum.getValue(data['firstInterval']);
+    }
+    if (data['secondInterval'] != null) {
+      timeShift.secondInterval =
+          TimeShiftIntervalEnum.getValue(data['secondInterval']);
+    }
     return timeShift;
   }
 
