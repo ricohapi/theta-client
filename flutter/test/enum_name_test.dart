@@ -6,6 +6,17 @@ void main() {
 
   tearDown(() {});
 
+  test('BluetoothPowerEnum', () async {
+    List<List<dynamic>> data = [
+      [BluetoothPowerEnum.on, 'ON'],
+      [BluetoothPowerEnum.off, 'OFF'],
+    ];
+    expect(data.length, BluetoothPowerEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
   test('BurstModeEnum', () async {
     List<List<dynamic>> data = [
       [BurstModeEnum.on, 'ON'],

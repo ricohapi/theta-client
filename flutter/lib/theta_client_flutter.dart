@@ -713,6 +713,30 @@ class ThetaFiles {
   ThetaFiles(this.fileList, this.totalEntries);
 }
 
+/// bluetooth power.
+enum BluetoothPowerEnum {
+  /// bluetooth ON
+  on('ON'),
+
+  /// bluetooth OFF
+  off('OFF');
+
+  final String rawValue;
+
+  const BluetoothPowerEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static BluetoothPowerEnum? getValue(String rawValue) {
+    return BluetoothPowerEnum.values
+        .cast<BluetoothPowerEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
 /// BurstMode setting.
 /// When this is set to ON, burst shooting is enabled,
 /// and a screen dedicated to burst shooting is displayed in Live View.
@@ -1412,6 +1436,9 @@ enum OptionNameEnum {
 
   /// Option name _burstMode
   burstMode('BurstMode', BurstModeEnum),
+
+  /// Option name _bluetoothPower
+  bluetoothPower('BluetoothPower', BluetoothPowerEnum),
 
   /// Option name _burstOption
   burstOption('BurstOption', BurstOption),
@@ -3388,6 +3415,9 @@ class Options {
   /// see [Bitrate]
   Bitrate? bitrate;
 
+  /// see [BluetoothPowerEnum]
+  BluetoothPowerEnum? bluetoothPower;
+
   /// BurstMode setting.
   /// When this is set to ON, burst shooting is enabled,
   /// and a screen dedicated to burst shooting is displayed in Live View.
@@ -3641,6 +3671,8 @@ class Options {
         return aperture as T;
       case OptionNameEnum.bitrate:
         return bitrate as T;
+      case OptionNameEnum.bluetoothPower:
+        return bluetoothPower as T;
       case OptionNameEnum.burstMode:
         return burstMode as T;
       case OptionNameEnum.burstOption:
@@ -3745,6 +3777,9 @@ class Options {
         break;
       case OptionNameEnum.bitrate:
         bitrate = value;
+        break;
+      case OptionNameEnum.bluetoothPower:
+        bluetoothPower = value;
         break;
       case OptionNameEnum.burstMode:
         burstMode = value;

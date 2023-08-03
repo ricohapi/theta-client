@@ -234,6 +234,9 @@ class ConvertUtils {
           result.bitrate =
           (entry.value is int) ? BitrateNumber(entry.value) : Bitrate.getValue(entry.value);
           break;
+        case OptionNameEnum.bluetoothPower:
+          result.bluetoothPower = BluetoothPowerEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.burstMode:
           result.burstMode = BurstModeEnum.getValue(entry.value);
           break;
@@ -387,6 +390,8 @@ class ConvertUtils {
     } else if (value is BitrateNumber) {
       return value.value;
     } else if (value is Bitrate) {
+      return value.rawValue;
+    } else if (value is BluetoothPowerEnum) {
       return value.rawValue;
     } else if (value is BurstModeEnum) {
       return value.rawValue;
