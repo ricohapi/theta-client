@@ -1,6 +1,7 @@
 package com.ricoh360.thetaclient
 
 import com.ricoh360.thetaclient.MultipartPostClient.Companion.BOUNDARY
+import com.ricoh360.thetaclient.PreviewClientImpl.Companion.connectionTimeout
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
@@ -24,7 +25,7 @@ import kotlinx.io.files.*
  * @param connectionTimeout connection timeout of [Ktor](https://ktor.io/)
  * @param socketTimeout socket timeout of [Ktor](https://ktor.io/)
  */
-open class BaseHttpClient(connectionTimeout: Long = 20_000L, socketTimeout: Long = 20_000L) : Closeable {
+open class BaseHttpClient() : Closeable {
 
     class URL(url: String) {
         /** protocol, only http or https */
@@ -55,9 +56,6 @@ open class BaseHttpClient(connectionTimeout: Long = 20_000L, socketTimeout: Long
             }
         }
     }
-
-    private val connectionTimeout = connectionTimeout
-    private val socketTimeout = socketTimeout
 
     /** parsed endpoint */
     private var endpoint: URL? = null
@@ -121,8 +119,12 @@ open class BaseHttpClient(connectionTimeout: Long = 20_000L, socketTimeout: Long
 
     /**
      * connect to the host
+     *
+     * @param endpoint endpoint of the host
+     * @param connectionTimeout timeout of connection (msec)
+     * @param socketTimeout timeout of socket (msec)
      */
-    protected suspend fun connect(endpoint: String) {
+    protected suspend fun connect(endpoint: String, connectionTimeout: Long, socketTimeout: Long) {
         reset()
         this.endpoint = URL(endpoint)
         this.selector = SelectorManager(Dispatchers.Default)
@@ -133,8 +135,8 @@ open class BaseHttpClient(connectionTimeout: Long = 20_000L, socketTimeout: Long
                 val socket = builder.connect(
                     InetSocketAddress(this@BaseHttpClient.endpoint!!.host, this@BaseHttpClient.endpoint!!.port),
                 ) {
-                    socketTimeout = this@BaseHttpClient.socketTimeout
-                    receiveBufferSize = buffer.size
+                    this.socketTimeout = socketTimeout
+                    this.receiveBufferSize = buffer.size
                 }
                 this@BaseHttpClient.input = socket.openReadChannel()
                 this@BaseHttpClient.output = socket.openWriteChannel(autoFlush = true)
@@ -438,13 +440,17 @@ interface MultipartPostClient  {
      * @param endpoint endpount of Web API, eg. "http://192.198.1.1:80/"
      * @param path request target of HTTP
      * @param filePaths Content of each part
-     * @param boundary boundary parameter of multipart/form-data
+     * @param connectionTimeout timeout for connection (msec).  If null, default value is used.
+     * @param socketTimeout timeout for socket (msec). If null, default value is used.
+     * @param boundary boundary parameter of multipart/form-data.  If this is not specified, default value is used.
      * @return body of the response
      */
     suspend fun request(
         endpoint: String,
         path: String,
         filePaths: List<String>,
+        connectionTimeout: Long,
+        socketTimeout: Long,
         boundary: String = BOUNDARY,
     ): ByteArray
 }
@@ -452,7 +458,7 @@ interface MultipartPostClient  {
 /**
  * http client implementation just for update firmware
  */
-class MultipartPostClientImpl(connectionTimeout: Long = 30_000L, socketTimeout: Long = 180_000L) : MultipartPostClient, BaseHttpClient(connectionTimeout, socketTimeout) {
+class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
 
     companion object {
         // read buffer size for reading firmware file
@@ -526,10 +532,11 @@ class MultipartPostClientImpl(connectionTimeout: Long = 30_000L, socketTimeout: 
         }
 
         /**
-         * get length pf a part
+         * get the length pf a part
          *
          * @param fileName corresponding to the part
          * @param filePath file path corresponding to the part
+         * @param boundary boundary parameter of multipart/form-data
          * @return
          */
         private suspend fun getPartLength(fileName: String, filePath: String, boundary: String): Long {
@@ -575,25 +582,28 @@ class MultipartPostClientImpl(connectionTimeout: Long = 30_000L, socketTimeout: 
      * @param endpoint endpount of Web API, eg. "http://192.198.1.1:80/"
      * @param path request target of HTTP
      * @param filePaths Content of each part
+     * @param connectionTimeout timeout for connection (msec). If null, default value is used.
+     * @param socketTimeout timeout for socket (msec). If null, default value is used.
      * @param boundary boundary parameter of multipart/form-data
      * @return body of the response
+     * @throws [BaseHttpClientException] when the host returns an error.
      */
     override suspend fun request(
         endpoint: String,
         path: String,
         filePaths: List<String>,
+        connectionTimeout: Long,
+        socketTimeout: Long,
         boundary: String,
     ): ByteArray {
-        requestOnce(endpoint, path, filePaths, boundary)
+        requestOnce(endpoint, path, filePaths, connectionTimeout, socketTimeout, boundary)
         if(this.status == HttpStatusCode.Unauthorized.value) { // need digest authentication
             ApiClient.digestAuth?.let { digestAuth ->
                 responseHeaders?.get(HttpHeaders.WWWAuthenticate.lowercase())?.let { header ->
                     val authHeader = parseAuthorizationHeader(header) as HttpAuthHeader.Parameterized
                     digestAuth.updateAuthHeaderInfo(authHeader)
-                    requestOnce(endpoint, path, filePaths, boundary, digestAuth.makeDigestHeader(path, HttpMethod.Post.value))
+                    requestOnce(endpoint, path, filePaths, connectionTimeout, socketTimeout, boundary, digestAuth.makeDigestHeader(path, HttpMethod.Post.value))
                 }
-            } ?: {
-                throw(BaseHttpClientException("Failed daigest authentication"))
             }
         }
         close()
@@ -607,21 +617,24 @@ class MultipartPostClientImpl(connectionTimeout: Long = 30_000L, socketTimeout: 
     /**
      * Send a HTTP request and read the response.
      *
-     * @param host
-     * @param path
-     * @param filePaths
-     * @param boundary
-     * @param port
+     * @param endpoint endpount of Web API, eg. "http://192.198.1.1:80/"
+     * @param path request target of HTTP
+     * @param filePaths Content of each part
      * @param digest value of Authorization header if needed
+     * @param connectionTimeout timeout for connection (msec). If null, default value is used.
+     * @param socketTimeout timeout for socket (msec). If null, default value is used.
+     * @param boundary boundary parameter of multipart/form-data
      */
     internal suspend fun requestOnce(
         endpont: String,
         path: String,
         filePaths: List<String>,
+        connectionTimeout: Long,
+        socketTimeout: Long,
         boundary: String,
         digest: String? = null,
     ) {
-        connect(endpont)
+        connect(endpont, connectionTimeout, socketTimeout)
         writeRequestLine(path, HttpMethod.Post)
         writeHeaders(genRequestHeaders(getContentLength(filePaths, boundary), digest))
         val buffer = ByteArray(READ_BUFFER_SIZE)
@@ -650,6 +663,13 @@ class MultipartPostClientImpl(connectionTimeout: Long = 30_000L, socketTimeout: 
         readBody()
     }
 
+    /**
+     * Get the length of the HTTP contents
+     *
+     * @param filePaths list of file paths to send their contents as multipart
+     * @param boundary "Boundary" Parameter of multipart content type
+     * @return length of the contents
+     */
     private suspend fun getContentLength(filePaths: List<String>, boundary: String): Long {
         var size = 0L
         filePaths.forEach {
@@ -660,32 +680,28 @@ class MultipartPostClientImpl(connectionTimeout: Long = 30_000L, socketTimeout: 
     }
 
     /**
-     * Write all headers for a part of multipart data when cpntent type is multipart.
-     * Aftre calling this function, you can not write a part header.
+     * Write all headers for a part of multipart data when content type is multipart.
+     * After calling this function, you can not write a part header.
      *
      * @param boundary "Boundary" Parameter of multipart content type
      * @param headers headers for a part
      */
     protected suspend fun writePartHeaders(boundary: String, headers: List<Pair<String, String>>) {
         write(genBoundaryDelimiter(boundary))
-        print(genBoundaryDelimiter(boundary))
         for ((name, value) in headers) {
             write("$name: $value\r\n")
-            print("$name: $value\r\n")
         }
         write("\r\n")
-        print("\r\n")
     }
 
     /**
-     * Write a close delimiter of multipart data when cpntent type is multipart.
+     * Write a close delimiter of multipart data when content type is multipart.
      * If you write data after calling this function, it is ignored on HTTP server
      *
      * @param boundary "Boundary" Parameter of multipart content type
      */
     private suspend fun writeCloseDelimiter(boundary: String) {
         write(genCloseDelimiter(boundary))
-        print(genCloseDelimiter(boundary))
     }
 
 }

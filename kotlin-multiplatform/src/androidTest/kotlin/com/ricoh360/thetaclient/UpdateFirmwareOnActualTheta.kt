@@ -16,7 +16,7 @@ import kotlin.test.*
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class UpdateFirmwareOnActualTheta {
-    private val endpoint = "http://192.168.1.1:80/"
+    private val endpoint = "http://192.168.1.3:80/"
 
     /**
      * Test for Theta SC2 for business
@@ -150,9 +150,9 @@ class UpdateFirmwareOnActualTheta {
         // Password of digest authentication is the characters from 3rd character of X_SERIAL_NUMBER
         const val PASSWORD_START_POSITION = 2
         // Serial number of Theta X. Password is assumed not to be changed.
-        //const val X_SERIAL_NUMBER = "YR15104645"
-        const val X_SERIAL_NUMBER = "YR13000011"
+        const val X_SERIAL_NUMBER = "YR15104645"
+        //const val X_SERIAL_NUMBER = "YR13000011"
         // IP address in client mode.
-        const val URL_CL = "http://192.168.1.12:80/"
+        const val URL_CL = "http://192.168.1.10:80/"
     }
 }

@@ -421,13 +421,15 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      *
      * @param apiPath The path of firmware update API which is non-public.
      * @param filePaths List of firmware file path.
+     * @param connectionTimeout Timeout (milli seconds) of socket connection
+     * @param socketTimeout Timeout (milli seconds) of socket
      * @exception ThetaWebApiException If an error occurs in THETA.
      * @exception NotConnectedException
      */
     @Throws(Throwable::class)
-    suspend fun updateFirmware(apiPath: String, filePaths: List<String>) {
+    suspend fun updateFirmware(apiPath: String, filePaths: List<String>, connectionTimeout: Long = 30_000L, socketTimeout: Long = 600_000L) {
         try {
-            val response = ThetaApi.callUpdateFirmwareApi(endpoint, apiPath, filePaths)
+            val response = ThetaApi.callUpdateFirmwareApi(endpoint, apiPath, filePaths, connectionTimeout, socketTimeout)
             response.error?.let {
                 throw ThetaWebApiException(it.message)
             }

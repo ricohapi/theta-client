@@ -16,7 +16,7 @@ object MockApiClient {
     var onRequest: ((HttpRequestData) -> ByteReadChannel)? = null
     var status: HttpStatusCode? = null
     var responseHeaders: Headers? = null
-    var useMock = false
+    var useMock = true
     var onPreviewRequest: (
         (
             endpoint: String,
@@ -100,7 +100,9 @@ object MockApiClient {
             endpoint: String,
             path: String,
             filePaths: List<String>,
-            boundary: String
+            connectionTimeout: Long,
+            socketTimeout: Long,
+            boundary: String,
         ): ByteArray {
             onMultipartPostRequest?.let {
                 return it(endpoint, path, filePaths, boundary)

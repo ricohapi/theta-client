@@ -122,12 +122,14 @@ object ThetaApi {
         endpoint: String,
         apiPath: String,
         filePaths: List<String>,
+        connectTimeout: Long,
+        socketTimeout: Long,
     ): UpdateFirmwareApiResponse {
         if(filePaths.isEmpty()) {
             throw IllegalArgumentException("Empty filePaths")
         }
         //val responseBody = ApiClient.multipartPostClient.request(endpoint, apiPath, filePaths)
-        val responseBody = multipartPostClient.request(endpoint, apiPath, filePaths)
+        val responseBody = multipartPostClient.request(endpoint, apiPath, filePaths, connectTimeout, socketTimeout)
         return Json.decodeFromString<UpdateFirmwareApiResponse>(String(responseBody))
     }
 

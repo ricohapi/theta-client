@@ -56,7 +56,7 @@ internal object ApiClient {
     }
 
     internal val previewClient = PreviewClientImpl()
-    internal val multipartPostClient = MultipartPostClientImpl(connectionTimeout = 30_000L, socketTimeout = 300_000L)
+    internal val multipartPostClient = MultipartPostClientImpl()
 }
 
 /**
