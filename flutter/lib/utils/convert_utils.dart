@@ -37,6 +37,7 @@ class ConvertUtils {
           element['name'],
           element['fileUrl'],
           element['size'],
+          element['dateTimeZone'],
           element['dateTime'],
           element['lat'],
           element['lng'],

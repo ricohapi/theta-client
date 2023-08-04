@@ -46,6 +46,7 @@ describe('listFiles', () => {
     return {
       name: `name${no}`,
       size: 10,
+      dateTimeZone: '2023:04:05 16:21:17+09:00',
       dateTime: '2023:04:05 16:21:17',
       thumbnailUrl: 'http://192.168.1.1/files/100RICOH/R${no}.JPG',
       fileUrl: 'http://192.168.1.1/files/100RICOH/R${no}.JPG',

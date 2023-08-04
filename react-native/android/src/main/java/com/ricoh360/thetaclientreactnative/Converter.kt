@@ -1182,6 +1182,9 @@ fun fileInfoFromTheta(fileInfo: ThetaRepository.FileInfo): ReadableMap {
   result.putString("fileUrl", fileInfo.fileUrl)
   result.putDouble("size", fileInfo.size.toDouble())
   result.putString("dateTime", fileInfo.dateTime)
+  fileInfo.dateTimeZone?.let {
+    result.putString("dateTimeZone", it)
+  }
   fileInfo.lat?.let {
     result.putDouble("lat", it.toDouble())
   }

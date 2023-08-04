@@ -239,6 +239,7 @@ void main() {
     const startPosition = 0;
     const name = 'R0013336.JPG';
     const size = 100;
+    const dateTimeZone = '2022:11:15 14:00:15+09:00';
     const dateTime = '2022:11:15 14:00:15';
     const fileUrl =
         'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG';
@@ -256,6 +257,7 @@ void main() {
       final Map info = <String, dynamic>{
         'name': name,
         'size': size,
+        'dateTimeZone': dateTimeZone,
         'dateTime': dateTime,
         'fileUrl': fileUrl,
         'thumbnailUrl': thumbnailUrl,
@@ -279,6 +281,7 @@ void main() {
       var fileInfo = thetaFiles.fileList[0];
       expect(fileInfo.name, name);
       expect(fileInfo.size, size);
+      expect(fileInfo.dateTimeZone, dateTimeZone);
       expect(fileInfo.dateTime, dateTime);
       expect(fileInfo.fileUrl, fileUrl);
       expect(fileInfo.thumbnailUrl, thumbnailUrl);
@@ -295,6 +298,7 @@ void main() {
     const startPosition = 0;
     const name = 'R0013336.JPG';
     const size = 100;
+    const dateTimeZone = '2022:11:15 14:00:15+09:00';
     const dateTime = '2022:11:15 14:00:15';
     const fileUrl =
         'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG';
@@ -314,6 +318,7 @@ void main() {
       final Map info = <String, dynamic>{
         'name': name,
         'size': size,
+        'dateTimeZone': dateTimeZone,
         'dateTime': dateTime,
         'fileUrl': fileUrl,
         'thumbnailUrl': thumbnailUrl,
@@ -336,6 +341,7 @@ void main() {
       var fileInfo = thetaFiles.fileList[0];
       expect(fileInfo.name, name);
       expect(fileInfo.size, size);
+      expect(fileInfo.dateTimeZone, dateTimeZone);
       expect(fileInfo.dateTime, dateTime);
       expect(fileInfo.fileUrl, fileUrl);
       expect(fileInfo.thumbnailUrl, thumbnailUrl);

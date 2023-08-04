@@ -4928,6 +4928,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @property name File name.
      * @property fileUrl You can get a file using HTTP GET to [fileUrl].
      * @property size File size in bytes.
+     * @property dateTimeZone File creation or update time with the time zone in the format "YYYY:MM:DD hh:mm:ss+(-)hh:mm".
      * @property dateTime File creation time in the format "YYYY:MM:DD HH:MM:SS".
      * @property lat Latitude.
      * @property lng Longitude.
@@ -4952,6 +4953,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         val name: String,
         val fileUrl: String,
         val size: Long,
+        val dateTimeZone: String?,
         val dateTime: String,
         val lat: Float?,
         val lng: Float?,
@@ -4976,7 +4978,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             cameraFileInfo.name,
             cameraFileInfo.fileUrl,
             cameraFileInfo.size,
-            cameraFileInfo.dateTimeZone!!.take(16), // Delete timezone
+            dateTimeZone = cameraFileInfo.dateTimeZone,
+            dateTime = cameraFileInfo.dateTimeZone!!.take(16), // Delete timezone
             cameraFileInfo.lat,
             cameraFileInfo.lng,
             cameraFileInfo.width,
