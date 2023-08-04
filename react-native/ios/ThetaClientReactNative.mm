@@ -2484,6 +2484,9 @@ NSDictionary* fileInfoFromTheta(THETACThetaRepositoryFileInfo* fileInfo) {
     @"dateTime":fileInfo.dateTime,
     @"thumbnailUrl":fileInfo.thumbnailUrl
   }];
+  if (fileInfo.dateTimeZone) {
+    [fileInfoObject setObject:fileInfo.dateTimeZone forKey:@"dateTimeZone"];
+  }
   if (fileInfo.lat) {
     [fileInfoObject setObject:@(fileInfo.lat.floatValue) forKey:@"lat"];
   }

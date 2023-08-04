@@ -6,6 +6,8 @@ export type FileInfo = {
   fileUrl: string;
   /** File size in bytes. */
   size: number;
+  /** File creation or update time with the time zone in the format "YYYY:MM:DD hh:mm:ss+(-)hh:mm". */
+  dateTimeZone: string;
   /** File creation time in the format "YYYY:MM:DD HH:MM:SS". */
   dateTime: string;
   /** Latitude. */
