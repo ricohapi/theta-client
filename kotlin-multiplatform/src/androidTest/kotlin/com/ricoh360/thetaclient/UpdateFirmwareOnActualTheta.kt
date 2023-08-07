@@ -130,7 +130,7 @@ class UpdateFirmwareOnActualTheta {
         // Environment variable name that holds the path of Theta firmware update API.
         const val FIRMWARE_UPDATE_API_ENV_NAME= "THETA_FU_API_PATH"
         // Timeout for socket and coroutine
-        const val TIMEOUT = 300_000L
+        const val TIMEOUT = 600_000L
         // directory firmware files exist
         val DIR = "/media/sf_vmshare/ex/"
         // lastest firmware version of SC2 for business
@@ -140,9 +140,9 @@ class UpdateFirmwareOnActualTheta {
         // previous firmware file of SC2 for business
         const val SC2_B_FILE_PREVIOUS = "bx1_v641.frm"
         // lastest firmware version of X
-        const val X_VERSION_LATEST = "2.20.1"
+        const val X_VERSION_LATEST = "2.21.0"
         // latest firmware file of X
-        const val X_FILE_LATEST = "cv1_v220.frm"
+        const val X_FILE_LATEST = "cv1_v221.frm"
         //const val X_FILE_LATEST = "cv1_v220_v210.frm"
 
         // User name of digest authentication is X_USERNAME_PREFIX + X_SERIAL_NUMBER
