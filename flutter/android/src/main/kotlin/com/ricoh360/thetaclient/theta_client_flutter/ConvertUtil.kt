@@ -81,6 +81,7 @@ fun toResult(fileInfoList: List<FileInfo>): List<Map<String, Any>> {
             "dateTime" to it.dateTime,
             "thumbnailUrl" to it.thumbnailUrl,
         )
+        it.dateTimeZone?.run { map.put("dateTimeZone", this) }
         it.lat?.run { map.put("lat", this) }
         it.lng?.run { map.put("lng", this) }
         it.width?.run { map.put("width", this) }

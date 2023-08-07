@@ -31,6 +31,9 @@ func convertResult(fileInfoList: [ThetaRepository.FileInfo]) -> [[String: Any]] 
             "dateTime": fileInfo.dateTime,
             "thumbnailUrl": fileInfo.thumbnailUrl,
         ]
+        if let dateTimeZone = fileInfo.dateTimeZone {
+            item["dateTimeZone"] = dateTimeZone
+        }
         if let lat = fileInfo.lat {
             item["lat"] = lat.floatValue
         }

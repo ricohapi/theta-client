@@ -620,6 +620,9 @@ class FileInfo {
   /// File size in bytes.
   final int size;
 
+  /// File creation or update time with the time zone in the format "YYYY:MM:DD hh:mm:ss+(-)hh:mm".
+  final String dateTimeZone;
+
   /// File creation time in the format "YYYY:MM:DD HH:MM:SS".
   final String dateTime;
 
@@ -681,6 +684,7 @@ class FileInfo {
       this.name,
       this.fileUrl,
       this.size,
+      this.dateTimeZone,
       this.dateTime,
       this.lat,
       this.lng,
