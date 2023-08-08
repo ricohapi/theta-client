@@ -122,7 +122,7 @@ open class BaseHttpClient() : Closeable {
      *
      * @param endpoint endpoint of the host
      * @param connectionTimeout timeout of connection (msec)
-     * @param socketTimeout timeout of socket (msec)
+     * @param socketTimeout read/write timeout of socket (msec)
      */
     protected suspend fun connect(endpoint: String, connectionTimeout: Long, socketTimeout: Long) {
         reset()
@@ -582,8 +582,8 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
      * @param endpoint endpount of Web API, eg. "http://192.198.1.1:80/"
      * @param path request target of HTTP
      * @param filePaths Content of each part
-     * @param connectionTimeout timeout for connection (msec). If null, default value is used.
-     * @param socketTimeout timeout for socket (msec). If null, default value is used.
+     * @param connectionTimeout timeout for connection (msec).
+     * @param socketTimeout timeout for socket (msec).
      * @param boundary boundary parameter of multipart/form-data
      * @return body of the response
      * @throws [BaseHttpClientException] when the host returns an error.
@@ -621,8 +621,8 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
      * @param path request target of HTTP
      * @param filePaths Content of each part
      * @param digest value of Authorization header if needed
-     * @param connectionTimeout timeout for connection (msec). If null, default value is used.
-     * @param socketTimeout timeout for socket (msec). If null, default value is used.
+     * @param connectionTimeout timeout for connection (msec).
+     * @param socketTimeout timeout for socket (msec).
      * @param boundary boundary parameter of multipart/form-data
      */
     internal suspend fun requestOnce(
@@ -644,15 +644,13 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
                 src = Path(it).source()
                 writePartHeaders(boundary, genPartHeaders(getFileName(it)))
                 // write part body
+                println("start body")
                 var count = 0
                 do {
                     write(buffer, count)
-                    //var s = ""
-                    //for(i in 0..count-1) s += buffer.elementAt(i).toInt().toChar()
-                    //print(s)
                     count = src.readAtMostTo(buffer, 0, READ_BUFFER_SIZE)
-                    //println("count: $count")
                 } while(count != -1)
+                println("end body")
             } finally {
                 src?.close()
             }
@@ -688,10 +686,13 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
      */
     protected suspend fun writePartHeaders(boundary: String, headers: List<Pair<String, String>>) {
         write(genBoundaryDelimiter(boundary))
+        print(genBoundaryDelimiter(boundary))
         for ((name, value) in headers) {
             write("$name: $value\r\n")
+            print("$name: $value\r\n")
         }
         write("\r\n")
+        print("\r\n")
     }
 
     /**
@@ -702,6 +703,7 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
      */
     private suspend fun writeCloseDelimiter(boundary: String) {
         write(genCloseDelimiter(boundary))
+        print(genCloseDelimiter(boundary))
     }
 
 }

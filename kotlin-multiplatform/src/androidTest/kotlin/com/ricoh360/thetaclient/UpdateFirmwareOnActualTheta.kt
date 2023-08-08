@@ -16,7 +16,7 @@ import kotlin.test.*
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class UpdateFirmwareOnActualTheta {
-    private val endpoint = "http://192.168.1.3:80/"
+    private val endpoint = "http://192.168.1.1:80/"
 
     /**
      * Test for Theta SC2 for business
