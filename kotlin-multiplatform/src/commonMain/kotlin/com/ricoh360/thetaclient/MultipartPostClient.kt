@@ -135,8 +135,9 @@ open class BaseHttpClient() : Closeable {
                 val socket = builder.connect(
                     InetSocketAddress(this@BaseHttpClient.endpoint!!.host, this@BaseHttpClient.endpoint!!.port),
                 ) {
-                    this.socketTimeout = socketTimeout
+                    this.keepAlive = true
                     this.receiveBufferSize = buffer.size
+                    this.socketTimeout = socketTimeout
                 }
                 this@BaseHttpClient.input = socket.openReadChannel()
                 this@BaseHttpClient.output = socket.openWriteChannel(autoFlush = true)

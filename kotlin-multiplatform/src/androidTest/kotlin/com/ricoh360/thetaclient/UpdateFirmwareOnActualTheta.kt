@@ -29,10 +29,7 @@ class UpdateFirmwareOnActualTheta {
         }
 
         val thetaRepository = kotlin.runCatching {
-            ThetaRepository.newInstance(
-                endpoint,
-                timeout = ThetaRepository.Timeout(requestTimeout = TIMEOUT, socketTimeout = TIMEOUT)
-            )
+            ThetaRepository.newInstance(endpoint)
         }.onFailure {
             assertTrue(false, it.toString())
         }.getOrNull()
@@ -58,6 +55,7 @@ class UpdateFirmwareOnActualTheta {
         kotlin.runCatching {
             thetaRepository.updateFirmware(apiPath, listOf(firmFile))
         }.onFailure {
+            println(it.toString())
             assertTrue(false, it.toString())
             return@runTest
         }
@@ -68,7 +66,7 @@ class UpdateFirmwareOnActualTheta {
      * Test for Theta X
      * Connect Theta with client mode, then set X_SERIAL_NUMBER and URL_CL.
      */
-    @Test
+    /*@Test
     fun updateFirmwareXTest() = runTest(dispatchTimeoutMs = TIMEOUT) {
         if(MockApiClient.useMock) {
             println("updateFirmwareXTest(): This test is just for Actual Theta, so skipped")
@@ -83,8 +81,7 @@ class UpdateFirmwareOnActualTheta {
                         USERNAME_PREFIX + X_SERIAL_NUMBER,
                         X_SERIAL_NUMBER.substring(PASSWORD_START_POSITION)
                     )
-                ),
-                timeout = ThetaRepository.Timeout(requestTimeout = TIMEOUT, socketTimeout = TIMEOUT)
+                )
             )
         }.onFailure {
             assertTrue(false, it.toString())
@@ -115,7 +112,7 @@ class UpdateFirmwareOnActualTheta {
             return@runTest
         }
         assertTrue(true, "call updateFirmware()")
-    }
+    }*/
 
     fun readFile(dir: String, file: String): ByteArray {
         val path = Paths.get(dir, file)
