@@ -49,6 +49,7 @@ void main() {
     const gpsTagRecording = [GpsTagRecordingEnum.on, 'GpsTagRecording'];
     const iso = [IsoEnum.iso100, 'Iso'];
     const isoAutoHighLimit = [IsoAutoHighLimitEnum.iso125, 'IsoAutoHighLimit'];
+    const preset = [PresetEnum.face, 'Preset'];
     const whiteBalance = [WhiteBalanceEnum.auto, 'WhiteBalance'];
 
     onCallBuildPhotoCapture = (options) {
@@ -63,6 +64,7 @@ void main() {
       expect(options[gpsTagRecording[1]], gpsTagRecording[0]);
       expect(options[iso[1]], iso[0]);
       expect(options[isoAutoHighLimit[1]], isoAutoHighLimit[0]);
+      expect(options[preset[1]], preset[0]);
       expect(options[whiteBalance[1]], whiteBalance[0]);
       return Future.value(null);
     };
@@ -80,6 +82,7 @@ void main() {
     builder.setGpsTagRecording(gpsTagRecording[0] as GpsTagRecordingEnum);
     builder.setIso(iso[0] as IsoEnum);
     builder.setIsoAutoHighLimit(isoAutoHighLimit[0] as IsoAutoHighLimitEnum);
+    builder.setPreset(preset[0] as PresetEnum);
     builder.setWhiteBalance(whiteBalance[0] as WhiteBalanceEnum);
 
     var capture = await builder.build();
@@ -95,6 +98,7 @@ void main() {
     expect(capture.getGpsTagRecording(), gpsTagRecording[0]);
     expect(capture.getIso(), iso[0]);
     expect(capture.getIsoAutoHighLimit(), isoAutoHighLimit[0]);
+    expect(capture.getPreset(), preset[0]);
     expect(capture.getWhiteBalance(), whiteBalance[0]);
   });
 

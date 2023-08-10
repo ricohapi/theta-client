@@ -96,6 +96,12 @@ class PhotoCaptureBuilder extends CaptureBuilder<PhotoCaptureBuilder> {
     return this;
   }
 
+  /// Set preset mode of Theta SC2 and Theta SC2 for business.
+  PhotoCaptureBuilder setPreset(PresetEnum preset) {
+    _options[OptionNameEnum.preset.rawValue] = preset;
+    return this;
+  }
+
   /// Builds an instance of a PhotoCapture that has all the combined parameters of the Options that have been added to the Builder.
   Future<PhotoCapture> build() async {
     var completer = Completer<PhotoCapture>();

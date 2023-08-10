@@ -661,6 +661,12 @@ class PresetConverter : OptionConverter {
       objects.putString("preset", it.toString())
     }
   }
+
+  override fun setPhotoOption(objects: ReadableMap, builder: PhotoCapture.Builder) {
+    objects.getString("preset")?.let {
+      builder.setPreset(ThetaRepository.PresetEnum.valueOf(it))
+    }
+  }
 }
 
 /**

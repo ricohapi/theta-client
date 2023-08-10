@@ -2068,6 +2068,12 @@ static convert_t PresetEnum = {
     if (val) {
       [rct setObject:val forKey:@"preset"];
     }
+  },
+  .setPhotoOption = ^(NSDictionary* rct, THETACPhotoCaptureBuilder *builder) {
+    id val = [PresetEnum.toTheta objectForKey:[rct objectForKey:@"preset"]];
+    if (val) {
+      [builder setPresetPreset:val];
+    }
   }
 };
 

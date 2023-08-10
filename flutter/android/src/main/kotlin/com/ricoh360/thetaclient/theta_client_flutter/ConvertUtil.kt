@@ -214,6 +214,11 @@ fun setPhotoCaptureBuilderParams(call: MethodCall, builder: PhotoCapture.Builder
             builder.setFileFormat(it)
         }
     }
+    call.argument<String>(OptionNameEnum.Preset.name)?.let { enumName ->
+        PresetEnum.values().find { it.name == enumName }?.let {
+            builder.setPreset(it)
+        }
+    }
 }
 
 fun setTimeShiftCaptureBuilderParams(call: MethodCall, builder: TimeShiftCapture.Builder) {

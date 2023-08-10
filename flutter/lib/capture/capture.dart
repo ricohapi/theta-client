@@ -66,6 +66,11 @@ class PhotoCapture extends Capture {
     return _options[TagNameEnum.photoFileFormat.rawValue];
   }
 
+  /// Get preset mode of Theta SC2 and Theta SC2 for business.
+  PresetEnum? getPreset() {
+    return _options[OptionNameEnum.preset.rawValue];
+  }
+
   /// Take a picture.
   void takePicture(void Function(String fileUrl) onSuccess,
       void Function(Exception exception) onError) {

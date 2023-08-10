@@ -45,6 +45,7 @@ void main() {
       ['WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
       ['Filter', FilterEnum.hdr, 'HDR'],
       ['PhotoFileFormat', PhotoFileFormatEnum.rawP_6_7K, 'RAW_P_6_7K'],
+      ['Preset', PresetEnum.face, 'FACE'],
     ];
 
     Map<String, dynamic> options = {};
