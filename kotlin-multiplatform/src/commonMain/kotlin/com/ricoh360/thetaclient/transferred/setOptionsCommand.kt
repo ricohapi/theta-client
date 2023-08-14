@@ -3,7 +3,6 @@
  */
 package com.ricoh360.thetaclient.transferred
 
-import com.ricoh360.thetaclient.ThetaRepository.ContinuousNumberEnum
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -349,6 +348,20 @@ data class Options(
     var exposureProgramSupport: List<Int>? = null,
 
     /**
+     * Turns face detection ON/OFF.
+     *
+     * @see FaceDetect
+     */
+    var _faceDetect: FaceDetect? = null,
+
+    /**
+     * supported turns face detection ON/OFF.
+     *
+     * @see FaceDetect
+     */
+    var _faceDetectSupport: List<FaceDetect>? = null,
+
+    /**
      * Image format used in shooting.
      *
      * @see MediaFileFormat
@@ -356,7 +369,7 @@ data class Options(
     var fileFormat: MediaFileFormat? = null,
 
     /**
-     * supported mage format used in shooting.
+     * supported image format used in shooting.
      */
     var fileFormatSupport: List<MediaFileFormat>? = null,
 
@@ -386,6 +399,30 @@ data class Options(
      * Supported image processing filter.
      */
     var _filterSupport: List<ImageFilter>? = null,
+
+    /**
+     * Shooting function.
+     *
+     * @see Function
+     */
+    var _function: ShootingFunction? = null,
+
+    /**
+     * Supported shooting function.
+     */
+    var _functionSupport: List<ShootingFunction>? = null,
+
+    /**
+     * Microphone gain.
+     *
+     * @see Gain
+     */
+    var _gain: Gain? = null,
+
+    /**
+     * Supported microphone gain.
+     */
+    var _gainSupport: List<Gain>? = null,
 
     /**
      * GPS location information.
@@ -1165,6 +1202,57 @@ enum class CaptureMode {
      */
     @SerialName("_preset")
     PRESET,
+}
+
+/**
+ * Face detection
+ *
+ * For
+ * - RICOH THETA X
+ */
+@Serializable
+enum class FaceDetect {
+    /**
+     * Face detection ON
+     */
+    @SerialName("ON")
+    ON,
+
+    /**
+     * Face detection OFF
+     */
+    @SerialName("OFF")
+    OFF,
+}
+
+/**
+ * Microphone gain.
+ *
+ * For
+ * - RICOH THETA X
+ * - RICOH THETA Z1
+ * - RICOH THETA V
+ */
+@Serializable
+enum class Gain {
+    /**
+     * Normal mode
+     */
+    @SerialName("normal")
+    NORMAL,
+
+    /**
+     * Loud volume mode
+     */
+    @SerialName("megavolume")
+    MEGA_VOLUME,
+
+    /**
+     * Mute mode
+     * (RICOH THETA V firmware v2.50.1 or later, RICOH THETA X is not supported.)
+     */
+    @SerialName("mute")
+    MUTE,
 }
 
 /**

@@ -408,8 +408,11 @@ void main() {
         ExposureProgramEnum.aperturePriority,
         'APERTURE_PRIORITY'
       ],
+      [OptionNameEnum.faceDetect, 'FaceDetect', FaceDetectEnum.off, 'OFF'],
       [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_2K, 'IMAGE_2K'],
       [OptionNameEnum.filter, 'Filter', FilterEnum.hdr, 'HDR'],
+      [OptionNameEnum.function, 'Function', ShootingFunctionEnum.normal, 'NORMAL'],
+      [OptionNameEnum.gain, 'Gain', GainEnum.normal, 'NORMAL'],
       [
         OptionNameEnum.gpsInfo,
         'GpsInfo',
@@ -554,8 +557,11 @@ void main() {
         ExposureProgramEnum.aperturePriority,
         'APERTURE_PRIORITY'
       ],
+      [OptionNameEnum.faceDetect, 'FaceDetect', FaceDetectEnum.on, 'ON'],
       [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_2K, 'IMAGE_2K'],
       [OptionNameEnum.filter, 'Filter', FilterEnum.hdr, 'HDR'],
+      [OptionNameEnum.function, 'Function', ShootingFunctionEnum.selfTimer, 'SELF_TIMER'],
+      [OptionNameEnum.gain, 'Gain', GainEnum.megaVolume, 'MEGA_VOLUME'],
       [
         OptionNameEnum.gpsInfo,
         'GpsInfo',

@@ -434,8 +434,11 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
         OptionNameEnum.ExposureCompensation -> ExposureCompensationEnum.values().find { it.name == valueName }
         OptionNameEnum.ExposureDelay -> ExposureDelayEnum.values().find { it.name == valueName }
         OptionNameEnum.ExposureProgram -> ExposureProgramEnum.values().find { it.name == valueName }
+        OptionNameEnum.FaceDetect -> FaceDetectEnum.values().find { it.name == valueName }
         OptionNameEnum.FileFormat -> FileFormatEnum.values().find { it.name == valueName }
         OptionNameEnum.Filter -> FilterEnum.values().find { it.name == valueName }
+        OptionNameEnum.Function -> ShootingFunctionEnum.values().find { it.name == valueName }
+        OptionNameEnum.Gain -> GainEnum.values().find { it.name == valueName }
         OptionNameEnum.Iso -> IsoEnum.values().find { it.name == valueName }
         OptionNameEnum.IsoAutoHighLimit -> ApertureEnum.values().find { it.name == valueName }
         OptionNameEnum.Language -> LanguageEnum.values().find { it.name == valueName }

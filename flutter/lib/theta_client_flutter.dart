@@ -1070,15 +1070,21 @@ enum ChargingStateEnum {
   }
 }
 
-/// Shooting function status
+/// Shooting function.
+/// Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
+/// Setting them at the same time as exposureDelay will result in an error.
+///
+/// For
+/// - RICOH THETA X
+/// - RICOH THETA Z1
 enum ShootingFunctionEnum {
-  /// Shooting function status. normal
+  /// Normal shooting function
   normal('NORMAL'),
 
-  /// Shooting function status. selfTimer
+  /// Self-timer shooting function(RICOH THETA X is not supported.)
   selfTimer('SELF_TIMER'),
 
-  /// Shooting function status. mySetting
+  /// My setting shooting function
   mySetting('MY_SETTING');
 
   final String rawValue;
@@ -1486,11 +1492,20 @@ enum OptionNameEnum {
   /// Option name exposureProgram
   exposureProgram('ExposureProgram', ExposureProgramEnum),
 
+  /// Option name faceDetect
+  faceDetect('FaceDetect', FaceDetectEnum),
+
   /// Option name fileFormat
   fileFormat('FileFormat', FileFormatEnum),
 
   /// Option name _filter
   filter('Filter', FilterEnum),
+
+  /// Option name function
+  function('Function', ShootingFunctionEnum),
+
+  /// Option name gain
+  gain('Gain', GainEnum),
 
   /// Option name gpsInfo
   gpsInfo('GpsInfo', GpsInfo),
@@ -2078,6 +2093,33 @@ enum ExposureProgramEnum {
   }
 }
 
+/// Face detection
+///
+/// For
+/// - RICOH THETA X
+enum FaceDetectEnum {
+  /// Face detection ON
+  on('ON'),
+
+  /// Face detection OFF
+  off('OFF');
+
+  final String rawValue;
+
+  const FaceDetectEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static FaceDetectEnum? getValue(String rawValue) {
+    return FaceDetectEnum.values
+        .cast<FaceDetectEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
 /// File format used in shooting.
 enum FileFormatEnum {
   /// Image File format.
@@ -2292,6 +2334,39 @@ enum FilterEnum {
   static FilterEnum? getValue(String rawValue) {
     return FilterEnum.values
         .cast<FilterEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Microphone gain.
+///
+/// For
+/// - RICOH THETA X
+/// - RICOH THETA Z1
+/// - RICOH THETA V
+enum GainEnum {
+  /// Normal mode
+  normal('NORMAL'),
+
+  /// Loud volume mode
+  megaVolume('MEGA_VOLUME'),
+
+  /// Mute mode
+  /// (RICOH THETA V firmware v2.50.1 or later, RICOH THETA X is not supported.)
+  mute('MUTE');
+
+  final String rawValue;
+
+  const GainEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static GainEnum? getValue(String rawValue) {
+    return GainEnum.values
+        .cast<GainEnum?>()
         .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
   }
 }
@@ -3542,6 +3617,9 @@ class Options {
   /// Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
   ExposureProgramEnum? exposureProgram;
 
+  /// see [FaceDetectEnum]
+  FaceDetectEnum? faceDetect;
+
   /// Image format used in shooting.
   ///
   /// The supported value depends on the shooting mode [captureMode].
@@ -3561,6 +3639,12 @@ class Options {
   /// shootingMethod is except for Normal shooting and [filter] is enabled
   /// Access during video capture mode
   FilterEnum? filter;
+
+  /// see [ShootingFunctionEnum]
+  ShootingFunctionEnum? function;
+
+  /// see [GainEnum]
+  GainEnum? gain;
 
   /// GPS location information.
   ///
@@ -3707,10 +3791,16 @@ class Options {
         return exposureDelay as T;
       case OptionNameEnum.exposureProgram:
         return exposureProgram as T;
+      case OptionNameEnum.faceDetect:
+        return faceDetect as T;
       case OptionNameEnum.fileFormat:
         return fileFormat as T;
       case OptionNameEnum.filter:
         return filter as T;
+      case OptionNameEnum.function:
+        return function as T;
+      case OptionNameEnum.gain:
+        return gain as T;
       case OptionNameEnum.gpsInfo:
         return gpsInfo as T;
       case OptionNameEnum.isGpsOn:
@@ -3830,11 +3920,20 @@ class Options {
       case OptionNameEnum.exposureProgram:
         exposureProgram = value;
         break;
+      case OptionNameEnum.faceDetect:
+        faceDetect = value;
+        break;
       case OptionNameEnum.fileFormat:
         fileFormat = value;
         break;
       case OptionNameEnum.filter:
         filter = value;
+        break;
+      case OptionNameEnum.function:
+        function = value;
+        break;
+      case OptionNameEnum.gain:
+        gain = value;
         break;
       case OptionNameEnum.gpsInfo:
         gpsInfo = value;

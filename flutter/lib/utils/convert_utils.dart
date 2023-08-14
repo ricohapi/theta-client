@@ -283,11 +283,20 @@ class ConvertUtils {
         case OptionNameEnum.exposureProgram:
           result.exposureProgram = ExposureProgramEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.faceDetect:
+          result.faceDetect = FaceDetectEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.fileFormat:
           result.fileFormat = FileFormatEnum.getValue(entry.value);
           break;
         case OptionNameEnum.filter:
           result.filter = FilterEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.function:
+          result.function = ShootingFunctionEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.gain:
+          result.gain = GainEnum.getValue(entry.value);
           break;
         case OptionNameEnum.gpsInfo:
           result.gpsInfo = convertGpsInfo(entry.value);
@@ -412,9 +421,15 @@ class ConvertUtils {
       return value.rawValue;
     } else if (value is ExposureProgramEnum) {
       return value.rawValue;
+    } else if (value is FaceDetectEnum) {
+      return value.rawValue;
     } else if (value is FileFormatEnum) {
       return value.rawValue;
     } else if (value is FilterEnum) {
+      return value.rawValue;
+    } else if (value is ShootingFunctionEnum) {
+      return value.rawValue;
+    } else if (value is GainEnum) {
       return value.rawValue;
     } else if (value is IsoEnum) {
       return value.rawValue;

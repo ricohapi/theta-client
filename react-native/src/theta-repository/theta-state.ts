@@ -1,3 +1,5 @@
+import type { ShootingFunctionEnum } from './options/option-function';
+
 /** Battery charging state constants */
 export const ChargingStateEnum = {
   /** Charging */
@@ -35,20 +37,6 @@ export const CaptureStatusEnum = {
 /** type definition of CaptureStatusEnum */
 export type CaptureStatusEnum =
   (typeof CaptureStatusEnum)[keyof typeof CaptureStatusEnum];
-
-/** Shooting function status constants */
-export const ShootingFunctionEnum = {
-  /** normal */
-  NORMAL: 'NORMAL',
-  /** selfTimer */
-  SELF_TIMER: 'SELF_TIMER',
-  /** mySetting */
-  MY_SETTING: 'MY_SETTING',
-} as const;
-
-/** type definition of ShootingFunctionEnum */
-export type ShootingFunctionEnum =
-  (typeof ShootingFunctionEnum)[keyof typeof ShootingFunctionEnum];
 
 /** Microphone option constants */
 export const MicrophoneOptionEnum = {

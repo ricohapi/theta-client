@@ -54,8 +54,11 @@ class CheckRequest {
             exposureCompensation: Float? = null,
             exposureDelay: Int? = null,
             exposureProgram: Int? = null,
+            faceDetect: FaceDetect? = null,
             filter: ImageFilter? = null,
             fileFormat: MediaFileFormat? = null,
+            function: ShootingFunction? = null,
+            gain: Gain? = null,
             gpsInfo: GpsInfo? = null,
             gpsTagRecording: GpsTagRecording? = null,
             iso: Int? = null,
@@ -144,11 +147,20 @@ class CheckRequest {
             exposureProgram?.let {
                 assertEquals(optionsRequest.parameters.options.exposureProgram, it, "setOptions exposureProgram")
             }
+            faceDetect?.let {
+                assertEquals(optionsRequest.parameters.options._faceDetect, it, "setOptions _faceDetect")
+            }
             filter?.let {
                 assertEquals(optionsRequest.parameters.options._filter, it, "setOptions _filter ${optionsRequest.parameters.options._filter} $it")
             }
             fileFormat?.let {
                 assertEquals(optionsRequest.parameters.options.fileFormat, it, "setOptions fileFormat")
+            }
+            function?.let {
+                assertEquals(optionsRequest.parameters.options._function, it, "setOptions _function")
+            }
+            gain?.let {
+                assertEquals(optionsRequest.parameters.options._gain, it, "setOptions _gain")
             }
             gpsInfo?.let {
                 assertEquals(optionsRequest.parameters.options.gpsInfo, it, "setOptions gpsInfo")

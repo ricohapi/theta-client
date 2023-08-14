@@ -503,11 +503,20 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.exposureprogram.name:
         options.exposureProgram = getEnumValue(values: ThetaRepository.ExposureProgramEnum.values(), name: value as! String)!
         break
+    case ThetaRepository.OptionNameEnum.facedetect.name:
+        options.faceDetect = getEnumValue(values: ThetaRepository.FaceDetectEnum.values(), name: value as! String)!
+        break
     case ThetaRepository.OptionNameEnum.fileformat.name:
         options.fileFormat = getEnumValue(values: ThetaRepository.FileFormatEnum.values(), name: value as! String)!
         break
     case ThetaRepository.OptionNameEnum.filter.name:
         options.filter = getEnumValue(values: ThetaRepository.FilterEnum.values(), name: value as! String)!
+        break
+    case ThetaRepository.OptionNameEnum.function.name:
+        options.function = getEnumValue(values: ThetaRepository.ShootingFunctionEnum.values(), name: value as! String)!
+        break
+    case ThetaRepository.OptionNameEnum.gain.name:
+        options.gain = getEnumValue(values: ThetaRepository.GainEnum.values(), name: value as! String)!
         break
     case ThetaRepository.OptionNameEnum.gpsinfo.name:
         options.gpsInfo = toGpsInfo(params: value as! [String : Any])

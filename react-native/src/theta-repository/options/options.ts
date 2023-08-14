@@ -6,7 +6,10 @@ import type { CameraControlSourceEnum } from './option-camera-control-source';
 import type { CameraModeEnum } from './option-camera-mode';
 import type { CaptureModeEnum } from './option-capture-mode';
 import type { ContinuousNumberEnum } from './option-continuous-number';
+import type { FaceDetectEnum } from './option-face-detect';
 import type { FilterEnum } from './option-filter';
+import type { ShootingFunctionEnum } from './option-function';
+import type { GainEnum } from './option-gain';
 import type { NetworkTypeEnum } from './option-network-type';
 import type { PowerSavingEnum } from './option-power-saving';
 import type { PresetEnum } from './option-preset';
@@ -477,10 +480,16 @@ export const OptionNameEnum = {
   ExposureDelay: 'ExposureDelay',
   /** exposureProgram */
   ExposureProgram: 'ExposureProgram',
+  /** _faceDetect */
+  FaceDetect: 'FaceDetect',
   /** fileFormat */
   FileFormat: 'FileFormat',
   /** filter */
   Filter: 'Filter',
+  /** _function */
+  Function: 'Function',
+  /** _gain */
+  Gain: 'Gain',
   /** gpsInfo */
   GpsInfo: 'GpsInfo',
   /** isGpsOn */
@@ -630,10 +639,16 @@ export type Options = {
   exposureDelay?: ExposureDelayEnum;
   /** Exposure program. The exposure settings that take priority can be selected. */
   exposureProgram?: ExposureProgramEnum;
+  /** Face detection */
+  faceDetect?: FaceDetectEnum;
   /** Image format used in shooting. */
   fileFormat?: PhotoFileFormatEnum | VideoFileFormatEnum;
   /** Image processing filter. */
   filter?: FilterEnum;
+  /** Shooting function. */
+  function?: ShootingFunctionEnum;
+  /** Microphone gain. */
+  gain?: GainEnum;
   /** GPS location information. */
   gpsInfo?: GpsInfo;
   /** Turns position information assigning ON/OFF. */

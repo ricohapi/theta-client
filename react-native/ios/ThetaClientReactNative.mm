@@ -259,6 +259,29 @@ static bool isNull(id obj) {
     return (obj == nil || obj == [NSNull null]);
 }
 
+/// create dictionary for converter
+template <typename T>
+static NSDictionary* createConverterDic(THETACKotlinArray* valueArray, bool isToTheta) {
+    NSMutableDictionary* dictionary = [[NSMutableDictionary alloc] init];
+    for (int i = 0; i < valueArray.size; i++) {
+        T* item = [valueArray getIndex:i];
+        isToTheta ? [dictionary setObject:item forKey:item.name] : [dictionary setObject:item.name forKey:item];
+    }
+    return dictionary;
+}
+
+/// create dictionary for toTheta
+template <typename T>
+static NSDictionary* createToThetaDic(THETACKotlinArray* valueArray) {
+    return createConverterDic<T>(valueArray, true);
+}
+
+/// create dictionary for fromTheta
+template <typename T>
+static NSDictionary* createFromThetaDic(THETACKotlinArray* valueArray) {
+    return createConverterDic<T>(valueArray, false);
+}
+
 /** opiton converter from theta to react */
 typedef void (^SetFromTheta)(NSMutableDictionary *, THETACThetaRepositoryOptions *);
 /** option converter from react to theta */
@@ -518,14 +541,6 @@ static convert_t CaptureStatusEnum = {
       THETACThetaRepositoryCaptureStatusEnum.timeShiftShooting: @"TIME_SHIFT_SHOOTING",
       THETACThetaRepositoryCaptureStatusEnum.continuousShooting: @"CONTINUOUS_SHOOTING",
       THETACThetaRepositoryCaptureStatusEnum.retrospectiveImageRecording: @"RETROSPECTIVE_IMAGE_RECORDING"
-  }
-};
-
-static convert_t ShootingFunctionEnum = {
-  .fromTheta = @{
-      THETACThetaRepositoryShootingFunctionEnum.normal: @"NORMAL",
-      THETACThetaRepositoryShootingFunctionEnum.selfTimer: @"SELF_TIMER",
-      THETACThetaRepositoryShootingFunctionEnum.mySetting: @"MY_SETTING"
   }
 };
 
@@ -1051,6 +1066,32 @@ static convert_t ExposureProgramEnum = {
 };
 
 /**
+ * FaceDetectEnum converter
+ */
+static convert_t FaceDetectEnum = {
+    .toTheta = nil,
+    .fromTheta = nil,
+    .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+        if (!FaceDetectEnum.toTheta) {
+            FaceDetectEnum.toTheta = createToThetaDic<THETACThetaRepositoryFaceDetectEnum>(THETACThetaRepositoryFaceDetectEnum.values);
+        }
+        id val = [FaceDetectEnum.toTheta objectForKey:[rct objectForKey:@"faceDetect"]];
+        if (val) {
+            opt.faceDetect = val;
+        }
+    },
+        .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+            if (!FaceDetectEnum.fromTheta) {
+                FaceDetectEnum.fromTheta = createFromThetaDic<THETACThetaRepositoryFaceDetectEnum>(THETACThetaRepositoryFaceDetectEnum.values);
+            }
+            id val = [FaceDetectEnum.fromTheta objectForKey:opt.faceDetect];
+            if (val) {
+                [rct setObject:val forKey:@"faceDetect"];
+            }
+        }
+};
+
+/**
  * FileFormatTypeEnum converter
  */
 static convert_t FileFormatTypeEnum = {
@@ -1200,6 +1241,58 @@ static convert_t FilterEnum = {
       [builder setFilterFilter:val];
     }
   }
+};
+
+/**
+ * ShootingFunctionEnum converter
+ */
+static convert_t ShootingFunctionEnum = {
+    .toTheta = nil,
+    .fromTheta = nil,
+    .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+        if (!ShootingFunctionEnum.toTheta) {
+            ShootingFunctionEnum.toTheta = createToThetaDic<THETACThetaRepositoryShootingFunctionEnum>(THETACThetaRepositoryShootingFunctionEnum.values);
+        }
+        id val = [ShootingFunctionEnum.toTheta objectForKey:[rct objectForKey:@"function"]];
+        if (val) {
+            opt.function = val;
+        }
+    },
+        .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+            if (!ShootingFunctionEnum.fromTheta) {
+                ShootingFunctionEnum.fromTheta = createFromThetaDic<THETACThetaRepositoryShootingFunctionEnum>(THETACThetaRepositoryShootingFunctionEnum.values);
+            }
+            id val = [ShootingFunctionEnum.fromTheta objectForKey:opt.function];
+            if (val) {
+                [rct setObject:val forKey:@"function"];
+            }
+        }
+};
+
+/**
+ * GainEnum converter
+ */
+static convert_t GainEnum = {
+    .toTheta = nil,
+    .fromTheta = nil,
+    .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+        if (!GainEnum.toTheta) {
+            GainEnum.toTheta = createToThetaDic<THETACThetaRepositoryShootingFunctionEnum>(THETACThetaRepositoryGainEnum.values);
+        }
+        id val = [GainEnum.toTheta objectForKey:[rct objectForKey:@"gain"]];
+        if (val) {
+            opt.gain = val;
+        }
+    },
+        .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+            if (!GainEnum.fromTheta) {
+                GainEnum.fromTheta = createFromThetaDic<THETACThetaRepositoryShootingFunctionEnum>(THETACThetaRepositoryGainEnum.values);
+            }
+            id val = [GainEnum.fromTheta objectForKey:opt.gain];
+            if (val) {
+                [rct setObject:val forKey:@"gain"];
+            }
+        }
 };
 
 /**
@@ -2275,8 +2368,11 @@ static NSDictionary *NameToOptionEnum = @{
   @"ExposureCompensation": THETACThetaRepositoryOptionNameEnum.exposurecompensation,
   @"ExposureDelay": THETACThetaRepositoryOptionNameEnum.exposuredelay,
   @"ExposureProgram": THETACThetaRepositoryOptionNameEnum.exposureprogram,
+  @"FaceDetect": THETACThetaRepositoryOptionNameEnum.facedetect,
   @"FileFormat": THETACThetaRepositoryOptionNameEnum.fileformat,
   @"Filter": THETACThetaRepositoryOptionNameEnum.filter,
+  @"Function": THETACThetaRepositoryOptionNameEnum.function,
+  @"Gain": THETACThetaRepositoryOptionNameEnum.gain,
   @"GpsInfo": THETACThetaRepositoryOptionNameEnum.gpsinfo,
   @"IsGpsOn": THETACThetaRepositoryOptionNameEnum.isgpson,
   @"Iso": THETACThetaRepositoryOptionNameEnum.iso,
@@ -2328,8 +2424,11 @@ static NSDictionary *OptionEnumToOption = @{
   @"ExposureCompensation": @"exposureCompensation",
   @"ExposureDelay": @"exposureDelay",
   @"ExposureProgram": @"exposureProgram",
+  @"FaceDetect": @"faceDetect",
   @"FileFormat": @"fileFormat",
   @"Filter": @"filter",
+  @"Function": @"function",
+  @"Gain": @"gain",
   @"GpsInfo": @"gpsInfo",
   @"IsGpsOn": @"isGpsOn",
   @"Iso": @"iso",
@@ -2384,8 +2483,11 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"exposureCompensation": ^{return &ExposureCompensationEnum;},
   @"exposureDelay": ^{return &ExposureDelayEnum;},
   @"exposureProgram": ^{return &ExposureProgramEnum;},
+  @"faceDetect": ^{return &FaceDetectEnum;},
   @"fileFormat": ^{return &FileFormatEnum;},
   @"filter": ^{return &FilterEnum;},
+  @"function": ^{return &ShootingFunctionEnum;},
+  @"gain": ^{return &GainEnum;},
   @"gpsInfo": ^{return &GpsInfoCvt;},
   @"isGpsOn": ^{return &IsGpsOnCvt;},
   @"iso": ^{return &IsoEnum;},
