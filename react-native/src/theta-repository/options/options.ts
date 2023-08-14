@@ -10,6 +10,7 @@ import type { FaceDetectEnum } from './option-face-detect';
 import type { FilterEnum } from './option-filter';
 import type { ShootingFunctionEnum } from './option-function';
 import type { GainEnum } from './option-gain';
+import type { ImageStitchingEnum } from './option-image-stitching';
 import type { NetworkTypeEnum } from './option-network-type';
 import type { PowerSavingEnum } from './option-power-saving';
 import type { PresetEnum } from './option-preset';
@@ -492,6 +493,8 @@ export const OptionNameEnum = {
   Gain: 'Gain',
   /** gpsInfo */
   GpsInfo: 'GpsInfo',
+  /** imageStitching */
+  ImageStitching: 'ImageStitching',
   /** isGpsOn */
   IsGpsOn: 'IsGpsOn',
   /** iso */
@@ -651,6 +654,8 @@ export type Options = {
   gain?: GainEnum;
   /** GPS location information. */
   gpsInfo?: GpsInfo;
+  /** Still image stitching setting during shooting. */
+  imageStitching?: ImageStitchingEnum;
   /** Turns position information assigning ON/OFF. */
   isGpsOn?: boolean;
   /** ISO sensitivity */

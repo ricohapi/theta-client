@@ -419,6 +419,7 @@ void main() {
         GpsInfo(1.0, 2.0, 3.0, '2022:01:01 00:01:00+09:00'),
         gpsInfoMap
       ],
+      [OptionNameEnum.imageStitching, 'ImageStitching', ImageStitchingEnum.auto, 'AUTO'],
       [OptionNameEnum.isGpsOn, 'IsGpsOn', true, true],
       [OptionNameEnum.iso, 'Iso', IsoEnum.iso50, 'ISO_50'],
       [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso200, 'ISO_200'],
@@ -568,6 +569,7 @@ void main() {
         GpsInfo(1.0, 2.0, 3.0, '2022:01:01 00:01:00+09:00'),
         gpsInfoMap
       ],
+      [OptionNameEnum.imageStitching, 'ImageStitching', ImageStitchingEnum.auto, 'AUTO'],
       [OptionNameEnum.isGpsOn, 'IsGpsOn', true, true],
       [OptionNameEnum.iso, 'Iso', IsoEnum.iso50, 'ISO_50'],
       [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso200, 'ISO_200'],

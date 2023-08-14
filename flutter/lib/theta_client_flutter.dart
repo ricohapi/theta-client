@@ -1510,6 +1510,9 @@ enum OptionNameEnum {
   /// Option name gpsInfo
   gpsInfo('GpsInfo', GpsInfo),
 
+  /// Option name imageStitching
+  imageStitching('ImageStitching', ImageStitchingEnum),
+
   /// Option name _gpsTagRecording
   ///
   /// For RICOH THETA X or later
@@ -2368,6 +2371,52 @@ enum GainEnum {
     return GainEnum.values
         .cast<GainEnum?>()
         .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// ImageStitching
+enum ImageStitchingEnum {
+  /// Refer to stitching when shooting with "auto"
+  auto('AUTO'),
+
+  /// Performs static stitching
+  static('STATIC'),
+
+  /// Performs dynamic stitching (RICOH THETA X or later)
+  dynamic('DYNAMIC'),
+
+  /// For Normal shooting, performs dynamic stitching,
+  /// for Interval shooting, saves dynamic distortion correction parameters
+  /// for the first image and then uses them for the 2nd and subsequent
+  /// images (RICOH THETA X is not supported)
+  dynamicAuto('DYNAMIC_AUTO'),
+
+  /// Performs semi-dynamic stitching
+  /// Saves dynamic distortion correction parameters for the first image
+  /// and then uses them for the 2nd and subsequent images (RICOH THETA X or later)
+  dynamicSemiAuto('DYNAMIC_SEMI_AUTO'),
+
+  /// Performs dynamic stitching and then saves distortion correction parameters
+  dynamicSave('DYNAMIC_SAVE'),
+
+  /// Performs stitching using the saved distortion correction parameters
+  dynamicLoad('DYNAMIC_LOAD'),
+
+  /// Does not perform stitching
+  none('NONE');
+
+  final String rawValue;
+  const ImageStitchingEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static ImageStitchingEnum? getValue(String rawValue) {
+    return ImageStitchingEnum.values.cast<ImageStitchingEnum?>().firstWhere(
+            (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -3651,6 +3700,9 @@ class Options {
   /// In order to append the location information, this property should be specified by the client.
   GpsInfo? gpsInfo;
 
+  /// Still image stitching setting during shooting.
+  ImageStitchingEnum? imageStitching;
+
   /// Turns position information assigning ON/OFF.
   /// For THETA X
   bool? isGpsOn;
@@ -3803,6 +3855,8 @@ class Options {
         return gain as T;
       case OptionNameEnum.gpsInfo:
         return gpsInfo as T;
+      case OptionNameEnum.imageStitching:
+        return imageStitching as T;
       case OptionNameEnum.isGpsOn:
         return isGpsOn as T;
       case OptionNameEnum.iso:
@@ -3937,6 +3991,9 @@ class Options {
         break;
       case OptionNameEnum.gpsInfo:
         gpsInfo = value;
+        break;
+      case OptionNameEnum.imageStitching:
+        imageStitching = value;
         break;
       case OptionNameEnum.isGpsOn:
         isGpsOn = value;

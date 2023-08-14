@@ -783,6 +783,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _imageStitching
+         */
+        ImageStitching("_imageStitching", ImageStitchingEnum::class),
+
+        /**
+         * Option name
          * _gpsTagRecording
          *
          * For RICOH THETA X or later
@@ -1147,6 +1153,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var gpsInfo: GpsInfo? = null,
 
         /**
+         * Still image stitching setting during shooting.
+         */
+        var imageStitching: ImageStitchingEnum? = null,
+
+        /**
          * Turns position information assigning ON/OFF.
          * For THETA X
          */
@@ -1322,6 +1333,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             function = null,
             gain = null,
             gpsInfo = null,
+            imageStitching = null,
             isGpsOn = null,
             iso = null,
             isoAutoHighLimit = null,
@@ -1379,6 +1391,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             function = options._function?.let { ShootingFunctionEnum.get(it) },
             gain = options._gain?.let { GainEnum.get(it) },
             gpsInfo = options.gpsInfo?.let { GpsInfo(it) },
+            imageStitching = options._imageStitching?.let { ImageStitchingEnum.get(it) },
             isGpsOn = options._gpsTagRecording?.let { it == GpsTagRecording.ON },
             iso = options.iso?.let { IsoEnum.get(it) },
             isoAutoHighLimit = options.isoAutoHighLimit?.let { IsoAutoHighLimitEnum.get(it) },
@@ -1438,6 +1451,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _gain = gain?.value,
                 gpsInfo = gpsInfo?.toTransferredGpsInfo(),
                 _gpsTagRecording = isGpsOn?.let { if (it) GpsTagRecording.ON else GpsTagRecording.OFF },
+                _imageStitching = imageStitching?.value,
                 iso = iso?.value,
                 isoAutoHighLimit = isoAutoHighLimit?.value,
                 _language = language?.value,
@@ -1502,6 +1516,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.Function -> function
                 OptionNameEnum.Gain -> gain
                 OptionNameEnum.GpsInfo -> gpsInfo
+                OptionNameEnum.ImageStitching -> imageStitching
                 OptionNameEnum.IsGpsOn -> isGpsOn
                 OptionNameEnum.Iso -> iso
                 OptionNameEnum.IsoAutoHighLimit -> isoAutoHighLimit
@@ -1568,6 +1583,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.Function -> function = value as ShootingFunctionEnum
                 OptionNameEnum.Gain -> gain = value as GainEnum
                 OptionNameEnum.GpsInfo -> gpsInfo = value as GpsInfo
+                OptionNameEnum.ImageStitching -> imageStitching = value as ImageStitchingEnum
                 OptionNameEnum.IsGpsOn -> isGpsOn = value as Boolean
                 OptionNameEnum.Iso -> iso = value as IsoEnum
                 OptionNameEnum.IsoAutoHighLimit -> isoAutoHighLimit = value as IsoAutoHighLimitEnum
@@ -3409,6 +3425,68 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @return GpsTagRecordingEnum
              */
             fun get(value: GpsTagRecording): GpsTagRecordingEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Still image stitching setting during shooting.
+     * For Theta X, Z1 and V.
+     */
+    enum class ImageStitchingEnum(val value: ImageStitching) {
+        /**
+         * Refer to stitching when shooting with "auto"
+         */
+        AUTO(ImageStitching.AUTO),
+
+        /**
+         * Performs static stitching
+         */
+        STATIC(ImageStitching.STATIC),
+
+        /**
+         * Performs dynamic stitching(RICOH THETA X or later)
+         */
+        DYNAMIC(ImageStitching.DYNAMIC),
+
+        /**
+         * For Normal shooting, performs dynamic stitching,
+         * for Interval shooting, saves dynamic distortion correction parameters for the first image
+         * and then uses them for the 2nd and subsequent images (RICOH THETA X is not supported)
+         */
+        DYNAMIC_AUTO(ImageStitching.DYNAMIC_AUTO),
+
+        /**
+         * Performs semi-dynamic stitching.
+         * Saves dynamic distortion correction parameters for the first image
+         * and then uses them for the 2nd and subsequent images(RICOH THETA X or later)
+         */
+        DYNAMIC_SEMI_AUTO(ImageStitching.DYNAMIC_SEMI_AUTO),
+
+        /**
+         * Performs dynamic stitching and then saves distortion correction parameters
+         */
+        DYNAMIC_SAVE(ImageStitching.DYNAMIC_SAVE),
+
+        /**
+         * Performs stitching using the saved distortion correction parameters
+         */
+        DYNAMIC_LOAD(ImageStitching.DYNAMIC_LOAD),
+
+        /**
+         * Does not perform stitching
+         */
+        NONE(ImageStitching.NONE);
+
+        companion object {
+            /**
+             * Convert ImageStitching to ImageStitchingEnum
+             *
+             * @param value
+             * @return ImageStitchingEnum
+             */
+            fun get(value: ImageStitching): ImageStitchingEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }

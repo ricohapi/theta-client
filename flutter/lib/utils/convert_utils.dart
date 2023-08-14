@@ -301,6 +301,9 @@ class ConvertUtils {
         case OptionNameEnum.gpsInfo:
           result.gpsInfo = convertGpsInfo(entry.value);
           break;
+        case OptionNameEnum.imageStitching:
+          result.imageStitching = ImageStitchingEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.isGpsOn:
           result.isGpsOn = entry.value;
           break;
@@ -430,6 +433,8 @@ class ConvertUtils {
     } else if (value is ShootingFunctionEnum) {
       return value.rawValue;
     } else if (value is GainEnum) {
+      return value.rawValue;
+    } else if (value is ImageStitchingEnum) {
       return value.rawValue;
     } else if (value is IsoEnum) {
       return value.rawValue;

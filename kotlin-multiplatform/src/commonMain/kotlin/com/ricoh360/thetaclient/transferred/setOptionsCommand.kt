@@ -2088,7 +2088,7 @@ enum class ImageStitching {
      * Performs semi-dynamic stitching
      */
     @SerialName("dynamicSemiAuto")
-    DYNAMIC_SEMIAUTO,
+    DYNAMIC_SEMI_AUTO,
 
     /**
      * Performs dynamic stitching and then saves distortion correction

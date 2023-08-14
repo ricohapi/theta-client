@@ -521,6 +521,9 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.gpsinfo.name:
         options.gpsInfo = toGpsInfo(params: value as! [String : Any])
         break
+    case ThetaRepository.OptionNameEnum.imagestitching.name:
+        options.imageStitching = getEnumValue(values: ThetaRepository.ImageStitchingEnum.values(), name: value as! String)!
+        break;
     case ThetaRepository.OptionNameEnum.isgpson.name:
         options.isGpsOn = (value as! Bool) ? true: false
         break

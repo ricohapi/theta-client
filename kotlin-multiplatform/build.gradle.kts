@@ -1,6 +1,7 @@
-import java.util.*
-import org.jetbrains.dokka.versioning.VersioningPlugin
+
 import org.jetbrains.dokka.versioning.VersioningConfiguration
+import org.jetbrains.dokka.versioning.VersioningPlugin
+import java.util.Properties
 
 plugins {
     kotlin("multiplatform")

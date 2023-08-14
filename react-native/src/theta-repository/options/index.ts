@@ -11,6 +11,7 @@ export * from './option-face-detect';
 export * from './option-filter';
 export * from './option-function';
 export * from './option-gain';
+export * from './option-image-stitching';
 export * from './option-network-type';
 export * from './option-power-saving';
 export * from './option-preset';

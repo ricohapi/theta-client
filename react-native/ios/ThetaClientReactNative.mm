@@ -1330,6 +1330,44 @@ static convert_t GpsTagRecordingEnum = {
 };
 
 /**
+ * ImageStitching convertor
+ */
+static convert_t ImageStitchingEnum = {
+  .toTheta = @{
+    @"AUTO": THETACThetaRepositoryImageStitchingEnum.auto_,
+    @"STATIC": THETACThetaRepositoryImageStitchingEnum.static_,
+    @"DYNAMIC": THETACThetaRepositoryImageStitchingEnum.dynamic,
+    @"DYNAMIC_AUTO": THETACThetaRepositoryImageStitchingEnum.dynamicAuto,
+    @"DYNAMIC_SEMI_AUTO": THETACThetaRepositoryImageStitchingEnum.dynamicSemiAuto,
+    @"DYNAMIC_SAVE": THETACThetaRepositoryImageStitchingEnum.dynamicSave,
+    @"DYNAMIC_LOAD": THETACThetaRepositoryImageStitchingEnum.dynamicLoad,
+    @"NONE": THETACThetaRepositoryImageStitchingEnum.none
+  },
+  .fromTheta = @{
+    THETACThetaRepositoryImageStitchingEnum.auto_: @"AUTO",
+    THETACThetaRepositoryImageStitchingEnum.static_: @"STATIC",
+    THETACThetaRepositoryImageStitchingEnum.dynamic: @"DYNAMIC",
+    THETACThetaRepositoryImageStitchingEnum.dynamicAuto: @"DYNAMIC_AUTO",
+    THETACThetaRepositoryImageStitchingEnum.dynamicSemiAuto: @"DYNAMIC_SEMI_AUTO",
+    THETACThetaRepositoryImageStitchingEnum.dynamicSave: @"DYNAMIC_SAVE",
+    THETACThetaRepositoryImageStitchingEnum.dynamicLoad: @"DYNAMIC_LOAD",
+    THETACThetaRepositoryImageStitchingEnum.none: @"NONE"
+  },
+  .setToTheta = ^(NSDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [ImageStitchingEnum.toTheta objectForKey:[rct objectForKey:@"imageStitching"]];
+    if (val) {
+      opt.imageStitching = val;
+    }
+  },
+  .setFromTheta = ^(NSMutableDictionary* rct, THETACThetaRepositoryOptions *opt) {
+    id val = [ImageStitchingEnum.fromTheta objectForKey:opt.imageStitching];
+    if (val) {
+      [rct setObject:val forKey:@"imageStitching"];
+    }
+  }
+};
+
+/**
  * IsoEnum converter
  */
 static convert_t IsoEnum = {
@@ -2374,6 +2412,7 @@ static NSDictionary *NameToOptionEnum = @{
   @"Function": THETACThetaRepositoryOptionNameEnum.function,
   @"Gain": THETACThetaRepositoryOptionNameEnum.gain,
   @"GpsInfo": THETACThetaRepositoryOptionNameEnum.gpsinfo,
+  @"ImageStitching": THETACThetaRepositoryOptionNameEnum.imagestitching,
   @"IsGpsOn": THETACThetaRepositoryOptionNameEnum.isgpson,
   @"Iso": THETACThetaRepositoryOptionNameEnum.iso,
   @"IsoAutoHighLimit": THETACThetaRepositoryOptionNameEnum.isoautohighlimit,
@@ -2430,6 +2469,7 @@ static NSDictionary *OptionEnumToOption = @{
   @"Function": @"function",
   @"Gain": @"gain",
   @"GpsInfo": @"gpsInfo",
+  @"ImageStitching": @"imageStitching",
   @"IsGpsOn": @"isGpsOn",
   @"Iso": @"iso",
   @"IsoAutoHighLimit": @"isoAutoHighLimit",
@@ -2489,6 +2529,7 @@ static NSDictionary<NSString*, OptionConverter> *NameToConverter = @{
   @"function": ^{return &ShootingFunctionEnum;},
   @"gain": ^{return &GainEnum;},
   @"gpsInfo": ^{return &GpsInfoCvt;},
+  @"imageStitching": ^{return &ImageStitchingEnum;},
   @"isGpsOn": ^{return &IsGpsOnCvt;},
   @"iso": ^{return &IsoEnum;},
   @"isoAutoHighLimit": ^{return &IsoAutoHighLimitEnum;},

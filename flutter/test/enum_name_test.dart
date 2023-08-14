@@ -453,6 +453,23 @@ void main() {
     }
   });
 
+  test('ImageStitchingEnum', () async {
+    List<List<dynamic>> data = [
+      [ImageStitchingEnum.auto, 'AUTO'],
+      [ImageStitchingEnum.static, 'STATIC'],
+      [ImageStitchingEnum.dynamic, 'DYNAMIC'],
+      [ImageStitchingEnum.dynamicAuto, 'DYNAMIC_AUTO'],
+      [ImageStitchingEnum.dynamicSemiAuto, 'DYNAMIC_SEMI_AUTO'],
+      [ImageStitchingEnum.dynamicSave, 'DYNAMIC_SAVE'],
+      [ImageStitchingEnum.dynamicLoad, 'DYNAMIC_LOAD'],
+      [ImageStitchingEnum.none, 'NONE'],
+    ];
+    expect(data.length, ImageStitchingEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
   test('PhotoFileFormatEnum', () async {
     List<List<dynamic>> data = [
       [PhotoFileFormatEnum.image_2K, 'IMAGE_2K'],

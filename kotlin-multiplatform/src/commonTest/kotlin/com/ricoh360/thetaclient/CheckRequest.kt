@@ -61,6 +61,7 @@ class CheckRequest {
             gain: Gain? = null,
             gpsInfo: GpsInfo? = null,
             gpsTagRecording: GpsTagRecording? = null,
+            imageStitching: ImageStitching? = null,
             iso: Int? = null,
             isoAutoHighLimit: Int? = null,
             language: Language? = null,
@@ -167,6 +168,9 @@ class CheckRequest {
             }
             gpsTagRecording?.let {
                 assertEquals(optionsRequest.parameters.options._gpsTagRecording, it, "setOptions gpsTagRecording")
+            }
+            imageStitching?.let {
+                assertEquals(optionsRequest.parameters.options._imageStitching, it, "setOptions imageStitching")
             }
             iso?.let {
                 assertEquals(optionsRequest.parameters.options.iso, it, "setOptions iso")

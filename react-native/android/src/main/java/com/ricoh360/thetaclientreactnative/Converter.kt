@@ -528,6 +528,23 @@ class GpsTagRecordingConverter : OptionConverter {
 }
 
 /**
+ * ImageStitchingConverter
+ */
+class ImageStitchingConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("imageStitching")?.let {
+      options.imageStitching = ThetaRepository.ImageStitchingEnum.valueOf(it)
+    }
+  }
+
+   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.imageStitching?.let {
+      objects.putString("imageStitching", it.toString())
+    }
+  }
+ }
+
+/**
  * IsoConverter
  */
 class IsoConverter : OptionConverter {

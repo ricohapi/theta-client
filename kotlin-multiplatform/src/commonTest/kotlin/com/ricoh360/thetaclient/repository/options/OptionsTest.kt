@@ -50,6 +50,7 @@ class OptionsTest {
         val function = ThetaRepository.ShootingFunctionEnum.NORMAL
         val gain = ThetaRepository.GainEnum.NORMAL
         val gpsInfo = ThetaRepository.GpsInfo.disabled
+        val imageStitching = ThetaRepository.ImageStitchingEnum.AUTO
         val isGpsOn = true
         val iso = ThetaRepository.IsoEnum.ISO_125
         val isoAutoHighLimit = ThetaRepository.IsoAutoHighLimitEnum.ISO_1000
@@ -106,6 +107,7 @@ class OptionsTest {
             function = function,
             gain = gain,
             gpsInfo = gpsInfo,
+            imageStitching = imageStitching,
             isGpsOn = isGpsOn,
             iso = iso,
             isoAutoHighLimit = isoAutoHighLimit,
@@ -162,6 +164,7 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Function), function, "function")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Gain), gain, "gain")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.GpsInfo), gpsInfo, "gpsInfo")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ImageStitching), imageStitching, "imageStitching")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.IsGpsOn), isGpsOn, "isGpsOn")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Iso), iso, "iso")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.IsoAutoHighLimit), isoAutoHighLimit, "isoAutoHighLimit")
@@ -228,6 +231,7 @@ class OptionsTest {
             Pair(ThetaRepository.OptionNameEnum.Function, ThetaRepository.ShootingFunctionEnum.NORMAL),
             Pair(ThetaRepository.OptionNameEnum.Gain, ThetaRepository.GainEnum.NORMAL),
             Pair(ThetaRepository.OptionNameEnum.GpsInfo, ThetaRepository.GpsInfo.disabled),
+            Pair(ThetaRepository.OptionNameEnum.ImageStitching, ThetaRepository.ImageStitchingEnum.AUTO),
             Pair(ThetaRepository.OptionNameEnum.IsGpsOn, true),
             Pair(ThetaRepository.OptionNameEnum.Iso, ThetaRepository.IsoEnum.ISO_125),
             Pair(ThetaRepository.OptionNameEnum.IsoAutoHighLimit, ThetaRepository.IsoAutoHighLimitEnum.ISO_1000),
@@ -315,6 +319,7 @@ class OptionsTest {
         val function = Pair(ShootingFunction.NORMAL, ThetaRepository.ShootingFunctionEnum.NORMAL)
         val gain = Pair(Gain.NORMAL, ThetaRepository.GainEnum.NORMAL)
         val gpsInfo = Pair(GpsInfo(65535.0f, 65535.0f, 0f, null, null), ThetaRepository.GpsInfo.disabled)
+        val imageStitching = Pair(ImageStitching.AUTO, ThetaRepository.ImageStitchingEnum.AUTO)
         val isGpsOn = Pair(GpsTagRecording.ON, true)
         val iso = Pair(125, ThetaRepository.IsoEnum.ISO_125)
         val isoAutoHighLimit = Pair(1000, ThetaRepository.IsoAutoHighLimitEnum.ISO_1000)
@@ -369,6 +374,7 @@ class OptionsTest {
             _gain = gain.first,
             gpsInfo = gpsInfo.first,
             _gpsTagRecording = isGpsOn.first,
+            _imageStitching = imageStitching.first,
             iso = iso.first,
             isoAutoHighLimit = isoAutoHighLimit.first,
             _language = language.first,
@@ -419,6 +425,7 @@ class OptionsTest {
         assertEquals(options.function, function.second, "function")
         assertEquals(options.gain, gain.second, "gain")
         assertEquals(options.gpsInfo, gpsInfo.second, "gpsInfo")
+        assertEquals(options.imageStitching, imageStitching.second, "imageStitching")
         assertEquals(options.isGpsOn, isGpsOn.second, "isGpsOn")
         assertEquals(options.iso, iso.second, "iso")
         assertEquals(options.isoAutoHighLimit, isoAutoHighLimit.second, "isoAutoHighLimit")
@@ -493,6 +500,7 @@ class OptionsTest {
             GpsInfo(65535.0f, 65535.0f, 0f, "", ""),
             ThetaRepository.GpsInfo(65535.0f, 65535.0f, 0f, "")
         )
+        val imageStitching = Pair(ImageStitching.AUTO, ThetaRepository.ImageStitchingEnum.AUTO)
         val isGpsOn = Pair(GpsTagRecording.ON, true)
         val iso = Pair(125, ThetaRepository.IsoEnum.ISO_125)
         val isoAutoHighLimit = Pair(1000, ThetaRepository.IsoAutoHighLimitEnum.ISO_1000)
@@ -546,6 +554,7 @@ class OptionsTest {
             function = function.second,
             gain = gain.second,
             gpsInfo = gpsInfo.second,
+            imageStitching = imageStitching.second,
             isGpsOn = isGpsOn.second,
             iso = iso.second,
             isoAutoHighLimit = isoAutoHighLimit.second,
@@ -598,6 +607,7 @@ class OptionsTest {
         assertEquals(options._gain, gain.first, "gain")
         assertEquals(options.gpsInfo, gpsInfo.first, "gpsInfo")
         assertEquals(options._gpsTagRecording, isGpsOn.first, "isGpsOn")
+        assertEquals(options._imageStitching, imageStitching.first, "imageStitching")
         assertEquals(options.iso, iso.first, "iso")
         assertEquals(options.isoAutoHighLimit, isoAutoHighLimit.first, "isoAutoHighLimit")
         assertEquals(options._language, language.first, "language")
