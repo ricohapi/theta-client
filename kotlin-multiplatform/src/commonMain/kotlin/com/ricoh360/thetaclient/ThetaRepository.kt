@@ -10,6 +10,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.*
 import io.ktor.utils.io.core.*
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlin.reflect.KClass
@@ -5254,6 +5255,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             return ThetaApi.callGetLivePreviewCommand(endpoint)
         } catch (e: PreviewClientException) {
             throw ThetaWebApiException("PreviewClientException")
+        } catch (e: CancellationException) {
+            throw e // Coroutine was cancelled.
         } catch (e: Exception) {
             throw NotConnectedException(e.message ?: e.toString())
         }
@@ -5275,6 +5278,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             }
         } catch (e: PreviewClientException) {
             throw ThetaWebApiException("PreviewClientException")
+        } catch (e: CancellationException) {
+            // Preview coroutine was cancelled. No need to do anything.
         } catch (e: Exception) {
             throw NotConnectedException(e.message ?: e.toString())
         }
