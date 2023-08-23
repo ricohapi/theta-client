@@ -5254,11 +5254,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         try {
             return ThetaApi.callGetLivePreviewCommand(endpoint)
         } catch (e: PreviewClientException) {
-            throw ThetaWebApiException("PreviewClientException")
+            throw ThetaWebApiException(e.toString())
         } catch (e: CancellationException) {
             throw e // Coroutine was cancelled.
         } catch (e: Exception) {
-            throw NotConnectedException(e.message ?: e.toString())
+            throw NotConnectedException(e.toString())
         }
     }
 
@@ -5277,11 +5277,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 return@callGetLivePreviewCommand frameHandler(it)
             }
         } catch (e: PreviewClientException) {
-            throw ThetaWebApiException("PreviewClientException")
+            throw ThetaWebApiException(e.toString())
         } catch (e: CancellationException) {
             // Preview coroutine was cancelled. No need to do anything.
         } catch (e: Exception) {
-            throw NotConnectedException(e.message ?: e.toString())
+            throw NotConnectedException(e.toString())
         }
     }
 
