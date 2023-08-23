@@ -5250,6 +5250,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * ```
      */
     @Throws(Throwable::class)
+    @Suppress("RethrowCaughtException")
     fun getLivePreview(): Flow<ByteReadPacket> {
         try {
             return ThetaApi.callGetLivePreviewCommand(endpoint)
@@ -5271,6 +5272,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @exception NotConnectedException
      */
     @Throws(Throwable::class)
+    @Suppress("SwallowedException")
     suspend fun getLivePreview(frameHandler: suspend (Pair<ByteArray, Int>) -> Boolean) {
         try {
             ThetaApi.callGetLivePreviewCommand(endpoint) {
