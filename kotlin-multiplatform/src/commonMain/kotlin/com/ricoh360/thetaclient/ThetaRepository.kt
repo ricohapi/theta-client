@@ -10,6 +10,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.*
 import io.ktor.utils.io.core.*
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlin.reflect.KClass
@@ -5249,13 +5250,16 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * ```
      */
     @Throws(Throwable::class)
+    @Suppress("RethrowCaughtException")
     fun getLivePreview(): Flow<ByteReadPacket> {
         try {
             return ThetaApi.callGetLivePreviewCommand(endpoint)
         } catch (e: PreviewClientException) {
-            throw ThetaWebApiException("PreviewClientException")
+            throw ThetaWebApiException(e.toString())
+        } catch (e: CancellationException) {
+            throw e // Coroutine was cancelled.
         } catch (e: Exception) {
-            throw NotConnectedException(e.message ?: e.toString())
+            throw NotConnectedException(e.toString())
         }
     }
 
@@ -5268,15 +5272,18 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @exception NotConnectedException
      */
     @Throws(Throwable::class)
+    @Suppress("SwallowedException")
     suspend fun getLivePreview(frameHandler: suspend (Pair<ByteArray, Int>) -> Boolean) {
         try {
             ThetaApi.callGetLivePreviewCommand(endpoint) {
                 return@callGetLivePreviewCommand frameHandler(it)
             }
         } catch (e: PreviewClientException) {
-            throw ThetaWebApiException("PreviewClientException")
+            throw ThetaWebApiException(e.toString())
+        } catch (e: CancellationException) {
+            // Preview coroutine was cancelled. No need to do anything.
         } catch (e: Exception) {
-            throw NotConnectedException(e.message ?: e.toString())
+            throw NotConnectedException(e.toString())
         }
     }
 
