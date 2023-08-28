@@ -109,6 +109,9 @@ object ThetaApi {
      * @param endpoint Endpoint of Theta web API
      * @param apiPath The path of firmware update API which is non-public.
      * @param filePaths List of firmware file path
+     * @param connectionTimeout Timeout (milli seconds) of socket connection
+     * @param socketTimeout Timeout (milli seconds) of socket
+     * @Param callback function to pass the percentage of sent firmware
      * @return response of update firmware API
      *
      * @exception IllegalArgumentException The method has been passed an illegal or inappropriate argument
@@ -124,11 +127,12 @@ object ThetaApi {
         filePaths: List<String>,
         connectTimeout: Long,
         socketTimeout: Long,
+        callback: ((Int) -> Unit)?,
     ): UpdateFirmwareApiResponse {
         if(filePaths.isEmpty()) {
             throw IllegalArgumentException("Empty filePaths")
         }
-        val responseBody = multipartPostClient.request(endpoint, apiPath, filePaths, connectTimeout, socketTimeout)
+        val responseBody = multipartPostClient.request(endpoint, apiPath, filePaths, connectTimeout, socketTimeout, callback)
         return Json.decodeFromString<UpdateFirmwareApiResponse>(String(responseBody))
     }
 

@@ -425,13 +425,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @param filePaths List of firmware file path.
      * @param connectionTimeout Timeout (milli seconds) of socket connection
      * @param socketTimeout Timeout (milli seconds) of socket
+     * @Param callback function to pass the percentage of sent firmware
      * @exception ThetaWebApiException If an error occurs in THETA.
      * @exception NotConnectedException
      */
     @Throws(Throwable::class)
-    suspend fun updateFirmware(apiPath: String, filePaths: List<String>, connectionTimeout: Long = 20_000L, socketTimeout: Long = 600_000L) {
+    suspend fun updateFirmware(apiPath: String, filePaths: List<String>, connectionTimeout: Long = 20_000L, socketTimeout: Long = 600_000L, callback: ((Int) -> Unit)? = null) {
         try {
-            val response = ThetaApi.callUpdateFirmwareApi(endpoint, apiPath, filePaths, connectionTimeout, socketTimeout)
+            val response = ThetaApi.callUpdateFirmwareApi(endpoint, apiPath, filePaths, connectionTimeout, socketTimeout, callback)
             response.error?.let {
                 throw ThetaWebApiException(it.message)
             }

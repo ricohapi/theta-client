@@ -25,7 +25,7 @@ import kotlinx.io.files.*
  * @param connectionTimeout connection timeout of [Ktor](https://ktor.io/)
  * @param socketTimeout socket timeout of [Ktor](https://ktor.io/)
  */
-open class BaseHttpClient() : Closeable {
+open class BaseHttpClient() {
 
     class URL(url: String) {
         /** protocol, only http or https */
@@ -149,7 +149,7 @@ open class BaseHttpClient() : Closeable {
     /**
      * close connection
      */
-    override fun close() {
+     fun close() {
         runCatching {
             input?.cancel()
         }
@@ -443,6 +443,7 @@ interface MultipartPostClient  {
      * @param filePaths Content of each part
      * @param connectionTimeout timeout for connection (msec).  If null, default value is used.
      * @param socketTimeout timeout for socket (msec). If null, default value is used.
+     * @Param callback function to pass the percentage of sent firmware
      * @param boundary boundary parameter of multipart/form-data.  If this is not specified, default value is used.
      * @return body of the response
      */
@@ -452,6 +453,7 @@ interface MultipartPostClient  {
         filePaths: List<String>,
         connectionTimeout: Long,
         socketTimeout: Long,
+        callback: ((Int) -> Unit)?,
         boundary: String = BOUNDARY,
     ): ByteArray
 }
@@ -585,6 +587,7 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
      * @param filePaths Content of each part
      * @param connectionTimeout timeout for connection (msec).
      * @param socketTimeout timeout for socket (msec).
+     * @Param callback function to pass the percentage of sent firmware
      * @param boundary boundary parameter of multipart/form-data
      * @return body of the response
      * @throws [BaseHttpClientException] when the host returns an error.
@@ -595,15 +598,16 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
         filePaths: List<String>,
         connectionTimeout: Long,
         socketTimeout: Long,
+        callback: ((Int) -> Unit)?,
         boundary: String,
     ): ByteArray {
-        requestOnce(endpoint, path, filePaths, connectionTimeout, socketTimeout, boundary)
+        requestOnce(endpoint, path, filePaths, connectionTimeout, socketTimeout, callback, boundary)
         if(this.status == HttpStatusCode.Unauthorized.value) { // need digest authentication
             ApiClient.digestAuth?.let { digestAuth ->
                 responseHeaders?.get(HttpHeaders.WWWAuthenticate.lowercase())?.let { header ->
                     val authHeader = parseAuthorizationHeader(header) as HttpAuthHeader.Parameterized
                     digestAuth.updateAuthHeaderInfo(authHeader)
-                    requestOnce(endpoint, path, filePaths, connectionTimeout, socketTimeout, boundary, digestAuth.makeDigestHeader(path, HttpMethod.Post.value))
+                    requestOnce(endpoint, path, filePaths, connectionTimeout, socketTimeout, callback, boundary, digestAuth.makeDigestHeader(path, HttpMethod.Post.value))
                 }
             }
         }
@@ -624,6 +628,7 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
      * @param digest value of Authorization header if needed
      * @param connectionTimeout timeout for connection (msec).
      * @param socketTimeout timeout for socket (msec).
+     * @Param callback function to pass the percentage of sent firmware
      * @param boundary boundary parameter of multipart/form-data
      */
     internal suspend fun requestOnce(
@@ -632,26 +637,36 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
         filePaths: List<String>,
         connectionTimeout: Long,
         socketTimeout: Long,
+        callback: ((Int) -> Unit)?,
         boundary: String,
         digest: String? = null,
     ) {
+        val contentLength = getContentLength(filePaths, boundary)
         connect(endpont, connectionTimeout, socketTimeout)
         writeRequestLine(path, HttpMethod.Post)
-        writeHeaders(genRequestHeaders(getContentLength(filePaths, boundary), digest))
+        writeHeaders(genRequestHeaders(contentLength, digest))
         val buffer = ByteArray(READ_BUFFER_SIZE)
+        var sentCount = 0L
+        var lastPercent = 0
         filePaths.forEach {
             var src: Source? = null
             try {
                 src = Path(it).source()
                 writePartHeaders(boundary, genPartHeaders(getFileName(it)))
                 // write part body
-                println("start body")
                 var count = 0
                 do {
                     write(buffer, count)
+                    sentCount += count
+                    callback?.let {
+                        var percent = (sentCount * 100 / contentLength).toInt()
+                        if (percent > lastPercent) {
+                            it(percent)
+                            lastPercent = percent
+                        }
+                    }
                     count = src.readAtMostTo(buffer, 0, READ_BUFFER_SIZE)
                 } while(count != -1)
-                println("end body")
             } finally {
                 src?.close()
             }
@@ -687,13 +702,10 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
      */
     protected suspend fun writePartHeaders(boundary: String, headers: List<Pair<String, String>>) {
         write(genBoundaryDelimiter(boundary))
-        print(genBoundaryDelimiter(boundary))
         for ((name, value) in headers) {
             write("$name: $value\r\n")
-            print("$name: $value\r\n")
         }
         write("\r\n")
-        print("\r\n")
     }
 
     /**
@@ -704,7 +716,6 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
      */
     private suspend fun writeCloseDelimiter(boundary: String) {
         write(genCloseDelimiter(boundary))
-        print(genCloseDelimiter(boundary))
     }
 
 }
