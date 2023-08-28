@@ -402,6 +402,23 @@ class ExposureProgramConverter : OptionConverter {
 };
 
 /**
+ * FaceDetectConverter
+ */
+class FaceDetectConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("faceDetect")?.let {
+      options.faceDetect = ThetaRepository.FaceDetectEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.faceDetect?.let {
+      objects.putString("faceDetect", it.toString())
+    }
+  }
+}
+
+/**
  * FileFormatConverter
  */
 class FileFormatConverter : OptionConverter {
@@ -454,6 +471,40 @@ class FilterConverter : OptionConverter {
 }
 
 /**
+ * FunctionConverter
+ */
+class FunctionConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("function")?.let {
+      options.function = ThetaRepository.ShootingFunctionEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.function?.let {
+      objects.putString("function", it.toString())
+    }
+  }
+}
+
+/**
+ * GainConverter
+ */
+class GainConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("gain")?.let {
+      options.gain = ThetaRepository.GainEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.gain?.let {
+      objects.putString("gain", it.toString())
+    }
+  }
+}
+
+/**
  * GpsTagRecordingConverter
  */
 class GpsTagRecordingConverter : OptionConverter {
@@ -475,6 +526,23 @@ class GpsTagRecordingConverter : OptionConverter {
     }
   }
 }
+
+/**
+ * ImageStitchingConverter
+ */
+class ImageStitchingConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("imageStitching")?.let {
+      options.imageStitching = ThetaRepository.ImageStitchingEnum.valueOf(it)
+    }
+  }
+
+   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.imageStitching?.let {
+      objects.putString("imageStitching", it.toString())
+    }
+  }
+ }
 
 /**
  * IsoConverter
@@ -659,6 +727,12 @@ class PresetConverter : OptionConverter {
   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
     options.preset?.let {
       objects.putString("preset", it.toString())
+    }
+  }
+
+  override fun setPhotoOption(objects: ReadableMap, builder: PhotoCapture.Builder) {
+    objects.getString("preset")?.let {
+      builder.setPreset(ThetaRepository.PresetEnum.valueOf(it))
     }
   }
 }
@@ -1182,6 +1256,9 @@ fun fileInfoFromTheta(fileInfo: ThetaRepository.FileInfo): ReadableMap {
   result.putString("fileUrl", fileInfo.fileUrl)
   result.putDouble("size", fileInfo.size.toDouble())
   result.putString("dateTime", fileInfo.dateTime)
+  fileInfo.dateTimeZone?.let {
+    result.putString("dateTimeZone", it)
+  }
   fileInfo.lat?.let {
     result.putDouble("lat", it.toDouble())
   }

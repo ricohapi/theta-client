@@ -54,10 +54,14 @@ class CheckRequest {
             exposureCompensation: Float? = null,
             exposureDelay: Int? = null,
             exposureProgram: Int? = null,
+            faceDetect: FaceDetect? = null,
             filter: ImageFilter? = null,
             fileFormat: MediaFileFormat? = null,
+            function: ShootingFunction? = null,
+            gain: Gain? = null,
             gpsInfo: GpsInfo? = null,
             gpsTagRecording: GpsTagRecording? = null,
+            imageStitching: ImageStitching? = null,
             iso: Int? = null,
             isoAutoHighLimit: Int? = null,
             language: Language? = null,
@@ -144,17 +148,29 @@ class CheckRequest {
             exposureProgram?.let {
                 assertEquals(optionsRequest.parameters.options.exposureProgram, it, "setOptions exposureProgram")
             }
+            faceDetect?.let {
+                assertEquals(optionsRequest.parameters.options._faceDetect, it, "setOptions _faceDetect")
+            }
             filter?.let {
                 assertEquals(optionsRequest.parameters.options._filter, it, "setOptions _filter ${optionsRequest.parameters.options._filter} $it")
             }
             fileFormat?.let {
                 assertEquals(optionsRequest.parameters.options.fileFormat, it, "setOptions fileFormat")
             }
+            function?.let {
+                assertEquals(optionsRequest.parameters.options._function, it, "setOptions _function")
+            }
+            gain?.let {
+                assertEquals(optionsRequest.parameters.options._gain, it, "setOptions _gain")
+            }
             gpsInfo?.let {
                 assertEquals(optionsRequest.parameters.options.gpsInfo, it, "setOptions gpsInfo")
             }
             gpsTagRecording?.let {
                 assertEquals(optionsRequest.parameters.options._gpsTagRecording, it, "setOptions gpsTagRecording")
+            }
+            imageStitching?.let {
+                assertEquals(optionsRequest.parameters.options._imageStitching, it, "setOptions imageStitching")
             }
             iso?.let {
                 assertEquals(optionsRequest.parameters.options.iso, it, "setOptions iso")

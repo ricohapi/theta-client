@@ -1,5 +1,6 @@
 
 import org.jetbrains.dokka.versioning.VersioningConfiguration
+import org.jetbrains.dokka.versioning.VersioningPlugin
 import java.util.Properties
 
 plugins {
@@ -17,7 +18,7 @@ dependencies {
     dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.8.20")
 }
 
-val theta_client_version = "1.3.0"
+val theta_client_version = "1.3.1"
 // Init publish property
 initProp()
 
@@ -67,7 +68,7 @@ kotlin {
                 implementation(kotlin("test"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
                 implementation("io.ktor:ktor-client-mock:$ktor_version")
-                implementation("com.goncalossilva:resources:0.2.5")
+                implementation("com.goncalossilva:resources:0.2.2")
             }
         }
         val androidMain by getting
@@ -225,7 +226,7 @@ tasks.dokkaHtml.configure {
     moduleName.set("theta-client")
 
     if(project.properties["version"].toString() != theta_client_version) {
-        //throw GradleException("The release version does not match the version defined in Gradle.")
+        throw GradleException("The release version does not match the version defined in Gradle.")
     }
 
     val pagesDir = file(project.properties["workspace"].toString()).resolve("gh-pages")
@@ -234,7 +235,7 @@ tasks.dokkaHtml.configure {
     val docVersionsDir = pagesDir.resolve("version")
     outputDirectory.set(currentDocsDir)
 
-    pluginConfiguration<org.jetbrains.dokka.versioning.VersioningPlugin, VersioningConfiguration> {
+    pluginConfiguration<VersioningPlugin, VersioningConfiguration> {
         version = currentVersion
         olderVersionsDir = docVersionsDir
     }

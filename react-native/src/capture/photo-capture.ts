@@ -2,6 +2,7 @@ import { CaptureBuilder } from './capture';
 import type {
   FilterEnum,
   PhotoFileFormatEnum,
+  PresetEnum,
 } from '../theta-repository/options';
 
 import { NativeModules } from 'react-native';
@@ -45,6 +46,16 @@ export class PhotoCaptureBuilder extends CaptureBuilder<PhotoCaptureBuilder> {
    */
   setFilter(filter: FilterEnum): PhotoCaptureBuilder {
     this.options.filter = filter;
+    return this;
+  }
+
+  /**
+   * Set preset mode of Theta SC2 and Theta SC2 for business.
+   * @param {FilterEnum} preset Preset mode to set
+   * @return PhotoCaptureBuilder
+   */
+  setPreset(preset: PresetEnum): PhotoCaptureBuilder {
+    this.options.preset = preset;
     return this;
   }
 

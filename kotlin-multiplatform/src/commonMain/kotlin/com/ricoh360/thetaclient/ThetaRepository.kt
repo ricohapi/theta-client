@@ -10,6 +10,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.*
 import io.ktor.utils.io.core.*
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlin.reflect.KClass
@@ -777,6 +778,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _faceDetect
+         */
+        FaceDetect("_faceDetect", FaceDetectEnum::class),
+
+        /**
+         * Option name
          * fileFormat
          */
         FileFormat("fileFormat", FileFormatEnum::class),
@@ -789,9 +796,27 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _function
+         */
+        Function("_function", ShootingFunctionEnum::class),
+
+        /**
+         * Option name
+         * _gain
+         */
+        Gain("_gain", GainEnum::class),
+
+        /**
+         * Option name
          * gpsInfo
          */
         GpsInfo("gpsInfo", ThetaRepository.GpsInfo::class),
+
+        /**
+         * Option name
+         * _imageStitching
+         */
+        ImageStitching("_imageStitching", ImageStitchingEnum::class),
 
         /**
          * Option name
@@ -1113,6 +1138,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var exposureProgram: ExposureProgramEnum? = null,
 
         /**
+         * @see FaceDetectEnum
+         */
+        var faceDetect: FaceDetectEnum? = null,
+
+        /**
          * Image format used in shooting.
          *
          * The supported value depends on the shooting mode [captureMode].
@@ -1137,11 +1167,26 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var filter: FilterEnum? = null,
 
         /**
+         * @see ShootingFunctionEnum
+         */
+        var function: ShootingFunctionEnum? = null,
+
+        /**
+         * @see GainEnum
+         */
+        var gain: GainEnum? = null,
+
+        /**
          * GPS location information.
          *
          * In order to append the location information, this property should be specified by the client.
          */
         var gpsInfo: GpsInfo? = null,
+
+        /**
+         * Still image stitching setting during shooting.
+         */
+        var imageStitching: ImageStitchingEnum? = null,
 
         /**
          * Turns position information assigning ON/OFF.
@@ -1313,9 +1358,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             exposureCompensation = null,
             exposureDelay = null,
             exposureProgram = null,
+            faceDetect = null,
             fileFormat = null,
             filter = null,
+            function = null,
+            gain = null,
             gpsInfo = null,
+            imageStitching = null,
             isGpsOn = null,
             iso = null,
             isoAutoHighLimit = null,
@@ -1367,9 +1416,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             },
             exposureDelay = options.exposureDelay?.let { ExposureDelayEnum.get(it) },
             exposureProgram = options.exposureProgram?.let { ExposureProgramEnum.get(it) },
+            faceDetect = options._faceDetect?.let { FaceDetectEnum.get(it) },
             fileFormat = options.fileFormat?.let { FileFormatEnum.get(it) },
             filter = options._filter?.let { FilterEnum.get(it) },
+            function = options._function?.let { ShootingFunctionEnum.get(it) },
+            gain = options._gain?.let { GainEnum.get(it) },
             gpsInfo = options.gpsInfo?.let { GpsInfo(it) },
+            imageStitching = options._imageStitching?.let { ImageStitchingEnum.get(it) },
             isGpsOn = options._gpsTagRecording?.let { it == GpsTagRecording.ON },
             iso = options.iso?.let { IsoEnum.get(it) },
             isoAutoHighLimit = options.isoAutoHighLimit?.let { IsoAutoHighLimitEnum.get(it) },
@@ -1422,10 +1475,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 exposureCompensation = exposureCompensation?.value,
                 exposureDelay = exposureDelay?.sec,
                 exposureProgram = exposureProgram?.value,
+                _faceDetect = faceDetect?.value,
                 fileFormat = fileFormat?.toMediaFileFormat(),
                 _filter = filter?.filter,
+                _function = function?.value,
+                _gain = gain?.value,
                 gpsInfo = gpsInfo?.toTransferredGpsInfo(),
                 _gpsTagRecording = isGpsOn?.let { if (it) GpsTagRecording.ON else GpsTagRecording.OFF },
+                _imageStitching = imageStitching?.value,
                 iso = iso?.value,
                 isoAutoHighLimit = isoAutoHighLimit?.value,
                 _language = language?.value,
@@ -1484,9 +1541,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.ExposureCompensation -> exposureCompensation
                 OptionNameEnum.ExposureDelay -> exposureDelay
                 OptionNameEnum.ExposureProgram -> exposureProgram
+                OptionNameEnum.FaceDetect -> faceDetect
                 OptionNameEnum.FileFormat -> fileFormat
                 OptionNameEnum.Filter -> filter
+                OptionNameEnum.Function -> function
+                OptionNameEnum.Gain -> gain
                 OptionNameEnum.GpsInfo -> gpsInfo
+                OptionNameEnum.ImageStitching -> imageStitching
                 OptionNameEnum.IsGpsOn -> isGpsOn
                 OptionNameEnum.Iso -> iso
                 OptionNameEnum.IsoAutoHighLimit -> isoAutoHighLimit
@@ -1547,9 +1608,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.ExposureCompensation -> exposureCompensation = value as ExposureCompensationEnum
                 OptionNameEnum.ExposureDelay -> exposureDelay = value as ExposureDelayEnum
                 OptionNameEnum.ExposureProgram -> exposureProgram = value as ExposureProgramEnum
+                OptionNameEnum.FaceDetect -> faceDetect = value as FaceDetectEnum
                 OptionNameEnum.FileFormat -> fileFormat = value as FileFormatEnum
                 OptionNameEnum.Filter -> filter = value as FilterEnum
+                OptionNameEnum.Function -> function = value as ShootingFunctionEnum
+                OptionNameEnum.Gain -> gain = value as GainEnum
                 OptionNameEnum.GpsInfo -> gpsInfo = value as GpsInfo
+                OptionNameEnum.ImageStitching -> imageStitching = value as ImageStitchingEnum
                 OptionNameEnum.IsGpsOn -> isGpsOn = value as Boolean
                 OptionNameEnum.Iso -> iso = value as IsoEnum
                 OptionNameEnum.IsoAutoHighLimit -> isoAutoHighLimit = value as IsoAutoHighLimitEnum
@@ -2633,6 +2698,36 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         }
     }
 
+    /**
+     * Face detection
+     *
+     * For
+     * - RICOH THETA X
+     */
+    enum class FaceDetectEnum(val value: FaceDetect) {
+        /**
+         * Face detection ON
+         */
+        ON(FaceDetect.ON),
+
+        /**
+         * Face detection OFF
+         */
+        OFF(FaceDetect.OFF);
+
+        companion object {
+            /**
+             * Convert FaceDetect to FaceDetectEnum
+             *
+             * @param value FaceDetect
+             * @return FaceDetectEnum
+             */
+            fun get(value: FaceDetect): FaceDetectEnum? {
+                return FaceDetectEnum.values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
     enum class FileFormatTypeEnum(val mediaType: MediaType) {
         /**
          * jpeg image
@@ -3224,6 +3319,44 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Microphone gain.
+     *
+     * For
+     * - RICOH THETA X
+     * - RICOH THETA Z1
+     * - RICOH THETA V
+     */
+    enum class GainEnum(val value: Gain) {
+        /**
+         * Normal mode
+         */
+        NORMAL(Gain.NORMAL),
+
+        /**
+         * Loud volume mode
+         */
+        MEGA_VOLUME(Gain.MEGA_VOLUME),
+
+        /**
+         * Mute mode
+         * (RICOH THETA V firmware v2.50.1 or later, RICOH THETA X is not supported.)
+         */
+        MUTE(Gain.MUTE);
+
+        companion object {
+            /**
+             * Convert Gain to GainEnum
+             *
+             * @param value Gain
+             * @return GainEnum
+             */
+            fun get(value: Gain): GainEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
      * GPS information
      *
      * 65535 is set for latitude and longitude when disabling the GPS setting at
@@ -3323,6 +3456,68 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @return GpsTagRecordingEnum
              */
             fun get(value: GpsTagRecording): GpsTagRecordingEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Still image stitching setting during shooting.
+     * For Theta X, Z1 and V.
+     */
+    enum class ImageStitchingEnum(val value: ImageStitching) {
+        /**
+         * Refer to stitching when shooting with "auto"
+         */
+        AUTO(ImageStitching.AUTO),
+
+        /**
+         * Performs static stitching
+         */
+        STATIC(ImageStitching.STATIC),
+
+        /**
+         * Performs dynamic stitching(RICOH THETA X or later)
+         */
+        DYNAMIC(ImageStitching.DYNAMIC),
+
+        /**
+         * For Normal shooting, performs dynamic stitching,
+         * for Interval shooting, saves dynamic distortion correction parameters for the first image
+         * and then uses them for the 2nd and subsequent images (RICOH THETA X is not supported)
+         */
+        DYNAMIC_AUTO(ImageStitching.DYNAMIC_AUTO),
+
+        /**
+         * Performs semi-dynamic stitching.
+         * Saves dynamic distortion correction parameters for the first image
+         * and then uses them for the 2nd and subsequent images(RICOH THETA X or later)
+         */
+        DYNAMIC_SEMI_AUTO(ImageStitching.DYNAMIC_SEMI_AUTO),
+
+        /**
+         * Performs dynamic stitching and then saves distortion correction parameters
+         */
+        DYNAMIC_SAVE(ImageStitching.DYNAMIC_SAVE),
+
+        /**
+         * Performs stitching using the saved distortion correction parameters
+         */
+        DYNAMIC_LOAD(ImageStitching.DYNAMIC_LOAD),
+
+        /**
+         * Does not perform stitching
+         */
+        NONE(ImageStitching.NONE);
+
+        companion object {
+            /**
+             * Convert ImageStitching to ImageStitchingEnum
+             *
+             * @param value
+             * @return ImageStitchingEnum
+             */
+            fun get(value: ImageStitching): ImageStitchingEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -4071,6 +4266,44 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 userid = userid,
                 password = password
             )
+        }
+    }
+
+    /**
+     * Shooting function.
+     * Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
+     * Setting them at the same time as exposureDelay will result in an error.
+     *
+     * For
+     * - RICOH THETA X
+     * - RICOH THETA Z1
+     */
+    enum class ShootingFunctionEnum(val value: ShootingFunction) {
+        /**
+         * Normal shooting function
+         */
+        NORMAL(ShootingFunction.NORMAL),
+
+        /**
+         * Self-timer shooting function(RICOH THETA X is not supported.)
+         */
+        SELF_TIMER(ShootingFunction.SELF_TIMER),
+
+        /**
+         * My setting shooting function
+         */
+        MY_SETTING(ShootingFunction.MY_SETTING);
+
+        companion object {
+            /**
+             * Convert Function to FunctionEnum
+             *
+             * @param value Function
+             * @return FunctionEnum
+             */
+            fun get(value: ShootingFunction): ShootingFunctionEnum? {
+                return values().firstOrNull { it.value == value }
+            }
         }
     }
 
@@ -4958,6 +5191,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @property name File name.
      * @property fileUrl You can get a file using HTTP GET to [fileUrl].
      * @property size File size in bytes.
+     * @property dateTimeZone File creation or update time with the time zone in the format "YYYY:MM:DD hh:mm:ss+(-)hh:mm".
      * @property dateTime File creation time in the format "YYYY:MM:DD HH:MM:SS".
      * @property lat Latitude.
      * @property lng Longitude.
@@ -4982,6 +5216,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         val name: String,
         val fileUrl: String,
         val size: Long,
+        val dateTimeZone: String?,
         val dateTime: String,
         val lat: Float?,
         val lng: Float?,
@@ -5006,7 +5241,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             cameraFileInfo.name,
             cameraFileInfo.fileUrl,
             cameraFileInfo.size,
-            cameraFileInfo.dateTimeZone!!.take(16), // Delete timezone
+            dateTimeZone = cameraFileInfo.dateTimeZone,
+            dateTime = cameraFileInfo.dateTimeZone!!.take(16), // Delete timezone
             cameraFileInfo.lat,
             cameraFileInfo.lng,
             cameraFileInfo.width,
@@ -5044,13 +5280,16 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * ```
      */
     @Throws(Throwable::class)
+    @Suppress("RethrowCaughtException")
     fun getLivePreview(): Flow<ByteReadPacket> {
         try {
             return ThetaApi.callGetLivePreviewCommand(endpoint)
         } catch (e: PreviewClientException) {
-            throw ThetaWebApiException("PreviewClientException")
+            throw ThetaWebApiException(e.toString())
+        } catch (e: CancellationException) {
+            throw e // Coroutine was cancelled.
         } catch (e: Exception) {
-            throw NotConnectedException(e.message ?: e.toString())
+            throw NotConnectedException(e.toString())
         }
     }
 
@@ -5063,15 +5302,18 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @exception NotConnectedException
      */
     @Throws(Throwable::class)
+    @Suppress("SwallowedException")
     suspend fun getLivePreview(frameHandler: suspend (Pair<ByteArray, Int>) -> Boolean) {
         try {
             ThetaApi.callGetLivePreviewCommand(endpoint) {
                 return@callGetLivePreviewCommand frameHandler(it)
             }
         } catch (e: PreviewClientException) {
-            throw ThetaWebApiException("PreviewClientException")
+            throw ThetaWebApiException(e.toString())
+        } catch (e: CancellationException) {
+            // Preview coroutine was cancelled. No need to do anything.
         } catch (e: Exception) {
-            throw NotConnectedException(e.message ?: e.toString())
+            throw NotConnectedException(e.toString())
         }
     }
 
@@ -5366,45 +5608,6 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                     ChargingState.CHARGING -> CHARGING
                     ChargingState.CHARGED -> COMPLETED
                     ChargingState.DISCONNECT -> NOT_CHARGING
-                }
-            }
-        }
-    }
-
-    /**
-     * Shooting function status
-     */
-    enum class ShootingFunctionEnum {
-        /**
-         * Shooting function status
-         * normal
-         */
-        NORMAL,
-
-        /**
-         * Shooting function status
-         * selfTimer
-         */
-        SELF_TIMER,
-
-        /**
-         * Shooting function status
-         * mySetting
-         */
-        MY_SETTING;
-
-        companion object {
-            /**
-             * Convert value to ShootingFunction
-             *
-             * @param shootingFunction Shooting function.
-             * @return ShootingFunctionEnum
-             */
-            fun get(shootingFunction: ShootingFunction): ShootingFunctionEnum {
-                return when (shootingFunction) {
-                    ShootingFunction.NORMAL -> NORMAL
-                    ShootingFunction.SELF_TIMER -> SELF_TIMER
-                    ShootingFunction.MY_SETTING -> MY_SETTING
                 }
             }
         }

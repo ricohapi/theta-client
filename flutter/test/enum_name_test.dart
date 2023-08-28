@@ -6,6 +6,17 @@ void main() {
 
   tearDown(() {});
 
+  test('BluetoothPowerEnum', () async {
+    List<List<dynamic>> data = [
+      [BluetoothPowerEnum.on, 'ON'],
+      [BluetoothPowerEnum.off, 'OFF'],
+    ];
+    expect(data.length, BluetoothPowerEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
   test('BurstModeEnum', () async {
     List<List<dynamic>> data = [
       [BurstModeEnum.on, 'ON'],
@@ -390,6 +401,17 @@ void main() {
     }
   });
 
+  test('FaceDetectEnum', () async {
+    List<List<dynamic>> data = [
+      [FaceDetectEnum.on, 'ON'],
+      [FaceDetectEnum.off, 'OFF'],
+    ];
+    expect(data.length, FaceDetectEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
   test('FileFormatEnum', () async {
     List<List<dynamic>> data = [
       [FileFormatEnum.image_2K, 'IMAGE_2K'],
@@ -426,6 +448,23 @@ void main() {
       [FileTypeEnum.video, 'VIDEO'],
     ];
     expect(data.length, FileTypeEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('ImageStitchingEnum', () async {
+    List<List<dynamic>> data = [
+      [ImageStitchingEnum.auto, 'AUTO'],
+      [ImageStitchingEnum.static, 'STATIC'],
+      [ImageStitchingEnum.dynamic, 'DYNAMIC'],
+      [ImageStitchingEnum.dynamicAuto, 'DYNAMIC_AUTO'],
+      [ImageStitchingEnum.dynamicSemiAuto, 'DYNAMIC_SEMI_AUTO'],
+      [ImageStitchingEnum.dynamicSave, 'DYNAMIC_SAVE'],
+      [ImageStitchingEnum.dynamicLoad, 'DYNAMIC_LOAD'],
+      [ImageStitchingEnum.none, 'NONE'],
+    ];
+    expect(data.length, ImageStitchingEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -478,6 +517,18 @@ void main() {
       [FilterEnum.hhHdr, 'HH_HDR'],
     ];
     expect(data.length, FilterEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('GainEnum', () async {
+    List<List<dynamic>> data = [
+      [GainEnum.normal, 'NORMAL'],
+      [GainEnum.megaVolume, 'MEGA_VOLUME'],
+      [GainEnum.mute, 'MUTE'],
+    ];
+    expect(data.length, GainEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }

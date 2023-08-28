@@ -4,10 +4,15 @@ import com.ricoh360.thetaclient.DigestAuth
 import com.ricoh360.thetaclient.ThetaRepository.*
 import com.ricoh360.thetaclient.capture.Capture
 import com.ricoh360.thetaclient.capture.PhotoCapture
+import com.ricoh360.thetaclient.capture.TimeShiftCapture
 import com.ricoh360.thetaclient.capture.VideoCapture
 import io.flutter.plugin.common.MethodCall
 
 const val KEY_CLIENT_MODE = "clientMode"
+const val KEY_NOTIFY_ID = "id"
+const val KEY_NOTIFY_PARAMS = "params"
+const val KEY_NOTIFY_PARAM_COMPLETION = "completion"
+const val KEY_NOTIFY_PARAM_IMAGE = "image"
 
 fun toResult(thetaInfo: ThetaInfo): Map<String, Any?> {
     return mapOf<String, Any?>(
@@ -76,6 +81,7 @@ fun toResult(fileInfoList: List<FileInfo>): List<Map<String, Any>> {
             "dateTime" to it.dateTime,
             "thumbnailUrl" to it.thumbnailUrl,
         )
+        it.dateTimeZone?.run { map.put("dateTimeZone", this) }
         it.lat?.run { map.put("lat", this) }
         it.lng?.run { map.put("lng", this) }
         it.width?.run { map.put("width", this) }
@@ -140,7 +146,7 @@ fun toProxy(map: Map<String, Any>): Proxy {
 }
 
 fun toTimeShift(map: Map<String, Any>): TimeShiftSetting {
-    var timeShift = TimeShiftSetting()
+    val timeShift = TimeShiftSetting()
     map["isFrontFirst"]?.let {
         timeShift.isFrontFirst = it as Boolean
     }
@@ -206,6 +212,31 @@ fun setPhotoCaptureBuilderParams(call: MethodCall, builder: PhotoCapture.Builder
     call.argument<String>("PhotoFileFormat")?.let { enumName ->
         PhotoFileFormatEnum.values().find { it.name == enumName }?.let {
             builder.setFileFormat(it)
+        }
+    }
+    call.argument<String>(OptionNameEnum.Preset.name)?.let { enumName ->
+        PresetEnum.values().find { it.name == enumName }?.let {
+            builder.setPreset(it)
+        }
+    }
+}
+
+fun setTimeShiftCaptureBuilderParams(call: MethodCall, builder: TimeShiftCapture.Builder) {
+    call.argument<Int>("_capture_interval")?.let {
+        if (it >= 0) {
+            builder.setCheckStatusCommandInterval(it.toLong())
+        }
+    }
+    call.argument<Map<String, Any>>(OptionNameEnum.TimeShift.name)?.let { timeShiftMap ->
+        val timeShift = toTimeShift(timeShiftMap)
+        timeShift.isFrontFirst?.let {
+            builder.setIsFrontFirst(it)
+        }
+        timeShift.firstInterval?.let {
+            builder.setFirstInterval(it)
+        }
+        timeShift.secondInterval?.let {
+            builder.setSecondInterval(it)
         }
     }
 }
@@ -394,6 +425,7 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
     return when (name) {
         OptionNameEnum.AiAutoThumbnail -> AiAutoThumbnailEnum.values().find { it.name == valueName }
         OptionNameEnum.Aperture -> ApertureEnum.values().find { it.name == valueName }
+        OptionNameEnum.BluetoothPower -> BluetoothPowerEnum.values().find { it.name == valueName }
         OptionNameEnum.BurstMode -> BurstModeEnum.values().find { it.name == valueName }
         OptionNameEnum.CameraControlSource -> CameraControlSourceEnum.values().find { it.name == valueName }
         OptionNameEnum.CameraMode -> CameraModeEnum.values().find { it.name == valueName }
@@ -402,8 +434,12 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
         OptionNameEnum.ExposureCompensation -> ExposureCompensationEnum.values().find { it.name == valueName }
         OptionNameEnum.ExposureDelay -> ExposureDelayEnum.values().find { it.name == valueName }
         OptionNameEnum.ExposureProgram -> ExposureProgramEnum.values().find { it.name == valueName }
+        OptionNameEnum.FaceDetect -> FaceDetectEnum.values().find { it.name == valueName }
         OptionNameEnum.FileFormat -> FileFormatEnum.values().find { it.name == valueName }
         OptionNameEnum.Filter -> FilterEnum.values().find { it.name == valueName }
+        OptionNameEnum.Function -> ShootingFunctionEnum.values().find { it.name == valueName }
+        OptionNameEnum.Gain -> GainEnum.values().find { it.name == valueName }
+        OptionNameEnum.ImageStitching -> ImageStitchingEnum.values().find { it.name == valueName }
         OptionNameEnum.Iso -> IsoEnum.values().find { it.name == valueName }
         OptionNameEnum.IsoAutoHighLimit -> ApertureEnum.values().find { it.name == valueName }
         OptionNameEnum.Language -> LanguageEnum.values().find { it.name == valueName }
@@ -536,4 +572,29 @@ fun toPluginInfosResult(pluginInfoList: List<PluginInfo>): List<Map<String, Any>
         resultList.add(result)
     }
     return resultList
+}
+
+fun toNotify(
+    id: Int,
+    params: Map<String, Any?>?,
+): Map<String, Any> {
+    val objects = mutableMapOf<String, Any>(
+        KEY_NOTIFY_ID to id,
+    )
+    params?.run {
+        objects[KEY_NOTIFY_PARAMS] = params
+    }
+    return objects
+}
+
+fun toCaptureProgressNotifyParam(value: Float): Map<String, Any> {
+    return mapOf<String, Any>(
+        KEY_NOTIFY_PARAM_COMPLETION to value
+    )
+}
+
+fun toPreviewNotifyParam(imageData: ByteArray): Map<String, Any> {
+    return mapOf<String, Any>(
+        KEY_NOTIFY_PARAM_IMAGE to imageData
+    )
 }

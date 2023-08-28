@@ -7,36 +7,53 @@ import 'package:theta_client_flutter/utils/convert_utils.dart';
 
 import 'theta_client_flutter_platform_interface.dart';
 
+const notifyIdLivePreview = 10001;
+const notifyIdTimeShiftProgress = 10002;
+
 /// An implementation of [ThetaClientFlutterPlatform] that uses method channels.
 class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting
   final methodChannel = const MethodChannel('theta_client_flutter');
-  final stream = const EventChannel('theta_client_flutter/live_preview');
-  StreamSubscription? streamSubscription;
-  bool Function(Uint8List)? frameHandler;
+  final notifyStream = const EventChannel('theta_client_flutter/theta_notify');
+  StreamSubscription? notifyStreamSubscription;
+  Map<int, Function(Map<dynamic, dynamic>?)> notifyList = {};
 
-  void enableEventReceiver() {
-    streamSubscription = stream.receiveBroadcastStream().listen((dynamic event) {
-      if (frameHandler != null) {
-        if (!frameHandler!(event)) {
-          disableEventReceiver();
-          methodChannel.invokeMethod<String>('stopLivePreview');
-        }
-      } else {
-        disableEventReceiver();
-        methodChannel.invokeMethod<String>('stopLivePreview');
-      }
+  void addNotify(int id, Function(Map<dynamic, dynamic>?) callback) {
+    notifyList[id] = callback;
+  }
+
+  void removeNotify(int id) {
+    notifyList.remove(id);
+  }
+
+  void clearNotify() {
+    notifyList.clear();
+  }
+
+  void onNotify(Map<dynamic, dynamic> event) {
+    final id = event['id'] as int;
+    final params = event['params'] as Map<dynamic, dynamic>?;
+    final handler = notifyList[id];
+    handler?.call(params);
+  }
+
+  void enableNotifyEventReceiver() {
+    if (notifyStreamSubscription != null) {
+      return;
+    }
+    notifyStreamSubscription =
+        notifyStream.receiveBroadcastStream().listen((dynamic event) {
+      onNotify(event);
     }, onError: (dynamic error) {
       debugPrint('Received error: ${error.message}');
+      disableNotifyEventReceiver();
     }, cancelOnError: true);
   }
 
-  void disableEventReceiver() {
-    if (streamSubscription != null) {
-      streamSubscription!.cancel();
-      streamSubscription = null;
-    }
+  void disableNotifyEventReceiver() {
+    notifyStreamSubscription?.cancel();
+    notifyStreamSubscription = null;
   }
 
   @override
@@ -47,6 +64,10 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<void> initialize(String endpoint, ThetaConfig? config, ThetaTimeout? timeout) async {
+    clearNotify();
+    disableNotifyEventReceiver();
+    enableNotifyEventReceiver();
+
     var completer = Completer<void>();
     try {
       final Map params = <String, dynamic>{
@@ -119,13 +140,18 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   Future<void> getLivePreview(bool Function(Uint8List) frameHandler) async {
     var completer = Completer<void>();
     try {
-      enableEventReceiver();
-      this.frameHandler = frameHandler;
+      enableNotifyEventReceiver();
+      addNotify(notifyIdLivePreview, (params) {
+        final image = params?['image'] as Uint8List?;
+        if (image != null && !frameHandler(image)) {
+          removeNotify(notifyIdLivePreview);
+          methodChannel.invokeMethod<String>('stopLivePreview');
+        }
+      });
       await methodChannel.invokeMethod<void>('getLivePreview');
       completer.complete(null);
     } catch (e) {
-      this.frameHandler = null;
-      disableEventReceiver();
+      removeNotify(notifyIdLivePreview);
       completer.completeError(e);
     }
     return completer.future;
@@ -136,7 +162,6 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       FileTypeEnum fileType, int entryCount, int startPosition, StorageEnum? storage) async {
     var completer = Completer<ThetaFiles>();
     try {
-      debugPrint('call listFiles');
       final Map params = <String, dynamic>{
         'fileType': fileType.rawValue,
         'entryCount': entryCount,
@@ -190,6 +215,49 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   @override
   Future<String?> takePicture() async {
     return methodChannel.invokeMethod<String>('takePicture');
+  }
+
+  @override
+  Future<void> getTimeShiftCaptureBuilder() async {
+    return methodChannel.invokeMethod<void>('getTimeShiftCaptureBuilder');
+  }
+
+  @override
+  Future<void> buildTimeShiftCapture(
+      Map<String, dynamic> options, int interval) async {
+    final params = ConvertUtils.convertCaptureParams(options);
+    params['_capture_interval'] = interval;
+    return methodChannel.invokeMethod<void>('buildTimeShiftCapture', params);
+  }
+
+  @override
+  Future<String?> startTimeShiftCapture(
+      void Function(double)? onProgress) async {
+    var completer = Completer<String?>();
+    try {
+      enableNotifyEventReceiver();
+      if (onProgress != null) {
+        addNotify(notifyIdTimeShiftProgress, (params) {
+          final completion = params?['completion'] as double?;
+          if (completion != null) {
+            onProgress(completion);
+          }
+        });
+      }
+      final fileUrl =
+          await methodChannel.invokeMethod<String>('startTimeShiftCapture');
+      removeNotify(notifyIdTimeShiftProgress);
+      completer.complete(fileUrl);
+    } catch (e) {
+      removeNotify(notifyIdTimeShiftProgress);
+      completer.completeError(e);
+    }
+    return completer.future;
+  }
+
+  @override
+  Future<void> stopTimeShiftCapture() async {
+    return methodChannel.invokeMethod<void>('stopTimeShiftCapture');
   }
 
   @override

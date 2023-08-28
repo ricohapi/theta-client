@@ -73,15 +73,17 @@ class ThetaViewModel(
             kotlin.runCatching {
                 thetaRepository.getLivePreview()
                     .collect { byteReadPacket ->
-                        if (isActive) {
-                            byteReadPacket.inputStream().use {
-                                _previewFlow.emit(BitmapFactory.decodeStream(it))
-                            }
+                        ensureActive()
+                        byteReadPacket.inputStream().use {
+                            _previewFlow.emit(BitmapFactory.decodeStream(it))
                         }
                         byteReadPacket.release()
                     }
             }.onFailure {
-                Timber.e(it)
+                when (it) {
+                    is CancellationException -> Timber.i(it) // Preview coroutine was cancelled. No need to do anything.
+                    else -> Timber.e(it)
+                }
             }
         }
     }

@@ -37,6 +37,7 @@ class ConvertUtils {
           element['name'],
           element['fileUrl'],
           element['size'],
+          element['dateTimeZone'],
           element['dateTime'],
           element['lat'],
           element['lng'],
@@ -135,6 +136,8 @@ class ConvertUtils {
     for (var entry in data.entries) {
       if (entry.value.runtimeType == GpsInfo) {
         result[entry.key] = convertGpsInfoParam(entry.value);
+      } else if (entry.value.runtimeType == TimeShift) {
+        result[entry.key] = convertTimeShiftParam(entry.value);
       } else if (entry.value.runtimeType == int || entry.value.runtimeType == double) {
         result[entry.key] = entry.value;
       } else {
@@ -174,20 +177,31 @@ class ConvertUtils {
 
   static Map<String, dynamic> convertTimeShiftParam(TimeShift timeShift) {
     var map = <String, dynamic>{};
-    if (timeShift.isFrontFirst != null) map['isFrontFirst'] = timeShift.isFrontFirst;
-    if (timeShift.firstInterval != null) map['firstInterval'] = timeShift.firstInterval.toString();
-    if (timeShift.secondInterval != null)
+    if (timeShift.isFrontFirst != null) {
+      map['isFrontFirst'] = timeShift.isFrontFirst;
+    }
+    if (timeShift.firstInterval != null) {
+      map['firstInterval'] = timeShift.firstInterval.toString();
+    }
+    if (timeShift.secondInterval != null) {
       map['secondInterval'] = timeShift.secondInterval.toString();
+    }
     return map;
   }
 
   static TimeShift convertTimeShift(Map<dynamic, dynamic> data) {
     var timeShift = TimeShift();
-    if (data['isFrontFirst'] != null) timeShift.isFrontFirst = data['isFrontFirst'];
-    if (data['firstInterval'] != null)
-      timeShift.firstInterval = TimeShiftIntervalEnum.getValue(data['firstInterval']);
-    if (data['secondInterval'] != null)
-      timeShift.secondInterval = TimeShiftIntervalEnum.getValue(data['secondInterval']);
+    if (data['isFrontFirst'] != null) {
+      timeShift.isFrontFirst = data['isFrontFirst'];
+    }
+    if (data['firstInterval'] != null) {
+      timeShift.firstInterval =
+          TimeShiftIntervalEnum.getValue(data['firstInterval']);
+    }
+    if (data['secondInterval'] != null) {
+      timeShift.secondInterval =
+          TimeShiftIntervalEnum.getValue(data['secondInterval']);
+    }
     return timeShift;
   }
 
@@ -220,6 +234,9 @@ class ConvertUtils {
         case OptionNameEnum.bitrate:
           result.bitrate =
           (entry.value is int) ? BitrateNumber(entry.value) : Bitrate.getValue(entry.value);
+          break;
+        case OptionNameEnum.bluetoothPower:
+          result.bluetoothPower = BluetoothPowerEnum.getValue(entry.value);
           break;
         case OptionNameEnum.burstMode:
           result.burstMode = BurstModeEnum.getValue(entry.value);
@@ -266,14 +283,26 @@ class ConvertUtils {
         case OptionNameEnum.exposureProgram:
           result.exposureProgram = ExposureProgramEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.faceDetect:
+          result.faceDetect = FaceDetectEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.fileFormat:
           result.fileFormat = FileFormatEnum.getValue(entry.value);
           break;
         case OptionNameEnum.filter:
           result.filter = FilterEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.function:
+          result.function = ShootingFunctionEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.gain:
+          result.gain = GainEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.gpsInfo:
           result.gpsInfo = convertGpsInfo(entry.value);
+          break;
+        case OptionNameEnum.imageStitching:
+          result.imageStitching = ImageStitchingEnum.getValue(entry.value);
           break;
         case OptionNameEnum.isGpsOn:
           result.isGpsOn = entry.value;
@@ -375,6 +404,8 @@ class ConvertUtils {
       return value.value;
     } else if (value is Bitrate) {
       return value.rawValue;
+    } else if (value is BluetoothPowerEnum) {
+      return value.rawValue;
     } else if (value is BurstModeEnum) {
       return value.rawValue;
     } else if (value is BurstOption) {
@@ -393,9 +424,17 @@ class ConvertUtils {
       return value.rawValue;
     } else if (value is ExposureProgramEnum) {
       return value.rawValue;
+    } else if (value is FaceDetectEnum) {
+      return value.rawValue;
     } else if (value is FileFormatEnum) {
       return value.rawValue;
     } else if (value is FilterEnum) {
+      return value.rawValue;
+    } else if (value is ShootingFunctionEnum) {
+      return value.rawValue;
+    } else if (value is GainEnum) {
+      return value.rawValue;
+    } else if (value is ImageStitchingEnum) {
       return value.rawValue;
     } else if (value is IsoEnum) {
       return value.rawValue;

@@ -1,9 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:theta_client_flutter/digest_auth.dart';
-import 'package:theta_client_flutter/utils/convert_utils.dart';
 
+import 'capture/capture_builder.dart';
 import 'theta_client_flutter_platform_interface.dart';
 import 'dart:async';
+
+export 'capture/capture.dart';
+export 'capture/capturing.dart';
+export 'capture/capture_builder.dart';
 
 /// Handle Theta web APIs.
 class ThetaClientFlutter {
@@ -118,6 +122,12 @@ class ThetaClientFlutter {
   PhotoCaptureBuilder getPhotoCaptureBuilder() {
     ThetaClientFlutterPlatform.instance.getPhotoCaptureBuilder();
     return PhotoCaptureBuilder();
+  }
+
+  /// Get TimeShiftCapture.Builder for capture time shift.
+  TimeShiftCaptureBuilder getTimeShiftCaptureBuilder() {
+    ThetaClientFlutterPlatform.instance.getTimeShiftCaptureBuilder();
+    return TimeShiftCaptureBuilder();
   }
 
   /// Get PhotoCapture.Builder for capture video.
@@ -610,6 +620,9 @@ class FileInfo {
   /// File size in bytes.
   final int size;
 
+  /// File creation or update time with the time zone in the format "YYYY:MM:DD hh:mm:ss+(-)hh:mm".
+  final String dateTimeZone;
+
   /// File creation time in the format "YYYY:MM:DD HH:MM:SS".
   final String dateTime;
 
@@ -671,6 +684,7 @@ class FileInfo {
       this.name,
       this.fileUrl,
       this.size,
+      this.dateTimeZone,
       this.dateTime,
       this.lat,
       this.lng,
@@ -701,6 +715,30 @@ class ThetaFiles {
   final int totalEntries;
 
   ThetaFiles(this.fileList, this.totalEntries);
+}
+
+/// bluetooth power.
+enum BluetoothPowerEnum {
+  /// bluetooth ON
+  on('ON'),
+
+  /// bluetooth OFF
+  off('OFF');
+
+  final String rawValue;
+
+  const BluetoothPowerEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static BluetoothPowerEnum? getValue(String rawValue) {
+    return BluetoothPowerEnum.values
+        .cast<BluetoothPowerEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
 }
 
 /// BurstMode setting.
@@ -1032,15 +1070,21 @@ enum ChargingStateEnum {
   }
 }
 
-/// Shooting function status
+/// Shooting function.
+/// Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
+/// Setting them at the same time as exposureDelay will result in an error.
+///
+/// For
+/// - RICOH THETA X
+/// - RICOH THETA Z1
 enum ShootingFunctionEnum {
-  /// Shooting function status. normal
+  /// Normal shooting function
   normal('NORMAL'),
 
-  /// Shooting function status. selfTimer
+  /// Self-timer shooting function(RICOH THETA X is not supported.)
   selfTimer('SELF_TIMER'),
 
-  /// Shooting function status. mySetting
+  /// My setting shooting function
   mySetting('MY_SETTING');
 
   final String rawValue;
@@ -1403,6 +1447,9 @@ enum OptionNameEnum {
   /// Option name _burstMode
   burstMode('BurstMode', BurstModeEnum),
 
+  /// Option name _bluetoothPower
+  bluetoothPower('BluetoothPower', BluetoothPowerEnum),
+
   /// Option name _burstOption
   burstOption('BurstOption', BurstOption),
 
@@ -1445,14 +1492,26 @@ enum OptionNameEnum {
   /// Option name exposureProgram
   exposureProgram('ExposureProgram', ExposureProgramEnum),
 
+  /// Option name faceDetect
+  faceDetect('FaceDetect', FaceDetectEnum),
+
   /// Option name fileFormat
   fileFormat('FileFormat', FileFormatEnum),
 
   /// Option name _filter
   filter('Filter', FilterEnum),
 
+  /// Option name function
+  function('Function', ShootingFunctionEnum),
+
+  /// Option name gain
+  gain('Gain', GainEnum),
+
   /// Option name gpsInfo
   gpsInfo('GpsInfo', GpsInfo),
+
+  /// Option name imageStitching
+  imageStitching('ImageStitching', ImageStitchingEnum),
 
   /// Option name _gpsTagRecording
   ///
@@ -2037,6 +2096,33 @@ enum ExposureProgramEnum {
   }
 }
 
+/// Face detection
+///
+/// For
+/// - RICOH THETA X
+enum FaceDetectEnum {
+  /// Face detection ON
+  on('ON'),
+
+  /// Face detection OFF
+  off('OFF');
+
+  final String rawValue;
+
+  const FaceDetectEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static FaceDetectEnum? getValue(String rawValue) {
+    return FaceDetectEnum.values
+        .cast<FaceDetectEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
 /// File format used in shooting.
 enum FileFormatEnum {
   /// Image File format.
@@ -2252,6 +2338,85 @@ enum FilterEnum {
     return FilterEnum.values
         .cast<FilterEnum?>()
         .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// Microphone gain.
+///
+/// For
+/// - RICOH THETA X
+/// - RICOH THETA Z1
+/// - RICOH THETA V
+enum GainEnum {
+  /// Normal mode
+  normal('NORMAL'),
+
+  /// Loud volume mode
+  megaVolume('MEGA_VOLUME'),
+
+  /// Mute mode
+  /// (RICOH THETA V firmware v2.50.1 or later, RICOH THETA X is not supported.)
+  mute('MUTE');
+
+  final String rawValue;
+
+  const GainEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static GainEnum? getValue(String rawValue) {
+    return GainEnum.values
+        .cast<GainEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+  }
+}
+
+/// ImageStitching
+enum ImageStitchingEnum {
+  /// Refer to stitching when shooting with "auto"
+  auto('AUTO'),
+
+  /// Performs static stitching
+  static('STATIC'),
+
+  /// Performs dynamic stitching (RICOH THETA X or later)
+  dynamic('DYNAMIC'),
+
+  /// For Normal shooting, performs dynamic stitching,
+  /// for Interval shooting, saves dynamic distortion correction parameters
+  /// for the first image and then uses them for the 2nd and subsequent
+  /// images (RICOH THETA X is not supported)
+  dynamicAuto('DYNAMIC_AUTO'),
+
+  /// Performs semi-dynamic stitching
+  /// Saves dynamic distortion correction parameters for the first image
+  /// and then uses them for the 2nd and subsequent images (RICOH THETA X or later)
+  dynamicSemiAuto('DYNAMIC_SEMI_AUTO'),
+
+  /// Performs dynamic stitching and then saves distortion correction parameters
+  dynamicSave('DYNAMIC_SAVE'),
+
+  /// Performs stitching using the saved distortion correction parameters
+  dynamicLoad('DYNAMIC_LOAD'),
+
+  /// Does not perform stitching
+  none('NONE');
+
+  final String rawValue;
+  const ImageStitchingEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static ImageStitchingEnum? getValue(String rawValue) {
+    return ImageStitchingEnum.values.cast<ImageStitchingEnum?>().firstWhere(
+            (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -3298,192 +3463,6 @@ enum GpsTagRecordingEnum {
   }
 }
 
-/// Photo image format used in PhotoCapture.
-enum PhotoFileFormatEnum {
-  /// Image File format.
-  /// type: jpeg
-  /// size: 2048 x 1024
-  ///
-  /// For RICOH THETA S or SC
-  image_2K('IMAGE_2K'),
-
-  /// Image File format.
-  /// type: jpeg
-  /// size: 5376 x 2688
-  ///
-  /// For RICOH THETA V or S or SC
-  image_5K('IMAGE_5K'),
-
-  /// Image File format.
-  /// type: jpeg
-  /// size: 6720 x 3360
-  ///
-  /// For RICOH THETA Z1
-  image_6_7K('IMAGE_6_7K'),
-
-  /// Image File format.
-  /// type: raw+
-  /// size: 6720 x 3360
-  ///
-  /// For RICOH THETA Z1
-  rawP_6_7K('RAW_P_6_7K'),
-
-  /// Image File format.
-  /// type: jpeg
-  /// size: 5504 x 2752
-  ///
-  /// For RICOH THETA X or later
-  image_5_5K('IMAGE_5_5K'),
-
-  /// Image File format.
-  /// type: jpeg
-  /// size: 11008 x 5504
-  ///
-  /// For RICOH THETA X or later
-  image_11K('IMAGE_11K');
-
-  final String rawValue;
-
-  const PhotoFileFormatEnum(this.rawValue);
-
-  @override
-  String toString() {
-    return rawValue;
-  }
-}
-
-/// Video image format used in VideoCapture.
-enum VideoFileFormatEnum {
-  /// Video File format.
-  /// type: mp4
-  /// size: 1280 x 570
-  ///
-  /// For RICOH THETA S or SC
-  videoHD('VIDEO_HD'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 1920 x 1080
-  ///
-  /// For RICOH THETA S or SC
-  videoFullHD('VIDEO_FULL_HD'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 1920 x 960
-  /// codec: H.264/MPEG-4 AVC
-  ///
-  /// For RICOH THETA Z1 or V
-  video_2K('VIDEO_2K'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 3840 x 1920
-  /// codec: H.264/MPEG-4 AVC
-  ///
-  /// For RICOH THETA Z1 or V
-  video_4K('VIDEO_4K'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 1920 x 960
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 30
-  ///
-  /// For RICOH THETA X or later
-  video_2K_30F('VIDEO_2K_30F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 1920 x 960
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 60
-  ///
-  /// For RICOH THETA X or later
-  video_2K_60F('VIDEO_2K_60F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 3840 x 1920
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 30
-  ///
-  /// For RICOH THETA X or later
-  video_4K_30F('VIDEO_4K_30F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 3840 x 1920
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 60
-  ///
-  /// For RICOH THETA X or later
-  video_4K_60F('VIDEO_4K_60F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 5760 x 2880
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 2
-  ///
-  /// For RICOH THETA X or later
-  video_5_7K_2F('VIDEO_5_7K_2F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 5760 x 2880
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 5
-  ///
-  /// For RICOH THETA X or later
-  video_5_7K_5F('VIDEO_5_7K_5F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 5760 x 2880
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 30
-  ///
-  /// For RICOH THETA X or later
-  video_5_7K_30F('VIDEO_5_7K_30F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 7680 x 3840
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 2
-  ///
-  /// For RICOH THETA X or later
-  video_7K_2F('VIDEO_7K_2F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 7680 x 3840
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 5
-  ///
-  /// For RICOH THETA X or later
-  video_7K_5F('VIDEO_7K_5F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 7680 x 3840
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 10
-  ///
-  /// For RICOH THETA X or later
-  video_7K_10F('VIDEO_7K_10F');
-
-  final String rawValue;
-
-  const VideoFileFormatEnum(this.rawValue);
-
-  @override
-  String toString() {
-    return rawValue;
-  }
-}
-
 /// GPS information.
 /// 65535 is set for latitude and longitude when disabling the GPS setting at
 /// RICOH THETA Z1 and prior.
@@ -3563,6 +3542,9 @@ class Options {
 
   /// see [Bitrate]
   Bitrate? bitrate;
+
+  /// see [BluetoothPowerEnum]
+  BluetoothPowerEnum? bluetoothPower;
 
   /// BurstMode setting.
   /// When this is set to ON, burst shooting is enabled,
@@ -3684,6 +3666,9 @@ class Options {
   /// Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
   ExposureProgramEnum? exposureProgram;
 
+  /// see [FaceDetectEnum]
+  FaceDetectEnum? faceDetect;
+
   /// Image format used in shooting.
   ///
   /// The supported value depends on the shooting mode [captureMode].
@@ -3704,10 +3689,19 @@ class Options {
   /// Access during video capture mode
   FilterEnum? filter;
 
+  /// see [ShootingFunctionEnum]
+  ShootingFunctionEnum? function;
+
+  /// see [GainEnum]
+  GainEnum? gain;
+
   /// GPS location information.
   ///
   /// In order to append the location information, this property should be specified by the client.
   GpsInfo? gpsInfo;
+
+  /// Still image stitching setting during shooting.
+  ImageStitchingEnum? imageStitching;
 
   /// Turns position information assigning ON/OFF.
   /// For THETA X
@@ -3817,6 +3811,8 @@ class Options {
         return aperture as T;
       case OptionNameEnum.bitrate:
         return bitrate as T;
+      case OptionNameEnum.bluetoothPower:
+        return bluetoothPower as T;
       case OptionNameEnum.burstMode:
         return burstMode as T;
       case OptionNameEnum.burstOption:
@@ -3847,12 +3843,20 @@ class Options {
         return exposureDelay as T;
       case OptionNameEnum.exposureProgram:
         return exposureProgram as T;
+      case OptionNameEnum.faceDetect:
+        return faceDetect as T;
       case OptionNameEnum.fileFormat:
         return fileFormat as T;
       case OptionNameEnum.filter:
         return filter as T;
+      case OptionNameEnum.function:
+        return function as T;
+      case OptionNameEnum.gain:
+        return gain as T;
       case OptionNameEnum.gpsInfo:
         return gpsInfo as T;
+      case OptionNameEnum.imageStitching:
+        return imageStitching as T;
       case OptionNameEnum.isGpsOn:
         return isGpsOn as T;
       case OptionNameEnum.iso:
@@ -3922,6 +3926,9 @@ class Options {
       case OptionNameEnum.bitrate:
         bitrate = value;
         break;
+      case OptionNameEnum.bluetoothPower:
+        bluetoothPower = value;
+        break;
       case OptionNameEnum.burstMode:
         burstMode = value;
         break;
@@ -3967,14 +3974,26 @@ class Options {
       case OptionNameEnum.exposureProgram:
         exposureProgram = value;
         break;
+      case OptionNameEnum.faceDetect:
+        faceDetect = value;
+        break;
       case OptionNameEnum.fileFormat:
         fileFormat = value;
         break;
       case OptionNameEnum.filter:
         filter = value;
         break;
+      case OptionNameEnum.function:
+        function = value;
+        break;
+      case OptionNameEnum.gain:
+        gain = value;
+        break;
       case OptionNameEnum.gpsInfo:
         gpsInfo = value;
+        break;
+      case OptionNameEnum.imageStitching:
+        imageStitching = value;
         break;
       case OptionNameEnum.isGpsOn:
         isGpsOn = value;
@@ -4052,247 +4071,6 @@ class Options {
         wlanFrequency = value;
         break;
     }
-  }
-}
-
-/// Capture
-class Capture {
-  /// options of capture
-  final Map<String, dynamic> _options;
-
-  /// Get aperture value.
-  ApertureEnum? getAperture() => _options[OptionNameEnum.aperture.rawValue];
-
-  /// Get color temperature of the camera (Kelvin).
-  int? getColorTemperature() => _options[OptionNameEnum.colorTemperature.rawValue];
-
-  /// Get exposure compensation (EV).
-  ExposureCompensationEnum? getExposureCompensation() =>
-      _options[OptionNameEnum.exposureCompensation.rawValue];
-
-  /// Get operating time (sec.) of the self-timer.
-  ExposureDelayEnum? getExposureDelay() => _options[OptionNameEnum.exposureDelay.rawValue];
-
-  /// Get exposure program.
-  ExposureProgramEnum? getExposureProgram() => _options[OptionNameEnum.exposureProgram.rawValue];
-
-  /// Get GPS information.
-  GpsInfo? getGpsInfo() => _options[OptionNameEnum.gpsInfo.rawValue];
-
-  /// Get turns position information assigning ON/OFF.
-  GpsTagRecordingEnum? getGpsTagRecording() => _options[TagNameEnum.gpsTagRecording.rawValue];
-
-  /// Set ISO sensitivity.
-  ///
-  /// It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
-  /// Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
-  ///
-  /// When the exposure program (exposureProgram) is set to Manual or ISO Priority
-  IsoEnum? getIso() => _options[OptionNameEnum.iso.rawValue];
-
-  /// Get ISO sensitivity upper limit when ISO sensitivity is set to automatic.
-  IsoAutoHighLimitEnum? getIsoAutoHighLimit() => _options[OptionNameEnum.isoAutoHighLimit.rawValue];
-
-  /// Get white balance.
-  WhiteBalanceEnum? getWhiteBalance() => _options[OptionNameEnum.whiteBalance.rawValue];
-
-  Capture(this._options);
-}
-
-/// Builder
-class CaptureBuilder<T> {
-  /// options of capture
-  final Map<String, dynamic> _options = {};
-
-  /// Set aperture value.
-  T setAperture(ApertureEnum aperture) {
-    _options[OptionNameEnum.aperture.rawValue] = aperture;
-    return this as T;
-  }
-
-  /// Set color temperature of the camera (Kelvin).
-  ///
-  /// 2500 to 10000. In 100-Kelvin units.
-  T setColorTemperature(int kelvin) {
-    _options[OptionNameEnum.colorTemperature.rawValue] = kelvin;
-    return this as T;
-  }
-
-  /// Set exposure compensation (EV).
-  T setExposureCompensation(ExposureCompensationEnum value) {
-    _options[OptionNameEnum.exposureCompensation.rawValue] = value;
-    return this as T;
-  }
-
-  /// Set operating time (sec.) of the self-timer.
-  T setExposureDelay(ExposureDelayEnum value) {
-    _options[OptionNameEnum.exposureDelay.rawValue] = value;
-    return this as T;
-  }
-
-  /// Set exposure program. The exposure settings that take priority can be selected.
-  T setExposureProgram(ExposureProgramEnum program) {
-    _options[OptionNameEnum.exposureProgram.rawValue] = program;
-    return this as T;
-  }
-
-  /// Set GPS information.
-  T setGpsInfo(GpsInfo gpsInfo) {
-    _options[OptionNameEnum.gpsInfo.rawValue] = gpsInfo;
-    return this as T;
-  }
-
-  /// Set turns position information assigning ON/OFF.
-  ///
-  /// For RICOH THETA X
-  T setGpsTagRecording(GpsTagRecordingEnum value) {
-    _options[TagNameEnum.gpsTagRecording.rawValue] = value;
-    return this as T;
-  }
-
-  /// Set ISO sensitivity.
-  ///
-  /// It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
-  /// Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
-  ///
-  /// When the exposure program (exposureProgram) is set to Manual or ISO Priority
-  T setIso(IsoEnum iso) {
-    _options[OptionNameEnum.iso.rawValue] = iso;
-    return this as T;
-  }
-
-  /// Set ISO sensitivity upper limit when ISO sensitivity is set to automatic.
-  T setIsoAutoHighLimit(IsoAutoHighLimitEnum iso) {
-    _options[OptionNameEnum.isoAutoHighLimit.rawValue] = iso;
-    return this as T;
-  }
-
-  /// Set white balance.
-  ///
-  /// It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
-  /// Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
-  T setWhiteBalance(WhiteBalanceEnum whiteBalance) {
-    _options[OptionNameEnum.whiteBalance.rawValue] = whiteBalance;
-    return this as T;
-  }
-}
-
-/// Capturing
-abstract class Capturing {
-  /// Stops capture.
-  void stopCapture();
-}
-
-/// Builder of [PhotoCapture]
-class PhotoCaptureBuilder extends CaptureBuilder<PhotoCaptureBuilder> {
-  /// Set photo file format.
-  PhotoCaptureBuilder setFileFormat(PhotoFileFormatEnum fileFormat) {
-    _options[TagNameEnum.photoFileFormat.rawValue] = fileFormat;
-    return this;
-  }
-
-  /// Set image processing filter.
-  PhotoCaptureBuilder setFilter(FilterEnum filter) {
-    _options[OptionNameEnum.filter.rawValue] = filter;
-    return this;
-  }
-
-  /// Builds an instance of a PhotoCapture that has all the combined parameters of the Options that have been added to the Builder.
-  Future<PhotoCapture> build() async {
-    var completer = Completer<PhotoCapture>();
-    try {
-      await ThetaClientFlutterPlatform.instance.buildPhotoCapture(_options);
-      completer.complete(PhotoCapture(_options));
-    } catch (e) {
-      completer.completeError(e);
-    }
-    return completer.future;
-  }
-}
-
-/// Capture of Photo
-class PhotoCapture extends Capture {
-  PhotoCapture(super.options);
-
-  /// Get image processing filter.
-  FilterEnum? getFilter() {
-    return _options[OptionNameEnum.filter.rawValue];
-  }
-
-  /// Get photo file format.
-  PhotoFileFormatEnum? getFileFormat() {
-    return _options[TagNameEnum.photoFileFormat.rawValue];
-  }
-
-  /// Take a picture.
-  void takePicture(
-      void Function(String fileUrl) onSuccess, void Function(Exception exception) onError) {
-    ThetaClientFlutterPlatform.instance
-        .takePicture()
-        .then((value) => onSuccess(value!))
-        .onError((error, stackTrace) => onError(error as Exception));
-  }
-}
-
-/// Builder of VideoCapture
-class VideoCaptureBuilder extends CaptureBuilder<VideoCaptureBuilder> {
-  /// Set video file format.
-  VideoCaptureBuilder setFileFormat(VideoFileFormatEnum fileFormat) {
-    _options[TagNameEnum.videoFileFormat.rawValue] = fileFormat;
-    return this;
-  }
-
-  /// Set maximum recordable time (in seconds) of the camera.
-  VideoCaptureBuilder setMaxRecordableTime(MaxRecordableTimeEnum time) {
-    _options[OptionNameEnum.maxRecordableTime.rawValue] = time;
-    return this;
-  }
-
-  /// Builds an instance of a VideoCapture that has all the combined parameters of the Options that have been added to the Builder.
-  Future<VideoCapture> build() async {
-    var completer = Completer<VideoCapture>();
-    try {
-      await ThetaClientFlutterPlatform.instance.buildVideoCapture(_options);
-      completer.complete(VideoCapture(_options));
-    } catch (e) {
-      completer.completeError(e);
-    }
-    return completer.future;
-  }
-}
-
-/// VideoCapturing
-class VideoCapturing extends Capturing {
-  /// Stops video capture.
-  ///  When call stopCapture() then call property callback.
-  @override
-  void stopCapture() {
-    ThetaClientFlutterPlatform.instance.stopVideoCapture();
-  }
-}
-
-/// Capture of Video
-class VideoCapture extends Capture {
-  VideoCapture(super.options);
-
-  /// Get maximum recordable time (in seconds) of the camera.
-  MaxRecordableTimeEnum? getMaxRecordableTime() {
-    return _options[OptionNameEnum.maxRecordableTime.rawValue];
-  }
-
-  /// Get video file format.
-  VideoFileFormatEnum? getFileFormat() {
-    return _options[TagNameEnum.videoFileFormat.rawValue];
-  }
-
-  /// Starts video capture.
-  VideoCapturing startCapture(
-      void Function(String fileUrl) onSuccess, void Function(Exception exception) onError) {
-    ThetaClientFlutterPlatform.instance
-        .startVideoCapture()
-        .then((value) => onSuccess(value!))
-        .onError((error, stackTrace) => onError(error as Exception));
-    return VideoCapturing();
   }
 }
 

@@ -36,6 +36,15 @@ class PhotoCapture private constructor(private val endpoint: String, options: Op
         }
     }
 
+    /**
+     * Get preset mode of Theta SC2 and Theta SC2 for business.
+     *
+     * @return Preset mode
+     */
+    fun getPreset() = options._preset?.let {
+        ThetaRepository.PresetEnum.get(it)
+    }
+
     // TODO: Add get photo option property
 
     /**
@@ -111,6 +120,10 @@ class PhotoCapture private constructor(private val endpoint: String, options: Op
      */
     class Builder internal constructor(private val endpoint: String, private val cameraModel: ThetaRepository.ThetaModel? = null) : Capture.Builder<Builder>() {
 
+        internal fun isPreset(): Boolean {
+            return options._preset != null && (cameraModel == ThetaRepository.ThetaModel.THETA_SC2 || cameraModel == ThetaRepository.ThetaModel.THETA_SC2_B)
+        }
+
         /**
          * Builds an instance of a PhotoCapture that has all the combined parameters of the Options that have been added to the Builder.
          *
@@ -120,8 +133,14 @@ class PhotoCapture private constructor(private val endpoint: String, options: Op
         suspend fun build(): PhotoCapture {
             try {
                 val modeOptions = when (cameraModel) {
-                    ThetaRepository.ThetaModel.THETA_X -> Options(captureMode = CaptureMode.IMAGE, _shootingMethod = ShootingMethod.NORMAL)
-                    else -> Options(captureMode = CaptureMode.IMAGE)
+                    ThetaRepository.ThetaModel.THETA_X -> Options(
+                        captureMode = CaptureMode.IMAGE,
+                        _shootingMethod = ShootingMethod.NORMAL,
+                    )
+
+                    else -> {
+                        Options(captureMode = if (isPreset()) CaptureMode.PRESET else CaptureMode.IMAGE)
+                    }
                 }
 
                 ThetaApi.callSetOptionsCommand(
@@ -166,6 +185,17 @@ class PhotoCapture private constructor(private val endpoint: String, options: Op
          */
         fun setFileFormat(fileFormat: ThetaRepository.PhotoFileFormatEnum): Builder {
             options.fileFormat = fileFormat.fileFormat.toMediaFileFormat()
+            return this
+        }
+
+        /**
+         * Set preset mode of Theta SC2 and Theta SC2 for business.
+         *
+         * @param preset Preset mode
+         * @return Builder
+         */
+        fun setPreset(preset: ThetaRepository.PresetEnum): Builder {
+            options._preset = preset.value
             return this
         }
 

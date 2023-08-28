@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 import 'package:theta_client_flutter/theta_client_flutter_platform_interface.dart';
 
-import 'theta_client_flutter_test.dart';
+import '../theta_client_flutter_test.dart';
 
 void main() {
   test('listFiles', () async {
@@ -16,6 +16,7 @@ void main() {
       name,
       'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG',
       100,
+      '2022:11:15 14:00:15+09:00',
       '2022:11:15 14:00:15',
       1.1,
       2.1,

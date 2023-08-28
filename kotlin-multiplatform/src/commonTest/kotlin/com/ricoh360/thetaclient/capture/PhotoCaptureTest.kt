@@ -829,6 +829,70 @@ class PhotoCaptureTest {
     }
 
     /**
+     * Setting preset.
+     */
+    @Test
+    fun settingPresetTest() = runTest {
+        // setup
+        val valueList = ThetaRepository.PresetEnum.values()
+
+        val responseArray = arrayOf(
+            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
+            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
+        )
+        var counter = 0
+        var valueIndex = 0
+
+        MockApiClient.onRequest = { request ->
+            val index = counter++
+
+            // check request
+            when (index) {
+                0 -> {
+                    CheckRequest.checkSetOptions(
+                        request = request,
+                        captureMode = CaptureMode.PRESET,
+                    )
+                }
+
+                1 -> {
+                    CheckRequest.checkSetOptions(
+                        request = request,
+                        preset = valueList[valueIndex].value,
+                    )
+                }
+            }
+
+            ByteReadChannel(responseArray[index])
+        }
+
+        // execute
+        val thetaRepository = ThetaRepository(endpoint)
+
+        val modelList =
+            listOf(ThetaRepository.ThetaModel.THETA_SC2, ThetaRepository.ThetaModel.THETA_SC2_B)
+        modelList.forEach { model ->
+            thetaRepository.cameraModel = model
+            valueList.forEach {
+                val photoCapture = thetaRepository.getPhotoCaptureBuilder()
+                    .setPreset(it)
+                    .build()
+
+                // check result
+                assertEquals(
+                    photoCapture.getPreset(),
+                    it,
+                    "set option preset $valueIndex",
+                )
+
+                valueIndex++
+                counter = 0
+            }
+            valueIndex = 0
+        }
+    }
+
+    /**
      * Error response to build call.
      */
     @Test

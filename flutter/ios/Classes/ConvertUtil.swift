@@ -3,6 +3,10 @@ import UIKit
 import THETAClient
 
 let KEY_CLIENT_MODE = "clientMode"
+let KEY_NOTIFY_ID = "id"
+let KEY_NOTIFY_PARAMS = "params"
+let KEY_NOTIFY_PARAM_COMPLETION = "completion"
+let KEY_NOTIFY_PARAM_IMAGE = "image"
 
 public class ConvertUtil: NSObject {
 }
@@ -27,6 +31,9 @@ func convertResult(fileInfoList: [ThetaRepository.FileInfo]) -> [[String: Any]] 
             "dateTime": fileInfo.dateTime,
             "thumbnailUrl": fileInfo.thumbnailUrl,
         ]
+        if let dateTimeZone = fileInfo.dateTimeZone {
+            item["dateTimeZone"] = dateTimeZone
+        }
         if let lat = fileInfo.lat {
             item["lat"] = lat.floatValue
         }
@@ -141,75 +148,99 @@ func convertResult(thetaState: ThetaRepository.ThetaState) -> [String: Any?] {
 }
 
 func setCaptureBuilderParams<T>(params: [String : Any], builder: CaptureBuilder<T>) {
-    if let value = params[ThetaRepository.OptionNameEnum.aperture.name]  {
-        if let enumValue = getEnumValue(values: ThetaRepository.ApertureEnum.values(), name: value as! String) {
+    if let value = params[ThetaRepository.OptionNameEnum.aperture.name] as? String {
+        if let enumValue = getEnumValue(values: ThetaRepository.ApertureEnum.values(), name: value) {
             builder.setAperture(aperture: enumValue)
         }
     }
-    if let value = params[ThetaRepository.OptionNameEnum.colortemperature.name]  {
-        builder.setColorTemperature(kelvin: value as! Int32)
+    if let value = params[ThetaRepository.OptionNameEnum.colortemperature.name] as? Int32 {
+        builder.setColorTemperature(kelvin: value)
     }
-    if let value = params[ThetaRepository.OptionNameEnum.exposurecompensation.name]  {
-        if let enumValue = getEnumValue(values: ThetaRepository.ExposureCompensationEnum.values(), name: value as! String) {
+    if let value = params[ThetaRepository.OptionNameEnum.exposurecompensation.name] as? String {
+        if let enumValue = getEnumValue(values: ThetaRepository.ExposureCompensationEnum.values(), name: value) {
             builder.setExposureCompensation(value: enumValue)
         }
     }
-    if let value = params[ThetaRepository.OptionNameEnum.exposuredelay.name]  {
-        if let enumValue = getEnumValue(values: ThetaRepository.ExposureDelayEnum.values(), name: value as! String) {
+    if let value = params[ThetaRepository.OptionNameEnum.exposuredelay.name] as? String {
+        if let enumValue = getEnumValue(values: ThetaRepository.ExposureDelayEnum.values(), name: value) {
             builder.setExposureDelay(delay: enumValue)
         }
     }
-    if let value = params[ThetaRepository.OptionNameEnum.exposureprogram.name]  {
-        if let enumValue = getEnumValue(values: ThetaRepository.ExposureProgramEnum.values(), name: value as! String) {
+    if let value = params[ThetaRepository.OptionNameEnum.exposureprogram.name] as? String {
+        if let enumValue = getEnumValue(values: ThetaRepository.ExposureProgramEnum.values(), name: value) {
             builder.setExposureProgram(program: enumValue)
         }
     }
-    if let value = params[ThetaRepository.OptionNameEnum.gpsinfo.name] {
-        builder.setGpsInfo(gpsInfo: toGpsInfo(params: value as! [String : Any]))
+    if let value = params[ThetaRepository.OptionNameEnum.gpsinfo.name] as? [String : Any] {
+        builder.setGpsInfo(gpsInfo: toGpsInfo(params: value))
     }
-    if let value = params["GpsTagRecording"] {
-        if let enumValue = getEnumValue(values: ThetaRepository.GpsTagRecordingEnum.values(), name: value as! String) {
+    if let value = params["GpsTagRecording"] as? String {
+        if let enumValue = getEnumValue(values: ThetaRepository.GpsTagRecordingEnum.values(), name: value) {
             builder.setGpsTagRecording(value: enumValue)
         }
     }
-    if let value = params[ThetaRepository.OptionNameEnum.iso.name] {
-        if let enumValue = getEnumValue(values: ThetaRepository.IsoEnum.values(), name: value as! String) {
+    if let value = params[ThetaRepository.OptionNameEnum.iso.name] as? String {
+        if let enumValue = getEnumValue(values: ThetaRepository.IsoEnum.values(), name: value) {
             builder.setIso(iso: enumValue)
         }
     }
-    if let value = params[ThetaRepository.OptionNameEnum.isoautohighlimit.name]  {
-        if let enumValue = getEnumValue(values: ThetaRepository.IsoAutoHighLimitEnum.values(), name: value as! String) {
+    if let value = params[ThetaRepository.OptionNameEnum.isoautohighlimit.name] as? String {
+        if let enumValue = getEnumValue(values: ThetaRepository.IsoAutoHighLimitEnum.values(), name: value) {
             builder.setIsoAutoHighLimit(iso: enumValue)
         }
     }
-    if let value = params[ThetaRepository.OptionNameEnum.whitebalance.name]  {
-        if let enumValue = getEnumValue(values: ThetaRepository.WhiteBalanceEnum.values(), name: value as! String) {
+    if let value = params[ThetaRepository.OptionNameEnum.whitebalance.name] as? String {
+        if let enumValue = getEnumValue(values: ThetaRepository.WhiteBalanceEnum.values(), name: value) {
             builder.setWhiteBalance(whiteBalance: enumValue)
         }
     }
 }
 
 func setPhotoCaptureBuilderParams(params: [String : Any], builder: PhotoCapture.Builder) {
-    if let value = params[ThetaRepository.OptionNameEnum.filter.name]  {
-        if let enumValue = getEnumValue(values: ThetaRepository.FilterEnum.values(), name: value as! String) {
+    if let value = params[ThetaRepository.OptionNameEnum.filter.name] as? String {
+        if let enumValue = getEnumValue(values: ThetaRepository.FilterEnum.values(), name: value) {
             builder.setFilter(filter: enumValue)
         }
     }
-    if let value = params["PhotoFileFormat"]  {
-        if let enumValue = getEnumValue(values: ThetaRepository.PhotoFileFormatEnum.values(), name: value as! String) {
+    if let value = params["PhotoFileFormat"] as? String  {
+        if let enumValue = getEnumValue(values: ThetaRepository.PhotoFileFormatEnum.values(), name: value) {
             builder.setFileFormat(fileFormat: enumValue)
+        }
+    }
+    if let value = params[ThetaRepository.OptionNameEnum.preset.name] as? String {
+        if let enumValue = getEnumValue(values: ThetaRepository.PresetEnum.values(), name: value) {
+            builder.setPreset(preset: enumValue)
+        }
+    }
+}
+
+func setTimeShiftCaptureBuilderParams(params: [String : Any], builder: TimeShiftCapture.Builder) {
+    if let interval = params["_capture_interval"] as? Int,
+       interval >= 0 {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
+    if let timeShiftParams = params[ThetaRepository.OptionNameEnum.timeshift.name] as? [String : Any] {
+        let timeShift = toTimeShift(params: timeShiftParams)
+        if let isFrontFirst = timeShift.isFrontFirst {
+            builder.setIsFrontFirst(isFrontFirst: isFrontFirst.boolValue)
+        }
+        if let firstInterval = timeShift.firstInterval {
+            builder.setFirstInterval(interval: firstInterval)
+        }
+        if let secondInterval = timeShift.secondInterval {
+            builder.setSecondInterval(interval: secondInterval)
         }
     }
 }
 
 func setVideoCaptureBuilderParams(params: [String : Any], builder: VideoCapture.Builder) {
-    if let value = params[ThetaRepository.OptionNameEnum.maxrecordabletime.name]  {
-        if let enumValue = getEnumValue(values: ThetaRepository.MaxRecordableTimeEnum.values(), name: value as! String) {
+    if let value = params[ThetaRepository.OptionNameEnum.maxrecordabletime.name] as? String {
+        if let enumValue = getEnumValue(values: ThetaRepository.MaxRecordableTimeEnum.values(), name: value) {
             builder.setMaxRecordableTime(time: enumValue)
         }
     }
-    if let value = params["VideoFileFormat"]  {
-        if let enumValue = getEnumValue(values: ThetaRepository.VideoFileFormatEnum.values(), name: value as! String) {
+    if let value = params["VideoFileFormat"] as? String {
+        if let enumValue = getEnumValue(values: ThetaRepository.VideoFileFormatEnum.values(), name: value) {
             builder.setFileFormat(fileFormat: enumValue)
         }
     }
@@ -422,6 +453,9 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.bitrate.name:
         options.bitrate = toBitrate(value: value)
         break
+    case ThetaRepository.OptionNameEnum.bluetoothpower.name:
+        options.bluetoothPower = getEnumValue(values: ThetaRepository.BluetoothPowerEnum.values(), name: value as! String)!
+        break
     case ThetaRepository.OptionNameEnum.burstmode.name:
         options.burstMode = getEnumValue(values: ThetaRepository.BurstModeEnum.values(), name: value as! String)!
         break
@@ -469,15 +503,27 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.exposureprogram.name:
         options.exposureProgram = getEnumValue(values: ThetaRepository.ExposureProgramEnum.values(), name: value as! String)!
         break
+    case ThetaRepository.OptionNameEnum.facedetect.name:
+        options.faceDetect = getEnumValue(values: ThetaRepository.FaceDetectEnum.values(), name: value as! String)!
+        break
     case ThetaRepository.OptionNameEnum.fileformat.name:
         options.fileFormat = getEnumValue(values: ThetaRepository.FileFormatEnum.values(), name: value as! String)!
         break
     case ThetaRepository.OptionNameEnum.filter.name:
         options.filter = getEnumValue(values: ThetaRepository.FilterEnum.values(), name: value as! String)!
         break
+    case ThetaRepository.OptionNameEnum.function.name:
+        options.function = getEnumValue(values: ThetaRepository.ShootingFunctionEnum.values(), name: value as! String)!
+        break
+    case ThetaRepository.OptionNameEnum.gain.name:
+        options.gain = getEnumValue(values: ThetaRepository.GainEnum.values(), name: value as! String)!
+        break
     case ThetaRepository.OptionNameEnum.gpsinfo.name:
         options.gpsInfo = toGpsInfo(params: value as! [String : Any])
         break
+    case ThetaRepository.OptionNameEnum.imagestitching.name:
+        options.imageStitching = getEnumValue(values: ThetaRepository.ImageStitchingEnum.values(), name: value as! String)!
+        break;
     case ThetaRepository.OptionNameEnum.isgpson.name:
         options.isGpsOn = (value as! Bool) ? true: false
         break
@@ -681,4 +727,26 @@ func toPluginInfosResult(pluginInfoList: [ThetaRepository.PluginInfo]) -> [[Stri
         resultList.append(item)
     })
     return resultList
+}
+
+func toNotify(id: Int, params: [String : Any]?) -> [String: Any] {
+    var result: [String: Any] = [
+        KEY_NOTIFY_ID: id
+    ]
+    if let params = params {
+        result[KEY_NOTIFY_PARAMS] = params
+    }
+    return result
+}
+
+func toCaptureProgressNotifyParam(value: Float) -> [String: Any] {
+    return [
+        KEY_NOTIFY_PARAM_COMPLETION: value
+    ]
+}
+
+func toPreviewNotifyParam(imageData: FlutterStandardTypedData) -> [String: Any] {
+    return [
+        KEY_NOTIFY_PARAM_IMAGE: imageData
+    ]
 }
