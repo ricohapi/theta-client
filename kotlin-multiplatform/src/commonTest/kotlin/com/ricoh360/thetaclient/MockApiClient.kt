@@ -16,7 +16,7 @@ object MockApiClient {
     var onRequest: ((HttpRequestData) -> ByteReadChannel)? = null
     var status: HttpStatusCode? = null
     var responseHeaders: Headers? = null
-    var useMock = false
+    var useMock = true
     var onPreviewRequest: (
         (
             endpoint: String,
