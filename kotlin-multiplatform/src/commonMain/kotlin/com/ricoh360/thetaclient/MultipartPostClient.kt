@@ -273,7 +273,7 @@ open class BaseHttpClient() {
                     } else if (ch == '\r'.code.toByte()) {
                         // skip CR
                     } else {
-                        throw PreviewClientException("invalid char in chunk size: $ch")
+                        throw BaseHttpClientException("invalid char in chunk size: $ch")
                     }
                 }
             }
@@ -329,7 +329,7 @@ open class BaseHttpClient() {
      * parse response status
      */
     protected suspend fun readStatusLine() {
-        val line: String = readUtf8Line() ?: throw PreviewClientException("no response status")
+        val line: String = readUtf8Line() ?: throw BaseHttpClientException("no response status line")
         status = 0
         statusMessage = null
         val match = Regex("HTTP/[0-9.]+ ([0-9]+) (.*)").find(line)
@@ -340,7 +340,7 @@ open class BaseHttpClient() {
             statusMessage = it
         }
         if ((status / 100) != 2 && status != HttpStatusCode.Unauthorized.value) {
-            throw PreviewClientException(statusMessage ?: "unknown error")
+            throw BaseHttpClientException("Unexpected response status code: $line")
         }
     }
 
@@ -358,7 +358,7 @@ open class BaseHttpClient() {
                 break
             }
             if (line[0] == ' ' || line[0] == '\t') { // RFC7320 obs-fold 3.2.4
-                throw PreviewClientException("obsoleted header: [$line]")
+                throw BaseHttpClientException("obsoleted header: [$line]")
             }
             val match = Regex("([^:]+):(.*)").find(line)
             var matchName: String? = null
