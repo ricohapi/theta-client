@@ -339,9 +339,6 @@ open class BaseHttpClient() {
         match?.groups?.get(2)?.value?.let {
             statusMessage = it
         }
-        if ((status / 100) != 2 && status != HttpStatusCode.Unauthorized.value) {
-            throw BaseHttpClientException("Unexpected response status code: $line")
-        }
     }
 
     /**
@@ -615,7 +612,7 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
         if(HttpStatusCode(this.status, this.statusMessage?: "").isSuccess()) {
             return this.responseBody ?: byteArrayOf()
         } else {
-            throw(BaseHttpClientException("${this.status} ${this.statusMessage} ${this.responseBody}"))
+            throw(BaseHttpClientException("Request failed: ${this.status} ${this.statusMessage} ${this.responseBody}"))
         }
     }
 
