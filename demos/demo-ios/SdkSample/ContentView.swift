@@ -8,6 +8,7 @@ let purple_700: UIColor = UIColor(hex: "6200EE")
 
 struct ContentView: View {
     @State var getInfoError: Bool = false
+    @Environment(\.scenePhase) var scenePhase
 
     init() {
         let appearance = UINavigationBarAppearance()
@@ -37,17 +38,6 @@ struct ContentView: View {
                   .background(Color(purple_700))
                   .cornerRadius(10)
             }
-              .onAppear() {
-                  Task {
-                      do {
-                          try await theta.info {info in
-                              print(info)
-                          }
-                      } catch {
-                          getInfoError = true
-                      }
-                  }
-              }
               .navigationTitle("Theta SDK sample app")
               .navigationBarTitleDisplayMode(.inline)
               .alert("warning", isPresented: $getInfoError) {
@@ -55,6 +45,22 @@ struct ContentView: View {
                   Text("Can not connect to Theta.")
               }
         }
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .active {
+                print("ContentView Active")
+                theta.reset()
+                Task {
+                    do {
+                        try await theta.info {info in
+                            print(info)
+                        }
+                    } catch {
+                        getInfoError = true
+                    }
+                }
+            }
+        }
+        
     }
 }
 

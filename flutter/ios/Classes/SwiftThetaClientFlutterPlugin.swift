@@ -275,13 +275,15 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             init(plugin: SwiftThetaClientFlutterPlugin) {
                 self.plugin = plugin
             }
-            func invoke(p1: Any?, completionHandler: @escaping (Any?, Error?) -> Void) {
-                let nsData = PlatformKt.frameFrom(
-                    packet: p1 as! KotlinPair
-                )
-                let data = FlutterStandardTypedData.init(bytes: nsData)
-                plugin?.sendNotifyEvent(id: NOTIFY_LIVE_PREVIEW, params: toPreviewNotifyParam(imageData: data))
-                completionHandler(plugin?.previewing, nil)
+            func invoke(p1: Any?) async throws -> Any? {
+                if let frameData = p1 as? KotlinPair<KotlinByteArray, KotlinInt> {
+                    let nsData = PlatformKt.frameFrom(
+                        packet: frameData
+                    )
+                    let data = FlutterStandardTypedData.init(bytes: nsData)
+                    plugin?.sendNotifyEvent(id: NOTIFY_LIVE_PREVIEW, params: toPreviewNotifyParam(imageData: data))
+                }
+                return plugin?.previewing
             }
         }
         

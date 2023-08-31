@@ -559,12 +559,11 @@ class FrameHandler: KotlinSuspendFunction1 {
     self.handler = handler
   }
 
-  func invoke(p1: Any?, completionHandler: @escaping (_ response: Any?, _ error: Error?) -> Void) {
+  func invoke(p1: Any?) async throws -> Any? {
     let now = CACurrentMediaTime()
     if (now - last < Self.FrameInterval) {
       // drop frame
-      completionHandler(true, nil)
-      return
+      return true
     }
     autoreleasepool {
       // extract jpeg data from ByteReadPacket
@@ -572,7 +571,7 @@ class FrameHandler: KotlinSuspendFunction1 {
         byteReadPacket: p1 as! Ktor_ioByteReadPacket
       )
       // draw frame and set result
-      completionHandler(handler(data), nil)
+      return handler(data)
     }
   }
 }
