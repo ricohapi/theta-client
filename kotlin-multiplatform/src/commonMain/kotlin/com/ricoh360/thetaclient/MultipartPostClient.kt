@@ -612,7 +612,12 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
         if(HttpStatusCode(this.status, this.statusMessage?: "").isSuccess()) {
             return this.responseBody ?: byteArrayOf()
         } else {
-            throw(BaseHttpClientException("Request failed: ${this.status} ${this.statusMessage} ${this.responseBody}"))
+            val headers = this.responseHeaders?.entries?.joinToString(prefix = "[", postfix = "]")
+            var body = "<empty>"
+            this.responseBody?.let {
+                body = String(it)
+            }
+            throw(BaseHttpClientException("Request failed: ${this.status} ${this.statusMessage}\n$headers\n$body}"))
         }
     }
 
