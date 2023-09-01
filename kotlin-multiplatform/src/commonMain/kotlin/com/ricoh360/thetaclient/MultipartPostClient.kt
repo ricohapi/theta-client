@@ -131,7 +131,6 @@ open class BaseHttpClient() {
         val builder = aSocket(selector!!).tcpNoDelay().tcp()
         withContext(Dispatchers.Default) {
             withTimeout(connectionTimeout) {
-                println("wait socket connection")
                 val socket = builder.connect(
                     InetSocketAddress(this@BaseHttpClient.endpoint!!.host, this@BaseHttpClient.endpoint!!.port),
                 ) {
@@ -218,10 +217,8 @@ open class BaseHttpClient() {
     protected suspend fun writeHeaders(headers: List<Pair<String, String>>) {
         for ((name, value) in headers) {
             write("$name: $value\r\n")
-            print("$name: $value\r\n")
         }
         write("\r\n")
-        print("\r\n")
     }
 
     /**
