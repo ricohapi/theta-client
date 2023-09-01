@@ -204,8 +204,9 @@ open class BaseHttpClient() {
      * @param method HTTP method
      */
     protected suspend fun writeRequestLine(path: String, method: HttpMethod) {
-        write("${method.value} $path HTTP/1.1\r\n")
-        print("${method.value} $path HTTP/1.1\n")
+        var slash = ""
+        if(path.first() != '/') slash = "/"
+        write("${method.value} $slash$path HTTP/1.1\r\n")
     }
 
     /**
