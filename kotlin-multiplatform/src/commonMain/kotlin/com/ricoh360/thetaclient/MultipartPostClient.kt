@@ -612,8 +612,8 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
         if(HttpStatusCode(this.status, this.statusMessage?: "").isSuccess()) {
             return this.responseBody ?: byteArrayOf()
         } else {
-            val headers = this.responseHeaders?.entries?.joinToString(prefix = "[", postfix = "]")
-            var body = "<empty>"
+            val headers = this.responseHeaders?.entries?.joinToString(prefix = "[", postfix = "]") ?: "[no header]"
+            var body = "[empty body]"
             this.responseBody?.let {
                 body = String(it)
             }
