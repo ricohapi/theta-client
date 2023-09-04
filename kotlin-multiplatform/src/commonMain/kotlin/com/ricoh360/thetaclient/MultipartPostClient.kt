@@ -146,6 +146,15 @@ open class BaseHttpClient() {
     }
 
     /**
+     * Is connected to the host
+     *
+     * @return whether connected to the host or not
+     */
+    protected fun isConnected(): Boolean {
+        return this.input != null && this.output != null && this.socket != null
+    }
+
+    /**
      * close connection
      */
      fun close() {
@@ -607,8 +616,11 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
             }
         }
         close()
-        if(HttpStatusCode(this.status, this.statusMessage?: "").isSuccess()) {
+        val httpStatusCode = HttpStatusCode(this.status, this.statusMessage?: "")
+        if(httpStatusCode.isSuccess()) {
             return this.responseBody ?: byteArrayOf()
+        } else if (httpStatusCode == HttpStatusCode.NotFound){
+            throw(BaseHttpClientException("Request failed: ${this.status} ${this.statusMessage}: API path \"$path\" may be wrong"))
         } else {
             val headers = this.responseHeaders?.entries?.joinToString(prefix = "[", postfix = "]") ?: "[no header]"
             var body = "[empty body]"
@@ -642,7 +654,7 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
         digest: String? = null,
     ) {
         val contentLength = getContentLength(filePaths, boundary)
-        connect(endpont, connectionTimeout, socketTimeout)
+        if (!isConnected()) connect(endpont, connectionTimeout, socketTimeout)
         writeRequestLine(path, HttpMethod.Post)
         writeHeaders(genRequestHeaders(contentLength, digest))
         val buffer = ByteArray(READ_BUFFER_SIZE)
