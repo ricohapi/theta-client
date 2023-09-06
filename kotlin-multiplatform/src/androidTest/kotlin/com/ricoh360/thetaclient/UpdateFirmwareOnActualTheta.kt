@@ -52,10 +52,6 @@ class UpdateFirmwareOnActualTheta {
         assertNotNull(apiPath, "API path is null")
         println("API path: $apiPath")
 
-        fun getSentPercentage(percent: Int) {
-            println("Sent $percent %")
-        }
-
         kotlin.runCatching {
             thetaRepository.updateFirmware(apiPath, listOf(firmFile), callback = ::getSentPercentage)
         }.onFailure {
@@ -64,6 +60,10 @@ class UpdateFirmwareOnActualTheta {
             return@runTest
         }
         assertTrue(true, "call updateFirmware()")
+    }
+
+    fun getSentPercentage(percent: Int) {
+        println("Sent $percent %")
     }
 
     /**
@@ -110,7 +110,7 @@ class UpdateFirmwareOnActualTheta {
         println("API path: $apiPath")
 
         kotlin.runCatching {
-            thetaRepository.updateFirmware(apiPath, listOf(DIR + X_FILE_LATEST))
+            thetaRepository.updateFirmware(apiPath, listOf(DIR + X_FILE_LATEST), callback = ::getSentPercentage)
         }.onFailure {
             assertTrue(false, it.toString())
             return@runTest
