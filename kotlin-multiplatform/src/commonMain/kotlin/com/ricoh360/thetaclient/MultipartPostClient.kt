@@ -1,31 +1,38 @@
 package com.ricoh360.thetaclient
 
 import com.ricoh360.thetaclient.MultipartPostClient.Companion.BOUNDARY
-import com.ricoh360.thetaclient.PreviewClientImpl.Companion.connectionTimeout
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.auth.HttpAuthHeader
 import io.ktor.http.auth.parseAuthorizationHeader
 import io.ktor.http.isSuccess
-import io.ktor.network.selector.*
-import io.ktor.network.sockets.*
-import io.ktor.utils.io.*
-import io.ktor.utils.io.charsets.*
-import io.ktor.utils.io.core.*
+import io.ktor.network.selector.SelectorManager
+import io.ktor.network.sockets.ASocket
+import io.ktor.network.sockets.InetSocketAddress
+import io.ktor.network.sockets.aSocket
+import io.ktor.network.sockets.openReadChannel
+import io.ktor.network.sockets.openWriteChannel
+import io.ktor.network.sockets.tcpNoDelay
+import io.ktor.utils.io.ByteReadChannel
+import io.ktor.utils.io.ByteWriteChannel
+import io.ktor.utils.io.cancel
+import io.ktor.utils.io.charsets.Charsets
+import io.ktor.utils.io.close
+import io.ktor.utils.io.core.String
+import io.ktor.utils.io.core.toByteArray
+import io.ktor.utils.io.writeFully
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
-import kotlinx.io.*
-import kotlinx.io.files.*
+import kotlinx.io.Source
+import kotlinx.io.files.Path
+import kotlinx.io.files.source
 
 /**
  * Base class of custom HTTP client
- +
- * @param connectionTimeout connection timeout of [Ktor](https://ktor.io/)
- * @param socketTimeout socket timeout of [Ktor](https://ktor.io/)
  */
-open class BaseHttpClient() {
+open class BaseHttpClient {
 
     class URL(url: String) {
         /** protocol, only http or https */
@@ -61,7 +68,7 @@ open class BaseHttpClient() {
     private var endpoint: URL? = null
 
     /**
-     * [ByteReadCHanel](https://api.ktor.io/ktor-io/io.ktor.utils.io/-byte-read-channel/index.html)
+     * [ByteReadChanel](https://api.ktor.io/ktor-io/io.ktor.utils.io/-byte-read-channel/index.html)
      * for asynchronous reading of sequences of bytes.
      */
     private var input: ByteReadChannel? = null
@@ -121,8 +128,8 @@ open class BaseHttpClient() {
      * connect to the host
      *
      * @param endpoint endpoint of the host
-     * @param connectionTimeout timeout of connection (msec)
-     * @param socketTimeout read/write timeout of socket (msec)
+     * @param connectionTimeout timeout of connection (millisecond)
+     * @param socketTimeout read/write timeout of socket (millisecond)
      */
     protected suspend fun connect(endpoint: String, connectionTimeout: Long, socketTimeout: Long) {
         reset()
@@ -184,9 +191,19 @@ open class BaseHttpClient() {
     }
 
     /**
+     * Clear all response data
+     */
+    protected fun clearResponse() {
+        status = 0
+        statusMessage = null
+        responseHeaders = null
+        responseBody = null
+    }
+
+    /**
      * write [bytes] to endpoint
      */
-    protected suspend fun write(bytes: ByteArray) {
+    private suspend fun write(bytes: ByteArray) {
         output?.writeFully(bytes)
     }
 
@@ -404,7 +421,7 @@ open class BaseHttpClient() {
                 byte?: {
                     throw(BaseHttpClientException("response body is too short"))
                 }
-                buf.set(i, byte!!)
+                buf[i]= byte!!
             }
             this.responseBody = buf
         } else {
@@ -442,11 +459,11 @@ interface MultipartPostClient  {
     /**
      * Send a HTTP request.
      *
-     * @param endpoint endpount of Web API, eg. "http://192.198.1.1:80/"
+     * @param endpoint endpoint of Web API, eg. "http://192.198.1.1:80/"
      * @param path request target of HTTP
      * @param filePaths Content of each part
-     * @param connectionTimeout timeout for connection (msec).  If null, default value is used.
-     * @param socketTimeout timeout for socket (msec). If null, default value is used.
+     * @param connectionTimeout timeout for connection (millisecond).  If null, default value is used.
+     * @param socketTimeout timeout for socket (millisecond). If null, default value is used.
      * @Param callback function to pass the percentage of sent firmware
      * @param boundary boundary parameter of multipart/form-data.  If this is not specified, default value is used.
      * @return body of the response
@@ -465,18 +482,18 @@ interface MultipartPostClient  {
 /**
  * http client implementation just for update firmware
  */
-class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
+class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
 
     companion object {
         // read buffer size for reading firmware file
         const val READ_BUFFER_SIZE = 1024 * 64
         // boundary, can be any uuid, which is constraint of Theta SC2
         //const val BOUNDARY = "ab0c85f4-6d89-4a7f-a0a5-115d7f43b5f1"
-        // refular expression to get a file name from a file path
-        val regexFileName = Regex("""[^/\\]+$""")
+        // regular expression to get a file name from a file path
+        private val regexFileName = Regex("""[^/\\]+$""")
 
         /**
-         * generate requet headers
+         * generate request headers
          *
          * @param contentLength size of the entity-body
          * @param authorization credentials containing the authentication information of the user agent if needed
@@ -504,7 +521,6 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
          * generate part headers for a file
          *
          * @param fileName file name for the part
-         * @param boundary boundary parameter of Content-Type header
          * @return list of part headers
          */
         private fun genPartHeaders(fileName: String): List<Pair<String, String>> {
@@ -584,13 +600,13 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
     }
 
     /**
-     * Send a HTTP request.
+     * Send a HTTP request of multipart post and receive the response.
      *
-     * @param endpoint endpount of Web API, eg. "http://192.198.1.1:80/"
+     * @param endpoint endpoint of Web API, eg. "http://192.198.1.1:80/"
      * @param path request target of HTTP
      * @param filePaths Content of each part
-     * @param connectionTimeout timeout for connection (msec).
-     * @param socketTimeout timeout for socket (msec).
+     * @param connectionTimeout timeout for connection (millisecond).
+     * @param socketTimeout timeout for socket (millisecond).
      * @Param callback function to pass the percentage of sent firmware
      * @param boundary boundary parameter of multipart/form-data
      * @return body of the response
@@ -605,19 +621,11 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
         callback: ((Int) -> Unit)?,
         boundary: String,
     ): ByteArray {
-        requestOnce(endpoint, path, filePaths, connectionTimeout, socketTimeout, callback, boundary)
-        if(this.status == HttpStatusCode.Unauthorized.value) { // need digest authentication
-            ApiClient.digestAuth?.let { digestAuth ->
-                responseHeaders?.get(HttpHeaders.WWWAuthenticate.lowercase())?.let { header ->
-                    val authHeader = parseAuthorizationHeader(header) as HttpAuthHeader.Parameterized
-                    digestAuth.updateAuthHeaderInfo(authHeader)
-                    requestOnce(endpoint, path, filePaths, connectionTimeout, socketTimeout, callback, boundary, digestAuth.makeDigestHeader(path, HttpMethod.Post.value))
-                }
-            }
-        }
+        val authorizationHeader: String? = checkAuthenticationNeeded(endpoint, path, connectionTimeout, socketTimeout)
+        requestWithAuth(endpoint, path, filePaths, connectionTimeout, socketTimeout, callback, boundary, authorizationHeader)
         close()
         val httpStatusCode = HttpStatusCode(this.status, this.statusMessage?: "")
-        if(httpStatusCode.isSuccess()) {
+        if(httpStatusCode.isSuccess() || httpStatusCode.value == 0) {
             return this.responseBody ?: byteArrayOf()
         } else if (httpStatusCode == HttpStatusCode.NotFound){
             throw(BaseHttpClientException("Request failed: ${this.status} ${this.statusMessage}: API path \"$path\" may be wrong"))
@@ -632,19 +640,20 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
     }
 
     /**
-     * Send a HTTP request and read the response.
+     * Send a HTTP request of multipart post and receive the response.
+     * Authorization header value can be specified.
      *
-     * @param endpoint endpount of Web API, eg. "http://192.198.1.1:80/"
+     * @param endpoint endpoint of Web API, eg. "http://192.198.1.1:80/"
      * @param path request target of HTTP
      * @param filePaths Content of each part
-     * @param digest value of Authorization header if needed
-     * @param connectionTimeout timeout for connection (msec).
-     * @param socketTimeout timeout for socket (msec).
+     * @param connectionTimeout timeout for connection (millisecond).
+     * @param socketTimeout timeout for socket (millisecond).
      * @Param callback function to pass the percentage of sent firmware
      * @param boundary boundary parameter of multipart/form-data
+     * @param digest value of Authorization header if needed
      */
-    internal suspend fun requestOnce(
-        endpont: String,
+    private suspend fun requestWithAuth(
+        endpoint: String,
         path: String,
         filePaths: List<String>,
         connectionTimeout: Long,
@@ -654,7 +663,7 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
         digest: String? = null,
     ) {
         val contentLength = getContentLength(filePaths, boundary)
-        if (!isConnected()) connect(endpont, connectionTimeout, socketTimeout)
+        if (!isConnected()) connect(endpoint, connectionTimeout, socketTimeout)
         writeRequestLine(path, HttpMethod.Post)
         writeHeaders(genRequestHeaders(contentLength, digest))
         val buffer = ByteArray(READ_BUFFER_SIZE)
@@ -671,7 +680,7 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
                     write(buffer, count)
                     sentCount += count
                     callback?.let {
-                        var percent = (sentCount * 100 / contentLength).toInt()
+                        val percent = (sentCount * 100 / contentLength).toInt()
                         if (percent > lastPercent) {
                             it(percent)
                             lastPercent = percent
@@ -684,10 +693,64 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
             }
         }
         writeCloseDelimiter(boundary)
-        readStatusLine()
-        readHeaders()
-        readBody()
+        kotlin.runCatching {
+            readStatusLine()
+            readHeaders()
+            readBody()
+        }.onFailure {
+            // Theta X does not send a status line but firmware update is executed.
+        }
     }
+
+    /**
+     * Check the connected Theta is in client mode or not.
+     * In client mode, digest authentication is needed.
+     *
+     * @param endpoint endpoint of Web API, eg. "http://192.198.1.1:80/"
+     * @param path request target of HTTP
+     * @param connectionTimeout timeout for connection (millisecond).
+     * @param socketTimeout timeout for socket (millisecond).
+     * @return Authorization header in client mode, null not in client mode.
+     */
+    private suspend fun checkAuthenticationNeeded(endpoint: String, path: String, connectionTimeout: Long, socketTimeout: Long): String? {
+        ApiClient.digestAuth ?: return null
+        if (!isConnected()) connect(endpoint, connectionTimeout, socketTimeout)
+        writeRequestLine(path, HttpMethod.Post)
+        writeHeaders(genRequestHeaders(0, null))
+        runCatching {
+            readStatusLine()
+            readHeaders()
+            readBody()
+        }.onFailure {
+            throw BaseHttpClientException(it.toString())
+        }
+        val authHeaderVal: String? = when (this.status) {
+            HttpStatusCode.Unauthorized.value -> genAuthorizationHeaderValue(path, this.responseHeaders)
+            else -> null
+        }
+        clearResponse()
+        return authHeaderVal
+    }
+
+    /**
+     * Generate authorization header value for digest authorization
+     *
+     * @param path request target of HTTP
+     * @param responseHeaders Response headers for a request without authorization header
+     * @return Digest authorization header
+     */
+    private fun genAuthorizationHeaderValue(path: String, responseHeaders: Map<String, String>?): String {
+        ApiClient.digestAuth?.let { digestAuth ->
+            responseHeaders?.get(HttpHeaders.WWWAuthenticate.lowercase())?.let { header ->
+                val authHeader = parseAuthorizationHeader(header) as HttpAuthHeader.Parameterized
+                digestAuth.updateAuthHeaderInfo(authHeader)
+                return digestAuth.makeDigestHeader(path, HttpMethod.Post.value)
+            }
+            throw(BaseHttpClientException("No WWW-Authenticate header in the 401 response"))
+        }
+        throw(BaseHttpClientException("No authentication information is set"))
+    }
+
 
     /**
      * Get the length of the HTTP contents
@@ -712,7 +775,7 @@ class MultipartPostClientImpl() : MultipartPostClient, BaseHttpClient() {
      * @param boundary "Boundary" Parameter of multipart content type
      * @param headers headers for a part
      */
-    protected suspend fun writePartHeaders(boundary: String, headers: List<Pair<String, String>>) {
+    private suspend fun writePartHeaders(boundary: String, headers: List<Pair<String, String>>) {
         write(genBoundaryDelimiter(boundary))
         for ((name, value) in headers) {
             write("$name: $value\r\n")
