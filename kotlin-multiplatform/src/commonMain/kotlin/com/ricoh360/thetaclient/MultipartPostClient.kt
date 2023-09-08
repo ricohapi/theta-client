@@ -513,6 +513,19 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
             return headers
         }
 
+        /**
+         * generate request headers without content-type header
+         *
+         * @return list of request headers
+         */
+        private fun genRequestHeadersWithoutContentType(): List<Pair<String, String>> {
+            return mutableListOf(
+                Pair("Content-Length", "0"),
+                Pair("Connection", "Keep-Alive"),
+                Pair("Cache-Control", "no-cache"),
+            )
+        }
+
         private fun genBoundaryDelimiter(boundary: String): String {
             return "--$boundary\r\n"
         }
@@ -621,7 +634,7 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
         callback: ((Int) -> Unit)?,
         boundary: String,
     ): ByteArray {
-        val authorizationHeader: String? = checkAuthenticationNeeded(endpoint, path, connectionTimeout, socketTimeout)
+        val authorizationHeader: String? = checkAuthenticationNeeded(endpoint, connectionTimeout, socketTimeout)
         requestWithAuth(endpoint, path, filePaths, connectionTimeout, socketTimeout, callback, boundary, authorizationHeader)
         close()
         val httpStatusCode = HttpStatusCode(this.status, this.statusMessage?: "")
@@ -712,11 +725,12 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
      * @param socketTimeout timeout for socket (millisecond).
      * @return Authorization header in client mode, null not in client mode.
      */
-    private suspend fun checkAuthenticationNeeded(endpoint: String, path: String, connectionTimeout: Long, socketTimeout: Long): String? {
+    private suspend fun checkAuthenticationNeeded(endpoint: String, connectionTimeout: Long, socketTimeout: Long): String? {
         ApiClient.digestAuth ?: return null
+        val path = "/osc/state"
         if (!isConnected()) connect(endpoint, connectionTimeout, socketTimeout)
         writeRequestLine(path, HttpMethod.Post)
-        writeHeaders(genRequestHeaders(0, null))
+        writeHeaders(genRequestHeadersWithoutContentType())
         runCatching {
             readStatusLine()
             readHeaders()

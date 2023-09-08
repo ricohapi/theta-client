@@ -79,7 +79,7 @@ class UpdateFirmwareOnActualTheta {
 
         val thetaRepository = kotlin.runCatching {
             ThetaRepository.newInstance(
-                URL_CL,
+                X_URL_CL,
                 config = ThetaRepository.Config(
                     clientMode = DigestAuth(
                         USERNAME_PREFIX + X_SERIAL_NUMBER,
@@ -118,6 +118,58 @@ class UpdateFirmwareOnActualTheta {
         assertTrue(true, "call updateFirmware()")
     }*/
 
+    /**
+     * Test for Theta V
+     * Connect Theta with client mode, then set V_SERIAL_NUMBER and V_URL_CL.
+     */
+    /*@Test
+    fun updateFirmwareVTest() = runTest(dispatchTimeoutMs = TIMEOUT) {
+        if(MockApiClient.useMock) {
+            println("updateFirmwareVTest(): This test is just for Actual Theta, so skipped")
+            return@runTest
+        }
+
+        val thetaRepository = kotlin.runCatching {
+            ThetaRepository.newInstance(
+                V_URL_CL,
+                config = ThetaRepository.Config(
+                    clientMode = DigestAuth(
+                        USERNAME_PREFIX + V_SERIAL_NUMBER,
+                        V_SERIAL_NUMBER.substring(PASSWORD_START_POSITION)
+                    )
+                )
+            )
+        }.onFailure {
+            assertTrue(false, it.toString())
+        }.getOrNull()
+
+        if (thetaRepository?.cameraModel != ThetaRepository.ThetaModel.THETA_V) {
+            assertTrue(false, "Connected Theta is not V but ${thetaRepository?.cameraModel}")
+            return@runTest
+        }
+
+        if(thetaRepository.getThetaInfo().firmwareVersion == V_VERSION_LATEST) {
+            println("Downgrade the firmware to previous version by fastboot")
+            return@runTest
+        }
+
+        val apiPath = kotlin.runCatching {
+            System.getenv(UpdateFirmwareOnActualTheta.FIRMWARE_UPDATE_API_ENV_NAME)
+        }.onFailure {
+            assertTrue(false, "${UpdateFirmwareOnActualTheta.FIRMWARE_UPDATE_API_ENV_NAME} can not be accessed")
+        }.getOrNull()
+        assertNotNull(apiPath, "API path is null")
+        println("API path: $apiPath")
+
+        kotlin.runCatching {
+            thetaRepository.updateFirmware(apiPath, listOf(DIR + V_FILE_LATEST), callback = ::getSentPercentage)
+        }.onFailure {
+            assertTrue(false, it.toString())
+            return@runTest
+        }
+        assertTrue(true, "call updateFirmware()")
+    }*/
+
     fun readFile(dir: String, file: String): ByteArray {
         val path = Paths.get(dir, file)
         if(Files.exists(path)) {
@@ -145,6 +197,8 @@ class UpdateFirmwareOnActualTheta {
         // latest firmware file of X
         const val X_FILE_LATEST = "cv1_v221.frm"
         //const val X_FILE_LATEST = "cv1_v220_v210.frm"
+        const val V_VERSION_LATEST = "3.82.1"
+        const val V_FILE_LATEST = "rt5_v382.frm"
 
         // User name of digest authentication is X_USERNAME_PREFIX + X_SERIAL_NUMBER
         const val USERNAME_PREFIX = "THETA"
@@ -152,8 +206,10 @@ class UpdateFirmwareOnActualTheta {
         const val PASSWORD_START_POSITION = 2
         // Serial number of Theta X. Password is assumed not to be changed.
         const val X_SERIAL_NUMBER = "YR15104645"
-        //const val X_SERIAL_NUMBER = "YR13000011"
         // IP address in client mode.
-        const val URL_CL = "http://192.168.1.10:80/"
+        const val X_URL_CL = "http://192.168.1.10:80/"
+
+        const val V_SERIAL_NUMBER = "YL00155198"
+        const val V_URL_CL = "http://192.168.1.12:80/"
     }
 }
