@@ -10,7 +10,7 @@ import kotlinx.serialization.json.JsonElement
  * reset request
  */
 @Serializable
-data class ResetRequest(
+internal data class ResetRequest(
     override val name: String = "camera.reset",
     override val parameters: EmptyParameter = EmptyParameter(),
 ) : CommandApiRequest
@@ -19,7 +19,7 @@ data class ResetRequest(
  * reset response
  */
 @Serializable
-data class ResetResponse(
+internal data class ResetResponse(
     /**
      * Executed command
      */

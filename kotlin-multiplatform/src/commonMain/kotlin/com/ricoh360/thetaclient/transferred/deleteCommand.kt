@@ -10,7 +10,7 @@ import kotlinx.serialization.json.JsonElement
  * delete request
  */
 @Serializable
-data class DeleteRequest(
+internal data class DeleteRequest(
     override val name: String = "camera.delete",
     override val parameters: DeleteParams,
 ) : CommandApiRequest
@@ -19,7 +19,7 @@ data class DeleteRequest(
  * delete request parameters
  */
 @Serializable
-data class DeleteParams(
+internal data class DeleteParams(
     /**
      * URLs of the file to delete The number of file URLs is up to
      * 128.  When you want to delete all at once, special parameters
@@ -34,7 +34,7 @@ data class DeleteParams(
  * delete response
  */
 @Serializable
-data class DeleteResponse(
+internal data class DeleteResponse(
     /**
      * Executed command
      */

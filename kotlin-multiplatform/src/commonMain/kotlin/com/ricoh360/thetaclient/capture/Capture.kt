@@ -8,7 +8,7 @@ import com.ricoh360.thetaclient.transferred.Options
  *
  * @property options option of capture
  */
-abstract class Capture protected constructor(protected val options: Options) {
+abstract class Capture internal constructor(internal val options: Options) {
 
     /**
      * Get aperture value.
@@ -107,7 +107,7 @@ abstract class Capture protected constructor(protected val options: Options) {
      * Builder
      */
     abstract class Builder<T> {
-        protected val options = Options()
+        internal val options = Options()
 
         /**
          * Set aperture value.

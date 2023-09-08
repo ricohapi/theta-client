@@ -6,13 +6,13 @@ package com.ricoh360.thetaclient.transferred
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class GetPluginLicenseRequest(
+internal data class GetPluginLicenseRequest(
     override val name: String = "camera._getPluginLicense",
     override val parameters: GetPluginLicenseParams,
 ) : CommandApiRequest
 
 @Serializable
-data class GetPluginLicenseParams(
+internal data class GetPluginLicenseParams(
     /**
      * Package name of the target plugin
      */

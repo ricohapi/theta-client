@@ -13,7 +13,7 @@ import io.ktor.utils.io.core.*
  * @Param headers See [io.ktor.http.Headers](https://api.ktor.io/ktor-http/io.ktor.http/-http-headers/index.html)
  * @Param readChannel See [io.ktor.utils.io.ByteReadChannel](https://api.ktor.io/ktor-io/io.ktor.utils.io/-byte-read-channel/index.html)
  */
-class MultipartReader(headers: Headers, val readChannel: ByteReadChannel) {
+internal class MultipartReader(headers: Headers, val readChannel: ByteReadChannel) {
     var boundary: String? // boundary parameter of Content-Type header
     var contentLengthRegex: Regex
     val BUFFER_SIZE = 128

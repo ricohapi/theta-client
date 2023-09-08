@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 /**
  * /osc/state api request
  */
-object StateApi {
+internal object StateApi {
     const val PATH = "/osc/state"
     val METHOD = HttpMethod.Post
 }
@@ -19,7 +19,7 @@ object StateApi {
  * state api response
  */
 @Serializable
-data class StateApiResponse(
+internal data class StateApiResponse(
     /**
      * Takes a unique value per current state ID.
      */
@@ -35,7 +35,7 @@ data class StateApiResponse(
  * camera state information
  */
 @Serializable
-data class CameraState(
+internal data class CameraState(
     /**
      * Battery level (0.0 to 1.0), When using an external power
      * source, 1 (100%)

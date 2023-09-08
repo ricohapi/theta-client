@@ -17,7 +17,7 @@ import kotlinx.serialization.encoding.Encoder
  */
 @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 @Serializable
-data class SetOptionsRequest(
+internal data class SetOptionsRequest(
     override val name: String = "camera.setOptions",
     override val parameters: SetOptionsParams,
 ) : CommandApiRequest
@@ -26,7 +26,7 @@ data class SetOptionsRequest(
  * set options request parameters
  */
 @Serializable
-data class SetOptionsParams(
+internal data class SetOptionsParams(
     /**
      * session id
      */
@@ -44,7 +44,7 @@ data class SetOptionsParams(
  * set options response
  */
 @Serializable
-data class SetOptionsResponse(
+internal data class SetOptionsResponse(
     /**
      * Executed command
      */
@@ -85,7 +85,7 @@ data class SetOptionsResponse(
  * set options results
  */
 @Serializable
-data class ResultSetOptions(
+internal data class ResultSetOptions(
     /**
      * option key value pair
      */
@@ -97,7 +97,7 @@ data class ResultSetOptions(
  */
 @Serializable
 @Suppress("ConstructorParameterNaming")
-data class Options(
+internal data class Options(
     /**
      * Turns the AI auto setting ON/OFF.
      */
@@ -820,7 +820,7 @@ enum class BurstMode {
  * only For RICOH THETA Z1 firmware v2.10.1 or later
  */
 @Serializable
-data class BurstOption(
+internal data class BurstOption(
     /**
      * @see BurstCaptureNum
      */
@@ -875,7 +875,7 @@ enum class BurstCaptureNum(val value: Int) {
     }
 }
 
-object BurstCaptureNumSerializer : KSerializer<BurstCaptureNum> {
+internal object BurstCaptureNumSerializer : KSerializer<BurstCaptureNum> {
     override val descriptor: SerialDescriptor
         get() = PrimitiveSerialDescriptor("_burstCaptureNum", PrimitiveKind.INT)
 
@@ -916,7 +916,7 @@ enum class BurstBracketStep(val value: Float) {
     }
 }
 
-object BurstBracketStepSerializer : KSerializer<BurstBracketStep> {
+internal object BurstBracketStepSerializer : KSerializer<BurstBracketStep> {
     override val descriptor: SerialDescriptor
         get() = PrimitiveSerialDescriptor("_burstBracketStep", PrimitiveKind.FLOAT)
 
@@ -979,7 +979,7 @@ enum class BurstCompensation(val value: Float) {
     }
 }
 
-object BurstCompensationSerializer : KSerializer<BurstCompensation> {
+internal object BurstCompensationSerializer : KSerializer<BurstCompensation> {
     override val descriptor: SerialDescriptor
         get() = PrimitiveSerialDescriptor("_burstCompensation", PrimitiveKind.FLOAT)
 
@@ -1032,7 +1032,7 @@ enum class BurstMaxExposureTime(val value: Double) {
     }
 }
 
-object BurstMaxExposureTimeSerializer : KSerializer<BurstMaxExposureTime> {
+internal object BurstMaxExposureTimeSerializer : KSerializer<BurstMaxExposureTime> {
     override val descriptor: SerialDescriptor
         get() = PrimitiveSerialDescriptor("_burstMaxExposureTime", PrimitiveKind.DOUBLE)
 
@@ -1065,7 +1065,7 @@ enum class BurstEnableIsoControl(val value: Int) {
     }
 }
 
-object BurstEnableIsoControlSerializer : KSerializer<BurstEnableIsoControl> {
+internal object BurstEnableIsoControlSerializer : KSerializer<BurstEnableIsoControl> {
     override val descriptor: SerialDescriptor
         get() = PrimitiveSerialDescriptor("_burstEnableIsoControl", PrimitiveKind.INT)
 
@@ -1098,7 +1098,7 @@ enum class BurstOrder(val value: Int) {
     }
 }
 
-object BurstOrderSerializer : KSerializer<BurstOrder> {
+internal object BurstOrderSerializer : KSerializer<BurstOrder> {
     override val descriptor: SerialDescriptor
         get() = PrimitiveSerialDescriptor("_burstOrder", PrimitiveKind.INT)
 
@@ -1450,7 +1450,7 @@ enum class Preset {
  * preview format
  */
 @Serializable
-data class PreviewFormat(
+internal data class PreviewFormat(
     /**
      * width
      */
@@ -1481,7 +1481,7 @@ data class PreviewFormat(
  * RICOH THETA X firmware v2.00.0 or later
  */
 @Serializable
-data class Proxy(
+internal data class Proxy(
     /**
      * true: use proxy false: do not use proxy
      */
@@ -1515,7 +1515,7 @@ data class Proxy(
  * For Theta X, Z1 and V.
  */
 @Serializable
-data class TimeShift(
+internal data class TimeShift(
     /**
      * Shooting order.
      * "front": first shoot the front side (side with Theta logo) then shoot the rear side (side with monitor).
@@ -1678,7 +1678,7 @@ enum class WlanFrequency(val frequency: Double) {
  * [Custom serializer](https://github.com/Kotlin/kotlinx.serialization/blob/master/docs/serializers.md#custom-serializers)
  * for [WlanFrequency]
  */
-object WlanFrequencySerializer : KSerializer<WlanFrequency> {
+internal object WlanFrequencySerializer : KSerializer<WlanFrequency> {
     override val descriptor: SerialDescriptor
         get() = PrimitiveSerialDescriptor("_wlanFrequency", PrimitiveKind.DOUBLE)
 
@@ -1865,7 +1865,7 @@ enum class GpsTagRecording {
  * GPS information
  */
 @Serializable
-data class GpsInfo(
+internal data class GpsInfo(
     /**
      * Latitude (-90.000000 – 90.000000)
      * When GPS is disabled: 65535
@@ -2004,7 +2004,7 @@ enum class MediaType {
  * Media file format setting
  */
 @Serializable
-data class MediaFileFormat(
+internal data class MediaFileFormat(
     /**
      * media type.
      */
@@ -2038,7 +2038,7 @@ data class MediaFileFormat(
  * Shutter volume support
  */
 @Serializable
-data class ShutterVolumeSupport(
+internal data class ShutterVolumeSupport(
     /**
      * minimum shutter volume
      */
@@ -2115,7 +2115,7 @@ enum class ImageStitching {
  * Capture interval support
  */
 @Serializable
-data class CaptureIntervalSupport(
+internal data class CaptureIntervalSupport(
     /**
      * minimum interval
      */
@@ -2133,7 +2133,7 @@ data class CaptureIntervalSupport(
  * Capture number support
  */
 @Serializable
-data class CaptureNumberSupport(
+internal data class CaptureNumberSupport(
     /**
      * Unlimited
      */

@@ -7,13 +7,13 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 
 @Serializable
-data class SetBluetoothDeviceRequest(
+internal data class SetBluetoothDeviceRequest(
     override val name: String = "camera._setBluetoothDevice",
     override val parameters: SetBluetoothDeviceParams,
 ) : CommandApiRequest
 
 @Serializable
-data class SetBluetoothDeviceParams(
+internal data class SetBluetoothDeviceParams(
     /**
      * Format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
      * Alphabetic letters are not case-sensitive.
@@ -22,7 +22,7 @@ data class SetBluetoothDeviceParams(
 )
 
 @Serializable
-data class SetBluetoothDeviceResponse(
+internal data class SetBluetoothDeviceResponse(
     /**
      * Executed command
      */
@@ -60,7 +60,7 @@ data class SetBluetoothDeviceResponse(
 ) : CommandApiResponse
 
 @Serializable
-data class ResultSetBluetoothDevice(
+internal data class ResultSetBluetoothDevice(
     /**
      * Device name generated from the serial number (S/N) of the Theta.
      * Eg. "00101234" or "THETAXS00101234" when the serial number (S/N) is "XS00101234"

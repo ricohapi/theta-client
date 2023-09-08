@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
  * get plugin order request
  */
 @Serializable
-data class GetPluginOrdersRequest(
+internal data class GetPluginOrdersRequest(
     override val name: String = "camera._getPluginOrders",
     override val parameters: EmptyParameter = EmptyParameter(),
 ) : CommandApiRequest
@@ -15,7 +15,7 @@ data class GetPluginOrdersRequest(
  * get plugin order response
  */
 @Serializable
-data class GetPluginOrdersResponse(
+internal data class GetPluginOrdersResponse(
     /**
      * Executed command
      */
@@ -56,7 +56,7 @@ data class GetPluginOrdersResponse(
  * plugin order results
  */
 @Serializable
-data class ResultGetPluginOrders(
+internal data class ResultGetPluginOrders(
     /**
      * Supported just by Theta X and  Z1.
      * For Z1, list of three package names for the start-up plugin.

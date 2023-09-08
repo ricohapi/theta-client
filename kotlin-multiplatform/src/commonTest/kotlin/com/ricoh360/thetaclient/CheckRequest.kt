@@ -11,7 +11,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalSerializationApi::class)
-class CheckRequest {
+internal class CheckRequest {
     companion object {
         fun checkCommandName(request: HttpRequestData, command: String) {
             assertEquals(request.url.encodedPath, "/osc/commands/execute", "command request path")

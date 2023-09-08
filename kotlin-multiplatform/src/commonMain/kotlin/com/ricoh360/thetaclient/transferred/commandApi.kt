@@ -11,7 +11,7 @@ import kotlinx.serialization.json.JsonElement
 /**
  * POST [/osc/commands/execute](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/protocols/commands_execute.md)
  */
-object CommandApi {
+internal object CommandApi {
     const val PATH = "/osc/commands/execute"
     val METHOD = HttpMethod.Post
 }
@@ -19,7 +19,7 @@ object CommandApi {
 /**
  * command api request interface
  */
-interface CommandApiRequest {
+internal interface CommandApiRequest {
     /**
      * Command to execute
      */
@@ -34,7 +34,7 @@ interface CommandApiRequest {
 /**
  * command api response interface
  */
-interface CommandApiResponse {
+internal interface CommandApiResponse {
     /**
      * Executed command
      */
@@ -79,7 +79,7 @@ interface CommandApiResponse {
  * state in command api response
  */
 @Serializable
-enum class CommandState {
+internal enum class CommandState {
     /**
      * command complete
      */
@@ -103,7 +103,7 @@ enum class CommandState {
  * error in command api response
  */
 @Serializable
-data class CommandError(
+internal data class CommandError(
     /**
      *  Error code
      */
@@ -119,7 +119,7 @@ data class CommandError(
  * completion at inProgress status
  */
 @Serializable
-data class CommandProgress(
+internal data class CommandProgress(
     /**
      * Progress rate of command executed
      */
@@ -130,13 +130,13 @@ data class CommandProgress(
  * empty parameters
  */
 @Serializable
-class EmptyParameter
+internal class EmptyParameter
 
 /**
  * Unknown Response data class
  */
 @Serializable
-data class UnknownResponse(
+internal data class UnknownResponse(
     /**
      * Executed command
      */

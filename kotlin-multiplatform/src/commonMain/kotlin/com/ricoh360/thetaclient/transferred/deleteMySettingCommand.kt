@@ -7,7 +7,7 @@ import kotlinx.serialization.json.JsonElement
  * delete my setting request
  */
 @Serializable
-data class DeleteMySettingRequest(
+internal data class DeleteMySettingRequest(
     override val name: String = "camera._deleteMySetting",
     override val parameters: DeleteMySettingParams,
 ) : CommandApiRequest
@@ -16,7 +16,7 @@ data class DeleteMySettingRequest(
  * delete my setting parameters
  */
 @Serializable
-data class DeleteMySettingParams(
+internal data class DeleteMySettingParams(
     /**
      * The target shooting mode
      * ("image": still image capture mode, "video": video capture)
@@ -29,7 +29,7 @@ data class DeleteMySettingParams(
  * delete my setting response
  */
 @Serializable
-data class DeleteMySettingResponse(
+internal data class DeleteMySettingResponse(
     /**
      * Executed command
      */

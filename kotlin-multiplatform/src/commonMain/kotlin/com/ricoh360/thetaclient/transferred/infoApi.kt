@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 /**
  * info api request
  */
-object InfoApi {
+internal object InfoApi {
     const val PATH = "/osc/info"
     val METHOD = HttpMethod.Get
 }
@@ -18,7 +18,7 @@ object InfoApi {
  * info api response
  */
 @Serializable
-data class InfoApiResponse(
+internal data class InfoApiResponse(
     /**
      * Manufacturer name
      */

@@ -7,7 +7,7 @@ import kotlinx.serialization.json.JsonElement
  * Plugin control request
  */
 @Serializable
-data class PluginControlRequest(
+internal data class PluginControlRequest(
     override val name: String = "camera._pluginControl",
     override val parameters: PluginControlParams,
 ) : CommandApiRequest
@@ -17,7 +17,7 @@ data class PluginControlRequest(
  * Supported just by Theta V and later.
  */
 @Serializable
-data class PluginControlParams(
+internal data class PluginControlParams(
     /**
      * Type of action: ("boot": start plugin; "finish": stop)
      */
@@ -34,7 +34,7 @@ data class PluginControlParams(
  * Set plugin response
  */
 @Serializable
-data class PluginControlResponse(
+internal data class PluginControlResponse(
     /**
      * Executed command
      */

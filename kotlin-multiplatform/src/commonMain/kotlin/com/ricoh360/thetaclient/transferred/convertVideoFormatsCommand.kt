@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
  * Convert video formats request
  */
 @Serializable
-data class ConvertVideoFormatsRequest(
+internal data class ConvertVideoFormatsRequest(
     override val name: String = "camera._convertVideoFormats",
     override val parameters: ConvertVideoFormatsParams,
 ) : CommandApiRequest
@@ -19,7 +19,7 @@ data class ConvertVideoFormatsRequest(
  * Convert video format parameters
  */
 @Serializable
-data class ConvertVideoFormatsParams(
+internal data class ConvertVideoFormatsParams(
     /**
      * URL of a saved movie file
      */
@@ -66,7 +66,7 @@ data class ConvertVideoFormatsParams(
  * Top Buttoncorrection value
  */
 @Serializable
-enum class TopBottomCorrection {
+internal enum class TopBottomCorrection {
     /**
      * Top/bottom correction enabled and rotational shake correction
      * enabled.
@@ -98,7 +98,7 @@ enum class TopBottomCorrection {
  * Convert video formats response
  */
 @Serializable
-data class ConvertVideoFormatsResponse(
+internal data class ConvertVideoFormatsResponse(
     /**
      * Executed command
      */
@@ -139,7 +139,7 @@ data class ConvertVideoFormatsResponse(
  * Convert video formats results
  */
 @Serializable
-data class ResultConvertVideoFormats(
+internal data class ResultConvertVideoFormats(
     /**
      * URL of a converted movie file
      */
@@ -150,7 +150,7 @@ data class ResultConvertVideoFormats(
  * video formats
  */
 @Serializable
-enum class VideoFormat {
+internal enum class VideoFormat {
     /**
      * 1920x960
      *

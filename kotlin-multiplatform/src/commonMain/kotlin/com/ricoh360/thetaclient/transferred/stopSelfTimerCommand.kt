@@ -10,7 +10,7 @@ import kotlinx.serialization.json.JsonElement
  * stop self timer request
  */
 @Serializable
-data class StopSelfTimerRequest(
+internal data class StopSelfTimerRequest(
     override val name: String = "camera._stopSelfTimer",
     override val parameters: EmptyParameter = EmptyParameter(),
 ) : CommandApiRequest
@@ -19,7 +19,7 @@ data class StopSelfTimerRequest(
  * stop self timer response
  */
 @Serializable
-data class StopSelfTimerResponse(
+internal data class StopSelfTimerResponse(
     /**
      * Executed command
      */

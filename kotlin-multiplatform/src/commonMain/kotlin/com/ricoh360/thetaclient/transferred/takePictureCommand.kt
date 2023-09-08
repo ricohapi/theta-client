@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
  * take picture request
  */
 @Serializable
-data class TakePictureRequest(
+internal data class TakePictureRequest(
     override val name: String = "camera.takePicture",
     override val parameters: EmptyParameter = EmptyParameter(),
 ) : CommandApiRequest
@@ -18,7 +18,7 @@ data class TakePictureRequest(
  * take picture Response
  */
 @Serializable
-data class TakePictureResponse(
+internal data class TakePictureResponse(
     /**
      * Executed command
      */
@@ -59,7 +59,7 @@ data class TakePictureResponse(
  * take picture results
  */
 @Serializable
-data class ResultTakePicture(
+internal data class ResultTakePicture(
     /**
      * URL of the captured still image file
      */

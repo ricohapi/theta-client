@@ -13,7 +13,7 @@ import kotlinx.serialization.json.jsonPrimitive
 /**
  * Status api request
  */
-object StatusApi {
+internal object StatusApi {
     const val PATH = "/osc/commands/status"
     val METHOD = HttpMethod.Post
 }
@@ -22,7 +22,7 @@ object StatusApi {
  * Status API request information class
  */
 @Serializable
-data class StatusApiRequest(
+internal data class StatusApiRequest(
     /**
      * request related command name
      */
@@ -37,7 +37,7 @@ data class StatusApiRequest(
 /**
  * Status API request parameters class
  */
-data class StatusApiParams(
+internal data class StatusApiParams(
     /**
      * status of this command
      */
@@ -54,7 +54,7 @@ data class StatusApiParams(
  * and return decoded object
  */
 @kotlinx.serialization.ExperimentalSerializationApi
-fun decodeStatusApiResponse(body: String?): CommandApiResponse {
+internal fun decodeStatusApiResponse(body: String?): CommandApiResponse {
     if (body == null) {
         return UnknownResponse("unknown")
     }

@@ -16,7 +16,7 @@ import kotlinx.serialization.encoding.Encoder
 /**
  * floating point number to/from Long serializer
  */
-object NumberAsLongSerializer : KSerializer<Long> {
+internal object NumberAsLongSerializer : KSerializer<Long> {
     /**
      * serial descriptor
      */
@@ -46,7 +46,7 @@ object NumberAsLongSerializer : KSerializer<Long> {
 /**
  * floating point number to/from Long serializer
  */
-object NumberAsIntSerializer : KSerializer<Int> {
+internal object NumberAsIntSerializer : KSerializer<Int> {
     /**
      * serial descriptor
      */
@@ -77,7 +77,7 @@ object NumberAsIntSerializer : KSerializer<Int> {
  * floating point number to/from List<Int> serializer
  */
 @kotlinx.serialization.ExperimentalSerializationApi
-object NumbersAsIntsSerializer : KSerializer<List<Int>> {
+internal object NumbersAsIntsSerializer : KSerializer<List<Int>> {
     /**
      * serial descriptor
      */
@@ -133,7 +133,7 @@ object NumbersAsIntsSerializer : KSerializer<List<Int>> {
  * floating point number to/from List<Long> serializer
  */
 @kotlinx.serialization.ExperimentalSerializationApi
-object NumbersAsLongsSerializer : KSerializer<List<Long>> {
+internal object NumbersAsLongsSerializer : KSerializer<List<Long>> {
     /**
      * serial descriptor
      */

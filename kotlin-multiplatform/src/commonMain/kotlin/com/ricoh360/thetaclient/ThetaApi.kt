@@ -25,7 +25,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
  * Http client using [Ktor](https://jp.ktor.work/clients/index.html)
  */
 @OptIn(ExperimentalSerializationApi::class) // explicitNulls
-object ThetaApi {
+internal object ThetaApi {
     val httpClient: HttpClient // for commands other than getLivePreview command
         get() = getHttpClient()
 

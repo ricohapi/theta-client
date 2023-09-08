@@ -10,7 +10,7 @@ import io.ktor.http.auth.parseAuthorizationHeader
 import io.ktor.http.encodedPath
 import kotlinx.coroutines.runBlocking
 
-const val DEFAULT_AUTH_QOP = "auth"
+internal const val DEFAULT_AUTH_QOP = "auth"
 internal const val DEFAULT_AUTH_NC = "00000001"
 internal const val KEY_AUTH_REALM = "realm"
 internal const val KEY_AUTH_NONCE = "nonce"
@@ -114,7 +114,7 @@ class DigestAuth(
  * @return digest authentication header string
  *
  */
-fun makeDigestHeader(
+internal fun makeDigestHeader(
     username: String,
     password: String,
     uri: String,

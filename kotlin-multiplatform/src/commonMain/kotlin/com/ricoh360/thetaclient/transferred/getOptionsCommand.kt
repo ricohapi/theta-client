@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
  * get options request
  */
 @Serializable
-data class GetOptionsRequest(
+internal data class GetOptionsRequest(
     override val name: String = "camera.getOptions",
     override val parameters: GetOptionsParams,
 ) : CommandApiRequest
@@ -18,7 +18,7 @@ data class GetOptionsRequest(
  * get options parameters
  */
 @Serializable
-data class GetOptionsParams(
+internal data class GetOptionsParams(
     /**
      * option name list to be acquired
      */
@@ -29,7 +29,7 @@ data class GetOptionsParams(
  * get options response
  */
 @Serializable
-data class GetOptionsResponse(
+internal data class GetOptionsResponse(
     /**
      * Executed command
      */
@@ -70,7 +70,7 @@ data class GetOptionsResponse(
  * get options results
  */
 @Serializable
-data class ResultGetOptions(
+internal data class ResultGetOptions(
     /**
      * option key value pair
      */

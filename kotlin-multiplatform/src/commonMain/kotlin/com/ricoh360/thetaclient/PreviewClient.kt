@@ -19,7 +19,7 @@ import kotlinx.coroutines.withTimeout
 /**
  * http client interface for preview only
  */
-interface PreviewClient {
+internal interface PreviewClient {
     /**
      * request [method] [path] with [contentType] of [body] to [endpoint]
      */
@@ -49,7 +49,7 @@ interface PreviewClient {
 }
 
 /** exception for processing preview stream */
-class PreviewClientException(
+internal class PreviewClientException(
     /** messages */
     msg: String,
     /** caused exception */
@@ -59,7 +59,7 @@ class PreviewClientException(
 /**
  * http client implement for preview only
  */
-class PreviewClientImpl : PreviewClient {
+internal class PreviewClientImpl : PreviewClient {
     /** parse url string */
     class URL(url: String) {
         /** protocol, only http or https */

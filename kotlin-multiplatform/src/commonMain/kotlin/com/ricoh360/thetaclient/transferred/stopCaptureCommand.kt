@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
  * stop capture request
  */
 @Serializable
-data class StopCaptureRequest(
+internal data class StopCaptureRequest(
     override val name: String = "camera.stopCapture",
     override val parameters: EmptyParameter = EmptyParameter(),
 ) : CommandApiRequest
@@ -18,7 +18,7 @@ data class StopCaptureRequest(
  * stop capture response
  */
 @Serializable
-data class StopCaptureResponse(
+internal data class StopCaptureResponse(
     /**
      * Executed command
      */
@@ -59,7 +59,7 @@ data class StopCaptureResponse(
  * stop capgure results
  */
 @Serializable
-data class ResultStopCapture(
+internal data class ResultStopCapture(
     /**
      * List of file URLS
      */
