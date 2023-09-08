@@ -514,13 +514,12 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
         }
 
         /**
-         * generate request headers without content-type header
+         * generate request headers without content related headers
          *
          * @return list of request headers
          */
-        private fun genRequestHeadersWithoutContentType(): List<Pair<String, String>> {
+        private fun genRequestHeadersWithoutContent(): List<Pair<String, String>> {
             return mutableListOf(
-                Pair("Content-Length", "0"),
                 Pair("Connection", "Keep-Alive"),
                 Pair("Cache-Control", "no-cache"),
             )
@@ -730,7 +729,7 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
         val path = "/osc/state"
         if (!isConnected()) connect(endpoint, connectionTimeout, socketTimeout)
         writeRequestLine(path, HttpMethod.Post)
-        writeHeaders(genRequestHeadersWithoutContentType())
+        writeHeaders(genRequestHeadersWithoutContent())
         runCatching {
             readStatusLine()
             readHeaders()
