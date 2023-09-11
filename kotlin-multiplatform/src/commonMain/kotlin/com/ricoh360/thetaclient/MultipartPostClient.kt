@@ -495,13 +495,17 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
         /**
          * generate request headers
          *
+         * @param endpoint URL of the endpoint
          * @param contentLength size of the entity-body
          * @param authorization credentials containing the authentication information of the user agent if needed
          * @param boundary boundary parameter of Content-Type header
          * @return list of request headers
          */
-        private fun genRequestHeaders(contentLength: Long, authorization: String?, boundary: String = BOUNDARY): List<Pair<String, String>> {
+        private fun genRequestHeaders(endpoint: String, contentLength: Long, authorization: String?, boundary: String = BOUNDARY): List<Pair<String, String>> {
+            val host = genHostHeaderValue(endpoint) ?: throw BaseHttpClientException("Can not get host header value")
             val headers = mutableListOf(
+                Pair("Host", host),
+                Pair("Accept", "*/*"),
                 Pair("Content-Length", contentLength.toString()),
                 Pair("Connection", "Keep-Alive"),
                 Pair("Cache-Control", "no-cache"),
@@ -516,13 +520,32 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
         /**
          * generate request headers without content related headers
          *
+         * @param endpoint URL of the endpoint
          * @return list of request headers
          */
-        private fun genRequestHeadersWithoutContent(): List<Pair<String, String>> {
+        private fun genRequestHeadersWithoutContent(endpoint: String): List<Pair<String, String>> {
+            val host = genHostHeaderValue(endpoint) ?: throw BaseHttpClientException("Can not get host header value")
             return mutableListOf(
+                Pair("Host", host),
+                Pair("Accept", "*/*"),
                 Pair("Connection", "Keep-Alive"),
                 Pair("Cache-Control", "no-cache"),
             )
+        }
+
+        /**
+         * Get the value of HTTP Host header
+         *
+         * @param endpoint URL of the endpoint
+         * @return Host header value, or null if not found
+         */
+        private fun genHostHeaderValue(endpoint: String): String? {
+            val regex = Regex("//(.*?)[:/]")
+            val match = regex.find(endpoint)
+            match?.groups?.let {
+                return it[1]?.value
+            }
+            return null
         }
 
         private fun genBoundaryDelimiter(boundary: String): String {
@@ -677,7 +700,7 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
         val contentLength = getContentLength(filePaths, boundary)
         if (!isConnected()) connect(endpoint, connectionTimeout, socketTimeout)
         writeRequestLine(path, HttpMethod.Post)
-        writeHeaders(genRequestHeaders(contentLength, digest))
+        writeHeaders(genRequestHeaders(endpoint, contentLength, digest))
         val buffer = ByteArray(READ_BUFFER_SIZE)
         var sentCount = 0L
         var lastPercent = 0
@@ -729,7 +752,7 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
         val path = "/osc/state"
         if (!isConnected()) connect(endpoint, connectionTimeout, socketTimeout)
         writeRequestLine(path, HttpMethod.Post)
-        writeHeaders(genRequestHeadersWithoutContent())
+        writeHeaders(genRequestHeadersWithoutContent(endpoint))
         runCatching {
             readStatusLine()
             readHeaders()
