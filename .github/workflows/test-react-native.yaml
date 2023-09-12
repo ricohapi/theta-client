@@ -2,6 +2,7 @@ name: ReactNative for test
 
 on:
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   build:
