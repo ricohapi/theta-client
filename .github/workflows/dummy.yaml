@@ -7,9 +7,12 @@ jobs:
   setup-env:
     runs-on: macos-12
     steps:
-    - name: dummy
-      run: |
-        cd flutter
+    - uses: actions/checkout@v3
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
   call-test-flutter:
     needs: [setup-env]
     - name: Run Flutter test
