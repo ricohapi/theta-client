@@ -1,4 +1,4 @@
-name: Dummy for test
+name: ReactNative for test
 
 on:
   workflow_dispatch:
