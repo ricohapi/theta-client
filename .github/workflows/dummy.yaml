@@ -4,4 +4,5 @@ on:
   workflow_dispatch:
 
 jobs:
-  uses: ./.github/workflows/test-flutter.yaml
+  flutter-test:
+    uses: ./.github/workflows/test-flutter.yaml
