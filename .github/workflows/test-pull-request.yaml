@@ -1,0 +1,12 @@
+name: Test for pull request
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  test-flutter:
+    uses: ./.github/workflows/test-flutter.yaml
+  test-react-native:
+    uses: ./.github/workflows/test-react-native.yaml
+  # test-kmm:
+  #   uses: ./.github/workflows/buildAndTest.yaml
