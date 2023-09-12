@@ -7,12 +7,12 @@ jobs:
   build:
     runs-on: macos-12
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 11
-      uses: actions/setup-java@v3
-      - uses: actions/setup-node@v3.1.1
-        with:
-                  node-version: v18.12.1
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - uses: actions/setup-node@v3.1.1
+      with:
+        node-version: v18.12.1
     - run: cd react-native
     - run: yarn install
     - run: yarn test
