@@ -14,7 +14,7 @@ jobs:
       with:
         node-version: v18.12.1
     - name: ReactNative Test
-      run |
+      run: |
         cd react-native
         yarn install
         yarn test
