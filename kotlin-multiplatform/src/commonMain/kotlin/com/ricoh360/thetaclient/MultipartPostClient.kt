@@ -118,10 +118,13 @@ open class BaseHttpClient {
     /** fixed buffers for receiving a response */
     companion object {
         /** receive buffer */
-        val buffer: ByteArray = ByteArray(10 * 1024)
+        val receiveBuffer: ByteArray = ByteArray(10 * 1024)
 
         /** line buffer for response headers */
         val lineBuffer: ByteArray = ByteArray(1024)
+
+        /** Send buffer size same as file read buffer size */
+        const val SEND_BUFFER_SIZE = 8192
     }
 
     /**
@@ -142,7 +145,8 @@ open class BaseHttpClient {
                     InetSocketAddress(this@BaseHttpClient.endpoint!!.host, this@BaseHttpClient.endpoint!!.port),
                 ) {
                     this.keepAlive = true
-                    this.receiveBufferSize = buffer.size
+                    this.receiveBufferSize = receiveBuffer.size
+                    this.sendBufferSize = SEND_BUFFER_SIZE
                     this.socketTimeout = socketTimeout
                 }
                 this@BaseHttpClient.input = socket.openReadChannel()
@@ -252,7 +256,7 @@ open class BaseHttpClient {
      */
     private suspend fun fillBuffer(): Int {
         pos = 0
-        curr = input!!.readAvailable(buffer, 0, buffer.size)
+        curr = input!!.readAvailable(receiveBuffer, 0, receiveBuffer.size)
         return curr
     }
 
@@ -265,7 +269,7 @@ open class BaseHttpClient {
                 return null
             }
         }
-        return buffer[pos++]
+        return receiveBuffer[pos++]
     }
 
     /**
@@ -486,7 +490,7 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
 
     companion object {
         // read buffer size for reading firmware file
-        const val READ_BUFFER_SIZE = 1024 * 64
+        const val READ_BUFFER_SIZE = 1024 * 8
         // boundary, can be any uuid, which is constraint of Theta SC2
         //const val BOUNDARY = "ab0c85f4-6d89-4a7f-a0a5-115d7f43b5f1"
         // regular expression to get a file name from a file path
@@ -631,7 +635,6 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
             size
         }
 
-
     }
 
     /**
@@ -656,7 +659,7 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
         callback: ((Int) -> Unit)?,
         boundary: String,
     ): ByteArray {
-        val authorizationHeader: String? = checkAuthenticationNeeded(endpoint, connectionTimeout, socketTimeout)
+        val authorizationHeader: String? = checkAuthenticationNeeded(endpoint, path, connectionTimeout, socketTimeout)
         requestWithAuth(endpoint, path, filePaths, connectionTimeout, socketTimeout, callback, boundary, authorizationHeader)
         close()
         val httpStatusCode = HttpStatusCode(this.status, this.statusMessage?: "")
@@ -728,12 +731,14 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
             }
         }
         writeCloseDelimiter(boundary)
-        kotlin.runCatching {
+        try {
             readStatusLine()
             readHeaders()
             readBody()
-        }.onFailure {
+        } catch(e: Throwable) {
             // Theta X does not send a status line but firmware update is executed.
+        } finally {
+            close()
         }
     }
 
@@ -747,9 +752,8 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
      * @param socketTimeout timeout for socket (millisecond).
      * @return Authorization header in client mode, null not in client mode.
      */
-    private suspend fun checkAuthenticationNeeded(endpoint: String, connectionTimeout: Long, socketTimeout: Long): String? {
+    private suspend fun checkAuthenticationNeeded(endpoint: String, path: String, connectionTimeout: Long, socketTimeout: Long): String? {
         ApiClient.digestAuth ?: return null
-        val path = "/osc/state"
         if (!isConnected()) connect(endpoint, connectionTimeout, socketTimeout)
         writeRequestLine(path, HttpMethod.Post)
         writeHeaders(genRequestHeadersWithoutContent(endpoint))
@@ -758,6 +762,8 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
             readHeaders()
             readBody()
         }.onFailure {
+            clearResponse()
+            close()
             throw BaseHttpClientException(it.toString())
         }
         val authHeaderVal: String? = when (this.status) {
@@ -765,6 +771,7 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
             else -> null
         }
         clearResponse()
+        close()
         return authHeaderVal
     }
 
@@ -813,6 +820,7 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
      */
     private suspend fun writePartHeaders(boundary: String, headers: List<Pair<String, String>>) {
         write(genBoundaryDelimiter(boundary))
+        print(genBoundaryDelimiter(boundary))
         for ((name, value) in headers) {
             write("$name: $value\r\n")
         }

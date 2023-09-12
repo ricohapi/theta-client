@@ -197,8 +197,8 @@ class UpdateFirmwareOnActualTheta {
         // latest firmware file of X
         const val X_FILE_LATEST = "cv1_v221.frm"
         //const val X_FILE_LATEST = "cv1_v220_v210.frm"
-        const val V_VERSION_LATEST = "3.82.1"
-        const val V_FILE_LATEST = "rt5_v382.frm"
+        const val V_VERSION_LATEST = "3.60.1"
+        const val V_FILE_LATEST = "rt5_v360.frm"
 
         // User name of digest authentication is X_USERNAME_PREFIX + X_SERIAL_NUMBER
         const val USERNAME_PREFIX = "THETA"
@@ -209,7 +209,7 @@ class UpdateFirmwareOnActualTheta {
         // IP address in client mode.
         const val X_URL_CL = "http://192.168.1.10:80/"
 
-        const val V_SERIAL_NUMBER = "YL00155198"
-        const val V_URL_CL = "http://192.168.1.12:80/"
+        const val V_SERIAL_NUMBER = "YL00120517"
+        const val V_URL_CL = "http://192.168.1.13:80/"
     }
 }

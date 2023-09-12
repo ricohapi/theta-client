@@ -437,13 +437,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 throw ThetaWebApiException(it.message)
             }
         } catch (e: JsonConvertException) {
-            throw ThetaWebApiException(e.message ?: e.toString())
+            throw ThetaWebApiException(e.toString())
         } catch (e: ResponseException) {
-            throw ThetaWebApiException(e.message ?: e.toString())
+            throw ThetaWebApiException(e.toString())
         } catch(e: IllegalArgumentException) {
-            throw ThetaWebApiException(e.message ?: e.toString())
+            throw ThetaWebApiException(e.toString())
         } catch (e: Exception) {
-            throw NotConnectedException(e.message ?: e.toString())
+            throw NotConnectedException(e.toString())
         }
     }
 
