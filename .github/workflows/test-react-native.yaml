@@ -1,0 +1,20 @@
+name: Dummy for test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-12
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - uses: actions/setup-node@v3.1.1
+      with:
+        node-version: v18.12.1
+    - name: ReactNative Test
+      run: |
+        cd react-native
+        yarn install
+        yarn test

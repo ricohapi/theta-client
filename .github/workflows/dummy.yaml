@@ -10,11 +10,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - uses: actions/setup-node@v3.1.1
-      with:
-        node-version: v18.12.1
-    - name: ReactNative Test
+    - uses: subosito/flutter-action@v1
+    - name: Flutter Test
       run: |
-        cd react-native
-        yarn install
-        yarn test
+        cd flutter
+        flutter pub get
+        flutter test
