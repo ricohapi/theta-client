@@ -1,0 +1,858 @@
+<!doctype html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Options</title>
+    <link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../../";</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../styles/jetbrains-mono.css" rel="Stylesheet">
+<link href="../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../styles/logo-styles.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script>
+<link href="../../../../styles/multimodule.css" rel="Stylesheet">
+</head>
+<body>
+<div class="navigation-wrapper" id="navigation-wrapper">
+    <div id="leftToggler"><span class="icon-toggler"></span></div>
+    <div class="library-name">
+            <a href="../../../../index.html">
+                    <span>theta-client</span>
+            </a>
+    </div>
+    <div>
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;theta-client/com.ricoh360.thetaclient/-theta-repository/-options/index.html&quot;}"><div class="versions-dropdown">
+  <div class="versions-dropdown-button">1.3.1</div>
+  <div class="versions-dropdown-data"><a href="../../../../../../theta-client/com.ricoh360.thetaclient/-theta-repository/-options/index.html">1.4.0</a><a href="index.html">1.3.1</a><a href="../../../../../1.3.0/theta-client/com.ricoh360.thetaclient/-theta-repository/-options/index.html">1.3.0</a><a href="../../../../../1.2.0/theta-client/com.ricoh360.thetaclient/-theta-repository/-options/index.html">1.2.0</a></div>
+</div>
+</dokka-template-command>    </div>
+    <div class="pull-right d-flex">
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":kotlin-multiplatform:dokkaHtml/commonMain">common</button>
+        </div>
+        <button id="theme-toggle-button"><span id="theme-toggle"></span></button>
+        <div id="searchBar"></div>
+    </div>
+</div>
+<div id="container">
+    <div id="leftColumn">
+        <div id="sideMenu"></div>
+    </div>
+    <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="theta-client::com.ricoh360.thetaclient/ThetaRepository.Options///PointingToDeclaration//1539438162">
+  <div class="breadcrumbs"><a href="../../../../index.html">theta-client</a><span class="delimiter">/</span><a href="../../index.html">com.ricoh360.thetaclient</a><span class="delimiter">/</span><a href="../index.html">ThetaRepository</a><span class="delimiter">/</span><span class="current">Options</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Options</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">Options</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">var </span>aiAutoThumbnail<span class="token operator">: </span><a href="../-ai-auto-thumbnail-enum/index.html">ThetaRepository.AiAutoThumbnailEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>aperture<span class="token operator">: </span><a href="../-aperture-enum/index.html">ThetaRepository.ApertureEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>bitrate<span class="token operator">: </span><a href="../-bitrate/index.html">ThetaRepository.Bitrate</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>bluetoothPower<span class="token operator">: </span><a href="../-bluetooth-power-enum/index.html">ThetaRepository.BluetoothPowerEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>burstMode<span class="token operator">: </span><a href="../-burst-mode-enum/index.html">ThetaRepository.BurstModeEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>burstOption<span class="token operator">: </span><a href="../-burst-option/index.html">ThetaRepository.BurstOption</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>cameraControlSource<span class="token operator">: </span><a href="../-camera-control-source-enum/index.html">ThetaRepository.CameraControlSourceEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>cameraMode<span class="token operator">: </span><a href="../-camera-mode-enum/index.html">ThetaRepository.CameraModeEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>captureInterval<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>captureMode<span class="token operator">: </span><a href="../-capture-mode-enum/index.html">ThetaRepository.CaptureModeEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>captureNumber<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>colorTemperature<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>compositeShootingOutputInterval<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>compositeShootingTime<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>continuousNumber<span class="token operator">: </span><a href="../-continuous-number-enum/index.html">ThetaRepository.ContinuousNumberEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>dateTimeZone<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>exposureCompensation<span class="token operator">: </span><a href="../-exposure-compensation-enum/index.html">ThetaRepository.ExposureCompensationEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>exposureDelay<span class="token operator">: </span><a href="../-exposure-delay-enum/index.html">ThetaRepository.ExposureDelayEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>exposureProgram<span class="token operator">: </span><a href="../-exposure-program-enum/index.html">ThetaRepository.ExposureProgramEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>fileFormat<span class="token operator">: </span><a href="../-file-format-enum/index.html">ThetaRepository.FileFormatEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>filter<span class="token operator">: </span><a href="../-filter-enum/index.html">ThetaRepository.FilterEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>gpsInfo<span class="token operator">: </span><a href="../-gps-info/index.html">ThetaRepository.GpsInfo</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>isGpsOn<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>iso<span class="token operator">: </span><a href="../-iso-enum/index.html">ThetaRepository.IsoEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>isoAutoHighLimit<span class="token operator">: </span><a href="../-iso-auto-high-limit-enum/index.html">ThetaRepository.IsoAutoHighLimitEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>language<span class="token operator">: </span><a href="../-language-enum/index.html">ThetaRepository.LanguageEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>maxRecordableTime<span class="token operator">: </span><a href="../-max-recordable-time-enum/index.html">ThetaRepository.MaxRecordableTimeEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>networkType<span class="token operator">: </span><a href="../-network-type-enum/index.html">ThetaRepository.NetworkTypeEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>offDelay<span class="token operator">: </span><a href="../-off-delay/index.html">ThetaRepository.OffDelay</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>password<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>powerSaving<span class="token operator">: </span><a href="../-power-saving-enum/index.html">ThetaRepository.PowerSavingEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>preset<span class="token operator">: </span><a href="../-preset-enum/index.html">ThetaRepository.PresetEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>previewFormat<span class="token operator">: </span><a href="../-preview-format-enum/index.html">ThetaRepository.PreviewFormatEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>proxy<span class="token operator">: </span><a href="../-proxy/index.html">ThetaRepository.Proxy</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>remainingPictures<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>remainingVideoSeconds<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>remainingSpace<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>shootingMethod<span class="token operator">: </span><a href="../-shooting-method-enum/index.html">ThetaRepository.ShootingMethodEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>shutterSpeed<span class="token operator">: </span><a href="../-shutter-speed-enum/index.html">ThetaRepository.ShutterSpeedEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>sleepDelay<span class="token operator">: </span><a href="../-sleep-delay/index.html">ThetaRepository.SleepDelay</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>timeShift<span class="token operator">: </span><a href="../-time-shift-setting/index.html">ThetaRepository.TimeShiftSetting</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>totalSpace<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>shutterVolume<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>username<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>whiteBalance<span class="token operator">: </span><a href="../-white-balance-enum/index.html">ThetaRepository.WhiteBalanceEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>whiteBalanceAutoStrength<span class="token operator">: </span><a href="../-white-balance-auto-strength-enum/index.html">ThetaRepository.WhiteBalanceAutoStrengthEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>wlanFrequency<span class="token operator">: </span><a href="../-wlan-frequency-enum/index.html">ThetaRepository.WlanFrequencyEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><p class="paragraph">Camera setting options. Refer to the <a href="https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md">options category</a></p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="778544899%2FConstructors%2F1539438162" anchor-label="Options" id="778544899%2FConstructors%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-options.html"><span><span>Options</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="778544899%2FConstructors%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">options<span class="token operator">: </span><a href="../../../com.ricoh360.thetaclient.transferred/-options/index.html">Options</a></span></span><span class="token punctuation">)</span></div><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">aiAutoThumbnail<span class="token operator">: </span><a href="../-ai-auto-thumbnail-enum/index.html">ThetaRepository.AiAutoThumbnailEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">aperture<span class="token operator">: </span><a href="../-aperture-enum/index.html">ThetaRepository.ApertureEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">bitrate<span class="token operator">: </span><a href="../-bitrate/index.html">ThetaRepository.Bitrate</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">bluetoothPower<span class="token operator">: </span><a href="../-bluetooth-power-enum/index.html">ThetaRepository.BluetoothPowerEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">burstMode<span class="token operator">: </span><a href="../-burst-mode-enum/index.html">ThetaRepository.BurstModeEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">burstOption<span class="token operator">: </span><a href="../-burst-option/index.html">ThetaRepository.BurstOption</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">cameraControlSource<span class="token operator">: </span><a href="../-camera-control-source-enum/index.html">ThetaRepository.CameraControlSourceEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">cameraMode<span class="token operator">: </span><a href="../-camera-mode-enum/index.html">ThetaRepository.CameraModeEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">captureInterval<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">captureMode<span class="token operator">: </span><a href="../-capture-mode-enum/index.html">ThetaRepository.CaptureModeEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">captureNumber<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">colorTemperature<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">compositeShootingOutputInterval<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">compositeShootingTime<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">continuousNumber<span class="token operator">: </span><a href="../-continuous-number-enum/index.html">ThetaRepository.ContinuousNumberEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">dateTimeZone<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">exposureCompensation<span class="token operator">: </span><a href="../-exposure-compensation-enum/index.html">ThetaRepository.ExposureCompensationEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">exposureDelay<span class="token operator">: </span><a href="../-exposure-delay-enum/index.html">ThetaRepository.ExposureDelayEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">exposureProgram<span class="token operator">: </span><a href="../-exposure-program-enum/index.html">ThetaRepository.ExposureProgramEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">fileFormat<span class="token operator">: </span><a href="../-file-format-enum/index.html">ThetaRepository.FileFormatEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">filter<span class="token operator">: </span><a href="../-filter-enum/index.html">ThetaRepository.FilterEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">gpsInfo<span class="token operator">: </span><a href="../-gps-info/index.html">ThetaRepository.GpsInfo</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">isGpsOn<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">iso<span class="token operator">: </span><a href="../-iso-enum/index.html">ThetaRepository.IsoEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">isoAutoHighLimit<span class="token operator">: </span><a href="../-iso-auto-high-limit-enum/index.html">ThetaRepository.IsoAutoHighLimitEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">language<span class="token operator">: </span><a href="../-language-enum/index.html">ThetaRepository.LanguageEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">maxRecordableTime<span class="token operator">: </span><a href="../-max-recordable-time-enum/index.html">ThetaRepository.MaxRecordableTimeEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">networkType<span class="token operator">: </span><a href="../-network-type-enum/index.html">ThetaRepository.NetworkTypeEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">offDelay<span class="token operator">: </span><a href="../-off-delay/index.html">ThetaRepository.OffDelay</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">password<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">powerSaving<span class="token operator">: </span><a href="../-power-saving-enum/index.html">ThetaRepository.PowerSavingEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">preset<span class="token operator">: </span><a href="../-preset-enum/index.html">ThetaRepository.PresetEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">previewFormat<span class="token operator">: </span><a href="../-preview-format-enum/index.html">ThetaRepository.PreviewFormatEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">proxy<span class="token operator">: </span><a href="../-proxy/index.html">ThetaRepository.Proxy</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">remainingPictures<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">remainingVideoSeconds<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">remainingSpace<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">shootingMethod<span class="token operator">: </span><a href="../-shooting-method-enum/index.html">ThetaRepository.ShootingMethodEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">shutterSpeed<span class="token operator">: </span><a href="../-shutter-speed-enum/index.html">ThetaRepository.ShutterSpeedEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">sleepDelay<span class="token operator">: </span><a href="../-sleep-delay/index.html">ThetaRepository.SleepDelay</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">timeShift<span class="token operator">: </span><a href="../-time-shift-setting/index.html">ThetaRepository.TimeShiftSetting</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">totalSpace<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">shutterVolume<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">username<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">whiteBalance<span class="token operator">: </span><a href="../-white-balance-enum/index.html">ThetaRepository.WhiteBalanceEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">whiteBalanceAutoStrength<span class="token operator">: </span><a href="../-white-balance-auto-strength-enum/index.html">ThetaRepository.WhiteBalanceAutoStrengthEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">wlanFrequency<span class="token operator">: </span><a href="../-wlan-frequency-enum/index.html">ThetaRepository.WlanFrequencyEnum</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="1321092766%2FProperties%2F1539438162" anchor-label="aiAutoThumbnail" id="1321092766%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="ai-auto-thumbnail.html"><span>ai</span><wbr><span>Auto</span><wbr><span><span>Thumbnail</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1321092766%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="ai-auto-thumbnail.html">aiAutoThumbnail</a><span class="token operator">: </span><a href="../-ai-auto-thumbnail-enum/index.html">ThetaRepository.AiAutoThumbnailEnum</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">AI auto thumbnail setting.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="777062647%2FProperties%2F1539438162" anchor-label="aperture" id="777062647%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="aperture.html"><span><span>aperture</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="777062647%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="aperture.html">aperture</a><span class="token operator">: </span><a href="../-aperture-enum/index.html">ThetaRepository.ApertureEnum</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Aperture value.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-832287514%2FProperties%2F1539438162" anchor-label="bitrate" id="-832287514%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="bitrate.html"><span><span>bitrate</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-832287514%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="bitrate.html">bitrate</a><span class="token operator">: </span><a href="../-bitrate/index.html">ThetaRepository.Bitrate</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1447123984%2FProperties%2F1539438162" anchor-label="bluetoothPower" id="-1447123984%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="bluetooth-power.html"><span>bluetooth</span><wbr><span><span>Power</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1447123984%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="bluetooth-power.html">bluetoothPower</a><span class="token operator">: </span><a href="../-bluetooth-power-enum/index.html">ThetaRepository.BluetoothPowerEnum</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Bluetooth power.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="280710320%2FProperties%2F1539438162" anchor-label="burstMode" id="280710320%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="burst-mode.html"><span>burst</span><wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="280710320%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="burst-mode.html">burstMode</a><span class="token operator">: </span><a href="../-burst-mode-enum/index.html">ThetaRepository.BurstModeEnum</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="247298206%2FProperties%2F1539438162" anchor-label="burstOption" id="247298206%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="burst-option.html"><span>burst</span><wbr><span><span>Option</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="247298206%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="burst-option.html">burstOption</a><span class="token operator">: </span><a href="../-burst-option/index.html">ThetaRepository.BurstOption</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1496387232%2FProperties%2F1539438162" anchor-label="cameraControlSource" id="-1496387232%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="camera-control-source.html"><span>camera</span><wbr><span>Control</span><wbr><span><span>Source</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1496387232%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="camera-control-source.html">cameraControlSource</a><span class="token operator">: </span><a href="../-camera-control-source-enum/index.html">ThetaRepository.CameraControlSourceEnum</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1989941601%2FProperties%2F1539438162" anchor-label="cameraMode" id="-1989941601%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="camera-mode.html"><span>camera</span><wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1989941601%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="camera-mode.html">cameraMode</a><span class="token operator">: </span><a href="../-camera-mode-enum/index.html">ThetaRepository.CameraModeEnum</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1898543592%2FProperties%2F1539438162" anchor-label="captureInterval" id="1898543592%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="capture-interval.html"><span>capture</span><wbr><span><span>Interval</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1898543592%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="capture-interval.html">captureInterval</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Shooting interval (sec.) for interval shooting.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1395072310%2FProperties%2F1539438162" anchor-label="captureMode" id="-1395072310%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="capture-mode.html"><span>capture</span><wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1395072310%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="capture-mode.html">captureMode</a><span class="token operator">: </span><a href="../-capture-mode-enum/index.html">ThetaRepository.CaptureModeEnum</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Shooting mode.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="462992356%2FProperties%2F1539438162" anchor-label="captureNumber" id="462992356%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="capture-number.html"><span>capture</span><wbr><span><span>Number</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="462992356%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="capture-number.html">captureNumber</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Number of shots for interval shooting.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1231670166%2FProperties%2F1539438162" anchor-label="colorTemperature" id="1231670166%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="color-temperature.html"><span>color</span><wbr><span><span>Temperature</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1231670166%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="color-temperature.html">colorTemperature</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Color temperature of the camera (Kelvin).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="603845923%2FProperties%2F1539438162" anchor-label="compositeShootingOutputInterval" id="603845923%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="composite-shooting-output-interval.html"><span>composite</span><wbr><span>Shooting</span><wbr><span>Output</span><wbr><span><span>Interval</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="603845923%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="composite-shooting-output-interval.html">compositeShootingOutputInterval</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">In-progress save interval for interval composite shooting (sec).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1567642652%2FProperties%2F1539438162" anchor-label="compositeShootingTime" id="1567642652%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="composite-shooting-time.html"><span>composite</span><wbr><span>Shooting</span><wbr><span><span>Time</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1567642652%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="composite-shooting-time.html">compositeShootingTime</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Shooting time for interval composite shooting (sec).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-97676209%2FProperties%2F1539438162" anchor-label="continuousNumber" id="-97676209%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="continuous-number.html"><span>continuous</span><wbr><span><span>Number</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-97676209%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="continuous-number.html">continuousNumber</a><span class="token operator">: </span><a href="../-continuous-number-enum/index.html">ThetaRepository.ContinuousNumberEnum</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-98144896%2FProperties%2F1539438162" anchor-label="dateTimeZone" id="-98144896%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="date-time-zone.html"><span>date</span><wbr><span>Time</span><wbr><span><span>Zone</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-98144896%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="date-time-zone.html">dateTimeZone</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Current system time of RICOH THETA. Setting another options will result in an error.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1110723674%2FProperties%2F1539438162" anchor-label="exposureCompensation" id="-1110723674%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="exposure-compensation.html"><span>exposure</span><wbr><span><span>Compensation</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1110723674%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="exposure-compensation.html">exposureCompensation</a><span class="token operator">: </span><a href="../-exposure-compensation-enum/index.html">ThetaRepository.ExposureCompensationEnum</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Exposure compensation (EV).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1895406089%2FProperties%2F1539438162" anchor-label="exposureDelay" id="-1895406089%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="exposure-delay.html"><span>exposure</span><wbr><span><span>Delay</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1895406089%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="exposure-delay.html">exposureDelay</a><span class="token operator">: </span><a href="../-exposure-delay-enum/index.html">ThetaRepository.ExposureDelayEnum</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Operating time (sec.) of the self-timer.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1440862422%2FProperties%2F1539438162" anchor-label="exposureProgram" id="1440862422%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="exposure-program.html"><span>exposure</span><wbr><span><span>Program</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1440862422%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="exposure-program.html">exposureProgram</a><span class="token operator">: </span><a href="../-exposure-program-enum/index.html">ThetaRepository.ExposureProgramEnum</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Exposure program. The exposure settings that take priority can be selected.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="557197012%2FProperties%2F1539438162" anchor-label="fileFormat" id="557197012%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="file-format.html"><span>file</span><wbr><span><span>Format</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="557197012%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="file-format.html">fileFormat</a><span class="token operator">: </span><a href="../-file-format-enum/index.html">ThetaRepository.FileFormatEnum</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Image format used in shooting.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1563818127%2FProperties%2F1539438162" anchor-label="filter" id="1563818127%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="filter.html"><span><span>filter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1563818127%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="filter.html">filter</a><span class="token operator">: </span><a href="../-filter-enum/index.html">ThetaRepository.FilterEnum</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Image processing filter.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1780058565%2FProperties%2F1539438162" anchor-label="gpsInfo" id="-1780058565%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="gps-info.html"><span>gps</span><wbr><span><span>Info</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1780058565%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="gps-info.html">gpsInfo</a><span class="token operator">: </span><a href="../-gps-info/index.html">ThetaRepository.GpsInfo</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">GPS location information.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1636634764%2FProperties%2F1539438162" anchor-label="isGpsOn" id="-1636634764%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-gps-on.html"><span>is</span><wbr><span>Gps</span><wbr><span><span>On</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1636634764%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="is-gps-on.html">isGpsOn</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Turns position information assigning ON/OFF. For THETA X</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1656686030%2FProperties%2F1539438162" anchor-label="iso" id="1656686030%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="iso.html"><span><span>iso</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1656686030%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="iso.html">iso</a><span class="token operator">: </span><a href="../-iso-enum/index.html">ThetaRepository.IsoEnum</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Turns position information assigning ON/OFF.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1286581858%2FProperties%2F1539438162" anchor-label="isoAutoHighLimit" id="1286581858%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="iso-auto-high-limit.html"><span>iso</span><wbr><span>Auto</span><wbr><span>High</span><wbr><span><span>Limit</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1286581858%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="iso-auto-high-limit.html">isoAutoHighLimit</a><span class="token operator">: </span><a href="../-iso-auto-high-limit-enum/index.html">ThetaRepository.IsoAutoHighLimitEnum</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">ISO sensitivity upper limit when ISO sensitivity is set to automatic.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="856007215%2FProperties%2F1539438162" anchor-label="language" id="856007215%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="language.html"><span><span>language</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="856007215%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="language.html">language</a><span class="token operator">: </span><a href="../-language-enum/index.html">ThetaRepository.LanguageEnum</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Language used in camera OS.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1459741335%2FProperties%2F1539438162" anchor-label="maxRecordableTime" id="1459741335%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="max-recordable-time.html"><span>max</span><wbr><span>Recordable</span><wbr><span><span>Time</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1459741335%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="max-recordable-time.html">maxRecordableTime</a><span class="token operator">: </span><a href="../-max-recordable-time-enum/index.html">ThetaRepository.MaxRecordableTimeEnum</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Maximum recordable time (in seconds) of the camera.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1056281813%2FProperties%2F1539438162" anchor-label="networkType" id="-1056281813%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="network-type.html"><span>network</span><wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1056281813%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="network-type.html">networkType</a><span class="token operator">: </span><a href="../-network-type-enum/index.html">ThetaRepository.NetworkTypeEnum</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Network type of the camera.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="665681843%2FProperties%2F1539438162" anchor-label="offDelay" id="665681843%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="off-delay.html"><span>off</span><wbr><span><span>Delay</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="665681843%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="off-delay.html">offDelay</a><span class="token operator">: </span><a href="../-off-delay/index.html">ThetaRepository.OffDelay</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Length of standby time before the camera automatically powers OFF.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1917248436%2FProperties%2F1539438162" anchor-label="password" id="-1917248436%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="password.html"><span><span>password</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1917248436%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="password.html">password</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Password used for digest authentication when _networkType is set to client mode. Can be set by camera.setOptions during direct mode.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1770872524%2FProperties%2F1539438162" anchor-label="powerSaving" id="-1770872524%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="power-saving.html"><span>power</span><wbr><span><span>Saving</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1770872524%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="power-saving.html">powerSaving</a><span class="token operator">: </span><a href="../-power-saving-enum/index.html">ThetaRepository.PowerSavingEnum</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Power saving mode. Only for Theta X.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="638726920%2FProperties%2F1539438162" anchor-label="preset" id="638726920%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="preset.html"><span><span>preset</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="638726920%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="preset.html">preset</a><span class="token operator">: </span><a href="../-preset-enum/index.html">ThetaRepository.PresetEnum</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Preset mode of Theta SC2 and Theta SC2 for business.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="377711156%2FProperties%2F1539438162" anchor-label="previewFormat" id="377711156%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="preview-format.html"><span>preview</span><wbr><span><span>Format</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="377711156%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="preview-format.html">previewFormat</a><span class="token operator">: </span><a href="../-preview-format-enum/index.html">ThetaRepository.PreviewFormatEnum</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Format of live view.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1603253893%2FProperties%2F1539438162" anchor-label="proxy" id="1603253893%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="proxy.html"><span><span>proxy</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1603253893%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="proxy.html">proxy</a><span class="token operator">: </span><a href="../-proxy/index.html">ThetaRepository.Proxy</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1026573128%2FProperties%2F1539438162" anchor-label="remainingPictures" id="1026573128%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remaining-pictures.html"><span>remaining</span><wbr><span><span>Pictures</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1026573128%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="remaining-pictures.html">remainingPictures</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The estimated remaining number of shots for the current shooting settings.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="796626007%2FProperties%2F1539438162" anchor-label="remainingSpace" id="796626007%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remaining-space.html"><span>remaining</span><wbr><span><span>Space</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="796626007%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="remaining-space.html">remainingSpace</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Remaining usable storage space (byte).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="23723993%2FProperties%2F1539438162" anchor-label="remainingVideoSeconds" id="23723993%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remaining-video-seconds.html"><span>remaining</span><wbr><span>Video</span><wbr><span><span>Seconds</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="23723993%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="remaining-video-seconds.html">remainingVideoSeconds</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The estimated remaining shooting time (sec.) for the current video shooting settings.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1782145379%2FProperties%2F1539438162" anchor-label="shootingMethod" id="1782145379%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="shooting-method.html"><span>shooting</span><wbr><span><span>Method</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1782145379%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="shooting-method.html">shootingMethod</a><span class="token operator">: </span><a href="../-shooting-method-enum/index.html">ThetaRepository.ShootingMethodEnum</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Shooting method for My Settings mode. In RICOH THETA X, it is used outside of MySetting. Can be acquired and set only when in the Still image shooting mode and _function is the My Settings shooting function. Changing _function initializes the setting details to Normal shooting.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1611293293%2FProperties%2F1539438162" anchor-label="shutterSpeed" id="1611293293%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="shutter-speed.html"><span>shutter</span><wbr><span><span>Speed</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1611293293%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="shutter-speed.html">shutterSpeed</a><span class="token operator">: </span><a href="../-shutter-speed-enum/index.html">ThetaRepository.ShutterSpeedEnum</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Shutter speed (sec).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1424064428%2FProperties%2F1539438162" anchor-label="shutterVolume" id="1424064428%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="shutter-volume.html"><span>shutter</span><wbr><span><span>Volume</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1424064428%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="shutter-volume.html">shutterVolume</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Shutter volume.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-247459685%2FProperties%2F1539438162" anchor-label="sleepDelay" id="-247459685%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="sleep-delay.html"><span>sleep</span><wbr><span><span>Delay</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-247459685%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="sleep-delay.html">sleepDelay</a><span class="token operator">: </span><a href="../-sleep-delay/index.html">ThetaRepository.SleepDelay</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Length of standby time before the camera enters the sleep mode.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-674176482%2FProperties%2F1539438162" anchor-label="timeShift" id="-674176482%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="time-shift.html"><span>time</span><wbr><span><span>Shift</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-674176482%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="time-shift.html">timeShift</a><span class="token operator">: </span><a href="../-time-shift-setting/index.html">ThetaRepository.TimeShiftSetting</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Time shift shooting</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1074712027%2FProperties%2F1539438162" anchor-label="totalSpace" id="-1074712027%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="total-space.html"><span>total</span><wbr><span><span>Space</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1074712027%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="total-space.html">totalSpace</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Total storage space (byte).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1259129231%2FProperties%2F1539438162" anchor-label="username" id="-1259129231%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="username.html"><span><span>username</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1259129231%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="username.html">username</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">User name used for digest authentication when _networkType is set to client mode. Can be set by camera.setOptions during direct mode.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="646806132%2FProperties%2F1539438162" anchor-label="whiteBalance" id="646806132%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="white-balance.html"><span>white</span><wbr><span><span>Balance</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="646806132%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="white-balance.html">whiteBalance</a><span class="token operator">: </span><a href="../-white-balance-enum/index.html">ThetaRepository.WhiteBalanceEnum</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">White balance.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1940901572%2FProperties%2F1539438162" anchor-label="whiteBalanceAutoStrength" id="1940901572%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="white-balance-auto-strength.html"><span>white</span><wbr><span>Balance</span><wbr><span>Auto</span><wbr><span><span>Strength</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1940901572%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="white-balance-auto-strength.html">whiteBalanceAutoStrength</a><span class="token operator">: </span><a href="../-white-balance-auto-strength-enum/index.html">ThetaRepository.WhiteBalanceAutoStrengthEnum</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1844120903%2FProperties%2F1539438162" anchor-label="wlanFrequency" id="-1844120903%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="wlan-frequency.html"><span>wlan</span><wbr><span><span>Frequency</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1844120903%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="wlan-frequency.html">wlanFrequency</a><span class="token operator">: </span><a href="../-wlan-frequency-enum/index.html">ThetaRepository.WlanFrequencyEnum</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Wireless LAN frequency of the camera</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="2143537297%2FFunctions%2F1539438162" anchor-label="getValue" id="2143537297%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-value.html"><span>get</span><wbr><span><span>Value</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2143537297%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="get-value.html">T</a><span class="token operator">&gt; </span><a href="get-value.html"><span class="token function">getValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="../-option-name-enum/index.html">ThetaRepository.OptionNameEnum</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="get-value.html">T</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Get Option value.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-280867173%2FFunctions%2F1539438162" anchor-label="setValue" id="-280867173%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-value.html"><span>set</span><wbr><span><span>Value</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-280867173%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-value.html"><span class="token function">setValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="../-option-name-enum/index.html">ThetaRepository.OptionNameEnum</a><span class="token punctuation">, </span></span><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set option value.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1751108592%2FFunctions%2F1539438162" anchor-label="toOptions" id="1751108592%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-options.html"><span>to</span><wbr><span><span>Options</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1751108592%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="to-options.html"><span class="token function">toOptions</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../../com.ricoh360.thetaclient.transferred/-options/index.html">Options</a></div><div class="brief "><p class="paragraph">Convert transferred.Options</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2023 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+    </div>
+</div>
+</body>
+</html>
+

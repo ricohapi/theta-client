@@ -1,0 +1,239 @@
+<!doctype html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>AccessPoint</title>
+    <link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../../";</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../styles/jetbrains-mono.css" rel="Stylesheet">
+<link href="../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../styles/logo-styles.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script>
+<link href="../../../../styles/multimodule.css" rel="Stylesheet">
+</head>
+<body>
+<div class="navigation-wrapper" id="navigation-wrapper">
+    <div id="leftToggler"><span class="icon-toggler"></span></div>
+    <div class="library-name">
+            <a href="../../../../index.html">
+                    <span>theta-client</span>
+            </a>
+    </div>
+    <div>
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;theta-client/com.ricoh360.thetaclient/-theta-repository/-access-point/index.html&quot;}"><div class="versions-dropdown">
+  <div class="versions-dropdown-button">1.3.1</div>
+  <div class="versions-dropdown-data"><a href="../../../../../../theta-client/com.ricoh360.thetaclient/-theta-repository/-access-point/index.html">1.4.0</a><a href="index.html">1.3.1</a><a href="../../../../../1.3.0/theta-client/com.ricoh360.thetaclient/-theta-repository/-access-point/index.html">1.3.0</a><a href="../../../../../1.2.0/theta-client/com.ricoh360.thetaclient/-theta-repository/-access-point/index.html">1.2.0</a></div>
+</div>
+</dokka-template-command>    </div>
+    <div class="pull-right d-flex">
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":kotlin-multiplatform:dokkaHtml/commonMain">common</button>
+        </div>
+        <button id="theme-toggle-button"><span id="theme-toggle"></span></button>
+        <div id="searchBar"></div>
+    </div>
+</div>
+<div id="container">
+    <div id="leftColumn">
+        <div id="sideMenu"></div>
+    </div>
+    <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="theta-client::com.ricoh360.thetaclient/ThetaRepository.AccessPoint///PointingToDeclaration//1539438162">
+  <div class="breadcrumbs"><a href="../../../../index.html">theta-client</a><span class="delimiter">/</span><a href="../../index.html">com.ricoh360.thetaclient</a><span class="delimiter">/</span><a href="../index.html">ThetaRepository</a><span class="delimiter">/</span><span class="current">AccessPoint</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Access</span><wbr><span><span>Point</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">AccessPoint</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>ssid<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>ssidStealth<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>authMode<span class="token operator">: </span><a href="../-auth-mode-enum/index.html">ThetaRepository.AuthModeEnum</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>connectionPriority<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">1</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>usingDhcp<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>ipAddress<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>subnetMask<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>defaultGateway<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>proxy<span class="token operator">: </span><a href="../-proxy/index.html">ThetaRepository.Proxy</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><p class="paragraph">Access point information.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="-1487960640%2FConstructors%2F1539438162" anchor-label="AccessPoint" id="-1487960640%2FConstructors%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-access-point.html"><span>Access</span><wbr><span><span>Point</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1487960640%2FConstructors%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">accessPoint<span class="token operator">: </span><a href="../../../com.ricoh360.thetaclient.transferred/-access-point/index.html">AccessPoint</a></span></span><span class="token punctuation">)</span></div><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ssid<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">ssidStealth<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">authMode<span class="token operator">: </span><a href="../-auth-mode-enum/index.html">ThetaRepository.AuthModeEnum</a><span class="token punctuation">, </span></span><span class="parameter ">connectionPriority<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">1</span><span class="token punctuation">, </span></span><span class="parameter ">usingDhcp<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">ipAddress<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">subnetMask<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">defaultGateway<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">proxy<span class="token operator">: </span><a href="../-proxy/index.html">ThetaRepository.Proxy</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="1899257962%2FProperties%2F1539438162" anchor-label="authMode" id="1899257962%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="auth-mode.html"><span>auth</span><wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1899257962%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="auth-mode.html">authMode</a><span class="token operator">: </span><a href="../-auth-mode-enum/index.html">ThetaRepository.AuthModeEnum</a></div><div class="brief "><p class="paragraph">Authentication mode.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-411881709%2FProperties%2F1539438162" anchor-label="connectionPriority" id="-411881709%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="connection-priority.html"><span>connection</span><wbr><span><span>Priority</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-411881709%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="connection-priority.html">connectionPriority</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">1</span></div><div class="brief "><p class="paragraph">Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1507707886%2FProperties%2F1539438162" anchor-label="defaultGateway" id="-1507707886%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="default-gateway.html"><span>default</span><wbr><span><span>Gateway</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1507707886%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="default-gateway.html">defaultGateway</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Default Gateway. This setting can be acquired when “usingDhcp” is false.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1343391528%2FProperties%2F1539438162" anchor-label="ipAddress" id="-1343391528%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="ip-address.html"><span>ip</span><wbr><span><span>Address</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1343391528%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="ip-address.html">ipAddress</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">IP address assigned to camera. This setting can be acquired when “usingDhcp” is false.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1546070441%2FProperties%2F1539438162" anchor-label="proxy" id="-1546070441%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="proxy.html"><span><span>proxy</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1546070441%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="proxy.html">proxy</a><span class="token operator">: </span><a href="../-proxy/index.html">ThetaRepository.Proxy</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Proxy information to be used for the access point.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-654040486%2FProperties%2F1539438162" anchor-label="ssid" id="-654040486%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="ssid.html"><span><span>ssid</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-654040486%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="ssid.html">ssid</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">SSID of the access point.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="672342013%2FProperties%2F1539438162" anchor-label="ssidStealth" id="672342013%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="ssid-stealth.html"><span>ssid</span><wbr><span><span>Stealth</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="672342013%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="ssid-stealth.html">ssidStealth</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">True if SSID stealth is enabled.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1523815508%2FProperties%2F1539438162" anchor-label="subnetMask" id="-1523815508%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="subnet-mask.html"><span>subnet</span><wbr><span><span>Mask</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1523815508%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="subnet-mask.html">subnetMask</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Subnet Mask. This setting can be acquired when “usingDhcp” is false.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-317411312%2FProperties%2F1539438162" anchor-label="usingDhcp" id="-317411312%2FProperties%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="using-dhcp.html"><span>using</span><wbr><span><span>Dhcp</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-317411312%2FProperties%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="using-dhcp.html">usingDhcp</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Using DHCP or not. This can be acquired when SSID is registered as an enable access point.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2023 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+    </div>
+</div>
+</body>
+</html>
+
