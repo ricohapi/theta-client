@@ -18,7 +18,7 @@ dependencies {
     dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.8.20")
 }
 
-val theta_client_version = "1.3.1"
+val theta_client_version = "1.4.0"
 // Init publish property
 initProp()
 
