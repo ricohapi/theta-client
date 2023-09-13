@@ -19,12 +19,12 @@ internal object MockApiClient {
     var useMock = true
     var onPreviewRequest: (
         (
-            endpoint: String,
-            method: String,
-            path: String,
-            body: String,
-            contentType: String
-        ) -> PreviewClient
+        endpoint: String,
+        method: String,
+        path: String,
+        body: String,
+        contentType: String
+    ) -> PreviewClient
     )? = null
     var onPreviewClose: (() -> Unit)? = null
     var onPreviewHasNextPart: (() -> Boolean)? = null

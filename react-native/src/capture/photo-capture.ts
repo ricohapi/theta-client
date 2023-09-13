@@ -66,8 +66,14 @@ export class PhotoCaptureBuilder extends CaptureBuilder<PhotoCaptureBuilder> {
    * @return promise of PhotoCapture instance
    */
   build(): Promise<PhotoCapture> {
-    return ThetaClientReactNative.buildPhotoCapture(this.options).then(
-      () => new PhotoCapture()
-    );
+    return new Promise<PhotoCapture>(async (resolve, reject) => {
+      try {
+        await ThetaClientReactNative.getPhotoCaptureBuilder();
+        await ThetaClientReactNative.buildPhotoCapture(this.options);
+        resolve(new PhotoCapture());
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 }

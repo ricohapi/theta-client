@@ -91,6 +91,7 @@ void main() {
       expect(error.toString().contains('test error'), true);
     }
     expect(previewCount, 0);
-    expect(platform.notifyList.containsKey(10002), false, reason: 'remove notify progress');
+    expect(platform.notifyList.containsKey(10002), false,
+        reason: 'remove notify progress');
   });
 }

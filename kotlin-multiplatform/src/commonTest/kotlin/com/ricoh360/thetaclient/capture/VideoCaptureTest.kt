@@ -37,30 +37,35 @@ class VideoCaptureTest {
             Resource("src/commonTest/resources/VideoCapture/start_capture_done.json").readText(),
             Resource("src/commonTest/resources/VideoCapture/stop_capture_done.json").readText()
         )
-        val requestPathArray = arrayOf(
-            "/osc/commands/execute",
-            "/osc/commands/execute",
-            "/osc/commands/execute"
-        )
         var counter = 0
         MockApiClient.onRequest = { request ->
             val index = counter++
 
+            var response = ""
             // check request
-            assertEquals(request.url.encodedPath, requestPathArray[index], "start capture request")
             when (index) {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.VIDEO)
+                    response = responseArray[0]
                 }
+
                 1 -> {
                     CheckRequest.checkCommandName(request, "camera.startCapture")
+                    response = responseArray[1]
                 }
-                2 -> {
-                    CheckRequest.checkCommandName(request, "camera.stopCapture")
+
+                else -> {
+                    if (CheckRequest.getCommandName(request) == "camera.stopCapture") {
+                        CheckRequest.checkCommandName(request, "camera.stopCapture")
+                        response = responseArray[2]
+                    } else if (request.url.encodedPath == "/osc/state") {
+                        response =
+                            Resource("src/commonTest/resources/VideoCapture/state_shooting.json").readText()
+                    }
                 }
             }
 
-            ByteReadChannel(responseArray[index])
+            ByteReadChannel(response)
         }
         val deferred = CompletableDeferred<Unit>()
 
@@ -74,18 +79,23 @@ class VideoCaptureTest {
 
         var file: String? = null
         val capturing = videoCapture.startCapture(object : VideoCapture.StartCaptureCallback {
-            override fun onSuccess(fileUrl: String) {
-                file = fileUrl
+            override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                assertTrue(false, "error stop capture")
                 deferred.complete(Unit)
             }
 
-            override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
+            override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(false, "error capture video")
+                deferred.complete(Unit)
+            }
+
+            override fun onCaptureCompleted(fileUrl: String?) {
+                file = fileUrl
                 deferred.complete(Unit)
             }
         })
         runBlocking {
-            delay(10)
+            delay(100)
         }
         capturing.stopCapture()
 
@@ -103,6 +113,89 @@ class VideoCaptureTest {
      * call startCapture.
      */
     @Test
+    fun cancelStartCaptureTest() = runTest {
+        // setup
+        val responseArray = arrayOf(
+            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
+            Resource("src/commonTest/resources/VideoCapture/start_capture_done.json").readText(),
+        )
+        var counter = 0
+        var idleCount = 0
+        MockApiClient.onRequest = { request ->
+            val index = counter++
+
+            var response = ""
+            // check request
+            when (index) {
+                0 -> {
+                    CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.VIDEO)
+                    response = responseArray[0]
+                }
+
+                1 -> {
+                    CheckRequest.checkCommandName(request, "camera.startCapture")
+                    response = responseArray[1]
+                }
+
+                else -> {
+                    if (request.url.encodedPath == "/osc/state") {
+                        idleCount += 1
+                        response =
+                            Resource("src/commonTest/resources/VideoCapture/state_idle.json").readText()
+                    } else {
+                        assertTrue(false, "error capture video")
+                    }
+                }
+            }
+
+            ByteReadChannel(response)
+        }
+        val deferred = CompletableDeferred<Unit>()
+
+        // execute
+        val thetaRepository = ThetaRepository(endpoint)
+        val videoCapture = thetaRepository.getVideoCaptureBuilder()
+            .build()
+
+        assertNull(videoCapture.getMaxRecordableTime(), "set option maxRecordableTime")
+        assertNull(videoCapture.getFileFormat(), "set option fileFormat")
+
+        var file: String? = "error"
+        videoCapture.startCapture(object : VideoCapture.StartCaptureCallback {
+            override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                assertTrue(false, "error stop capture")
+                deferred.complete(Unit)
+            }
+
+            override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                assertTrue(false, "error capture video")
+                deferred.complete(Unit)
+            }
+
+            override fun onCaptureCompleted(fileUrl: String?) {
+                file = fileUrl
+                deferred.complete(Unit)
+            }
+        })
+        runBlocking {
+            delay(100)
+        }
+
+        runBlocking {
+            withTimeout(2000) {
+                deferred.await()
+            }
+        }
+
+        // check result
+        assertNull(file, "cancel capture video")
+        assertEquals(idleCount, 2, "cancel capture video")
+    }
+
+    /**
+     * call startCapture.
+     */
+    @Test
     fun startCaptureWithMaxRecordableTimeAndFileFormatTest() = runTest {
         // setup
         val fileFormat = ThetaRepository.VideoFileFormatEnum.VIDEO_5_7K_30F
@@ -111,14 +204,10 @@ class VideoCaptureTest {
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
-            Resource("src/commonTest/resources/VideoCapture/start_capture_done.json").readText(),
-            Resource("src/commonTest/resources/VideoCapture/stop_capture_done.json").readText()
         )
         val requestPathArray = arrayOf(
             "/osc/commands/execute",
             "/osc/commands/execute",
-            "/osc/commands/execute",
-            "/osc/commands/execute"
         )
         var counter = 0
         MockApiClient.onRequest = { request ->
@@ -130,6 +219,7 @@ class VideoCaptureTest {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.VIDEO)
                 }
+
                 1 -> {
                     CheckRequest.checkSetOptions(
                         request = request,
@@ -137,17 +227,10 @@ class VideoCaptureTest {
                         maxRecordableTime = maxRecordableTime.sec
                     )
                 }
-                2 -> {
-                    CheckRequest.checkCommandName(request, "camera.startCapture")
-                }
-                3 -> {
-                    CheckRequest.checkCommandName(request, "camera.stopCapture")
-                }
             }
 
             ByteReadChannel(responseArray[index])
         }
-        val deferred = CompletableDeferred<Unit>()
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
@@ -156,34 +239,12 @@ class VideoCaptureTest {
             .setFileFormat(fileFormat)
             .build()
 
-        assertEquals(videoCapture.getMaxRecordableTime(), maxRecordableTime, "set option maxRecordableTime")
+        assertEquals(
+            videoCapture.getMaxRecordableTime(),
+            maxRecordableTime,
+            "set option maxRecordableTime"
+        )
         assertEquals(videoCapture.getFileFormat(), fileFormat, "set option fileFormat")
-
-        var file: String? = null
-        val capturing = videoCapture.startCapture(object : VideoCapture.StartCaptureCallback {
-            override fun onSuccess(fileUrl: String) {
-                file = fileUrl
-                deferred.complete(Unit)
-            }
-
-            override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue(false, "error capture video")
-                deferred.complete(Unit)
-            }
-        })
-        runBlocking {
-            delay(10)
-        }
-        capturing.stopCapture()
-
-        runBlocking {
-            withTimeout(1000) {
-                deferred.await()
-            }
-        }
-
-        // check result
-        assertTrue(file?.startsWith("http://") ?: false, "start capture video")
     }
 
     /**
@@ -209,6 +270,7 @@ class VideoCaptureTest {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.VIDEO)
                 }
+
                 1 -> {
                     CheckRequest.checkSetOptions(
                         request = request,
@@ -262,6 +324,7 @@ class VideoCaptureTest {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.VIDEO)
                 }
+
                 1 -> {
                     CheckRequest.checkSetOptions(
                         request = request,
@@ -343,7 +406,11 @@ class VideoCaptureTest {
                 .build()
         } catch (e: ThetaRepository.ThetaWebApiException) {
             assertTrue(
-                e.message!!.indexOf("json", 0, true) >= 0 || e.message!!.indexOf("Illegal", 0, true) >= 0,
+                e.message!!.indexOf("json", 0, true) >= 0 || e.message!!.indexOf(
+                    "Illegal",
+                    0,
+                    true
+                ) >= 0,
                 "setOptions option not json error response"
             )
             exceptionNotJson = true
@@ -383,7 +450,10 @@ class VideoCaptureTest {
             thetaRepository.getVideoCaptureBuilder()
                 .build()
         } catch (e: ThetaRepository.ThetaWebApiException) {
-            assertTrue(e.message!!.indexOf("UnitTest", 0, true) >= 0, "status error and json response")
+            assertTrue(
+                e.message!!.indexOf("UnitTest", 0, true) >= 0,
+                "status error and json response"
+            )
             exceptionStatusJson = true
         }
         assertTrue(exceptionStatusJson, "status error and json response")
@@ -436,13 +506,21 @@ class VideoCaptureTest {
         // execute error response
         var deferred = CompletableDeferred<Unit>()
         videoCapture.startCapture(object : VideoCapture.StartCaptureCallback {
-            override fun onSuccess(fileUrl: String) {
+            override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(false, "capture video")
                 deferred.complete(Unit)
             }
 
-            override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue(exception.message!!.indexOf("UnitTest", 0, true) >= 0, "capture video error response")
+            override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                assertTrue(
+                    exception.message!!.indexOf("UnitTest", 0, true) >= 0,
+                    "capture video error response"
+                )
+                deferred.complete(Unit)
+            }
+
+            override fun onCaptureCompleted(fileUrl: String?) {
+                assertTrue(false, "capture video")
                 deferred.complete(Unit)
             }
         })
@@ -456,13 +534,18 @@ class VideoCaptureTest {
         // execute json error response
         deferred = CompletableDeferred()
         videoCapture.startCapture(object : VideoCapture.StartCaptureCallback {
-            override fun onSuccess(fileUrl: String) {
+            override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(false, "capture video")
                 deferred.complete(Unit)
             }
 
-            override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
+            override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(exception.message!!.length >= 0, "capture video json error response")
+                deferred.complete(Unit)
+            }
+
+            override fun onCaptureCompleted(fileUrl: String?) {
+                assertTrue(false, "capture video")
                 deferred.complete(Unit)
             }
         })
@@ -505,13 +588,21 @@ class VideoCaptureTest {
         // execute status error and json response
         var deferred = CompletableDeferred<Unit>()
         videoCapture.startCapture(object : VideoCapture.StartCaptureCallback {
-            override fun onSuccess(fileUrl: String) {
+            override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(false, "capture video")
                 deferred.complete(Unit)
             }
 
-            override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue(exception.message!!.indexOf("UnitTest", 0, true) >= 0, "status error and json response")
+            override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                assertTrue(
+                    exception.message!!.indexOf("UnitTest", 0, true) >= 0,
+                    "status error and json response"
+                )
+                deferred.complete(Unit)
+            }
+
+            override fun onCaptureCompleted(fileUrl: String?) {
+                assertTrue(false, "capture video")
                 deferred.complete(Unit)
             }
         })
@@ -525,13 +616,18 @@ class VideoCaptureTest {
         // execute status error and not json response
         deferred = CompletableDeferred()
         videoCapture.startCapture(object : VideoCapture.StartCaptureCallback {
-            override fun onSuccess(fileUrl: String) {
+            override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(false, "capture video")
                 deferred.complete(Unit)
             }
 
-            override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
+            override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(exception.message!!.indexOf("503", 0, true) >= 0, "status error")
+                deferred.complete(Unit)
+            }
+
+            override fun onCaptureCompleted(fileUrl: String?) {
+                assertTrue(false, "capture video")
                 deferred.complete(Unit)
             }
         })
@@ -545,13 +641,18 @@ class VideoCaptureTest {
         // execute timeout exception
         deferred = CompletableDeferred()
         videoCapture.startCapture(object : VideoCapture.StartCaptureCallback {
-            override fun onSuccess(fileUrl: String) {
+            override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(false, "capture video")
                 deferred.complete(Unit)
             }
 
-            override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
+            override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(exception.message!!.indexOf("time", 0, true) >= 0, "timeout exception")
+                deferred.complete(Unit)
+            }
+
+            override fun onCaptureCompleted(fileUrl: String?) {
+                assertTrue(false, "capture video")
                 deferred.complete(Unit)
             }
         })
@@ -584,13 +685,21 @@ class VideoCaptureTest {
         var videoCapturing = VideoCapturing(
             endpoint,
             object : VideoCapture.StartCaptureCallback {
-                override fun onSuccess(fileUrl: String) {
+                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    assertTrue(
+                        exception.message!!.indexOf("UnitTest", 0, true) >= 0,
+                        "stop capture error response"
+                    )
+                    deferred.complete(Unit)
+                }
+
+                override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
                     assertTrue(false, "stop capture")
                     deferred.complete(Unit)
                 }
 
-                override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
-                    assertTrue(exception.message!!.indexOf("UnitTest", 0, true) >= 0, "stop capture error response")
+                override fun onCaptureCompleted(fileUrl: String?) {
+                    assertTrue(false, "stop capture")
                     deferred.complete(Unit)
                 }
             }
@@ -608,13 +717,18 @@ class VideoCaptureTest {
         videoCapturing = VideoCapturing(
             endpoint,
             object : VideoCapture.StartCaptureCallback {
-                override fun onSuccess(fileUrl: String) {
+                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    assertTrue(exception.message!!.length >= 0, "stop capture json error response")
+                    deferred.complete(Unit)
+                }
+
+                override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
                     assertTrue(false, "stop capture")
                     deferred.complete(Unit)
                 }
 
-                override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
-                    assertTrue(exception.message!!.length >= 0, "stop capture json error response")
+                override fun onCaptureCompleted(fileUrl: String?) {
+                    assertTrue(false, "stop capture")
                     deferred.complete(Unit)
                 }
             }
@@ -655,13 +769,21 @@ class VideoCaptureTest {
         var videoCapturing = VideoCapturing(
             endpoint,
             object : VideoCapture.StartCaptureCallback {
-                override fun onSuccess(fileUrl: String) {
+                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    assertTrue(
+                        exception.message!!.indexOf("UnitTest", 0, true) >= 0,
+                        "status error and json response"
+                    )
+                    deferred.complete(Unit)
+                }
+
+                override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
                     assertTrue(false, "stop capture")
                     deferred.complete(Unit)
                 }
 
-                override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
-                    assertTrue(exception.message!!.indexOf("UnitTest", 0, true) >= 0, "status error and json response")
+                override fun onCaptureCompleted(fileUrl: String?) {
+                    assertTrue(false, "stop capture")
                     deferred.complete(Unit)
                 }
             }
@@ -679,13 +801,18 @@ class VideoCaptureTest {
         videoCapturing = VideoCapturing(
             endpoint,
             object : VideoCapture.StartCaptureCallback {
-                override fun onSuccess(fileUrl: String) {
+                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    assertTrue(exception.message!!.indexOf("503", 0, true) >= 0, "status error")
+                    deferred.complete(Unit)
+                }
+
+                override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
                     assertTrue(false, "stop capture")
                     deferred.complete(Unit)
                 }
 
-                override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
-                    assertTrue(exception.message!!.indexOf("503", 0, true) >= 0, "status error")
+                override fun onCaptureCompleted(fileUrl: String?) {
+                    assertTrue(false, "stop capture")
                     deferred.complete(Unit)
                 }
             }
@@ -703,13 +830,21 @@ class VideoCaptureTest {
         videoCapturing = VideoCapturing(
             endpoint,
             object : VideoCapture.StartCaptureCallback {
-                override fun onSuccess(fileUrl: String) {
+                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    assertTrue(
+                        exception.message!!.indexOf("time", 0, true) >= 0,
+                        "timeout exception"
+                    )
+                    deferred.complete(Unit)
+                }
+
+                override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
                     assertTrue(false, "stop capture")
                     deferred.complete(Unit)
                 }
 
-                override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
-                    assertTrue(exception.message!!.indexOf("time", 0, true) >= 0, "timeout exception")
+                override fun onCaptureCompleted(fileUrl: String?) {
+                    assertTrue(false, "stop capture")
                     deferred.complete(Unit)
                 }
             }

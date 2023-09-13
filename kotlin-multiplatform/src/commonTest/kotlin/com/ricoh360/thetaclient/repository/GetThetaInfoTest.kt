@@ -54,8 +54,12 @@ class GetThetaInfoTest {
         assertTrue(!thetaInfo.hasGps, "info hasGps")
         assertTrue(thetaInfo.hasGyro, "info hasGyro")
         assertTrue(thetaInfo.uptime > 0, "info uptime")
-        assertTrue(thetaInfo.api == listOf("/osc/info", "/osc/state", "/osc/checkForUpdates",
-            "/osc/commands/execute", "/osc/commands/status"), "info api")
+        assertTrue(
+            thetaInfo.api == listOf(
+                "/osc/info", "/osc/state", "/osc/checkForUpdates",
+                "/osc/commands/execute", "/osc/commands/status"
+            ), "info api"
+        )
         assertTrue(thetaInfo.endpoints == EndPoint(80, 80), "info endpoints")
         assertTrue(thetaInfo.apiLevel == listOf(2), "info apiLevel")
     }
@@ -88,8 +92,12 @@ class GetThetaInfoTest {
         assertTrue(!thetaInfo.hasGps, "info hasGps")
         assertTrue(!thetaInfo.hasGyro, "info hasGyro")
         assertTrue(thetaInfo.uptime > 0, "info uptime")
-        assertTrue(thetaInfo.api == listOf("/osc/info", "/osc/state", "/osc/checkForUpdates",
-            "/osc/commands/execute", "/osc/commands/status"), "info api")
+        assertTrue(
+            thetaInfo.api == listOf(
+                "/osc/info", "/osc/state", "/osc/checkForUpdates",
+                "/osc/commands/execute", "/osc/commands/status"
+            ), "info api"
+        )
         assertTrue(thetaInfo.endpoints == EndPoint(80, 80), "info endpoints")
         assertTrue(thetaInfo.apiLevel == listOf(1, 2), "info apiLevel")
     }
@@ -122,8 +130,12 @@ class GetThetaInfoTest {
         assertTrue(thetaInfo.hasGps, "info hasGps")
         assertTrue(thetaInfo.hasGyro, "info hasGyro")
         assertTrue(thetaInfo.uptime > 0, "info uptime")
-        assertTrue(thetaInfo.api == listOf("/osc/info", "/osc/state", "/osc/checkForUpdates",
-            "/osc/commands/execute", "/osc/commands/status"), "info api")
+        assertTrue(
+            thetaInfo.api == listOf(
+                "/osc/info", "/osc/state", "/osc/checkForUpdates",
+                "/osc/commands/execute", "/osc/commands/status"
+            ), "info api"
+        )
         assertTrue(thetaInfo.endpoints == EndPoint(80, 80), "info endpoints")
         assertTrue(thetaInfo.apiLevel == listOf(2), "info apiLevel")
     }
@@ -154,13 +166,17 @@ class GetThetaInfoTest {
         assertTrue(thetaInfo.firmwareVersion.length > 1, "info firmwareVersion")
         val result = Regex("^\\d+").find(thetaInfo.firmwareVersion)
         assertNotNull(result)
-        result.value.toIntOrNull()?.let { assertTrue(it <= 5)} ?: assertTrue(false, "firmware version")
+        result.value.toIntOrNull()?.let { assertTrue(it <= 5) } ?: assertTrue(false, "firmware version")
         assertTrue(thetaInfo.supportUrl == "https://theta360.com/en/support/", "info supportUrl")
         assertTrue(!thetaInfo.hasGps, "info hasGps")
         assertTrue(thetaInfo.hasGyro, "info hasGyro")
         assertTrue(thetaInfo.uptime > 0, "info uptime")
-        assertTrue(thetaInfo.api == listOf("/osc/info", "/osc/state", "/osc/checkForUpdates",
-            "/osc/commands/execute", "/osc/commands/status"), "info api")
+        assertTrue(
+            thetaInfo.api == listOf(
+                "/osc/info", "/osc/state", "/osc/checkForUpdates",
+                "/osc/commands/execute", "/osc/commands/status"
+            ), "info api"
+        )
         assertTrue(thetaInfo.endpoints == EndPoint(80, 80), "info endpoints")
         assertTrue(thetaInfo.apiLevel == listOf(2), "info apiLevel")
     }
@@ -191,13 +207,17 @@ class GetThetaInfoTest {
         assertTrue(thetaInfo.firmwareVersion.length > 1, "info firmwareVersion")
         val result = Regex("^\\d+").find(thetaInfo.firmwareVersion)
         assertNotNull(result)
-        result.value.toIntOrNull()?.let { assertTrue(it >= 6)} ?: assertTrue(false, "firmware version")
+        result.value.toIntOrNull()?.let { assertTrue(it >= 6) } ?: assertTrue(false, "firmware version")
         assertTrue(thetaInfo.supportUrl == "https://theta360.com/en/support/", "info supportUrl")
         assertTrue(!thetaInfo.hasGps, "info hasGps")
         assertTrue(thetaInfo.hasGyro, "info hasGyro")
         assertTrue(thetaInfo.uptime > 0, "info uptime")
-        assertTrue(thetaInfo.api == listOf("/osc/info", "/osc/state", "/osc/checkForUpdates",
-            "/osc/commands/execute", "/osc/commands/status"), "info api")
+        assertTrue(
+            thetaInfo.api == listOf(
+                "/osc/info", "/osc/state", "/osc/checkForUpdates",
+                "/osc/commands/execute", "/osc/commands/status"
+            ), "info api"
+        )
         assertTrue(thetaInfo.endpoints == EndPoint(80, 80), "info endpoints")
         assertTrue(thetaInfo.apiLevel == listOf(2), "info apiLevel")
     }
@@ -220,7 +240,7 @@ class GetThetaInfoTest {
         } catch (e: ThetaRepository.ThetaWebApiException) {
             assertTrue(
                 e.message!!.indexOf("json", 0, true) >= 0 ||
-                    e.message!!.indexOf("Illegal", 0, true) >= 0,
+                        e.message!!.indexOf("Illegal", 0, true) >= 0,
                 "error response"
             )
         }

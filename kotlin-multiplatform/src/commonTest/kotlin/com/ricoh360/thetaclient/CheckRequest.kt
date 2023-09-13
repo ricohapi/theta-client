@@ -33,6 +33,28 @@ internal class CheckRequest {
             assertEquals(requestData.name, command, "command name")
         }
 
+        fun getCommandName(request: HttpRequestData): String? {
+            if (request.url.encodedPath != "/osc/commands/execute") {
+                return null
+            }
+
+            val body = request.body as TextContent
+            val js = Json {
+                encodeDefaults = true // Encode properties with default value.
+                explicitNulls = false // Don't encode properties with null value.
+                ignoreUnknownKeys = true // Ignore unknown keys on decode.
+            }
+
+            @Serializable
+            data class CommandApiRequestAny(
+                override val name: String,
+                override val parameters: JsonObject
+            ) : CommandApiRequest
+
+            val requestData = js.decodeFromString<CommandApiRequestAny>(body.text)
+            return requestData.name
+        }
+
         fun checkSetOptions(
             request: HttpRequestData,
             aiAutoThumbnail: AiAutoThumbnail? = null,

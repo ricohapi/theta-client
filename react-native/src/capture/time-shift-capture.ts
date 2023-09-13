@@ -134,9 +134,19 @@ export class TimeShiftCaptureBuilder extends CaptureBuilder<TimeShiftCaptureBuil
    * @return promise of TimeShiftCapture instance
    */
   build(): Promise<TimeShiftCapture> {
-    return ThetaClientReactNative.buildTimeShiftCapture(
-      this.options,
-      this.interval ?? -1
-    ).then(() => new TimeShiftCapture(NotifyController.instance));
+    let params = {
+      ...this.options,
+      // Cannot pass negative values in IOS, use objects
+      _capture_interval: this.interval ?? -1,
+    };
+    return new Promise<TimeShiftCapture>(async (resolve, reject) => {
+      try {
+        await ThetaClientReactNative.getTimeShiftCaptureBuilder();
+        await ThetaClientReactNative.buildTimeShiftCapture(params);
+        resolve(new TimeShiftCapture(NotifyController.instance));
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 }

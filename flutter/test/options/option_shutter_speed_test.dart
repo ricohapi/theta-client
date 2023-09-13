@@ -57,22 +57,70 @@ void main() {
       [ShutterSpeedEnum.shutterSpeedOneOver_500, 'SHUTTER_SPEED_ONE_OVER_500'],
       [ShutterSpeedEnum.shutterSpeedOneOver_640, 'SHUTTER_SPEED_ONE_OVER_640'],
       [ShutterSpeedEnum.shutterSpeedOneOver_800, 'SHUTTER_SPEED_ONE_OVER_800'],
-      [ShutterSpeedEnum.shutterSpeedOneOver_1000, 'SHUTTER_SPEED_ONE_OVER_1000'],
-      [ShutterSpeedEnum.shutterSpeedOneOver_1250, 'SHUTTER_SPEED_ONE_OVER_1250'],
-      [ShutterSpeedEnum.shutterSpeedOneOver_1600, 'SHUTTER_SPEED_ONE_OVER_1600'],
-      [ShutterSpeedEnum.shutterSpeedOneOver_2000, 'SHUTTER_SPEED_ONE_OVER_2000'],
-      [ShutterSpeedEnum.shutterSpeedOneOver_2500, 'SHUTTER_SPEED_ONE_OVER_2500'],
-      [ShutterSpeedEnum.shutterSpeedOneOver_3200, 'SHUTTER_SPEED_ONE_OVER_3200'],
-      [ShutterSpeedEnum.shutterSpeedOneOver_4000, 'SHUTTER_SPEED_ONE_OVER_4000'],
-      [ShutterSpeedEnum.shutterSpeedOneOver_5000, 'SHUTTER_SPEED_ONE_OVER_5000'],
-      [ShutterSpeedEnum.shutterSpeedOneOver_6400, 'SHUTTER_SPEED_ONE_OVER_6400'],
-      [ShutterSpeedEnum.shutterSpeedOneOver_8000, 'SHUTTER_SPEED_ONE_OVER_8000'],
-      [ShutterSpeedEnum.shutterSpeedOneOver_10000, 'SHUTTER_SPEED_ONE_OVER_10000'],
-      [ShutterSpeedEnum.shutterSpeedOneOver_12500, 'SHUTTER_SPEED_ONE_OVER_12500'],
-      [ShutterSpeedEnum.shutterSpeedOneOver_12800, 'SHUTTER_SPEED_ONE_OVER_12800'],
-      [ShutterSpeedEnum.shutterSpeedOneOver_16000, 'SHUTTER_SPEED_ONE_OVER_16000'],
-      [ShutterSpeedEnum.shutterSpeedOneOver_20000, 'SHUTTER_SPEED_ONE_OVER_20000'],
-      [ShutterSpeedEnum.shutterSpeedOneOver_25000, 'SHUTTER_SPEED_ONE_OVER_25000'],
+      [
+        ShutterSpeedEnum.shutterSpeedOneOver_1000,
+        'SHUTTER_SPEED_ONE_OVER_1000'
+      ],
+      [
+        ShutterSpeedEnum.shutterSpeedOneOver_1250,
+        'SHUTTER_SPEED_ONE_OVER_1250'
+      ],
+      [
+        ShutterSpeedEnum.shutterSpeedOneOver_1600,
+        'SHUTTER_SPEED_ONE_OVER_1600'
+      ],
+      [
+        ShutterSpeedEnum.shutterSpeedOneOver_2000,
+        'SHUTTER_SPEED_ONE_OVER_2000'
+      ],
+      [
+        ShutterSpeedEnum.shutterSpeedOneOver_2500,
+        'SHUTTER_SPEED_ONE_OVER_2500'
+      ],
+      [
+        ShutterSpeedEnum.shutterSpeedOneOver_3200,
+        'SHUTTER_SPEED_ONE_OVER_3200'
+      ],
+      [
+        ShutterSpeedEnum.shutterSpeedOneOver_4000,
+        'SHUTTER_SPEED_ONE_OVER_4000'
+      ],
+      [
+        ShutterSpeedEnum.shutterSpeedOneOver_5000,
+        'SHUTTER_SPEED_ONE_OVER_5000'
+      ],
+      [
+        ShutterSpeedEnum.shutterSpeedOneOver_6400,
+        'SHUTTER_SPEED_ONE_OVER_6400'
+      ],
+      [
+        ShutterSpeedEnum.shutterSpeedOneOver_8000,
+        'SHUTTER_SPEED_ONE_OVER_8000'
+      ],
+      [
+        ShutterSpeedEnum.shutterSpeedOneOver_10000,
+        'SHUTTER_SPEED_ONE_OVER_10000'
+      ],
+      [
+        ShutterSpeedEnum.shutterSpeedOneOver_12500,
+        'SHUTTER_SPEED_ONE_OVER_12500'
+      ],
+      [
+        ShutterSpeedEnum.shutterSpeedOneOver_12800,
+        'SHUTTER_SPEED_ONE_OVER_12800'
+      ],
+      [
+        ShutterSpeedEnum.shutterSpeedOneOver_16000,
+        'SHUTTER_SPEED_ONE_OVER_16000'
+      ],
+      [
+        ShutterSpeedEnum.shutterSpeedOneOver_20000,
+        'SHUTTER_SPEED_ONE_OVER_20000'
+      ],
+      [
+        ShutterSpeedEnum.shutterSpeedOneOver_25000,
+        'SHUTTER_SPEED_ONE_OVER_25000'
+      ],
     ];
     expect(data.length, ShutterSpeedEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {

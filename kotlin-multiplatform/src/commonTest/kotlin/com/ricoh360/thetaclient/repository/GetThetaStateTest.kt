@@ -54,7 +54,7 @@ class GetThetaStateTest {
         assertTrue(thetaState.latestFileUrl.startsWith("http://"), "state latestFileUrl")
         assertEquals(thetaState.chargingState, ThetaRepository.ChargingStateEnum.NOT_CHARGING, "state chargingState")
         assertEquals(thetaState.apiVersion, 2, "state apiVersion")
-        assertTrue(!thetaState.isPluginRunning!!,"state isPluginRunning")
+        assertTrue(!thetaState.isPluginRunning!!, "state isPluginRunning")
         assertTrue(thetaState.isPluginWebServer!!, "state isPluginWebServer")
         assertEquals(thetaState.function, ThetaRepository.ShootingFunctionEnum.SELF_TIMER, "state function")
         assertTrue(!thetaState.isMySettingChanged!!, "state isMySettingChanged")
@@ -363,7 +363,7 @@ class GetThetaStateTest {
         } catch (e: ThetaRepository.ThetaWebApiException) {
             assertTrue(
                 e.message!!.indexOf("json", 0, true) >= 0 ||
-                    e.message!!.indexOf("Illegal", 0, true) >= 0,
+                        e.message!!.indexOf("Illegal", 0, true) >= 0,
                 "error response"
             )
         }

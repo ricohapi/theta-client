@@ -52,8 +52,8 @@ describe('time shift capture', () => {
 
     let isCallBuild = false;
     jest.mocked(thetaClient.buildTimeShiftCapture).mockImplementation(
-      jest.fn(async (options, interval) => {
-        expect(interval).toBe(1);
+      jest.fn(async (options) => {
+        expect(options._capture_interval).toBe(1);
         expect(options.timeShift?.isFrontFirst).toBeTruthy();
         expect(options.timeShift?.firstInterval).toBe(
           TimeShiftIntervalEnum.INTERVAL_1
@@ -83,8 +83,8 @@ describe('time shift capture', () => {
     expect(builder.interval).toBeUndefined();
 
     jest.mocked(thetaClient.buildTimeShiftCapture).mockImplementation(
-      jest.fn(async (options, interval) => {
-        expect(interval).toBe(-1);
+      jest.fn(async (options) => {
+        expect(options._capture_interval).toBe(-1);
         expect(options.timeShift).toBeUndefined();
       })
     );

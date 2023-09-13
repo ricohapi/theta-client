@@ -101,5 +101,7 @@ class OffDelayTest {
             val options = orgOptions.toOptions()
             assertEquals(options.offDelay, it.second, "offDelay ${it.second}")
         }
+
+        assertEquals(ThetaRepository.OffDelayEnum.get(0), ThetaRepository.OffDelayEnum.DISABLE, "DISABLE")
     }
 }

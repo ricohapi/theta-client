@@ -6,17 +6,21 @@ import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.AuthenticationMode
 import com.ricoh360.thetaclient.transferred.IpAddressAllocation
 import com.ricoh360.thetaclient.transferred.SetAccessPointRequest
-import io.ktor.client.network.sockets.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.http.content.*
-import io.ktor.utils.io.*
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.client.request.HttpRequestData
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.TextContent
+import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalSerializationApi::class, ExperimentalCoroutinesApi::class)
 class SetAccessPointTest {

@@ -10,6 +10,10 @@ export const NativeModules = {
     buildTimeShiftCapture: jest.fn(),
     startTimeShiftCapture: jest.fn(),
     cancelTimeShiftCapture: jest.fn(),
+    getVideoCaptureBuilder: jest.fn(),
+    buildVideoCapture: jest.fn(),
+    startVideoCapture: jest.fn(),
+    stopVideoCapture: jest.fn(),
   },
 };
 

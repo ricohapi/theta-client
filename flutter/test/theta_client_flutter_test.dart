@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:theta_client_flutter/theta_client_flutter.dart';
-import 'package:theta_client_flutter/theta_client_flutter_platform_interface.dart';
-import 'package:theta_client_flutter/theta_client_flutter_method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:theta_client_flutter/theta_client_flutter.dart';
+import 'package:theta_client_flutter/theta_client_flutter_method_channel.dart';
+import 'package:theta_client_flutter/theta_client_flutter_platform_interface.dart';
 
 class MockThetaClientFlutterPlatform
     with MockPlatformInterfaceMixin
@@ -33,7 +33,8 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
-  Future<void> initialize(String endpoint, ThetaConfig? config, ThetaTimeout? timeout) {
+  Future<void> initialize(
+      String endpoint, ThetaConfig? config, ThetaTimeout? timeout) {
     return onCallInitialize();
   }
 
@@ -43,8 +44,8 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
-  Future<ThetaFiles> listFiles(
-      FileTypeEnum fileType, int entryCount, int startPosition, StorageEnum? storage) {
+  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount,
+      int startPosition, StorageEnum? storage) {
     return onCallListFiles();
   }
 
@@ -95,8 +96,9 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
-  Future<String?> startVideoCapture() {
-    return onCallStartVideoCapture();
+  Future<String?> startVideoCapture(
+      void Function(Exception exception)? onStopFailed) {
+    return onCallStartVideoCapture(onStopFailed);
   }
 
   @override
@@ -176,8 +178,13 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
-  Future<void> setAccessPointDynamically(String ssid, bool ssidStealth, AuthModeEnum authMode,
-      String password, int connectionPriority, Proxy? proxy) {
+  Future<void> setAccessPointDynamically(
+      String ssid,
+      bool ssidStealth,
+      AuthModeEnum authMode,
+      String password,
+      int connectionPriority,
+      Proxy? proxy) {
     return Future.value();
   }
 
@@ -269,15 +276,20 @@ Future<ThetaState> Function() onGetThetaState = Future.value;
 Future<void> Function() onCallGetLivePreview = Future.value;
 Future<ThetaFiles> Function() onCallListFiles = Future.value;
 Future<void> Function() onCallGetPhotoCaptureBuilder = Future.value;
-Future<void> Function(Map<String, dynamic> options) onCallBuildPhotoCapture = Future.value;
+Future<void> Function(Map<String, dynamic> options) onCallBuildPhotoCapture =
+    Future.value;
 Future<String?> Function() onCallTakePicture = Future.value;
 Future<void> Function() onCallGetTimeShiftCaptureBuilder = Future.value;
-Future<void> Function(Map<String, dynamic> options, int interval) onCallBuildTimeShiftCapture = (options, interval) => Future.value();
-Future<String?> Function(void Function(double)? onProgress) onCallStartTimeShiftCapture = (onProgress) => Future.value();
+Future<void> Function(Map<String, dynamic> options, int interval)
+    onCallBuildTimeShiftCapture = (options, interval) => Future.value();
+Future<String?> Function(void Function(double)? onProgress)
+    onCallStartTimeShiftCapture = (onProgress) => Future.value();
 Future<void> Function() onCallStopTimeShiftCapture = Future.value;
 Future<void> Function() onCallGetVideoCaptureBuilder = Future.value;
-Future<void> Function(Map<String, dynamic> options) onCallBuildVideoCapture = Future.value;
-Future<String?> Function() onCallStartVideoCapture = Future.value;
+Future<void> Function(Map<String, dynamic> options) onCallBuildVideoCapture =
+    Future.value;
+Future<String?> Function(void Function(Exception exception)? onStopFailed)
+    onCallStartVideoCapture = (onStopFailed) => Future.value();
 Future<void> Function() onCallStopVideoCapture = Future.value;
 Future<Options> Function(List<OptionNameEnum> optionNames) onCallGetOptions =
     (optionNames) => Future.value(Options());
@@ -288,7 +300,8 @@ Future<String> Function(String str) onCallGetString = Future.value;
 Future<List<String>> Function() onCallGetStringList = Future.value;
 
 void main() {
-  final ThetaClientFlutterPlatform initialPlatform = ThetaClientFlutterPlatform.instance;
+  final ThetaClientFlutterPlatform initialPlatform =
+      ThetaClientFlutterPlatform.instance;
 
   test('$MethodChannelThetaClientFlutter is the default instance', () {
     expect(initialPlatform, isInstanceOf<MethodChannelThetaClientFlutter>());
@@ -296,7 +309,8 @@ void main() {
 
   test('getPlatformVersion', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     expect(await thetaClientPlugin.getPlatformVersion(), '42');
@@ -304,7 +318,8 @@ void main() {
 
   test('initialize', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     onCallInitialize = Future.value;
@@ -315,7 +330,8 @@ void main() {
 
   test('isInitialized', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     onCallIsInitialized = () {
@@ -326,7 +342,8 @@ void main() {
 
   test('getThetaModel', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     const thetaModel = ThetaModel.thetaZ1;
@@ -340,7 +357,8 @@ void main() {
 
   test('getThetaInfo', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     const model = 'RICOH THETA Z1';
@@ -349,8 +367,21 @@ void main() {
     const apiLevel = [2];
     var endpoints = Endpoints(80, 80);
     onGetThetaInfo = () {
-      return Future.value(ThetaInfo('RICOH', model, 'serialNo', 'wlanMac', 'blMac', 'firmVersion',
-          'supportUrl', true, true, 1, api, endpoints, apiLevel, thetaModel));
+      return Future.value(ThetaInfo(
+          'RICOH',
+          model,
+          'serialNo',
+          'wlanMac',
+          'blMac',
+          'firmVersion',
+          'supportUrl',
+          true,
+          true,
+          1,
+          api,
+          endpoints,
+          apiLevel,
+          thetaModel));
     };
 
     var thetaInfo = await thetaClientPlugin.getThetaInfo();
@@ -360,7 +391,8 @@ void main() {
 
   test('getThetaState', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     const fingerprint = 'fingerprint_1';
@@ -381,7 +413,10 @@ void main() {
     const isMySettingChanged = true;
     const currentMicrophone = MicrophoneOptionEnum.auto;
     const isSdCard = true;
-    const cameraError = [CameraErrorEnum.batteryChargeFail, CameraErrorEnum.batteryHighTemperature];
+    const cameraError = [
+      CameraErrorEnum.batteryChargeFail,
+      CameraErrorEnum.batteryHighTemperature
+    ];
     const isBatteryInsert = false;
     onGetThetaState = () {
       return Future.value(ThetaState(
@@ -417,7 +452,8 @@ void main() {
     expect(thetaState.recordedTime, recordedTime);
     expect(thetaState.recordableTime, recordableTime);
     expect(thetaState.capturedPictures, capturedPictures);
-    expect(thetaState.compositeShootingElapsedTime, compositeShootingElapsedTime);
+    expect(
+        thetaState.compositeShootingElapsedTime, compositeShootingElapsedTime);
     expect(thetaState.latestFileUrl, latestFileUrl);
     expect(thetaState.chargingState, chargingState);
     expect(thetaState.apiVersion, apiVersion);
@@ -433,7 +469,8 @@ void main() {
 
   test('getOptions', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     onCallGetOptions = (optionNames) {
@@ -451,7 +488,8 @@ void main() {
 
   test('setOptions', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     onCallSetOptions = Future.value;
@@ -465,7 +503,8 @@ void main() {
 
   test('restoreSettings', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     onCallRestoreSettings = Future.value;
@@ -476,7 +515,8 @@ void main() {
 
   test('getMySetting', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     onCallGetOptions = (optionNames) {
@@ -489,7 +529,8 @@ void main() {
 
   test('getMySettingFromOldModel', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     onCallGetOptions = (optionNames) {
@@ -507,7 +548,8 @@ void main() {
 
   test('setMySetting', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     onCallSetOptions = Future.value;
@@ -521,7 +563,8 @@ void main() {
 
   test('deleteMySetting', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     thetaClientPlugin.deleteMySetting(CaptureModeEnum.image);
@@ -530,7 +573,8 @@ void main() {
 
   test('listPlugins', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     var infoList = List<PluginInfo>.empty(growable: true);
@@ -557,7 +601,8 @@ void main() {
 
   test('setPlugin', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     thetaClientPlugin.setPlugin('com.theta360.usbstorage');
@@ -566,7 +611,8 @@ void main() {
 
   test('startPlugin', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     thetaClientPlugin.startPlugin('com.theta360.usbstorage');
@@ -575,7 +621,8 @@ void main() {
 
   test('stopPlugin', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     thetaClientPlugin.stopPlugin();
@@ -584,7 +631,8 @@ void main() {
 
   test('getPluginLicense', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     var license = """
@@ -610,7 +658,8 @@ void main() {
 
   test('getPluginOrders', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     var strList = List<String>.empty(growable: true);
@@ -626,7 +675,8 @@ void main() {
 
   test('setPluginOrders', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     thetaClientPlugin.setPluginOrders(['com.theta360.usbstorage']);
@@ -635,7 +685,8 @@ void main() {
 
   test('setBluetoothDevice', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     var name = '10107709';

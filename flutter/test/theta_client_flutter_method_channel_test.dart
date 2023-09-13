@@ -122,10 +122,14 @@ void main() {
     const isMySettingChanged = true;
     const currentMicrophone = MicrophoneOptionEnum.auto;
     const isSdCard = true;
-    const cameraError = [CameraErrorEnum.batteryChargeFail, CameraErrorEnum.batteryHighTemperature];
+    const cameraError = [
+      CameraErrorEnum.batteryChargeFail,
+      CameraErrorEnum.batteryHighTemperature
+    ];
     const isBatteryInsert = false;
 
-    List<String> convertCameraErrorParam(List<CameraErrorEnum> cameraErrorList) {
+    List<String> convertCameraErrorParam(
+        List<CameraErrorEnum> cameraErrorList) {
       var stringList = List<String>.empty(growable: true);
       for (CameraErrorEnum element in cameraErrorList) {
         stringList.add(element.rawValue);
@@ -169,7 +173,8 @@ void main() {
     expect(thetaState.recordedTime, recordedTime);
     expect(thetaState.recordableTime, recordableTime);
     expect(thetaState.capturedPictures, capturedPictures);
-    expect(thetaState.compositeShootingElapsedTime, compositeShootingElapsedTime);
+    expect(
+        thetaState.compositeShootingElapsedTime, compositeShootingElapsedTime);
     expect(thetaState.latestFileUrl, latestFileUrl);
     expect(thetaState.chargingState, chargingState);
     expect(thetaState.apiVersion, apiVersion);
@@ -234,7 +239,11 @@ void main() {
   });
 
   test('listFiles', () async {
-    const fileTypes = [FileTypeEnum.all, FileTypeEnum.image, FileTypeEnum.video];
+    const fileTypes = [
+      FileTypeEnum.all,
+      FileTypeEnum.image,
+      FileTypeEnum.video
+    ];
     const entryCount = 10;
     const startPosition = 0;
     const name = 'R0013336.JPG';
@@ -275,8 +284,8 @@ void main() {
 
     for (int i = 0; i < fileTypes.length; i++) {
       index = i;
-      var thetaFiles =
-          await platform.listFiles(fileTypes[i], entryCount, startPosition, StorageEnum.current);
+      var thetaFiles = await platform.listFiles(
+          fileTypes[i], entryCount, startPosition, StorageEnum.current);
       expect(thetaFiles.fileList.length, 2);
       var fileInfo = thetaFiles.fileList[0];
       expect(fileInfo.name, name);
@@ -293,7 +302,11 @@ void main() {
   });
 
   test('listFiles StorageEnum', () async {
-    const storages = [StorageEnum.internal, StorageEnum.sd, StorageEnum.current];
+    const storages = [
+      StorageEnum.internal,
+      StorageEnum.sd,
+      StorageEnum.current
+    ];
     const entryCount = 10;
     const startPosition = 0;
     const name = 'R0013336.JPG';
@@ -335,8 +348,8 @@ void main() {
 
     for (int i = 0; i < storages.length; i++) {
       index = i;
-      var thetaFiles =
-          await platform.listFiles(FileTypeEnum.image, entryCount, startPosition, storages[index]);
+      var thetaFiles = await platform.listFiles(
+          FileTypeEnum.image, entryCount, startPosition, storages[index]);
       expect(thetaFiles.fileList.length, 2);
       var fileInfo = thetaFiles.fileList[0];
       expect(fileInfo.name, name);
@@ -370,10 +383,25 @@ void main() {
       'secondInterval': TimeShiftIntervalEnum.interval_10.toString()
     };
     List<List<dynamic>> data = [
-      [OptionNameEnum.aiAutoThumbnail, 'AiAutoThumbnail', AiAutoThumbnailEnum.off, 'OFF'],
-      [OptionNameEnum.aperture, 'Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
+      [
+        OptionNameEnum.aiAutoThumbnail,
+        'AiAutoThumbnail',
+        AiAutoThumbnailEnum.off,
+        'OFF'
+      ],
+      [
+        OptionNameEnum.aperture,
+        'Aperture',
+        ApertureEnum.aperture_2_0,
+        'APERTURE_2_0'
+      ],
       [OptionNameEnum.bitrate, 'Bitrate', Bitrate.fine, 'FINE'],
-      [OptionNameEnum.bluetoothPower, 'BluetoothPower', BluetoothPowerEnum.off, 'OFF'],
+      [
+        OptionNameEnum.bluetoothPower,
+        'BluetoothPower',
+        BluetoothPowerEnum.off,
+        'OFF'
+      ],
       [OptionNameEnum.burstMode, 'BurstMode', BurstModeEnum.on, 'ON'],
       [
         OptionNameEnum.cameraControlSource,
@@ -381,14 +409,34 @@ void main() {
         CameraControlSourceEnum.camera,
         'CAMERA'
       ],
-      [OptionNameEnum.cameraMode, 'CameraMode', CameraModeEnum.capture, 'CAPTURE'],
-      [OptionNameEnum.captureMode, 'CaptureMode', CaptureModeEnum.image, 'IMAGE'],
+      [
+        OptionNameEnum.cameraMode,
+        'CameraMode',
+        CameraModeEnum.capture,
+        'CAPTURE'
+      ],
+      [
+        OptionNameEnum.captureMode,
+        'CaptureMode',
+        CaptureModeEnum.image,
+        'IMAGE'
+      ],
       [OptionNameEnum.captureInterval, 'CaptureInterval', 6, 6],
       [OptionNameEnum.captureNumber, 'CaptureNumber', 0, 0],
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 2, 2],
-      [OptionNameEnum.compositeShootingOutputInterval, 'CompositeShootingOutputInterval', 60, 60],
+      [
+        OptionNameEnum.compositeShootingOutputInterval,
+        'CompositeShootingOutputInterval',
+        60,
+        60
+      ],
       [OptionNameEnum.compositeShootingTime, 'CompositeShootingTime', 600, 600],
-      [OptionNameEnum.continuousNumber, 'ContinuousNumber', ContinuousNumberEnum.max11, 'MAX_11'],
+      [
+        OptionNameEnum.continuousNumber,
+        'ContinuousNumber',
+        ContinuousNumberEnum.max11,
+        'MAX_11'
+      ],
       [
         OptionNameEnum.dateTimeZone,
         'DateTimeZone',
@@ -401,7 +449,12 @@ void main() {
         ExposureCompensationEnum.m0_3,
         'M0_3'
       ],
-      [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delay1, 'DELAY_1'],
+      [
+        OptionNameEnum.exposureDelay,
+        'ExposureDelay',
+        ExposureDelayEnum.delay1,
+        'DELAY_1'
+      ],
       [
         OptionNameEnum.exposureProgram,
         'ExposureProgram',
@@ -409,9 +462,19 @@ void main() {
         'APERTURE_PRIORITY'
       ],
       [OptionNameEnum.faceDetect, 'FaceDetect', FaceDetectEnum.off, 'OFF'],
-      [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_2K, 'IMAGE_2K'],
+      [
+        OptionNameEnum.fileFormat,
+        'FileFormat',
+        FileFormatEnum.image_2K,
+        'IMAGE_2K'
+      ],
       [OptionNameEnum.filter, 'Filter', FilterEnum.hdr, 'HDR'],
-      [OptionNameEnum.function, 'Function', ShootingFunctionEnum.normal, 'NORMAL'],
+      [
+        OptionNameEnum.function,
+        'Function',
+        ShootingFunctionEnum.normal,
+        'NORMAL'
+      ],
       [OptionNameEnum.gain, 'Gain', GainEnum.normal, 'NORMAL'],
       [
         OptionNameEnum.gpsInfo,
@@ -419,10 +482,20 @@ void main() {
         GpsInfo(1.0, 2.0, 3.0, '2022:01:01 00:01:00+09:00'),
         gpsInfoMap
       ],
-      [OptionNameEnum.imageStitching, 'ImageStitching', ImageStitchingEnum.auto, 'AUTO'],
+      [
+        OptionNameEnum.imageStitching,
+        'ImageStitching',
+        ImageStitchingEnum.auto,
+        'AUTO'
+      ],
       [OptionNameEnum.isGpsOn, 'IsGpsOn', true, true],
       [OptionNameEnum.iso, 'Iso', IsoEnum.iso50, 'ISO_50'],
-      [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso200, 'ISO_200'],
+      [
+        OptionNameEnum.isoAutoHighLimit,
+        'IsoAutoHighLimit',
+        IsoAutoHighLimitEnum.iso200,
+        'ISO_200'
+      ],
       [OptionNameEnum.language, 'Language', LanguageEnum.de, 'DE'],
       [
         OptionNameEnum.maxRecordableTime,
@@ -430,8 +503,18 @@ void main() {
         MaxRecordableTimeEnum.time_1500,
         'RECORDABLE_TIME_1500'
       ],
-      [OptionNameEnum.networkType, 'NetworkType', NetworkTypeEnum.client, 'CLIENT'],
-      [OptionNameEnum.offDelay, 'OffDelay', OffDelayEnum.offDelay_10m, 'OFF_DELAY_10M'],
+      [
+        OptionNameEnum.networkType,
+        'NetworkType',
+        NetworkTypeEnum.client,
+        'CLIENT'
+      ],
+      [
+        OptionNameEnum.offDelay,
+        'OffDelay',
+        OffDelayEnum.offDelay_10m,
+        'OFF_DELAY_10M'
+      ],
       [OptionNameEnum.password, 'Password', 'password', 'password'],
       [OptionNameEnum.powerSaving, 'PowerSaving', PowerSavingEnum.on, 'ON'],
       [OptionNameEnum.preset, 'Preset', PresetEnum.room, 'ROOM'],
@@ -445,7 +528,12 @@ void main() {
       [OptionNameEnum.remainingPictures, 'RemainingPictures', 3, 3],
       [OptionNameEnum.remainingVideoSeconds, 'RemainingVideoSeconds', 4, 4],
       [OptionNameEnum.remainingSpace, 'RemainingSpace', 5, 5],
-      [OptionNameEnum.shootingMethod, 'ShootingMethod', ShootingMethodEnum.normal, 'NORMAL'],
+      [
+        OptionNameEnum.shootingMethod,
+        'ShootingMethod',
+        ShootingMethodEnum.normal,
+        'NORMAL'
+      ],
       [
         OptionNameEnum.shutterSpeed,
         'ShutterSpeed',
@@ -453,7 +541,12 @@ void main() {
         'SHUTTER_SPEED_ONE_OVER_10'
       ],
       [OptionNameEnum.shutterVolume, 'ShutterVolume', 7, 7],
-      [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
+      [
+        OptionNameEnum.sleepDelay,
+        'SleepDelay',
+        SleepDelayEnum.sleepDelay_10m,
+        'SLEEP_DELAY_10M'
+      ],
       [
         OptionNameEnum.timeShift,
         'TimeShift',
@@ -477,7 +570,12 @@ void main() {
         WhiteBalanceAutoStrengthEnum.off,
         'OFF'
       ],
-      [OptionNameEnum.wlanFrequency, 'WlanFrequency', WlanFrequencyEnum.ghz_2_4, 'GHZ_2_4'],
+      [
+        OptionNameEnum.wlanFrequency,
+        'WlanFrequency',
+        WlanFrequencyEnum.ghz_2_4,
+        'GHZ_2_4'
+      ],
     ];
 
     Map<String, dynamic> optionMap = {};
@@ -527,17 +625,47 @@ void main() {
       'secondInterval': TimeShiftIntervalEnum.interval_10.toString()
     };
     List<List<dynamic>> data = [
-      [OptionNameEnum.aiAutoThumbnail, 'AiAutoThumbnail', AiAutoThumbnailEnum.on, 'ON'],
-      [OptionNameEnum.aperture, 'Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
+      [
+        OptionNameEnum.aiAutoThumbnail,
+        'AiAutoThumbnail',
+        AiAutoThumbnailEnum.on,
+        'ON'
+      ],
+      [
+        OptionNameEnum.aperture,
+        'Aperture',
+        ApertureEnum.aperture_2_0,
+        'APERTURE_2_0'
+      ],
       [OptionNameEnum.bitrate, 'Bitrate', Bitrate.fine, 'FINE'],
-      [OptionNameEnum.bluetoothPower, 'BluetoothPower', BluetoothPowerEnum.on, 'ON'],
+      [
+        OptionNameEnum.bluetoothPower,
+        'BluetoothPower',
+        BluetoothPowerEnum.on,
+        'ON'
+      ],
       [OptionNameEnum.burstMode, 'BurstMode', BurstModeEnum.on, 'ON'],
-      [OptionNameEnum.cameraMode, 'CameraMode', CameraModeEnum.capture, 'CAPTURE'],
-      [OptionNameEnum.captureMode, 'CaptureMode', CaptureModeEnum.image, 'IMAGE'],
+      [
+        OptionNameEnum.cameraMode,
+        'CameraMode',
+        CameraModeEnum.capture,
+        'CAPTURE'
+      ],
+      [
+        OptionNameEnum.captureMode,
+        'CaptureMode',
+        CaptureModeEnum.image,
+        'IMAGE'
+      ],
       [OptionNameEnum.captureInterval, 'CaptureInterval', 4, 4],
       [OptionNameEnum.captureNumber, 'CaptureNumber', 2, 2],
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 2, 2],
-      [OptionNameEnum.compositeShootingOutputInterval, 'CompositeShootingOutputInterval', 60, 60],
+      [
+        OptionNameEnum.compositeShootingOutputInterval,
+        'CompositeShootingOutputInterval',
+        60,
+        60
+      ],
       [OptionNameEnum.compositeShootingTime, 'CompositeShootingTime', 600, 600],
       [
         OptionNameEnum.dateTimeZone,
@@ -551,7 +679,12 @@ void main() {
         ExposureCompensationEnum.m0_3,
         'M0_3'
       ],
-      [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delay1, 'DELAY_1'],
+      [
+        OptionNameEnum.exposureDelay,
+        'ExposureDelay',
+        ExposureDelayEnum.delay1,
+        'DELAY_1'
+      ],
       [
         OptionNameEnum.exposureProgram,
         'ExposureProgram',
@@ -559,9 +692,19 @@ void main() {
         'APERTURE_PRIORITY'
       ],
       [OptionNameEnum.faceDetect, 'FaceDetect', FaceDetectEnum.on, 'ON'],
-      [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_2K, 'IMAGE_2K'],
+      [
+        OptionNameEnum.fileFormat,
+        'FileFormat',
+        FileFormatEnum.image_2K,
+        'IMAGE_2K'
+      ],
       [OptionNameEnum.filter, 'Filter', FilterEnum.hdr, 'HDR'],
-      [OptionNameEnum.function, 'Function', ShootingFunctionEnum.selfTimer, 'SELF_TIMER'],
+      [
+        OptionNameEnum.function,
+        'Function',
+        ShootingFunctionEnum.selfTimer,
+        'SELF_TIMER'
+      ],
       [OptionNameEnum.gain, 'Gain', GainEnum.megaVolume, 'MEGA_VOLUME'],
       [
         OptionNameEnum.gpsInfo,
@@ -569,10 +712,20 @@ void main() {
         GpsInfo(1.0, 2.0, 3.0, '2022:01:01 00:01:00+09:00'),
         gpsInfoMap
       ],
-      [OptionNameEnum.imageStitching, 'ImageStitching', ImageStitchingEnum.auto, 'AUTO'],
+      [
+        OptionNameEnum.imageStitching,
+        'ImageStitching',
+        ImageStitchingEnum.auto,
+        'AUTO'
+      ],
       [OptionNameEnum.isGpsOn, 'IsGpsOn', true, true],
       [OptionNameEnum.iso, 'Iso', IsoEnum.iso50, 'ISO_50'],
-      [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso200, 'ISO_200'],
+      [
+        OptionNameEnum.isoAutoHighLimit,
+        'IsoAutoHighLimit',
+        IsoAutoHighLimitEnum.iso200,
+        'ISO_200'
+      ],
       [OptionNameEnum.language, 'Language', LanguageEnum.de, 'DE'],
       [
         OptionNameEnum.maxRecordableTime,
@@ -580,8 +733,18 @@ void main() {
         MaxRecordableTimeEnum.time_1500,
         'RECORDABLE_TIME_1500'
       ],
-      [OptionNameEnum.networkType, 'NetworkType', NetworkTypeEnum.client, 'CLIENT'],
-      [OptionNameEnum.offDelay, 'OffDelay', OffDelayEnum.offDelay_15m, 'OFF_DELAY_15M'],
+      [
+        OptionNameEnum.networkType,
+        'NetworkType',
+        NetworkTypeEnum.client,
+        'CLIENT'
+      ],
+      [
+        OptionNameEnum.offDelay,
+        'OffDelay',
+        OffDelayEnum.offDelay_15m,
+        'OFF_DELAY_15M'
+      ],
       [OptionNameEnum.password, 'Password', 'password', 'password'],
       [OptionNameEnum.powerSaving, 'PowerSaving', PowerSavingEnum.on, 'ON'],
       [OptionNameEnum.preset, 'Preset', PresetEnum.room, 'ROOM'],
@@ -595,7 +758,12 @@ void main() {
       [OptionNameEnum.remainingPictures, 'RemainingPictures', 3, 3],
       [OptionNameEnum.remainingVideoSeconds, 'RemainingVideoSeconds', 4, 4],
       [OptionNameEnum.remainingSpace, 'RemainingSpace', 5, 5],
-      [OptionNameEnum.shootingMethod, 'ShootingMethod', ShootingMethodEnum.normal, 'NORMAL'],
+      [
+        OptionNameEnum.shootingMethod,
+        'ShootingMethod',
+        ShootingMethodEnum.normal,
+        'NORMAL'
+      ],
       [
         OptionNameEnum.shutterSpeed,
         'ShutterSpeed',
@@ -603,7 +771,12 @@ void main() {
         'SHUTTER_SPEED_ONE_OVER_20'
       ],
       [OptionNameEnum.shutterVolume, 'ShutterVolume', 7, 7],
-      [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
+      [
+        OptionNameEnum.sleepDelay,
+        'SleepDelay',
+        SleepDelayEnum.sleepDelay_10m,
+        'SLEEP_DELAY_10M'
+      ],
       [
         OptionNameEnum.timeShift,
         'TimeShift',
@@ -627,7 +800,12 @@ void main() {
         WhiteBalanceAutoStrengthEnum.on,
         'ON'
       ],
-      [OptionNameEnum.wlanFrequency, 'WlanFrequency', WlanFrequencyEnum.ghz_2_4, 'GHZ_2_4'],
+      [
+        OptionNameEnum.wlanFrequency,
+        'WlanFrequency',
+        WlanFrequencyEnum.ghz_2_4,
+        'GHZ_2_4'
+      ],
     ];
 
     Map<String, dynamic> optionMap = {};
@@ -885,7 +1063,9 @@ void main() {
       expect(arguments['applyTopBottomCorrection'], applyTopBottomCorrection);
       return Future.value(result);
     });
-    expect(await platform.convertVideoFormats(fileUrl, toLowResolution, applyTopBottomCorrection),
+    expect(
+        await platform.convertVideoFormats(
+            fileUrl, toLowResolution, applyTopBottomCorrection),
         result);
   });
 
@@ -946,16 +1126,21 @@ void main() {
     for (int i = 0; i < resultList.length; i++) {
       expect(resultList[i].ssid, data[i]['ssid']);
       expect(resultList[i].ssidStealth, data[i]['ssidStealth']);
-      expect(resultList[i].authMode, AuthModeEnum.getValue(data[i]['authMode'] as String));
+      expect(resultList[i].authMode,
+          AuthModeEnum.getValue(data[i]['authMode'] as String));
       expect(resultList[i].connectionPriority, data[i]['connectionPriority']);
       expect(resultList[i].usingDhcp, data[i]['usingDhcp']);
       expect(resultList[i].ipAddress, data[i]['ipAddress']);
       expect(resultList[i].subnetMask, data[i]['subnetMask']);
       expect(resultList[i].defaultGateway, data[i]['defaultGateway']);
-      expect(resultList[i].proxy?.use, (data[i]['proxy'] as Map<String, dynamic>)['use']);
-      expect(resultList[i].proxy?.url, (data[i]['proxy'] as Map<String, dynamic>)['url']);
-      expect(resultList[i].proxy?.port, (data[i]['proxy'] as Map<String, dynamic>)['port']);
-      expect(resultList[i].proxy?.userid, (data[i]['proxy'] as Map<String, dynamic>)['userid']);
+      expect(resultList[i].proxy?.use,
+          (data[i]['proxy'] as Map<String, dynamic>)['use']);
+      expect(resultList[i].proxy?.url,
+          (data[i]['proxy'] as Map<String, dynamic>)['url']);
+      expect(resultList[i].proxy?.port,
+          (data[i]['proxy'] as Map<String, dynamic>)['port']);
+      expect(resultList[i].proxy?.userid,
+          (data[i]['proxy'] as Map<String, dynamic>)['userid']);
     }
   });
 
@@ -1017,8 +1202,16 @@ void main() {
       expect(arguments['proxy']['password'], proxy.password);
       return Future.value();
     });
-    await platform.setAccessPointStatically(ssid, ssidStealth, authMode, password,
-        connectionPriority, ipAddress, subnetMask, defaultGateway, proxy);
+    await platform.setAccessPointStatically(
+        ssid,
+        ssidStealth,
+        authMode,
+        password,
+        connectionPriority,
+        ipAddress,
+        subnetMask,
+        defaultGateway,
+        proxy);
   });
 
   test('deleteAccessPoint', () async {
@@ -1033,7 +1226,12 @@ void main() {
 
   test('getMySetting', () async {
     List<List<dynamic>> data = [
-      [OptionNameEnum.aperture, 'Aperture', ApertureEnum.apertureAuto, 'APERTURE_AUTO'],
+      [
+        OptionNameEnum.aperture,
+        'Aperture',
+        ApertureEnum.apertureAuto,
+        'APERTURE_AUTO'
+      ],
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 5000, 5000],
       [
         OptionNameEnum.exposureCompensation,
@@ -1041,14 +1239,24 @@ void main() {
         ExposureCompensationEnum.zero,
         'ZERO'
       ],
-      [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delayOff, 'DELAY_OFF'],
+      [
+        OptionNameEnum.exposureDelay,
+        'ExposureDelay',
+        ExposureDelayEnum.delayOff,
+        'DELAY_OFF'
+      ],
       [
         OptionNameEnum.exposureProgram,
         'ExposureProgram',
         ExposureProgramEnum.normalProgram,
         'NORMAL_PROGRAM'
       ],
-      [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_6_7K, 'IMAGE_6_7K'],
+      [
+        OptionNameEnum.fileFormat,
+        'FileFormat',
+        FileFormatEnum.image_6_7K,
+        'IMAGE_6_7K'
+      ],
       [OptionNameEnum.filter, 'Filter', FilterEnum.off, 'OFF'],
       [OptionNameEnum.iso, 'Iso', IsoEnum.isoAuto, 'ISO_AUTO'],
       [
@@ -1057,7 +1265,12 @@ void main() {
         IsoAutoHighLimitEnum.iso6400,
         'ISO_6400'
       ],
-      [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.auto, 'AUTO'],
+      [
+        OptionNameEnum.whiteBalance,
+        'WhiteBalance',
+        WhiteBalanceEnum.auto,
+        'AUTO'
+      ],
       [
         OptionNameEnum.whiteBalanceAutoStrength,
         'WhiteBalanceAutoStrength',
@@ -1091,7 +1304,12 @@ void main() {
 
   test('getMySettingFromOldModel', () async {
     List<List<dynamic>> data = [
-      [OptionNameEnum.aperture, 'Aperture', ApertureEnum.apertureAuto, 'APERTURE_AUTO'],
+      [
+        OptionNameEnum.aperture,
+        'Aperture',
+        ApertureEnum.apertureAuto,
+        'APERTURE_AUTO'
+      ],
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 5000, 5000],
       [
         OptionNameEnum.exposureCompensation,
@@ -1099,14 +1317,24 @@ void main() {
         ExposureCompensationEnum.zero,
         'ZERO'
       ],
-      [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delayOff, 'DELAY_OFF'],
+      [
+        OptionNameEnum.exposureDelay,
+        'ExposureDelay',
+        ExposureDelayEnum.delayOff,
+        'DELAY_OFF'
+      ],
       [
         OptionNameEnum.exposureProgram,
         'ExposureProgram',
         ExposureProgramEnum.normalProgram,
         'NORMAL_PROGRAM'
       ],
-      [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_6_7K, 'IMAGE_6_7K'],
+      [
+        OptionNameEnum.fileFormat,
+        'FileFormat',
+        FileFormatEnum.image_6_7K,
+        'IMAGE_6_7K'
+      ],
       [OptionNameEnum.filter, 'Filter', FilterEnum.off, 'OFF'],
       [OptionNameEnum.iso, 'Iso', IsoEnum.isoAuto, 'ISO_AUTO'],
       [
@@ -1115,7 +1343,12 @@ void main() {
         IsoAutoHighLimitEnum.iso6400,
         'ISO_6400'
       ],
-      [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.auto, 'AUTO'],
+      [
+        OptionNameEnum.whiteBalance,
+        'WhiteBalance',
+        WhiteBalanceEnum.auto,
+        'AUTO'
+      ],
       [
         OptionNameEnum.whiteBalanceAutoStrength,
         'WhiteBalanceAutoStrength',
@@ -1151,7 +1384,12 @@ void main() {
 
   test('setMySetting', () async {
     List<List<dynamic>> data = [
-      [OptionNameEnum.aperture, 'Aperture', ApertureEnum.apertureAuto, 'APERTURE_AUTO'],
+      [
+        OptionNameEnum.aperture,
+        'Aperture',
+        ApertureEnum.apertureAuto,
+        'APERTURE_AUTO'
+      ],
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 100, 100],
       [
         OptionNameEnum.exposureCompensation,
@@ -1159,14 +1397,24 @@ void main() {
         ExposureCompensationEnum.p0_3,
         'P0_3'
       ],
-      [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delay2, 'DELAY_2'],
+      [
+        OptionNameEnum.exposureDelay,
+        'ExposureDelay',
+        ExposureDelayEnum.delay2,
+        'DELAY_2'
+      ],
       [
         OptionNameEnum.exposureProgram,
         'ExposureProgram',
         ExposureProgramEnum.shutterPriority,
         'SHUTTER_PRIORITY'
       ],
-      [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_2K, 'IMAGE_2K'],
+      [
+        OptionNameEnum.fileFormat,
+        'FileFormat',
+        FileFormatEnum.image_2K,
+        'IMAGE_2K'
+      ],
       [OptionNameEnum.filter, 'Filter', FilterEnum.hdr, 'HDR'],
       [OptionNameEnum.iso, 'Iso', IsoEnum.iso100, 'ISO_100'],
       [
@@ -1175,7 +1423,12 @@ void main() {
         IsoAutoHighLimitEnum.iso1250,
         'ISO_1250'
       ],
-      [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.auto, 'AUTO'],
+      [
+        OptionNameEnum.whiteBalance,
+        'WhiteBalance',
+        WhiteBalanceEnum.auto,
+        'AUTO'
+      ],
       [
         OptionNameEnum.whiteBalanceAutoStrength,
         'WhiteBalanceAutoStrength',
@@ -1214,7 +1467,8 @@ void main() {
   test('deleteMySetting', () async {
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       expect(methodCall.method, 'deleteMySetting');
-      expect(methodCall.arguments['captureMode'], CaptureModeEnum.image.rawValue);
+      expect(
+          methodCall.arguments['captureMode'], CaptureModeEnum.image.rawValue);
       return Future.value();
     });
     await platform.deleteMySetting(CaptureModeEnum.image);

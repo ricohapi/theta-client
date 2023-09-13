@@ -13,6 +13,7 @@ import com.ricoh360.thetaclient.capture.VideoCapture
 const val KEY_NOTIFY_NAME = "name"
 const val KEY_NOTIFY_PARAMS = "params"
 const val KEY_NOTIFY_PARAM_COMPLETION = "completion"
+const val KEY_NOTIFY_PARAM_MESSAGE = "message"
 
 fun toNotify(
   name: String,
@@ -29,6 +30,12 @@ fun toNotify(
 fun toCaptureProgressNotifyParam(value: Float): WritableMap {
   val result = Arguments.createMap()
   result.putDouble(KEY_NOTIFY_PARAM_COMPLETION, value.toDouble())
+  return result
+}
+
+fun toMessageNotifyParam(value: String): WritableMap {
+  val result = Arguments.createMap()
+  result.putString(KEY_NOTIFY_PARAM_MESSAGE, value)
   return result
 }
 
@@ -537,12 +544,12 @@ class ImageStitchingConverter : OptionConverter {
     }
   }
 
-   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
     options.imageStitching?.let {
       objects.putString("imageStitching", it.toString())
     }
   }
- }
+}
 
 /**
  * IsoConverter

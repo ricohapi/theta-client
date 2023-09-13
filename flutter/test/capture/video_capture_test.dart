@@ -113,20 +113,22 @@ void main() {
 
     onCallGetVideoCaptureBuilder = Future.value;
     onCallBuildVideoCapture = Future.value;
-    onCallStartVideoCapture = () {
+    onCallStartVideoCapture = (onStopFailed) {
       return Future.value(imageUrl);
     };
 
     var builder = thetaClientPlugin.getVideoCaptureBuilder();
     var capture = await builder.build();
     String? fileUrl;
+
     capture.startCapture((value) {
       expect(value, imageUrl);
       fileUrl = value;
     }, (exception) {
       expect(false, isTrue, reason: 'Error. startCapture');
-    });
-    await Future.delayed(const Duration(milliseconds: 10), () {});
+    }, onStopFailed: (exception) {});
+
+    await Future.delayed(const Duration(milliseconds: 100), () {});
     expect(fileUrl, imageUrl);
     expect(capture.getAperture(), isNull);
   });
@@ -140,7 +142,7 @@ void main() {
     onCallGetVideoCaptureBuilder = Future.value;
     onCallBuildVideoCapture = Future.value;
     var completer = Completer<String>();
-    onCallStartVideoCapture = () {
+    onCallStartVideoCapture = (onStopFailed) {
       return completer.future;
     };
     onCallStopVideoCapture = () {
@@ -154,7 +156,7 @@ void main() {
       expect(false, isTrue, reason: 'startCapture');
     }, (exception) {
       expect(exception, isNotNull, reason: 'Error. startCapture');
-    });
+    }, onStopFailed: (exception) {});
     capturing.stopCapture();
     await Future.delayed(const Duration(milliseconds: 10), () {});
     expect(capture.getAperture(), isNull);
@@ -171,7 +173,7 @@ void main() {
     onCallGetVideoCaptureBuilder = Future.value;
     onCallBuildVideoCapture = Future.value;
     var completer = Completer<String>();
-    onCallStartVideoCapture = () {
+    onCallStartVideoCapture = (onStopFailed) {
       return completer.future;
     };
     onCallStopVideoCapture = () {
@@ -187,7 +189,7 @@ void main() {
       fileUrl = value;
     }, (exception) {
       expect(false, isTrue, reason: 'Error. startCapture');
-    });
+    }, onStopFailed: (exception) {});
     capturing.stopCapture();
     await Future.delayed(const Duration(milliseconds: 10), () {});
     expect(fileUrl, imageUrl);

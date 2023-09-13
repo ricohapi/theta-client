@@ -57,6 +57,7 @@ class PhotoCaptureTest {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
                 }
+
                 1 -> {
                     CheckRequest.checkCommandName(request, "camera.takePicture")
                 }
@@ -127,6 +128,7 @@ class PhotoCaptureTest {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
                 }
+
                 1 -> {
                     CheckRequest.checkSetOptions(
                         request = request,
@@ -134,6 +136,7 @@ class PhotoCaptureTest {
                         fileFormat = fileFormat.fileFormat.toMediaFileFormat()
                     )
                 }
+
                 2 -> {
                     CheckRequest.checkCommandName(request, "camera.takePicture")
                 }
@@ -199,6 +202,7 @@ class PhotoCaptureTest {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
                 }
+
                 1 -> {
                     CheckRequest.checkSetOptions(
                         request = request,
@@ -253,6 +257,7 @@ class PhotoCaptureTest {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
                 }
+
                 1 -> {
                     CheckRequest.checkSetOptions(
                         request = request,
@@ -307,6 +312,7 @@ class PhotoCaptureTest {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
                 }
+
                 1 -> {
                     CheckRequest.checkSetOptions(
                         request = request,
@@ -361,6 +367,7 @@ class PhotoCaptureTest {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
                 }
+
                 1 -> {
                     CheckRequest.checkSetOptions(
                         request = request,
@@ -415,6 +422,7 @@ class PhotoCaptureTest {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
                 }
+
                 1 -> {
                     CheckRequest.checkSetOptions(
                         request = request,
@@ -469,6 +477,7 @@ class PhotoCaptureTest {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
                 }
+
                 1 -> {
                     CheckRequest.checkSetOptions(
                         request = request,
@@ -523,6 +532,7 @@ class PhotoCaptureTest {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
                 }
+
                 1 -> {
                     CheckRequest.checkSetOptions(
                         request = request,
@@ -581,6 +591,7 @@ class PhotoCaptureTest {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
                 }
+
                 1 -> {
                     CheckRequest.checkSetOptions(
                         request = request,
@@ -635,6 +646,7 @@ class PhotoCaptureTest {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
                 }
+
                 1 -> {
                     CheckRequest.checkSetOptions(
                         request = request,
@@ -689,6 +701,7 @@ class PhotoCaptureTest {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
                 }
+
                 1 -> {
                     CheckRequest.checkSetOptions(
                         request = request,
@@ -743,6 +756,7 @@ class PhotoCaptureTest {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
                 }
+
                 1 -> {
                     CheckRequest.checkSetOptions(
                         request = request,
@@ -797,6 +811,7 @@ class PhotoCaptureTest {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
                 }
+
                 1 -> {
                     CheckRequest.checkSetOptions(
                         request = request,

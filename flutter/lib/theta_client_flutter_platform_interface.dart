@@ -10,7 +10,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static ThetaClientFlutterPlatform _instance = MethodChannelThetaClientFlutter();
+  static ThetaClientFlutterPlatform _instance =
+      MethodChannelThetaClientFlutter();
 
   /// The default instance of [ThetaClientFlutterPlatform] to use.
   ///
@@ -29,7 +30,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
 
-  Future<void> initialize(String endpoint, ThetaConfig? config, ThetaTimeout? timeout) {
+  Future<void> initialize(
+      String endpoint, ThetaConfig? config, ThetaTimeout? timeout) {
     throw UnimplementedError('initialize() has not been implemented.');
   }
 
@@ -57,8 +59,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('getLivePreview() has not been implemented.');
   }
 
-  Future<ThetaFiles> listFiles(
-      FileTypeEnum fileType, int entryCount, int startPosition, StorageEnum? storage) {
+  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount,
+      int startPosition, StorageEnum? storage) {
     throw UnimplementedError('listFiles() has not been implemented.');
   }
 
@@ -82,7 +84,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
   }
 
   Future<void> getPhotoCaptureBuilder() {
-    throw UnimplementedError('getPhotoCaptureBuilder() has not been implemented.');
+    throw UnimplementedError(
+        'getPhotoCaptureBuilder() has not been implemented.');
   }
 
   Future<void> buildPhotoCapture(Map<String, dynamic> options) {
@@ -94,30 +97,37 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
   }
 
   Future<void> getTimeShiftCaptureBuilder() {
-    throw UnimplementedError('getTimeShiftCaptureBuilder() has not been implemented.');
+    throw UnimplementedError(
+        'getTimeShiftCaptureBuilder() has not been implemented.');
   }
 
-  Future<void> buildTimeShiftCapture(Map<String, dynamic> options, int interval) {
-    throw UnimplementedError('buildTimeShiftCapture() has not been implemented.');
+  Future<void> buildTimeShiftCapture(
+      Map<String, dynamic> options, int interval) {
+    throw UnimplementedError(
+        'buildTimeShiftCapture() has not been implemented.');
   }
 
   Future<String?> startTimeShiftCapture(void Function(double)? onProgress) {
-    throw UnimplementedError('startTimeShiftCapture() has not been implemented.');
+    throw UnimplementedError(
+        'startTimeShiftCapture() has not been implemented.');
   }
 
   Future<void> stopTimeShiftCapture() {
-    throw UnimplementedError('stopTimeShiftCapture() has not been implemented.');
+    throw UnimplementedError(
+        'stopTimeShiftCapture() has not been implemented.');
   }
 
   Future<void> getVideoCaptureBuilder() {
-    throw UnimplementedError('getVideoCaptureBuilder() has not been implemented.');
+    throw UnimplementedError(
+        'getVideoCaptureBuilder() has not been implemented.');
   }
 
   Future<void> buildVideoCapture(Map<String, dynamic> options) {
     throw UnimplementedError('buildVideoCapture() has not been implemented.');
   }
 
-  Future<String?> startVideoCapture() {
+  Future<String?> startVideoCapture(
+      void Function(Exception exception)? onStopFailed) {
     throw UnimplementedError('startVideoCapture() has not been implemented.');
   }
 
@@ -162,9 +172,15 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('listAccessPoints() has not been implemented.');
   }
 
-  Future<void> setAccessPointDynamically(String ssid, bool ssidStealth, AuthModeEnum authMode,
-      String password, int connectionPriority, Proxy? proxy) {
-    throw UnimplementedError('setAccessPointDynamically() has not been implemented.');
+  Future<void> setAccessPointDynamically(
+      String ssid,
+      bool ssidStealth,
+      AuthModeEnum authMode,
+      String password,
+      int connectionPriority,
+      Proxy? proxy) {
+    throw UnimplementedError(
+        'setAccessPointDynamically() has not been implemented.');
   }
 
   Future<void> setAccessPointStatically(
@@ -177,7 +193,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
       String subnetMask,
       String defaultGateway,
       Proxy? proxy) {
-    throw UnimplementedError('setAccessPointStatically() has not been implemented.');
+    throw UnimplementedError(
+        'setAccessPointStatically() has not been implemented.');
   }
 
   Future<void> deleteAccessPoint(String ssid) {

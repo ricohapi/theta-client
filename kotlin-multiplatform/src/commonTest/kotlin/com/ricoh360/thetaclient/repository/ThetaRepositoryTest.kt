@@ -105,9 +105,11 @@ class ThetaRepositoryTest {
                 2 -> {
                     CheckRequest.checkCommandName(request, "camera.startSession")
                 }
+
                 3 -> {
                     CheckRequest.checkSetOptions(request, clientVersion = 2)
                 }
+
                 4 -> {
                     CheckRequest.checkGetOptions(
                         request,
@@ -161,9 +163,11 @@ class ThetaRepositoryTest {
                 2 -> {
                     CheckRequest.checkCommandName(request, "camera.startSession")
                 }
+
                 3 -> {
                     CheckRequest.checkSetOptions(request, clientVersion = 2)
                 }
+
                 4 -> {
                     CheckRequest.checkGetOptions(
                         request,
@@ -265,6 +269,7 @@ class ThetaRepositoryTest {
                         dateTimeZone = config.dateTime,
                     )
                 }
+
                 3 -> {
                     CheckRequest.checkSetOptions(
                         request = request,
@@ -326,6 +331,7 @@ class ThetaRepositoryTest {
                         dateTimeZone = config.dateTime,
                     )
                 }
+
                 6 -> {
                     CheckRequest.checkSetOptions(
                         request = request,
@@ -387,6 +393,7 @@ class ThetaRepositoryTest {
                         dateTimeZone = config.dateTime,
                     )
                 }
+
                 6 -> {
                     CheckRequest.checkSetOptions(
                         request = request,
@@ -539,6 +546,7 @@ class ThetaRepositoryTest {
                 2 -> {
                     CheckRequest.checkCommandName(request, "camera.startSession")
                 }
+
                 3 -> {
                     CheckRequest.checkCommandName(request, "camera.setOptions")
                 }
@@ -649,7 +657,7 @@ class ThetaRepositoryTest {
         } catch (e: ThetaRepository.ThetaWebApiException) {
             assertTrue(
                 e.message!!.indexOf("json", 0, true) >= 0 ||
-                    e.message!!.indexOf("Illegal", 0, true) >= 0,
+                        e.message!!.indexOf("Illegal", 0, true) >= 0,
                 "error response"
             )
         }
@@ -688,7 +696,7 @@ class ThetaRepositoryTest {
             arrayOf("RICOH THETA X", null, ThetaRepository.ThetaModel.THETA_X),
             arrayOf("RICOH THETA X", "2222222", ThetaRepository.ThetaModel.THETA_X),
             arrayOf("RICOH THETA Z1", null, ThetaRepository.ThetaModel.THETA_Z1),
-            arrayOf("RICOH THETA Z1","4444444", ThetaRepository.ThetaModel.THETA_Z1),
+            arrayOf("RICOH THETA Z1", "4444444", ThetaRepository.ThetaModel.THETA_Z1),
             arrayOf("RICOH THETA V", null, ThetaRepository.ThetaModel.THETA_V),
             arrayOf("RICOH THETA S", null, ThetaRepository.ThetaModel.THETA_S),
             arrayOf("RICOH THETA SC", null, ThetaRepository.ThetaModel.THETA_SC),

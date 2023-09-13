@@ -4,7 +4,6 @@
 package com.ricoh360.thetaclient.transferred
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonElement
 
 @Serializable
 internal data class SetBluetoothDeviceRequest(

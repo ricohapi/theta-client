@@ -40,6 +40,7 @@ describe('listFiles', () => {
 
   afterEach(() => {
     thetaClient.initialize = jest.fn();
+    thetaClient.listFiles = jest.fn();
   });
 
   function createFileInfo(no: number): FileInfo {
@@ -91,48 +92,70 @@ describe('listFiles', () => {
     );
   });
 
-  test('Call listFiles StorageEnum', async () => {
+  test.each([
+    [StorageEnum.INTERNAL, 'INTERNAL'],
+    [StorageEnum.SD, 'SD'],
+    [StorageEnum.CURRENT, 'CURRENT'],
+  ])('Call listFiles StorageEnum', async (storageEnum, value) => {
+    jest.mocked(thetaClient.listFiles).mockImplementation(
+      jest.fn(async (_fileTypeEnum, _startPosition, _entryCount, _storage) => {
+        expect(_fileTypeEnum).toBe(fileType);
+        expect(_startPosition).toBe(startPosition);
+        expect(_entryCount).toBe(entryCount);
+        expect(_storage).toBe(storageEnum);
+        return createThetaFiles(_entryCount);
+      })
+    );
+
     const fileType = FileTypeEnum.IMAGE;
     const startPosition = 0;
     const entryCount = 1;
-
-    storageEnumArray.forEach(async (item) => {
-      const result = await listFiles(
-        fileType,
-        startPosition,
-        entryCount,
-        item[0]
-      );
-      expect(result.totalEntries).toBe(entryCount);
-      expect(thetaClient.listFiles).toHaveBeenCalledWith(
-        fileType,
-        startPosition,
-        entryCount,
-        item[1]
-      );
-    });
+    const result = await listFiles(
+      fileType,
+      startPosition,
+      entryCount,
+      storageEnum
+    );
+    expect(result.totalEntries).toBe(entryCount);
+    expect(thetaClient.listFiles).toHaveBeenCalledWith(
+      fileType,
+      startPosition,
+      entryCount,
+      value
+    );
   });
 
-  test('Call listFiles FileTypeEnum', async () => {
+  test.each([
+    [FileTypeEnum.IMAGE, 'IMAGE'],
+    [FileTypeEnum.VIDEO, 'VIDEO'],
+    [FileTypeEnum.ALL, 'ALL'],
+  ])('Call listFiles FileTypeEnum', async (fileTypeEnum, value) => {
     const startPosition = 0;
     const entryCount = 1;
     const storage = StorageEnum.INTERNAL;
 
-    fileTypeEnumArray.forEach(async (item) => {
-      const result = await listFiles(
-        item[0],
-        startPosition,
-        entryCount,
-        storage
-      );
-      expect(result.totalEntries).toBe(entryCount);
-      expect(thetaClient.listFiles).toHaveBeenCalledWith(
-        item[1],
-        startPosition,
-        entryCount,
-        storage
-      );
-    });
+    jest.mocked(thetaClient.listFiles).mockImplementation(
+      jest.fn(async (_fileTypeEnum, _startPosition, _entryCount, _storage) => {
+        expect(_fileTypeEnum).toBe(fileTypeEnum);
+        expect(_startPosition).toBe(startPosition);
+        expect(_entryCount).toBe(entryCount);
+        return createThetaFiles(_entryCount);
+      })
+    );
+
+    const result = await listFiles(
+      fileTypeEnum,
+      startPosition,
+      entryCount,
+      storage
+    );
+    expect(result.totalEntries).toBe(entryCount);
+    expect(thetaClient.listFiles).toHaveBeenCalledWith(
+      value,
+      startPosition,
+      entryCount,
+      storage
+    );
   });
 
   test('FileTypeEnum length', () => {

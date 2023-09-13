@@ -4,7 +4,7 @@
 
 The supported platform is iOS and Android, and the language is kotlin and swift, respectively, to create a project.
 
-``` Terminal
+```Terminal
 flutter create --platforms=android,ios -i swift -a kotlin your_app_name
 ```
 
@@ -20,19 +20,22 @@ Copy to the project that created the Flutter plugin package for THETA Client.
 
 Added `theta_client_flutter` copied to `dependencies` of `pubspec.yaml`.
 
-``` pubspec.yaml
+```pubspec.yaml
 dependencies:
   flutter:
     sdk: flutter
   theta_client_flutter:
     path: ./packages/theta_client_flutter
 ```
+
 ### Android setting
+
 Set the minimum SDK version to 26 or higher
 
-``` build.gradle
+```build.gradle
     MinSdkVersion 26
 ```
+
 ### iOS setting
 
 Set iOS Deployment Target to 15 or higher
@@ -43,7 +46,7 @@ Connect the wireless LAN between THETA and the smartphone that runs on the appli
 
 ## Initialize THETA Client
 
-``` Dart
+```Dart
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
 final _thetaClientFlutterPlugin = ThetaClientFlutter();
@@ -66,19 +69,21 @@ _thetaClientFlutterPlugin.initialize('http://<IP address>:<port number>')
     // handle error
   });
 ```
-* THETA IP ADDRESS
 
-| Mode |Address |
-|-------|---------|
-|Direct mode|192.168.1.1|
-|Other| Camera IP address|
+- THETA IP ADDRESS
 
-* When downloading images or videos from THETA, the connection is plain, so the settings for each platform are required depending on the destination address (default 192.168.1.1).
+| Mode        | Address           |
+| ----------- | ----------------- |
+| Direct mode | 192.168.1.1       |
+| Other       | Camera IP address |
 
-	* iOS: shows an example of Info.plist by default.
-Xcode `Signing & Capabilities` -> `App Transport Security Exception` can also be added.
+- When downloading images or videos from THETA, the connection is plain, so the settings for each platform are required depending on the destination address (default 192.168.1.1).
 
-``` xml
+      * iOS: shows an example of Info.plist by default.
+
+  Xcode `Signing & Capabilities` -> `App Transport Security Exception` can also be added.
+
+```xml
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
     <plist version="1.0">
@@ -104,7 +109,7 @@ Xcode `Signing & Capabilities` -> `App Transport Security Exception` can also be
     </plist>
 ```
 
-* Android: Shows an example of the Res/xml/network_security_config.xml.
+- Android: Shows an example of the Res/xml/network_security_config.xml.
 
 ```xml
     <?xml version="1.0" encoding="utf-8"?>
@@ -120,7 +125,7 @@ Xcode `Signing & Capabilities` -> `App Transport Security Exception` can also be
 
 First, shooting settings are performed using `getPhotoCaptureBuilder()` to create `PhotoCapture` objects.
 
-``` Dart
+```Dart
 _thetaClientFlutterPlugin.getPhotoCaptureBuilder()
   .setIsoAutoHighLimit(IsoAutoHighLimitEnum.iso1000)
   .setFileFormat(PhotoFileFormatEnum.image_5K)
@@ -132,26 +137,26 @@ _thetaClientFlutterPlugin.getPhotoCaptureBuilder()
     // handle error
   });
 ```
+
 The above example sets the maximum ISO sensitivity to 1000 and the file format to IMAGE_5K.
 
 See [DIsplay a preview](#preview) for instructions on how to view preview.
 
 Next, we call `PhotoCapture.takePicture()` to shoot still pictures.
 
-``` Dart
-    photoCapture.takePicture((fileUrl) { 
+```Dart
+    photoCapture.takePicture((fileUrl) {
       // send HTTP GET request for fileUrl and receive JPEG file
     }, (exception) {
       // catch error while take picture
     });
-});});
 ```
 
 ## Shoot a video
 
 First, you set up shooting using `getVideoCaptureBuilder()` and create `VideoCapture` objects.
 
-``` Dart
+```Dart
 _thetaClientFlutterPlugin.getVideoCaptureBuilder()
   .setIsoAutoHighLimit(IsoAutoHighLimitEnum.iso800)
   .setFileFormat(VideoFileFormatEnum.videoHD)
@@ -170,21 +175,20 @@ See [Display a preview](#preview) for instructions on how to view preview.
 
 Next, we call `VideoCapture.startCapture()` to start recording videos.
 
-
-``` Dart
-VideoCapturing videoCapturing = videoCapture.startCapture()
-  .then(fileUrl => {
-    // GETリクエストを送信してMP4ファイルを受け取る処理
-  })
-  .catch(error => {
-    // handle error
+```Dart
+  VideoCapturing videoCapturing = videoCapture.startCapture((fileUrl) {
+    // get MP4 file
+  }, (exception) {
+    // handle error of startCapture
+  }, onStopFailed: (exception) {
+    // handle error of stopCapture
   });
 ```
 
 Next, call `VideoCapture.stopCapture()` to finish recording the video.
-If successful, then the URL of the shot file is called then as shown above.
+If successful, then the URL of the shot file is called callback function as shown above.
 
-``` Dart
+```Dart
 VideoCapturing.stopCapture();
 ```
 
@@ -195,7 +199,7 @@ The preview is an equirectangular form of motion JPEG.
 The arguments to the callback function are passed to the memory image of the frame data (JPEG).
 To exit the preview, return `false` as the return value of the callback function.
 
-``` Dart
+```Dart
   bool previewing = false;
 
   bool frameHandler(Uint8List frameData) {
@@ -236,8 +240,7 @@ To exit the preview, return `false` as the return value of the callback function
 
 To configure the camera, set the desired settings to `Options` and call `setOptions()`.
 
-
-``` Dart
+```Dart
 final options = Options();
 options.aperture = ApertureEnum.apertureAuto;
 _thetaClientFlutterPlugin.setOptions(options)
@@ -253,7 +256,7 @@ _thetaClientFlutterPlugin.setOptions(options)
 
 To get the camera settings, specify the list of options you want to obtain and call `getOptions()`.
 
-``` Dart
+```Dart
 final optionNames = [
   OptionNameEnum.aperture,
   OptionNameEnum.captureMode,
@@ -266,7 +269,7 @@ _thetaClientFlutterPlugin.getOptions(optionNames)
   .onError((error, stackTrace) {
     // handle error
   });
-  ```
+```
 
 ## List still images and videos in THETA
 
@@ -274,32 +277,32 @@ The list of still pictures (JPEG file) and videos (MP4 file) in THETA can be obt
 The return type of `listFiles()` is `ThetaFiles`, and property `fileList` of `ThetaFiles` is the list of files in THETA.
 `fileList` is a list of `FileInfo`.
 
-* FileTypeEnum
+- FileTypeEnum
 
-  |Value|Content|
-  |---|---|
-  |IMAGE|List of still images (JPEG files)|
-  |VIDEO|List of videos (MP4 files)|
-  |ALL|List all files|
+  | Value | Content                           |
+  | ----- | --------------------------------- |
+  | IMAGE | List of still images (JPEG files) |
+  | VIDEO | List of videos (MP4 files)        |
+  | ALL   | List all files                    |
 
-* ThetaFiles
+- ThetaFiles
 
-  |Property name|Type|Contents|
-  |---|---|---|
-  |fileList|List\<FileInfo\>|The list of files in THETA|
-  |totalEntries|int| Number of files in THETA (see [api spec](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md))
+  | Property name | Type             | Contents                                                                                                                                          |
+  | ------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | fileList      | List\<FileInfo\> | The list of files in THETA                                                                                                                        |
+  | totalEntries  | int              | Number of files in THETA (see [api spec](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md)) |
 
-* FileInfo
+- FileInfo
 
-  |Property name|Type|Contents|
-  |---|---|---|
-  |name|String|Represents the file name|
-  |size|int|Indicates the file size (in bytes)|
-  |dateTime|String|Shooting date and time (YYYY:MM:DD HH:MM:SS)|
-  |fileUrl|String|Represents the URL of the file|
-  |thumbnailUrl|String|Represents a thumbnail URL|
+  | Property name | Type   | Contents                                     |
+  | ------------- | ------ | -------------------------------------------- |
+  | name          | String | Represents the file name                     |
+  | size          | int    | Indicates the file size (in bytes)           |
+  | dateTime      | String | Shooting date and time (YYYY:MM:DD HH:MM:SS) |
+  | fileUrl       | String | Represents the URL of the file               |
+  | thumbnailUrl  | String | Represents a thumbnail URL                   |
 
-``` Dart
+```Dart
 _thetaClientFlutterPlugin.listFiles(FileTypeEnum.image, 1000, 0)
   .then((files) {
     // handle file list(files.fileList)
@@ -315,9 +318,9 @@ You can retrieve data from the URL of still pictures (JPEG file) or videos (MP4 
 You can download using the http package by using the following functions:
 For still images, the image can be downloaded and displayed using the Image Widget network constructor.
 
-* Http package: https://pub.dev/packages/http
+- Http package: https://pub.dev/packages/http
 
-``` Dart
+```Dart
 void downloadFile(String fileUrl, String filePath) async {
   final url = Uri.parse(fileUrl);
   final response = await get(url);
@@ -331,7 +334,7 @@ void downloadFile(String fileUrl, String filePath) async {
 
 Thumbnails of the files in THETA can be downloaded using the `FileInfo.thumbnailUrl` acquired by `listFiles()` as follows:
 
-``` Dart
+```Dart
   final url = Uri.parse(fileInfo.thumbnailUrl);
   final response = await get(url);
   final file = File(filePath);
@@ -347,7 +350,7 @@ As an argument to a callback function that performs each frame processing
 Call `getLivePreview()`.
 A previewing frame can be received as an event parameter.
 
-``` Dart
+```Dart
   bool previewing = false;
 
   bool frameHandler(Uint8List frameData) {
@@ -389,7 +392,7 @@ A previewing frame can be received as an event parameter.
 To obtain the information about the connected THETA, call `getThetaInfo()`.
 If the call is successful, you can get `ThetaInfo`.
 
-``` Dart
+```Dart
 _thetaClientFlutterPlugin.getThetaInfo()
   .then((thetaInfo) {
     // processing thetaInfo
@@ -404,7 +407,7 @@ _thetaClientFlutterPlugin.getThetaInfo()
 To get the state of the connected THETA, call `getThetaState()`.
 Successful calling allows you to acquire the `ThetaState`.
 
-``` Dart
+```Dart
 _thetaClientFlutterPlugin.getThetaState()
   .then((thetaState) {
     // processing thetaState
@@ -418,7 +421,7 @@ _thetaClientFlutterPlugin.getThetaState()
 
 Call `reset()` to reset the connected THETA.
 
-``` Dart
+```Dart
 _thetaClientFlutterPlugin.reset()
   .then((value) {
     // reset done
@@ -426,5 +429,4 @@ _thetaClientFlutterPlugin.reset()
   .onError((error, stackTrace) {
     // handle error
   });
-  ```
-  
+```

@@ -1,8 +1,45 @@
 package com.ricoh360.thetaclient.repository.options
 
 import com.ricoh360.thetaclient.ThetaRepository
-import com.ricoh360.thetaclient.transferred.*
-import kotlin.test.*
+import com.ricoh360.thetaclient.transferred.AiAutoThumbnail
+import com.ricoh360.thetaclient.transferred.BluetoothPower
+import com.ricoh360.thetaclient.transferred.BurstBracketStep
+import com.ricoh360.thetaclient.transferred.BurstCaptureNum
+import com.ricoh360.thetaclient.transferred.BurstCompensation
+import com.ricoh360.thetaclient.transferred.BurstEnableIsoControl
+import com.ricoh360.thetaclient.transferred.BurstMaxExposureTime
+import com.ricoh360.thetaclient.transferred.BurstMode
+import com.ricoh360.thetaclient.transferred.BurstOption
+import com.ricoh360.thetaclient.transferred.BurstOrder
+import com.ricoh360.thetaclient.transferred.CameraControlSource
+import com.ricoh360.thetaclient.transferred.CameraMode
+import com.ricoh360.thetaclient.transferred.CaptureMode
+import com.ricoh360.thetaclient.transferred.FaceDetect
+import com.ricoh360.thetaclient.transferred.FirstShootingEnum
+import com.ricoh360.thetaclient.transferred.Gain
+import com.ricoh360.thetaclient.transferred.GpsInfo
+import com.ricoh360.thetaclient.transferred.GpsTagRecording
+import com.ricoh360.thetaclient.transferred.ImageFilter
+import com.ricoh360.thetaclient.transferred.ImageStitching
+import com.ricoh360.thetaclient.transferred.Language
+import com.ricoh360.thetaclient.transferred.MediaFileFormat
+import com.ricoh360.thetaclient.transferred.MediaType
+import com.ricoh360.thetaclient.transferred.NetworkType
+import com.ricoh360.thetaclient.transferred.Options
+import com.ricoh360.thetaclient.transferred.PowerSaving
+import com.ricoh360.thetaclient.transferred.Preset
+import com.ricoh360.thetaclient.transferred.PreviewFormat
+import com.ricoh360.thetaclient.transferred.Proxy
+import com.ricoh360.thetaclient.transferred.ShootingFunction
+import com.ricoh360.thetaclient.transferred.ShootingMethod
+import com.ricoh360.thetaclient.transferred.TimeShift
+import com.ricoh360.thetaclient.transferred.WhiteBalance
+import com.ricoh360.thetaclient.transferred.WhiteBalanceAutoStrength
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class OptionsTest {
     @BeforeTest

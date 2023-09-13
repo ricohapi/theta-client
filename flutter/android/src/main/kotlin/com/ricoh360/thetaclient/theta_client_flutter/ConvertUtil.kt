@@ -13,6 +13,7 @@ const val KEY_NOTIFY_ID = "id"
 const val KEY_NOTIFY_PARAMS = "params"
 const val KEY_NOTIFY_PARAM_COMPLETION = "completion"
 const val KEY_NOTIFY_PARAM_IMAGE = "image"
+const val KEY_NOTIFY_PARAM_MESSAGE = "message"
 
 fun toResult(thetaInfo: ThetaInfo): Map<String, Any?> {
     return mapOf<String, Any?>(
@@ -474,10 +475,13 @@ fun toConfigParam(data: Map<String, Any>): Config {
             OptionNameEnum.DateTimeZone.name -> config.dateTime = value.toString()
             OptionNameEnum.Language.name -> config.language =
                 getOptionValueEnum(OptionNameEnum.Language, value as String) as LanguageEnum?
+
             OptionNameEnum.OffDelay.name -> config.offDelay =
                 getOptionValueEnum(OptionNameEnum.OffDelay, value as String) as OffDelayEnum?
+
             OptionNameEnum.SleepDelay.name -> config.sleepDelay =
                 getOptionValueEnum(OptionNameEnum.SleepDelay, value as String) as SleepDelayEnum?
+
             OptionNameEnum.ShutterVolume.name -> config.shutterVolume = value as Int
             KEY_CLIENT_MODE -> config.clientMode = toDigestAuthParam(value as Map<*, *>)
         }
@@ -596,5 +600,11 @@ fun toCaptureProgressNotifyParam(value: Float): Map<String, Any> {
 fun toPreviewNotifyParam(imageData: ByteArray): Map<String, Any> {
     return mapOf<String, Any>(
         KEY_NOTIFY_PARAM_IMAGE to imageData
+    )
+}
+
+fun toMessageNotifyParam(message: String): Map<String, Any> {
+    return mapOf<String, Any>(
+        KEY_NOTIFY_PARAM_MESSAGE to message
     )
 }

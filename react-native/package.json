@@ -14,7 +14,7 @@
     "ios",
     "cpp",
     "*.podspec",
-    "!lib/typescript/example",
+    "!lib/typescript/verification-tool",
     "!ios/build",
     "!android/build",
     "!android/gradle",
@@ -28,11 +28,13 @@
   ],
   "scripts": {
     "test": "jest",
-    "typescript": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
-    "prepare": "bob build",
+    "prepack": "bob build",
     "release": "release-it",
-    "bootstrap": "yarn install"
+    "verification-tool": "yarn --cwd verification-tool",
+    "bootstrap": "yarn verification-tool && yarn install && yarn verification-tool pods",
+    "clean": "del-cli android/build verification-tool/android/build verification-tool/android/app/build verification-tool/ios/build"
   },
   "keywords": [
     "react-native",
@@ -51,8 +53,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
-    "@arkweid/lefthook": "^0.7.7",
-    "@commitlint/config-conventional": "^17.3.0",
+    "@commitlint/config-conventional": "^17.0.3",
     "@react-native-community/eslint-config": "^3.0.2",
     "@release-it/conventional-changelog": "^5.0.0",
     "@types/jest": "^29.2.4",
@@ -67,7 +68,7 @@
     "pod-install": "^0.1.0",
     "prettier": "^2.8.1",
     "react": "18.2.0",
-    "react-native": "0.70.6",
+    "react-native": "0.71.7",
     "react-native-builder-bob": "^0.20.3",
     "release-it": "^15.5.1",
     "typescript": "^4.9.4"
@@ -79,9 +80,14 @@
     "react": "*",
     "react-native": "*"
   },
+  "engines": {
+    "node": ">= 16.0.0"
+  },
+  "packageManager": "^yarn@1.22.15",
   "jest": {
     "preset": "react-native",
     "modulePathIgnorePatterns": [
+      "<rootDir>/verification-tool/node_modules",
       "<rootDir>/lib/"
     ]
   },

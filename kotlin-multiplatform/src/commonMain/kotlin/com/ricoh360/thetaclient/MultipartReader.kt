@@ -3,9 +3,10 @@
  */
 package com.ricoh360.thetaclient
 
-import io.ktor.http.*
-import io.ktor.utils.io.*
-import io.ktor.utils.io.core.*
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
+import io.ktor.utils.io.ByteReadChannel
+import io.ktor.utils.io.core.ByteReadPacket
 
 /**
  * Reader for HTTP multipart response body Theta sends.

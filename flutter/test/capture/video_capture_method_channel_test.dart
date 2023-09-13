@@ -73,6 +73,6 @@ void main() {
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       return fileUrl;
     });
-    expect(await platform.startVideoCapture(), fileUrl);
+    expect(await platform.startVideoCapture(null), fileUrl);
   });
 }

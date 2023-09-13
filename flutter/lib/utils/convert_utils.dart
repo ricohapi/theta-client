@@ -32,7 +32,8 @@ class ConvertUtils {
   static ThetaFiles convertThetaFiles(Map<dynamic, dynamic> data) {
     var inputList = data['fileList'] as List<dynamic>;
     var fileList = List<FileInfo>.empty(growable: true);
-    for (Map<dynamic, dynamic> element in inputList.cast<Map<dynamic, dynamic>>()) {
+    for (Map<dynamic, dynamic> element
+        in inputList.cast<Map<dynamic, dynamic>>()) {
       var info = FileInfo(
           element['name'],
           element['fileUrl'],
@@ -50,15 +51,17 @@ class ConvertUtils {
           element['recordTime'],
           element['isProcessed'],
           element['previewUrl'],
-          (element['codec'] != null) ? CodecEnum.getValue(element['codec'] as String) : null,
-          (element['projectionType'] != null) ? ProjectionTypeEnum.getValue(
-              element['projectionType'] as String) : null,
+          (element['codec'] != null)
+              ? CodecEnum.getValue(element['codec'] as String)
+              : null,
+          (element['projectionType'] != null)
+              ? ProjectionTypeEnum.getValue(element['projectionType'] as String)
+              : null,
           element['continuousShootingGroupId'],
           element['frameRate'],
           element['favorite'],
           element['imageDescription'],
-          element['storageID']
-      );
+          element['storageID']);
       fileList.add(info);
     }
     return ThetaFiles(fileList, data['totalEntries']);
@@ -70,9 +73,7 @@ class ConvertUtils {
       apiList.add(str);
     });
     Endpoints endpoints = Endpoints(
-        data['endpoints']['httpPort'],
-        data['endpoints']['httpUpdatesPort']
-    );
+        data['endpoints']['httpPort'], data['endpoints']['httpUpdatesPort']);
     var apiLevelList = List<int>.empty(growable: true);
     data['apiLevel'].forEach((n) {
       apiLevelList.add(n);
@@ -91,8 +92,7 @@ class ConvertUtils {
         apiList,
         endpoints,
         apiLevelList,
-        ThetaModel.getValue(data['thetaModel'])
-    );
+        ThetaModel.getValue(data['thetaModel']));
     return thetaInfo;
   }
 
@@ -138,7 +138,8 @@ class ConvertUtils {
         result[entry.key] = convertGpsInfoParam(entry.value);
       } else if (entry.value.runtimeType == TimeShift) {
         result[entry.key] = convertTimeShiftParam(entry.value);
-      } else if (entry.value.runtimeType == int || entry.value.runtimeType == double) {
+      } else if (entry.value.runtimeType == int ||
+          entry.value.runtimeType == double) {
         result[entry.key] = entry.value;
       } else {
         result[entry.key] = entry.value.toString();
@@ -232,8 +233,9 @@ class ConvertUtils {
           result.aperture = ApertureEnum.getValue(entry.value);
           break;
         case OptionNameEnum.bitrate:
-          result.bitrate =
-          (entry.value is int) ? BitrateNumber(entry.value) : Bitrate.getValue(entry.value);
+          result.bitrate = (entry.value is int)
+              ? BitrateNumber(entry.value)
+              : Bitrate.getValue(entry.value);
           break;
         case OptionNameEnum.bluetoothPower:
           result.bluetoothPower = BluetoothPowerEnum.getValue(entry.value);
@@ -245,7 +247,8 @@ class ConvertUtils {
           result.burstOption = convertBurstOption(entry.value);
           break;
         case OptionNameEnum.cameraControlSource:
-          result.cameraControlSource = CameraControlSourceEnum.getValue(entry.value);
+          result.cameraControlSource =
+              CameraControlSourceEnum.getValue(entry.value);
           break;
         case OptionNameEnum.cameraMode:
           result.cameraMode = CameraModeEnum.getValue(entry.value);
@@ -275,7 +278,8 @@ class ConvertUtils {
           result.dateTimeZone = entry.value;
           break;
         case OptionNameEnum.exposureCompensation:
-          result.exposureCompensation = ExposureCompensationEnum.getValue(entry.value);
+          result.exposureCompensation =
+              ExposureCompensationEnum.getValue(entry.value);
           break;
         case OptionNameEnum.exposureDelay:
           result.exposureDelay = ExposureDelayEnum.getValue(entry.value);
@@ -317,7 +321,8 @@ class ConvertUtils {
           result.language = LanguageEnum.getValue(entry.value);
           break;
         case OptionNameEnum.maxRecordableTime:
-          result.maxRecordableTime = MaxRecordableTimeEnum.getValue(entry.value);
+          result.maxRecordableTime =
+              MaxRecordableTimeEnum.getValue(entry.value);
           break;
         case OptionNameEnum.networkType:
           result.networkType = NetworkTypeEnum.getValue(entry.value);
@@ -374,7 +379,8 @@ class ConvertUtils {
           result.whiteBalance = WhiteBalanceEnum.getValue(entry.value);
           break;
         case OptionNameEnum.whiteBalanceAutoStrength:
-          result.whiteBalanceAutoStrength = WhiteBalanceAutoStrengthEnum.getValue(entry.value);
+          result.whiteBalanceAutoStrength =
+              WhiteBalanceAutoStrengthEnum.getValue(entry.value);
           break;
         case OptionNameEnum.wlanFrequency:
           result.wlanFrequency = WlanFrequencyEnum.getValue(entry.value);
@@ -466,7 +472,10 @@ class ConvertUtils {
       return value.rawValue;
     } else if (value is WlanFrequencyEnum) {
       return value.rawValue;
-    } else if (value is int || value is double || value is String || value is bool) {
+    } else if (value is int ||
+        value is double ||
+        value is String ||
+        value is bool) {
       return value;
     } else if (value is GpsInfo) {
       return convertGpsInfoParam(value);
@@ -520,31 +529,19 @@ class ConvertUtils {
   }
 
   static Exif convertExif(Map<dynamic, dynamic> data) {
-    var exif = Exif(
-        data['exifVersion'],
-        data['dateTime'],
-        data['imageWidth'],
-        data['imageLength'],
-        data['gpsLatitude'],
-        data['gpsLongitude']
-    );
+    var exif = Exif(data['exifVersion'], data['dateTime'], data['imageWidth'],
+        data['imageLength'], data['gpsLatitude'], data['gpsLongitude']);
     return exif;
   }
 
   static Xmp convertXmp(Map<dynamic, dynamic> data) {
-    var xmp = Xmp(
-        data['poseHeadingDegrees'],
-        data['fullPanoWidthPixels'],
-        data['fullPanoHeightPixels']
-    );
+    var xmp = Xmp(data['poseHeadingDegrees'], data['fullPanoWidthPixels'],
+        data['fullPanoHeightPixels']);
     return xmp;
   }
 
   static Metadata convertMetadata(Map<dynamic, dynamic> data) {
-    var metadata = Metadata(
-        convertExif(data['exif']),
-        convertXmp(data['xmp'])
-    );
+    var metadata = Metadata(convertExif(data['exif']), convertXmp(data['xmp']));
     return metadata;
   }
 

@@ -1,13 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:theta_client_flutter/digest_auth.dart';
 
 import 'capture/capture_builder.dart';
 import 'theta_client_flutter_platform_interface.dart';
-import 'dart:async';
 
 export 'capture/capture.dart';
-export 'capture/capturing.dart';
 export 'capture/capture_builder.dart';
+export 'capture/capturing.dart';
 
 /// Handle Theta web APIs.
 class ThetaClientFlutter {
@@ -22,8 +23,11 @@ class ThetaClientFlutter {
   /// - @param timeout Timeout of HTTP call.
   /// - @throws If an error occurs in THETA.
   Future<void> initialize(
-      [String endpoint = 'http://192.168.1.1:80/', ThetaConfig? config, ThetaTimeout? timeout]) {
-    return ThetaClientFlutterPlatform.instance.initialize(endpoint, config, timeout);
+      [String endpoint = 'http://192.168.1.1:80/',
+      ThetaConfig? config,
+      ThetaTimeout? timeout]) {
+    return ThetaClientFlutterPlatform.instance
+        .initialize(endpoint, config, timeout);
   }
 
   /// Returns whether it is initialized or not.
@@ -196,8 +200,8 @@ class ThetaClientFlutter {
   /// - @throws Command is currently disabled.
   Future<String> convertVideoFormats(String fileUrl, bool toLowResolution,
       [bool applyTopBottomCorrection = true]) {
-    return ThetaClientFlutterPlatform.instance
-        .convertVideoFormats(fileUrl, toLowResolution, applyTopBottomCorrection);
+    return ThetaClientFlutterPlatform.instance.convertVideoFormats(
+        fileUrl, toLowResolution, applyTopBottomCorrection);
   }
 
   /// Cancels the movie format conversion.
@@ -265,8 +269,16 @@ class ThetaClientFlutter {
       required String subnetMask,
       required String defaultGateway,
       Proxy? proxy}) {
-    return ThetaClientFlutterPlatform.instance.setAccessPointStatically(ssid, ssidStealth, authMode,
-        password, connectionPriority, ipAddress, subnetMask, defaultGateway, proxy);
+    return ThetaClientFlutterPlatform.instance.setAccessPointStatically(
+        ssid,
+        ssidStealth,
+        authMode,
+        password,
+        connectionPriority,
+        ipAddress,
+        subnetMask,
+        defaultGateway,
+        proxy);
   }
 
   /// Deletes access point information used in client mode.
@@ -303,7 +315,8 @@ class ThetaClientFlutter {
   /// - @exception ThetaWebApiException When an invalid option is specified.
   /// - @exception NotConnectedException
   Future<Options> getMySettingFromOldModel(List<OptionNameEnum> optionNames) {
-    return ThetaClientFlutterPlatform.instance.getMySettingFromOldModel(optionNames);
+    return ThetaClientFlutterPlatform.instance
+        .getMySettingFromOldModel(optionNames);
   }
 
   /// Registers shooting conditions in My Settings.
@@ -313,7 +326,8 @@ class ThetaClientFlutter {
   /// - @exception ThetaWebApiException When an invalid option is specified.
   /// - @exception NotConnectedException
   Future<void> setMySetting(CaptureModeEnum captureMode, Options options) {
-    return ThetaClientFlutterPlatform.instance.setMySetting(captureMode, options);
+    return ThetaClientFlutterPlatform.instance
+        .setMySetting(captureMode, options);
   }
 
   /// Delete shooting conditions in My Settings. Supported just by Theta X and Z1.
@@ -441,9 +455,9 @@ enum ThetaModel {
   }
 
   static ThetaModel? getValue(String? rawValue) {
-    return ThetaModel.values
-        .cast<ThetaModel?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return ThetaModel.values.cast<ThetaModel?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -576,9 +590,9 @@ enum CodecEnum {
   }
 
   static CodecEnum? getValue(String rawValue) {
-    return CodecEnum.values
-        .cast<CodecEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return CodecEnum.values.cast<CodecEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -603,9 +617,9 @@ enum ProjectionTypeEnum {
   }
 
   static ProjectionTypeEnum? getValue(String rawValue) {
-    return ProjectionTypeEnum.values
-        .cast<ProjectionTypeEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return ProjectionTypeEnum.values.cast<ProjectionTypeEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -735,9 +749,9 @@ enum BluetoothPowerEnum {
   }
 
   static BluetoothPowerEnum? getValue(String rawValue) {
-    return BluetoothPowerEnum.values
-        .cast<BluetoothPowerEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return BluetoothPowerEnum.values.cast<BluetoothPowerEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -763,9 +777,9 @@ enum BurstModeEnum {
   }
 
   static BurstModeEnum? getValue(String rawValue) {
-    return BurstModeEnum.values
-        .cast<BurstModeEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return BurstModeEnum.values.cast<BurstModeEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -791,8 +805,13 @@ class BurstOption {
   /// see [BurstOrderEnum]
   BurstOrderEnum? burstOrder;
 
-  BurstOption(this.burstCaptureNum, this.burstBracketStep, this.burstCompensation,
-      this.burstMaxExposureTime, this.burstEnableIsoControl, this.burstOrder);
+  BurstOption(
+      this.burstCaptureNum,
+      this.burstBracketStep,
+      this.burstCompensation,
+      this.burstMaxExposureTime,
+      this.burstEnableIsoControl,
+      this.burstOrder);
 
   @override
   bool operator ==(Object other) => hashCode == other.hashCode;
@@ -827,9 +846,9 @@ enum BurstCaptureNumEnum {
   }
 
   static BurstCaptureNumEnum? getValue(String rawValue) {
-    return BurstCaptureNumEnum.values
-        .cast<BurstCaptureNumEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return BurstCaptureNumEnum.values.cast<BurstCaptureNumEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -857,9 +876,9 @@ enum BurstBracketStepEnum {
   }
 
   static BurstBracketStepEnum? getValue(String rawValue) {
-    return BurstBracketStepEnum.values
-        .cast<BurstBracketStepEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return BurstBracketStepEnum.values.cast<BurstBracketStepEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -911,7 +930,8 @@ enum BurstCompensationEnum {
   static BurstCompensationEnum? getValue(String rawValue) {
     return BurstCompensationEnum.values
         .cast<BurstCompensationEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+        .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
   }
 }
 
@@ -953,7 +973,8 @@ enum BurstMaxExposureTimeEnum {
   static BurstMaxExposureTimeEnum? getValue(String rawValue) {
     return BurstMaxExposureTimeEnum.values
         .cast<BurstMaxExposureTimeEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+        .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
   }
 }
 
@@ -975,7 +996,8 @@ enum BurstEnableIsoControlEnum {
   static BurstEnableIsoControlEnum? getValue(String rawValue) {
     return BurstEnableIsoControlEnum.values
         .cast<BurstEnableIsoControlEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+        .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
   }
 }
 
@@ -995,9 +1017,9 @@ enum BurstOrderEnum {
   }
 
   static BurstOrderEnum? getValue(String rawValue) {
-    return BurstOrderEnum.values
-        .cast<BurstOrderEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return BurstOrderEnum.values.cast<BurstOrderEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1037,9 +1059,9 @@ enum CaptureStatusEnum {
   }
 
   static CaptureStatusEnum? getValue(String rawValue) {
-    return CaptureStatusEnum.values
-        .cast<CaptureStatusEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return CaptureStatusEnum.values.cast<CaptureStatusEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1064,9 +1086,9 @@ enum ChargingStateEnum {
   }
 
   static ChargingStateEnum? getValue(String rawValue) {
-    return ChargingStateEnum.values
-        .cast<ChargingStateEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return ChargingStateEnum.values.cast<ChargingStateEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1097,9 +1119,9 @@ enum ShootingFunctionEnum {
   }
 
   static ShootingFunctionEnum? getValue(String rawValue) {
-    return ShootingFunctionEnum.values
-        .cast<ShootingFunctionEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return ShootingFunctionEnum.values.cast<ShootingFunctionEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1124,9 +1146,9 @@ enum MicrophoneOptionEnum {
   }
 
   static MicrophoneOptionEnum? getValue(String rawValue) {
-    return MicrophoneOptionEnum.values
-        .cast<MicrophoneOptionEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return MicrophoneOptionEnum.values.cast<MicrophoneOptionEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1231,9 +1253,9 @@ enum CameraErrorEnum {
   }
 
   static CameraErrorEnum? getValue(String rawValue) {
-    return CameraErrorEnum.values
-        .cast<CameraErrorEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return CameraErrorEnum.values.cast<CameraErrorEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1342,8 +1364,8 @@ class Exif {
   /// GPS longitude if exists.
   double? gpsLongitude;
 
-  Exif(this.exifVersion, this.dateTime, this.imageWidth, this.imageLength, this.gpsLatitude,
-      this.gpsLongitude);
+  Exif(this.exifVersion, this.dateTime, this.imageWidth, this.imageLength,
+      this.gpsLatitude, this.gpsLongitude);
 }
 
 /// Photo sphere XMP metadata of a still image.
@@ -1357,7 +1379,8 @@ class Xmp {
   /// Image height (pixel).
   int fullPanoHeightPixels;
 
-  Xmp(this.poseHeadingDegrees, this.fullPanoWidthPixels, this.fullPanoHeightPixels);
+  Xmp(this.poseHeadingDegrees, this.fullPanoWidthPixels,
+      this.fullPanoHeightPixels);
 }
 
 /// Metadata of a still image
@@ -1392,9 +1415,9 @@ enum AuthModeEnum {
   }
 
   static AuthModeEnum? getValue(String rawValue) {
-    return AuthModeEnum.values
-        .cast<AuthModeEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return AuthModeEnum.values.cast<AuthModeEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1427,8 +1450,16 @@ class AccessPoint {
   /// Proxy information to be used for the access point.
   Proxy? proxy;
 
-  AccessPoint(this.ssid, this.ssidStealth, this.authMode, this.connectionPriority, this.usingDhcp,
-      this.ipAddress, this.subnetMask, this.defaultGateway, this.proxy);
+  AccessPoint(
+      this.ssid,
+      this.ssidStealth,
+      this.authMode,
+      this.connectionPriority,
+      this.usingDhcp,
+      this.ipAddress,
+      this.subnetMask,
+      this.defaultGateway,
+      this.proxy);
 }
 
 /// Camera setting options name.
@@ -1585,7 +1616,8 @@ enum OptionNameEnum {
   whiteBalance('WhiteBalance', WhiteBalanceEnum),
 
   /// Option name WhiteBalanceAutoStrength
-  whiteBalanceAutoStrength('WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum),
+  whiteBalanceAutoStrength(
+      'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum),
 
   // Option name wlanfrequency
   wlanFrequency('WlanFrequency', WlanFrequencyEnum);
@@ -1601,9 +1633,9 @@ enum OptionNameEnum {
   }
 
   static OptionNameEnum? getValue(String rawValue) {
-    return OptionNameEnum.values
-        .cast<OptionNameEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return OptionNameEnum.values.cast<OptionNameEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1627,9 +1659,9 @@ enum AiAutoThumbnailEnum {
   }
 
   static AiAutoThumbnailEnum? getValue(String rawValue) {
-    return AiAutoThumbnailEnum.values
-        .cast<AiAutoThumbnailEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return AiAutoThumbnailEnum.values.cast<AiAutoThumbnailEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1673,9 +1705,9 @@ enum ApertureEnum {
   }
 
   static ApertureEnum? getValue(String rawValue) {
-    return ApertureEnum.values
-        .cast<ApertureEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return ApertureEnum.values.cast<ApertureEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1780,7 +1812,8 @@ enum CameraControlSourceEnum {
   static CameraControlSourceEnum? getValue(String rawValue) {
     return CameraControlSourceEnum.values
         .cast<CameraControlSourceEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+        .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
   }
 }
 
@@ -1808,9 +1841,9 @@ enum CameraModeEnum {
   }
 
   static CameraModeEnum? getValue(String rawValue) {
-    return CameraModeEnum.values
-        .cast<CameraModeEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return CameraModeEnum.values.cast<CameraModeEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1841,9 +1874,9 @@ enum CaptureModeEnum {
   }
 
   static CaptureModeEnum? getValue(String rawValue) {
-    return CaptureModeEnum.values
-        .cast<CaptureModeEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return CaptureModeEnum.values.cast<CaptureModeEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1935,9 +1968,9 @@ enum ContinuousNumberEnum {
   }
 
   static ContinuousNumberEnum? getValue(String rawValue) {
-    return ContinuousNumberEnum.values
-        .cast<ContinuousNumberEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return ContinuousNumberEnum.values.cast<ContinuousNumberEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1994,7 +2027,8 @@ enum ExposureCompensationEnum {
   static ExposureCompensationEnum? getValue(String rawValue) {
     return ExposureCompensationEnum.values
         .cast<ExposureCompensationEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+        .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
   }
 }
 
@@ -2043,9 +2077,9 @@ enum ExposureDelayEnum {
   }
 
   static ExposureDelayEnum? getValue(String rawValue) {
-    return ExposureDelayEnum.values
-        .cast<ExposureDelayEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return ExposureDelayEnum.values.cast<ExposureDelayEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2090,9 +2124,9 @@ enum ExposureProgramEnum {
   }
 
   static ExposureProgramEnum? getValue(String rawValue) {
-    return ExposureProgramEnum.values
-        .cast<ExposureProgramEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return ExposureProgramEnum.values.cast<ExposureProgramEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2117,9 +2151,9 @@ enum FaceDetectEnum {
   }
 
   static FaceDetectEnum? getValue(String rawValue) {
-    return FaceDetectEnum.values
-        .cast<FaceDetectEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return FaceDetectEnum.values.cast<FaceDetectEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2297,9 +2331,9 @@ enum FileFormatEnum {
   }
 
   static FileFormatEnum? getValue(String rawValue) {
-    return FileFormatEnum.values
-        .cast<FileFormatEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return FileFormatEnum.values.cast<FileFormatEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2335,9 +2369,9 @@ enum FilterEnum {
   }
 
   static FilterEnum? getValue(String rawValue) {
-    return FilterEnum.values
-        .cast<FilterEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return FilterEnum.values.cast<FilterEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2368,9 +2402,9 @@ enum GainEnum {
   }
 
   static GainEnum? getValue(String rawValue) {
-    return GainEnum.values
-        .cast<GainEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return GainEnum.values.cast<GainEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2406,6 +2440,7 @@ enum ImageStitchingEnum {
   none('NONE');
 
   final String rawValue;
+
   const ImageStitchingEnum(this.rawValue);
 
   @override
@@ -2415,7 +2450,7 @@ enum ImageStitchingEnum {
 
   static ImageStitchingEnum? getValue(String rawValue) {
     return ImageStitchingEnum.values.cast<ImageStitchingEnum?>().firstWhere(
-            (element) => element?.rawValue == rawValue,
+        (element) => element?.rawValue == rawValue,
         orElse: () => null);
   }
 }
@@ -2527,9 +2562,9 @@ enum IsoEnum {
   }
 
   static IsoEnum? getValue(String rawValue) {
-    return IsoEnum.values
-        .cast<IsoEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return IsoEnum.values.cast<IsoEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2637,9 +2672,9 @@ enum IsoAutoHighLimitEnum {
   }
 
   static IsoAutoHighLimitEnum? getValue(String rawValue) {
-    return IsoAutoHighLimitEnum.values
-        .cast<IsoAutoHighLimitEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return IsoAutoHighLimitEnum.values.cast<IsoAutoHighLimitEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2691,9 +2726,9 @@ enum LanguageEnum {
   }
 
   static LanguageEnum? getValue(String rawValue) {
-    return LanguageEnum.values
-        .cast<LanguageEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return LanguageEnum.values.cast<LanguageEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2729,7 +2764,8 @@ enum MaxRecordableTimeEnum {
   static MaxRecordableTimeEnum? getValue(String rawValue) {
     return MaxRecordableTimeEnum.values
         .cast<MaxRecordableTimeEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+        .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
   }
 }
 
@@ -2757,9 +2793,9 @@ enum NetworkTypeEnum {
   }
 
   static NetworkTypeEnum? getValue(String rawValue) {
-    return NetworkTypeEnum.values
-        .cast<NetworkTypeEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return NetworkTypeEnum.values.cast<NetworkTypeEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2799,9 +2835,9 @@ enum OffDelayEnum {
   }
 
   static OffDelayEnum? getValue(String rawValue) {
-    return OffDelayEnum.values
-        .cast<OffDelayEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return OffDelayEnum.values.cast<OffDelayEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2825,9 +2861,9 @@ enum PowerSavingEnum {
   }
 
   static PowerSavingEnum? getValue(String rawValue) {
-    return PowerSavingEnum.values
-        .cast<PowerSavingEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return PowerSavingEnum.values.cast<PowerSavingEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2848,9 +2884,9 @@ enum PresetEnum {
   }
 
   static PresetEnum? getValue(String rawValue) {
-    return PresetEnum.values
-        .cast<PresetEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return PresetEnum.values.cast<PresetEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2899,9 +2935,9 @@ enum PreviewFormatEnum {
   }
 
   static PreviewFormatEnum? getValue(String rawValue) {
-    return PreviewFormatEnum.values
-        .cast<PreviewFormatEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return PreviewFormatEnum.values.cast<PreviewFormatEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2948,9 +2984,9 @@ enum ShootingMethodEnum {
   }
 
   static ShootingMethodEnum? getValue(String rawValue) {
-    return ShootingMethodEnum.values
-        .cast<ShootingMethodEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return ShootingMethodEnum.values.cast<ShootingMethodEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -3189,9 +3225,9 @@ enum ShutterSpeedEnum {
   }
 
   static ShutterSpeedEnum? getValue(String rawValue) {
-    return ShutterSpeedEnum.values
-        .cast<ShutterSpeedEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return ShutterSpeedEnum.values.cast<ShutterSpeedEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -3229,9 +3265,9 @@ enum SleepDelayEnum {
   }
 
   static SleepDelayEnum? getValue(String rawValue) {
-    return SleepDelayEnum.values
-        .cast<SleepDelayEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return SleepDelayEnum.values.cast<SleepDelayEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -3302,9 +3338,9 @@ enum WhiteBalanceEnum {
   }
 
   static WhiteBalanceEnum? getValue(String rawValue) {
-    return WhiteBalanceEnum.values
-        .cast<WhiteBalanceEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return WhiteBalanceEnum.values.cast<WhiteBalanceEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -3330,7 +3366,8 @@ class TimeShift {
   bool operator ==(Object other) => hashCode == other.hashCode;
 
   @override
-  int get hashCode => Object.hashAll([isFrontFirst, firstInterval, secondInterval]);
+  int get hashCode =>
+      Object.hashAll([isFrontFirst, firstInterval, secondInterval]);
 
   @override
   String toString() {
@@ -3385,7 +3422,8 @@ enum TimeShiftIntervalEnum {
   static TimeShiftIntervalEnum? getValue(String rawValue) {
     return TimeShiftIntervalEnum.values
         .cast<TimeShiftIntervalEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+        .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
   }
 }
 
@@ -3415,7 +3453,8 @@ enum WhiteBalanceAutoStrengthEnum {
   static WhiteBalanceAutoStrengthEnum? getValue(String rawValue) {
     return WhiteBalanceAutoStrengthEnum.values
         .cast<WhiteBalanceAutoStrengthEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+        .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
   }
 }
 
@@ -3437,9 +3476,9 @@ enum WlanFrequencyEnum {
   }
 
   static WlanFrequencyEnum? getValue(String rawValue) {
-    return WlanFrequencyEnum.values
-        .cast<WlanFrequencyEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return WlanFrequencyEnum.values.cast<WlanFrequencyEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -3494,7 +3533,8 @@ class GpsInfo {
   bool operator ==(Object other) => hashCode == other.hashCode;
 
   @override
-  int get hashCode => Object.hashAll([latitude, longitude, altitude, dateTimeZone]);
+  int get hashCode =>
+      Object.hashAll([latitude, longitude, altitude, dateTimeZone]);
 }
 
 /// Proxy information to be used when wired LAN is enabled.
@@ -4143,6 +4183,15 @@ class PluginInfo {
   /// Message
   String message;
 
-  PluginInfo(this.name, this.packageName, this.version, this.isPreInstalled, this.isRunning,
-      this.isForeground, this.isBoot, this.hasWebServer, this.exitStatus, this.message);
+  PluginInfo(
+      this.name,
+      this.packageName,
+      this.version,
+      this.isPreInstalled,
+      this.isRunning,
+      this.isForeground,
+      this.isBoot,
+      this.hasWebServer,
+      this.exitStatus,
+      this.message);
 }

@@ -5,8 +5,8 @@ import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.FirstShootingEnum
-import com.ricoh360.thetaclient.transferred.TimeShift
 import com.ricoh360.thetaclient.transferred.Options
+import com.ricoh360.thetaclient.transferred.TimeShift
 import io.ktor.http.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -65,12 +65,14 @@ class TimeShiftTest {
      */
     @Test
     fun setOptionTimeShiftTest() = runTest {
-        val value = Pair(ThetaRepository.TimeShiftSetting(
-            true,
-            ThetaRepository.TimeShiftIntervalEnum.INTERVAL_9,
-            ThetaRepository.TimeShiftIntervalEnum.INTERVAL_10
-        ),
-            TimeShift(FirstShootingEnum.FRONT, 9, 10))
+        val value = Pair(
+            ThetaRepository.TimeShiftSetting(
+                true,
+                ThetaRepository.TimeShiftIntervalEnum.INTERVAL_9,
+                ThetaRepository.TimeShiftIntervalEnum.INTERVAL_10
+            ),
+            TimeShift(FirstShootingEnum.FRONT, 9, 10)
+        )
 
         MockApiClient.onRequest = { request ->
             // check request
@@ -100,12 +102,18 @@ class TimeShiftTest {
     fun convertOptionTimeShiftTest() = runTest {
         val values = listOf(
             Pair(ThetaRepository.TimeShiftSetting(), TimeShift()),
-            Pair(ThetaRepository.TimeShiftSetting(null, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_0, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_1),
-                TimeShift(null, 0, 1)),
-            Pair(ThetaRepository.TimeShiftSetting(true, null, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_5),
-                TimeShift(FirstShootingEnum.FRONT, null, 5)),
-            Pair(ThetaRepository.TimeShiftSetting(false, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_10, null),
-                TimeShift(FirstShootingEnum.REAR, 10, null)),
+            Pair(
+                ThetaRepository.TimeShiftSetting(null, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_0, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_1),
+                TimeShift(null, 0, 1)
+            ),
+            Pair(
+                ThetaRepository.TimeShiftSetting(true, null, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_5),
+                TimeShift(FirstShootingEnum.FRONT, null, 5)
+            ),
+            Pair(
+                ThetaRepository.TimeShiftSetting(false, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_10, null),
+                TimeShift(FirstShootingEnum.REAR, 10, null)
+            ),
         )
 
         values.forEach {

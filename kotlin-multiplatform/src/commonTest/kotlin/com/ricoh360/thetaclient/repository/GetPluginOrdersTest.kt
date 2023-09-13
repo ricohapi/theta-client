@@ -3,12 +3,16 @@ package com.ricoh360.thetaclient.repository
 import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
-import io.ktor.http.*
-import io.ktor.utils.io.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalSerializationApi::class, ExperimentalCoroutinesApi::class)
 class GetPluginOrdersTest {
@@ -35,7 +39,7 @@ class GetPluginOrdersTest {
         val thetaRepository = ThetaRepository(endpoint)
         var pluginList: List<String> = listOf()
         kotlin.runCatching {
-             pluginList = thetaRepository.getPluginOrders()
+            pluginList = thetaRepository.getPluginOrders()
         }.onSuccess {
             assertTrue(pluginList.size == 3, "size of list")
         }.onFailure {

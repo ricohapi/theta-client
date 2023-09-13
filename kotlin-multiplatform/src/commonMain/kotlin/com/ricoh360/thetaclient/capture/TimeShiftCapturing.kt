@@ -3,8 +3,8 @@ package com.ricoh360.thetaclient.capture
 import com.ricoh360.thetaclient.ThetaApi
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.StopCaptureResponse
-import io.ktor.client.plugins.*
-import io.ktor.serialization.*
+import io.ktor.client.plugins.ResponseException
+import io.ktor.serialization.JsonConvertException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -3,8 +3,8 @@ package com.ricoh360.thetaclient.capture
 import com.ricoh360.thetaclient.ThetaApi
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.StopCaptureResponse
-import io.ktor.client.plugins.*
-import io.ktor.serialization.*
+import io.ktor.client.plugins.ResponseException
+import io.ktor.serialization.JsonConvertException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,22 +32,22 @@ class VideoCapturing internal constructor(
             try {
                 response = ThetaApi.callStopCaptureCommand(endpoint)
                 response.error?.let {
-                    callback.onError(ThetaRepository.ThetaWebApiException(it.message))
+                    callback.onStopFailed(ThetaRepository.ThetaWebApiException(it.message))
                     return@launch
                 }
             } catch (e: JsonConvertException) {
-                callback.onError(ThetaRepository.ThetaWebApiException(e.message ?: e.toString()))
+                callback.onStopFailed(ThetaRepository.ThetaWebApiException(e.message ?: e.toString()))
                 return@launch
             } catch (e: ResponseException) {
-                callback.onError(ThetaRepository.ThetaWebApiException.create(e))
+                callback.onStopFailed(ThetaRepository.ThetaWebApiException(e.message ?: e.toString()))
                 return@launch
             } catch (e: Exception) {
-                callback.onError(ThetaRepository.NotConnectedException(e.message ?: e.toString()))
+                callback.onStopFailed(ThetaRepository.NotConnectedException(e.message ?: e.toString()))
                 return@launch
             }
 
             val fileUrl = response.results?.fileUrls?.firstOrNull() ?: response.results?.fileUrl ?: ""
-            callback.onSuccess(fileUrl)
+            callback.onCaptureCompleted(fileUrl)
         }
     }
 }

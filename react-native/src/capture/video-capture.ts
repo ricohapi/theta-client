@@ -5,24 +5,61 @@ import type {
 } from '../theta-repository/options';
 
 import { NativeModules } from 'react-native';
+import {
+  BaseNotify,
+  NotifyController,
+} from '../theta-repository/notify-controller';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
+
+const NOTIFY_NAME = 'VIDEO-CAPTURE-STOP-ERROR';
+
+interface CaptureStopErrorNotify extends BaseNotify {
+  params?: {
+    message: string;
+  };
+}
 
 /**
  * VideoCapture class
  */
 export class VideoCapture {
+  notify: NotifyController;
+  constructor(notify: NotifyController) {
+    this.notify = notify;
+  }
+
   /**
    * start video capture
+   * @param onStopFailed the block for error of stopCapture
    * @return promise of captured file url
    */
-  startCapture(): Promise<string> {
-    return ThetaClientReactNative.startCapture();
+  startCapture(
+    onStopFailed?: (error: any) => void
+  ): Promise<string | undefined> {
+    if (onStopFailed) {
+      this.notify.addNotify(NOTIFY_NAME, (event: CaptureStopErrorNotify) => {
+        onStopFailed(event.params);
+      });
+    }
+    return new Promise<string | undefined>(async (resolve, reject) => {
+      await ThetaClientReactNative.startVideoCapture()
+        .then((result?: string) => {
+          resolve(result ?? undefined);
+        })
+        .catch((error: any) => {
+          reject(error);
+        })
+        .finally(() => {
+          this.notify.removeNotify(NOTIFY_NAME);
+        });
+    });
   }
+
   /**
    * stop video capture
    */
   stopCapture() {
-    ThetaClientReactNative.stopCapture();
+    ThetaClientReactNative.stopVideoCapture();
   }
 }
 
@@ -62,8 +99,14 @@ export class VideoCaptureBuilder extends CaptureBuilder<VideoCaptureBuilder> {
    * @return promise of VideoCapture instance
    */
   build(): Promise<VideoCapture> {
-    return ThetaClientReactNative.buildVideoCapture(this.options).then(
-      () => new VideoCapture()
-    );
+    return new Promise<VideoCapture>(async (resolve, reject) => {
+      try {
+        await ThetaClientReactNative.getVideoCaptureBuilder();
+        await ThetaClientReactNative.buildVideoCapture(this.options);
+        resolve(new VideoCapture(NotifyController.instance));
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 }

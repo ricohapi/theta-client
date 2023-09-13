@@ -69,7 +69,6 @@ export function reset(): Promise<boolean> {
  * @return created PhotoCaptureBuilder
  */
 export function getPhotoCaptureBuilder(): PhotoCaptureBuilder {
-  ThetaClientReactNative.getPhotoCaptureBuilder();
   return new PhotoCaptureBuilder();
 }
 
@@ -80,7 +79,6 @@ export function getPhotoCaptureBuilder(): PhotoCaptureBuilder {
  * @return created TimeShiftCaptureBuilder
  */
 export function getTimeShiftCaptureBuilder(): TimeShiftCaptureBuilder {
-  ThetaClientReactNative.getTimeShiftCaptureBuilder();
   return new TimeShiftCaptureBuilder();
 }
 
@@ -91,7 +89,6 @@ export function getTimeShiftCaptureBuilder(): TimeShiftCaptureBuilder {
  * @return created VideoCaptureBuilder instance
  */
 export function getVideoCaptureBuilder(): VideoCaptureBuilder {
-  ThetaClientReactNative.getVideoCaptureBuilder();
   return new VideoCaptureBuilder();
 }
 

@@ -7,7 +7,8 @@ import '../theta_client_flutter_test.dart';
 void main() {
   test('listFiles', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
-    MockThetaClientFlutterPlatform fakePlatform = MockThetaClientFlutterPlatform();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     const name = 'R0013336.JPG';
@@ -42,7 +43,8 @@ void main() {
       return Future.value(input);
     };
 
-    var result = await thetaClientPlugin.listFiles(FileTypeEnum.image, 10, 10, StorageEnum.current);
+    var result = await thetaClientPlugin.listFiles(
+        FileTypeEnum.image, 10, 10, StorageEnum.current);
     expect(result, input);
   });
 
@@ -66,7 +68,8 @@ void main() {
     expect(data.length, ProjectionTypeEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
-      expect(ProjectionTypeEnum.getValue(data[i][1]), data[i][0], reason: data[i][1]);
+      expect(ProjectionTypeEnum.getValue(data[i][1]), data[i][0],
+          reason: data[i][1]);
     }
   });
 }

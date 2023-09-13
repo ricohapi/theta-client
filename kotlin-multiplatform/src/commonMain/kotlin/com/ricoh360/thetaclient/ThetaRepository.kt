@@ -181,6 +181,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 HttpStatusCode.Unauthorized -> {
                     throw ThetaUnauthorizedException(e.message ?: e.toString())
                 }
+
                 else -> {
                     throw ThetaWebApiException.create(e)
                 }
@@ -4054,6 +4055,9 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @return [OffDelayEnum] or [OffDelay]
              */
             fun get(sec: Int): OffDelay {
+                if (sec == 0) {
+                    return DISABLE
+                }
                 return values().firstOrNull { it.sec == sec } ?: OffDelaySec(sec)
             }
         }
@@ -4786,6 +4790,9 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @return [SleepDelayEnum] or [SleepDelaySec]
              */
             fun get(sec: Int): SleepDelay {
+                if (sec == 0) {
+                    return DISABLE
+                }
                 return values().firstOrNull { it.sec == sec } ?: SleepDelaySec(sec)
             }
         }
@@ -5944,9 +5951,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                     size = VideoFormat.VIDEO_4K
                 )
             }
+
             ThetaModel.isBeforeThetaV(cameraModel) -> {
                 return fileUrl
             }
+
             else -> {
                 ConvertVideoFormatsParams(
                     fileUrl = fileUrl,
@@ -6633,11 +6642,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 plugins.size > SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 -> {
                     throw ArgumentException("Argument list must have $SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 or less elements for RICOH THETA Z1")
                 }
+
                 plugins.size < SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 -> {
                     do { // autocomplete
                         plugins += ""
                     } while (plugins.size < SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1)
                 }
+
                 else -> {}
             }
         }

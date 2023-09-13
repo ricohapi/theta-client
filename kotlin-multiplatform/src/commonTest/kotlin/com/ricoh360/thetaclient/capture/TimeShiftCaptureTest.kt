@@ -6,8 +6,8 @@ import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.CaptureMode
 import com.ricoh360.thetaclient.transferred.FirstShootingEnum
-import com.ricoh360.thetaclient.transferred.TimeShift
 import com.ricoh360.thetaclient.transferred.Preset
+import com.ricoh360.thetaclient.transferred.TimeShift
 import io.ktor.client.network.sockets.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -62,6 +62,7 @@ class TimeShiftCaptureTest {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
                 }
+
                 1 -> {
                     CheckRequest.checkCommandName(request, "camera.startCapture")
                 }
@@ -135,6 +136,7 @@ class TimeShiftCaptureTest {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.PRESET, preset = Preset.ROOM)
                 }
+
                 1 -> {
                     CheckRequest.checkCommandName(request, "camera.startCapture")
                 }
@@ -208,6 +210,7 @@ class TimeShiftCaptureTest {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.PRESET, preset = Preset.ROOM)
                 }
+
                 1 -> {
                     CheckRequest.checkCommandName(request, "camera.startCapture")
                 }

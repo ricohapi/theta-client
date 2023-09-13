@@ -78,9 +78,9 @@ class ImageStitchingTest {
         }
     }
 
-   /**
-    * Convert ThetaRepository.Options to Options.
-    */
+    /**
+     * Convert ThetaRepository.Options to Options.
+     */
     @Test
     fun convertOptionImageStitchingTest() = runTest {
         val values = listOf(
