@@ -3,6 +3,8 @@ package com.ricoh360.thetaclient.theta_client_flutter
 import android.util.Log
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.capture.PhotoCapture
+import com.ricoh360.thetaclient.capture.TimeShiftCapture
+import com.ricoh360.thetaclient.capture.TimeShiftCapturing
 import com.ricoh360.thetaclient.capture.VideoCapture
 import com.ricoh360.thetaclient.capture.VideoCapturing
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -28,32 +30,49 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
     var endpoint = "http://192.168.1.1:80/"
     var thetaRepository: ThetaRepository? = null
     var previewing = false
-    lateinit var eventChannel: EventChannel
-    var eventSink: EventChannel.EventSink? = null
+    lateinit var eventNotifyChannel: EventChannel
+    var eventNotifySink: EventChannel.EventSink? = null
 
     var photoCaptureBuilder: PhotoCapture.Builder? = null
     var photoCapture: PhotoCapture? = null
+    var timeShiftCaptureBuilder: TimeShiftCapture.Builder? = null
+    var timeShiftCapture: TimeShiftCapture? = null
+    var timeShiftCapturing: TimeShiftCapturing? = null
     var videoCaptureBuilder: VideoCapture.Builder? = null
     var videoCapture: VideoCapture? = null
     var videoCapturing: VideoCapturing? = null
 
-    val errorCode: String = "Error"
-    val messageNotInit: String = "Not initialized."
-    val messageNoResult: String = "Result is Null."
-    val messageNoArgument: String = "No Argument."
+    companion object {
+        const val errorCode: String = "Error"
+        const val messageNotInit: String = "Not initialized."
+        const val messageNoResult: String = "Result is Null."
+        const val messageNoArgument: String = "No Argument."
+
+        const val eventNameNotify = "theta_client_flutter/theta_notify"
+        const val notifyIdLivePreview = 10001
+        const val notifyIdTimeShiftProgress = 10002
+        const val notifyIdVideoCaptureStopError = 10003
+    }
+
+    fun sendNotifyEvent(id: Int, params: Map<String, Any?>) {
+        scopeMain.launch {
+            eventNotifySink?.success(toNotify(id, params))
+        }
+    }
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "theta_client_flutter")
         channel.setMethodCallHandler(this)
-        eventChannel = EventChannel(flutterPluginBinding.binaryMessenger, "theta_client_flutter/live_preview")
-        eventChannel.setStreamHandler(
+
+        eventNotifyChannel = EventChannel(flutterPluginBinding.binaryMessenger, eventNameNotify)
+        eventNotifyChannel.setStreamHandler(
             object : EventChannel.StreamHandler {
                 override fun onListen(arguments: Any?, events: EventChannel.EventSink) {
-                    eventSink = events
+                    eventNotifySink = events
                 }
 
                 override fun onCancel(arguments: Any?) {
-                    Log.w("Android", "EventChannel onCancel called")
+                    Log.w("Android", "EventChannel onCancel called to theta notify")
                 }
             }
         )
@@ -64,210 +83,273 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             "getPlatformVersion" -> {
                 result.success("Android ${android.os.Build.VERSION.RELEASE}")
             }
+
             "initialize" -> {
                 scope.launch {
                     initialize(call, result)
                 }
             }
+
             "isInitialized" -> {
                 isInitialized(result)
             }
+
             "restoreSettings" -> {
                 scope.launch {
                     restoreSettings(result)
                 }
             }
+
             "getThetaModel" -> {
                 getThetaModel(result)
             }
+
             "getThetaInfo" -> {
                 scope.launch {
                     getThetaInfo(result)
                 }
             }
+
             "getThetaState" -> {
                 scope.launch {
                     getThetaState(result)
                 }
             }
+
             "getLivePreview" -> {
                 scope.launch {
                     getLivePreview(result)
                 }
             }
+
             "stopLivePreview" -> {
                 stopLivePreview(result)
             }
+
             "listFiles" -> {
                 scope.launch {
                     listFiles(call, result)
                 }
             }
+
             "deleteFiles" -> {
                 scope.launch {
                     deleteFiles(call, result)
                 }
             }
+
             "deleteAllFiles" -> {
                 scope.launch {
                     deleteAllFiles(result)
                 }
             }
+
             "deleteAllImageFiles" -> {
                 scope.launch {
                     deleteAllImageFiles(result)
                 }
             }
+
             "deleteAllVideoFiles" -> {
                 scope.launch {
                     deleteAllVideoFiles(result)
                 }
             }
+
             "getPhotoCaptureBuilder" -> {
                 getPhotoCaptureBuilder(result)
             }
+
             "buildPhotoCapture" -> {
                 scope.launch {
                     buildPhotoCapture(call, result)
                 }
             }
+
             "takePicture" -> {
                 takePicture(result)
             }
+
+            "getTimeShiftCaptureBuilder" -> {
+                getTimeShiftCaptureBuilder(result)
+            }
+
+            "buildTimeShiftCapture" -> {
+                scope.launch {
+                    buildTimeShiftCapture(call, result)
+                }
+            }
+
+            "startTimeShiftCapture" -> {
+                startTimeShiftCapture(result)
+            }
+
+            "stopTimeShiftCapture" -> {
+                stopTimeShiftCapture(result)
+            }
+
             "getVideoCaptureBuilder" -> {
                 getVideoCaptureBuilder(result)
             }
+
             "buildVideoCapture" -> {
                 scope.launch {
                     buildVideoCapture(call, result)
                 }
             }
+
             "startVideoCapture" -> {
                 startVideoCapture(result)
             }
+
             "stopVideoCapture" -> {
                 stopVideoCapture(result)
             }
+
             "getOptions" -> {
                 scope.launch {
                     getOptions(call, result)
                 }
             }
+
             "setOptions" -> {
                 scope.launch {
                     setOptions(call, result)
                 }
             }
+
             "getMetadata" -> {
                 scope.launch {
                     getMetadata(call, result)
                 }
             }
+
             "reset" -> {
                 scope.launch {
                     reset(result)
                 }
             }
+
             "stopSelfTimer" -> {
                 scope.launch {
                     stopSelfTimer(result)
                 }
             }
+
             "convertVideoFormats" -> {
                 scope.launch {
                     convertVideoFormats(call, result)
                 }
             }
+
             "cancelVideoConvert" -> {
                 scope.launch {
                     cancelVideoConvert(result)
                 }
             }
+
             "finishWlan" -> {
                 scope.launch {
                     finishWlan(result)
                 }
             }
+
             "listAccessPoints" -> {
                 scope.launch {
                     listAccessPoints(result)
                 }
             }
+
             "setAccessPointDynamically" -> {
                 scope.launch {
                     setAccessPointDynamically(call, result)
                 }
             }
+
             "setAccessPointStatically" -> {
                 scope.launch {
                     setAccessPointStatically(call, result)
                 }
             }
+
             "deleteAccessPoint" -> {
                 scope.launch {
                     deleteAccessPoint(call, result)
                 }
             }
+
             "getMySetting" -> {
                 scope.launch {
                     getMySetting(call, result)
                 }
             }
+
             "getMySettingFromOldModel" -> {
                 scope.launch {
                     getMySettingFromOldModel(call, result)
                 }
             }
+
             "setMySetting" -> {
                 scope.launch {
                     setMySetting(call, result)
                 }
             }
+
             "deleteMySetting" -> {
                 scope.launch {
                     deleteMySetting(call, result)
                 }
             }
+
             "listPlugins" -> {
                 scope.launch {
                     listPlugins(call, result)
                 }
             }
+
             "setPlugin" -> {
                 scope.launch {
                     setPlugin(call, result)
                 }
             }
+
             "startPlugin" -> {
                 scope.launch {
                     startPlugin(call, result)
                 }
             }
+
             "stopPlugin" -> {
                 scope.launch {
                     stopPlugin(call, result)
                 }
             }
+
             "getPluginLicense" -> {
                 scope.launch {
                     getPluginLicense(call, result)
                 }
             }
+
             "getPluginOrders" -> {
                 scope.launch {
                     getPluginOrders(call, result)
                 }
             }
+
             "setPluginOrders" -> {
                 scope.launch {
                     setPluginOrders(call, result)
                 }
             }
+
             "setBluetoothDevice" -> {
                 scope.launch {
                     setBluetoothDevice(call, result)
                 }
             }
+
             else -> {
                 result.notImplemented()
             }
@@ -283,6 +365,9 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         previewing = false
         photoCaptureBuilder = null
         photoCapture = null
+        timeShiftCaptureBuilder = null
+        timeShiftCapture = null
+        timeShiftCapturing = null
         videoCaptureBuilder = null
         videoCapture = null
         videoCapturing = null
@@ -358,22 +443,17 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     suspend fun getLivePreview(result: Result) {
-        if (thetaRepository == null) {
+        val theta = thetaRepository
+        if (theta == null) {
             result.error(errorCode, messageNotInit, null)
             return
         }
 
         previewing = true
         try {
-            thetaRepository!!.getLivePreview {
-                if (eventSink != null) {
-                    val data = it.first.sliceArray(IntRange(0, it.second - 1))
-                    scopeMain.launch {
-                        if (previewing) {
-                            eventSink?.success(data)
-                        }
-                    }
-                }
+            theta.getLivePreview {
+                val data = it.first.sliceArray(IntRange(0, it.second - 1))
+                sendNotifyEvent(notifyIdLivePreview, toPreviewNotifyParam(data))
                 @Suppress("LABEL_NAME_CLASH")
                 return@getLivePreview previewing
             }
@@ -428,6 +508,70 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         })
     }
 
+    fun getTimeShiftCaptureBuilder(result: Result) {
+        val theta = thetaRepository
+        if (theta == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        timeShiftCaptureBuilder = theta.getTimeShiftCaptureBuilder()
+        result.success(null)
+    }
+
+    suspend fun buildTimeShiftCapture(call: MethodCall, result: Result) {
+        val theta = thetaRepository
+        val timeShiftCaptureBuilder = timeShiftCaptureBuilder
+        if (theta == null || timeShiftCaptureBuilder == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        setCaptureBuilderParams(call, timeShiftCaptureBuilder)
+        setTimeShiftCaptureBuilderParams(call, timeShiftCaptureBuilder)
+        try {
+            timeShiftCapture = timeShiftCaptureBuilder.build()
+            result.success(null)
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    fun startTimeShiftCapture(result: Result) {
+        val theta = thetaRepository
+        val timeShiftCapture = timeShiftCapture
+        if (theta == null || timeShiftCapture == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        timeShiftCapturing =
+            timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
+                override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
+                    result.error(exception.javaClass.simpleName, exception.message, null)
+                }
+
+                override fun onProgress(completion: Float) {
+                    sendNotifyEvent(
+                        notifyIdTimeShiftProgress,
+                        toCaptureProgressNotifyParam(completion)
+                    )
+                }
+
+                override fun onSuccess(fileUrl: String?) {
+                    result.success(fileUrl)
+                }
+            })
+    }
+
+    fun stopTimeShiftCapture(result: Result) {
+        val theta = thetaRepository
+        val timeShiftCapturing = timeShiftCapturing
+        if (theta == null || timeShiftCapturing == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        timeShiftCapturing.stopCapture()
+        result.success(null)
+    }
+
     fun getVideoCaptureBuilder(result: Result) {
         if (thetaRepository == null) {
             result.error(errorCode, messageNotInit, null)
@@ -453,17 +597,26 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     fun startVideoCapture(result: Result) {
-        if (thetaRepository == null || videoCapture == null) {
+        val theta = thetaRepository
+        val capture = videoCapture
+        if (theta == null || capture == null) {
             result.error(errorCode, messageNotInit, null)
             return
         }
-        videoCapturing = videoCapture!!.startCapture(object : VideoCapture.StartCaptureCallback {
-            override fun onSuccess(fileUrl: String) {
+        videoCapturing = capture.startCapture(object : VideoCapture.StartCaptureCallback {
+            override fun onCaptureCompleted(fileUrl: String?) {
                 result.success(fileUrl)
             }
 
-            override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
+            override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 result.error(exception.javaClass.simpleName, exception.message, null)
+            }
+
+            override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                sendNotifyEvent(
+                    notifyIdVideoCaptureStopError,
+                    toMessageNotifyParam(exception.message ?: exception.toString())
+                )
             }
         })
     }

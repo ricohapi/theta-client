@@ -1,9 +1,11 @@
 ﻿# THETA Client Tutorial for React Native
 
 ## Advance preparation
+
 Connect the wireless LAN between the smartphone and THETA that runs on the application using this SDK.
 
 ## Initialize THETA Client
+
 ```Typescript
 import {initialize} from 'theta-client-react-native';
 
@@ -26,19 +28,19 @@ initialize('http://<IP address>:<port number>')
   });
 ```
 
-* THETA IP ADDRESS
+- THETA IP ADDRESS
 
-| Mode |Address |
-|-------|---------|
-|Direct mode|192.168.1.1|
-|Other| Camera IP address|
+| Mode        | Address           |
+| ----------- | ----------------- |
+| Direct mode | 192.168.1.1       |
+| Other       | Camera IP address |
 
-* When downloading images or videos from THETA, the connection is plain, so the settings for each platform are required depending on the destination address (default 192.168.1.1).
+- When downloading images or videos from THETA, the connection is plain, so the settings for each platform are required depending on the destination address (default 192.168.1.1).
 
-* iOS: shows an example of Info.plist by default.
-Xcode `Signing & Capabilities` -> `App Transport Security Exception` can also be added.
+- iOS: shows an example of Info.plist by default.
+  Xcode `Signing & Capabilities` -> `App Transport Security Exception` can also be added.
 
-``` xml
+```xml
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
     <plist version="1.0">
@@ -64,7 +66,8 @@ Xcode `Signing & Capabilities` -> `App Transport Security Exception` can also be
     </plist>
 ```
 
-* Android: Res/xml/network_security_config.xml shows an example of the default case.
+- Android: Res/xml/network_security_config.xml shows an example of the default case.
+
 ```xml
     <?xml version="1.0" encoding="utf-8"?>
     <network-security-config>
@@ -79,7 +82,7 @@ Xcode `Signing & Capabilities` -> `App Transport Security Exception` can also be
 
 First, shooting settings are performed using `getPhotoCaptureBuilder()` to create `PhotoCapture` objects.
 
-``` Typescript
+```Typescript
 import {
   getPhotoCaptureBuilder,
   IsoAutoHighLimitEnum,
@@ -103,7 +106,7 @@ The above example sets the maximum ISO sensitivity to 1000 and the file format t
 See [Display a preview](#preview) for instructions on how to view preview.
 Next, we call `PhotoCapture.takePicture()` to shoot still pictures.
 
-``` Typescript
+```Typescript
 photoCapture.takePicture()
   .then(fileUrl => {
     // HTTP GET to fileUrl and receiving a JPEG file
@@ -117,7 +120,7 @@ photoCapture.takePicture()
 
 First, you set up shooting using `getVideoCaptureBuilder()` and create `VideoCapture` objects.
 
-``` Typescript
+```Typescript
 import {
   getVideoCaptureBuilder,
   IsoAutoHighLimitEnum,
@@ -142,20 +145,23 @@ See [Display a preview](#preview) for instructions on how to view preview.
 
 Next, we call `VideoCapture.startCapture()` to start recording videos.
 
-``` Typescript
-VideoCapture.startCapture()
-  .then(fileUrl => {
+```Typescript
+VideoCapture
+  .startCapture((error) => {
+    // handle error of stopCapture
+  })
+  .then((fileUrl) => {
     // send GET requests and receiving MP4 files
   })
-  .catch(error => {
-    // handle error
+  .catch((error) => {
+    // handle error of startCapture
   });
-  ```
-  
+```
+
 Next, call `VideoCapture.stopCapture()` to finish recording the video.
 If successful, then the URL of the shot file is called then as shown above.
 
-``` Typescript
+```Typescript
 VideoCapture.stopCapture();
 ```
 
@@ -167,7 +173,7 @@ When calling `getLivePreview()`, the event THETA_FRAME_EVENT occurs every time e
 The DATA URL of the frame data (JPEG) is passed to the event data.
 To exit the preview, call `stopLivePreview()`.
 
-``` Typescript
+```Typescript
 import * as React from 'react';
 import {NativeModules, NativeEventEmitter} from 'react-native';
 import {
@@ -252,39 +258,38 @@ getOptions(optionNames)
   });
 ```
 
-
 ## List still images and videos in THETA
 
 The list of still pictures (JPEG file) and videos (MP4 file) in THETA can be obtained using `listFiles(fileType:FileType Enum, startPosition:number, entryCount:number)`
 The return type of `listFiles()` is `ThetaFiles`, and property `fileList` of `ThetaFiles` is the list of files in THETA.
 `fileList` is a list of `FileInfo`.
 
-* FileTypeEnum
+- FileTypeEnum
 
-  |Value|Content|
-  |---|---|
-  |IMAGE|List of still images (JPEG files)|
-  |VIDEO|List of videos (MP4 files)|
-  |ALL|List all files|
+  | Value | Content                           |
+  | ----- | --------------------------------- |
+  | IMAGE | List of still images (JPEG files) |
+  | VIDEO | List of videos (MP4 files)        |
+  | ALL   | List all files                    |
 
-* ThetaFiles
+- ThetaFiles
 
-  |Property name|Type|Contents|
-  |---|---|---|
-  |fileList|List\<FileInfo\>|The list of files in THETA|
-  |totalEntries|number| Number of files in THETA (see [api spec](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md))
+  | Property name | Type             | Contents                                                                                                                                          |
+  | ------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | fileList      | List\<FileInfo\> | The list of files in THETA                                                                                                                        |
+  | totalEntries  | number           | Number of files in THETA (see [api spec](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md)) |
 
-* FileInfo
+- FileInfo
 
-  |Property name|Type|Contents|
-  |---|---|---|
-  |name|string|Represents the file name|
-  |size|number|Indicates the file size (in bytes)|
-  |dateTime|string|Shooting date and time (YYYY:MM:DD HH:MM:SS)|
-  |fileUrl|string|Represents the URL of the file|
-  |thumbnailUrl|string|Represents a thumbnail URL|
+  | Property name | Type   | Contents                                     |
+  | ------------- | ------ | -------------------------------------------- |
+  | name          | string | Represents the file name                     |
+  | size          | number | Indicates the file size (in bytes)           |
+  | dateTime      | string | Shooting date and time (YYYY:MM:DD HH:MM:SS) |
+  | fileUrl       | string | Represents the URL of the file               |
+  | thumbnailUrl  | string | Represents a thumbnail URL                   |
 
-``` Typescript
+```Typescript
 import {listFiles, FileTypeEnum} from 'theta-client-react-native';
 
 await listFiles(FileTypeEnum.IMAGE, 0, 1000)
@@ -295,12 +300,14 @@ await listFiles(FileTypeEnum.IMAGE, 0, 1000)
     // handle error
   });
 ```
+
 ## Download still images and videos
+
 You can retrieve data from the URL of still pictures (JPEG file) or videos (MP4 file).
 You can download using the following functions.
 For still images, you can download the image and display it by setting the URL to the source attribute of the Image component.
 
-``` Typescript
+```Typescript
 fetch(url)
   .then((res) => {
     if (!res.ok) {
@@ -317,10 +324,12 @@ fetch(url)
     // handle error
   });
 ```
+
 ## Obtain thumbnails
+
 Thumbnails of the files in THETA can be downloaded using the `thumbnailUrl` of the `FileInfo` aquired by `listFiles()` as follows:
 
-``` Typescript
+```Typescript
 fetch(fileInfo.thumbnailUrl)
   .then((res) => {
     if (!res.ok) {
@@ -338,13 +347,12 @@ fetch(fileInfo.thumbnailUrl)
   });
 ```
 
-
 ## Get the THETA information
 
 To obtain the information about the connected THETA, call `getThetaInfo()`.
 If the call is successful, you can get `ThetaInfo`.
 
-``` Typescript
+```Typescript
 import {getThetaInfo} from 'theta-client-react-native';
 
 getThetaInfo()
@@ -361,7 +369,7 @@ getThetaInfo()
 To get the state of the connected THETA, call `getThetaState()`.
 Successful calling allows you to acquire the `ThetaState`.
 
-``` Typescript
+```Typescript
 import {getThetaState} from 'theta-client-react-native';
 
 getThetaState()
@@ -377,7 +385,7 @@ getThetaState()
 
 Call `reset()` to reset the connected THETA.
 
-``` Typescript
+```Typescript
 import {reset} from 'theta-client-react-native';
 
 reset()

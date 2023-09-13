@@ -106,13 +106,16 @@ class ThetaRepositoryClientModeTest {
                 0 -> {
                     assertNull(authHeader)
                 }
+
                 1 -> {
                     assertNotNull(authHeader)
                     checkAuthHeader(authHeader, username, request.url.encodedPath, realm, qop, nonce)
                 }
+
                 2 -> {
                     assertNull(authHeader)
                 }
+
                 3 -> {
                     assertNotNull(authHeader)
                     checkAuthHeader(authHeader, username, request.url.encodedPath, realm, qop, nonce)
@@ -183,9 +186,11 @@ class ThetaRepositoryClientModeTest {
                 0 -> {
                     assertNull(authHeader)
                 }
+
                 1 -> {
                     assertNotNull(authHeader)
                 }
+
                 2 -> {
                     assertTrue(false, "newInstance")
                 }
@@ -238,6 +243,7 @@ class ThetaRepositoryClientModeTest {
                 0 -> {
                     assertNull(authHeader)
                 }
+
                 1 -> {
                     assertTrue(false, "newInstance")
                 }
@@ -304,6 +310,7 @@ class ThetaRepositoryClientModeTest {
                 0 -> {
                     assertNull(authHeader)
                 }
+
                 1 -> {
                     assertTrue(false, "newInstance")
                 }

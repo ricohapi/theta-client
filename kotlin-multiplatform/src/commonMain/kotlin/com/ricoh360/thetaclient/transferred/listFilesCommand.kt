@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
  * list files request
  */
 @Serializable
-data class ListFilesRequest(
+internal data class ListFilesRequest(
     override val name: String = "camera.listFiles",
     override val parameters: ListFilesParams,
 ) : CommandApiRequest
@@ -19,7 +19,7 @@ data class ListFilesRequest(
  * list files request parameters
  */
 @Serializable
-data class ListFilesParams(
+internal data class ListFilesParams(
     /**
      * File type to acquire.
      * FileType.ALL: All types
@@ -79,7 +79,7 @@ data class ListFilesParams(
  * list files response
  */
 @Serializable
-data class ListFilesResponse(
+internal data class ListFilesResponse(
     /**
      * Executed command
      */
@@ -120,7 +120,7 @@ data class ListFilesResponse(
  * list files request results
  */
 @Serializable
-data class ResultListFiles(
+internal data class ResultListFiles(
     /**
      * The list of still image files and movie files acquired.
      */
@@ -138,7 +138,7 @@ data class ResultListFiles(
  * camera file information
  */
 @Serializable
-data class CameraFileInfo(
+internal data class CameraFileInfo(
     /**
      * File name
      */

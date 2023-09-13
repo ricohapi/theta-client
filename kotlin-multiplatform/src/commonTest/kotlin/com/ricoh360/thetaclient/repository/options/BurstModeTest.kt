@@ -4,7 +4,6 @@ import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
-import com.ricoh360.thetaclient.transferred.BluetoothPower
 import com.ricoh360.thetaclient.transferred.BurstMode
 import com.ricoh360.thetaclient.transferred.Options
 import io.ktor.client.request.*

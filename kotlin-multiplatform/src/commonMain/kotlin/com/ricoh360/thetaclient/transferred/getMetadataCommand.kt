@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
  * get metadata request
  */
 @Serializable
-data class GetMetadataRequest(
+internal data class GetMetadataRequest(
     override val name: String = "camera._getMetadata",
     override val parameters: GetMetadataParams,
 ) : CommandApiRequest
@@ -19,7 +19,7 @@ data class GetMetadataRequest(
  * get metadata request parameters
  */
 @Serializable
-data class GetMetadataParams(
+internal data class GetMetadataParams(
     /**
      * JPEG file ID
      */
@@ -30,7 +30,7 @@ data class GetMetadataParams(
  * get metadata response
  */
 @Serializable
-data class GetMetadataResponse(
+internal data class GetMetadataResponse(
     /**
      * Executed command
      */
@@ -71,7 +71,7 @@ data class GetMetadataResponse(
  * get metadata results
  */
 @Serializable
-data class ResultGetMetadata(
+internal data class ResultGetMetadata(
     /**
      * EXIF information in JSON format
      */
@@ -88,7 +88,7 @@ data class ResultGetMetadata(
  * https://www.cipa.jp/std/documents/j/DC-008-2012_J.pdf
  */
 @Serializable
-data class ExifInfo(
+internal data class ExifInfo(
     /**
      * EXIF Support version
      */
@@ -237,7 +237,7 @@ data class ExifInfo(
  * XMP information
  */
 @Serializable
-data class XmpInfo(
+internal data class XmpInfo(
     /**
      * Open Choice of Text Projection type. Google currently only
      * supports equirectangular.

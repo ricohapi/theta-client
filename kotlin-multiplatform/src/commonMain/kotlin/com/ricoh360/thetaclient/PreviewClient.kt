@@ -8,18 +8,29 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.auth.HttpAuthHeader
 import io.ktor.http.auth.parseAuthorizationHeader
-import io.ktor.network.selector.*
-import io.ktor.network.sockets.*
-import io.ktor.utils.io.*
-import io.ktor.utils.io.charsets.*
-import io.ktor.utils.io.core.*
+import io.ktor.network.selector.SelectorManager
+import io.ktor.network.sockets.ASocket
+import io.ktor.network.sockets.InetSocketAddress
+import io.ktor.network.sockets.aSocket
+import io.ktor.network.sockets.openReadChannel
+import io.ktor.network.sockets.openWriteChannel
+import io.ktor.network.sockets.tcpNoDelay
+import io.ktor.utils.io.ByteReadChannel
+import io.ktor.utils.io.ByteWriteChannel
+import io.ktor.utils.io.cancel
+import io.ktor.utils.io.charsets.Charsets
+import io.ktor.utils.io.close
+import io.ktor.utils.io.core.String
+import io.ktor.utils.io.core.toByteArray
+import io.ktor.utils.io.discard
+import io.ktor.utils.io.writeFully
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withTimeout
 
 /**
  * http client interface for preview only
  */
-interface PreviewClient {
+internal interface PreviewClient {
     /**
      * request [method] [path] with [contentType] of [body] to [endpoint]
      */
@@ -49,7 +60,7 @@ interface PreviewClient {
 }
 
 /** exception for processing preview stream */
-class PreviewClientException(
+internal class PreviewClientException(
     /** messages */
     msg: String,
     /** caused exception */
@@ -59,7 +70,7 @@ class PreviewClientException(
 /**
  * http client implement for preview only
  */
-class PreviewClientImpl : PreviewClient {
+internal class PreviewClientImpl : PreviewClient {
     /** parse url string */
     class URL(url: String) {
         /** protocol, only http or https */
@@ -427,6 +438,7 @@ class PreviewClientImpl : PreviewClient {
                     }
                 } ?: client
             }
+
             else -> client
         }
     }

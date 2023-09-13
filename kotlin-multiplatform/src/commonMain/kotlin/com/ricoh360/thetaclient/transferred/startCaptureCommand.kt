@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
  * start capture request
  */
 @Serializable
-data class StartCaptureRequest(
+internal data class StartCaptureRequest(
     override val name: String = "camera.startCapture",
     override val parameters: StartCaptureParams,
 ) : CommandApiRequest
@@ -19,7 +19,7 @@ data class StartCaptureRequest(
  * start capture request parameters
  */
 @Serializable
-data class StartCaptureParams(
+internal data class StartCaptureParams(
     /**
      * Continuously shoots in the still image shooting mode.  Interval
      * shooting is started if this parameter is omitted
@@ -34,7 +34,7 @@ data class StartCaptureParams(
  * Shooting mode
  */
 @Serializable
-enum class ShootingMode {
+internal enum class ShootingMode {
     /**
      * Interval shooting
      */
@@ -78,7 +78,7 @@ enum class ShootingMode {
  * start capture response
  */
 @Serializable
-data class StartCaptureResponse(
+internal data class StartCaptureResponse(
     /**
      * Executed command
      */
@@ -119,7 +119,7 @@ data class StartCaptureResponse(
  * start capture results
  */
 @Serializable
-data class ResultStartCapture(
+internal data class ResultStartCapture(
     /**
      * List of file URLs.
      * For others than Theta SC2.

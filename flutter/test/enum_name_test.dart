@@ -6,6 +6,17 @@ void main() {
 
   tearDown(() {});
 
+  test('BluetoothPowerEnum', () async {
+    List<List<dynamic>> data = [
+      [BluetoothPowerEnum.on, 'ON'],
+      [BluetoothPowerEnum.off, 'OFF'],
+    ];
+    expect(data.length, BluetoothPowerEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
   test('BurstModeEnum', () async {
     List<List<dynamic>> data = [
       [BurstModeEnum.on, 'ON'],
@@ -25,7 +36,8 @@ void main() {
       [BurstCaptureNumEnum.burstCaptureNum_7, 'BURST_CAPTURE_NUM_7'],
       [BurstCaptureNumEnum.burstCaptureNum_9, 'BURST_CAPTURE_NUM_9'],
     ];
-    expect(data.length, BurstCaptureNumEnum.values.length, reason: 'enum count');
+    expect(data.length, BurstCaptureNumEnum.values.length,
+        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -44,7 +56,8 @@ void main() {
       [BurstBracketStepEnum.bracketStep_2_7, 'BRACKET_STEP_2_7'],
       [BurstBracketStepEnum.bracketStep_3_0, 'BRACKET_STEP_3_0'],
     ];
-    expect(data.length, BurstBracketStepEnum.values.length, reason: 'enum count');
+    expect(data.length, BurstBracketStepEnum.values.length,
+        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -52,39 +65,130 @@ void main() {
 
   test('BurstCompensationEnum', () async {
     List<List<dynamic>> data = [
-      [BurstCompensationEnum.burstCompensationDown_5_0, 'BURST_COMPENSATION_DOWN_5_0'],
-      [BurstCompensationEnum.burstCompensationDown_4_7, 'BURST_COMPENSATION_DOWN_4_7'],
-      [BurstCompensationEnum.burstCompensationDown_4_3, 'BURST_COMPENSATION_DOWN_4_3'],
-      [BurstCompensationEnum.burstCompensationDown_4_0, 'BURST_COMPENSATION_DOWN_4_0'],
-      [BurstCompensationEnum.burstCompensationDown_3_7, 'BURST_COMPENSATION_DOWN_3_7'],
-      [BurstCompensationEnum.burstCompensationDown_3_3, 'BURST_COMPENSATION_DOWN_3_3'],
-      [BurstCompensationEnum.burstCompensationDown_3_0, 'BURST_COMPENSATION_DOWN_3_0'],
-      [BurstCompensationEnum.burstCompensationDown_2_7, 'BURST_COMPENSATION_DOWN_2_7'],
-      [BurstCompensationEnum.burstCompensationDown_2_3, 'BURST_COMPENSATION_DOWN_2_3'],
-      [BurstCompensationEnum.burstCompensationDown_2_0, 'BURST_COMPENSATION_DOWN_2_0'],
-      [BurstCompensationEnum.burstCompensationDown_1_7, 'BURST_COMPENSATION_DOWN_1_7'],
-      [BurstCompensationEnum.burstCompensationDown_1_3, 'BURST_COMPENSATION_DOWN_1_3'],
-      [BurstCompensationEnum.burstCompensationDown_1_0, 'BURST_COMPENSATION_DOWN_1_0'],
-      [BurstCompensationEnum.burstCompensationDown_0_7, 'BURST_COMPENSATION_DOWN_0_7'],
-      [BurstCompensationEnum.burstCompensationDown_0_3, 'BURST_COMPENSATION_DOWN_0_3'],
+      [
+        BurstCompensationEnum.burstCompensationDown_5_0,
+        'BURST_COMPENSATION_DOWN_5_0'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationDown_4_7,
+        'BURST_COMPENSATION_DOWN_4_7'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationDown_4_3,
+        'BURST_COMPENSATION_DOWN_4_3'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationDown_4_0,
+        'BURST_COMPENSATION_DOWN_4_0'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationDown_3_7,
+        'BURST_COMPENSATION_DOWN_3_7'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationDown_3_3,
+        'BURST_COMPENSATION_DOWN_3_3'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationDown_3_0,
+        'BURST_COMPENSATION_DOWN_3_0'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationDown_2_7,
+        'BURST_COMPENSATION_DOWN_2_7'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationDown_2_3,
+        'BURST_COMPENSATION_DOWN_2_3'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationDown_2_0,
+        'BURST_COMPENSATION_DOWN_2_0'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationDown_1_7,
+        'BURST_COMPENSATION_DOWN_1_7'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationDown_1_3,
+        'BURST_COMPENSATION_DOWN_1_3'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationDown_1_0,
+        'BURST_COMPENSATION_DOWN_1_0'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationDown_0_7,
+        'BURST_COMPENSATION_DOWN_0_7'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationDown_0_3,
+        'BURST_COMPENSATION_DOWN_0_3'
+      ],
       [BurstCompensationEnum.burstCompensation_0_0, 'BURST_COMPENSATION_0_0'],
-      [BurstCompensationEnum.burstCompensationUp_0_3, 'BURST_COMPENSATION_UP_0_3'],
-      [BurstCompensationEnum.burstCompensationUp_0_7, 'BURST_COMPENSATION_UP_0_7'],
-      [BurstCompensationEnum.burstCompensationUp_1_0, 'BURST_COMPENSATION_UP_1_0'],
-      [BurstCompensationEnum.burstCompensationUp_1_3, 'BURST_COMPENSATION_UP_1_3'],
-      [BurstCompensationEnum.burstCompensationUp_1_7, 'BURST_COMPENSATION_UP_1_7'],
-      [BurstCompensationEnum.burstCompensationUp_2_0, 'BURST_COMPENSATION_UP_2_0'],
-      [BurstCompensationEnum.burstCompensationUp_2_3, 'BURST_COMPENSATION_UP_2_3'],
-      [BurstCompensationEnum.burstCompensationUp_2_7, 'BURST_COMPENSATION_UP_2_7'],
-      [BurstCompensationEnum.burstCompensationUp_3_0, 'BURST_COMPENSATION_UP_3_0'],
-      [BurstCompensationEnum.burstCompensationUp_3_3, 'BURST_COMPENSATION_UP_3_3'],
-      [BurstCompensationEnum.burstCompensationUp_3_7, 'BURST_COMPENSATION_UP_3_7'],
-      [BurstCompensationEnum.burstCompensationUp_4_0, 'BURST_COMPENSATION_UP_4_0'],
-      [BurstCompensationEnum.burstCompensationUp_4_3, 'BURST_COMPENSATION_UP_4_3'],
-      [BurstCompensationEnum.burstCompensationUp_4_7, 'BURST_COMPENSATION_UP_4_7'],
-      [BurstCompensationEnum.burstCompensationUp_5_0, 'BURST_COMPENSATION_UP_5_0'],
+      [
+        BurstCompensationEnum.burstCompensationUp_0_3,
+        'BURST_COMPENSATION_UP_0_3'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationUp_0_7,
+        'BURST_COMPENSATION_UP_0_7'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationUp_1_0,
+        'BURST_COMPENSATION_UP_1_0'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationUp_1_3,
+        'BURST_COMPENSATION_UP_1_3'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationUp_1_7,
+        'BURST_COMPENSATION_UP_1_7'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationUp_2_0,
+        'BURST_COMPENSATION_UP_2_0'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationUp_2_3,
+        'BURST_COMPENSATION_UP_2_3'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationUp_2_7,
+        'BURST_COMPENSATION_UP_2_7'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationUp_3_0,
+        'BURST_COMPENSATION_UP_3_0'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationUp_3_3,
+        'BURST_COMPENSATION_UP_3_3'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationUp_3_7,
+        'BURST_COMPENSATION_UP_3_7'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationUp_4_0,
+        'BURST_COMPENSATION_UP_4_0'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationUp_4_3,
+        'BURST_COMPENSATION_UP_4_3'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationUp_4_7,
+        'BURST_COMPENSATION_UP_4_7'
+      ],
+      [
+        BurstCompensationEnum.burstCompensationUp_5_0,
+        'BURST_COMPENSATION_UP_5_0'
+      ],
     ];
-    expect(data.length, BurstCompensationEnum.values.length, reason: 'enum count');
+    expect(data.length, BurstCompensationEnum.values.length,
+        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -93,8 +197,14 @@ void main() {
   test('BurstMaxExposureTimeEnum', () async {
     List<List<dynamic>> data = [
       [BurstMaxExposureTimeEnum.maxExposureTime_0_5, 'MAX_EXPOSURE_TIME_0_5'],
-      [BurstMaxExposureTimeEnum.maxExposureTime_0_625, 'MAX_EXPOSURE_TIME_0_625'],
-      [BurstMaxExposureTimeEnum.maxExposureTime_0_76923076, 'MAX_EXPOSURE_TIME_0_76923076'],
+      [
+        BurstMaxExposureTimeEnum.maxExposureTime_0_625,
+        'MAX_EXPOSURE_TIME_0_625'
+      ],
+      [
+        BurstMaxExposureTimeEnum.maxExposureTime_0_76923076,
+        'MAX_EXPOSURE_TIME_0_76923076'
+      ],
       [BurstMaxExposureTimeEnum.maxExposureTime_1, 'MAX_EXPOSURE_TIME_1'],
       [BurstMaxExposureTimeEnum.maxExposureTime_1_3, 'MAX_EXPOSURE_TIME_1_3'],
       [BurstMaxExposureTimeEnum.maxExposureTime_1_6, 'MAX_EXPOSURE_TIME_1_6'],
@@ -115,7 +225,8 @@ void main() {
       [BurstMaxExposureTimeEnum.maxExposureTime_50, 'MAX_EXPOSURE_TIME_50'],
       [BurstMaxExposureTimeEnum.maxExposureTime_60, 'MAX_EXPOSURE_TIME_60'],
     ];
-    expect(data.length, BurstMaxExposureTimeEnum.values.length, reason: 'enum count');
+    expect(data.length, BurstMaxExposureTimeEnum.values.length,
+        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -126,7 +237,8 @@ void main() {
       [BurstEnableIsoControlEnum.off, 'OFF'],
       [BurstEnableIsoControlEnum.on, 'ON'],
     ];
-    expect(data.length, BurstEnableIsoControlEnum.values.length, reason: 'enum count');
+    expect(data.length, BurstEnableIsoControlEnum.values.length,
+        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -152,7 +264,10 @@ void main() {
       [CaptureStatusEnum.converting, 'CONVERTING'],
       [CaptureStatusEnum.timeShiftShooting, 'TIME_SHIFT_SHOOTING'],
       [CaptureStatusEnum.continuousShooting, 'CONTINUOUS_SHOOTING'],
-      [CaptureStatusEnum.retrospectiveImageRecording, 'RETROSPECTIVE_IMAGE_RECORDING'],
+      [
+        CaptureStatusEnum.retrospectiveImageRecording,
+        'RETROSPECTIVE_IMAGE_RECORDING'
+      ],
     ];
     expect(data.length, CaptureStatusEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
@@ -197,7 +312,8 @@ void main() {
       [ContinuousNumberEnum.max20, 'MAX_20'],
       [ContinuousNumberEnum.unsupported, 'UNSUPPORTED'],
     ];
-    expect(data.length, ContinuousNumberEnum.values.length, reason: 'enum count');
+    expect(data.length, ContinuousNumberEnum.values.length,
+        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -209,7 +325,8 @@ void main() {
       [ShootingFunctionEnum.selfTimer, 'SELF_TIMER'],
       [ShootingFunctionEnum.mySetting, 'MY_SETTING'],
     ];
-    expect(data.length, ShootingFunctionEnum.values.length, reason: 'enum count');
+    expect(data.length, ShootingFunctionEnum.values.length,
+        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -221,7 +338,8 @@ void main() {
       [MicrophoneOptionEnum.internal, 'INTERNAL'],
       [MicrophoneOptionEnum.external, 'EXTERNAL'],
     ];
-    expect(data.length, MicrophoneOptionEnum.values.length, reason: 'enum count');
+    expect(data.length, MicrophoneOptionEnum.values.length,
+        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -275,7 +393,8 @@ void main() {
       [AiAutoThumbnailEnum.on, 'ON'],
       [AiAutoThumbnailEnum.off, 'OFF'],
     ];
-    expect(data.length, AiAutoThumbnailEnum.values.length, reason: 'enum count');
+    expect(data.length, AiAutoThumbnailEnum.values.length,
+        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -301,7 +420,8 @@ void main() {
       [CameraControlSourceEnum.camera, 'CAMERA'],
       [CameraControlSourceEnum.app, 'APP'],
     ];
-    expect(data.length, CameraControlSourceEnum.values.length, reason: 'enum count');
+    expect(data.length, CameraControlSourceEnum.values.length,
+        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -350,7 +470,8 @@ void main() {
       [ExposureCompensationEnum.p1_7, 'P1_7'],
       [ExposureCompensationEnum.p2_0, 'P2_0'],
     ];
-    expect(data.length, ExposureCompensationEnum.values.length, reason: 'enum count');
+    expect(data.length, ExposureCompensationEnum.values.length,
+        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -384,7 +505,19 @@ void main() {
       [ExposureProgramEnum.shutterPriority, 'SHUTTER_PRIORITY'],
       [ExposureProgramEnum.isoPriority, 'ISO_PRIORITY'],
     ];
-    expect(data.length, ExposureProgramEnum.values.length, reason: 'enum count');
+    expect(data.length, ExposureProgramEnum.values.length,
+        reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('FaceDetectEnum', () async {
+    List<List<dynamic>> data = [
+      [FaceDetectEnum.on, 'ON'],
+      [FaceDetectEnum.off, 'OFF'],
+    ];
+    expect(data.length, FaceDetectEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -431,6 +564,23 @@ void main() {
     }
   });
 
+  test('ImageStitchingEnum', () async {
+    List<List<dynamic>> data = [
+      [ImageStitchingEnum.auto, 'AUTO'],
+      [ImageStitchingEnum.static, 'STATIC'],
+      [ImageStitchingEnum.dynamic, 'DYNAMIC'],
+      [ImageStitchingEnum.dynamicAuto, 'DYNAMIC_AUTO'],
+      [ImageStitchingEnum.dynamicSemiAuto, 'DYNAMIC_SEMI_AUTO'],
+      [ImageStitchingEnum.dynamicSave, 'DYNAMIC_SAVE'],
+      [ImageStitchingEnum.dynamicLoad, 'DYNAMIC_LOAD'],
+      [ImageStitchingEnum.none, 'NONE'],
+    ];
+    expect(data.length, ImageStitchingEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
   test('PhotoFileFormatEnum', () async {
     List<List<dynamic>> data = [
       [PhotoFileFormatEnum.image_2K, 'IMAGE_2K'],
@@ -440,7 +590,8 @@ void main() {
       [PhotoFileFormatEnum.image_5_5K, 'IMAGE_5_5K'],
       [PhotoFileFormatEnum.image_11K, 'IMAGE_11K'],
     ];
-    expect(data.length, PhotoFileFormatEnum.values.length, reason: 'enum count');
+    expect(data.length, PhotoFileFormatEnum.values.length,
+        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -463,7 +614,8 @@ void main() {
       [VideoFileFormatEnum.video_7K_5F, 'VIDEO_7K_5F'],
       [VideoFileFormatEnum.video_7K_10F, 'VIDEO_7K_10F'],
     ];
-    expect(data.length, VideoFileFormatEnum.values.length, reason: 'enum count');
+    expect(data.length, VideoFileFormatEnum.values.length,
+        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -483,12 +635,25 @@ void main() {
     }
   });
 
+  test('GainEnum', () async {
+    List<List<dynamic>> data = [
+      [GainEnum.normal, 'NORMAL'],
+      [GainEnum.megaVolume, 'MEGA_VOLUME'],
+      [GainEnum.mute, 'MUTE'],
+    ];
+    expect(data.length, GainEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
   test('GpsTagRecordingEnum', () async {
     List<List<dynamic>> data = [
       [GpsTagRecordingEnum.on, 'ON'],
       [GpsTagRecordingEnum.off, 'OFF'],
     ];
-    expect(data.length, GpsTagRecordingEnum.values.length, reason: 'enum count');
+    expect(data.length, GpsTagRecordingEnum.values.length,
+        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -548,7 +713,8 @@ void main() {
       [IsoAutoHighLimitEnum.iso5000, 'ISO_5000'],
       [IsoAutoHighLimitEnum.iso6400, 'ISO_6400'],
     ];
-    expect(data.length, IsoAutoHighLimitEnum.values.length, reason: 'enum count');
+    expect(data.length, IsoAutoHighLimitEnum.values.length,
+        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -578,9 +744,13 @@ void main() {
       [MaxRecordableTimeEnum.time_300, 'RECORDABLE_TIME_300'],
       [MaxRecordableTimeEnum.time_1500, 'RECORDABLE_TIME_1500'],
       [MaxRecordableTimeEnum.time_7200, 'RECORDABLE_TIME_7200'],
-      [MaxRecordableTimeEnum.doNotUpdateMySettingCondition, 'DO_NOT_UPDATE_MY_SETTING_CONDITION'],
+      [
+        MaxRecordableTimeEnum.doNotUpdateMySettingCondition,
+        'DO_NOT_UPDATE_MY_SETTING_CONDITION'
+      ],
     ];
-    expect(data.length, MaxRecordableTimeEnum.values.length, reason: 'enum count');
+    expect(data.length, MaxRecordableTimeEnum.values.length,
+        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -728,7 +898,8 @@ void main() {
       [TimeShiftIntervalEnum.interval_9, 'INTERVAL_9'],
       [TimeShiftIntervalEnum.interval_10, 'INTERVAL_10'],
     ];
-    expect(data.length, TimeShiftIntervalEnum.values.length, reason: 'enum count');
+    expect(data.length, TimeShiftIntervalEnum.values.length,
+        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -760,7 +931,8 @@ void main() {
       [WhiteBalanceAutoStrengthEnum.on, 'ON'],
       [WhiteBalanceAutoStrengthEnum.off, 'OFF'],
     ];
-    expect(data.length, WhiteBalanceAutoStrengthEnum.values.length, reason: 'enum count');
+    expect(data.length, WhiteBalanceAutoStrengthEnum.values.length,
+        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }

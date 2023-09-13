@@ -101,5 +101,7 @@ class SleepDelayTest {
             val options = orgOptions.toOptions()
             assertEquals(options.sleepDelay, it.second, "sleepDelay ${it.second}")
         }
+
+        assertEquals(ThetaRepository.SleepDelayEnum.get(0), ThetaRepository.SleepDelayEnum.DISABLE, "DISABLE")
     }
 }

@@ -19,6 +19,7 @@ import {
 } from '../capture';
 import type { ThetaConfig } from './theta-config';
 import type { ThetaTimeout } from './theta-timeout';
+import { NotifyController } from './notify-controller';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 /**
@@ -35,6 +36,8 @@ export function initialize(
   config?: ThetaConfig,
   timeout?: ThetaTimeout
 ): Promise<boolean> {
+  NotifyController.instance.init();
+
   return ThetaClientReactNative.initialize(endPoint, config, timeout);
 }
 
@@ -66,7 +69,6 @@ export function reset(): Promise<boolean> {
  * @return created PhotoCaptureBuilder
  */
 export function getPhotoCaptureBuilder(): PhotoCaptureBuilder {
-  ThetaClientReactNative.getPhotoCaptureBuilder();
   return new PhotoCaptureBuilder();
 }
 
@@ -77,7 +79,6 @@ export function getPhotoCaptureBuilder(): PhotoCaptureBuilder {
  * @return created TimeShiftCaptureBuilder
  */
 export function getTimeShiftCaptureBuilder(): TimeShiftCaptureBuilder {
-  ThetaClientReactNative.getTimeShiftCaptureBuilder();
   return new TimeShiftCaptureBuilder();
 }
 
@@ -88,7 +89,6 @@ export function getTimeShiftCaptureBuilder(): TimeShiftCaptureBuilder {
  * @return created VideoCaptureBuilder instance
  */
 export function getVideoCaptureBuilder(): VideoCaptureBuilder {
-  ThetaClientReactNative.getVideoCaptureBuilder();
   return new VideoCaptureBuilder();
 }
 

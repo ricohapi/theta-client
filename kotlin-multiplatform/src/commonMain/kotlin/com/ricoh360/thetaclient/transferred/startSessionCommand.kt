@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
  * start capture request
  */
 @Serializable
-data class StartSessionRequest(
+internal data class StartSessionRequest(
     override val name: String = "camera.startSession",
     override val parameters: EmptyParameter = EmptyParameter(),
 ) : CommandApiRequest
@@ -18,7 +18,7 @@ data class StartSessionRequest(
  * start capture response
  */
 @Serializable
-data class StartSessionResponse(
+internal data class StartSessionResponse(
     /**
      * Executed command
      */
@@ -59,7 +59,7 @@ data class StartSessionResponse(
  * start capture results
  */
 @Serializable
-data class ResultStartSession(
+internal data class ResultStartSession(
     /**
      * session identifier
      */

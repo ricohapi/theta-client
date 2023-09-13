@@ -1,0 +1,11 @@
+name: Dummy for test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  dummy:
+    if: ${{ false }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: ""

@@ -5,7 +5,6 @@ import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.Options
-import com.ricoh360.thetaclient.transferred.WhiteBalanceAutoStrength
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.http.content.*

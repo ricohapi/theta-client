@@ -13,6 +13,7 @@ import com.ricoh360.thetaclient.capture.VideoCapture
 const val KEY_NOTIFY_NAME = "name"
 const val KEY_NOTIFY_PARAMS = "params"
 const val KEY_NOTIFY_PARAM_COMPLETION = "completion"
+const val KEY_NOTIFY_PARAM_MESSAGE = "message"
 
 fun toNotify(
   name: String,
@@ -29,6 +30,12 @@ fun toNotify(
 fun toCaptureProgressNotifyParam(value: Float): WritableMap {
   val result = Arguments.createMap()
   result.putDouble(KEY_NOTIFY_PARAM_COMPLETION, value.toDouble())
+  return result
+}
+
+fun toMessageNotifyParam(value: String): WritableMap {
+  val result = Arguments.createMap()
+  result.putString(KEY_NOTIFY_PARAM_MESSAGE, value)
   return result
 }
 
@@ -402,6 +409,23 @@ class ExposureProgramConverter : OptionConverter {
 };
 
 /**
+ * FaceDetectConverter
+ */
+class FaceDetectConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("faceDetect")?.let {
+      options.faceDetect = ThetaRepository.FaceDetectEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.faceDetect?.let {
+      objects.putString("faceDetect", it.toString())
+    }
+  }
+}
+
+/**
  * FileFormatConverter
  */
 class FileFormatConverter : OptionConverter {
@@ -454,6 +478,40 @@ class FilterConverter : OptionConverter {
 }
 
 /**
+ * FunctionConverter
+ */
+class FunctionConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("function")?.let {
+      options.function = ThetaRepository.ShootingFunctionEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.function?.let {
+      objects.putString("function", it.toString())
+    }
+  }
+}
+
+/**
+ * GainConverter
+ */
+class GainConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("gain")?.let {
+      options.gain = ThetaRepository.GainEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.gain?.let {
+      objects.putString("gain", it.toString())
+    }
+  }
+}
+
+/**
  * GpsTagRecordingConverter
  */
 class GpsTagRecordingConverter : OptionConverter {
@@ -472,6 +530,23 @@ class GpsTagRecordingConverter : OptionConverter {
   override fun setVideoOption(objects: ReadableMap, builder: VideoCapture.Builder) {
     objects.getString("gpsTagRecording")?.let {
       builder.setGpsTagRecording(ThetaRepository.GpsTagRecordingEnum.valueOf(it))
+    }
+  }
+}
+
+/**
+ * ImageStitchingConverter
+ */
+class ImageStitchingConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("imageStitching")?.let {
+      options.imageStitching = ThetaRepository.ImageStitchingEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.imageStitching?.let {
+      objects.putString("imageStitching", it.toString())
     }
   }
 }
@@ -659,6 +734,12 @@ class PresetConverter : OptionConverter {
   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
     options.preset?.let {
       objects.putString("preset", it.toString())
+    }
+  }
+
+  override fun setPhotoOption(objects: ReadableMap, builder: PhotoCapture.Builder) {
+    objects.getString("preset")?.let {
+      builder.setPreset(ThetaRepository.PresetEnum.valueOf(it))
     }
   }
 }

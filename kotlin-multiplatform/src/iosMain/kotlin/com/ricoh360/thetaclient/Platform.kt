@@ -21,7 +21,7 @@ actual class Platform actual constructor() {
 actual typealias FrameSource = NSData
 
 /** fixed NSData */
-val data: NSMutableData = NSMutableData.create(length = 10)!!
+internal val data: NSMutableData = NSMutableData.create(length = 10)!!
 
 /**
  * convert [packet] to NSData frame source data

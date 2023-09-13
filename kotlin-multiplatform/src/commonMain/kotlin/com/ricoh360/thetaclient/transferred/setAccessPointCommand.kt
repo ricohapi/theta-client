@@ -11,7 +11,7 @@ import kotlinx.serialization.json.JsonElement
  * set access point request
  */
 @Serializable
-data class SetAccessPointRequest(
+internal data class SetAccessPointRequest(
     override val name: String = "camera._setAccessPoint",
     override val parameters: SetAccessPointParams,
 ) : CommandApiRequest
@@ -20,7 +20,7 @@ data class SetAccessPointRequest(
  * set access point request parameters
  */
 @Serializable
-data class SetAccessPointParams(
+internal data class SetAccessPointParams(
     /**
      * SSID (Up to 32 bytes)
      */
@@ -92,7 +92,7 @@ data class SetAccessPointParams(
  * set access point response
  */
 @Serializable
-data class SetAccessPointResponse(
+internal data class SetAccessPointResponse(
     /**
      * Executed command
      */

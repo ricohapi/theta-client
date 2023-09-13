@@ -2,6 +2,7 @@ import { CaptureBuilder } from './capture';
 import type {
   FilterEnum,
   PhotoFileFormatEnum,
+  PresetEnum,
 } from '../theta-repository/options';
 
 import { NativeModules } from 'react-native';
@@ -49,14 +50,30 @@ export class PhotoCaptureBuilder extends CaptureBuilder<PhotoCaptureBuilder> {
   }
 
   /**
+   * Set preset mode of Theta SC2 and Theta SC2 for business.
+   * @param {FilterEnum} preset Preset mode to set
+   * @return PhotoCaptureBuilder
+   */
+  setPreset(preset: PresetEnum): PhotoCaptureBuilder {
+    this.options.preset = preset;
+    return this;
+  }
+
+  /**
    * Builds an instance of a PhotoCapture that has all the combined
    * parameters of the Options that have been added to the Builder.
    *
    * @return promise of PhotoCapture instance
    */
   build(): Promise<PhotoCapture> {
-    return ThetaClientReactNative.buildPhotoCapture(this.options).then(
-      () => new PhotoCapture()
-    );
+    return new Promise<PhotoCapture>(async (resolve, reject) => {
+      try {
+        await ThetaClientReactNative.getPhotoCaptureBuilder();
+        await ThetaClientReactNative.buildPhotoCapture(this.options);
+        resolve(new PhotoCapture());
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 }

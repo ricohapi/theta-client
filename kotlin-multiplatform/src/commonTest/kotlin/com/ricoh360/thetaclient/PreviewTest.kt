@@ -40,46 +40,46 @@ class PreviewTest {
         assertEquals(listFilesRequest.name, "camera.getLivePreview", "command name")
     }
 
-/*
-    @Test
-    fun getLivePreviewTest1() = runTest {
-        MockApiClient.onRequest = { request ->
-            // check request
-            assertEquals(request.url.encodedPath, "/osc/commands/execute", "request path")
-            checkRequest(request)
-            ByteReadChannel(Resource("src/commonTest/resources/getLivePreview/preview_dummy_500.txt").readText())
-        }
+    /*
+        @Test
+        fun getLivePreviewTest1() = runTest {
+            MockApiClient.onRequest = { request ->
+                // check request
+                assertEquals(request.url.encodedPath, "/osc/commands/execute", "request path")
+                checkRequest(request)
+                ByteReadChannel(Resource("src/commonTest/resources/getLivePreview/preview_dummy_500.txt").readText())
+            }
 
-        val READ_COUNT = 1000
-        var count = 0
-        ThetaApi.callGetLivePreviewCommand(endpoint).collect { byteReadPacket ->
-            byteReadPacket.release()
-            if(++ count == READ_COUNT) {
-                assertTrue(true, "Read ${READ_COUNT} parts")
-                this.cancel()
+            val READ_COUNT = 1000
+            var count = 0
+            ThetaApi.callGetLivePreviewCommand(endpoint).collect { byteReadPacket ->
+                byteReadPacket.release()
+                if(++ count == READ_COUNT) {
+                    assertTrue(true, "Read ${READ_COUNT} parts")
+                    this.cancel()
+                }
             }
         }
-    }
 
-    @Test
-    fun getLivePreviewTest2() = runTest {
-        MockApiClient.onRequest = { request ->
-            // check request
-            assertEquals(request.url.encodedPath, "/osc/commands/execute", "request path")
-            checkRequest(request)
-            ByteReadChannel(Resource("src/commonTest/resources/getLivePreview/preview_dummy_500.txt").readText())
-        }
-
-        val READ_COUNT = 1000
-        var count = 0
-        ThetaApi.callGetLivePreviewCommand(endpoint) handler@ { byteReadPacket ->
-            byteReadPacket.release()
-            if(++count == READ_COUNT) {
-                assertTrue(true, "Read ${READ_COUNT} parts")
-                return@handler false
+        @Test
+        fun getLivePreviewTest2() = runTest {
+            MockApiClient.onRequest = { request ->
+                // check request
+                assertEquals(request.url.encodedPath, "/osc/commands/execute", "request path")
+                checkRequest(request)
+                ByteReadChannel(Resource("src/commonTest/resources/getLivePreview/preview_dummy_500.txt").readText())
             }
-            return@handler true
+
+            val READ_COUNT = 1000
+            var count = 0
+            ThetaApi.callGetLivePreviewCommand(endpoint) handler@ { byteReadPacket ->
+                byteReadPacket.release()
+                if(++count == READ_COUNT) {
+                    assertTrue(true, "Read ${READ_COUNT} parts")
+                    return@handler false
+                }
+                return@handler true
+            }
         }
-    }
-*/
+    */
 }

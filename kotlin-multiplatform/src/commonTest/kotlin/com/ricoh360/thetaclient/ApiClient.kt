@@ -9,7 +9,7 @@ import io.ktor.client.HttpClient
  *
  * @return HttpClient
  */
-fun getHttpClient(): HttpClient {
+internal fun getHttpClient(): HttpClient {
     return if (MockApiClient.useMock) {
         MockApiClient.mockHttpClient
     } else {
@@ -29,7 +29,7 @@ fun getHttpClient(): HttpClient {
  *
  * @return PreviewClient
  */
-fun getHPreviewClient(): PreviewClient {
+internal fun getHPreviewClient(): PreviewClient {
     return if (MockApiClient.useMock) {
         MockApiClient.mockPreviewClient
     } else {

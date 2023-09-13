@@ -7,46 +7,70 @@ import 'package:theta_client_flutter/utils/convert_utils.dart';
 
 import 'theta_client_flutter_platform_interface.dart';
 
+const notifyIdLivePreview = 10001;
+const notifyIdTimeShiftProgress = 10002;
+const notifyIdVideoCaptureStopError = 10003;
+
 /// An implementation of [ThetaClientFlutterPlatform] that uses method channels.
 class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting
   final methodChannel = const MethodChannel('theta_client_flutter');
-  final stream = const EventChannel('theta_client_flutter/live_preview');
-  StreamSubscription? streamSubscription;
-  bool Function(Uint8List)? frameHandler;
+  final notifyStream = const EventChannel('theta_client_flutter/theta_notify');
+  StreamSubscription? notifyStreamSubscription;
+  Map<int, Function(Map<dynamic, dynamic>?)> notifyList = {};
 
-  void enableEventReceiver() {
-    streamSubscription = stream.receiveBroadcastStream().listen((dynamic event) {
-      if (frameHandler != null) {
-        if (!frameHandler!(event)) {
-          disableEventReceiver();
-          methodChannel.invokeMethod<String>('stopLivePreview');
-        }
-      } else {
-        disableEventReceiver();
-        methodChannel.invokeMethod<String>('stopLivePreview');
-      }
+  void addNotify(int id, Function(Map<dynamic, dynamic>?) callback) {
+    notifyList[id] = callback;
+  }
+
+  void removeNotify(int id) {
+    notifyList.remove(id);
+  }
+
+  void clearNotify() {
+    notifyList.clear();
+  }
+
+  void onNotify(Map<dynamic, dynamic> event) {
+    final id = event['id'] as int;
+    final params = event['params'] as Map<dynamic, dynamic>?;
+    final handler = notifyList[id];
+    handler?.call(params);
+  }
+
+  void enableNotifyEventReceiver() {
+    if (notifyStreamSubscription != null) {
+      return;
+    }
+    notifyStreamSubscription =
+        notifyStream.receiveBroadcastStream().listen((dynamic event) {
+      onNotify(event);
     }, onError: (dynamic error) {
       debugPrint('Received error: ${error.message}');
+      disableNotifyEventReceiver();
     }, cancelOnError: true);
   }
 
-  void disableEventReceiver() {
-    if (streamSubscription != null) {
-      streamSubscription!.cancel();
-      streamSubscription = null;
-    }
+  void disableNotifyEventReceiver() {
+    notifyStreamSubscription?.cancel();
+    notifyStreamSubscription = null;
   }
 
   @override
   Future<String?> getPlatformVersion() async {
-    final version = await methodChannel.invokeMethod<String>('getPlatformVersion');
+    final version =
+        await methodChannel.invokeMethod<String>('getPlatformVersion');
     return version;
   }
 
   @override
-  Future<void> initialize(String endpoint, ThetaConfig? config, ThetaTimeout? timeout) async {
+  Future<void> initialize(
+      String endpoint, ThetaConfig? config, ThetaTimeout? timeout) async {
+    clearNotify();
+    disableNotifyEventReceiver();
+    enableNotifyEventReceiver();
+
     var completer = Completer<void>();
     try {
       final Map params = <String, dynamic>{
@@ -80,7 +104,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   @override
   Future<ThetaModel?> getThetaModel() async {
     var completer = Completer<ThetaModel?>();
-    final thetaModel = await methodChannel.invokeMethod<String?>('getThetaModel');
+    final thetaModel =
+        await methodChannel.invokeMethod<String?>('getThetaModel');
     completer.complete(ThetaModel.getValue(thetaModel));
     return completer.future;
   }
@@ -90,8 +115,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
     var completer = Completer<ThetaInfo>();
     try {
       debugPrint('call getThetaInfo');
-      var result = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('getThetaInfo')
-          as Map<dynamic, dynamic>;
+      var result = await methodChannel.invokeMethod<Map<dynamic, dynamic>>(
+          'getThetaInfo') as Map<dynamic, dynamic>;
       var thetaInfo = ConvertUtils.convertThetaInfo(result);
       completer.complete(thetaInfo);
     } catch (e) {
@@ -105,8 +130,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
     var completer = Completer<ThetaState>();
     try {
       debugPrint('call getThetaState');
-      var result = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('getThetaState')
-          as Map<dynamic, dynamic>;
+      var result = await methodChannel.invokeMethod<Map<dynamic, dynamic>>(
+          'getThetaState') as Map<dynamic, dynamic>;
       var thetaState = ConvertUtils.convertThetaState(result);
       completer.complete(thetaState);
     } catch (e) {
@@ -119,24 +144,28 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   Future<void> getLivePreview(bool Function(Uint8List) frameHandler) async {
     var completer = Completer<void>();
     try {
-      enableEventReceiver();
-      this.frameHandler = frameHandler;
+      enableNotifyEventReceiver();
+      addNotify(notifyIdLivePreview, (params) {
+        final image = params?['image'] as Uint8List?;
+        if (image != null && !frameHandler(image)) {
+          removeNotify(notifyIdLivePreview);
+          methodChannel.invokeMethod<String>('stopLivePreview');
+        }
+      });
       await methodChannel.invokeMethod<void>('getLivePreview');
       completer.complete(null);
     } catch (e) {
-      this.frameHandler = null;
-      disableEventReceiver();
+      removeNotify(notifyIdLivePreview);
       completer.completeError(e);
     }
     return completer.future;
   }
 
   @override
-  Future<ThetaFiles> listFiles(
-      FileTypeEnum fileType, int entryCount, int startPosition, StorageEnum? storage) async {
+  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount,
+      int startPosition, StorageEnum? storage) async {
     var completer = Completer<ThetaFiles>();
     try {
-      debugPrint('call listFiles');
       final Map params = <String, dynamic>{
         'fileType': fileType.rawValue,
         'entryCount': entryCount,
@@ -146,8 +175,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       if (storage != null) {
         params['storage'] = storage.rawValue;
       }
-      var result = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('listFiles', params)
-          as Map<dynamic, dynamic>;
+      var result = await methodChannel.invokeMethod<Map<dynamic, dynamic>>(
+          'listFiles', params) as Map<dynamic, dynamic>;
       var thetaFiles = ConvertUtils.convertThetaFiles(result);
       completer.complete(thetaFiles);
     } catch (e) {
@@ -193,6 +222,49 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   }
 
   @override
+  Future<void> getTimeShiftCaptureBuilder() async {
+    return methodChannel.invokeMethod<void>('getTimeShiftCaptureBuilder');
+  }
+
+  @override
+  Future<void> buildTimeShiftCapture(
+      Map<String, dynamic> options, int interval) async {
+    final params = ConvertUtils.convertCaptureParams(options);
+    params['_capture_interval'] = interval;
+    return methodChannel.invokeMethod<void>('buildTimeShiftCapture', params);
+  }
+
+  @override
+  Future<String?> startTimeShiftCapture(
+      void Function(double)? onProgress) async {
+    var completer = Completer<String?>();
+    try {
+      enableNotifyEventReceiver();
+      if (onProgress != null) {
+        addNotify(notifyIdTimeShiftProgress, (params) {
+          final completion = params?['completion'] as double?;
+          if (completion != null) {
+            onProgress(completion);
+          }
+        });
+      }
+      final fileUrl =
+          await methodChannel.invokeMethod<String>('startTimeShiftCapture');
+      removeNotify(notifyIdTimeShiftProgress);
+      completer.complete(fileUrl);
+    } catch (e) {
+      removeNotify(notifyIdTimeShiftProgress);
+      completer.completeError(e);
+    }
+    return completer.future;
+  }
+
+  @override
+  Future<void> stopTimeShiftCapture() async {
+    return methodChannel.invokeMethod<void>('stopTimeShiftCapture');
+  }
+
+  @override
   Future<void> getVideoCaptureBuilder() async {
     return methodChannel.invokeMethod<void>('getVideoCaptureBuilder');
   }
@@ -204,8 +276,28 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   }
 
   @override
-  Future<String?> startVideoCapture() async {
-    return methodChannel.invokeMethod<String>('startVideoCapture');
+  Future<String?> startVideoCapture(
+      void Function(Exception exception)? onStopFailed) async {
+    var completer = Completer<String?>();
+    try {
+      enableNotifyEventReceiver();
+      if (onStopFailed != null) {
+        addNotify(notifyIdVideoCaptureStopError, (params) {
+          final message = params?['message'] as String?;
+          if (message != null) {
+            onStopFailed(Exception(message));
+          }
+        });
+      }
+      final fileUrl =
+          await methodChannel.invokeMethod<String>('startVideoCapture');
+      removeNotify(notifyIdVideoCaptureStopError);
+      completer.complete(fileUrl);
+    } catch (e) {
+      removeNotify(notifyIdVideoCaptureStopError);
+      completer.completeError(e);
+    }
+    return completer.future;
   }
 
   @override
@@ -243,7 +335,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   Future<Metadata> getMetadata(String fileUrl) async {
     var completer = Completer<Metadata>();
     try {
-      var data = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('getMetadata', fileUrl);
+      var data = await methodChannel.invokeMethod<Map<dynamic, dynamic>>(
+          'getMetadata', fileUrl);
       completer.complete(ConvertUtils.convertMetadata(data!));
     } catch (e) {
       completer.completeError(e);
@@ -262,8 +355,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   }
 
   @override
-  Future<String> convertVideoFormats(
-      String fileUrl, bool toLowResolution, bool applyTopBottomCorrection) async {
+  Future<String> convertVideoFormats(String fileUrl, bool toLowResolution,
+      bool applyTopBottomCorrection) async {
     var completer = Completer<String>();
     try {
       final Map params = <String, dynamic>{
@@ -271,7 +364,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
         'toLowResolution': toLowResolution,
         'applyTopBottomCorrection': applyTopBottomCorrection,
       };
-      var result = await methodChannel.invokeMethod<String>('convertVideoFormats', params);
+      var result = await methodChannel.invokeMethod<String>(
+          'convertVideoFormats', params);
       completer.complete(result);
     } catch (e) {
       completer.completeError(e);
@@ -293,9 +387,10 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   Future<List<AccessPoint>> listAccessPoints() async {
     var completer = Completer<List<AccessPoint>>();
     try {
-      var result =
-          await methodChannel.invokeMethod<List<dynamic>>('listAccessPoints') as List<dynamic>;
-      var fileInfoList = ConvertUtils.toAccessPointList(result.cast<Map<dynamic, dynamic>>());
+      var result = await methodChannel
+          .invokeMethod<List<dynamic>>('listAccessPoints') as List<dynamic>;
+      var fileInfoList =
+          ConvertUtils.toAccessPointList(result.cast<Map<dynamic, dynamic>>());
       completer.complete(fileInfoList);
     } catch (e) {
       completer.completeError(e);
@@ -304,8 +399,13 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   }
 
   @override
-  Future<void> setAccessPointDynamically(String ssid, bool ssidStealth, AuthModeEnum authMode,
-      String password, int connectionPriority, Proxy? proxy) async {
+  Future<void> setAccessPointDynamically(
+      String ssid,
+      bool ssidStealth,
+      AuthModeEnum authMode,
+      String password,
+      int connectionPriority,
+      Proxy? proxy) async {
     final Map params = <String, dynamic>{
       'ssid': ssid,
       'ssidStealth': ssidStealth,
@@ -314,7 +414,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       'connectionPriority': connectionPriority,
       'proxy': proxy != null ? ConvertUtils.convertProxyParam(proxy) : null
     };
-    return methodChannel.invokeMethod<void>('setAccessPointDynamically', params);
+    return methodChannel.invokeMethod<void>(
+        'setAccessPointDynamically', params);
   }
 
   @override
@@ -354,7 +455,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       final Map params = <String, dynamic>{
         'captureMode': captureMode.rawValue,
       };
-      var options = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('getMySetting', params);
+      var options = await methodChannel.invokeMethod<Map<dynamic, dynamic>>(
+          'getMySetting', params);
 
       if (options != null) {
         completer.complete(ConvertUtils.convertOptions(options));
@@ -369,7 +471,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   }
 
   @override
-  Future<Options> getMySettingFromOldModel(List<OptionNameEnum> optionNames) async {
+  Future<Options> getMySettingFromOldModel(
+      List<OptionNameEnum> optionNames) async {
     var completer = Completer<Options>();
     try {
       final Map params = <String, dynamic>{
@@ -391,7 +494,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   }
 
   @override
-  Future<void> setMySetting(CaptureModeEnum captureMode, Options options) async {
+  Future<void> setMySetting(
+      CaptureModeEnum captureMode, Options options) async {
     var completer = Completer<void>();
     final Map params = <String, dynamic>{
       'captureMode': captureMode.rawValue,
@@ -423,8 +527,10 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   Future<List<PluginInfo>> listPlugins() async {
     var completer = Completer<List<PluginInfo>>();
     try {
-      var result = await methodChannel.invokeMethod<List<dynamic>>('listPlugins') as List<dynamic>;
-      var plugins = ConvertUtils.toPluginInfoList(result.cast<Map<dynamic, dynamic>>());
+      var result = await methodChannel
+          .invokeMethod<List<dynamic>>('listPlugins') as List<dynamic>;
+      var plugins =
+          ConvertUtils.toPluginInfoList(result.cast<Map<dynamic, dynamic>>());
       completer.complete(plugins);
     } catch (e) {
       completer.completeError(e);
@@ -451,7 +557,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   Future<String> getPluginLicense(String packageName) async {
     var completer = Completer<String>();
     try {
-      var result = await methodChannel.invokeMethod<String>('getPluginLicense', packageName);
+      var result = await methodChannel.invokeMethod<String>(
+          'getPluginLicense', packageName);
       completer.complete(result);
     } catch (e) {
       completer.completeError(e);
@@ -463,8 +570,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   Future<List<String>> getPluginOrders() async {
     var completer = Completer<List<String>>();
     try {
-      var result =
-          await methodChannel.invokeMethod<List<dynamic>>('getPluginOrders') as List<dynamic>;
+      var result = await methodChannel
+          .invokeMethod<List<dynamic>>('getPluginOrders') as List<dynamic>;
       completer.complete(ConvertUtils.convertStringList(result));
     } catch (e) {
       completer.completeError(e);
@@ -481,7 +588,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   Future<String> setBluetoothDevice(String uuid) async {
     var completer = Completer<String>();
     try {
-      var result = await methodChannel.invokeMethod<String>('setBluetoothDevice', uuid);
+      var result =
+          await methodChannel.invokeMethod<String>('setBluetoothDevice', uuid);
       completer.complete(result);
     } catch (e) {
       completer.completeError(e);

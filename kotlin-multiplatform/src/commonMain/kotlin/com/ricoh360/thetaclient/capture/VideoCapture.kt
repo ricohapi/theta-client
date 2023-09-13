@@ -7,7 +7,13 @@ import io.ktor.client.plugins.*
 import io.ktor.serialization.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
+internal const val CHECK_STATE_INTERVAL = 1000L
+internal const val CHECK_STATE_RETRY = 3
+internal const val CHECK_SHOOTING_IDLE_COUNT = 2
+internal const val ERROR_GET_CAPTURE_STATUS = "Capture status cannot be retrieved."
 
 /*
  * VideoCapture
@@ -15,7 +21,8 @@ import kotlinx.coroutines.launch
  * @property endpoint URL of Theta web API endpoint
  * @property options option of video capture
  */
-class VideoCapture private constructor(private val endpoint: String, options: Options) : Capture(options) {
+class VideoCapture private constructor(private val endpoint: String, options: Options) :
+    Capture(options) {
 
     private val scope = CoroutineScope(Dispatchers.Default)
 
@@ -45,19 +52,42 @@ class VideoCapture private constructor(private val endpoint: String, options: Op
      * Callback of startCapture
      */
     interface StartCaptureCallback {
+
         /**
-         * Called when successful.
+         * Called when stopCapture error occurs.
          *
-         * @param fileUrl URL of the video capture
+         * @param exception Exception of error occurs
          */
-        fun onSuccess(fileUrl: String)
+        fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException)
 
         /**
          * Called when error occurs.
          *
          * @param exception Exception of error occurs
          */
-        fun onError(exception: ThetaRepository.ThetaRepositoryException)
+        fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException)
+
+        /**
+         * Called when successful.
+         *
+         * @param fileUrl URL of the video capture
+         */
+        fun onCaptureCompleted(fileUrl: String?)
+    }
+
+    internal suspend fun getCaptureStatus(): CaptureStatus? {
+        var retry = CHECK_STATE_RETRY
+        while (retry > 0) {
+            try {
+                val stateResponse = ThetaApi.callStateApi(endpoint)
+                return stateResponse.state._captureStatus
+            } catch (e: Exception) {
+                println("getCaptureStatus retry: $retry")
+                delay(CHECK_STATE_INTERVAL)
+            }
+            retry -= 1
+        }
+        return null
     }
 
     /**
@@ -66,21 +96,86 @@ class VideoCapture private constructor(private val endpoint: String, options: Op
      * @param callback Success or failure of the call
      */
     fun startCapture(callback: StartCaptureCallback): VideoCapturing {
+        var isEndCapture = false
+
+        fun callOnCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+            if (isEndCapture) {
+                return
+            }
+            isEndCapture = true
+            callback.onCaptureFailed(exception)
+        }
+
+        fun callOnCaptureCompleted(fileUrl: String?) {
+            println("call callOnCaptureCompleted: $fileUrl")
+            if (isEndCapture) {
+                return
+            }
+            isEndCapture = true
+            callback.onCaptureCompleted(fileUrl)
+        }
+
+        val captureCallback = object : StartCaptureCallback {
+            override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                if (!isEndCapture) {
+                    callback.onStopFailed(exception)
+                }
+            }
+
+            override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+            }
+
+            override fun onCaptureCompleted(fileUrl: String?) {
+                callOnCaptureCompleted(fileUrl)
+            }
+
+        }
         scope.launch {
             try {
                 ThetaApi.callStartCaptureCommand(endpoint, StartCaptureParams()).error?.let {
-                    callback.onError(ThetaRepository.ThetaWebApiException(it.message))
+                    callOnCaptureFailed(ThetaRepository.ThetaWebApiException(it.message))
                 }
             } catch (e: JsonConvertException) {
-                callback.onError(ThetaRepository.ThetaWebApiException(e.message ?: e.toString()))
+                callOnCaptureFailed(ThetaRepository.ThetaWebApiException(e.message ?: e.toString()))
             } catch (e: ResponseException) {
-                callback.onError(ThetaRepository.ThetaWebApiException.create(e))
+                callOnCaptureFailed(ThetaRepository.ThetaWebApiException.create(e))
             } catch (e: Exception) {
-                callback.onError(ThetaRepository.NotConnectedException(e.message ?: e.toString()))
+                callOnCaptureFailed(
+                    ThetaRepository.NotConnectedException(
+                        e.message ?: e.toString()
+                    )
+                )
             }
-        }
 
-        return VideoCapturing(endpoint, callback)
+            var idleCount = CHECK_SHOOTING_IDLE_COUNT
+            while (!isEndCapture) {
+                delay(CHECK_STATE_INTERVAL)
+                when (getCaptureStatus()) {
+                    null -> {
+                        callOnCaptureFailed(
+                            ThetaRepository.ThetaWebApiException(
+                                ERROR_GET_CAPTURE_STATUS
+                            )
+                        )
+                        break
+                    }
+
+                    CaptureStatus.IDLE -> {
+                        idleCount -= 1
+                        // In the case of SC2, it becomes idle in the middle, so wait multiple times
+                        if (idleCount <= 0) {
+                            break
+                        }
+                    }
+
+                    else -> {
+                        idleCount = CHECK_SHOOTING_IDLE_COUNT
+                    }
+                }
+            }
+            callOnCaptureCompleted(null)
+        }
+        return VideoCapturing(endpoint, captureCallback)
     }
 
     /*

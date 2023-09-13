@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
  * get live preview request
  */
 @Serializable
-data class GetLivePreviewRequest(
+internal data class GetLivePreviewRequest(
     override val name: String = "camera.getLivePreview",
     override val parameters: EmptyParameter = EmptyParameter(),
 ) : CommandApiRequest

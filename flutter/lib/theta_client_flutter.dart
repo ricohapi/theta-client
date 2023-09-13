@@ -1,9 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:theta_client_flutter/digest_auth.dart';
-import 'package:theta_client_flutter/utils/convert_utils.dart';
 
+import 'capture/capture_builder.dart';
 import 'theta_client_flutter_platform_interface.dart';
-import 'dart:async';
+
+export 'capture/capture.dart';
+export 'capture/capture_builder.dart';
+export 'capture/capturing.dart';
 
 /// Handle Theta web APIs.
 class ThetaClientFlutter {
@@ -18,8 +23,11 @@ class ThetaClientFlutter {
   /// - @param timeout Timeout of HTTP call.
   /// - @throws If an error occurs in THETA.
   Future<void> initialize(
-      [String endpoint = 'http://192.168.1.1:80/', ThetaConfig? config, ThetaTimeout? timeout]) {
-    return ThetaClientFlutterPlatform.instance.initialize(endpoint, config, timeout);
+      [String endpoint = 'http://192.168.1.1:80/',
+      ThetaConfig? config,
+      ThetaTimeout? timeout]) {
+    return ThetaClientFlutterPlatform.instance
+        .initialize(endpoint, config, timeout);
   }
 
   /// Returns whether it is initialized or not.
@@ -120,6 +128,12 @@ class ThetaClientFlutter {
     return PhotoCaptureBuilder();
   }
 
+  /// Get TimeShiftCapture.Builder for capture time shift.
+  TimeShiftCaptureBuilder getTimeShiftCaptureBuilder() {
+    ThetaClientFlutterPlatform.instance.getTimeShiftCaptureBuilder();
+    return TimeShiftCaptureBuilder();
+  }
+
   /// Get PhotoCapture.Builder for capture video.
   VideoCaptureBuilder getVideoCaptureBuilder() {
     ThetaClientFlutterPlatform.instance.getVideoCaptureBuilder();
@@ -186,8 +200,8 @@ class ThetaClientFlutter {
   /// - @throws Command is currently disabled.
   Future<String> convertVideoFormats(String fileUrl, bool toLowResolution,
       [bool applyTopBottomCorrection = true]) {
-    return ThetaClientFlutterPlatform.instance
-        .convertVideoFormats(fileUrl, toLowResolution, applyTopBottomCorrection);
+    return ThetaClientFlutterPlatform.instance.convertVideoFormats(
+        fileUrl, toLowResolution, applyTopBottomCorrection);
   }
 
   /// Cancels the movie format conversion.
@@ -255,8 +269,16 @@ class ThetaClientFlutter {
       required String subnetMask,
       required String defaultGateway,
       Proxy? proxy}) {
-    return ThetaClientFlutterPlatform.instance.setAccessPointStatically(ssid, ssidStealth, authMode,
-        password, connectionPriority, ipAddress, subnetMask, defaultGateway, proxy);
+    return ThetaClientFlutterPlatform.instance.setAccessPointStatically(
+        ssid,
+        ssidStealth,
+        authMode,
+        password,
+        connectionPriority,
+        ipAddress,
+        subnetMask,
+        defaultGateway,
+        proxy);
   }
 
   /// Deletes access point information used in client mode.
@@ -293,7 +315,8 @@ class ThetaClientFlutter {
   /// - @exception ThetaWebApiException When an invalid option is specified.
   /// - @exception NotConnectedException
   Future<Options> getMySettingFromOldModel(List<OptionNameEnum> optionNames) {
-    return ThetaClientFlutterPlatform.instance.getMySettingFromOldModel(optionNames);
+    return ThetaClientFlutterPlatform.instance
+        .getMySettingFromOldModel(optionNames);
   }
 
   /// Registers shooting conditions in My Settings.
@@ -303,7 +326,8 @@ class ThetaClientFlutter {
   /// - @exception ThetaWebApiException When an invalid option is specified.
   /// - @exception NotConnectedException
   Future<void> setMySetting(CaptureModeEnum captureMode, Options options) {
-    return ThetaClientFlutterPlatform.instance.setMySetting(captureMode, options);
+    return ThetaClientFlutterPlatform.instance
+        .setMySetting(captureMode, options);
   }
 
   /// Delete shooting conditions in My Settings. Supported just by Theta X and Z1.
@@ -431,9 +455,9 @@ enum ThetaModel {
   }
 
   static ThetaModel? getValue(String? rawValue) {
-    return ThetaModel.values
-        .cast<ThetaModel?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return ThetaModel.values.cast<ThetaModel?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -566,9 +590,9 @@ enum CodecEnum {
   }
 
   static CodecEnum? getValue(String rawValue) {
-    return CodecEnum.values
-        .cast<CodecEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return CodecEnum.values.cast<CodecEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -593,9 +617,9 @@ enum ProjectionTypeEnum {
   }
 
   static ProjectionTypeEnum? getValue(String rawValue) {
-    return ProjectionTypeEnum.values
-        .cast<ProjectionTypeEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return ProjectionTypeEnum.values.cast<ProjectionTypeEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -707,6 +731,30 @@ class ThetaFiles {
   ThetaFiles(this.fileList, this.totalEntries);
 }
 
+/// bluetooth power.
+enum BluetoothPowerEnum {
+  /// bluetooth ON
+  on('ON'),
+
+  /// bluetooth OFF
+  off('OFF');
+
+  final String rawValue;
+
+  const BluetoothPowerEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static BluetoothPowerEnum? getValue(String rawValue) {
+    return BluetoothPowerEnum.values.cast<BluetoothPowerEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
 /// BurstMode setting.
 /// When this is set to ON, burst shooting is enabled,
 /// and a screen dedicated to burst shooting is displayed in Live View.
@@ -729,9 +777,9 @@ enum BurstModeEnum {
   }
 
   static BurstModeEnum? getValue(String rawValue) {
-    return BurstModeEnum.values
-        .cast<BurstModeEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return BurstModeEnum.values.cast<BurstModeEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -757,8 +805,13 @@ class BurstOption {
   /// see [BurstOrderEnum]
   BurstOrderEnum? burstOrder;
 
-  BurstOption(this.burstCaptureNum, this.burstBracketStep, this.burstCompensation,
-      this.burstMaxExposureTime, this.burstEnableIsoControl, this.burstOrder);
+  BurstOption(
+      this.burstCaptureNum,
+      this.burstBracketStep,
+      this.burstCompensation,
+      this.burstMaxExposureTime,
+      this.burstEnableIsoControl,
+      this.burstOrder);
 
   @override
   bool operator ==(Object other) => hashCode == other.hashCode;
@@ -793,9 +846,9 @@ enum BurstCaptureNumEnum {
   }
 
   static BurstCaptureNumEnum? getValue(String rawValue) {
-    return BurstCaptureNumEnum.values
-        .cast<BurstCaptureNumEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return BurstCaptureNumEnum.values.cast<BurstCaptureNumEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -823,9 +876,9 @@ enum BurstBracketStepEnum {
   }
 
   static BurstBracketStepEnum? getValue(String rawValue) {
-    return BurstBracketStepEnum.values
-        .cast<BurstBracketStepEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return BurstBracketStepEnum.values.cast<BurstBracketStepEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -877,7 +930,8 @@ enum BurstCompensationEnum {
   static BurstCompensationEnum? getValue(String rawValue) {
     return BurstCompensationEnum.values
         .cast<BurstCompensationEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+        .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
   }
 }
 
@@ -919,7 +973,8 @@ enum BurstMaxExposureTimeEnum {
   static BurstMaxExposureTimeEnum? getValue(String rawValue) {
     return BurstMaxExposureTimeEnum.values
         .cast<BurstMaxExposureTimeEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+        .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
   }
 }
 
@@ -941,7 +996,8 @@ enum BurstEnableIsoControlEnum {
   static BurstEnableIsoControlEnum? getValue(String rawValue) {
     return BurstEnableIsoControlEnum.values
         .cast<BurstEnableIsoControlEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+        .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
   }
 }
 
@@ -961,9 +1017,9 @@ enum BurstOrderEnum {
   }
 
   static BurstOrderEnum? getValue(String rawValue) {
-    return BurstOrderEnum.values
-        .cast<BurstOrderEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return BurstOrderEnum.values.cast<BurstOrderEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1003,9 +1059,9 @@ enum CaptureStatusEnum {
   }
 
   static CaptureStatusEnum? getValue(String rawValue) {
-    return CaptureStatusEnum.values
-        .cast<CaptureStatusEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return CaptureStatusEnum.values.cast<CaptureStatusEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1030,21 +1086,27 @@ enum ChargingStateEnum {
   }
 
   static ChargingStateEnum? getValue(String rawValue) {
-    return ChargingStateEnum.values
-        .cast<ChargingStateEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return ChargingStateEnum.values.cast<ChargingStateEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
-/// Shooting function status
+/// Shooting function.
+/// Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
+/// Setting them at the same time as exposureDelay will result in an error.
+///
+/// For
+/// - RICOH THETA X
+/// - RICOH THETA Z1
 enum ShootingFunctionEnum {
-  /// Shooting function status. normal
+  /// Normal shooting function
   normal('NORMAL'),
 
-  /// Shooting function status. selfTimer
+  /// Self-timer shooting function(RICOH THETA X is not supported.)
   selfTimer('SELF_TIMER'),
 
-  /// Shooting function status. mySetting
+  /// My setting shooting function
   mySetting('MY_SETTING');
 
   final String rawValue;
@@ -1057,9 +1119,9 @@ enum ShootingFunctionEnum {
   }
 
   static ShootingFunctionEnum? getValue(String rawValue) {
-    return ShootingFunctionEnum.values
-        .cast<ShootingFunctionEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return ShootingFunctionEnum.values.cast<ShootingFunctionEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1084,9 +1146,9 @@ enum MicrophoneOptionEnum {
   }
 
   static MicrophoneOptionEnum? getValue(String rawValue) {
-    return MicrophoneOptionEnum.values
-        .cast<MicrophoneOptionEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return MicrophoneOptionEnum.values.cast<MicrophoneOptionEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1191,9 +1253,9 @@ enum CameraErrorEnum {
   }
 
   static CameraErrorEnum? getValue(String rawValue) {
-    return CameraErrorEnum.values
-        .cast<CameraErrorEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return CameraErrorEnum.values.cast<CameraErrorEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1302,8 +1364,8 @@ class Exif {
   /// GPS longitude if exists.
   double? gpsLongitude;
 
-  Exif(this.exifVersion, this.dateTime, this.imageWidth, this.imageLength, this.gpsLatitude,
-      this.gpsLongitude);
+  Exif(this.exifVersion, this.dateTime, this.imageWidth, this.imageLength,
+      this.gpsLatitude, this.gpsLongitude);
 }
 
 /// Photo sphere XMP metadata of a still image.
@@ -1317,7 +1379,8 @@ class Xmp {
   /// Image height (pixel).
   int fullPanoHeightPixels;
 
-  Xmp(this.poseHeadingDegrees, this.fullPanoWidthPixels, this.fullPanoHeightPixels);
+  Xmp(this.poseHeadingDegrees, this.fullPanoWidthPixels,
+      this.fullPanoHeightPixels);
 }
 
 /// Metadata of a still image
@@ -1352,9 +1415,9 @@ enum AuthModeEnum {
   }
 
   static AuthModeEnum? getValue(String rawValue) {
-    return AuthModeEnum.values
-        .cast<AuthModeEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return AuthModeEnum.values.cast<AuthModeEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1387,8 +1450,16 @@ class AccessPoint {
   /// Proxy information to be used for the access point.
   Proxy? proxy;
 
-  AccessPoint(this.ssid, this.ssidStealth, this.authMode, this.connectionPriority, this.usingDhcp,
-      this.ipAddress, this.subnetMask, this.defaultGateway, this.proxy);
+  AccessPoint(
+      this.ssid,
+      this.ssidStealth,
+      this.authMode,
+      this.connectionPriority,
+      this.usingDhcp,
+      this.ipAddress,
+      this.subnetMask,
+      this.defaultGateway,
+      this.proxy);
 }
 
 /// Camera setting options name.
@@ -1406,6 +1477,9 @@ enum OptionNameEnum {
 
   /// Option name _burstMode
   burstMode('BurstMode', BurstModeEnum),
+
+  /// Option name _bluetoothPower
+  bluetoothPower('BluetoothPower', BluetoothPowerEnum),
 
   /// Option name _burstOption
   burstOption('BurstOption', BurstOption),
@@ -1449,14 +1523,26 @@ enum OptionNameEnum {
   /// Option name exposureProgram
   exposureProgram('ExposureProgram', ExposureProgramEnum),
 
+  /// Option name faceDetect
+  faceDetect('FaceDetect', FaceDetectEnum),
+
   /// Option name fileFormat
   fileFormat('FileFormat', FileFormatEnum),
 
   /// Option name _filter
   filter('Filter', FilterEnum),
 
+  /// Option name function
+  function('Function', ShootingFunctionEnum),
+
+  /// Option name gain
+  gain('Gain', GainEnum),
+
   /// Option name gpsInfo
   gpsInfo('GpsInfo', GpsInfo),
+
+  /// Option name imageStitching
+  imageStitching('ImageStitching', ImageStitchingEnum),
 
   /// Option name _gpsTagRecording
   ///
@@ -1530,7 +1616,8 @@ enum OptionNameEnum {
   whiteBalance('WhiteBalance', WhiteBalanceEnum),
 
   /// Option name WhiteBalanceAutoStrength
-  whiteBalanceAutoStrength('WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum),
+  whiteBalanceAutoStrength(
+      'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum),
 
   // Option name wlanfrequency
   wlanFrequency('WlanFrequency', WlanFrequencyEnum);
@@ -1546,9 +1633,9 @@ enum OptionNameEnum {
   }
 
   static OptionNameEnum? getValue(String rawValue) {
-    return OptionNameEnum.values
-        .cast<OptionNameEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return OptionNameEnum.values.cast<OptionNameEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1572,9 +1659,9 @@ enum AiAutoThumbnailEnum {
   }
 
   static AiAutoThumbnailEnum? getValue(String rawValue) {
-    return AiAutoThumbnailEnum.values
-        .cast<AiAutoThumbnailEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return AiAutoThumbnailEnum.values.cast<AiAutoThumbnailEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1618,9 +1705,9 @@ enum ApertureEnum {
   }
 
   static ApertureEnum? getValue(String rawValue) {
-    return ApertureEnum.values
-        .cast<ApertureEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return ApertureEnum.values.cast<ApertureEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1725,7 +1812,8 @@ enum CameraControlSourceEnum {
   static CameraControlSourceEnum? getValue(String rawValue) {
     return CameraControlSourceEnum.values
         .cast<CameraControlSourceEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+        .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
   }
 }
 
@@ -1753,9 +1841,9 @@ enum CameraModeEnum {
   }
 
   static CameraModeEnum? getValue(String rawValue) {
-    return CameraModeEnum.values
-        .cast<CameraModeEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return CameraModeEnum.values.cast<CameraModeEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1786,9 +1874,9 @@ enum CaptureModeEnum {
   }
 
   static CaptureModeEnum? getValue(String rawValue) {
-    return CaptureModeEnum.values
-        .cast<CaptureModeEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return CaptureModeEnum.values.cast<CaptureModeEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1880,9 +1968,9 @@ enum ContinuousNumberEnum {
   }
 
   static ContinuousNumberEnum? getValue(String rawValue) {
-    return ContinuousNumberEnum.values
-        .cast<ContinuousNumberEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return ContinuousNumberEnum.values.cast<ContinuousNumberEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -1939,7 +2027,8 @@ enum ExposureCompensationEnum {
   static ExposureCompensationEnum? getValue(String rawValue) {
     return ExposureCompensationEnum.values
         .cast<ExposureCompensationEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+        .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
   }
 }
 
@@ -1988,9 +2077,9 @@ enum ExposureDelayEnum {
   }
 
   static ExposureDelayEnum? getValue(String rawValue) {
-    return ExposureDelayEnum.values
-        .cast<ExposureDelayEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return ExposureDelayEnum.values.cast<ExposureDelayEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2035,9 +2124,36 @@ enum ExposureProgramEnum {
   }
 
   static ExposureProgramEnum? getValue(String rawValue) {
-    return ExposureProgramEnum.values
-        .cast<ExposureProgramEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return ExposureProgramEnum.values.cast<ExposureProgramEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
+/// Face detection
+///
+/// For
+/// - RICOH THETA X
+enum FaceDetectEnum {
+  /// Face detection ON
+  on('ON'),
+
+  /// Face detection OFF
+  off('OFF');
+
+  final String rawValue;
+
+  const FaceDetectEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static FaceDetectEnum? getValue(String rawValue) {
+    return FaceDetectEnum.values.cast<FaceDetectEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2215,9 +2331,9 @@ enum FileFormatEnum {
   }
 
   static FileFormatEnum? getValue(String rawValue) {
-    return FileFormatEnum.values
-        .cast<FileFormatEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return FileFormatEnum.values.cast<FileFormatEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2253,9 +2369,89 @@ enum FilterEnum {
   }
 
   static FilterEnum? getValue(String rawValue) {
-    return FilterEnum.values
-        .cast<FilterEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return FilterEnum.values.cast<FilterEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
+/// Microphone gain.
+///
+/// For
+/// - RICOH THETA X
+/// - RICOH THETA Z1
+/// - RICOH THETA V
+enum GainEnum {
+  /// Normal mode
+  normal('NORMAL'),
+
+  /// Loud volume mode
+  megaVolume('MEGA_VOLUME'),
+
+  /// Mute mode
+  /// (RICOH THETA V firmware v2.50.1 or later, RICOH THETA X is not supported.)
+  mute('MUTE');
+
+  final String rawValue;
+
+  const GainEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static GainEnum? getValue(String rawValue) {
+    return GainEnum.values.cast<GainEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
+/// ImageStitching
+enum ImageStitchingEnum {
+  /// Refer to stitching when shooting with "auto"
+  auto('AUTO'),
+
+  /// Performs static stitching
+  static('STATIC'),
+
+  /// Performs dynamic stitching (RICOH THETA X or later)
+  dynamic('DYNAMIC'),
+
+  /// For Normal shooting, performs dynamic stitching,
+  /// for Interval shooting, saves dynamic distortion correction parameters
+  /// for the first image and then uses them for the 2nd and subsequent
+  /// images (RICOH THETA X is not supported)
+  dynamicAuto('DYNAMIC_AUTO'),
+
+  /// Performs semi-dynamic stitching
+  /// Saves dynamic distortion correction parameters for the first image
+  /// and then uses them for the 2nd and subsequent images (RICOH THETA X or later)
+  dynamicSemiAuto('DYNAMIC_SEMI_AUTO'),
+
+  /// Performs dynamic stitching and then saves distortion correction parameters
+  dynamicSave('DYNAMIC_SAVE'),
+
+  /// Performs stitching using the saved distortion correction parameters
+  dynamicLoad('DYNAMIC_LOAD'),
+
+  /// Does not perform stitching
+  none('NONE');
+
+  final String rawValue;
+
+  const ImageStitchingEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static ImageStitchingEnum? getValue(String rawValue) {
+    return ImageStitchingEnum.values.cast<ImageStitchingEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2366,9 +2562,9 @@ enum IsoEnum {
   }
 
   static IsoEnum? getValue(String rawValue) {
-    return IsoEnum.values
-        .cast<IsoEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return IsoEnum.values.cast<IsoEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2476,9 +2672,9 @@ enum IsoAutoHighLimitEnum {
   }
 
   static IsoAutoHighLimitEnum? getValue(String rawValue) {
-    return IsoAutoHighLimitEnum.values
-        .cast<IsoAutoHighLimitEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return IsoAutoHighLimitEnum.values.cast<IsoAutoHighLimitEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2530,9 +2726,9 @@ enum LanguageEnum {
   }
 
   static LanguageEnum? getValue(String rawValue) {
-    return LanguageEnum.values
-        .cast<LanguageEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return LanguageEnum.values.cast<LanguageEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2568,7 +2764,8 @@ enum MaxRecordableTimeEnum {
   static MaxRecordableTimeEnum? getValue(String rawValue) {
     return MaxRecordableTimeEnum.values
         .cast<MaxRecordableTimeEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+        .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
   }
 }
 
@@ -2596,9 +2793,9 @@ enum NetworkTypeEnum {
   }
 
   static NetworkTypeEnum? getValue(String rawValue) {
-    return NetworkTypeEnum.values
-        .cast<NetworkTypeEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return NetworkTypeEnum.values.cast<NetworkTypeEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2638,9 +2835,9 @@ enum OffDelayEnum {
   }
 
   static OffDelayEnum? getValue(String rawValue) {
-    return OffDelayEnum.values
-        .cast<OffDelayEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return OffDelayEnum.values.cast<OffDelayEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2664,9 +2861,9 @@ enum PowerSavingEnum {
   }
 
   static PowerSavingEnum? getValue(String rawValue) {
-    return PowerSavingEnum.values
-        .cast<PowerSavingEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return PowerSavingEnum.values.cast<PowerSavingEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2687,9 +2884,9 @@ enum PresetEnum {
   }
 
   static PresetEnum? getValue(String rawValue) {
-    return PresetEnum.values
-        .cast<PresetEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return PresetEnum.values.cast<PresetEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2738,9 +2935,9 @@ enum PreviewFormatEnum {
   }
 
   static PreviewFormatEnum? getValue(String rawValue) {
-    return PreviewFormatEnum.values
-        .cast<PreviewFormatEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return PreviewFormatEnum.values.cast<PreviewFormatEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -2787,9 +2984,9 @@ enum ShootingMethodEnum {
   }
 
   static ShootingMethodEnum? getValue(String rawValue) {
-    return ShootingMethodEnum.values
-        .cast<ShootingMethodEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return ShootingMethodEnum.values.cast<ShootingMethodEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -3028,9 +3225,9 @@ enum ShutterSpeedEnum {
   }
 
   static ShutterSpeedEnum? getValue(String rawValue) {
-    return ShutterSpeedEnum.values
-        .cast<ShutterSpeedEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return ShutterSpeedEnum.values.cast<ShutterSpeedEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -3068,9 +3265,9 @@ enum SleepDelayEnum {
   }
 
   static SleepDelayEnum? getValue(String rawValue) {
-    return SleepDelayEnum.values
-        .cast<SleepDelayEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return SleepDelayEnum.values.cast<SleepDelayEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -3141,9 +3338,9 @@ enum WhiteBalanceEnum {
   }
 
   static WhiteBalanceEnum? getValue(String rawValue) {
-    return WhiteBalanceEnum.values
-        .cast<WhiteBalanceEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return WhiteBalanceEnum.values.cast<WhiteBalanceEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -3169,7 +3366,8 @@ class TimeShift {
   bool operator ==(Object other) => hashCode == other.hashCode;
 
   @override
-  int get hashCode => Object.hashAll([isFrontFirst, firstInterval, secondInterval]);
+  int get hashCode =>
+      Object.hashAll([isFrontFirst, firstInterval, secondInterval]);
 
   @override
   String toString() {
@@ -3224,7 +3422,8 @@ enum TimeShiftIntervalEnum {
   static TimeShiftIntervalEnum? getValue(String rawValue) {
     return TimeShiftIntervalEnum.values
         .cast<TimeShiftIntervalEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+        .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
   }
 }
 
@@ -3254,7 +3453,8 @@ enum WhiteBalanceAutoStrengthEnum {
   static WhiteBalanceAutoStrengthEnum? getValue(String rawValue) {
     return WhiteBalanceAutoStrengthEnum.values
         .cast<WhiteBalanceAutoStrengthEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+        .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
   }
 }
 
@@ -3276,9 +3476,9 @@ enum WlanFrequencyEnum {
   }
 
   static WlanFrequencyEnum? getValue(String rawValue) {
-    return WlanFrequencyEnum.values
-        .cast<WlanFrequencyEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue, orElse: () => null);
+    return WlanFrequencyEnum.values.cast<WlanFrequencyEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
   }
 }
 
@@ -3295,192 +3495,6 @@ enum GpsTagRecordingEnum {
   final String rawValue;
 
   const GpsTagRecordingEnum(this.rawValue);
-
-  @override
-  String toString() {
-    return rawValue;
-  }
-}
-
-/// Photo image format used in PhotoCapture.
-enum PhotoFileFormatEnum {
-  /// Image File format.
-  /// type: jpeg
-  /// size: 2048 x 1024
-  ///
-  /// For RICOH THETA S or SC
-  image_2K('IMAGE_2K'),
-
-  /// Image File format.
-  /// type: jpeg
-  /// size: 5376 x 2688
-  ///
-  /// For RICOH THETA V or S or SC
-  image_5K('IMAGE_5K'),
-
-  /// Image File format.
-  /// type: jpeg
-  /// size: 6720 x 3360
-  ///
-  /// For RICOH THETA Z1
-  image_6_7K('IMAGE_6_7K'),
-
-  /// Image File format.
-  /// type: raw+
-  /// size: 6720 x 3360
-  ///
-  /// For RICOH THETA Z1
-  rawP_6_7K('RAW_P_6_7K'),
-
-  /// Image File format.
-  /// type: jpeg
-  /// size: 5504 x 2752
-  ///
-  /// For RICOH THETA X or later
-  image_5_5K('IMAGE_5_5K'),
-
-  /// Image File format.
-  /// type: jpeg
-  /// size: 11008 x 5504
-  ///
-  /// For RICOH THETA X or later
-  image_11K('IMAGE_11K');
-
-  final String rawValue;
-
-  const PhotoFileFormatEnum(this.rawValue);
-
-  @override
-  String toString() {
-    return rawValue;
-  }
-}
-
-/// Video image format used in VideoCapture.
-enum VideoFileFormatEnum {
-  /// Video File format.
-  /// type: mp4
-  /// size: 1280 x 570
-  ///
-  /// For RICOH THETA S or SC
-  videoHD('VIDEO_HD'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 1920 x 1080
-  ///
-  /// For RICOH THETA S or SC
-  videoFullHD('VIDEO_FULL_HD'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 1920 x 960
-  /// codec: H.264/MPEG-4 AVC
-  ///
-  /// For RICOH THETA Z1 or V
-  video_2K('VIDEO_2K'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 3840 x 1920
-  /// codec: H.264/MPEG-4 AVC
-  ///
-  /// For RICOH THETA Z1 or V
-  video_4K('VIDEO_4K'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 1920 x 960
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 30
-  ///
-  /// For RICOH THETA X or later
-  video_2K_30F('VIDEO_2K_30F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 1920 x 960
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 60
-  ///
-  /// For RICOH THETA X or later
-  video_2K_60F('VIDEO_2K_60F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 3840 x 1920
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 30
-  ///
-  /// For RICOH THETA X or later
-  video_4K_30F('VIDEO_4K_30F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 3840 x 1920
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 60
-  ///
-  /// For RICOH THETA X or later
-  video_4K_60F('VIDEO_4K_60F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 5760 x 2880
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 2
-  ///
-  /// For RICOH THETA X or later
-  video_5_7K_2F('VIDEO_5_7K_2F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 5760 x 2880
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 5
-  ///
-  /// For RICOH THETA X or later
-  video_5_7K_5F('VIDEO_5_7K_5F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 5760 x 2880
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 30
-  ///
-  /// For RICOH THETA X or later
-  video_5_7K_30F('VIDEO_5_7K_30F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 7680 x 3840
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 2
-  ///
-  /// For RICOH THETA X or later
-  video_7K_2F('VIDEO_7K_2F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 7680 x 3840
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 5
-  ///
-  /// For RICOH THETA X or later
-  video_7K_5F('VIDEO_7K_5F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 7680 x 3840
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 10
-  ///
-  /// For RICOH THETA X or later
-  video_7K_10F('VIDEO_7K_10F');
-
-  final String rawValue;
-
-  const VideoFileFormatEnum(this.rawValue);
 
   @override
   String toString() {
@@ -3519,7 +3533,8 @@ class GpsInfo {
   bool operator ==(Object other) => hashCode == other.hashCode;
 
   @override
-  int get hashCode => Object.hashAll([latitude, longitude, altitude, dateTimeZone]);
+  int get hashCode =>
+      Object.hashAll([latitude, longitude, altitude, dateTimeZone]);
 }
 
 /// Proxy information to be used when wired LAN is enabled.
@@ -3567,6 +3582,9 @@ class Options {
 
   /// see [Bitrate]
   Bitrate? bitrate;
+
+  /// see [BluetoothPowerEnum]
+  BluetoothPowerEnum? bluetoothPower;
 
   /// BurstMode setting.
   /// When this is set to ON, burst shooting is enabled,
@@ -3688,6 +3706,9 @@ class Options {
   /// Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
   ExposureProgramEnum? exposureProgram;
 
+  /// see [FaceDetectEnum]
+  FaceDetectEnum? faceDetect;
+
   /// Image format used in shooting.
   ///
   /// The supported value depends on the shooting mode [captureMode].
@@ -3708,10 +3729,19 @@ class Options {
   /// Access during video capture mode
   FilterEnum? filter;
 
+  /// see [ShootingFunctionEnum]
+  ShootingFunctionEnum? function;
+
+  /// see [GainEnum]
+  GainEnum? gain;
+
   /// GPS location information.
   ///
   /// In order to append the location information, this property should be specified by the client.
   GpsInfo? gpsInfo;
+
+  /// Still image stitching setting during shooting.
+  ImageStitchingEnum? imageStitching;
 
   /// Turns position information assigning ON/OFF.
   /// For THETA X
@@ -3821,6 +3851,8 @@ class Options {
         return aperture as T;
       case OptionNameEnum.bitrate:
         return bitrate as T;
+      case OptionNameEnum.bluetoothPower:
+        return bluetoothPower as T;
       case OptionNameEnum.burstMode:
         return burstMode as T;
       case OptionNameEnum.burstOption:
@@ -3851,12 +3883,20 @@ class Options {
         return exposureDelay as T;
       case OptionNameEnum.exposureProgram:
         return exposureProgram as T;
+      case OptionNameEnum.faceDetect:
+        return faceDetect as T;
       case OptionNameEnum.fileFormat:
         return fileFormat as T;
       case OptionNameEnum.filter:
         return filter as T;
+      case OptionNameEnum.function:
+        return function as T;
+      case OptionNameEnum.gain:
+        return gain as T;
       case OptionNameEnum.gpsInfo:
         return gpsInfo as T;
+      case OptionNameEnum.imageStitching:
+        return imageStitching as T;
       case OptionNameEnum.isGpsOn:
         return isGpsOn as T;
       case OptionNameEnum.iso:
@@ -3926,6 +3966,9 @@ class Options {
       case OptionNameEnum.bitrate:
         bitrate = value;
         break;
+      case OptionNameEnum.bluetoothPower:
+        bluetoothPower = value;
+        break;
       case OptionNameEnum.burstMode:
         burstMode = value;
         break;
@@ -3971,14 +4014,26 @@ class Options {
       case OptionNameEnum.exposureProgram:
         exposureProgram = value;
         break;
+      case OptionNameEnum.faceDetect:
+        faceDetect = value;
+        break;
       case OptionNameEnum.fileFormat:
         fileFormat = value;
         break;
       case OptionNameEnum.filter:
         filter = value;
         break;
+      case OptionNameEnum.function:
+        function = value;
+        break;
+      case OptionNameEnum.gain:
+        gain = value;
+        break;
       case OptionNameEnum.gpsInfo:
         gpsInfo = value;
+        break;
+      case OptionNameEnum.imageStitching:
+        imageStitching = value;
         break;
       case OptionNameEnum.isGpsOn:
         isGpsOn = value;
@@ -4059,247 +4114,6 @@ class Options {
   }
 }
 
-/// Capture
-class Capture {
-  /// options of capture
-  final Map<String, dynamic> _options;
-
-  /// Get aperture value.
-  ApertureEnum? getAperture() => _options[OptionNameEnum.aperture.rawValue];
-
-  /// Get color temperature of the camera (Kelvin).
-  int? getColorTemperature() => _options[OptionNameEnum.colorTemperature.rawValue];
-
-  /// Get exposure compensation (EV).
-  ExposureCompensationEnum? getExposureCompensation() =>
-      _options[OptionNameEnum.exposureCompensation.rawValue];
-
-  /// Get operating time (sec.) of the self-timer.
-  ExposureDelayEnum? getExposureDelay() => _options[OptionNameEnum.exposureDelay.rawValue];
-
-  /// Get exposure program.
-  ExposureProgramEnum? getExposureProgram() => _options[OptionNameEnum.exposureProgram.rawValue];
-
-  /// Get GPS information.
-  GpsInfo? getGpsInfo() => _options[OptionNameEnum.gpsInfo.rawValue];
-
-  /// Get turns position information assigning ON/OFF.
-  GpsTagRecordingEnum? getGpsTagRecording() => _options[TagNameEnum.gpsTagRecording.rawValue];
-
-  /// Set ISO sensitivity.
-  ///
-  /// It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
-  /// Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
-  ///
-  /// When the exposure program (exposureProgram) is set to Manual or ISO Priority
-  IsoEnum? getIso() => _options[OptionNameEnum.iso.rawValue];
-
-  /// Get ISO sensitivity upper limit when ISO sensitivity is set to automatic.
-  IsoAutoHighLimitEnum? getIsoAutoHighLimit() => _options[OptionNameEnum.isoAutoHighLimit.rawValue];
-
-  /// Get white balance.
-  WhiteBalanceEnum? getWhiteBalance() => _options[OptionNameEnum.whiteBalance.rawValue];
-
-  Capture(this._options);
-}
-
-/// Builder
-class CaptureBuilder<T> {
-  /// options of capture
-  final Map<String, dynamic> _options = {};
-
-  /// Set aperture value.
-  T setAperture(ApertureEnum aperture) {
-    _options[OptionNameEnum.aperture.rawValue] = aperture;
-    return this as T;
-  }
-
-  /// Set color temperature of the camera (Kelvin).
-  ///
-  /// 2500 to 10000. In 100-Kelvin units.
-  T setColorTemperature(int kelvin) {
-    _options[OptionNameEnum.colorTemperature.rawValue] = kelvin;
-    return this as T;
-  }
-
-  /// Set exposure compensation (EV).
-  T setExposureCompensation(ExposureCompensationEnum value) {
-    _options[OptionNameEnum.exposureCompensation.rawValue] = value;
-    return this as T;
-  }
-
-  /// Set operating time (sec.) of the self-timer.
-  T setExposureDelay(ExposureDelayEnum value) {
-    _options[OptionNameEnum.exposureDelay.rawValue] = value;
-    return this as T;
-  }
-
-  /// Set exposure program. The exposure settings that take priority can be selected.
-  T setExposureProgram(ExposureProgramEnum program) {
-    _options[OptionNameEnum.exposureProgram.rawValue] = program;
-    return this as T;
-  }
-
-  /// Set GPS information.
-  T setGpsInfo(GpsInfo gpsInfo) {
-    _options[OptionNameEnum.gpsInfo.rawValue] = gpsInfo;
-    return this as T;
-  }
-
-  /// Set turns position information assigning ON/OFF.
-  ///
-  /// For RICOH THETA X
-  T setGpsTagRecording(GpsTagRecordingEnum value) {
-    _options[TagNameEnum.gpsTagRecording.rawValue] = value;
-    return this as T;
-  }
-
-  /// Set ISO sensitivity.
-  ///
-  /// It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
-  /// Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
-  ///
-  /// When the exposure program (exposureProgram) is set to Manual or ISO Priority
-  T setIso(IsoEnum iso) {
-    _options[OptionNameEnum.iso.rawValue] = iso;
-    return this as T;
-  }
-
-  /// Set ISO sensitivity upper limit when ISO sensitivity is set to automatic.
-  T setIsoAutoHighLimit(IsoAutoHighLimitEnum iso) {
-    _options[OptionNameEnum.isoAutoHighLimit.rawValue] = iso;
-    return this as T;
-  }
-
-  /// Set white balance.
-  ///
-  /// It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
-  /// Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
-  T setWhiteBalance(WhiteBalanceEnum whiteBalance) {
-    _options[OptionNameEnum.whiteBalance.rawValue] = whiteBalance;
-    return this as T;
-  }
-}
-
-/// Capturing
-abstract class Capturing {
-  /// Stops capture.
-  void stopCapture();
-}
-
-/// Builder of [PhotoCapture]
-class PhotoCaptureBuilder extends CaptureBuilder<PhotoCaptureBuilder> {
-  /// Set photo file format.
-  PhotoCaptureBuilder setFileFormat(PhotoFileFormatEnum fileFormat) {
-    _options[TagNameEnum.photoFileFormat.rawValue] = fileFormat;
-    return this;
-  }
-
-  /// Set image processing filter.
-  PhotoCaptureBuilder setFilter(FilterEnum filter) {
-    _options[OptionNameEnum.filter.rawValue] = filter;
-    return this;
-  }
-
-  /// Builds an instance of a PhotoCapture that has all the combined parameters of the Options that have been added to the Builder.
-  Future<PhotoCapture> build() async {
-    var completer = Completer<PhotoCapture>();
-    try {
-      await ThetaClientFlutterPlatform.instance.buildPhotoCapture(_options);
-      completer.complete(PhotoCapture(_options));
-    } catch (e) {
-      completer.completeError(e);
-    }
-    return completer.future;
-  }
-}
-
-/// Capture of Photo
-class PhotoCapture extends Capture {
-  PhotoCapture(super.options);
-
-  /// Get image processing filter.
-  FilterEnum? getFilter() {
-    return _options[OptionNameEnum.filter.rawValue];
-  }
-
-  /// Get photo file format.
-  PhotoFileFormatEnum? getFileFormat() {
-    return _options[TagNameEnum.photoFileFormat.rawValue];
-  }
-
-  /// Take a picture.
-  void takePicture(
-      void Function(String fileUrl) onSuccess, void Function(Exception exception) onError) {
-    ThetaClientFlutterPlatform.instance
-        .takePicture()
-        .then((value) => onSuccess(value!))
-        .onError((error, stackTrace) => onError(error as Exception));
-  }
-}
-
-/// Builder of VideoCapture
-class VideoCaptureBuilder extends CaptureBuilder<VideoCaptureBuilder> {
-  /// Set video file format.
-  VideoCaptureBuilder setFileFormat(VideoFileFormatEnum fileFormat) {
-    _options[TagNameEnum.videoFileFormat.rawValue] = fileFormat;
-    return this;
-  }
-
-  /// Set maximum recordable time (in seconds) of the camera.
-  VideoCaptureBuilder setMaxRecordableTime(MaxRecordableTimeEnum time) {
-    _options[OptionNameEnum.maxRecordableTime.rawValue] = time;
-    return this;
-  }
-
-  /// Builds an instance of a VideoCapture that has all the combined parameters of the Options that have been added to the Builder.
-  Future<VideoCapture> build() async {
-    var completer = Completer<VideoCapture>();
-    try {
-      await ThetaClientFlutterPlatform.instance.buildVideoCapture(_options);
-      completer.complete(VideoCapture(_options));
-    } catch (e) {
-      completer.completeError(e);
-    }
-    return completer.future;
-  }
-}
-
-/// VideoCapturing
-class VideoCapturing extends Capturing {
-  /// Stops video capture.
-  ///  When call stopCapture() then call property callback.
-  @override
-  void stopCapture() {
-    ThetaClientFlutterPlatform.instance.stopVideoCapture();
-  }
-}
-
-/// Capture of Video
-class VideoCapture extends Capture {
-  VideoCapture(super.options);
-
-  /// Get maximum recordable time (in seconds) of the camera.
-  MaxRecordableTimeEnum? getMaxRecordableTime() {
-    return _options[OptionNameEnum.maxRecordableTime.rawValue];
-  }
-
-  /// Get video file format.
-  VideoFileFormatEnum? getFileFormat() {
-    return _options[TagNameEnum.videoFileFormat.rawValue];
-  }
-
-  /// Starts video capture.
-  VideoCapturing startCapture(
-      void Function(String fileUrl) onSuccess, void Function(Exception exception) onError) {
-    ThetaClientFlutterPlatform.instance
-        .startVideoCapture()
-        .then((value) => onSuccess(value!))
-        .onError((error, stackTrace) => onError(error as Exception));
-    return VideoCapturing();
-  }
-}
-
 /// Configuration of THETA
 class ThetaConfig {
   /// Location information acquisition time
@@ -4369,6 +4183,15 @@ class PluginInfo {
   /// Message
   String message;
 
-  PluginInfo(this.name, this.packageName, this.version, this.isPreInstalled, this.isRunning,
-      this.isForeground, this.isBoot, this.hasWebServer, this.exitStatus, this.message);
+  PluginInfo(
+      this.name,
+      this.packageName,
+      this.version,
+      this.isPreInstalled,
+      this.isRunning,
+      this.isForeground,
+      this.isBoot,
+      this.hasWebServer,
+      this.exitStatus,
+      this.message);
 }

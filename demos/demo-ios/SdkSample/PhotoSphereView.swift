@@ -7,12 +7,18 @@ import SwiftUI
 struct PhotoSphereView: View {
     @Environment(\.presentationMode) var presentation
     var item: FileItem
+    @State var isClose = false
+
     init(_ item: FileItem = FileItem()) {
         self.item = item
     }
     var body: some View {
         VStack {
-            SphereView(urlString: item.url)
+            if isClose {
+                EmptyView()
+            } else {
+                SphereView(urlString: item.url)
+            }
         }
         .navigationBarBackButtonHidden(true)
         .navigationTitle(item.name)
@@ -20,7 +26,11 @@ struct PhotoSphereView: View {
           leading:
             HStack {
                 Button(action: {
-                           self.presentation.wrappedValue.dismiss()
+                    isClose = true
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                        self.presentation.wrappedValue.dismiss()
+                    }
                        },
                        label: {
                            Image("chevron")

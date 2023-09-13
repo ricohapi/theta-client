@@ -25,7 +25,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
  * Http client using [Ktor](https://jp.ktor.work/clients/index.html)
  */
 @OptIn(ExperimentalSerializationApi::class) // explicitNulls
-object ThetaApi {
+internal object ThetaApi {
     val httpClient: HttpClient // for commands other than getLivePreview command
         get() = getHttpClient()
 
@@ -283,14 +283,17 @@ object ThetaApi {
                 continue
             }
 
+            var isContinued = true
             try {
-                var isContinued = true
                 while (isContinued && previewClient.hasNextPart()) {
                     isContinued = frameHandler(previewClient.nextPart())
                 }
                 if (!isContinued) return
             } finally {
                 try {
+                    if (isContinued && retry > 0) {
+                        delay(WAIT)
+                    }
                     previewClient.close()
                 } catch (_: Throwable) {
                 }

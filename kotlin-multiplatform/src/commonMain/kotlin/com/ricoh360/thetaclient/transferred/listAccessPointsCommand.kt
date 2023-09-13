@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
  * list access points request
  */
 @Serializable
-data class ListAccessPointsRequest(
+internal data class ListAccessPointsRequest(
     override val name: String = "camera._listAccessPoints",
     override val parameters: EmptyParameter = EmptyParameter(),
 ) : CommandApiRequest
@@ -19,7 +19,7 @@ data class ListAccessPointsRequest(
  * list access points response
  */
 @Serializable
-data class ListAccessPointsResponse(
+internal data class ListAccessPointsResponse(
     /**
      * Executed command
      */
@@ -60,7 +60,7 @@ data class ListAccessPointsResponse(
  * list access points results
  */
 @Serializable
-data class ResultListAccessPoints(
+internal data class ResultListAccessPoints(
     /**
      * Lists the access points stored on the camera and the access
      * points detected by the camera.  See the next section for
@@ -73,7 +73,7 @@ data class ResultListAccessPoints(
  * access point infomation
  */
 @Serializable
-data class AccessPoint(
+internal data class AccessPoint(
     /**
      * SSID
      */

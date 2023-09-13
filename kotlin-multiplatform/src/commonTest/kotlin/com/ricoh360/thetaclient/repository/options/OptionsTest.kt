@@ -1,8 +1,45 @@
 package com.ricoh360.thetaclient.repository.options
 
 import com.ricoh360.thetaclient.ThetaRepository
-import com.ricoh360.thetaclient.transferred.*
-import kotlin.test.*
+import com.ricoh360.thetaclient.transferred.AiAutoThumbnail
+import com.ricoh360.thetaclient.transferred.BluetoothPower
+import com.ricoh360.thetaclient.transferred.BurstBracketStep
+import com.ricoh360.thetaclient.transferred.BurstCaptureNum
+import com.ricoh360.thetaclient.transferred.BurstCompensation
+import com.ricoh360.thetaclient.transferred.BurstEnableIsoControl
+import com.ricoh360.thetaclient.transferred.BurstMaxExposureTime
+import com.ricoh360.thetaclient.transferred.BurstMode
+import com.ricoh360.thetaclient.transferred.BurstOption
+import com.ricoh360.thetaclient.transferred.BurstOrder
+import com.ricoh360.thetaclient.transferred.CameraControlSource
+import com.ricoh360.thetaclient.transferred.CameraMode
+import com.ricoh360.thetaclient.transferred.CaptureMode
+import com.ricoh360.thetaclient.transferred.FaceDetect
+import com.ricoh360.thetaclient.transferred.FirstShootingEnum
+import com.ricoh360.thetaclient.transferred.Gain
+import com.ricoh360.thetaclient.transferred.GpsInfo
+import com.ricoh360.thetaclient.transferred.GpsTagRecording
+import com.ricoh360.thetaclient.transferred.ImageFilter
+import com.ricoh360.thetaclient.transferred.ImageStitching
+import com.ricoh360.thetaclient.transferred.Language
+import com.ricoh360.thetaclient.transferred.MediaFileFormat
+import com.ricoh360.thetaclient.transferred.MediaType
+import com.ricoh360.thetaclient.transferred.NetworkType
+import com.ricoh360.thetaclient.transferred.Options
+import com.ricoh360.thetaclient.transferred.PowerSaving
+import com.ricoh360.thetaclient.transferred.Preset
+import com.ricoh360.thetaclient.transferred.PreviewFormat
+import com.ricoh360.thetaclient.transferred.Proxy
+import com.ricoh360.thetaclient.transferred.ShootingFunction
+import com.ricoh360.thetaclient.transferred.ShootingMethod
+import com.ricoh360.thetaclient.transferred.TimeShift
+import com.ricoh360.thetaclient.transferred.WhiteBalance
+import com.ricoh360.thetaclient.transferred.WhiteBalanceAutoStrength
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class OptionsTest {
     @BeforeTest
@@ -44,9 +81,13 @@ class OptionsTest {
         val exposureCompensation = ThetaRepository.ExposureCompensationEnum.M0_3
         val exposureDelay = ThetaRepository.ExposureDelayEnum.DELAY_10
         val exposureProgram = ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM
+        val faceDetect = ThetaRepository.FaceDetectEnum.ON
         val fileFormat = ThetaRepository.FileFormatEnum.IMAGE_11K
         val filter = ThetaRepository.FilterEnum.HDR
+        val function = ThetaRepository.ShootingFunctionEnum.NORMAL
+        val gain = ThetaRepository.GainEnum.NORMAL
         val gpsInfo = ThetaRepository.GpsInfo.disabled
+        val imageStitching = ThetaRepository.ImageStitchingEnum.AUTO
         val isGpsOn = true
         val iso = ThetaRepository.IsoEnum.ISO_125
         val isoAutoHighLimit = ThetaRepository.IsoAutoHighLimitEnum.ISO_1000
@@ -97,9 +138,13 @@ class OptionsTest {
             exposureCompensation = exposureCompensation,
             exposureDelay = exposureDelay,
             exposureProgram = exposureProgram,
+            faceDetect = faceDetect,
             fileFormat = fileFormat,
             filter = filter,
+            function = function,
+            gain = gain,
             gpsInfo = gpsInfo,
+            imageStitching = imageStitching,
             isGpsOn = isGpsOn,
             iso = iso,
             isoAutoHighLimit = isoAutoHighLimit,
@@ -150,9 +195,13 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ExposureCompensation), exposureCompensation, "exposureCompensation")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ExposureDelay), exposureDelay, "exposureDelay")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ExposureProgram), exposureProgram, "exposureProgram")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.FaceDetect), faceDetect, "faceDetect")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.FileFormat), fileFormat, "fileFormat")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Filter), filter, "filter")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Function), function, "function")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Gain), gain, "gain")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.GpsInfo), gpsInfo, "gpsInfo")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ImageStitching), imageStitching, "imageStitching")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.IsGpsOn), isGpsOn, "isGpsOn")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Iso), iso, "iso")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.IsoAutoHighLimit), isoAutoHighLimit, "isoAutoHighLimit")
@@ -213,9 +262,13 @@ class OptionsTest {
             Pair(ThetaRepository.OptionNameEnum.ExposureCompensation, ThetaRepository.ExposureCompensationEnum.M0_3),
             Pair(ThetaRepository.OptionNameEnum.ExposureDelay, ThetaRepository.ExposureDelayEnum.DELAY_10),
             Pair(ThetaRepository.OptionNameEnum.ExposureProgram, ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM),
+            Pair(ThetaRepository.OptionNameEnum.FaceDetect, ThetaRepository.FaceDetectEnum.OFF),
             Pair(ThetaRepository.OptionNameEnum.FileFormat, ThetaRepository.FileFormatEnum.IMAGE_11K),
             Pair(ThetaRepository.OptionNameEnum.Filter, ThetaRepository.FilterEnum.HDR),
+            Pair(ThetaRepository.OptionNameEnum.Function, ThetaRepository.ShootingFunctionEnum.NORMAL),
+            Pair(ThetaRepository.OptionNameEnum.Gain, ThetaRepository.GainEnum.NORMAL),
             Pair(ThetaRepository.OptionNameEnum.GpsInfo, ThetaRepository.GpsInfo.disabled),
+            Pair(ThetaRepository.OptionNameEnum.ImageStitching, ThetaRepository.ImageStitchingEnum.AUTO),
             Pair(ThetaRepository.OptionNameEnum.IsGpsOn, true),
             Pair(ThetaRepository.OptionNameEnum.Iso, ThetaRepository.IsoEnum.ISO_125),
             Pair(ThetaRepository.OptionNameEnum.IsoAutoHighLimit, ThetaRepository.IsoAutoHighLimitEnum.ISO_1000),
@@ -294,12 +347,16 @@ class OptionsTest {
         val exposureCompensation = Pair(-0.3f, ThetaRepository.ExposureCompensationEnum.M0_3)
         val exposureDelay = Pair(10, ThetaRepository.ExposureDelayEnum.DELAY_10)
         val exposureProgram = Pair(2, ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM)
+        val faceDetect = Pair(FaceDetect.OFF, ThetaRepository.FaceDetectEnum.OFF)
         val fileFormat = Pair(
             MediaFileFormat(MediaType.JPEG, 11008, 5504, null, null),
             ThetaRepository.FileFormatEnum.IMAGE_11K
         )
         val filter = Pair(ImageFilter.HDR, ThetaRepository.FilterEnum.HDR)
+        val function = Pair(ShootingFunction.NORMAL, ThetaRepository.ShootingFunctionEnum.NORMAL)
+        val gain = Pair(Gain.NORMAL, ThetaRepository.GainEnum.NORMAL)
         val gpsInfo = Pair(GpsInfo(65535.0f, 65535.0f, 0f, null, null), ThetaRepository.GpsInfo.disabled)
+        val imageStitching = Pair(ImageStitching.AUTO, ThetaRepository.ImageStitchingEnum.AUTO)
         val isGpsOn = Pair(GpsTagRecording.ON, true)
         val iso = Pair(125, ThetaRepository.IsoEnum.ISO_125)
         val isoAutoHighLimit = Pair(1000, ThetaRepository.IsoAutoHighLimitEnum.ISO_1000)
@@ -347,10 +404,14 @@ class OptionsTest {
             exposureCompensation = exposureCompensation.first,
             exposureDelay = exposureDelay.first,
             exposureProgram = exposureProgram.first,
+            _faceDetect = faceDetect.first,
             fileFormat = fileFormat.first,
             _filter = filter.first,
+            _function = function.first,
+            _gain = gain.first,
             gpsInfo = gpsInfo.first,
             _gpsTagRecording = isGpsOn.first,
+            _imageStitching = imageStitching.first,
             iso = iso.first,
             isoAutoHighLimit = isoAutoHighLimit.first,
             _language = language.first,
@@ -395,9 +456,13 @@ class OptionsTest {
         assertEquals(options.exposureCompensation, exposureCompensation.second, "exposureCompensation")
         assertEquals(options.exposureDelay, exposureDelay.second, "exposureDelay")
         assertEquals(options.exposureProgram, exposureProgram.second, "exposureProgram")
+        assertEquals(options.faceDetect, faceDetect.second, "faceDetect")
         assertEquals(options.fileFormat, fileFormat.second, "fileFormat")
         assertEquals(options.filter, filter.second, "filter")
+        assertEquals(options.function, function.second, "function")
+        assertEquals(options.gain, gain.second, "gain")
         assertEquals(options.gpsInfo, gpsInfo.second, "gpsInfo")
+        assertEquals(options.imageStitching, imageStitching.second, "imageStitching")
         assertEquals(options.isGpsOn, isGpsOn.second, "isGpsOn")
         assertEquals(options.iso, iso.second, "iso")
         assertEquals(options.isoAutoHighLimit, isoAutoHighLimit.second, "isoAutoHighLimit")
@@ -460,15 +525,19 @@ class OptionsTest {
         val exposureCompensation = Pair(-0.3f, ThetaRepository.ExposureCompensationEnum.M0_3)
         val exposureDelay = Pair(10, ThetaRepository.ExposureDelayEnum.DELAY_10)
         val exposureProgram = Pair(2, ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM)
+        val faceDetect = Pair(FaceDetect.ON, ThetaRepository.FaceDetectEnum.ON)
         val fileFormat = Pair(
             MediaFileFormat(MediaType.JPEG, 11008, 5504, null, null),
             ThetaRepository.FileFormatEnum.IMAGE_11K
         )
         val filter = Pair(ImageFilter.HDR, ThetaRepository.FilterEnum.HDR)
+        val function = Pair(ShootingFunction.SELF_TIMER, ThetaRepository.ShootingFunctionEnum.SELF_TIMER)
+        val gain = Pair(Gain.MEGA_VOLUME, ThetaRepository.GainEnum.MEGA_VOLUME)
         val gpsInfo = Pair(
             GpsInfo(65535.0f, 65535.0f, 0f, "", ""),
             ThetaRepository.GpsInfo(65535.0f, 65535.0f, 0f, "")
         )
+        val imageStitching = Pair(ImageStitching.AUTO, ThetaRepository.ImageStitchingEnum.AUTO)
         val isGpsOn = Pair(GpsTagRecording.ON, true)
         val iso = Pair(125, ThetaRepository.IsoEnum.ISO_125)
         val isoAutoHighLimit = Pair(1000, ThetaRepository.IsoAutoHighLimitEnum.ISO_1000)
@@ -516,9 +585,13 @@ class OptionsTest {
             exposureCompensation = exposureCompensation.second,
             exposureDelay = exposureDelay.second,
             exposureProgram = exposureProgram.second,
+            faceDetect = faceDetect.second,
             fileFormat = fileFormat.second,
             filter = filter.second,
+            function = function.second,
+            gain = gain.second,
             gpsInfo = gpsInfo.second,
+            imageStitching = imageStitching.second,
             isGpsOn = isGpsOn.second,
             iso = iso.second,
             isoAutoHighLimit = isoAutoHighLimit.second,
@@ -564,10 +637,14 @@ class OptionsTest {
         assertEquals(options.exposureCompensation, exposureCompensation.first, "exposureCompensation")
         assertEquals(options.exposureDelay, exposureDelay.first, "exposureDelay")
         assertEquals(options.exposureProgram, exposureProgram.first, "exposureProgram")
+        assertEquals(options._faceDetect, faceDetect.first, "faceDetect")
         assertEquals(options.fileFormat, fileFormat.first, "fileFormat")
         assertEquals(options._filter, filter.first, "filter")
+        assertEquals(options._function, function.first, "function")
+        assertEquals(options._gain, gain.first, "gain")
         assertEquals(options.gpsInfo, gpsInfo.first, "gpsInfo")
         assertEquals(options._gpsTagRecording, isGpsOn.first, "isGpsOn")
+        assertEquals(options._imageStitching, imageStitching.first, "imageStitching")
         assertEquals(options.iso, iso.first, "iso")
         assertEquals(options.isoAutoHighLimit, isoAutoHighLimit.first, "isoAutoHighLimit")
         assertEquals(options._language, language.first, "language")

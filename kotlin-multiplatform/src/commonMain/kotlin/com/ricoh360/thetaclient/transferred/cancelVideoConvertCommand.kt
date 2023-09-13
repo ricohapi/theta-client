@@ -10,7 +10,7 @@ import kotlinx.serialization.json.JsonElement
  * cancel video convert request
  */
 @Serializable
-data class CancelVideoConvertRequest(
+internal data class CancelVideoConvertRequest(
     override val name: String = "camera._cancelVideoConvert",
     override val parameters: EmptyParameter = EmptyParameter(),
 ) : CommandApiRequest
@@ -19,7 +19,7 @@ data class CancelVideoConvertRequest(
  * cancel video convert response
  */
 @Serializable
-data class CancelVideoConvertResponse(
+internal data class CancelVideoConvertResponse(
     /**
      * Executed command
      */

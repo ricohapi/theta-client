@@ -65,7 +65,7 @@ internal object ApiClient {
  *
  * @return HttpClient
  */
-fun getHttpClient(): HttpClient {
+internal fun getHttpClient(): HttpClient {
     return ApiClient.httpClient ?: run {
         ApiClient.newHttpClient().let { httpClient ->
             ApiClient.httpClient = httpClient
@@ -81,6 +81,6 @@ fun getHttpClient(): HttpClient {
  *
  * @return PreviewClient
  */
-fun getHPreviewClient(): PreviewClient {
+internal fun getHPreviewClient(): PreviewClient {
     return ApiClient.previewClient
 }

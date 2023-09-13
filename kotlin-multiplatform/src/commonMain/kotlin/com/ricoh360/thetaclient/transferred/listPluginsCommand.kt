@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
  * list plugins request
  */
 @Serializable
-data class ListPluginsRequest(
+internal data class ListPluginsRequest(
     override val name: String = "camera._listPlugins",
     override val parameters: EmptyParameter = EmptyParameter(),
 ) : CommandApiRequest
@@ -15,7 +15,7 @@ data class ListPluginsRequest(
  * list plugins response
  */
 @Serializable
-data class ListPluginsResponse(
+internal data class ListPluginsResponse(
     /**
      * Executed command
      */
@@ -56,12 +56,12 @@ data class ListPluginsResponse(
  * get options results
  */
 @Serializable
-data class ResultListPlugins(
+internal data class ResultListPlugins(
     val plugins: List<Plugin>,
 )
 
 @Serializable
-data class Plugin(
+internal data class Plugin(
     /**
      * Plugin name
      */

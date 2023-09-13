@@ -7,7 +7,7 @@ import kotlinx.serialization.json.JsonElement
  * Set my setting request
  */
 @Serializable
-data class SetMySettingRequest(
+internal data class SetMySettingRequest(
     override val name: String = "camera._setMySetting",
     override val parameters: SetMySettingParams,
 ) : CommandApiRequest
@@ -16,7 +16,7 @@ data class SetMySettingRequest(
  * Set my setting parameters
  */
 @Serializable
-data class SetMySettingParams(
+internal data class SetMySettingParams(
     /**
      * The target shooting mode
      * ("image": still image capture mode, "video": video capture)
@@ -33,7 +33,7 @@ data class SetMySettingParams(
  * Set my setting response
  */
 @Serializable
-data class SetMySettingResponse(
+internal data class SetMySettingResponse(
     /**
      * Executed command
      */

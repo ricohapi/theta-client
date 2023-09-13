@@ -10,7 +10,7 @@ import kotlinx.serialization.json.JsonElement
  * finish wlan request
  */
 @Serializable
-data class FinishWlanRequest(
+internal data class FinishWlanRequest(
     override val name: String = "camera._finishWlan",
     override val parameters: EmptyParameter = EmptyParameter(),
 ) : CommandApiRequest
@@ -19,7 +19,7 @@ data class FinishWlanRequest(
  * finish wlan response
  */
 @Serializable
-data class FinishWlanResponse(
+internal data class FinishWlanResponse(
     /**
      * Executed command
      */

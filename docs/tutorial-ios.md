@@ -1,12 +1,13 @@
 ﻿# THETA CLient Tutorial for iOS
 
 ## Available models
-* RICOH THETA X
-* RICOH THETA Z1
-* RICOH THETA V
-* RICOH THETA SC2
-* RICOH THETA S (firmware v1.62 or later only)
-* RICOH THETA SC
+
+- RICOH THETA X
+- RICOH THETA Z1
+- RICOH THETA V
+- RICOH THETA SC2
+- RICOH THETA S (firmware v1.62 or later only)
+- RICOH THETA SC
 
 ## Advance preparation
 
@@ -14,7 +15,7 @@ Connect the wireless LAN between THETA and the smartphone that runs on the appli
 
 ## To instantiate SDK
 
-``` swift
+```swift
 import THETAClient
 // Create ThetaRepository object by specifying an IP address
 ThetaRepository.Companion.shared.doNewInstance(
@@ -28,17 +29,19 @@ ThetaRepository.Companion.shared.doNewInstance(
   }
 }
 ```
-* THETA IP ADDRESS
 
-| Mode |Address |
-|-------|---------|
-|Direct mode|192.168.1.1|
-|Other| Assigned IP address|
+- THETA IP ADDRESS
 
-* When downloading images or videos from THETA using URLSession, the connection is plain. Therefore, the connection permission setting to Info.plist is required depending on the destination address (default 192.168.1.1).
-The following is an example of Info.plist by default.
-Xcode `Signing & Capabilities` -> `App Transport Security Exception` can also be added.
-``` xml
+| Mode        | Address             |
+| ----------- | ------------------- |
+| Direct mode | 192.168.1.1         |
+| Other       | Assigned IP address |
+
+- When downloading images or videos from THETA using URLSession, the connection is plain. Therefore, the connection permission setting to Info.plist is required depending on the destination address (default 192.168.1.1).
+  The following is an example of Info.plist by default.
+  Xcode `Signing & Capabilities` -> `App Transport Security Exception` can also be added.
+
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -68,7 +71,7 @@ Xcode `Signing & Capabilities` -> `App Transport Security Exception` can also be
 
 First, use `ThetaRepository.getPhotoCaptureBuilder()` to set the shooting and create the `PhotoCapture` object.
 
-``` swift
+```swift
 Task {
   do {
     let photoCapture: PhotoCapture = try await withCheckedThrowingContinuation {continuation in
@@ -89,6 +92,7 @@ Task {
   }
 }
 ```
+
 The above example sets the maximum ISO sensitivity to 1000 and the file format to image5k.
 
 See [View preview](#preview) for instructions on how to view preview.
@@ -96,7 +100,7 @@ See [View preview](#preview) for instructions on how to view preview.
 Then we call `PhotoCapture.takePicture(callback:)` to shoot still pictures.
 Create and call a callback class that implements `PhotoCaptureTakePictureCallback` as follows.
 
-``` swift
+```swift
 do {
   class Callback: PhotoCaptureTakePictureCallback {
       let callback: (_ fileUrl: String?, _ error: Error?) -> Void
@@ -130,180 +134,181 @@ do {
 
 ### Properties that can be set for shooting still images
 
-* Exposure Compensation: `setExposureCompensation(value:ThetaRepository.ExposureCompensationEnum)`
+- Exposure Compensation: `setExposureCompensation(value:ThetaRepository.ExposureCompensationEnum)`
 
-| Value|Correction value |Remarks|
-|---|---:|---|
-|m20|-2.0f||
-|m17|-1.7f||
-|m13|-1.0f||
-|m07|-0.7f||
-|m03|-0.3f||
-|zero|0.0f||
-|p03|0.3f||
-|p07|0.7f||
-|p13|1.0f||
-|p17|1.7f||
-|p20|2.0f||
+| Value | Correction value | Remarks |
+| ----- | ---------------: | ------- |
+| m20   |            -2.0f |         |
+| m17   |            -1.7f |         |
+| m13   |            -1.0f |         |
+| m07   |            -0.7f |         |
+| m03   |            -0.3f |         |
+| zero  |             0.0f |         |
+| p03   |             0.3f |         |
+| p07   |             0.7f |         |
+| p13   |             1.0f |         |
+| p17   |             1.7f |         |
+| p20   |             2.0f |         |
 
-* Exposure Delay Setting: `setExposureDelay(delay:ThetaRepository.ExposureDelayEnum)`
+- Exposure Delay Setting: `setExposureDelay(delay:ThetaRepository.ExposureDelayEnum)`
 
-Delay between the takePicture command and the start of exposure  (= self-timer).
+Delay between the takePicture command and the start of exposure (= self-timer).
 
-| Value|Delay time (seconds) |Remarks|
-|---|---:|---|
-|delayOff|0||
-|delay1|1||
-|delay2|2||
-|delay3|3||
-|delay4|4||
-|delay5|5||
-|delay6|6||
-|delay7|7||
-|delay8|8||
-|delay9|9||
-|delay10|10||
+| Value    | Delay time (seconds) | Remarks |
+| -------- | -------------------: | ------- |
+| delayOff |                    0 |         |
+| delay1   |                    1 |         |
+| delay2   |                    2 |         |
+| delay3   |                    3 |         |
+| delay4   |                    4 |         |
+| delay5   |                    5 |         |
+| delay6   |                    6 |         |
+| delay7   |                    7 |         |
+| delay8   |                    8 |         |
+| delay9   |                    9 |         |
+| delay10  |                   10 |         |
 
-* Exposure Program: `setExposureProgram(program:ThetaRepository.ExposureProgramEnum)`
+- Exposure Program: `setExposureProgram(program:ThetaRepository.ExposureProgramEnum)`
 
-| Value|Content |Remarks|
-|---|---|---|
-|manual|Manual||
-|normalProgram|Regular programs||
-|aperturePriority|Aperture priority||
-|shutterPriority|Shutter priority||
-|isoPriority|ISO priority||
+| Value            | Content           | Remarks |
+| ---------------- | ----------------- | ------- |
+| manual           | Manual            |         |
+| normalProgram    | Regular programs  |         |
+| aperturePriority | Aperture priority |         |
+| shutterPriority  | Shutter priority  |         |
+| isoPriority      | ISO priority      |         |
 
-* File Format: `setFileFormat(fileFormat:ThetaRepository.PhotoFileFormatEnum)`
+- File Format: `setFileFormat(fileFormat:ThetaRepository.PhotoFileFormatEnum)`
 
-| Value|Type| Width|Height |S|SC|SC2|V|Z1|X|
-|---|---|--:|--:|:-:|:-:|:-:|:-:|:-:|:-:|
-|image2k|Jpeg|2048|1024|+|+|-|-|-|-|
-|image5k|Jpeg|5376|2688|+|+|+|+|-|-|
-|image67k|Jpeg|6720|3360|-|-|-|-|+|-|
-|rawP67k|Raw+|6720|3360|-|-|-|-|+|-|
-|image55k|Jpeg|5504|2752|-|-|-|-|-|+|
-|image11k|Jpeg|11008|5504|-|-|-|-|-|+|
+| Value    | Type | Width | Height |  S  | SC  | SC2 |  V  | Z1  |  X  |
+| -------- | ---- | ----: | -----: | :-: | :-: | :-: | :-: | :-: | :-: |
+| image2k  | Jpeg |  2048 |   1024 |  +  |  +  |  -  |  -  |  -  |  -  |
+| image5k  | Jpeg |  5376 |   2688 |  +  |  +  |  +  |  +  |  -  |  -  |
+| image67k | Jpeg |  6720 |   3360 |  -  |  -  |  -  |  -  |  +  |  -  |
+| rawP67k  | Raw+ |  6720 |   3360 |  -  |  -  |  -  |  -  |  +  |  -  |
+| image55k | Jpeg |  5504 |   2752 |  -  |  -  |  -  |  -  |  -  |  +  |
+| image11k | Jpeg | 11008 |   5504 |  -  |  -  |  -  |  -  |  -  |  +  |
 
-* Image Processing: `setFilter(filter:ThetaRepository.Filter)`
+- Image Processing: `setFilter(filter:ThetaRepository.Filter)`
 
-| Value|Content |Remarks|
-|---|---|---|
-|off|None|||
-|noiseReduction|Noise reduction||
-|hdr|HDR||
+| Value          | Content         | Remarks |
+| -------------- | --------------- | ------- | --- |
+| off            | None            |         |     |
+| noiseReduction | Noise reduction |         |
+| hdr            | HDR             |         |
 
-* GPS on/off: `setGpsTagRecording(value:ThetaRepository.GpsTagRecordingEnum)`
+- GPS on/off: `setGpsTagRecording(value:ThetaRepository.GpsTagRecordingEnum)`
 
 Other than THETA X, this setting is ignored.
 
-| Value|Content |Remarks
-|---|---|---|
-|on|GPS | |
-|off|No GPS||
+| Value | Content | Remarks |
+| ----- | ------- | ------- |
+| on    | GPS     |         |
+| off   | No GPS  |         |
 
-* ISO value: `setIso(iso:ThetaRepository.IsoEnum)`
+- ISO value: `setIso(iso:ThetaRepository.IsoEnum)`
 
-| Value|ISO value |Remarks|
-|---|---:|---|
-|isoAuto|0||
-|iso50|50|THETA X only|
-|iso64|64|THETA SC2, V and X only|
-|iso80|80|THETA S and SC don't support|
-|iso100|100||
-|iso125|125||
-|iso160|160||
-|iso200|200||
-|iso250|250||
-|iso320|320||
-|iso400|400||
-|iso500|150||
-|iso640|640||
-|iso800|800||
-|iso1000|1000||
-|iso1250|1250||
-|iso1600|1600||
-|iso2000|2000|THETA S and SC don't support|
-|iso2500|2500|THETA S and SC don't support|
-|iso3200|3200|THETA S and SC don't support|
-|iso4000|4000|THETA Z1 only|
-|iso5000|5000|THETA Z1 only|
-|iso6400|6400|THETA Z1 only|
+| Value   | ISO value | Remarks                      |
+| ------- | --------: | ---------------------------- |
+| isoAuto |         0 |                              |
+| iso50   |        50 | THETA X only                 |
+| iso64   |        64 | THETA SC2, V and X only      |
+| iso80   |        80 | THETA S and SC don't support |
+| iso100  |       100 |                              |
+| iso125  |       125 |                              |
+| iso160  |       160 |                              |
+| iso200  |       200 |                              |
+| iso250  |       250 |                              |
+| iso320  |       320 |                              |
+| iso400  |       400 |                              |
+| iso500  |       150 |                              |
+| iso640  |       640 |                              |
+| iso800  |       800 |                              |
+| iso1000 |      1000 |                              |
+| iso1250 |      1250 |                              |
+| iso1600 |      1600 |                              |
+| iso2000 |      2000 | THETA S and SC don't support |
+| iso2500 |      2500 | THETA S and SC don't support |
+| iso3200 |      3200 | THETA S and SC don't support |
+| iso4000 |      4000 | THETA Z1 only                |
+| iso5000 |      5000 | THETA Z1 only                |
+| iso6400 |      6400 | THETA Z1 only                |
 
-* ISO upper limit: `setIsoAutoHighLimit(iso:ThetaRepository.IsoAutoHighLimitEnum)`
+- ISO upper limit: `setIsoAutoHighLimit(iso:ThetaRepository.IsoAutoHighLimitEnum)`
 
 This setting is ignored by THETA V Firmware v2.50.1 or earlier, THETA S and THETA SC.
 
-| Value|Upper ISO limit |Remarks|
-|---|---:|---|
-|iso100|100|THETA X only|
-|iso125|125|THETA X only|
-|iso160|160|THETA X only|
-|iso200|200||
-|iso250|250||
-|iso320|320||
-|iso400|400||
-|iso500|150||
-|iso640|640||
-|iso800|800||
-|iso1000|1000||
-|iso1250|1250||
-|iso1600|1600||
-|iso2000|2000||
-|iso2500|2500||
-|iso3200|3200||
-|iso4000|4000|THETA Z1 only|
-|iso5000|5000|THETA Z1 only|
-|iso6400|6400|THETA Z1 only|
+| Value   | Upper ISO limit | Remarks       |
+| ------- | --------------: | ------------- |
+| iso100  |             100 | THETA X only  |
+| iso125  |             125 | THETA X only  |
+| iso160  |             160 | THETA X only  |
+| iso200  |             200 |               |
+| iso250  |             250 |               |
+| iso320  |             320 |               |
+| iso400  |             400 |               |
+| iso500  |             150 |               |
+| iso640  |             640 |               |
+| iso800  |             800 |               |
+| iso1000 |            1000 |               |
+| iso1250 |            1250 |               |
+| iso1600 |            1600 |               |
+| iso2000 |            2000 |               |
+| iso2500 |            2500 |               |
+| iso3200 |            3200 |               |
+| iso4000 |            4000 | THETA Z1 only |
+| iso5000 |            5000 | THETA Z1 only |
+| iso6400 |            6400 | THETA Z1 only |
 
-* Aperture setting: `setAperture(aperture:ThetaRepository.ApertureEnum)`
+- Aperture setting: `setAperture(aperture:ThetaRepository.ApertureEnum)`
 
-| Value|Setting value |Remarks|
-|---|---:|---|
-|apertureAuto|Automatic||
-|aperture20|2.0f|THETA V or prior only|
-|aperture21|2.1f|THETA Z1 only|
-|aperture24|2.4f|THETA X only|
-|aperture35|3.5f|THETA Z1 only|
-|aperture56|5.6f|THETA Z1 only|
+| Value        | Setting value | Remarks               |
+| ------------ | ------------: | --------------------- |
+| apertureAuto |     Automatic |                       |
+| aperture20   |          2.0f | THETA V or prior only |
+| aperture21   |          2.1f | THETA Z1 only         |
+| aperture24   |          2.4f | THETA X only          |
+| aperture35   |          3.5f | THETA Z1 only         |
+| aperture56   |          5.6f | THETA Z1 only         |
 
-* Color temperature setting: `setColorTemperature(kelvin:Int)`
-  * 2500 to 10000
+- Color temperature setting: `setColorTemperature(kelvin:Int)`
 
-* GPS information: `setGpsInfo(gpsInfo:ThetaRepository.GpsInfo)`
+  - 2500 to 10000
+
+- GPS information: `setGpsInfo(gpsInfo:ThetaRepository.GpsInfo)`
 
 GpsInfo shall be prepared as follows:
 `ThetaRepository.GpsInfo(latitude:longitude:altitude:dateTimeZone:)`
 
-| Value|Setting value |Remarks|
-|---|---|---|
-|latitude|Latitude | -90 to 90 or 65535 (disabled)|
-|longitude|Longitude | -180 to 180 or 65535 (disabled)|
-|altitude|Altitude |||
-|dateTimeZone|Date and time|YYYY:MM:DD hh:mm:ss+(-)hh:mm or empty string (disabled)|
+| Value        | Setting value | Remarks                                                 |
+| ------------ | ------------- | ------------------------------------------------------- | --- |
+| latitude     | Latitude      | -90 to 90 or 65535 (disabled)                           |
+| longitude    | Longitude     | -180 to 180 or 65535 (disabled)                         |
+| altitude     | Altitude      |                                                         |     |
+| dateTimeZone | Date and time | YYYY:MM:DD hh:mm:ss+(-)hh:mm or empty string (disabled) |
 
-* White balance: `setWhiteBalance(whiteBalance:ThetaRepository.WhiteBalanceEnum)`
+- White balance: `setWhiteBalance(whiteBalance:ThetaRepository.WhiteBalanceEnum)`
 
-| Value|Setting value |Remarks|
-|---|---|---|
-|auto|Automatic||
-|daylight|Outdoor|About 5,200|
-|shade|Shade|About 7,000|
-|cloudyDaylight|Cloudy|About 6,000|
-|incandescent|Incandescent light 1|About 3,200|
-|warmWhiteFluorescent|Incandescent light 2||
-|daylightFluorescent|Fluorescent light 1 (daylight)||
-|daywhiteFluorescent|Fluorescent light 2 (natural white)||
-|fluorescent|Fluorescent light 3 (white)|About 4,000|
-|bulbFluorescent|Fluorescent light 4 (light bulb color)||
-|colorTemperature|CT settings (specified by the colorTemperature option)|RICOH THETA S firmware v01.82 or later and RICOH THETA SC firmware v01.10 or later|
-|underwater|Underwater|RICOH THETA V firmware v3.21.1 or later|
+| Value                | Setting value                                          | Remarks                                                                            |
+| -------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| auto                 | Automatic                                              |                                                                                    |
+| daylight             | Outdoor                                                | About 5,200                                                                        |
+| shade                | Shade                                                  | About 7,000                                                                        |
+| cloudyDaylight       | Cloudy                                                 | About 6,000                                                                        |
+| incandescent         | Incandescent light 1                                   | About 3,200                                                                        |
+| warmWhiteFluorescent | Incandescent light 2                                   |                                                                                    |
+| daylightFluorescent  | Fluorescent light 1 (daylight)                         |                                                                                    |
+| daywhiteFluorescent  | Fluorescent light 2 (natural white)                    |                                                                                    |
+| fluorescent          | Fluorescent light 3 (white)                            | About 4,000                                                                        |
+| bulbFluorescent      | Fluorescent light 4 (light bulb color)                 |                                                                                    |
+| colorTemperature     | CT settings (specified by the colorTemperature option) | RICOH THETA S firmware v01.82 or later and RICOH THETA SC firmware v01.10 or later |
+| underwater           | Underwater                                             | RICOH THETA V firmware v3.21.1 or later                                            |
 
 ## Shoot a video
 
 First, use the `ThetaRepository.getVideoCaptureBuilder()` to set the shooting and create the `VideoCapture` object.
 
-``` swift
+```swift
 Task {
   do {
     let videoCapture: VideoCapture = try await withCheckedThrowingContinuation {continuation in
@@ -333,17 +338,20 @@ See [Display preview](#preview)
 Next, we call `VideoCapture.startCapture(callback:)` to start shooting videos.
 Create and call a callback class that implements `VideoCaptureStartCaptureCallback` as follows.
 
-``` swift
+```swift
 class Callback: VideoCaptureStartCaptureCallback {
     let callback: (_ fileUrl: String?, _ error: Error?) -> Void
     init(_ callback: @escaping (_ fileUrl: String?, _ error: Error?) -> Void) {
         self.callback = callback
     }
-    func onSuccess(fileUrl: String) {
+    func onCaptureCompleted(fileUrl: String?) {
         callback(fileUrl, nil)
     }
-    func onError(exception: ThetaRepository.ThetaRepositoryException) {
+    func onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
         callback(nil, exception as? Error)
+    }
+    func onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+        // handle error of stopCapture
     }
 }
 let videoCapturing = videoCapture.startCapture(
@@ -361,203 +369,202 @@ let videoCapturing = videoCapture.startCapture(
 Next, we call `VideoCapturing.stopCapture()` to finish recording the video.
 When the MP4 file is created after shooting, the callback function passed to `startCapture(callback:)` is called.
 
-``` swift
+```swift
 VideoCapturing.stopCapture()
 ```
 
 ### Properties that can be set when shooting videos
 
-* Exposure compensation: `setExposureCompensation(value:ThetaRepository.ExposureCompensationEnum)`
+- Exposure compensation: `setExposureCompensation(value:ThetaRepository.ExposureCompensationEnum)`
 
-| Value|Correction value |Remarks|
-|---|---:|---|
-|m20|-2.0f||
-|m17|-1.7f||
-|m13|-1.0f||
-|m07|-0.7f||
-|m03|-0.3f||
-|zero|0.0f||
-|p03|0.3f||
-|p07|0.7f||
-|p13|1.0f||
-|p17|1.7f||
-|p20|2.0f||
+| Value | Correction value | Remarks |
+| ----- | ---------------: | ------- |
+| m20   |            -2.0f |         |
+| m17   |            -1.7f |         |
+| m13   |            -1.0f |         |
+| m07   |            -0.7f |         |
+| m03   |            -0.3f |         |
+| zero  |             0.0f |         |
+| p03   |             0.3f |         |
+| p07   |             0.7f |         |
+| p13   |             1.0f |         |
+| p17   |             1.7f |         |
+| p20   |             2.0f |         |
 
-* Exposure delay setting: `setExposureDelay(delay:ThetaRepository.ExposureDelayEnum)`
+- Exposure delay setting: `setExposureDelay(delay:ThetaRepository.ExposureDelayEnum)`
 
 Delay between the startCapture command and the start of exposure (= self-timer).
 
-| Value|Delay time (seconds) |Remarks|
-|---|---:|---|
-|delayOff|0||
-|delay1|1||
-|delay2|2||
-|delay3|3||
-|delay4|4||
-|delay5|5||
-|delay6|6||
-|delay7|7||
-|delay8|8||
-|delay9|9||
-|delay10|10||
+| Value    | Delay time (seconds) | Remarks |
+| -------- | -------------------: | ------- |
+| delayOff |                    0 |         |
+| delay1   |                    1 |         |
+| delay2   |                    2 |         |
+| delay3   |                    3 |         |
+| delay4   |                    4 |         |
+| delay5   |                    5 |         |
+| delay6   |                    6 |         |
+| delay7   |                    7 |         |
+| delay8   |                    8 |         |
+| delay9   |                    9 |         |
+| delay10  |                   10 |         |
 
-* Exposure program: `setExposureProgram(program:ThetaRepository.ExposureProgramEnum)`
+- Exposure program: `setExposureProgram(program:ThetaRepository.ExposureProgramEnum)`
 
-| Value|Content |Remarks|
-|---|---|---|
-|manual|Manual||
-|normalProgram|Regular programs||
-|aperturePriority|Aperture priority||
-|shutterPriority|Shutter priority||
-|isoPriority|ISO priority||
+| Value            | Content           | Remarks |
+| ---------------- | ----------------- | ------- |
+| manual           | Manual            |         |
+| normalProgram    | Regular programs  |         |
+| aperturePriority | Aperture priority |         |
+| shutterPriority  | Shutter priority  |         |
+| isoPriority      | ISO priority      |         |
 
-* File format: `setFileFormat(fileFormat:ThetaRepository.VideoFileFormatEnum)`
+- File format: `setFileFormat(fileFormat:ThetaRepository.VideoFileFormatEnum)`
 
-| Value|Type| Width|Height |Frame rate | Codec|S|SC|SC2|V|Z1|X|
-|---|---|--:|--:|--:|--|:-:|:-:|:-:|:-:|:-:|:-:|
-|videoHd|mp4|1280|570|||+|+|-|-|-|-|
-|videoFullHd|mp4|1920|1080|||+|+|-|-|-|-|
-|video2k|mp4|1920|960||H.264/MPEG-4 AVC|-|-|+|+|+|-|
-|video4k|mp4|3840|1920||H.264/MPEG-4 AVC|-|-|+|+|+|-|
-|video2k30f|mp4|1920|960|30|H.264/MPEG-4 AVC|-|-|-|-|-|+|
-|video2k60f|mp4|1920|960|60|H.264/MPEG-4 AVC|-|-|-|-|-|+|
-|video4k30f|mp4|3840|1920|30|H.264/MPEG-4 AVC|-|-|-|-|-|+|
-|video4k60f|mp4|3840|1920|60|H.264/MPEG-4 AVC|-|-|-|-|-|+|
-|video57k2f|mp4|5760|2880|2|H.264/MPEG-4 AVC|-|-|-|-|-|+|
-|video57k5f|mp4|5760|2880|5|H.264/MPEG-4 AVC|-|-|-|-|-|+|
-|video57k30f|mp4|5760|2880|30|H.264/MPEG-4 AVC|-|-|-|-|-|+|
-|video7k2f|mp4|7680|3840|2|H.264/MPEG-4 AVC|-|-|-|-|-|+|
-|video7k5f|mp4|7680|3840|5|H.264/MPEG-4 AVC|-|-|-|-|-|+|
-|video7k10f|mp4|7680|3840|10|H.264/MPEG-4 AVC|-|-|-|-|-|+|
+| Value       | Type | Width | Height | Frame rate | Codec            |  S  | SC  | SC2 |  V  | Z1  |  X  |
+| ----------- | ---- | ----: | -----: | ---------: | ---------------- | :-: | :-: | :-: | :-: | :-: | :-: |
+| videoHd     | mp4  |  1280 |    570 |            |                  |  +  |  +  |  -  |  -  |  -  |  -  |
+| videoFullHd | mp4  |  1920 |   1080 |            |                  |  +  |  +  |  -  |  -  |  -  |  -  |
+| video2k     | mp4  |  1920 |    960 |            | H.264/MPEG-4 AVC |  -  |  -  |  +  |  +  |  +  |  -  |
+| video4k     | mp4  |  3840 |   1920 |            | H.264/MPEG-4 AVC |  -  |  -  |  +  |  +  |  +  |  -  |
+| video2k30f  | mp4  |  1920 |    960 |         30 | H.264/MPEG-4 AVC |  -  |  -  |  -  |  -  |  -  |  +  |
+| video2k60f  | mp4  |  1920 |    960 |         60 | H.264/MPEG-4 AVC |  -  |  -  |  -  |  -  |  -  |  +  |
+| video4k30f  | mp4  |  3840 |   1920 |         30 | H.264/MPEG-4 AVC |  -  |  -  |  -  |  -  |  -  |  +  |
+| video4k60f  | mp4  |  3840 |   1920 |         60 | H.264/MPEG-4 AVC |  -  |  -  |  -  |  -  |  -  |  +  |
+| video57k2f  | mp4  |  5760 |   2880 |          2 | H.264/MPEG-4 AVC |  -  |  -  |  -  |  -  |  -  |  +  |
+| video57k5f  | mp4  |  5760 |   2880 |          5 | H.264/MPEG-4 AVC |  -  |  -  |  -  |  -  |  -  |  +  |
+| video57k30f | mp4  |  5760 |   2880 |         30 | H.264/MPEG-4 AVC |  -  |  -  |  -  |  -  |  -  |  +  |
+| video7k2f   | mp4  |  7680 |   3840 |          2 | H.264/MPEG-4 AVC |  -  |  -  |  -  |  -  |  -  |  +  |
+| video7k5f   | mp4  |  7680 |   3840 |          5 | H.264/MPEG-4 AVC |  -  |  -  |  -  |  -  |  -  |  +  |
+| video7k10f  | mp4  |  7680 |   3840 |         10 | H.264/MPEG-4 AVC |  -  |  -  |  -  |  -  |  -  |  +  |
 
-* Maximum recording time setting: `setMaxRecordableTime(time:ThetaRepository.MaxRecordeTimeEnum)`
+- Maximum recording time setting: `setMaxRecordableTime(time:ThetaRepository.MaxRecordeTimeEnum)`
 
-| Value|Content |Remarks
-|---|---|---|
-|recordableTime300|300 seconds||
-|recordableTime1500|1500 seconds||
+| Value              | Content      | Remarks |
+| ------------------ | ------------ | ------- |
+| recordableTime300  | 300 seconds  |         |
+| recordableTime1500 | 1500 seconds |         |
 
-* GPS on/off: `setGpsTagRecording(value:ThetaRepository.GpsTagRecordingEnum)`
+- GPS on/off: `setGpsTagRecording(value:ThetaRepository.GpsTagRecordingEnum)`
 
 Other than THETA X, this setting is ignored.
 
-| Value|Content |Remarks|
-|---|---|---|
-|on|GPS | |
-|off|No GPS||
+| Value | Content | Remarks |
+| ----- | ------- | ------- |
+| on    | GPS     |         |
+| off   | No GPS  |         |
 
-* ISO value: `setIso(iso:ThetaRepository.IsoEnum)`
+- ISO value: `setIso(iso:ThetaRepository.IsoEnum)`
 
-| Value|ISO value |Remarks|
-|---|---:|---|
-|isoAuto|0||
-|iso50|50|THETA X only|
-|iso64|64|THETA SC2, V and X only|
-|iso80|80|THETA S and SC don't support|
-|iso100|100||
-|iso125|125||
-|iso160|160||
-|iso200|200||
-|iso250|250||
-|iso320|320||
-|iso400|400||
-|iso500|150||
-|iso640|640||
-|iso800|800||
-|iso1000|1000||
-|iso1250|1250||
-|iso1600|1600||
-|iso2000|2000|THETA S and SC don't support|
-|iso2500|2500|THETA S and SC don't support|
-|iso3200|3200|THETA S and SC don't support|
-|iso4000|4000|THETA V and Z1 only|
-|iso5000|5000|THETA V and Z1 only|
-|iso6400|6400|THETA V and Z1 only|
+| Value   | ISO value | Remarks                      |
+| ------- | --------: | ---------------------------- |
+| isoAuto |         0 |                              |
+| iso50   |        50 | THETA X only                 |
+| iso64   |        64 | THETA SC2, V and X only      |
+| iso80   |        80 | THETA S and SC don't support |
+| iso100  |       100 |                              |
+| iso125  |       125 |                              |
+| iso160  |       160 |                              |
+| iso200  |       200 |                              |
+| iso250  |       250 |                              |
+| iso320  |       320 |                              |
+| iso400  |       400 |                              |
+| iso500  |       150 |                              |
+| iso640  |       640 |                              |
+| iso800  |       800 |                              |
+| iso1000 |      1000 |                              |
+| iso1250 |      1250 |                              |
+| iso1600 |      1600 |                              |
+| iso2000 |      2000 | THETA S and SC don't support |
+| iso2500 |      2500 | THETA S and SC don't support |
+| iso3200 |      3200 | THETA S and SC don't support |
+| iso4000 |      4000 | THETA V and Z1 only          |
+| iso5000 |      5000 | THETA V and Z1 only          |
+| iso6400 |      6400 | THETA V and Z1 only          |
 
-
-* ISO upper limit: `setIsoAutoHighLimit(iso:ThetaRepository.IsoAutoHighLimitEnum)`
+- ISO upper limit: `setIsoAutoHighLimit(iso:ThetaRepository.IsoAutoHighLimitEnum)`
 
 THETA V Firmware v2.50.1 or earlier is ignored even if specified in THETA S or THETA SC.
 
-| Value|Upper ISO limit|Remarks|
-|---|---:|---|
-|iso100|100|THETA X only|
-|iso125|125|THETA X only|
-|iso160|160|THETA X only|
-|iso200|200||
-|iso250|250||
-|iso320|320||
-|iso400|400||
-|iso500|150||
-|iso640|640||
-|iso800|800||
-|iso1000|1000||
-|iso1250|1250||
-|iso1600|1600||
-|iso2000|2000||
-|iso2500|2500||
-|iso3200|3200||
-|iso4000|4000|THETA V and Z1 only|
-|iso5000|5000|THETA V and Z1 only|
-|iso6400|6400|THETA V and Z1 only|
+| Value   | Upper ISO limit | Remarks             |
+| ------- | --------------: | ------------------- |
+| iso100  |             100 | THETA X only        |
+| iso125  |             125 | THETA X only        |
+| iso160  |             160 | THETA X only        |
+| iso200  |             200 |                     |
+| iso250  |             250 |                     |
+| iso320  |             320 |                     |
+| iso400  |             400 |                     |
+| iso500  |             150 |                     |
+| iso640  |             640 |                     |
+| iso800  |             800 |                     |
+| iso1000 |            1000 |                     |
+| iso1250 |            1250 |                     |
+| iso1600 |            1600 |                     |
+| iso2000 |            2000 |                     |
+| iso2500 |            2500 |                     |
+| iso3200 |            3200 |                     |
+| iso4000 |            4000 | THETA V and Z1 only |
+| iso5000 |            5000 | THETA V and Z1 only |
+| iso6400 |            6400 | THETA V and Z1 only |
 
+- Aperture setting: `setAperture(aperture:ThetaRepository.ApertureEnum)`
 
-* Aperture setting: `setAperture(aperture:ThetaRepository.ApertureEnum)`
+| Value        | Setting value | Remarks               |
+| ------------ | ------------: | --------------------- |
+| apertureAuto |     Automatic |                       |
+| aperture20   |          2.0f | THETA V or prior only |
+| aperture21   |          2.1f | THETA Z1 only         |
+| aperture24   |          2.4f | THETA X only          |
+| aperture35   |          3.5f | THETA Z1 only         |
+| aperture56   |          5.6f | THETA Z1 only         |
 
-| Value|Setting value |Remarks|
-|---|---:|---|
-|apertureAuto|Automatic||
-|aperture20|2.0f|THETA V or prior only|
-|aperture21|2.1f|THETA Z1 only|
-|aperture24|2.4f|THETA X only|
-|aperture35|3.5f|THETA Z1 only|
-|aperture56|5.6f|THETA Z1 only|
+- Color temperature setting: `setColorTemperature(kelvin:Int)`
 
-* Color temperature setting: `setColorTemperature(kelvin:Int)`
-  * 2500 to 10000
+  - 2500 to 10000
 
-* GPS information: `setGpsInfo(gpsInfo:ThetaRepository.GpsInfo)`
+- GPS information: `setGpsInfo(gpsInfo:ThetaRepository.GpsInfo)`
 
 GpsInfo shall be prepared as follows:
 `ThetaRepository.GpsInfo(latitude:longitude:altitude:dateTimeZone:)`
 
-| Value|Setting value |Remarks|
-|---|---|---|
-|latitude|Latitude | -90 to 90 or 65535 (disabled)|
-|longitude|Longitude | -180 to 180 or 65535 (disabled)|
-|altitude|Altitude |||
-|dateTimeZone|Date and time|YYYY:MM:DD hh:mm:ss+(-)hh:mm or empty string (disabled)|
+| Value        | Setting value | Remarks                                                 |
+| ------------ | ------------- | ------------------------------------------------------- | --- |
+| latitude     | Latitude      | -90 to 90 or 65535 (disabled)                           |
+| longitude    | Longitude     | -180 to 180 or 65535 (disabled)                         |
+| altitude     | Altitude      |                                                         |     |
+| dateTimeZone | Date and time | YYYY:MM:DD hh:mm:ss+(-)hh:mm or empty string (disabled) |
 
-* White balance: `setWhiteBalance(whiteBalance:ThetaRepository.WhiteBalanceEnum)`
+- White balance: `setWhiteBalance(whiteBalance:ThetaRepository.WhiteBalanceEnum)`
 
-| Value|Setting value |Remarks|
-|---|---|---|
-|auto|Automatic||
-|daylight|Outdoor|About 5,200|
-|shade|Shade|About 7,000|
-|cloudyDaylight|Cloudy|About 6,000|
-|incandescent|Incandescent light 1|About 3,200|
-|warmWhiteFluorescent|Incandescent light 2||
-|daylightFluorescent|Fluorescent light 1(daylight)||
-|daywhiteFluorescent|Fluorescent light 2(natural white)||
-|fluorescent|Fluorescent light 3 (white)|About 4,000|
-|bulbFluorescent|Fluorescent light 4 (light bulb color)||
-|colorTemperature|CT settings (specified by the colorTemperature option)|RICOH THETA S firmware v01.82 or later and RICOH THETA SC firmware v01.10 or later|
-|underwater|Underwater|RICOH THETA V firmware v3.21.1 or later|
+| Value                | Setting value                                          | Remarks                                                                            |
+| -------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| auto                 | Automatic                                              |                                                                                    |
+| daylight             | Outdoor                                                | About 5,200                                                                        |
+| shade                | Shade                                                  | About 7,000                                                                        |
+| cloudyDaylight       | Cloudy                                                 | About 6,000                                                                        |
+| incandescent         | Incandescent light 1                                   | About 3,200                                                                        |
+| warmWhiteFluorescent | Incandescent light 2                                   |                                                                                    |
+| daylightFluorescent  | Fluorescent light 1(daylight)                          |                                                                                    |
+| daywhiteFluorescent  | Fluorescent light 2(natural white)                     |                                                                                    |
+| fluorescent          | Fluorescent light 3 (white)                            | About 4,000                                                                        |
+| bulbFluorescent      | Fluorescent light 4 (light bulb color)                 |                                                                                    |
+| colorTemperature     | CT settings (specified by the colorTemperature option) | RICOH THETA S firmware v01.82 or later and RICOH THETA SC firmware v01.10 or later |
+| underwater           | Underwater                                             | RICOH THETA V firmware v3.21.1 or later                                            |
 
 ## <a id="preview"></a>Display a preview
 
 The preview is an equirectangular images of motion JPEG format.
 
-| Model | Width (pixel) | Height (pixel) |Frame rate (fps) | Remarks |
-| ---- | --: |--: | -----------: |---- |
-| THETA X | 1024 |512 | 30 ||
-| THETA Z1 |1024 | 512 |30 | |
-| THETA V |1024 | 512 |30 | Firmware v2.21.1 or later |
-| THETA V |1024 | 512 |8 | Firmware v2.20.1 or earlier |
-| THETA SC2 |1024 | 512 |30 | |
-| THETA S |640 | 320 |10 | |
-| THETA SC |640 | 320 |10 | |
+| Model     | Width (pixel) | Height (pixel) | Frame rate (fps) | Remarks                     |
+| --------- | ------------: | -------------: | ---------------: | --------------------------- |
+| THETA X   |          1024 |            512 |               30 |                             |
+| THETA Z1  |          1024 |            512 |               30 |                             |
+| THETA V   |          1024 |            512 |               30 | Firmware v2.21.1 or later   |
+| THETA V   |          1024 |            512 |                8 | Firmware v2.20.1 or earlier |
+| THETA SC2 |          1024 |            512 |               30 |                             |
+| THETA S   |           640 |            320 |               10 |                             |
+| THETA SC  |           640 |            320 |               10 |                             |
 
 When we call `getLivePreview(frameHandler:completionHandler:)` then the callback function is called each time each frame in the preview is received.
 The arguments to the callback function are passed to the objects [`Ktor_ByteReadPacket`](https://api.ktor.io/ktor-io/io.kitir.utils.io/-byte-read-packet/index.html) and to the callback function that returns the result.
@@ -570,7 +577,7 @@ If CPU usage is high and preview is continued for a long time, the system may de
 In such a case, adjust the frame rate (approximately 10 fps) so that the frames are discarded before extracting `Data` so as not to place a load on the CPU.
 An example of receiving a frame is shown below.
 
-``` swift
+```swift
 class FrameHandler: KotlinSuspendFunction1 {
   static let FrameInterval = CFTimeInterval(1.0/10.0)
   var last: CFTimeInterval = 0
@@ -580,12 +587,11 @@ class FrameHandler: KotlinSuspendFunction1 {
     self.handler = handler
   }
 
-  func invoke(p1: Any?, completionHandler: @escaping (_ response: Any?, _ error: Error?) -> Void) {
+  func invoke(p1: Any?) async throws -> Any? {
     let now = CACurrentMediaTime()
     if (now - last < Self.FrameInterval) {
       // drop frame
-      completionHandler(true, nil)
-      return
+      return true
     }
     autoreleasepool {
       // extract jpeg data from ByteReadPacket
@@ -593,7 +599,7 @@ class FrameHandler: KotlinSuspendFunction1 {
         byteReadPacket: p1 as! Ktor_ioByteReadPacket
       )
       // draw frame and set result
-      completionHandler(handler(data), nil)
+      return handler(data)
     }
   }
 }
@@ -638,253 +644,256 @@ Task {
 
 Refer to the table below for the items and contents that can be set to "Options".
 
-* Date time: `dateTimeZone:String`
+- Date time: `dateTimeZone:String`
 
 Format: YYYY:MM:DD hh:mm:ss+(-)hh:mm
 
-hh is  0 to 23, +(-)hh:mm are time zones.
+hh is 0 to 23, +(-)hh:mm are time zones.
 
 Example: 2014:05:18 01:04:29+08:00
 
-* Exposure Compensation: `exposureCompensation:ThetaRepository.ExposureCompensationEnum`
+- Exposure Compensation: `exposureCompensation:ThetaRepository.ExposureCompensationEnum`
 
-| Value| Correction value | Remarks|
-|---|---:|---|
-|m20|-2.0f||
-|m17|-1.7f||
-|m13|-1.0f||
-|m07|-0.7f||
-|m03|-0.3f||
-|zero| 0.0f||
-|p03|0.3f||
-|p07|0.7f||
-|p13|1.0f||
-|p17|1.7f||
-|p20|2.0f||
+| Value | Correction value | Remarks |
+| ----- | ---------------: | ------- |
+| m20   |            -2.0f |         |
+| m17   |            -1.7f |         |
+| m13   |            -1.0f |         |
+| m07   |            -0.7f |         |
+| m03   |            -0.3f |         |
+| zero  |             0.0f |         |
+| p03   |             0.3f |         |
+| p07   |             0.7f |         |
+| p13   |             1.0f |         |
+| p17   |             1.7f |         |
+| p20   |             2.0f |         |
 
-* Exposure Delay Setting: `ExposureDelay:ThetaRepository.ExposureDelayEnum`
+- Exposure Delay Setting: `ExposureDelay:ThetaRepository.ExposureDelayEnum`
 
 Delay between the startCapture command and the start of exposure (= self-timer).
 
-| Value| Delay time (seconds) | Remarks|
-|---|---:|---|
-|delayOff|0||
-|delay1|1||
-|delay2|2||
-|delay3|3||
-|delay4|4||
-|delay5|5||
-|delay6|6||
-|delay7|7||
-|delay8|8||
-|delay9|9||
-|delay10|10||
+| Value    | Delay time (seconds) | Remarks |
+| -------- | -------------------: | ------- |
+| delayOff |                    0 |         |
+| delay1   |                    1 |         |
+| delay2   |                    2 |         |
+| delay3   |                    3 |         |
+| delay4   |                    4 |         |
+| delay5   |                    5 |         |
+| delay6   |                    6 |         |
+| delay7   |                    7 |         |
+| delay8   |                    8 |         |
+| delay9   |                    9 |         |
+| delay10  |                   10 |         |
 
-* Exposure Program: `ExposureProgram:ThetaRepository.ExposureProgramEnum`
+- Exposure Program: `ExposureProgram:ThetaRepository.ExposureProgramEnum`
 
-| Value| Content | Remarks|
-|---|---|---|
-|manual| Manual||
-|normalProgram| Regular programs||
-|aperturePriority| Aperture priority||
-|shutterPriority| Shutter priority||
-|isoPriority| ISO priority||
+| Value            | Content           | Remarks |
+| ---------------- | ----------------- | ------- |
+| manual           | Manual            |         |
+| normalProgram    | Regular programs  |         |
+| aperturePriority | Aperture priority |         |
+| shutterPriority  | Shutter priority  |         |
+| isoPriority      | ISO priority      |         |
 
-* File Format: `FileFormat:ThetaRepository.FileFormatEnum`
+- File Format: `FileFormat:ThetaRepository.FileFormatEnum`
 
-| Value| Type| Width| Height | Frame rate | Codec| S| SC| SC2|V| Z1| X|
-|---|---|--:|--:|--:|--|:-:|:-:|:-:|:-:|:-:|:-:|
-|videoHd|mp4|1280|570|||+|+|-|-|-|-|
-|videoFullHd|mp4|1920|1080|||+|+|-|-|-|-|
-|video2k|mp4|1920|960||H.264/MPEG-4 AVC|-|-|+|+|+|-|
-|video4k|mp4|3840|1920||H.264/MPEG-4 AVC|-|-|+|+|+|-|
-|video2k30f|mp4|1920|960|30|H.264/MPEG-4 AVC|-|-|-|-|-|+|
-|video2k60f|mp4|1920|960|60|H.264/MPEG-4 AVC|-|-|-|-|-|+|
-|video4k30f|mp4|3840|1920|30|H.264/MPEG-4 AVC|-|-|-|-|-|+|
-|video4k60f|mp4|3840|1920|60|H.264/MPEG-4 AVC|-|-|-|-|-|+|
-|video57k2f|mp4|5760|2880|2|H.264/MPEG-4 AVC|-|-|-|-|-|+|
-|video57k5f|mp4|5760|2880|5|H.264/MPEG-4 AVC|-|-|-|-|-|+|
-|video57k30f|mp4|5760|2880|30|H.264/MPEG-4 AVC|-|-|-|-|-|+|
-|video7k2f|mp4|7680|3840|2|H.264/MPEG-4 AVC|-|-|-|-|-|+|
-|video7k5f|mp4|7680|3840|5|H.264/MPEG-4 AVC|-|-|-|-|-|+|
-|video7k10f|mp4|7680|3840|10|H.264/MPEG-4 AVC|-|-|-|-|-|+|
+| Value       | Type | Width | Height | Frame rate | Codec            |  S  | SC  | SC2 |  V  | Z1  |  X  |
+| ----------- | ---- | ----: | -----: | ---------: | ---------------- | :-: | :-: | :-: | :-: | :-: | :-: |
+| videoHd     | mp4  |  1280 |    570 |            |                  |  +  |  +  |  -  |  -  |  -  |  -  |
+| videoFullHd | mp4  |  1920 |   1080 |            |                  |  +  |  +  |  -  |  -  |  -  |  -  |
+| video2k     | mp4  |  1920 |    960 |            | H.264/MPEG-4 AVC |  -  |  -  |  +  |  +  |  +  |  -  |
+| video4k     | mp4  |  3840 |   1920 |            | H.264/MPEG-4 AVC |  -  |  -  |  +  |  +  |  +  |  -  |
+| video2k30f  | mp4  |  1920 |    960 |         30 | H.264/MPEG-4 AVC |  -  |  -  |  -  |  -  |  -  |  +  |
+| video2k60f  | mp4  |  1920 |    960 |         60 | H.264/MPEG-4 AVC |  -  |  -  |  -  |  -  |  -  |  +  |
+| video4k30f  | mp4  |  3840 |   1920 |         30 | H.264/MPEG-4 AVC |  -  |  -  |  -  |  -  |  -  |  +  |
+| video4k60f  | mp4  |  3840 |   1920 |         60 | H.264/MPEG-4 AVC |  -  |  -  |  -  |  -  |  -  |  +  |
+| video57k2f  | mp4  |  5760 |   2880 |          2 | H.264/MPEG-4 AVC |  -  |  -  |  -  |  -  |  -  |  +  |
+| video57k5f  | mp4  |  5760 |   2880 |          5 | H.264/MPEG-4 AVC |  -  |  -  |  -  |  -  |  -  |  +  |
+| video57k30f | mp4  |  5760 |   2880 |         30 | H.264/MPEG-4 AVC |  -  |  -  |  -  |  -  |  -  |  +  |
+| video7k2f   | mp4  |  7680 |   3840 |          2 | H.264/MPEG-4 AVC |  -  |  -  |  -  |  -  |  -  |  +  |
+| video7k5f   | mp4  |  7680 |   3840 |          5 | H.264/MPEG-4 AVC |  -  |  -  |  -  |  -  |  -  |  +  |
+| video7k10f  | mp4  |  7680 |   3840 |         10 | H.264/MPEG-4 AVC |  -  |  -  |  -  |  -  |  -  |  +  |
 
-* Image Processing: `filter:ThetaRepository.Filter`
+- Image Processing: `filter:ThetaRepository.Filter`
 
-| Value| Content | Remarks|
-|---|---|---|
-|off| None|||
-|noiseReduction| Noise reduction||
-|hdr| HDR| |
+| Value          | Content         | Remarks |
+| -------------- | --------------- | ------- | --- |
+| off            | None            |         |     |
+| noiseReduction | Noise reduction |         |
+| hdr            | HDR             |         |
 
-* GPS ON/OFF: `isGpsOn:Bool`
+- GPS ON/OFF: `isGpsOn:Bool`
 
 Other than THETA X, it is ignored.
 
-| Value| Content | Remarks|
-|---|---|---|
-|true| GPS | |
-|false| No GPS||
+| Value | Content | Remarks |
+| ----- | ------- | ------- |
+| true  | GPS     |         |
+| false | No GPS  |         |
 
-* ISO value: `iso:ThetaRepository.IsoEnum`
+- ISO value: `iso:ThetaRepository.IsoEnum`
 
-| Value| ISO value | Remarks|
-|---|---:|---|
-|isoAuto|0||
-|iso50|50||
-|iso64|64||
-|iso80|80||
-|iso100|100||
-|iso125|125||
-|iso160|160||
-|iso200|200||
-|iso250|250||
-|iso320|320||
-|iso400|400||
-|iso500|150||
-|iso640|640||
-|iso800|800||
-|iso1000|1000||
-|iso1250|1250||
-|iso1600|1600||
-|iso2000|2000||
-|iso2500|2500||
-|iso3200|3200||
-|iso4000|4000||
-|iso5000|5000||
-|iso6400|6400||
+| Value   | ISO value | Remarks |
+| ------- | --------: | ------- |
+| isoAuto |         0 |         |
+| iso50   |        50 |         |
+| iso64   |        64 |         |
+| iso80   |        80 |         |
+| iso100  |       100 |         |
+| iso125  |       125 |         |
+| iso160  |       160 |         |
+| iso200  |       200 |         |
+| iso250  |       250 |         |
+| iso320  |       320 |         |
+| iso400  |       400 |         |
+| iso500  |       150 |         |
+| iso640  |       640 |         |
+| iso800  |       800 |         |
+| iso1000 |      1000 |         |
+| iso1250 |      1250 |         |
+| iso1600 |      1600 |         |
+| iso2000 |      2000 |         |
+| iso2500 |      2500 |         |
+| iso3200 |      3200 |         |
+| iso4000 |      4000 |         |
+| iso5000 |      5000 |         |
+| iso6400 |      6400 |         |
 
-* ISO ceiling: `isoAutoHighLimit:ThetaRepository.IsoAutoHighLimitEnum`
+- ISO ceiling: `isoAutoHighLimit:ThetaRepository.IsoAutoHighLimitEnum`
 
 THETA V Firmware v2.50.1 or earlier is ignored even if specified in THETA S or THETA SC.
 
-| Value| Upper ISO limit | Remarks|
-|---|---:|---|
-|iso100|100||
-|iso125|125||
-|iso160|160||
-|iso200|200||
-|iso250|250||
-|iso320|320||
-|iso400|400||
-|iso500|150||
-|iso640|640||
-|iso800|800||
-|iso1000|1000||
-|iso1250|1250||
-|iso1600|1600||
-|iso2000|2000||
-|iso2500|2500||
-|iso3200|3200||
-|iso4000|4000||
-|iso5000|5000||
-|iso6400|6400||
+| Value   | Upper ISO limit | Remarks |
+| ------- | --------------: | ------- |
+| iso100  |             100 |         |
+| iso125  |             125 |         |
+| iso160  |             160 |         |
+| iso200  |             200 |         |
+| iso250  |             250 |         |
+| iso320  |             320 |         |
+| iso400  |             400 |         |
+| iso500  |             150 |         |
+| iso640  |             640 |         |
+| iso800  |             800 |         |
+| iso1000 |            1000 |         |
+| iso1250 |            1250 |         |
+| iso1600 |            1600 |         |
+| iso2000 |            2000 |         |
+| iso2500 |            2500 |         |
+| iso3200 |            3200 |         |
+| iso4000 |            4000 |         |
+| iso5000 |            5000 |         |
+| iso6400 |            6400 |         |
 
-* Aperture: `ThetaRepository.ApertureEnum`
+- Aperture: `ThetaRepository.ApertureEnum`
 
-| Value| Setting value | Remarks|
-|---|---:|---|
-|apertureAuto| Automatic||
-|aperture20|2.0f||
-|aperture21|2.1f||
-|aperture24|2.4f||
-|aperture35|3.5f||
-|aperture56|5.6f||
+| Value        | Setting value | Remarks |
+| ------------ | ------------: | ------- |
+| apertureAuto |     Automatic |         |
+| aperture20   |          2.0f |         |
+| aperture21   |          2.1f |         |
+| aperture24   |          2.4f |         |
+| aperture35   |          3.5f |         |
+| aperture56   |          5.6f |         |
 
-* Color Temperature Setting: `colorTemperature:Int`
-  * 2500 to 10000
+- Color Temperature Setting: `colorTemperature:Int`
 
-* GPS Information: `gpsInfo:ThetaRepository.GpsInfo`
+  - 2500 to 10000
+
+- GPS Information: `gpsInfo:ThetaRepository.GpsInfo`
 
 GpsInfo shall be prepared as follows:
 `ThetaRepository.GpsInfo(latitude:longitude:altitude:dateTimeZone:)`
 
-| Value|Setting value |Remarks|
-|---|---|---|
-|latitude|Latitude | -90 to 90 or 65535 (disabled)|
-|longitude|Longitude | -180 to 180 or 65535 (disabled)|
-|altitude|Altitude |||
-|dateTimeZone|Date and time|YYYY:MM:DD hh:mm:ss+(-)hh:mm or empty string (disabled)|
+| Value        | Setting value | Remarks                                                 |
+| ------------ | ------------- | ------------------------------------------------------- | --- |
+| latitude     | Latitude      | -90 to 90 or 65535 (disabled)                           |
+| longitude    | Longitude     | -180 to 180 or 65535 (disabled)                         |
+| altitude     | Altitude      |                                                         |     |
+| dateTimeZone | Date and time | YYYY:MM:DD hh:mm:ss+(-)hh:mm or empty string (disabled) |
 
-* White Balance: `whiteBalance:ThetaRepository.WhiteBalanceEnum`
+- White Balance: `whiteBalance:ThetaRepository.WhiteBalanceEnum`
 
-| Value| Setting value | Remarks|
-|---|---|---|
-|auto| Automatic||
-|daylight| Outdoor| About 5,200|
-|shade| Shade| About 7,000|
-|cloudyDaylight| Cloudy| About 6,000|
-|incandescent| Incandescent light 1| About 3,200|
-|warmWhiteFluorescent|Incandescent light 2||
-|daylightFluorescent|Fluorescent light 1 (daylight)||
-|daywhiteFluorescent|Fluorescent light 2 (natural white)||
-|fluorescent| Fluorescent light 3 (white)| About 4,000|
-|bulbFluorescent|Fluorescent light 4 (light bulb color)||
-|colorTemperature|CT settings (specified by the colorTemperature option)|RICOH THETA S firmware v01.82 or later and RICOH THETA SC firmware v01.10 or later|
-|underwater|Underwater|RICOH THETA V firmware v3.21.1 or later|
+| Value                | Setting value                                          | Remarks                                                                            |
+| -------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| auto                 | Automatic                                              |                                                                                    |
+| daylight             | Outdoor                                                | About 5,200                                                                        |
+| shade                | Shade                                                  | About 7,000                                                                        |
+| cloudyDaylight       | Cloudy                                                 | About 6,000                                                                        |
+| incandescent         | Incandescent light 1                                   | About 3,200                                                                        |
+| warmWhiteFluorescent | Incandescent light 2                                   |                                                                                    |
+| daylightFluorescent  | Fluorescent light 1 (daylight)                         |                                                                                    |
+| daywhiteFluorescent  | Fluorescent light 2 (natural white)                    |                                                                                    |
+| fluorescent          | Fluorescent light 3 (white)                            | About 4,000                                                                        |
+| bulbFluorescent      | Fluorescent light 4 (light bulb color)                 |                                                                                    |
+| colorTemperature     | CT settings (specified by the colorTemperature option) | RICOH THETA S firmware v01.82 or later and RICOH THETA SC firmware v01.10 or later |
+| underwater           | Underwater                                             | RICOH THETA V firmware v3.21.1 or later                                            |
 
-* Maximum Recording Time Setting: `maxRecordableTime:ThetaRepository.MaxRecorderTimeEnum`
+- Maximum Recording Time Setting: `maxRecordableTime:ThetaRepository.MaxRecorderTimeEnum`
 
-| Value| Content | Remarks|
-|---|---|---|
-|recordableTime300| 300 seconds||
-|recordableTime1500| 1500 seconds||
+| Value              | Content      | Remarks |
+| ------------------ | ------------ | ------- |
+| recordableTime300  | 300 seconds  |         |
+| recordableTime1500 | 1500 seconds |         |
 
-* Capture mode: `captureMode:ThetaRepository.CaptureModeEnum`
+- Capture mode: `captureMode:ThetaRepository.CaptureModeEnum`
 
-| Value| Content | Remarks|
-|---|---|---|
-|image| Still image shooting mode||
-|video| Video shooting mode||
+| Value | Content                   | Remarks |
+| ----- | ------------------------- | ------- |
+| image | Still image shooting mode |         |
+| video | Video shooting mode       |         |
 
-* Language Settings: `language:ThetaRepository.LanguageEnum`
+- Language Settings: `language:ThetaRepository.LanguageEnum`
 
 Ignored even if specified in THETA S or THETA SC.
 
-|Value|Content|Remarks|
-|--|---|---|
-|enUs| U.S. English||
-|enGb| English||
-|ja| Japanese |||
-|fr| French |||
-|de| German |||
-|zhTw| Chinese Taiwan |||
-|zhCn| Chinese |||
-|it| Italian||
-|ko| Korean |||
+| Value | Content        | Remarks |
+| ----- | -------------- | ------- | --- |
+| enUs  | U.S. English   |         |
+| enGb  | English        |         |
+| ja    | Japanese       |         |     |
+| fr    | French         |         |     |
+| de    | German         |         |     |
+| zhTw  | Chinese Taiwan |         |     |
+| zhCn  | Chinese        |         |     |
+| it    | Italian        |         |
+| ko    | Korean         |         |     |
 
-* Time to enter sleep mode (minutes): `sleepDelay:ThetaRepository.SleepDelayEnum/SleepDelaySec`
+- Time to enter sleep mode (minutes): `sleepDelay:ThetaRepository.SleepDelayEnum/SleepDelaySec`
 
-  * ThetaRepository.SleepDelayEnum
-  
-|Value|Set value (minutes)| Remarks|
-|--|--:|---|
-|disable| 0| Not automatically turned off|
-|sleepDelay3m|3||
-|sleepDelay5m|5||
-|sleepDelay7m|7||
-|sleepDelay10m|10||
+  - ThetaRepository.SleepDelayEnum
 
-  * ThetaRepository.SleepDelaySec(sec:Int)
-    * 0 to 1800 (seconds)
+| Value         | Set value (minutes) | Remarks                      |
+| ------------- | ------------------: | ---------------------------- |
+| disable       |                   0 | Not automatically turned off |
+| sleepDelay3m  |                   3 |                              |
+| sleepDelay5m  |                   5 |                              |
+| sleepDelay7m  |                   7 |                              |
+| sleepDelay10m |                  10 |                              |
 
-* Time from sleep to auto power off (minutes): `OffDelay:ThetaRepository.OffDelayEnum/OffDelaySec`
+- ThetaRepository.SleepDelaySec(sec:Int)
 
-  * ThetaRepository.OffDelayEnum
+  - 0 to 1800 (seconds)
 
-|Value|Set value (minutes)| Remarks|
-|--|--:|---|
-|disable| 0| Not automatically turned off|
-|offDelay5m|5||
-|offDelay10m|10||
-|offDelay15m|15||
-|offDelay30m|30||
+- Time from sleep to auto power off (minutes): `OffDelay:ThetaRepository.OffDelayEnum/OffDelaySec`
 
-  * ThetaRepository.OffDelaySec(sec:Int)
-    * 0 to 1800 (seconds)
+  - ThetaRepository.OffDelayEnum
 
-* Shutter sound: `shutterVolume:Int`
-  * 0 - 100
+| Value       | Set value (minutes) | Remarks                      |
+| ----------- | ------------------: | ---------------------------- |
+| disable     |                   0 | Not automatically turned off |
+| offDelay5m  |                   5 |                              |
+| offDelay10m |                  10 |                              |
+| offDelay15m |                  15 |                              |
+| offDelay30m |                  30 |                              |
+
+- ThetaRepository.OffDelaySec(sec:Int)
+
+  - 0 to 1800 (seconds)
+
+- Shutter sound: `shutterVolume:Int`
+  - 0 - 100
 
 ## Acquire camera settings
 
@@ -915,31 +924,31 @@ Task {
 
 See the table below for the `ThetaRepository.OptionNameEnum`:
 
-| Value| Meaning | Type |
-|----|-----|--|
-|aperture| aperture|ThetaRepository.ApertureEnum|
-|capturemode| capture mode | ThetaRepository.CaptureModeEnum|
-|colortemperature| colortemperature |Int|
-|datetimezone| date and time|String|
-|exposurecompensation| exposure compensation |ThetaRepository.ExposureCompensationEnum|
-|exposuredelay| exposure delay time|ThetaRepository.ExposureDelayEnum|
-|exposureprogram| exposure program|ThetaRepository.ExposureProgram|
-|fileformat| file format|ThetaRepository.FileFormatEnum|
-|filter| image filter | ThetaRepository.FilterEnum|
-|gpsinfo| GPS information | ThetaRepository.GpsInfo|
-|isgpson| GPS flag | Bool|
-|iso| ISO value |ThetaRepository.IsoEnum|
-|isoautohighlimit| ISO upper limit|ThetaRepository.IsoAutoHighLimitEnum|
-|language| language |ThetaRepository.LanguageEnum|
-|maxrecordabletime| maximum recording time|ThetaRepository.MaxRecordableTimeEnum|
-|offdelay| power off time|ThetaRepository.Off DelayEnum,OffDelaySec|
-|sleepdelay| sleep time | ThetaRepository.SleepDelayEnum,SleepDelaySec|
-|remainingpictures| number of remaining images |Int|
-|remainingvideoseconds| remaining recording seconds|Int|
-|remainingspace| remaining area |Long|
-|totalspace| total area |Long|
-|shuttervolume| shutter volume |Int|
-|whitebalance| white balance|ThetaRepository.WhiteBalanceEnum|
+| Value                 | Meaning                     | Type                                         |
+| --------------------- | --------------------------- | -------------------------------------------- |
+| aperture              | aperture                    | ThetaRepository.ApertureEnum                 |
+| capturemode           | capture mode                | ThetaRepository.CaptureModeEnum              |
+| colortemperature      | colortemperature            | Int                                          |
+| datetimezone          | date and time               | String                                       |
+| exposurecompensation  | exposure compensation       | ThetaRepository.ExposureCompensationEnum     |
+| exposuredelay         | exposure delay time         | ThetaRepository.ExposureDelayEnum            |
+| exposureprogram       | exposure program            | ThetaRepository.ExposureProgram              |
+| fileformat            | file format                 | ThetaRepository.FileFormatEnum               |
+| filter                | image filter                | ThetaRepository.FilterEnum                   |
+| gpsinfo               | GPS information             | ThetaRepository.GpsInfo                      |
+| isgpson               | GPS flag                    | Bool                                         |
+| iso                   | ISO value                   | ThetaRepository.IsoEnum                      |
+| isoautohighlimit      | ISO upper limit             | ThetaRepository.IsoAutoHighLimitEnum         |
+| language              | language                    | ThetaRepository.LanguageEnum                 |
+| maxrecordabletime     | maximum recording time      | ThetaRepository.MaxRecordableTimeEnum        |
+| offdelay              | power off time              | ThetaRepository.Off DelayEnum,OffDelaySec    |
+| sleepdelay            | sleep time                  | ThetaRepository.SleepDelayEnum,SleepDelaySec |
+| remainingpictures     | number of remaining images  | Int                                          |
+| remainingvideoseconds | remaining recording seconds | Int                                          |
+| remainingspace        | remaining area              | Long                                         |
+| totalspace            | total area                  | Long                                         |
+| shuttervolume         | shutter volume              | Int                                          |
+| whitebalance          | white balance               | ThetaRepository.WhiteBalanceEnum             |
 
 ## List still images and videos in THETA
 
@@ -949,33 +958,32 @@ The return type of `ThetaRepository.listFiles()` is `ThetaRepository.ThetaFiles`
 
 The `fileType` is the `ThetaRepository.FileTypeEnum` type, whose contents are as follows:
 
-* ThetaRepository.FileTypeEnum
+- ThetaRepository.FileTypeEnum
 
-|Value|Content|
-|---|---|
-|image| List of still images (JPEG files)|
-|video| List of videos (MP4 files)|
-|all| List all files|
+| Value | Content                           |
+| ----- | --------------------------------- |
+| image | List of still images (JPEG files) |
+| video | List of videos (MP4 files)        |
+| all   | List all files                    |
 
-* ThetaFiles
+- ThetaFiles
 
-    |Property name|Type|Contents|
-    |---|---|---|
-    |fileList|[ThetaRepository.FileInfo]|The list of files in THETA|
-    |totalEntries|Int32| Number of files in THETA (see [api spec](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md))
+  | Property name | Type                       | Contents                                                                                                                                          |
+  | ------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | fileList      | [ThetaRepository.FileInfo] | The list of files in THETA                                                                                                                        |
+  | totalEntries  | Int32                      | Number of files in THETA (see [api spec](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.list_files.md)) |
 
+- ThetaRepository.FileInfo
 
-* ThetaRepository.FileInfo
+| Property name | Type   | Contents                                     |
+| ------------- | ------ | -------------------------------------------- |
+| name          | String | Represents the file name                     |
+| size          | Long   | Indicates the file size (in bytes)           |
+| dateTime      | String | Shooting date and time (YYYY:MM:DD HH:MM:SS) |
+| fileUrl       | String | Represents the URL of the file               |
+| thumbnailUrl  | String | Represents a thumbnail URL                   |
 
-|Property name|Type|Contents|
-|---|---|---|
-|name| String| Represents the file name|
-|size| Long| Indicates the file size (in bytes)|
-|dateTime| String| Shooting date and time (YYYY:MM:DD HH:MM:SS)|
-|fileUrl| String| Represents the URL of the file|
-|thumbnailUrl| String| Represents a thumbnail URL|
-
-``` swift
+```swift
 Task {
   do {
     let listFiles: [ThetaRepository.FileInfo] =
@@ -1002,7 +1010,7 @@ Task {
 
 Use `URLSession` to retrieve data from the URL of still images (JPEG file) or videos (MP4 file) shot. You can download it as `Data` using the following functions.
 
-``` swift
+```swift
 func download(url: String) async throws -> Data {
   return try await withCheckedThrowingContinuation {continuation in
     URLSession.shared.dataTask(with: URL(string: url)!) {data, _, error in
@@ -1045,7 +1053,7 @@ Task {
 
 To reset the connected THETA, call `ThetaRepository.reset(completionHandler:)`.
 
-``` swift
+```swift
 Task {
   do {
     let _:Bool = try await withCheckedThrowingContinuation {continuation in
@@ -1069,18 +1077,18 @@ To obtain the information about the connected THETA, call `ThetaRepository.getTh
 Successful calls allow you to obtain `ThetaRepository.ThetaInfo`.
 This data contains the following information:
 
-* ThetaRepository.ThetaInfo
+- ThetaRepository.ThetaInfo
 
-|Property name|Type|Contents|
-|---|---|---|
-|firmwareVersion|String|Represents the firmware version|
-|hasGps|Bool|Indicates whether you have a GPS function.|
-|hasGyro|Bool|Indicates whether you have a gyro.|
-|model|String|Indicates the model number of THETA.|
-|serialNumber|String|Represents the THETA serial number|
-|uptime|Integer|This means the number of seconds since the THETA power was turned on.|
+| Property name   | Type    | Contents                                                              |
+| --------------- | ------- | --------------------------------------------------------------------- |
+| firmwareVersion | String  | Represents the firmware version                                       |
+| hasGps          | Bool    | Indicates whether you have a GPS function.                            |
+| hasGyro         | Bool    | Indicates whether you have a gyro.                                    |
+| model           | String  | Indicates the model number of THETA.                                  |
+| serialNumber    | String  | Represents the THETA serial number                                    |
+| uptime          | Integer | This means the number of seconds since the THETA power was turned on. |
 
-``` swift
+```swift
 Task {
   do {
     let thetaInfo: ThetaRepository.ThetaInfo = try await withCheckedThrowingContinuation {continuation in
@@ -1106,27 +1114,27 @@ To get the state of the connected THETA, call `ThetaRepository.getThetaState(com
 Successful calling allows you to get `ThetaRepository.ThetaState`.
 This data contains the following information:
 
-* ThetaRepository.ThetaState
+- ThetaRepository.ThetaState
 
-|Property name|Type|Contents|
-|---|---|---|
-|batteryLevel|Float|Battery level |
-|chargingState|ThetaRepository.ChargingStateEnum|Indicates charging status|
-|fingerprint|String|Indicates a unique identifier for each current state|
-|isSdCard|Bool|Indicates whether an SD card exists.|
-|latestFileUrl|String|Represents the URL of the last acquired media|
-|recordableTime|Int32_t|Indicates the number of recordable seconds.|
-|recordedTime|Int32_t|Indicates the number of recorded seconds|
+| Property name  | Type                              | Contents                                             |
+| -------------- | --------------------------------- | ---------------------------------------------------- |
+| batteryLevel   | Float                             | Battery level                                        |
+| chargingState  | ThetaRepository.ChargingStateEnum | Indicates charging status                            |
+| fingerprint    | String                            | Indicates a unique identifier for each current state |
+| isSdCard       | Bool                              | Indicates whether an SD card exists.                 |
+| latestFileUrl  | String                            | Represents the URL of the last acquired media        |
+| recordableTime | Int32_t                           | Indicates the number of recordable seconds.          |
+| recordedTime   | Int32_t                           | Indicates the number of recorded seconds             |
 
-* ThetaRepository.ChargingStateEnum
+- ThetaRepository.ChargingStateEnum
 
-|Property name|Details|
-|---|---|
-|charging|Indicates charging in progress.|
-|charged|Indicates completion of charging.|
-|notCharging|Indicates disconnection of the cable.|
+| Property name | Details                               |
+| ------------- | ------------------------------------- |
+| charging      | Indicates charging in progress.       |
+| charged       | Indicates completion of charging.     |
+| notCharging   | Indicates disconnection of the cable. |
 
-``` swift
+```swift
 Task {
   do {
     let thetaState: ThetaRepository.ThetaState = try await withCheckedThrowingContinuation {continuation in

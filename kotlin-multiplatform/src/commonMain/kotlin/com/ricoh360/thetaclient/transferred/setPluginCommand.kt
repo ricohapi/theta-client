@@ -7,7 +7,7 @@ import kotlinx.serialization.json.JsonElement
  * Set plugin request
  */
 @Serializable
-data class SetPluginRequest(
+internal data class SetPluginRequest(
     override val name: String = "camera._setPlugin",
     override val parameters: SetPluginParams,
 ) : CommandApiRequest
@@ -17,7 +17,7 @@ data class SetPluginRequest(
  * Supported just by Theta V.
  */
 @Serializable
-data class SetPluginParams(
+internal data class SetPluginParams(
     /**
      * Target package name for boot
      */
@@ -32,7 +32,7 @@ data class SetPluginParams(
  * Set plugin response
  */
 @Serializable
-data class SetPluginResponse(
+internal data class SetPluginResponse(
     /**
      * Executed command
      */

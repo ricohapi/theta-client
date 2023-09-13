@@ -54,18 +54,21 @@ struct TakePhotoView: View {
         .navigationBarBackButtonHidden(true)
         .navigationTitle("Take Photo")
         .navigationBarItems(
-          leading:
-            HStack {
-                Button(action: {
-                           self.presentation.wrappedValue.dismiss()
-                       },
-                       label: {
-                           Image("chevron")
-                             .resizable()
-                             .frame(width: 24, height: 24)
-                       }
-                )
-            }
+            leading:
+                HStack {
+                    Button(action: {
+                        previewing = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            self.presentation.wrappedValue.dismiss()
+                        }
+                    },
+                           label: {
+                        Image("chevron")
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                    }
+                    )
+                }
         )
     }
     var hiddenLink: some View {
@@ -97,21 +100,25 @@ struct TakePhotoView: View {
     }
 
     func takePhoto() async {
-        do {
-            if (!previewing) {
-                return
+        if (!previewing) {
+            return
+        }
+        previewing = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            Task {
+                do {
+                    try await theta.takePicture {photoUrl in
+                        let parts = photoUrl.components(separatedBy: "/")
+                        item = FileItem(
+                            name: parts[parts.count - 1],
+                            url: photoUrl
+                        )
+                        isActive = true
+                    }
+                } catch {
+                    // TODO: handle error
+                }
             }
-            previewing = false
-            try await theta.takePicture {photoUrl in
-                let parts = photoUrl.components(separatedBy: "/")
-                item = FileItem(
-                  name: parts[parts.count - 1],
-                  url: photoUrl
-                )
-                isActive = true
-            }
-        } catch {
-            // TODO: handle error
         }
     }
 }

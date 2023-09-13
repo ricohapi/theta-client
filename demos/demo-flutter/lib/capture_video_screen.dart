@@ -184,6 +184,9 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingO
   }
 
   void startVideoCapture() {
+    if (videoCapture == null) {
+      return;
+    }
     if (shooting) {
         debugPrint('already shooting');
       return;
@@ -195,27 +198,34 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingO
     // Stops while shooting is in progress
     stopLivePreview();
 
-    videoCapturing = videoCapture!.startCapture((fileUrl) {
+
+    videoCapturing = videoCapture?.startCapture((fileUrl) {
       setState(() {
         shooting = false;
       });
       debugPrint('capture video: $fileUrl');
       if (!mounted) return;
 
-      final uri = Uri.parse(fileUrl);
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => VideoScreen(
-          name: uri.pathSegments.last,
-          fileUrl: fileUrl,
+      if (fileUrl != null) {
+        final uri = Uri.parse(fileUrl);
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => VideoScreen(
+            name: uri.pathSegments.last,
+            fileUrl: fileUrl,
+            )
           )
-        )
-      ).then((value) => startLivePreview());
+        ).then((value) => startLivePreview());
+      }
     }, (exception) {
       setState(() {
         shooting = false;
       });
       startLivePreview();
       debugPrint(exception.toString());
+
+    }, onStopFailed: (exception) {
+      debugPrint(exception.toString());
+      MessageBox.show(context, 'Error. stopCapture.\n$exception');
     });
   }
 
@@ -224,6 +234,7 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingO
         debugPrint('Not start capture.');
       return;
     }
+    debugPrint("stopVideoCapture");
     videoCapturing!.stopCapture();
   }
 }

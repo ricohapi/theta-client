@@ -7,7 +7,7 @@ import kotlinx.serialization.json.JsonElement
  * Set plugin orders request
  */
 @Serializable
-data class SetPluginOrdersRequest(
+internal data class SetPluginOrdersRequest(
     override val name: String = "camera._setPluginOrders",
     override val parameters: SetPluginOrdersParams,
 ) : CommandApiRequest
@@ -16,7 +16,7 @@ data class SetPluginOrdersRequest(
  * Set plugin orders parameters
  */
 @Serializable
-data class SetPluginOrdersParams(
+internal data class SetPluginOrdersParams(
     /**
      * List of plugin package names.
      * For Z1, array of three package names for the start-up plugin. No restrictions for the number of package names for X.
@@ -30,7 +30,7 @@ data class SetPluginOrdersParams(
  * Set plugin orders response
  */
 @Serializable
-data class SetPluginOrdersResponse(
+internal data class SetPluginOrdersResponse(
     /**
      * Executed command
      */

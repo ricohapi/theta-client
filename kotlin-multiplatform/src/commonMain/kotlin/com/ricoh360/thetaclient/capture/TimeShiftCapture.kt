@@ -150,6 +150,7 @@ class TimeShiftCapture private constructor(
                         _timeShift = TimeShift(firstShooting = FirstShootingEnum.FRONT, firstInterval = SC2B_DEFAULT_FIRST_INTERVAL, secondInterval = SC2B_DEFAULT_SECOND_INTERVAL),
                         exposureDelay = SC2B_DEFAULT_EXPOSURE_DELAY, // without this option, sometimes shooting is normal but time-shift
                     )
+
                     else -> Options(captureMode = CaptureMode.IMAGE)
                 }
 

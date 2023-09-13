@@ -11,7 +11,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalSerializationApi::class)
-class CheckRequest {
+internal class CheckRequest {
     companion object {
         fun checkCommandName(request: HttpRequestData, command: String) {
             assertEquals(request.url.encodedPath, "/osc/commands/execute", "command request path")
@@ -31,6 +31,28 @@ class CheckRequest {
 
             val requestData = js.decodeFromString<CommandApiRequestAny>(body.text)
             assertEquals(requestData.name, command, "command name")
+        }
+
+        fun getCommandName(request: HttpRequestData): String? {
+            if (request.url.encodedPath != "/osc/commands/execute") {
+                return null
+            }
+
+            val body = request.body as TextContent
+            val js = Json {
+                encodeDefaults = true // Encode properties with default value.
+                explicitNulls = false // Don't encode properties with null value.
+                ignoreUnknownKeys = true // Ignore unknown keys on decode.
+            }
+
+            @Serializable
+            data class CommandApiRequestAny(
+                override val name: String,
+                override val parameters: JsonObject
+            ) : CommandApiRequest
+
+            val requestData = js.decodeFromString<CommandApiRequestAny>(body.text)
+            return requestData.name
         }
 
         fun checkSetOptions(
@@ -54,10 +76,14 @@ class CheckRequest {
             exposureCompensation: Float? = null,
             exposureDelay: Int? = null,
             exposureProgram: Int? = null,
+            faceDetect: FaceDetect? = null,
             filter: ImageFilter? = null,
             fileFormat: MediaFileFormat? = null,
+            function: ShootingFunction? = null,
+            gain: Gain? = null,
             gpsInfo: GpsInfo? = null,
             gpsTagRecording: GpsTagRecording? = null,
+            imageStitching: ImageStitching? = null,
             iso: Int? = null,
             isoAutoHighLimit: Int? = null,
             language: Language? = null,
@@ -144,17 +170,29 @@ class CheckRequest {
             exposureProgram?.let {
                 assertEquals(optionsRequest.parameters.options.exposureProgram, it, "setOptions exposureProgram")
             }
+            faceDetect?.let {
+                assertEquals(optionsRequest.parameters.options._faceDetect, it, "setOptions _faceDetect")
+            }
             filter?.let {
                 assertEquals(optionsRequest.parameters.options._filter, it, "setOptions _filter ${optionsRequest.parameters.options._filter} $it")
             }
             fileFormat?.let {
                 assertEquals(optionsRequest.parameters.options.fileFormat, it, "setOptions fileFormat")
             }
+            function?.let {
+                assertEquals(optionsRequest.parameters.options._function, it, "setOptions _function")
+            }
+            gain?.let {
+                assertEquals(optionsRequest.parameters.options._gain, it, "setOptions _gain")
+            }
             gpsInfo?.let {
                 assertEquals(optionsRequest.parameters.options.gpsInfo, it, "setOptions gpsInfo")
             }
             gpsTagRecording?.let {
                 assertEquals(optionsRequest.parameters.options._gpsTagRecording, it, "setOptions gpsTagRecording")
+            }
+            imageStitching?.let {
+                assertEquals(optionsRequest.parameters.options._imageStitching, it, "setOptions imageStitching")
             }
             iso?.let {
                 assertEquals(optionsRequest.parameters.options.iso, it, "setOptions iso")

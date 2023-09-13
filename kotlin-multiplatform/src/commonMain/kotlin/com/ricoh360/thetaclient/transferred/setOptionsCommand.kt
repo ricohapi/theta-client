@@ -3,7 +3,6 @@
  */
 package com.ricoh360.thetaclient.transferred
 
-import com.ricoh360.thetaclient.ThetaRepository.ContinuousNumberEnum
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -18,7 +17,7 @@ import kotlinx.serialization.encoding.Encoder
  */
 @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 @Serializable
-data class SetOptionsRequest(
+internal data class SetOptionsRequest(
     override val name: String = "camera.setOptions",
     override val parameters: SetOptionsParams,
 ) : CommandApiRequest
@@ -27,7 +26,7 @@ data class SetOptionsRequest(
  * set options request parameters
  */
 @Serializable
-data class SetOptionsParams(
+internal data class SetOptionsParams(
     /**
      * session id
      */
@@ -45,7 +44,7 @@ data class SetOptionsParams(
  * set options response
  */
 @Serializable
-data class SetOptionsResponse(
+internal data class SetOptionsResponse(
     /**
      * Executed command
      */
@@ -86,7 +85,7 @@ data class SetOptionsResponse(
  * set options results
  */
 @Serializable
-data class ResultSetOptions(
+internal data class ResultSetOptions(
     /**
      * option key value pair
      */
@@ -98,7 +97,7 @@ data class ResultSetOptions(
  */
 @Serializable
 @Suppress("ConstructorParameterNaming")
-data class Options(
+internal data class Options(
     /**
      * Turns the AI auto setting ON/OFF.
      */
@@ -349,6 +348,20 @@ data class Options(
     var exposureProgramSupport: List<Int>? = null,
 
     /**
+     * Turns face detection ON/OFF.
+     *
+     * @see FaceDetect
+     */
+    var _faceDetect: FaceDetect? = null,
+
+    /**
+     * supported turns face detection ON/OFF.
+     *
+     * @see FaceDetect
+     */
+    var _faceDetectSupport: List<FaceDetect>? = null,
+
+    /**
      * Image format used in shooting.
      *
      * @see MediaFileFormat
@@ -356,7 +369,7 @@ data class Options(
     var fileFormat: MediaFileFormat? = null,
 
     /**
-     * supported mage format used in shooting.
+     * supported image format used in shooting.
      */
     var fileFormatSupport: List<MediaFileFormat>? = null,
 
@@ -386,6 +399,30 @@ data class Options(
      * Supported image processing filter.
      */
     var _filterSupport: List<ImageFilter>? = null,
+
+    /**
+     * Shooting function.
+     *
+     * @see Function
+     */
+    var _function: ShootingFunction? = null,
+
+    /**
+     * Supported shooting function.
+     */
+    var _functionSupport: List<ShootingFunction>? = null,
+
+    /**
+     * Microphone gain.
+     *
+     * @see Gain
+     */
+    var _gain: Gain? = null,
+
+    /**
+     * Supported microphone gain.
+     */
+    var _gainSupport: List<Gain>? = null,
 
     /**
      * GPS location information.
@@ -783,7 +820,7 @@ enum class BurstMode {
  * only For RICOH THETA Z1 firmware v2.10.1 or later
  */
 @Serializable
-data class BurstOption(
+internal data class BurstOption(
     /**
      * @see BurstCaptureNum
      */
@@ -838,7 +875,7 @@ enum class BurstCaptureNum(val value: Int) {
     }
 }
 
-object BurstCaptureNumSerializer : KSerializer<BurstCaptureNum> {
+internal object BurstCaptureNumSerializer : KSerializer<BurstCaptureNum> {
     override val descriptor: SerialDescriptor
         get() = PrimitiveSerialDescriptor("_burstCaptureNum", PrimitiveKind.INT)
 
@@ -879,7 +916,7 @@ enum class BurstBracketStep(val value: Float) {
     }
 }
 
-object BurstBracketStepSerializer : KSerializer<BurstBracketStep> {
+internal object BurstBracketStepSerializer : KSerializer<BurstBracketStep> {
     override val descriptor: SerialDescriptor
         get() = PrimitiveSerialDescriptor("_burstBracketStep", PrimitiveKind.FLOAT)
 
@@ -942,7 +979,7 @@ enum class BurstCompensation(val value: Float) {
     }
 }
 
-object BurstCompensationSerializer : KSerializer<BurstCompensation> {
+internal object BurstCompensationSerializer : KSerializer<BurstCompensation> {
     override val descriptor: SerialDescriptor
         get() = PrimitiveSerialDescriptor("_burstCompensation", PrimitiveKind.FLOAT)
 
@@ -995,7 +1032,7 @@ enum class BurstMaxExposureTime(val value: Double) {
     }
 }
 
-object BurstMaxExposureTimeSerializer : KSerializer<BurstMaxExposureTime> {
+internal object BurstMaxExposureTimeSerializer : KSerializer<BurstMaxExposureTime> {
     override val descriptor: SerialDescriptor
         get() = PrimitiveSerialDescriptor("_burstMaxExposureTime", PrimitiveKind.DOUBLE)
 
@@ -1028,7 +1065,7 @@ enum class BurstEnableIsoControl(val value: Int) {
     }
 }
 
-object BurstEnableIsoControlSerializer : KSerializer<BurstEnableIsoControl> {
+internal object BurstEnableIsoControlSerializer : KSerializer<BurstEnableIsoControl> {
     override val descriptor: SerialDescriptor
         get() = PrimitiveSerialDescriptor("_burstEnableIsoControl", PrimitiveKind.INT)
 
@@ -1061,7 +1098,7 @@ enum class BurstOrder(val value: Int) {
     }
 }
 
-object BurstOrderSerializer : KSerializer<BurstOrder> {
+internal object BurstOrderSerializer : KSerializer<BurstOrder> {
     override val descriptor: SerialDescriptor
         get() = PrimitiveSerialDescriptor("_burstOrder", PrimitiveKind.INT)
 
@@ -1165,6 +1202,57 @@ enum class CaptureMode {
      */
     @SerialName("_preset")
     PRESET,
+}
+
+/**
+ * Face detection
+ *
+ * For
+ * - RICOH THETA X
+ */
+@Serializable
+enum class FaceDetect {
+    /**
+     * Face detection ON
+     */
+    @SerialName("ON")
+    ON,
+
+    /**
+     * Face detection OFF
+     */
+    @SerialName("OFF")
+    OFF,
+}
+
+/**
+ * Microphone gain.
+ *
+ * For
+ * - RICOH THETA X
+ * - RICOH THETA Z1
+ * - RICOH THETA V
+ */
+@Serializable
+enum class Gain {
+    /**
+     * Normal mode
+     */
+    @SerialName("normal")
+    NORMAL,
+
+    /**
+     * Loud volume mode
+     */
+    @SerialName("megavolume")
+    MEGA_VOLUME,
+
+    /**
+     * Mute mode
+     * (RICOH THETA V firmware v2.50.1 or later, RICOH THETA X is not supported.)
+     */
+    @SerialName("mute")
+    MUTE,
 }
 
 /**
@@ -1362,7 +1450,7 @@ enum class Preset {
  * preview format
  */
 @Serializable
-data class PreviewFormat(
+internal data class PreviewFormat(
     /**
      * width
      */
@@ -1393,7 +1481,7 @@ data class PreviewFormat(
  * RICOH THETA X firmware v2.00.0 or later
  */
 @Serializable
-data class Proxy(
+internal data class Proxy(
     /**
      * true: use proxy false: do not use proxy
      */
@@ -1427,7 +1515,7 @@ data class Proxy(
  * For Theta X, Z1 and V.
  */
 @Serializable
-data class TimeShift(
+internal data class TimeShift(
     /**
      * Shooting order.
      * "front": first shoot the front side (side with Theta logo) then shoot the rear side (side with monitor).
@@ -1439,12 +1527,14 @@ data class TimeShift(
      * Time (sec) before 1st lens shooting.
      * 0 to 10.  For V or Z1, default is 5. For X, default is 2.
      */
+    @Serializable(with = NumberAsIntSerializer::class)
     var firstInterval: Int? = null,
 
     /**
      * Time (sec) from 1st lens shooting until start of 2nd lens shooting.
      * 0 to 10.  Default is 5.
      */
+    @Serializable(with = NumberAsIntSerializer::class)
     var secondInterval: Int? = null,
 )
 
@@ -1588,7 +1678,7 @@ enum class WlanFrequency(val frequency: Double) {
  * [Custom serializer](https://github.com/Kotlin/kotlinx.serialization/blob/master/docs/serializers.md#custom-serializers)
  * for [WlanFrequency]
  */
-object WlanFrequencySerializer : KSerializer<WlanFrequency> {
+internal object WlanFrequencySerializer : KSerializer<WlanFrequency> {
     override val descriptor: SerialDescriptor
         get() = PrimitiveSerialDescriptor("_wlanFrequency", PrimitiveKind.DOUBLE)
 
@@ -1775,7 +1865,7 @@ enum class GpsTagRecording {
  * GPS information
  */
 @Serializable
-data class GpsInfo(
+internal data class GpsInfo(
     /**
      * Latitude (-90.000000 – 90.000000)
      * When GPS is disabled: 65535
@@ -1914,7 +2004,7 @@ enum class MediaType {
  * Media file format setting
  */
 @Serializable
-data class MediaFileFormat(
+internal data class MediaFileFormat(
     /**
      * media type.
      */
@@ -1948,7 +2038,7 @@ data class MediaFileFormat(
  * Shutter volume support
  */
 @Serializable
-data class ShutterVolumeSupport(
+internal data class ShutterVolumeSupport(
     /**
      * minimum shutter volume
      */
@@ -1998,7 +2088,7 @@ enum class ImageStitching {
      * Performs semi-dynamic stitching
      */
     @SerialName("dynamicSemiAuto")
-    DYNAMIC_SEMIAUTO,
+    DYNAMIC_SEMI_AUTO,
 
     /**
      * Performs dynamic stitching and then saves distortion correction
@@ -2025,7 +2115,7 @@ enum class ImageStitching {
  * Capture interval support
  */
 @Serializable
-data class CaptureIntervalSupport(
+internal data class CaptureIntervalSupport(
     /**
      * minimum interval
      */
@@ -2043,7 +2133,7 @@ data class CaptureIntervalSupport(
  * Capture number support
  */
 @Serializable
-data class CaptureNumberSupport(
+internal data class CaptureNumberSupport(
     /**
      * Unlimited
      */

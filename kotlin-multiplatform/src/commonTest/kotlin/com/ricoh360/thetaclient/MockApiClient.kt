@@ -12,19 +12,19 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 
 @OptIn(ExperimentalSerializationApi::class) // explicitNulls
-object MockApiClient {
+internal object MockApiClient {
     var onRequest: ((HttpRequestData) -> ByteReadChannel)? = null
     var status: HttpStatusCode? = null
     var responseHeaders: Headers? = null
     var useMock = true
     var onPreviewRequest: (
         (
-            endpoint: String,
-            method: String,
-            path: String,
-            body: String,
-            contentType: String
-        ) -> PreviewClient
+        endpoint: String,
+        method: String,
+        path: String,
+        body: String,
+        contentType: String
+    ) -> PreviewClient
     )? = null
     var onPreviewClose: (() -> Unit)? = null
     var onPreviewHasNextPart: (() -> Boolean)? = null

@@ -10,6 +10,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.*
 import io.ktor.utils.io.core.*
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlin.reflect.KClass
@@ -180,6 +181,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 HttpStatusCode.Unauthorized -> {
                     throw ThetaUnauthorizedException(e.message ?: e.toString())
                 }
+
                 else -> {
                     throw ThetaWebApiException.create(e)
                 }
@@ -452,7 +454,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             listFilesResponse.results!!.entries.forEach {
                 fileList.add(FileInfo(it))
             }
-            return ThetaFiles(fileList, listFilesResponse.results!!.totalEntries)
+            return ThetaFiles(fileList, listFilesResponse.results.totalEntries)
         } catch (e: JsonConvertException) {
             throw ThetaWebApiException(e.message ?: e.toString())
         } catch (e: ResponseException) {
@@ -747,6 +749,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _faceDetect
+         */
+        FaceDetect("_faceDetect", FaceDetectEnum::class),
+
+        /**
+         * Option name
          * fileFormat
          */
         FileFormat("fileFormat", FileFormatEnum::class),
@@ -759,9 +767,27 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _function
+         */
+        Function("_function", ShootingFunctionEnum::class),
+
+        /**
+         * Option name
+         * _gain
+         */
+        Gain("_gain", GainEnum::class),
+
+        /**
+         * Option name
          * gpsInfo
          */
         GpsInfo("gpsInfo", ThetaRepository.GpsInfo::class),
+
+        /**
+         * Option name
+         * _imageStitching
+         */
+        ImageStitching("_imageStitching", ImageStitchingEnum::class),
 
         /**
          * Option name
@@ -1083,6 +1109,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var exposureProgram: ExposureProgramEnum? = null,
 
         /**
+         * @see FaceDetectEnum
+         */
+        var faceDetect: FaceDetectEnum? = null,
+
+        /**
          * Image format used in shooting.
          *
          * The supported value depends on the shooting mode [captureMode].
@@ -1107,11 +1138,26 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var filter: FilterEnum? = null,
 
         /**
+         * @see ShootingFunctionEnum
+         */
+        var function: ShootingFunctionEnum? = null,
+
+        /**
+         * @see GainEnum
+         */
+        var gain: GainEnum? = null,
+
+        /**
          * GPS location information.
          *
          * In order to append the location information, this property should be specified by the client.
          */
         var gpsInfo: GpsInfo? = null,
+
+        /**
+         * Still image stitching setting during shooting.
+         */
+        var imageStitching: ImageStitchingEnum? = null,
 
         /**
          * Turns position information assigning ON/OFF.
@@ -1283,9 +1329,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             exposureCompensation = null,
             exposureDelay = null,
             exposureProgram = null,
+            faceDetect = null,
             fileFormat = null,
             filter = null,
+            function = null,
+            gain = null,
             gpsInfo = null,
+            imageStitching = null,
             isGpsOn = null,
             iso = null,
             isoAutoHighLimit = null,
@@ -1313,7 +1363,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             wlanFrequency = null,
         )
 
-        constructor(options: com.ricoh360.thetaclient.transferred.Options) : this(
+        internal constructor(options: com.ricoh360.thetaclient.transferred.Options) : this(
             aiAutoThumbnail = options._aiAutoThumbnail?.let { AiAutoThumbnailEnum.get(it) },
             aperture = options.aperture?.let { ApertureEnum.get(it) },
             bitrate = options._bitrate?.let { BitrateEnum.get(it) },
@@ -1337,9 +1387,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             },
             exposureDelay = options.exposureDelay?.let { ExposureDelayEnum.get(it) },
             exposureProgram = options.exposureProgram?.let { ExposureProgramEnum.get(it) },
+            faceDetect = options._faceDetect?.let { FaceDetectEnum.get(it) },
             fileFormat = options.fileFormat?.let { FileFormatEnum.get(it) },
             filter = options._filter?.let { FilterEnum.get(it) },
+            function = options._function?.let { ShootingFunctionEnum.get(it) },
+            gain = options._gain?.let { GainEnum.get(it) },
             gpsInfo = options.gpsInfo?.let { GpsInfo(it) },
+            imageStitching = options._imageStitching?.let { ImageStitchingEnum.get(it) },
             isGpsOn = options._gpsTagRecording?.let { it == GpsTagRecording.ON },
             iso = options.iso?.let { IsoEnum.get(it) },
             isoAutoHighLimit = options.isoAutoHighLimit?.let { IsoAutoHighLimitEnum.get(it) },
@@ -1371,7 +1425,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Convert transferred.Options
          * @return transferred.Options
          */
-        fun toOptions(): com.ricoh360.thetaclient.transferred.Options {
+        internal fun toOptions(): com.ricoh360.thetaclient.transferred.Options {
             return Options(
                 _aiAutoThumbnail = aiAutoThumbnail?.value,
                 aperture = aperture?.value,
@@ -1392,10 +1446,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 exposureCompensation = exposureCompensation?.value,
                 exposureDelay = exposureDelay?.sec,
                 exposureProgram = exposureProgram?.value,
+                _faceDetect = faceDetect?.value,
                 fileFormat = fileFormat?.toMediaFileFormat(),
                 _filter = filter?.filter,
+                _function = function?.value,
+                _gain = gain?.value,
                 gpsInfo = gpsInfo?.toTransferredGpsInfo(),
                 _gpsTagRecording = isGpsOn?.let { if (it) GpsTagRecording.ON else GpsTagRecording.OFF },
+                _imageStitching = imageStitching?.value,
                 iso = iso?.value,
                 isoAutoHighLimit = isoAutoHighLimit?.value,
                 _language = language?.value,
@@ -1454,9 +1512,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.ExposureCompensation -> exposureCompensation
                 OptionNameEnum.ExposureDelay -> exposureDelay
                 OptionNameEnum.ExposureProgram -> exposureProgram
+                OptionNameEnum.FaceDetect -> faceDetect
                 OptionNameEnum.FileFormat -> fileFormat
                 OptionNameEnum.Filter -> filter
+                OptionNameEnum.Function -> function
+                OptionNameEnum.Gain -> gain
                 OptionNameEnum.GpsInfo -> gpsInfo
+                OptionNameEnum.ImageStitching -> imageStitching
                 OptionNameEnum.IsGpsOn -> isGpsOn
                 OptionNameEnum.Iso -> iso
                 OptionNameEnum.IsoAutoHighLimit -> isoAutoHighLimit
@@ -1517,9 +1579,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.ExposureCompensation -> exposureCompensation = value as ExposureCompensationEnum
                 OptionNameEnum.ExposureDelay -> exposureDelay = value as ExposureDelayEnum
                 OptionNameEnum.ExposureProgram -> exposureProgram = value as ExposureProgramEnum
+                OptionNameEnum.FaceDetect -> faceDetect = value as FaceDetectEnum
                 OptionNameEnum.FileFormat -> fileFormat = value as FileFormatEnum
                 OptionNameEnum.Filter -> filter = value as FilterEnum
+                OptionNameEnum.Function -> function = value as ShootingFunctionEnum
+                OptionNameEnum.Gain -> gain = value as GainEnum
                 OptionNameEnum.GpsInfo -> gpsInfo = value as GpsInfo
+                OptionNameEnum.ImageStitching -> imageStitching = value as ImageStitchingEnum
                 OptionNameEnum.IsGpsOn -> isGpsOn = value as Boolean
                 OptionNameEnum.Iso -> iso = value as IsoEnum
                 OptionNameEnum.IsoAutoHighLimit -> isoAutoHighLimit = value as IsoAutoHighLimitEnum
@@ -1851,7 +1917,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          */
         val burstOrder: BurstOrderEnum? = null
     ) {
-        constructor(option: com.ricoh360.thetaclient.transferred.BurstOption) : this(
+        internal constructor(option: com.ricoh360.thetaclient.transferred.BurstOption) : this(
             burstCaptureNum = option._burstCaptureNum?.let { BurstCaptureNumEnum.get(value = it) },
             burstBracketStep = option._burstBracketStep?.let { BurstBracketStepEnum.get(value = it) },
             burstCompensation = option._burstCompensation?.let { BurstCompensationEnum.get(value = it) },
@@ -1865,7 +1931,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          *
          * @return transferred.BurstOption
          */
-        fun toTransferredBurstOption(): com.ricoh360.thetaclient.transferred.BurstOption {
+        internal fun toTransferredBurstOption(): com.ricoh360.thetaclient.transferred.BurstOption {
             return BurstOption(
                 _burstCaptureNum = burstCaptureNum?.value,
                 _burstBracketStep = burstBracketStep?.value,
@@ -2603,6 +2669,36 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         }
     }
 
+    /**
+     * Face detection
+     *
+     * For
+     * - RICOH THETA X
+     */
+    enum class FaceDetectEnum(val value: FaceDetect) {
+        /**
+         * Face detection ON
+         */
+        ON(FaceDetect.ON),
+
+        /**
+         * Face detection OFF
+         */
+        OFF(FaceDetect.OFF);
+
+        companion object {
+            /**
+             * Convert FaceDetect to FaceDetectEnum
+             *
+             * @param value FaceDetect
+             * @return FaceDetectEnum
+             */
+            fun get(value: FaceDetect): FaceDetectEnum? {
+                return FaceDetectEnum.values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
     enum class FileFormatTypeEnum(val mediaType: MediaType) {
         /**
          * jpeg image
@@ -2867,7 +2963,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          *
          * @return MediaFileFormat
          */
-        fun toMediaFileFormat(): MediaFileFormat {
+        internal fun toMediaFileFormat(): MediaFileFormat {
             return MediaFileFormat(type.mediaType, width, height, _codec, _frameRate)
         }
 
@@ -2878,7 +2974,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param mediaFileFormat File format for ThetaApi.
              * @return FileFormatEnum
              */
-            fun get(mediaFileFormat: MediaFileFormat): FileFormatEnum? {
+            internal fun get(mediaFileFormat: MediaFileFormat): FileFormatEnum? {
                 return values().firstOrNull {
                     it.type.mediaType == mediaFileFormat.type &&
                             it.width == mediaFileFormat.width &&
@@ -3194,6 +3290,44 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Microphone gain.
+     *
+     * For
+     * - RICOH THETA X
+     * - RICOH THETA Z1
+     * - RICOH THETA V
+     */
+    enum class GainEnum(val value: Gain) {
+        /**
+         * Normal mode
+         */
+        NORMAL(Gain.NORMAL),
+
+        /**
+         * Loud volume mode
+         */
+        MEGA_VOLUME(Gain.MEGA_VOLUME),
+
+        /**
+         * Mute mode
+         * (RICOH THETA V firmware v2.50.1 or later, RICOH THETA X is not supported.)
+         */
+        MUTE(Gain.MUTE);
+
+        companion object {
+            /**
+             * Convert Gain to GainEnum
+             *
+             * @param value Gain
+             * @return GainEnum
+             */
+            fun get(value: Gain): GainEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
      * GPS information
      *
      * 65535 is set for latitude and longitude when disabling the GPS setting at
@@ -3237,7 +3371,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             val disabled = GpsInfo(65535f, 65535f, 0f, "")
         }
 
-        constructor(gpsInfo: com.ricoh360.thetaclient.transferred.GpsInfo) : this(
+        internal constructor(gpsInfo: com.ricoh360.thetaclient.transferred.GpsInfo) : this(
             latitude = gpsInfo.lat ?: 65535f,
             longitude = gpsInfo.lng ?: 65535f,
             altitude = gpsInfo._altitude ?: 0f,
@@ -3258,7 +3392,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          *
          * @return transferred.GpsInfo
          */
-        fun toTransferredGpsInfo(): com.ricoh360.thetaclient.transferred.GpsInfo {
+        internal fun toTransferredGpsInfo(): com.ricoh360.thetaclient.transferred.GpsInfo {
             return GpsInfo(
                 lat = latitude,
                 lng = longitude,
@@ -3293,6 +3427,68 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @return GpsTagRecordingEnum
              */
             fun get(value: GpsTagRecording): GpsTagRecordingEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Still image stitching setting during shooting.
+     * For Theta X, Z1 and V.
+     */
+    enum class ImageStitchingEnum(val value: ImageStitching) {
+        /**
+         * Refer to stitching when shooting with "auto"
+         */
+        AUTO(ImageStitching.AUTO),
+
+        /**
+         * Performs static stitching
+         */
+        STATIC(ImageStitching.STATIC),
+
+        /**
+         * Performs dynamic stitching(RICOH THETA X or later)
+         */
+        DYNAMIC(ImageStitching.DYNAMIC),
+
+        /**
+         * For Normal shooting, performs dynamic stitching,
+         * for Interval shooting, saves dynamic distortion correction parameters for the first image
+         * and then uses them for the 2nd and subsequent images (RICOH THETA X is not supported)
+         */
+        DYNAMIC_AUTO(ImageStitching.DYNAMIC_AUTO),
+
+        /**
+         * Performs semi-dynamic stitching.
+         * Saves dynamic distortion correction parameters for the first image
+         * and then uses them for the 2nd and subsequent images(RICOH THETA X or later)
+         */
+        DYNAMIC_SEMI_AUTO(ImageStitching.DYNAMIC_SEMI_AUTO),
+
+        /**
+         * Performs dynamic stitching and then saves distortion correction parameters
+         */
+        DYNAMIC_SAVE(ImageStitching.DYNAMIC_SAVE),
+
+        /**
+         * Performs stitching using the saved distortion correction parameters
+         */
+        DYNAMIC_LOAD(ImageStitching.DYNAMIC_LOAD),
+
+        /**
+         * Does not perform stitching
+         */
+        NONE(ImageStitching.NONE);
+
+        companion object {
+            /**
+             * Convert ImageStitching to ImageStitchingEnum
+             *
+             * @param value
+             * @return ImageStitchingEnum
+             */
+            fun get(value: ImageStitching): ImageStitchingEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -3859,6 +4055,9 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @return [OffDelayEnum] or [OffDelay]
              */
             fun get(sec: Int): OffDelay {
+                if (sec == 0) {
+                    return DISABLE
+                }
                 return values().firstOrNull { it.sec == sec } ?: OffDelaySec(sec)
             }
         }
@@ -3962,7 +4161,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         /**
          * Convert PreviewFormatEnum to PreviewFormat.
          */
-        fun toPreviewFormat(): PreviewFormat {
+        internal fun toPreviewFormat(): PreviewFormat {
             return PreviewFormat(width, height, framerate)
         }
 
@@ -3970,7 +4169,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             /**
              * Convert PreviewFormat to PreviewFormatEnum
              */
-            fun get(value: PreviewFormat): PreviewFormatEnum? {
+            internal fun get(value: PreviewFormat): PreviewFormatEnum? {
                 return PreviewFormatEnum.values().firstOrNull {
                     it.height == value.height &&
                             it.width == value.width &&
@@ -4020,7 +4219,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             password = null
         )
 
-        constructor(info: com.ricoh360.thetaclient.transferred.Proxy) : this(
+        internal constructor(info: com.ricoh360.thetaclient.transferred.Proxy) : this(
             use = info.use,
             url = info.url,
             port = info.port,
@@ -4033,7 +4232,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          *
          * @return transferred.Proxy
          */
-        fun toTransferredProxy(): com.ricoh360.thetaclient.transferred.Proxy {
+        internal fun toTransferredProxy(): com.ricoh360.thetaclient.transferred.Proxy {
             return com.ricoh360.thetaclient.transferred.Proxy(
                 use = use,
                 url = url,
@@ -4041,6 +4240,44 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 userid = userid,
                 password = password
             )
+        }
+    }
+
+    /**
+     * Shooting function.
+     * Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
+     * Setting them at the same time as exposureDelay will result in an error.
+     *
+     * For
+     * - RICOH THETA X
+     * - RICOH THETA Z1
+     */
+    enum class ShootingFunctionEnum(val value: ShootingFunction) {
+        /**
+         * Normal shooting function
+         */
+        NORMAL(ShootingFunction.NORMAL),
+
+        /**
+         * Self-timer shooting function(RICOH THETA X is not supported.)
+         */
+        SELF_TIMER(ShootingFunction.SELF_TIMER),
+
+        /**
+         * My setting shooting function
+         */
+        MY_SETTING(ShootingFunction.MY_SETTING);
+
+        companion object {
+            /**
+             * Convert Function to FunctionEnum
+             *
+             * @param value Function
+             * @return FunctionEnum
+             */
+            fun get(value: ShootingFunction): ShootingFunctionEnum? {
+                return values().firstOrNull { it.value == value }
+            }
         }
     }
 
@@ -4553,6 +4790,9 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @return [SleepDelayEnum] or [SleepDelaySec]
              */
             fun get(sec: Int): SleepDelay {
+                if (sec == 0) {
+                    return DISABLE
+                }
                 return values().firstOrNull { it.sec == sec } ?: SleepDelaySec(sec)
             }
         }
@@ -4582,7 +4822,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          */
         var secondInterval: TimeShiftIntervalEnum? = null,
     ) {
-        constructor(timeShift: com.ricoh360.thetaclient.transferred.TimeShift) : this(
+        internal constructor(timeShift: com.ricoh360.thetaclient.transferred.TimeShift) : this(
             isFrontFirst = timeShift.firstShooting?.let {
                 it == FirstShootingEnum.FRONT
             },
@@ -4600,7 +4840,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          *
          * @return transferred.TimeShift
          */
-        fun toTransferredTimeShift(): com.ricoh360.thetaclient.transferred.TimeShift {
+        internal fun toTransferredTimeShift(): com.ricoh360.thetaclient.transferred.TimeShift {
             return TimeShift(
                 firstShooting = isFrontFirst?.let {
                     if (it) FirstShootingEnum.FRONT else FirstShootingEnum.REAR
@@ -4974,7 +5214,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         val imageDescription: String?,
         val storageID: String?,
     ) {
-        constructor(cameraFileInfo: CameraFileInfo) : this(
+        internal constructor(cameraFileInfo: CameraFileInfo) : this(
             cameraFileInfo.name,
             cameraFileInfo.fileUrl,
             cameraFileInfo.size,
@@ -5017,13 +5257,16 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * ```
      */
     @Throws(Throwable::class)
+    @Suppress("RethrowCaughtException")
     fun getLivePreview(): Flow<ByteReadPacket> {
         try {
             return ThetaApi.callGetLivePreviewCommand(endpoint)
         } catch (e: PreviewClientException) {
-            throw ThetaWebApiException("PreviewClientException")
+            throw ThetaWebApiException(e.toString())
+        } catch (e: CancellationException) {
+            throw e // Coroutine was cancelled.
         } catch (e: Exception) {
-            throw NotConnectedException(e.message ?: e.toString())
+            throw NotConnectedException(e.toString())
         }
     }
 
@@ -5036,15 +5279,18 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @exception NotConnectedException
      */
     @Throws(Throwable::class)
+    @Suppress("SwallowedException")
     suspend fun getLivePreview(frameHandler: suspend (Pair<ByteArray, Int>) -> Boolean) {
         try {
             ThetaApi.callGetLivePreviewCommand(endpoint) {
                 return@callGetLivePreviewCommand frameHandler(it)
             }
         } catch (e: PreviewClientException) {
-            throw ThetaWebApiException("PreviewClientException")
+            throw ThetaWebApiException(e.toString())
+        } catch (e: CancellationException) {
+            // Preview coroutine was cancelled. No need to do anything.
         } catch (e: Exception) {
-            throw NotConnectedException(e.message ?: e.toString())
+            throw NotConnectedException(e.toString())
         }
     }
 
@@ -5085,7 +5331,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     class ThetaWebApiException(message: String) : ThetaRepositoryException(message) {
         companion object {
-            suspend inline fun create(exception: ResponseException): ThetaWebApiException {
+            internal suspend inline fun create(exception: ResponseException): ThetaWebApiException {
                 val message = try {
                     val response: UnknownResponse = exception.response.body()
                     response.error?.message ?: exception.message ?: exception.toString()
@@ -5144,7 +5390,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         val endpoints: EndPoint,
         val apiLevel: List<Int>,
     ) {
-        constructor(res: InfoApiResponse) : this(
+        internal constructor(res: InfoApiResponse) : this(
             manufacturer = res.manufacturer,
             model = res.model,
             serialNumber = res.serialNumber,
@@ -5207,7 +5453,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         val cameraError: List<CameraErrorEnum>?,
         val isBatteryInsert: Boolean?
     ) {
-        constructor(response: StateApiResponse) : this(
+        internal constructor(response: StateApiResponse) : this(
             response.fingerprint,
             response.state.batteryLevel.toFloat(),
             response.state.storageUri,
@@ -5339,45 +5585,6 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                     ChargingState.CHARGING -> CHARGING
                     ChargingState.CHARGED -> COMPLETED
                     ChargingState.DISCONNECT -> NOT_CHARGING
-                }
-            }
-        }
-    }
-
-    /**
-     * Shooting function status
-     */
-    enum class ShootingFunctionEnum {
-        /**
-         * Shooting function status
-         * normal
-         */
-        NORMAL,
-
-        /**
-         * Shooting function status
-         * selfTimer
-         */
-        SELF_TIMER,
-
-        /**
-         * Shooting function status
-         * mySetting
-         */
-        MY_SETTING;
-
-        companion object {
-            /**
-             * Convert value to ShootingFunction
-             *
-             * @param shootingFunction Shooting function.
-             * @return ShootingFunctionEnum
-             */
-            fun get(shootingFunction: ShootingFunction): ShootingFunctionEnum {
-                return when (shootingFunction) {
-                    ShootingFunction.NORMAL -> NORMAL
-                    ShootingFunction.SELF_TIMER -> SELF_TIMER
-                    ShootingFunction.MY_SETTING -> MY_SETTING
                 }
             }
         }
@@ -5644,7 +5851,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         val gpsLatitude: Double?,
         val gpsLongitude: Double?
     ) {
-        constructor(exif: ExifInfo) : this(
+        internal constructor(exif: ExifInfo) : this(
             exifVersion = exif.ExifVersion,
             dateTime = exif.DateTime,
             imageWidth = exif.ImageWidth,
@@ -5666,7 +5873,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         val fullPanoWidthPixels: Int,
         val fullPanoHeightPixels: Int
     ) {
-        constructor(xmp: XmpInfo) : this(
+        internal constructor(xmp: XmpInfo) : this(
             poseHeadingDegrees = xmp.PoseHeadingDegrees,
             fullPanoWidthPixels = xmp.FullPanoWidthPixels,
             fullPanoHeightPixels = xmp.FullPanoHeightPixels
@@ -5744,9 +5951,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                     size = VideoFormat.VIDEO_4K
                 )
             }
+
             ThetaModel.isBeforeThetaV(cameraModel) -> {
                 return fileUrl
             }
+
             else -> {
                 ConvertVideoFormatsParams(
                     fileUrl = fileUrl,
@@ -6041,7 +6250,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         val defaultGateway: String?,
         val proxy: Proxy?,
     ) {
-        constructor(accessPoint: com.ricoh360.thetaclient.transferred.AccessPoint) : this(
+        internal constructor(accessPoint: com.ricoh360.thetaclient.transferred.AccessPoint) : this(
             ssid = accessPoint.ssid,
             ssidStealth = accessPoint.ssidStealth,
             authMode = AuthModeEnum.get(accessPoint.security)!!,
@@ -6117,7 +6326,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         val exitStatus: String,
         val message: String,
     ) {
-        constructor(plugin: Plugin) : this(
+        internal constructor(plugin: Plugin) : this(
             name = plugin.pluginName,
             packageName = plugin.packageName,
             version = plugin.version,
@@ -6433,11 +6642,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 plugins.size > SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 -> {
                     throw ArgumentException("Argument list must have $SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 or less elements for RICOH THETA Z1")
                 }
+
                 plugins.size < SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 -> {
                     do { // autocomplete
                         plugins += ""
                     } while (plugins.size < SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1)
                 }
+
                 else -> {}
             }
         }
@@ -6496,15 +6707,15 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 /**
  * Check status interval for Command
  */
-const val CHECK_COMMAND_STATUS_INTERVAL = 1000L
+internal const val CHECK_COMMAND_STATUS_INTERVAL = 1000L
 
 /**
  * The size of setPluginOrders()'s argument list for Z1
  */
-const val SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 = 3
+internal const val SIZE_OF_SET_PLUGIN_ORDERS_ARGUMENT_LIST_FOR_Z1 = 3
 
 /**
  * The first character of the serial number of the SC2 for business.
  * Other characters are used to SC2.
  */
-const val FIRST_CHAR_OF_SERIAL_NUMBER_SC2_B = '4'
+internal const val FIRST_CHAR_OF_SERIAL_NUMBER_SC2_B = '4'

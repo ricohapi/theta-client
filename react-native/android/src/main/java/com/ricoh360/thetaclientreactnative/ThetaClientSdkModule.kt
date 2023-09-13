@@ -371,9 +371,13 @@ class ThetaClientReactNativeModule(
     "exposureCompensation" to ExposureCompensationConverter(),
     "exposureDelay" to ExposureDelayConverter(),
     "exposureProgram" to ExposureProgramConverter(),
+    "faceDetect" to FaceDetectConverter(),
     "fileFormat" to FileFormatConverter(),
     "filter" to FilterConverter(),
+    "function" to FunctionConverter(),
+    "gain" to GainConverter(),
     "gpsInfo" to GpsInfoConverter(),
+    "imageStitching" to ImageStitchingConverter(),
     "isGpsOn" to IsGpsOnConverter(),
     "iso" to IsoConverter(),
     "isoAutoHighLimit" to IsoAutoHighLimitConverter(),
@@ -423,9 +427,13 @@ class ThetaClientReactNativeModule(
     "ExposureCompensation" to "exposureCompensation",
     "ExposureDelay" to "exposureDelay",
     "ExposureProgram" to "exposureProgram",
+    "FaceDetect" to "faceDetect",
     "FileFormat" to "fileFormat",
     "Filter" to "filter",
+    "Function" to "function",
+    "Gain" to "gain",
     "GpsInfo" to "gpsInfo",
+    "ImageStitching" to "imageStitching",
     "IsGpsOn" to "isGpsOn",
     "Iso" to "iso",
     "IsoAutoHighLimit" to "isoAutoHighLimit",
@@ -567,11 +575,16 @@ class ThetaClientReactNativeModule(
 
   /**
    * getPhotoCaptureBuilder  -  get photo capture builder from repository
+   * @param promise promise to set result
    */
   @ReactMethod
-  fun getPhotoCaptureBuilder() {
-    val theta = theta ?: throw Exception(messageNotInit)
-    photoCaptureBuilder = theta.getPhotoCaptureBuilder()
+  fun getPhotoCaptureBuilder(promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    photoCaptureBuilder = theta?.getPhotoCaptureBuilder()
+    promise.resolve(true)
   }
 
   /**
@@ -583,7 +596,8 @@ class ThetaClientReactNativeModule(
   @ReactMethod
   fun buildPhotoCapture(options: ReadableMap, promise: Promise) {
     if (theta == null) {
-      throw Exception(messageNotInit)
+      promise.reject(Exception(messageNotInit))
+      return
     }
     if (photoCaptureBuilder == null) {
       promise.reject(Exception("no photoCaptureBuilder"))
@@ -641,19 +655,22 @@ class ThetaClientReactNativeModule(
    * getTimeShiftCaptureBuilder  -  get time-shift builder from repository
    */
   @ReactMethod
-  fun getTimeShiftCaptureBuilder() {
-    val theta = theta ?: throw Exception(messageNotInit)
-    timeShiftCaptureBuilder = theta.getTimeShiftCaptureBuilder()
+  fun getTimeShiftCaptureBuilder(promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    timeShiftCaptureBuilder = theta?.getTimeShiftCaptureBuilder()
+    promise.resolve(true)
   }
 
   /**
    * buildTimeShiftCapture  -  build time-shift
    * @param options option to execute time-shift
-   * @param interval interval of checking time-shift status
    * @param promise Promise for buildTimeShiftCapture
    */
   @ReactMethod
-  fun buildTimeShiftCapture(options: ReadableMap, interval: Int, promise: Promise) {
+  fun buildTimeShiftCapture(options: ReadableMap, promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -669,8 +686,11 @@ class ThetaClientReactNativeModule(
             cvt?.setTimeShiftOption(options, builder)
           }
 
-          if (interval >= 0) {
-            builder.setCheckStatusCommandInterval(interval.toLong())
+          val interval = if (options.hasKey("_capture_interval")) options.getInt("_capture_interval") else null
+          interval?.let {
+            if (it >= 0) {
+              builder.setCheckStatusCommandInterval(it.toLong())
+            }
           }
 
           timeShiftCapture = builder.build()
@@ -705,7 +725,7 @@ class ThetaClientReactNativeModule(
 
         override fun onProgress(completion: Float) {
           sendNotifyEvent(
-            toNotify("TIME-SHIFT-PROGRESS", toCaptureProgressNotifyParam(value = completion))
+            toNotify(NOTIFY_TIMESHIFT_PROGRESS, toCaptureProgressNotifyParam(value = completion))
           )
         }
 
@@ -734,11 +754,16 @@ class ThetaClientReactNativeModule(
 
   /**
    * getVideoCaptureBuilder  -  get video capture builder
+   * @param promise promise to set result
    */
   @ReactMethod
-  fun getVideoCaptureBuilder() {
-    val theta = theta ?: throw Exception(messageNotInit)
-    videoCaptureBuilder = theta.getVideoCaptureBuilder()
+  fun getVideoCaptureBuilder(promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    videoCaptureBuilder = theta?.getVideoCaptureBuilder()
+    promise.resolve(true)
   }
 
   /**
@@ -779,7 +804,7 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun startCapture(promise: Promise) {
+  fun startVideoCapture(promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -789,16 +814,25 @@ class ThetaClientReactNativeModule(
       return
     }
     class StartCaptureCallback : VideoCapture.StartCaptureCallback {
-      override fun onSuccess(fileUrl: String) {
+      override fun onCaptureCompleted(fileUrl: String?) {
         promise.resolve(fileUrl)
         videoCapture = null
         videoCapturing = null
       }
 
-      override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
+      override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
         promise.reject(exception)
         videoCapture = null
         videoCapturing = null
+      }
+
+      override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+        sendNotifyEvent(
+          toNotify(
+            NOTIFY_VIDEO_CAPTURE_STOP_ERROR,
+            toMessageNotifyParam(exception.message ?: exception.toString())
+          )
+        )
       }
     }
     videoCapturing = videoCapture!!.startCapture(StartCaptureCallback())
@@ -808,7 +842,7 @@ class ThetaClientReactNativeModule(
    * stopCapture  -  stop capturing video
    */
   @ReactMethod
-  fun stopCapture() {
+  fun stopVideoCapture() {
     if (theta == null) {
       throw Exception(messageNotInit)
     }
@@ -1474,5 +1508,7 @@ class ThetaClientReactNativeModule(
     const val NAME = "ThetaClientReactNative"
     const val EVENT_NAME = "ThetaFrameEvent"
     const val EVENT_NOTIFY = "ThetaNotify"
+    const val NOTIFY_TIMESHIFT_PROGRESS = "TIME-SHIFT-PROGRESS"
+    const val NOTIFY_VIDEO_CAPTURE_STOP_ERROR = "VIDEO-CAPTURE-STOP-ERROR"
   }
 }

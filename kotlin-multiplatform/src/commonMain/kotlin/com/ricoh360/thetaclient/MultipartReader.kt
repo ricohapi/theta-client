@@ -3,9 +3,10 @@
  */
 package com.ricoh360.thetaclient
 
-import io.ktor.http.*
-import io.ktor.utils.io.*
-import io.ktor.utils.io.core.*
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
+import io.ktor.utils.io.ByteReadChannel
+import io.ktor.utils.io.core.ByteReadPacket
 
 /**
  * Reader for HTTP multipart response body Theta sends.
@@ -13,7 +14,7 @@ import io.ktor.utils.io.core.*
  * @Param headers See [io.ktor.http.Headers](https://api.ktor.io/ktor-http/io.ktor.http/-http-headers/index.html)
  * @Param readChannel See [io.ktor.utils.io.ByteReadChannel](https://api.ktor.io/ktor-io/io.ktor.utils.io/-byte-read-channel/index.html)
  */
-class MultipartReader(headers: Headers, val readChannel: ByteReadChannel) {
+internal class MultipartReader(headers: Headers, val readChannel: ByteReadChannel) {
     var boundary: String? // boundary parameter of Content-Type header
     var contentLengthRegex: Regex
     val BUFFER_SIZE = 128

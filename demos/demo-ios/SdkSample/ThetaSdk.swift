@@ -22,6 +22,10 @@ class Theta {
     var thetaRepository: ThetaRepository? = nil
     var lastInfo: ThetaInfo? = nil
 
+    func reset() {
+        thetaRepository = nil
+    }
+
     func initialize() async throws {
         if (thetaRepository != nil) {
             return;
@@ -73,22 +77,22 @@ class Theta {
             init(_ handler: @escaping ThetaFrameHandler) {
                 self.handler = handler
             }
-            func invoke(
-              p1: Any?,
-              completionHandler: @escaping ThetaHandlerWithError<Any>
-            ) {
+            func invoke(p1: Any?) async throws -> Any? {
                 let now = CACurrentMediaTime()
                 if (now - last > Self.FrameInterval) {
+                    var result = false
                     autoreleasepool {
-                        let nsData = PlatformKt.frameFrom(
-                          packet: p1 as! KotlinPair<KotlinByteArray, KotlinInt>
-                        )
-                        let result = handler(nsData)
-                        completionHandler(result, nil)
+                        if let frameData = p1 as? KotlinPair<KotlinByteArray, KotlinInt> {
+                            let nsData = PlatformKt.frameFrom(
+                                packet: frameData
+                            )
+                            result = handler(nsData)
+                        }
                     }
                     last = now
+                    return result
                 } else {
-                    completionHandler(true, nil)
+                    return true
                 }
             }
         }
