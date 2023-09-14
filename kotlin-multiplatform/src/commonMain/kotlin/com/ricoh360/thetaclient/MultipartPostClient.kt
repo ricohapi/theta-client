@@ -23,6 +23,8 @@ import io.ktor.utils.io.core.String
 import io.ktor.utils.io.core.toByteArray
 import io.ktor.utils.io.writeFully
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlinx.io.Source
@@ -169,6 +171,7 @@ open class BaseHttpClient {
      * close connection
      */
      fun close() {
+        val WAIT = 500L // milliseconds
         runCatching {
             input?.cancel()
         }
@@ -179,6 +182,9 @@ open class BaseHttpClient {
             socket?.close()
         }
         runCatching {
+            runBlocking {
+                delay(WAIT) // On iOS, close() may be suspended if no delay.
+            }
             selector?.close()
         }
         reset()
