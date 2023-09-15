@@ -733,6 +733,9 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
             }
         }
         writeCloseDelimiter(boundary)
+        callback?.let {
+            it(100)
+        }
         try {
             readStatusLine()
             readHeaders()
@@ -822,7 +825,6 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
      */
     private suspend fun writePartHeaders(boundary: String, headers: List<Pair<String, String>>) {
         write(genBoundaryDelimiter(boundary))
-        print(genBoundaryDelimiter(boundary))
         for ((name, value) in headers) {
             write("$name: $value\r\n")
         }

@@ -425,7 +425,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @param filePaths List of firmware file path.
      * @param connectionTimeout Timeout (milli seconds) of socket connection
      * @param socketTimeout Timeout (milli seconds) of socket
-     * @Param callback function to pass the percentage of sent firmware
+     * @Param callback function to pass the percentage of sent firmware.
+     * After sending firmware, several minutes may be needed to start firmware update.
      * @exception ThetaWebApiException If an error occurs in THETA.
      * @exception NotConnectedException
      */

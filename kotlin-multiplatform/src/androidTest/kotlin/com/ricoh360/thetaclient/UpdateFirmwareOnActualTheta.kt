@@ -78,6 +78,7 @@ class UpdateFirmwareOnActualTheta {
         }
 
         val thetaRepository = kotlin.runCatching {
+            //ThetaRepository.newInstance(endpoint)
             ThetaRepository.newInstance(
                 X_URL_CL,
                 config = ThetaRepository.Config(
@@ -130,6 +131,7 @@ class UpdateFirmwareOnActualTheta {
         }
 
         val thetaRepository = kotlin.runCatching {
+            //ThetaRepository.newInstance(endpoint)
             ThetaRepository.newInstance(
                 V_URL_CL,
                 config = ThetaRepository.Config(
@@ -197,8 +199,10 @@ class UpdateFirmwareOnActualTheta {
         // latest firmware file of X
         const val X_FILE_LATEST = "cv1_v221.frm"
         //const val X_FILE_LATEST = "cv1_v220_v210.frm"
-        const val V_VERSION_LATEST = "3.60.1"
-        const val V_FILE_LATEST = "rt5_v360.frm"
+        //const val V_VERSION_LATEST = "3.70.1"
+        //const val V_FILE_LATEST = "rt5_v370.frm"
+        const val V_VERSION_LATEST = "3.80.2"
+        const val V_FILE_LATEST = "rt5_v380.frm"
 
         // User name of digest authentication is X_USERNAME_PREFIX + X_SERIAL_NUMBER
         const val USERNAME_PREFIX = "THETA"
