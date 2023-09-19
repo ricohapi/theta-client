@@ -134,7 +134,9 @@
   },
   "eslintIgnore": [
     "node_modules/",
-    "lib/"
+    "lib/",
+    "marzipano.js",
+    "verification-tool/node_modules"
   ],
   "prettier": {
     "quoteProps": "consistent",

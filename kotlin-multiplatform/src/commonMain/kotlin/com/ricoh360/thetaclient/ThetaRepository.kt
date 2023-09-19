@@ -172,7 +172,9 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 }
             }
             restoreConfig = Config()
-            getConfigSetting(restoreConfig!!, cameraModel!!)
+            restoreConfig?.let {
+                getConfigSetting(it, cameraModel)
+            }
             initConfig?.let { setConfigSettings(it) }
         } catch (e: JsonConvertException) {
             throw ThetaWebApiException(e.message ?: e.toString())
@@ -253,10 +255,10 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @exception ThetaWebApiException If an error occurs in THETA.
      */
     @Throws(Throwable::class)
-    internal suspend fun getConfigSetting(config: Config, model: ThetaModel) {
+    internal suspend fun getConfigSetting(config: Config, model: ThetaModel?) {
         val optionNameList = listOfNotNull(
             OptionNameEnum.DateTimeZone.value,
-            if (ThetaModel.isBeforeThetaV(model)) null else OptionNameEnum.Language.value,
+            model?.let { if (ThetaModel.isBeforeThetaV(model)) null else OptionNameEnum.Language.value },
             OptionNameEnum.OffDelay.value,
             OptionNameEnum.SleepDelay.value,
             OptionNameEnum.ShutterVolume.value

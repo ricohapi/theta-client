@@ -211,6 +211,60 @@ class ThetaRepositoryTest {
     }
 
     /**
+     * New instance. for other camera
+     */
+    @Test
+    fun newInstanceForOtherTest() = runTest {
+        // setup
+        val responseArray = arrayOf(
+            Resource("src/commonTest/resources/info/info_other.json").readText(),
+            Resource("src/commonTest/resources/getOptions/get_options_init_s_done.json").readText()
+        )
+        val requestPathArray = arrayOf(
+            "/osc/info",
+            "/osc/commands/execute"
+        )
+        var counter = 0
+        MockApiClient.onRequest = { request ->
+            val index = counter++
+
+            // check request
+            assertEquals(request.url.encodedPath, requestPathArray[index], "request path")
+            when (index) {
+                1 -> {
+                    CheckRequest.checkGetOptions(
+                        request,
+                        listOf(
+                            "dateTimeZone",
+                            "offDelay",
+                            "sleepDelay",
+                            "_shutterVolume",
+                        )
+                    )
+                }
+            }
+
+            ByteReadChannel(responseArray[index])
+        }
+
+        // execute
+        try {
+            val thetaRepository =  ThetaRepository.newInstance(endpoint)
+            assertNotNull(ThetaRepository.restoreConfig, "restoreConfig")
+            ThetaRepository.restoreConfig?.let {
+                assertNotNull(it.dateTime, "dateTime")
+                assertNull(it.language, "language")
+                assertNotNull(it.offDelay, "offDelay")
+                assertNotNull(it.sleepDelay, "sleepDelay")
+                assertNotNull(it.shutterVolume, "shutterVolume")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            assertTrue(false, "Error. newInstance")
+        }
+    }
+
+    /**
      * New instance with timeout
      */
     @Test

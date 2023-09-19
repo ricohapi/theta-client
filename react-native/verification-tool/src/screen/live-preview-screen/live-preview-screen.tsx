@@ -1,11 +1,11 @@
 import React from 'react';
 import {
   View,
-  Image,
   NativeModules,
   NativeEventEmitter,
   Alert,
   Text,
+  Platform,
 } from 'react-native';
 import styles from './styles';
 import {
@@ -16,11 +16,18 @@ import {
 } from 'theta-client-react-native';
 import { useIsFocused } from '@react-navigation/native';
 import Button from '../../components/ui/button';
+import WebView from 'react-native-webview';
 
 const LivePreviewScreen: React.FC = () => {
-  const [dataUrl, setDataUrl] = React.useState<string | undefined>();
   const isFocused = useIsFocused();
+  const [dataUrl, setDataUrl] = React.useState<string | undefined>();
   const [previewing, setPreviewing] = React.useState<boolean>(false);
+  const [isLoaded, setLoaded] = React.useState(false);
+  const webViewRef = React.useRef<WebView>(null);
+  const source =
+    Platform.OS === 'android'
+      ? 'file:///android_asset/live-preview/index.html'
+      : './Web.bundle/live-preview/index.html';
 
   const startLivePreview = async () => {
     setPreviewing(true);
@@ -35,6 +42,35 @@ const LivePreviewScreen: React.FC = () => {
           { text: 'OK' },
         ]);
       });
+  };
+
+  const setFrameData = (data: string) => {
+    if (isLoaded && webViewRef.current) {
+      webViewRef.current.injectJavaScript(`
+      setFrame('${data}');true
+      `);
+    }
+  };
+
+  const onStart = () => {
+    startLivePreview();
+  };
+
+  const onStop = () => {
+    isInitialized().then((isInit) => {
+      if (isInit) {
+        stopLivePreview();
+      } else {
+        Alert.alert('stopLivePreview', 'error: Not initialized.', [
+          { text: 'OK' },
+        ]);
+      }
+    });
+  };
+
+  const onLoad = () => {
+    console.log('onLoad');
+    setLoaded(true);
   };
 
   React.useEffect(() => {
@@ -57,27 +93,23 @@ const LivePreviewScreen: React.FC = () => {
     return;
   }, [isFocused]);
 
-  const onStart = () => {
-    startLivePreview();
-  };
-  const onStop = () => {
-    isInitialized().then((isInit) => {
-      if (isInit) {
-        stopLivePreview();
-      } else {
-        Alert.alert('stopLivePreview', 'error: Not initialized.', [
-          { text: 'OK' },
-        ]);
-      }
-    });
-  };
+  React.useEffect(() => {
+    if (isLoaded && dataUrl) {
+      setFrameData(dataUrl);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataUrl, isLoaded]);
 
   return (
     <View style={styles.takePhotoBack}>
       <View style={styles.contentContainer}>
-        {dataUrl && (
-          <Image style={styles.takePhoto} source={{ uri: dataUrl }} />
-        )}
+        <WebView
+          style={styles.webview}
+          ref={webViewRef}
+          originWhitelist={['*']}
+          source={{ uri: source }}
+          onLoad={onLoad}
+        />
       </View>
       <View style={styles.bottomViewContainer}>
         <Text>{previewing ? 'Previewing...' : 'Stopped'}</Text>

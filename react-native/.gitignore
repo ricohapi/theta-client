@@ -78,3 +78,6 @@ package
 frameworks/
 coverage/
 android/libs/
+
+# verification-tool
+marzipano.js

@@ -6,15 +6,18 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
-    "pods": "pod-install --quiet"
+    "pods": "pod-install --quiet",
+    "postinstall": "./scripts/copy-npm-module-to-web-bundles.sh"
   },
   "dependencies": {
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/native-stack": "^6.9.13",
+    "marzipano": "0.10.2",
     "react": "18.2.0",
     "react-native": "0.71.7",
     "react-native-safe-area-context": "^4.7.1",
-    "react-native-screens": "^3.24.0"
+    "react-native-screens": "^3.24.0",
+    "react-native-webview": "^13.6.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

@@ -34,6 +34,10 @@ const styles = StyleSheet.create({
     width: 150,
     paddingHorizontal: 10,
   },
+  webview: {
+    width: '100%',
+    height: '100%',
+  },
 });
 
 export default styles;

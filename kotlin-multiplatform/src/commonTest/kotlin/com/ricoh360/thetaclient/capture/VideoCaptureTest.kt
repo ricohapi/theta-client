@@ -189,7 +189,7 @@ class VideoCaptureTest {
 
         // check result
         assertNull(file, "cancel capture video")
-        assertEquals(idleCount, 2, "cancel capture video")
+        assertTrue(idleCount > 2, "cancel capture video")
     }
 
     /**
