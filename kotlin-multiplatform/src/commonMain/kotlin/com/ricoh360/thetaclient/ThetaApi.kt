@@ -19,6 +19,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Semaphore
 import kotlinx.serialization.ExperimentalSerializationApi
 
 /**
@@ -31,6 +32,8 @@ internal object ThetaApi {
 
     val previewClient: PreviewClient // Just for getLivePreview command
         get() = getHPreviewClient()
+
+    var requestSemaphore = Semaphore(1)
 
     /**
      * Call [/osc/info](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/protocols/info.md)
@@ -47,7 +50,9 @@ internal object ThetaApi {
     suspend fun callInfoApi(
         endpoint: String,
     ): InfoApiResponse {
-        return httpClient.get(getApiUrl(endpoint, InfoApi.PATH)).body()
+        return syncExecutor(requestSemaphore, ApiClient.timeout.requestTimeout) {
+            httpClient.get(getApiUrl(endpoint, InfoApi.PATH)).body()
+        }
     }
 
     /**
@@ -64,7 +69,9 @@ internal object ThetaApi {
     suspend fun callStateApi(
         endpoint: String,
     ): StateApiResponse {
-        return httpClient.post(getApiUrl(endpoint, StateApi.PATH)).body()
+        return syncExecutor(requestSemaphore, ApiClient.timeout.requestTimeout) {
+            httpClient.post(getApiUrl(endpoint, StateApi.PATH)).body()
+        }
     }
 
     /**
@@ -85,15 +92,17 @@ internal object ThetaApi {
         endpoint: String,
         params: StatusApiParams,
     ): CommandApiResponse {
-        val request = StatusApiRequest(name = params.name, id = params.id)
-        val response = httpClient.post(getApiUrl(endpoint, StatusApi.PATH)) {
-            headers {
-                append("Content-Type", "application/json; charset=utf-8")
-                append("Cache-Control", "no-cache")
+        return syncExecutor(requestSemaphore, ApiClient.timeout.requestTimeout) {
+            val request = StatusApiRequest(name = params.name, id = params.id)
+            val response = httpClient.post(getApiUrl(endpoint, StatusApi.PATH)) {
+                headers {
+                    append("Content-Type", "application/json; charset=utf-8")
+                    append("Cache-Control", "no-cache")
+                }
+                setBody(request)
             }
-            setBody(request)
+            decodeStatusApiResponse(response.bodyAsText())
         }
-        return decodeStatusApiResponse(response.bodyAsText())
     }
 
     /*
@@ -779,12 +788,14 @@ internal object ThetaApi {
         endpoint: String,
         body: CommandApiRequest,
     ): HttpResponse {
-        return httpClient.post(getApiUrl(endpoint, CommandApi.PATH)) {
-            headers {
-                append("Content-Type", "application/json; charset=utf-8")
-                append("Cache-Control", "no-cache")
+        return syncExecutor(requestSemaphore, ApiClient.timeout.requestTimeout) {
+            httpClient.post(getApiUrl(endpoint, CommandApi.PATH)) {
+                headers {
+                    append("Content-Type", "application/json; charset=utf-8")
+                    append("Cache-Control", "no-cache")
+                }
+                setBody(body)
             }
-            setBody(body)
         }
     }
 

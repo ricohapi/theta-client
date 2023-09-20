@@ -8,6 +8,10 @@ import com.ricoh360.thetaclient.ThetaRepository
 import io.ktor.http.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import kotlin.test.*
 
@@ -249,7 +253,7 @@ class ThetaRepositoryTest {
 
         // execute
         try {
-            val thetaRepository =  ThetaRepository.newInstance(endpoint)
+            ThetaRepository.newInstance(endpoint)
             assertNotNull(ThetaRepository.restoreConfig, "restoreConfig")
             ThetaRepository.restoreConfig?.let {
                 assertNotNull(it.dateTime, "dateTime")
@@ -760,4 +764,64 @@ class ThetaRepositoryTest {
         }
     }
 
+    @Test
+    fun callSingleRequestTest() = runBlocking {
+        var counter = 0
+        val jsonString = Resource("src/commonTest/resources/info/info_z1.json").readText()
+        MockApiClient.onRequest = { _ ->
+            counter += 1
+            runBlocking {
+                delay(200)
+            }
+            assertEquals(counter, 1, "No concurrency")
+            counter -= 1
+            ByteReadChannel(jsonString)
+        }
+
+        // test
+        val thetaRepository = ThetaRepository(endpoint)
+        val apiJobsList = listOf(
+            launch {
+                thetaRepository.getThetaInfo()
+            },
+            launch {
+                thetaRepository.getThetaInfo()
+            },
+        )
+        apiJobsList.joinAll()
+    }
+
+    @Test
+    fun callSingleRequestTimeoutTest() = runBlocking {
+        var counter = 0
+        val jsonString = Resource("src/commonTest/resources/info/info_z1.json").readText()
+        MockApiClient.onRequest = { _ ->
+            counter += 1
+            runBlocking {
+                delay(200)
+            }
+            counter -= 1
+            ByteReadChannel(jsonString)
+        }
+
+        val timeout = ThetaRepository.Timeout(
+            requestTimeout = 100L,
+        )
+        // test
+        val thetaRepository = ThetaRepository(endpoint, null, timeout)
+        val apiJobsList = listOf(
+            launch {
+                thetaRepository.getThetaInfo()
+            },
+            launch {
+                try {
+                    thetaRepository.getThetaInfo()
+                    assertTrue(false)
+                } catch (e: ThetaRepository.NotConnectedException) {
+                    assertTrue((e.message?.indexOf("time", 0, true) ?: -1) >= 0, "timeout error")
+                }
+            },
+        )
+        apiJobsList.joinAll()
+    }
 }
