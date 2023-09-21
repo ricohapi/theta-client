@@ -420,6 +420,38 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Update the firmware of Theta using non-public API.
+     * In case of Theta SC2, power off and on by hand is needed after this command finishes.
+     * If target Theta is in insufficient charge, Theta may disconnect the socket.
+     *
+     * @param apiPath The path of firmware update API which is non-public.
+     * @param filePaths List of firmware file path.
+     * @param connectionTimeout Timeout (milli seconds) of socket connection
+     * @param socketTimeout Timeout (milli seconds) of socket
+     * @Param callback function to pass the percentage of sent firmware.
+     * After sending firmware, several minutes may be needed to start firmware update.
+     * @exception ThetaWebApiException If an error occurs in THETA.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun updateFirmware(apiPath: String, filePaths: List<String>, connectionTimeout: Long = 20_000L, socketTimeout: Long = 600_000L, callback: ((Int) -> Unit)? = null) {
+        try {
+            val response = ThetaApi.callUpdateFirmwareApi(endpoint, apiPath, filePaths, connectionTimeout, socketTimeout, callback)
+            response.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException(e.toString())
+        } catch(e: IllegalArgumentException) {
+            throw ThetaWebApiException(e.toString())
+        } catch (e: Exception) {
+            throw NotConnectedException(e.toString())
+        }
+    }
+
+    /**
      * Acquires a list of still image files and movie files.
      *
      * @param[fileType] File types to acquire.

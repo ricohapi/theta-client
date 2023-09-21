@@ -54,6 +54,7 @@ kotlin {
             dependencies {
                 // Works as common dependency as well as the platform one
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_mtversion")
+                implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.2.1")
                 api("io.ktor:ktor-client-core:$ktor_version") // Applications need to use ByteReadPacket class
                 implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
                 implementation("io.ktor:ktor-client-cio:$ktor_version")

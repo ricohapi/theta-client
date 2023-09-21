@@ -36,3 +36,16 @@ internal fun getHPreviewClient(): PreviewClient {
         ApiClient.previewClient
     }
 }
+
+/**
+ * Return MultipartPostClient for updateFirmware unit test.
+ *
+ * @return mock MultipartPostClient when useMock is true.
+ */
+fun getMultipartPostClient(): MultipartPostClient {
+    return if (MockApiClient.useMock) {
+        MockApiClient.mockMultipartPostClient
+    } else {
+        ApiClient.multipartPostClient
+    }
+}

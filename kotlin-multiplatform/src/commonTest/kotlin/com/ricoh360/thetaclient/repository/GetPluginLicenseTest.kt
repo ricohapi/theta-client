@@ -42,7 +42,6 @@ class GetPluginLicenseTest {
             html = thetaRepository.getPluginLicense("com.theta360.automaticfaceblur")
         }.onSuccess {
             assertTrue(true, "getPluginLicense()")
-            println(html)
         }.onFailure {
             println(it.toString())
             assertTrue(false, "getPluginLicense()")
