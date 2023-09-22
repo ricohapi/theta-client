@@ -35,6 +35,11 @@ import kotlinx.io.files.source
 open class BaseHttpClient {
 
     class URL(url: String) {
+        companion object {
+            /** default port number */
+            const val DEFAULT_PORT = 80
+        }
+
         /** protocol, only http or https */
         private var protocol: String = "http"
 
@@ -42,7 +47,7 @@ open class BaseHttpClient {
         var host: String = "localhost"
 
         /** port number */
-        var port: Int = 80
+        var port: Int = DEFAULT_PORT
 
         /** path and query expression */
         var path: String = "/"
@@ -278,6 +283,8 @@ open class BaseHttpClient {
      * read a byte with chunk processing
      */
     private suspend fun readByte(): Byte? {
+        val HEX_10 = 16 // decimal value of hex "10"
+        val HEX_A = 10 // decimal value of hex "A"
         if (chunked) {
             if (chunkSize <= 0) {
                 if (chunkSize == 0) {
@@ -290,14 +297,14 @@ open class BaseHttpClient {
                 while (true) {
                     val ch = readFromBuffer() ?: break
                     if (ch >= '0'.code.toByte() && ch <= '9'.code.toByte()) {
-                        chunkSize *= 16
+                        chunkSize *= HEX_10
                         chunkSize += ch.toUInt().toInt() - '0'.code.toUInt().toInt()
                     } else if (ch >= 'a'.code.toByte() && ch <= 'f'.code.toByte()) {
-                        chunkSize *= 16
-                        chunkSize += ch.toUInt().toInt() - 'a'.code.toUInt().toInt() + 10
+                        chunkSize *= HEX_10
+                        chunkSize += ch.toUInt().toInt() - 'a'.code.toUInt().toInt() + HEX_A
                     } else if (ch >= 'A'.code.toByte() && ch <= 'F'.code.toByte()) {
-                        chunkSize *= 16
-                        chunkSize += ch.toUInt().toInt() - 'A'.code.toUInt().toInt() + 10
+                        chunkSize *= HEX_10
+                        chunkSize += ch.toUInt().toInt() - 'A'.code.toUInt().toInt() + HEX_A
                     } else if (ch == '\n'.code.toByte()) {
                         break
                     } else if (ch == '\r'.code.toByte()) {
@@ -497,6 +504,8 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
         //const val BOUNDARY = "ab0c85f4-6d89-4a7f-a0a5-115d7f43b5f1"
         // regular expression to get a file name from a file path
         private val regexFileName = Regex("""[^/\\]+$""")
+        // 100 percentage
+        private const val PERCENTAGE_100 = 100
 
         /**
          * generate request headers
@@ -720,7 +729,7 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
                     write(buffer, count)
                     sentCount += count
                     callback?.let {
-                        val percent = (sentCount * 100 / contentLength).toInt()
+                        val percent = (sentCount * PERCENTAGE_100 / contentLength).toInt()
                         if (percent > lastPercent) {
                             it(percent)
                             lastPercent = percent
@@ -734,7 +743,7 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
         }
         writeCloseDelimiter(boundary)
         callback?.let {
-            it(100)
+            it(PERCENTAGE_100)
         }
         try {
             readStatusLine()
