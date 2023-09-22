@@ -142,10 +142,6 @@ internal object ThetaApi {
         if(filePaths.isEmpty()) {
             throw IllegalArgumentException("Empty filePaths")
         }
-        runCatching {
-            // Theta SC2 may be failed if other sockets exists
-            previewClient.close()
-        }
         val responseBody = multipartPostClient.request(endpoint, apiPath, filePaths, connectTimeout, socketTimeout, callback)
         return if(responseBody.size > 0) Json.decodeFromString<UpdateFirmwareApiResponse>(String(responseBody))
         else Json.decodeFromString(DUMMY_RESPONSE) // Theta X does not send response body
