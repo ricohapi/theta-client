@@ -546,7 +546,7 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
          * @return Host header value, or null if not found
          */
         private fun genHostHeaderValue(endpoint: String): String? {
-            val regex = Regex("//(.*?)[:/]")
+            val regex = Regex("""//(.*?)([:/]|$)""")
             val match = regex.find(endpoint)
             match?.groups?.let {
                 return it[1]?.value
