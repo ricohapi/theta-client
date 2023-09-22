@@ -34,7 +34,7 @@ internal object ThetaApi {
         get() = getHttpClient()
 
     val previewClient: PreviewClient // Just for getLivePreview command
-        get() = getPreviewClient()
+        get() = getHPreviewClient()
 
     val multipartPostClient: MultipartPostClient // just for updateFirmware protcol
         get() = getMultipartPostClient()

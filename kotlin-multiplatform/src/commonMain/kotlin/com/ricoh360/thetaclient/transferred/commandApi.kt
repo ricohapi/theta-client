@@ -79,7 +79,7 @@ internal interface CommandApiResponse {
  * state in command api response
  */
 @Serializable
-internal enum class CommandState {
+enum class CommandState {
     /**
      * command complete
      */
@@ -103,7 +103,7 @@ internal enum class CommandState {
  * error in command api response
  */
 @Serializable
-internal data class CommandError(
+data class CommandError(
     /**
      *  Error code
      */
