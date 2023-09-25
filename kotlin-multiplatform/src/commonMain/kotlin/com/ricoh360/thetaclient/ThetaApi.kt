@@ -130,7 +130,7 @@ internal object ThetaApi {
      * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
      */
     @Throws(Throwable::class)
-    suspend fun callUpdateFirmwareApi(
+    internal suspend fun callUpdateFirmwareApi(
         endpoint: String,
         apiPath: String,
         filePaths: List<String>,

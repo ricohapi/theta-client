@@ -183,37 +183,37 @@ class UpdateFirmwareOnActualTheta {
 
     companion object {
         // Environment variable name that holds the path of Theta firmware update API.
-        const val FIRMWARE_UPDATE_API_ENV_NAME= "THETA_FU_API_PATH"
+        const val FIRMWARE_UPDATE_API_ENV_NAME= "to be specified"
         // Timeout for socket and coroutine
         const val TIMEOUT = 600_000L
-        // directory firmware files exist
-        val DIR = "/media/sf_vmshare/ex/"
+        // Full path of the directory firmware files exist
+        val DIR = "to be specified"
         // lastest firmware version of SC2 for business
-        const val SC2_B_VERSION_LATEST = "06.52"
+        const val SC2_B_VERSION_LATEST = "to be specified"
         // latest firmware file of SC2 for business
-        const val SC2_B_FILE_LATEST = "bx1_v652.frm"
+        const val SC2_B_FILE_LATEST = "to be specified"
         // previous firmware file of SC2 for business
-        const val SC2_B_FILE_PREVIOUS = "bx1_v641.frm"
-        // lastest firmware version of X
-        const val X_VERSION_LATEST = "2.21.0"
+        const val SC2_B_FILE_PREVIOUS = "to be specified"
+        // latest firmware version of X
+        const val X_VERSION_LATEST = "to be specified"
         // latest firmware file of X
-        const val X_FILE_LATEST = "cv1_v221.frm"
-        //const val X_FILE_LATEST = "cv1_v220_v210.frm"
-        //const val V_VERSION_LATEST = "3.70.1"
-        //const val V_FILE_LATEST = "rt5_v370.frm"
-        const val V_VERSION_LATEST = "3.80.2"
-        const val V_FILE_LATEST = "rt5_v380.frm"
+        const val X_FILE_LATEST = "to be specified"
+        // latest firmware version of V
+        const val V_VERSION_LATEST = "to be specified"
+        // latest firmware file of V
+        const val V_FILE_LATEST = "to be specified"
 
         // User name of digest authentication is X_USERNAME_PREFIX + X_SERIAL_NUMBER
         const val USERNAME_PREFIX = "THETA"
         // Password of digest authentication is the characters from 3rd character of X_SERIAL_NUMBER
         const val PASSWORD_START_POSITION = 2
         // Serial number of Theta X. Password is assumed not to be changed.
-        const val X_SERIAL_NUMBER = "YR15104645"
-        // IP address in client mode.
-        const val X_URL_CL = "http://192.168.1.10:80/"
-
-        const val V_SERIAL_NUMBER = "YL00120517"
-        const val V_URL_CL = "http://192.168.1.13:80/"
+        const val X_SERIAL_NUMBER = "to be specified"
+        // IP address in client mode for X.
+        const val X_URL_CL = "to be specified"
+        // Serial number of Theta V. Password is assumed not to be changed.
+        const val V_SERIAL_NUMBER = "to be specified"
+        // IP address in client mode for V
+        const val V_URL_CL = "to be specified"
     }
 }

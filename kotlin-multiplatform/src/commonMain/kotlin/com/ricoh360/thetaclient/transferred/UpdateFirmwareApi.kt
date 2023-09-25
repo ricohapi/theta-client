@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 /**
  * Firmware update API request.
  */
-object UpdateFirmwareApi {
+internal object UpdateFirmwareApi {
     val method = HttpMethod.Post
 }
 
@@ -14,7 +14,7 @@ object UpdateFirmwareApi {
  * Firmware update API response
  */
 @Serializable
-data class UpdateFirmwareApiResponse(
+internal data class UpdateFirmwareApiResponse(
     /**
      * Executed API
      */
