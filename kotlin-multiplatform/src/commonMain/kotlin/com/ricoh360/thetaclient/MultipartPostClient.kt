@@ -288,7 +288,7 @@ open class BaseHttpClient {
     /**
      * read a byte with chunk processing
      */
-    @Suppress("CognitiveComplexMethod", "NestedBlockDepth", "LoopWithTooManyJumpStatements")
+    @Suppress("CyclomaticComplexMethod", "NestedBlockDepth", "LoopWithTooManyJumpStatements")
     private suspend fun readByte(): Byte? {
         if (chunked) {
             if (chunkSize <= 0) {
@@ -388,7 +388,7 @@ open class BaseHttpClient {
      * Read response headers.
      * Call this function after calling [readStatusLine]
      */
-    @Suppress("CognitiveComplexMethod", "LoopWithTooManyJumpStatements", "ThrowsCount")
+    @Suppress("CyclomaticComplexMethod", "LoopWithTooManyJumpStatements", "ThrowsCount")
     protected suspend fun readHeaders() {
         var headerChunked = false
         var headerContentLength: Int? = null
