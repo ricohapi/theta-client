@@ -34,6 +34,7 @@ import kotlinx.io.files.source
  */
 open class BaseHttpClient {
 
+    @Suppress("MagicNumber")
     class URL(url: String) {
         companion object {
             /** default port number */
@@ -130,6 +131,11 @@ open class BaseHttpClient {
 
         /** Send buffer size same as file read buffer size */
         const val SEND_BUFFER_SIZE = 8192
+
+        // decimal value of hex "10"
+        const val HEX_10 = 16
+        // decimal value of hex "A"
+        const val HEX_A = 10
     }
 
     /**
@@ -282,9 +288,8 @@ open class BaseHttpClient {
     /**
      * read a byte with chunk processing
      */
+    @Suppress("CognitiveComplexMethod", "NestedBlockDepth", "LoopWithTooManyJumpStatements")
     private suspend fun readByte(): Byte? {
-        val HEX_10 = 16 // decimal value of hex "10"
-        val HEX_A = 10 // decimal value of hex "A"
         if (chunked) {
             if (chunkSize <= 0) {
                 if (chunkSize == 0) {
@@ -331,6 +336,7 @@ open class BaseHttpClient {
     /**
      * read until CR+LF and return String as UTF-8
      */
+    @Suppress("LoopWithTooManyJumpStatements")
     private suspend fun readUtf8Line(): String? {
         val buf = lineBuffer
         var bp = 0
@@ -382,6 +388,7 @@ open class BaseHttpClient {
      * Read response headers.
      * Call this function after calling [readStatusLine]
      */
+    @Suppress("CognitiveComplexMethod", "LoopWithTooManyJumpStatements", "ThrowsCount")
     protected suspend fun readHeaders() {
         var headerChunked = false
         var headerContentLength: Int? = null
@@ -701,6 +708,7 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
      * @param boundary boundary parameter of multipart/form-data
      * @param digest value of Authorization header if needed
      */
+    @Suppress("NestedBlockDepth", "SwallowedException")
     private suspend fun requestWithAuth(
         endpoint: String,
         path: String,
