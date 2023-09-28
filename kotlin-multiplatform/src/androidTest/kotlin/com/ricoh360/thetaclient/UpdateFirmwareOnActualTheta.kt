@@ -12,7 +12,7 @@ import kotlin.test.*
  * Prerequisites:
  *   - Set the directory, where firmware files exist, to constant DIR
  *   - Put firmware files on DIR
- *   - Set the path of Theta firmware update API to environment variable THETA_FU_API_PATH
+ *   - Set the path of Theta firmware update API to environment variable FIRMWARE_UPDATE_API_ENV_NAME specifies
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class UpdateFirmwareOnActualTheta {

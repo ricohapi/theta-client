@@ -288,7 +288,7 @@ open class BaseHttpClient {
     /**
      * read a byte with chunk processing
      */
-    @Suppress("CyclomaticComplexMethod", "NestedBlockDepth", "LoopWithTooManyJumpStatements")
+    @Suppress("CognitiveComplexMethod", "CyclomaticComplexMethod", "NestedBlockDepth", "LoopWithTooManyJumpStatements")
     private suspend fun readByte(): Byte? {
         if (chunked) {
             if (chunkSize <= 0) {
