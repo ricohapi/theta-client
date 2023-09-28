@@ -134,10 +134,16 @@ class ThetaClientFlutter {
     return TimeShiftCaptureBuilder();
   }
 
-  /// Get PhotoCapture.Builder for capture video.
+  /// Get VideoCapture.Builder for capture video.
   VideoCaptureBuilder getVideoCaptureBuilder() {
     ThetaClientFlutterPlatform.instance.getVideoCaptureBuilder();
     return VideoCaptureBuilder();
+  }
+
+  /// Get LimitlessIntervalCapture.Builder for capture limitless interval.
+  LimitlessIntervalCaptureBuilder getLimitlessIntervalCaptureBuilder() {
+    ThetaClientFlutterPlatform.instance.getLimitlessIntervalCaptureBuilder();
+    return LimitlessIntervalCaptureBuilder();
   }
 
   /// Acquires the properties and property support specifications for shooting, the camera, etc.

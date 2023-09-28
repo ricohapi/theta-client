@@ -16,37 +16,23 @@ private const val CHECK_SHOOTING_IDLE_COUNT = 2
 private const val ERROR_GET_CAPTURE_STATUS = "Capture status cannot be retrieved."
 
 /*
- * VideoCapture
+ * LimitlessIntervalCapture
  *
  * @property endpoint URL of Theta web API endpoint
- * @property options option of video capture
+ * @property cameraModel Camera model info.
+ * @property options option of limitless interval capture
  */
-class VideoCapture private constructor(private val endpoint: String, options: Options) :
+class LimitlessIntervalCapture private constructor(private val endpoint: String, private val cameraModel: ThetaRepository.ThetaModel? = null, options: Options) :
     Capture(options) {
 
     private val scope = CoroutineScope(Dispatchers.Default)
 
     /**
-     * Get maximum recordable time (in seconds) of the camera.
-     *
-     * @return Maximum recordable time
+     * Get shooting interval (sec.) for interval shooting.
      */
-    fun getMaxRecordableTime() = options._maxRecordableTime?.let {
-        ThetaRepository.MaxRecordableTimeEnum.get(it)
-    }
+    fun getCaptureInterval() = options.captureInterval
 
-    /**
-     * Get video file format.
-     *
-     * @return Video file format
-     */
-    fun getFileFormat() = options.fileFormat?.let { it ->
-        ThetaRepository.FileFormatEnum.get(it)?.let {
-            ThetaRepository.VideoFileFormatEnum.get(it)
-        }
-    }
-
-    // TODO: Add get video option property
+    // TODO: Add get limitless interval option property
 
     /**
      * Callback of startCapture
@@ -70,9 +56,9 @@ class VideoCapture private constructor(private val endpoint: String, options: Op
         /**
          * Called when successful.
          *
-         * @param fileUrl URL of the video capture
+         * @param fileUrls URLs of the limitless interval capture
          */
-        fun onCaptureCompleted(fileUrl: String?)
+        fun onCaptureCompleted(fileUrls: List<String>?)
     }
 
     internal suspend fun getCaptureStatus(): CaptureStatus? {
@@ -91,11 +77,11 @@ class VideoCapture private constructor(private val endpoint: String, options: Op
     }
 
     /**
-     * Starts video capture.
+     * Starts limitless interval capture.
      *
      * @param callback Success or failure of the call
      */
-    fun startCapture(callback: StartCaptureCallback): VideoCapturing {
+    fun startCapture(callback: StartCaptureCallback): LimitlessIntervalCapturing {
         var isEndCapture = false
 
         fun callOnCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
@@ -106,13 +92,13 @@ class VideoCapture private constructor(private val endpoint: String, options: Op
             callback.onCaptureFailed(exception)
         }
 
-        fun callOnCaptureCompleted(fileUrl: String?) {
-            println("call callOnCaptureCompleted: $fileUrl")
+        fun callOnCaptureCompleted(fileUrls: List<String>?) {
+            println("call callOnCaptureCompleted: $fileUrls")
             if (isEndCapture) {
                 return
             }
             isEndCapture = true
-            callback.onCaptureCompleted(fileUrl)
+            callback.onCaptureCompleted(fileUrls)
         }
 
         val captureCallback = object : StartCaptureCallback {
@@ -125,14 +111,18 @@ class VideoCapture private constructor(private val endpoint: String, options: Op
             override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
             }
 
-            override fun onCaptureCompleted(fileUrl: String?) {
-                callOnCaptureCompleted(fileUrl)
+            override fun onCaptureCompleted(fileUrls: List<String>?) {
+                callOnCaptureCompleted(fileUrls)
             }
 
         }
         scope.launch {
             try {
-                ThetaApi.callStartCaptureCommand(endpoint, StartCaptureParams()).error?.let {
+                val params = when (cameraModel) {
+                    ThetaRepository.ThetaModel.THETA_X -> StartCaptureParams()
+                    else -> StartCaptureParams(_mode = ShootingMode.INTERVAL_SHOOTING)
+                }
+                ThetaApi.callStartCaptureCommand(endpoint, params).error?.let {
                     callOnCaptureFailed(ThetaRepository.ThetaWebApiException(it.message))
                 }
             } catch (e: JsonConvertException) {
@@ -175,69 +165,65 @@ class VideoCapture private constructor(private val endpoint: String, options: Op
             }
             callOnCaptureCompleted(null)
         }
-        return VideoCapturing(endpoint, captureCallback)
+        return LimitlessIntervalCapturing(
+            endpoint = endpoint,
+            callback = captureCallback
+        )
     }
 
     /*
-     * Builder of VideoCapture
+     * Builder of LimitlessIntervalCapture
      *
      * @property endpoint URL of Theta web API endpoint
+     * @property cameraModel Camera model info.
      */
-    class Builder internal constructor(private val endpoint: String) : Capture.Builder<Builder>() {
+    class Builder internal constructor(private val endpoint: String, val cameraModel: ThetaRepository.ThetaModel? = null) : Capture.Builder<Builder>() {
 
         /**
-         * Builds an instance of a VideoCapture that has all the combined parameters of the Options that have been added to the Builder.
+         * Builds an instance of a LimitlessIntervalCapture that has all the combined parameters of the Options that have been added to the Builder.
          *
-         * @return VideoCapture
+         * @return LimitlessIntervalCapture
          */
         @Throws(Throwable::class)
-        suspend fun build(): VideoCapture {
+        suspend fun build(): LimitlessIntervalCapture {
             try {
                 ThetaApi.callSetOptionsCommand(
-                    endpoint,
-                    SetOptionsParams(options = Options(captureMode = CaptureMode.VIDEO))
+                    endpoint = endpoint,
+                    params = SetOptionsParams(options = Options(captureMode = CaptureMode.IMAGE))
                 ).error?.let {
-                    throw ThetaRepository.ThetaWebApiException(it.message)
+                    throw ThetaRepository.ThetaWebApiException(message = it.message)
                 }
-                if (options != Options()) {
-                    ThetaApi.callSetOptionsCommand(endpoint, SetOptionsParams(options)).error?.let {
-                        throw ThetaRepository.ThetaWebApiException(it.message)
-                    }
+
+                options.captureNumber = 0 // Unlimited (_limitless)
+                when (cameraModel) {
+                    ThetaRepository.ThetaModel.THETA_X -> options._shootingMethod = ShootingMethod.INTERVAL
+                    else -> {}
+                }
+                ThetaApi.callSetOptionsCommand(endpoint = endpoint, params = SetOptionsParams(options)).error?.let {
+                    throw ThetaRepository.ThetaWebApiException(message = it.message)
                 }
             } catch (e: JsonConvertException) {
-                throw ThetaRepository.ThetaWebApiException(e.message ?: e.toString())
+                throw ThetaRepository.ThetaWebApiException(message = e.message ?: e.toString())
             } catch (e: ResponseException) {
-                throw ThetaRepository.ThetaWebApiException.create(e)
+                throw ThetaRepository.ThetaWebApiException.create(exception = e)
             } catch (e: ThetaRepository.ThetaWebApiException) {
                 throw e
             } catch (e: Exception) {
-                throw ThetaRepository.NotConnectedException(e.message ?: e.toString())
+                throw ThetaRepository.NotConnectedException(message = e.message ?: e.toString())
             }
-            return VideoCapture(endpoint, options)
+            return LimitlessIntervalCapture(endpoint = endpoint, cameraModel = cameraModel, options = options)
         }
 
         /**
-         * Set maximum recordable time (in seconds) of the camera.
-         *
-         * @param time Maximum recordable time
+         * Set shooting interval (sec.) for interval shooting.
+         * @param interval sec
          * @return Builder
          */
-        fun setMaxRecordableTime(time: ThetaRepository.MaxRecordableTimeEnum): Builder {
-            options._maxRecordableTime = time.sec
+        fun setCaptureInterval(interval: Int): Builder {
+            options.captureInterval = interval
             return this
         }
 
-        /**
-         * Set video file format.
-         *
-         * @param fileFormat Video file format
-         * @return Builder
-         */
-        fun setFileFormat(fileFormat: ThetaRepository.VideoFileFormatEnum): Builder {
-            options.fileFormat = fileFormat.fileFormat.toMediaFileFormat()
-            return this
-        }
-
-        // TODO: Add set video option property
+        // TODO: Add set limitless interval option property
     }
 }

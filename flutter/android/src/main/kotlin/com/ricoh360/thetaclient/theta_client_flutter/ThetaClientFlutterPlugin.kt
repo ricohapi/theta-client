@@ -7,6 +7,8 @@ import com.ricoh360.thetaclient.capture.TimeShiftCapture
 import com.ricoh360.thetaclient.capture.TimeShiftCapturing
 import com.ricoh360.thetaclient.capture.VideoCapture
 import com.ricoh360.thetaclient.capture.VideoCapturing
+import com.ricoh360.thetaclient.capture.LimitlessIntervalCapture
+import com.ricoh360.thetaclient.capture.LimitlessIntervalCapturing
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
@@ -41,6 +43,9 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
     var videoCaptureBuilder: VideoCapture.Builder? = null
     var videoCapture: VideoCapture? = null
     var videoCapturing: VideoCapturing? = null
+    var limitlessIntervalCaptureBuilder: LimitlessIntervalCapture.Builder? = null
+    var limitlessIntervalCapture: LimitlessIntervalCapture? = null
+    var limitlessIntervalCapturing: LimitlessIntervalCapturing? = null
 
     companion object {
         const val errorCode: String = "Error"
@@ -52,6 +57,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         const val notifyIdLivePreview = 10001
         const val notifyIdTimeShiftProgress = 10002
         const val notifyIdVideoCaptureStopError = 10003
+        const val notifyIdLimitlessIntervalCaptureStopError = 10004
     }
 
     fun sendNotifyEvent(id: Int, params: Map<String, Any?>) {
@@ -204,6 +210,24 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
 
             "stopVideoCapture" -> {
                 stopVideoCapture(result)
+            }
+
+            "getLimitlessIntervalCaptureBuilder" -> {
+                getLimitlessIntervalCaptureBuilder(result)
+            }
+
+            "buildLimitlessIntervalCapture" -> {
+                scope.launch {
+                    buildLimitlessIntervalCapture(call, result)
+                }
+            }
+
+            "startLimitlessIntervalCapture" -> {
+                startLimitlessIntervalCapture(result)
+            }
+
+            "stopLimitlessIntervalCapture" -> {
+                stopLimitlessIntervalCapture(result)
             }
 
             "getOptions" -> {
@@ -371,6 +395,9 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         videoCaptureBuilder = null
         videoCapture = null
         videoCapturing = null
+        limitlessIntervalCaptureBuilder = null
+        limitlessIntervalCapture = null
+        limitlessIntervalCapturing = null
 
         try {
             endpoint = call.argument<String>("endpoint")!!
@@ -627,6 +654,66 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             return
         }
         videoCapturing!!.stopCapture()
+        result.success(null)
+    }
+
+    fun getLimitlessIntervalCaptureBuilder(result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        limitlessIntervalCaptureBuilder = thetaRepository?.getLimitlessIntervalCaptureBuilder()
+        result.success(null)
+    }
+
+    suspend fun buildLimitlessIntervalCapture(call: MethodCall, result: Result) {
+        if (thetaRepository == null || limitlessIntervalCaptureBuilder == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        limitlessIntervalCaptureBuilder?.let {
+            setCaptureBuilderParams(call, it)
+            setLimitlessIntervalCaptureBuilderParams(call, it)
+        }
+        try {
+            limitlessIntervalCapture = limitlessIntervalCaptureBuilder?.build()
+            result.success(null)
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    fun startLimitlessIntervalCapture(result: Result) {
+        val theta = thetaRepository
+        val capture = limitlessIntervalCapture
+        if (theta == null || capture == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        limitlessIntervalCapturing = capture.startCapture(object : LimitlessIntervalCapture.StartCaptureCallback {
+            override fun onCaptureCompleted(fileUrls: List<String>?) {
+                result.success(fileUrls)
+            }
+
+            override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                result.error(exception.javaClass.simpleName, exception.message, null)
+            }
+
+            override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                sendNotifyEvent(
+                    notifyIdLimitlessIntervalCaptureStopError,
+                    toMessageNotifyParam(exception.message ?: exception.toString())
+                )
+            }
+        })
+    }
+
+    fun stopLimitlessIntervalCapture(result: Result) {
+        if (thetaRepository == null || limitlessIntervalCapturing == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        limitlessIntervalCapturing?.stopCapture()
         result.success(null)
     }
 

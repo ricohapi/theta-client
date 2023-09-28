@@ -17,6 +17,7 @@ import DeleteFilesScreen from './screen/delete-files-screen/delete-files-screen'
 import GetMetadataScreen from './screen/get-metadata-screen/get-metadata-screen';
 import GetInfoScreen from './screen/get-info-screen/get-info-screen';
 import TimeShiftCaptureScreen from './screen/time-shift-capture-screen/time-shift-capture-screen';
+import LimitlessIntervalCaptureScreen from './screen/limitless-interval-capture-screen/limitless-interval-capture-screen';
 
 const Stack = createNativeStackNavigator();
 
@@ -89,6 +90,11 @@ const App = () => {
           options={{ title: 'Video Capture' }}
           name="videoCapture"
           component={VideoCaptureScreen}
+        />
+        <Stack.Screen
+          options={{ title: 'Limitless Interval Capture' }}
+          name="limitlessIntervalCapture"
+          component={LimitlessIntervalCaptureScreen}
         />
         <Stack.Screen
           options={{ title: 'TimeShift Capture' }}

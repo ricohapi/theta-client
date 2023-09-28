@@ -94,9 +94,9 @@ complexity:
   #    threshold: 10
   #    includeStaticDeclarations: false
   #    includePrivateDeclarations: false
-  #  ComplexMethod:
-  #    active: true
-  #    threshold: 15
+  ComplexMethod:
+    active: true
+    threshold: 20
   #    ignoreSingleWhenExpression: false
   #    ignoreSimpleWhenEntries: false
   #    ignoreNestingFunctions: false
@@ -237,13 +237,13 @@ exceptions:
   #    active: false
   #  PrintStackTrace:
   #    active: true
-  #  RethrowCaughtException:
-  #    active: true
+  RethrowCaughtException:
+    active: false
   #  ReturnFromFinally:
   #    active: true
   #    ignoreLabeled: false
-  #  SwallowedException:
-  #    active: true
+  SwallowedException:
+    active: false
   #    ignoredExceptionTypes:
   #      - 'InterruptedException'
   #      - 'MalformedURLException'
@@ -282,8 +282,8 @@ exceptions:
     #   - 'RuntimeException'
     #   - 'Throwable'
     # allowedExceptionNameRegex: '_|(ignore|expected).*'
-#  TooGenericExceptionThrown:
-#    active: true
+  TooGenericExceptionThrown:
+    active: false
 #    exceptionNames:
 #      - 'Error'
 #      - 'Exception'
@@ -546,9 +546,9 @@ style:
   #  LibraryEntitiesShouldNotBePublic:
   #    active: true
   #    excludes: [ '**' ]
-  #  LoopWithTooManyJumpStatements:
-  #    active: true
-  #    maxJumpCount: 1
+  LoopWithTooManyJumpStatements:
+    active: true
+    maxJumpCount: 3
   MagicNumber:
     active: true
     excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
@@ -620,10 +620,10 @@ style:
   #    active: true
   #  SpacingBetweenPackageAndImports:
   #    active: false
-  #  ThrowsCount:
-  #    active: true
-  #    max: 2
-  #    excludeGuardClauses: false
+  ThrowsCount:
+    active: true
+    max: 8
+    excludeGuardClauses: false
   #  TrailingWhitespace:
   #    active: false
   #  UnderscoresInNumericLiterals:

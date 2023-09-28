@@ -6,6 +6,7 @@ import com.ricoh360.thetaclient.capture.Capture
 import com.ricoh360.thetaclient.capture.PhotoCapture
 import com.ricoh360.thetaclient.capture.TimeShiftCapture
 import com.ricoh360.thetaclient.capture.VideoCapture
+import com.ricoh360.thetaclient.capture.LimitlessIntervalCapture
 import io.flutter.plugin.common.MethodCall
 
 const val KEY_CLIENT_MODE = "clientMode"
@@ -252,6 +253,12 @@ fun setVideoCaptureBuilderParams(call: MethodCall, builder: VideoCapture.Builder
         VideoFileFormatEnum.values().find { it.name == enumName }?.let {
             builder.setFileFormat(it)
         }
+    }
+}
+
+fun setLimitlessIntervalCaptureBuilderParams(call: MethodCall, builder: LimitlessIntervalCapture.Builder) {
+    call.argument<Int>(OptionNameEnum.CaptureInterval.name)?.also {
+        builder.setCaptureInterval(it)
     }
 }
 

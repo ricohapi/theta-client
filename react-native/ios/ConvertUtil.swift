@@ -18,6 +18,7 @@ let KEY_SOCKET_TIMEOUT = "socketTimeout"
 let KEY_THETA_MODEL = "thetaModel"
 let KEY_TIMESHIFT = "timeShift"
 let KEY_APERTURE = "aperture"
+let KEY_CAPTURE_INTERVAL = "captureInterval"
 let KEY_COLOR_TEMPERATURE = "colorTemperature"
 let KEY_EXPOSURE_COMPENSATION = "exposureCompensation"
 let KEY_EXPOSURE_DELAY = "exposureDelay"
@@ -51,7 +52,7 @@ let KEY_BURST_COMPENSATION = "burstCompensation"
 let KEY_BURST_MAX_EXPOSURE_TIME = "burstMaxExposureTime"
 let KEY_BURST_ENABLE_ISO_CONTROL = "burstEnableIsoControl"
 let KEY_BURST_ORDER = "burstOrder"
-let KEY_CAPTURE_INTERVAL = "_capture_interval"
+let KEY_TIMESHIFT_CAPTURE_INTERVAL = "_capture_interval"
 
 public class ConvertUtil: NSObject {}
 
@@ -478,7 +479,7 @@ func setPhotoCaptureBuilderParams(params: [String: Any], builder: PhotoCapture.B
 }
 
 func setTimeShiftCaptureBuilderParams(params: [String: Any], builder: TimeShiftCapture.Builder) {
-    if let interval = params[KEY_CAPTURE_INTERVAL] as? Int,
+    if let interval = params[KEY_TIMESHIFT_CAPTURE_INTERVAL] as? Int,
        interval >= 0
     {
         builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
@@ -511,6 +512,12 @@ func setVideoCaptureBuilderParams(params: [String: Any], builder: VideoCapture.B
         ) {
             builder.setFileFormat(fileFormat: enumValue)
         }
+    }
+}
+
+func setLimitlessIntervalCaptureBuilderParams(params: [String: Any], builder: LimitlessIntervalCapture.Builder) {
+    if let value = params[KEY_CAPTURE_INTERVAL] as? Int32 {
+        builder.setCaptureInterval(interval: value)
     }
 }
 

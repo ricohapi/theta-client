@@ -9,6 +9,7 @@ import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.capture.PhotoCapture
 import com.ricoh360.thetaclient.capture.TimeShiftCapture
 import com.ricoh360.thetaclient.capture.VideoCapture
+import com.ricoh360.thetaclient.capture.LimitlessIntervalCapture
 
 const val KEY_NOTIFY_NAME = "name"
 const val KEY_NOTIFY_PARAMS = "params"
@@ -48,6 +49,7 @@ interface OptionConverter {
   fun setPhotoOption(objects: ReadableMap, builder: PhotoCapture.Builder) {}
   fun setTimeShiftOption(objects: ReadableMap, builder: TimeShiftCapture.Builder) {}
   fun setVideoOption(objects: ReadableMap, builder: VideoCapture.Builder) {}
+  fun setLimitlessIntervalOption(objects: ReadableMap, builder: LimitlessIntervalCapture.Builder) {}
 }
 
 /**
@@ -96,6 +98,12 @@ class ApertureConverter : OptionConverter {
   }
 
   override fun setVideoOption(objects: ReadableMap, builder: VideoCapture.Builder) {
+    objects.getString("aperture")?.let {
+      builder.setAperture(ThetaRepository.ApertureEnum.valueOf(it))
+    }
+  }
+
+  override fun setLimitlessIntervalOption(objects: ReadableMap, builder: LimitlessIntervalCapture.Builder) {
     objects.getString("aperture")?.let {
       builder.setAperture(ThetaRepository.ApertureEnum.valueOf(it))
     }
@@ -252,6 +260,10 @@ class CaptureIntervalConverter : OptionConverter {
       objects.putInt("captureInterval", it)
     }
   }
+
+  override fun setLimitlessIntervalOption(objects: ReadableMap, builder: LimitlessIntervalCapture.Builder) {
+    builder.setCaptureInterval(objects.getInt("captureInterval"))
+  }
 }
 
 /**
@@ -336,6 +348,12 @@ class ExposureCompensationConverter : OptionConverter {
       builder.setExposureCompensation(ThetaRepository.ExposureCompensationEnum.valueOf(it))
     }
   }
+
+  override fun setLimitlessIntervalOption(objects: ReadableMap, builder: LimitlessIntervalCapture.Builder) {
+    objects.getString("exposureCompensation")?.let {
+      builder.setExposureCompensation(ThetaRepository.ExposureCompensationEnum.valueOf(it))
+    }
+  }
 }
 
 /**
@@ -371,6 +389,12 @@ class ExposureDelayConverter : OptionConverter {
       builder.setExposureDelay(ThetaRepository.ExposureDelayEnum.valueOf(it))
     }
   }
+
+  override fun setLimitlessIntervalOption(objects: ReadableMap, builder: LimitlessIntervalCapture.Builder) {
+    objects.getString("exposureDelay")?.let {
+      builder.setExposureDelay(ThetaRepository.ExposureDelayEnum.valueOf(it))
+    }
+  }
 }
 
 /**
@@ -402,6 +426,12 @@ class ExposureProgramConverter : OptionConverter {
   }
 
   override fun setVideoOption(objects: ReadableMap, builder: VideoCapture.Builder) {
+    objects.getString("exposureProgram")?.let {
+      builder.setExposureProgram(ThetaRepository.ExposureProgramEnum.valueOf(it))
+    }
+  }
+
+  override fun setLimitlessIntervalOption(objects: ReadableMap, builder: LimitlessIntervalCapture.Builder) {
     objects.getString("exposureProgram")?.let {
       builder.setExposureProgram(ThetaRepository.ExposureProgramEnum.valueOf(it))
     }
@@ -532,6 +562,12 @@ class GpsTagRecordingConverter : OptionConverter {
       builder.setGpsTagRecording(ThetaRepository.GpsTagRecordingEnum.valueOf(it))
     }
   }
+
+  override fun setLimitlessIntervalOption(objects: ReadableMap, builder: LimitlessIntervalCapture.Builder) {
+    objects.getString("gpsTagRecording")?.let {
+      builder.setGpsTagRecording(ThetaRepository.GpsTagRecordingEnum.valueOf(it))
+    }
+  }
 }
 
 /**
@@ -584,6 +620,12 @@ class IsoConverter : OptionConverter {
       builder.setIso(ThetaRepository.IsoEnum.valueOf(it))
     }
   }
+
+  override fun setLimitlessIntervalOption(objects: ReadableMap, builder: LimitlessIntervalCapture.Builder) {
+    objects.getString("iso")?.let {
+      builder.setIso(ThetaRepository.IsoEnum.valueOf(it))
+    }
+  }
 }
 
 /**
@@ -615,6 +657,12 @@ class IsoAutoHighLimitConverter : OptionConverter {
   }
 
   override fun setVideoOption(objects: ReadableMap, builder: VideoCapture.Builder) {
+    objects.getString("isoAutoHighLimit")?.let {
+      builder.setIsoAutoHighLimit(ThetaRepository.IsoAutoHighLimitEnum.valueOf(it))
+    }
+  }
+
+  override fun setLimitlessIntervalOption(objects: ReadableMap, builder: LimitlessIntervalCapture.Builder) {
     objects.getString("isoAutoHighLimit")?.let {
       builder.setIsoAutoHighLimit(ThetaRepository.IsoAutoHighLimitEnum.valueOf(it))
     }
@@ -899,6 +947,12 @@ class WhiteBalanceConverter : OptionConverter {
       builder.setWhiteBalance(ThetaRepository.WhiteBalanceEnum.valueOf(it))
     }
   }
+
+  override fun setLimitlessIntervalOption(objects: ReadableMap, builder: LimitlessIntervalCapture.Builder) {
+    objects.getString("whiteBalance")?.let {
+      builder.setWhiteBalance(ThetaRepository.WhiteBalanceEnum.valueOf(it))
+    }
+  }
 }
 
 /**
@@ -959,6 +1013,10 @@ class ColorTemperatureConverter : OptionConverter {
   }
 
   override fun setVideoOption(objects: ReadableMap, builder: VideoCapture.Builder) {
+    builder.setColorTemperature(objects.getInt("colorTemperature"))
+  }
+
+  override fun setLimitlessIntervalOption(objects: ReadableMap, builder: LimitlessIntervalCapture.Builder) {
     builder.setColorTemperature(objects.getInt("colorTemperature"))
   }
 }

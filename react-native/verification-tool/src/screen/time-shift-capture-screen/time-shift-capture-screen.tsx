@@ -4,9 +4,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './styles';
 import Button from '../../components/ui/button';
 import {
+  CaptureModeEnum,
   Options,
   TimeShiftCapture,
   getTimeShiftCaptureBuilder,
+  setOptions,
   stopSelfTimer,
 } from 'theta-client-react-native';
 import { CaptureCommonOptionsEdit } from '../../components/capture/capture-common-options';
@@ -16,13 +18,9 @@ import { InputNumber } from '../../components/ui/input-number';
 const TimeShiftCaptureScreen: React.FC = ({ navigation }) => {
   const [interval, setInterval] = React.useState<number>();
   const [message, setMessage] = React.useState('progress = 0');
-  const [options, setOptions] = React.useState<Options>();
+  const [captureOptions, setCaptureOptions] = React.useState<Options>();
   const [isTaking, setIsTaking] = React.useState(false);
   const [capture, setCapture] = React.useState<TimeShiftCapture>();
-
-  React.useEffect(() => {
-    navigation.setOptions({ title: 'TimeShift Capture' });
-  }, [navigation]);
 
   const onTake = async () => {
     if (isTaking) {
@@ -33,32 +31,34 @@ const TimeShiftCaptureScreen: React.FC = ({ navigation }) => {
     if (interval != null) {
       builder.setCheckStatusCommandInterval(interval);
     }
-    options?.timeShift?.isFrontFirst &&
-      builder.setIsFrontFirst(options.timeShift.isFrontFirst);
-    options?.timeShift?.firstInterval &&
-      builder.setFirstInterval(options.timeShift.firstInterval);
-    options?.timeShift?.secondInterval &&
-      builder.setSecondInterval(options.timeShift.secondInterval);
+    captureOptions?.timeShift?.isFrontFirst &&
+      builder.setIsFrontFirst(captureOptions.timeShift.isFrontFirst);
+    captureOptions?.timeShift?.firstInterval &&
+      builder.setFirstInterval(captureOptions.timeShift.firstInterval);
+    captureOptions?.timeShift?.secondInterval &&
+      builder.setSecondInterval(captureOptions.timeShift.secondInterval);
 
-    options?.aperture && builder.setAperture(options.aperture);
-    if (options?.colorTemperature != null) {
-      builder.setColorTemperature(options.colorTemperature);
+    captureOptions?.aperture && builder.setAperture(captureOptions.aperture);
+    if (captureOptions?.colorTemperature != null) {
+      builder.setColorTemperature(captureOptions.colorTemperature);
     }
-    options?.exposureCompensation &&
-      builder.setExposureCompensation(options.exposureCompensation);
-    options?.exposureDelay && builder.setExposureDelay(options.exposureDelay);
-    options?.exposureProgram &&
-      builder.setExposureProgram(options.exposureProgram);
-    options?.gpsInfo && builder.setGpsInfo(options.gpsInfo);
-    options?._gpsTagRecording &&
-      builder.setGpsTagRecording(options._gpsTagRecording);
-    options?.iso && builder.setIso(options.iso);
-    options?.isoAutoHighLimit &&
-      builder.setIsoAutoHighLimit(options.isoAutoHighLimit);
-    options?.whiteBalance && builder.setWhiteBalance(options.whiteBalance);
+    captureOptions?.exposureCompensation &&
+      builder.setExposureCompensation(captureOptions.exposureCompensation);
+    captureOptions?.exposureDelay &&
+      builder.setExposureDelay(captureOptions.exposureDelay);
+    captureOptions?.exposureProgram &&
+      builder.setExposureProgram(captureOptions.exposureProgram);
+    captureOptions?.gpsInfo && builder.setGpsInfo(captureOptions.gpsInfo);
+    captureOptions?._gpsTagRecording &&
+      builder.setGpsTagRecording(captureOptions._gpsTagRecording);
+    captureOptions?.iso && builder.setIso(captureOptions.iso);
+    captureOptions?.isoAutoHighLimit &&
+      builder.setIsoAutoHighLimit(captureOptions.isoAutoHighLimit);
+    captureOptions?.whiteBalance &&
+      builder.setWhiteBalance(captureOptions.whiteBalance);
 
     console.log('TimeShiftCapture interval: ' + interval);
-    console.log('TimeShiftCapture options: ' + JSON.stringify(options));
+    console.log('TimeShiftCapture options: ' + JSON.stringify(captureOptions));
     console.log('TimeShiftCapture builder: ' + JSON.stringify(builder));
 
     try {
@@ -123,6 +123,14 @@ const TimeShiftCaptureScreen: React.FC = ({ navigation }) => {
   };
 
   React.useEffect(() => {
+    setOptions({ captureMode: CaptureModeEnum.IMAGE }).catch();
+  }, []);
+
+  React.useEffect(() => {
+    navigation.setOptions({ title: 'TimeShift Capture' });
+  }, [navigation]);
+
+  React.useEffect(() => {
     if (capture != null && !isTaking) {
       setIsTaking(true);
       startTimeShiftCapture();
@@ -170,15 +178,15 @@ const TimeShiftCaptureScreen: React.FC = ({ navigation }) => {
           />
           <TimeShiftEdit
             onChange={(option) => {
-              setOptions(option);
+              setCaptureOptions(option);
             }}
-            options={options}
+            options={captureOptions}
           />
           <CaptureCommonOptionsEdit
             onChange={(option) => {
-              setOptions(option);
+              setCaptureOptions(option);
             }}
-            options={options}
+            options={captureOptions}
           />
         </ScrollView>
       </View>

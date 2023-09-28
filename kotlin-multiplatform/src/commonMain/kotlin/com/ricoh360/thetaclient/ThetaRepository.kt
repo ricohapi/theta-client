@@ -1,5 +1,6 @@
 package com.ricoh360.thetaclient
 
+import com.ricoh360.thetaclient.capture.LimitlessIntervalCapture
 import com.ricoh360.thetaclient.capture.PhotoCapture
 import com.ricoh360.thetaclient.capture.TimeShiftCapture
 import com.ricoh360.thetaclient.capture.VideoCapture
@@ -5306,7 +5307,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
-     * Get PhotoCapture.Builder for capture video.
+     * Get VideoCapture.Builder for capture video.
      *
      * @return PhotoCapture.Builder
      */
@@ -5321,6 +5322,15 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     fun getTimeShiftCaptureBuilder(): TimeShiftCapture.Builder {
         return TimeShiftCapture.Builder(endpoint, cameraModel)
+    }
+
+    /**
+     * Get LimitlessIntervalCapture.Builder for capture video.
+     *
+     * @return PhotoCapture.Builder
+     */
+    fun getLimitlessIntervalCaptureBuilder(): LimitlessIntervalCapture.Builder {
+        return LimitlessIntervalCapture.Builder(endpoint, cameraModel)
     }
 
     /**

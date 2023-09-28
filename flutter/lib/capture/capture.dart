@@ -129,8 +129,29 @@ class VideoCapture extends Capture {
       {void Function(Exception exception)? onStopFailed}) {
     ThetaClientFlutterPlatform.instance
         .startVideoCapture(onStopFailed)
-        .then((value) => onCaptureCompleted(value!))
+        .then((value) => onCaptureCompleted(value))
         .onError((error, stackTrace) => onCaptureFailed(error as Exception));
     return VideoCapturing();
+  }
+}
+
+/// Capture of limitless interval
+class LimitlessIntervalCapture extends Capture {
+  LimitlessIntervalCapture(super.options);
+
+  /// Get shooting interval (sec.) for interval shooting.
+  int? setCaptureInterval() =>
+      _options[OptionNameEnum.captureInterval.rawValue];
+
+  /// Starts limitless interval capture.
+  LimitlessIntervalCapturing startCapture(
+      void Function(List<String>? fileUrls) onCaptureCompleted,
+      void Function(Exception exception) onCaptureFailed,
+      {void Function(Exception exception)? onStopFailed}) {
+    ThetaClientFlutterPlatform.instance
+        .startLimitlessIntervalCapture(onStopFailed)
+        .then((value) => onCaptureCompleted(value))
+        .onError((error, stackTrace) => onCaptureFailed(error as Exception));
+    return LimitlessIntervalCapturing();
   }
 }

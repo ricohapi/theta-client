@@ -12,6 +12,9 @@ let MESSAGE_NO_TIMESHIFT_CAPTURING = "no timeShiftCapturing."
 let MESSAGE_NO_VIDEO_CAPTURE = "No videoCapture."
 let MESSAGE_NO_VIDEO_CAPTURE_BUILDER = "no video capture builder."
 let MESSAGE_NO_VIDEO_CAPTURING = "no videoCapturing."
+let MESSAGE_NO_LIMITLESS_INTERVAL_CAPTURE = "No limitlessIntervalCapture."
+let MESSAGE_NO_LIMITLESS_INTERVAL_CAPTURE_BUILDER = "no limitlessIntervalCaptureBuilder."
+let MESSAGE_NO_LIMITLESS_INTERVAL_CAPTURING = "no limitlessIntervalCapturing."
 
 @objc(ThetaClientReactNative)
 class ThetaClientReactNative: RCTEventEmitter {
@@ -25,12 +28,16 @@ class ThetaClientReactNative: RCTEventEmitter {
     var videoCaptureBuilder: VideoCapture.Builder?
     var videoCapture: VideoCapture?
     var videoCapturing: VideoCapturing?
+    var limitlessIntervalCaptureBuilder: LimitlessIntervalCapture.Builder?
+    var limitlessIntervalCapture: LimitlessIntervalCapture?
+    var limitlessIntervalCapturing: LimitlessIntervalCapturing?
 
     static let EVENT_FRAME = "ThetaFrameEvent"
     static let EVENT_NOTIFY = "ThetaNotify"
 
     static let NOTIFY_TIMESHIFT_PROGRESS = "TIME-SHIFT-PROGRESS"
     static let NOTIFY_VIDEO_CAPTURE_STOP_ERROR = "VIDEO-CAPTURE-STOP-ERROR"
+    static let NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR = "LIMITLESS-INTERVAL-CAPTURE-STOP-ERROR"
 
     @objc
     override func supportedEvents() -> [String]! {
@@ -66,6 +73,9 @@ class ThetaClientReactNative: RCTEventEmitter {
         videoCaptureBuilder = nil
         videoCapture = nil
         videoCapturing = nil
+        limitlessIntervalCaptureBuilder = nil
+        limitlessIntervalCapture = nil
+        limitlessIntervalCapturing = nil
         previewing = false
 
         Task {
@@ -727,6 +737,126 @@ class ThetaClientReactNative: RCTEventEmitter {
             return
         }
         videoCapturing.stopCapture()
+        resolve(nil)
+    }
+
+    @objc(getLimitlessIntervalCaptureBuilder:withRejecter:)
+    func getLimitlessIntervalCaptureBuilder(
+        resolve: RCTPromiseResolveBlock,
+        reject: RCTPromiseRejectBlock
+    ) {
+        guard let thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        print("getLimitlessIntervalCaptureBuilder")
+        limitlessIntervalCaptureBuilder = thetaRepository.getLimitlessIntervalCaptureBuilder()
+        resolve(nil)
+    }
+
+    @objc(buildLimitlessIntervalCapture:withResolver:withRejecter:)
+    func buildLimitlessIntervalCapture(
+        options: [AnyHashable: Any]?,
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let _ = thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        guard let limitlessIntervalCaptureBuilder else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NO_LIMITLESS_INTERVAL_CAPTURE_BUILDER, nil)
+            return
+        }
+
+        if let options = options as? [String: Any] {
+            setCaptureBuilderParams(params: options, builder: limitlessIntervalCaptureBuilder)
+            setLimitlessIntervalCaptureBuilderParams(params: options, builder: limitlessIntervalCaptureBuilder)
+        }
+        limitlessIntervalCaptureBuilder.build { capture, error in
+            if let error {
+                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+            } else if let capture {
+                self.limitlessIntervalCapture = capture
+                self.limitlessIntervalCaptureBuilder = nil
+                resolve(true)
+            } else {
+                reject(ERROR_CODE_ERROR, MESSAGE_NO_LIMITLESS_INTERVAL_CAPTURE, nil)
+            }
+        }
+    }
+
+    @objc(startLimitlessIntervalCapture:withRejecter:)
+    func startLimitlessIntervalCapture(
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let _ = thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        guard let limitlessIntervalCapture else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NO_LIMITLESS_INTERVAL_CAPTURE, nil)
+            return
+        }
+        class Callback: LimitlessIntervalCaptureStartCaptureCallback {
+            let callback: (_ urls: [String]?, _ error: Error?) -> Void
+            weak var client: ThetaClientReactNative?
+            init(
+                _ callback: @escaping (_ urls: [String]?, _ error: Error?) -> Void,
+                client: ThetaClientReactNative
+            ) {
+                self.callback = callback
+                self.client = client
+            }
+
+            func onCaptureCompleted(fileUrls: [String]?) {
+                callback(fileUrls, nil)
+            }
+
+            func onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                callback(nil, exception.asError())
+            }
+
+            func onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                let error = exception.asError()
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR,
+                        params: toMessageNotifyParam(value: error.localizedDescription)
+                    )
+                )
+            }
+        }
+
+        limitlessIntervalCapturing = limitlessIntervalCapture.startCapture(
+            callback: Callback(
+                { urls, error in
+                    if let error {
+                        reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                    } else {
+                        self.limitlessIntervalCapture = nil
+                        resolve(urls)
+                    }
+                }, client: self
+            ))
+    }
+
+    @objc(stopLimitlessIntervalCapture:withRejecter:)
+    func stopLimitlessIntervalCapture(
+        resolve: RCTPromiseResolveBlock,
+        reject: RCTPromiseRejectBlock
+    ) {
+        guard let _ = thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        guard let limitlessIntervalCapturing else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NO_LIMITLESS_INTERVAL_CAPTURING, nil)
+            return
+        }
+        limitlessIntervalCapturing.stopCapture()
         resolve(nil)
     }
 

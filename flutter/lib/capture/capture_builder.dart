@@ -194,6 +194,29 @@ class VideoCaptureBuilder extends CaptureBuilder<VideoCaptureBuilder> {
   }
 }
 
+/// Builder of LimitlessIntervalCapture
+class LimitlessIntervalCaptureBuilder
+    extends CaptureBuilder<LimitlessIntervalCaptureBuilder> {
+  /// Set shooting interval (sec.) for interval shooting.
+  LimitlessIntervalCaptureBuilder setCaptureInterval(int interval) {
+    _options[OptionNameEnum.captureInterval.rawValue] = interval;
+    return this;
+  }
+
+  /// Builds an instance of a LimitlessIntervalCapture that has all the combined parameters of the Options that have been added to the Builder.
+  Future<LimitlessIntervalCapture> build() async {
+    var completer = Completer<LimitlessIntervalCapture>();
+    try {
+      await ThetaClientFlutterPlatform.instance
+          .buildLimitlessIntervalCapture(_options);
+      completer.complete(LimitlessIntervalCapture(_options));
+    } catch (e) {
+      completer.completeError(e);
+    }
+    return completer.future;
+  }
+}
+
 /// Photo image format used in PhotoCapture.
 enum PhotoFileFormatEnum {
   /// Image File format.

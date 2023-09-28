@@ -13,7 +13,7 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class VideoCaptureTest {
+class LimitlessIntervalCaptureTest {
     private val endpoint = "http://192.168.1.1:80/"
 
     @BeforeTest
@@ -34,8 +34,9 @@ class VideoCaptureTest {
         // setup
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
-            Resource("src/commonTest/resources/VideoCapture/start_capture_done.json").readText(),
-            Resource("src/commonTest/resources/VideoCapture/stop_capture_done.json").readText()
+            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
+            Resource("src/commonTest/resources/LimitlessIntervalCapture/start_capture_done.json").readText(),
+            Resource("src/commonTest/resources/LimitlessIntervalCapture/stop_capture_done.json").readText()
         )
         var counter = 0
         MockApiClient.onRequest = { request ->
@@ -45,22 +46,27 @@ class VideoCaptureTest {
             // check request
             when (index) {
                 0 -> {
-                    CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.VIDEO)
+                    CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
                     response = responseArray[0]
                 }
 
                 1 -> {
-                    CheckRequest.checkCommandName(request, "camera.startCapture")
+                    CheckRequest.checkSetOptions(request = request, captureNumber = 0)
                     response = responseArray[1]
+                }
+
+                2 -> {
+                    CheckRequest.checkCommandName(request, "camera.startCapture")
+                    response = responseArray[2]
                 }
 
                 else -> {
                     if (CheckRequest.getCommandName(request) == "camera.stopCapture") {
                         CheckRequest.checkCommandName(request, "camera.stopCapture")
-                        response = responseArray[2]
+                        response = responseArray[3]
                     } else if (request.url.encodedPath == "/osc/state") {
                         response =
-                            Resource("src/commonTest/resources/VideoCapture/state_shooting.json").readText()
+                            Resource("src/commonTest/resources/LimitlessIntervalCapture/state_shooting.json").readText()
                     }
                 }
             }
@@ -71,26 +77,24 @@ class VideoCaptureTest {
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
-        val videoCapture = thetaRepository.getVideoCaptureBuilder()
-            .build()
+        val capture = thetaRepository.getLimitlessIntervalCaptureBuilder().build()
 
-        assertNull(videoCapture.getMaxRecordableTime(), "set option maxRecordableTime")
-        assertNull(videoCapture.getFileFormat(), "set option fileFormat")
+        assertNull(capture.getCaptureInterval(), "set option captureInterval")
 
-        var file: String? = null
-        val capturing = videoCapture.startCapture(object : VideoCapture.StartCaptureCallback {
+        var files: List<String>? = null
+        val capturing = capture.startCapture(object : LimitlessIntervalCapture.StartCaptureCallback {
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(false, "error stop capture")
                 deferred.complete(Unit)
             }
 
             override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue(false, "error capture video")
+                assertTrue(false, "error capture limitless interval")
                 deferred.complete(Unit)
             }
 
-            override fun onCaptureCompleted(fileUrl: String?) {
-                file = fileUrl
+            override fun onCaptureCompleted(fileUrls: List<String>?) {
+                files = fileUrls
                 deferred.complete(Unit)
             }
         })
@@ -106,7 +110,7 @@ class VideoCaptureTest {
         }
 
         // check result
-        assertTrue(file?.startsWith("http://") ?: false, "start capture video")
+        assertTrue(files?.firstOrNull()?.startsWith("http://") ?: false, "start capture limitless interval")
     }
 
     /**
@@ -117,7 +121,8 @@ class VideoCaptureTest {
         // setup
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
-            Resource("src/commonTest/resources/VideoCapture/start_capture_done.json").readText(),
+            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
+            Resource("src/commonTest/resources/LimitlessIntervalCapture/start_capture_done.json").readText(),
         )
         var counter = 0
         var idleCount = 0
@@ -128,22 +133,27 @@ class VideoCaptureTest {
             // check request
             when (index) {
                 0 -> {
-                    CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.VIDEO)
+                    CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
                     response = responseArray[0]
                 }
 
                 1 -> {
-                    CheckRequest.checkCommandName(request, "camera.startCapture")
+                    CheckRequest.checkSetOptions(request = request, captureNumber = 0)
                     response = responseArray[1]
+                }
+
+                2 -> {
+                    CheckRequest.checkCommandName(request, "camera.startCapture")
+                    response = responseArray[2]
                 }
 
                 else -> {
                     if (request.url.encodedPath == "/osc/state") {
                         idleCount += 1
                         response =
-                            Resource("src/commonTest/resources/VideoCapture/state_idle.json").readText()
+                            Resource("src/commonTest/resources/LimitlessIntervalCapture/state_idle.json").readText()
                     } else {
-                        assertTrue(false, "error capture video")
+                        assertTrue(false, "error capture limitless interval")
                     }
                 }
             }
@@ -154,26 +164,24 @@ class VideoCaptureTest {
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
-        val videoCapture = thetaRepository.getVideoCaptureBuilder()
-            .build()
+        val capture = thetaRepository.getLimitlessIntervalCaptureBuilder().build()
 
-        assertNull(videoCapture.getMaxRecordableTime(), "set option maxRecordableTime")
-        assertNull(videoCapture.getFileFormat(), "set option fileFormat")
+        assertNull(capture.getCaptureInterval(), "set option captureInterval")
 
-        var file: String? = "error"
-        videoCapture.startCapture(object : VideoCapture.StartCaptureCallback {
+        var files: List<String>? = null
+        capture.startCapture(object : LimitlessIntervalCapture.StartCaptureCallback {
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(false, "error stop capture")
                 deferred.complete(Unit)
             }
 
             override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue(false, "error capture video")
+                assertTrue(false, "error capture limitless interval")
                 deferred.complete(Unit)
             }
 
-            override fun onCaptureCompleted(fileUrl: String?) {
-                file = fileUrl
+            override fun onCaptureCompleted(fileUrls: List<String>?) {
+                files = fileUrls
                 deferred.complete(Unit)
             }
         })
@@ -188,43 +196,37 @@ class VideoCaptureTest {
         }
 
         // check result
-        assertNull(file, "cancel capture video")
-        assertTrue(idleCount >= 2, "cancel capture video")
+        assertNull(files, "cancel capture limitless interval")
+        assertTrue(idleCount >= 2, "cancel capture limitless interval")
     }
 
     /**
-     * call startCapture.
+     * Setting captureInterval.
      */
     @Test
-    fun startCaptureWithMaxRecordableTimeAndFileFormatTest() = runTest {
-        // setup
-        val fileFormat = ThetaRepository.VideoFileFormatEnum.VIDEO_5_7K_30F
-        val maxRecordableTime = ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_300
+    fun settingCaptureIntervalTest() = runTest {
+        val interval = 5
 
+        // setup
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
-            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
-        )
-        val requestPathArray = arrayOf(
-            "/osc/commands/execute",
-            "/osc/commands/execute",
+            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText()
         )
         var counter = 0
+
         MockApiClient.onRequest = { request ->
             val index = counter++
 
             // check request
-            assertEquals(request.url.encodedPath, requestPathArray[index], "start capture request")
             when (index) {
                 0 -> {
-                    CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.VIDEO)
+                    CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
                 }
 
                 1 -> {
                     CheckRequest.checkSetOptions(
                         request = request,
-                        fileFormat = fileFormat.fileFormat.toMediaFileFormat(),
-                        maxRecordableTime = maxRecordableTime.sec
+                        captureInterval = interval
                     )
                 }
             }
@@ -234,126 +236,12 @@ class VideoCaptureTest {
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
-        val videoCapture = thetaRepository.getVideoCaptureBuilder()
-            .setMaxRecordableTime(maxRecordableTime)
-            .setFileFormat(fileFormat)
+        val capture = thetaRepository.getLimitlessIntervalCaptureBuilder()
+            .setCaptureInterval(interval)
             .build()
 
-        assertEquals(
-            videoCapture.getMaxRecordableTime(),
-            maxRecordableTime,
-            "set option maxRecordableTime"
-        )
-        assertEquals(videoCapture.getFileFormat(), fileFormat, "set option fileFormat")
-    }
-
-    /**
-     * Setting filter.
-     */
-    @Test
-    fun settingMaxRecordableTimeTest() = runTest {
-        // setup
-        val valueList = ThetaRepository.MaxRecordableTimeEnum.values()
-
-        val responseArray = arrayOf(
-            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
-            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText()
-        )
-        var counter = 0
-        var valueIndex = 0
-
-        MockApiClient.onRequest = { request ->
-            val index = counter++
-
-            // check request
-            when (index) {
-                0 -> {
-                    CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.VIDEO)
-                }
-
-                1 -> {
-                    CheckRequest.checkSetOptions(
-                        request = request,
-                        maxRecordableTime = valueList[valueIndex].sec
-                    )
-                }
-            }
-
-            ByteReadChannel(responseArray[index])
-        }
-
-        // execute
-        val thetaRepository = ThetaRepository(endpoint)
-        valueList.forEach {
-            val videoCapture = thetaRepository.getVideoCaptureBuilder()
-                .setMaxRecordableTime(it)
-                .build()
-
-            // check result
-            assertEquals(
-                videoCapture.getMaxRecordableTime(),
-                it,
-                "set option maxRecordableTime $valueIndex"
-            )
-
-            valueIndex++
-            counter = 0
-        }
-    }
-
-    /**
-     * Setting fileFormat.
-     */
-    @Test
-    fun settingFileFormatTest() = runTest {
-        // setup
-        val valueList = ThetaRepository.VideoFileFormatEnum.values()
-
-        val responseArray = arrayOf(
-            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
-            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText()
-        )
-        var counter = 0
-        var valueIndex = 0
-
-        MockApiClient.onRequest = { request ->
-            val index = counter++
-
-            // check request
-            when (index) {
-                0 -> {
-                    CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.VIDEO)
-                }
-
-                1 -> {
-                    CheckRequest.checkSetOptions(
-                        request = request,
-                        fileFormat = valueList[valueIndex].fileFormat.toMediaFileFormat()
-                    )
-                }
-            }
-
-            ByteReadChannel(responseArray[index])
-        }
-
-        // execute
-        val thetaRepository = ThetaRepository(endpoint)
-
-        valueList.forEach {
-            val videoCapture = thetaRepository.getVideoCaptureBuilder()
-                .setFileFormat(it)
-                .build()
-
-            // check result
-            assertEquals(
-                videoCapture.getFileFormat(),
-                it,
-                "set option fileFormat $valueIndex"
-            )
-
-            valueIndex++
-            counter = 0
-        }
+        // check result
+        assertEquals(capture.getCaptureInterval(), interval, "set option captureInterval $interval")
     }
 
     /**
@@ -364,8 +252,6 @@ class VideoCaptureTest {
         // setup
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_error.json").readText(), // set captureMode error
-            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
-            Resource("src/commonTest/resources/setOptions/set_options_error.json").readText(), // set option error
             "Not json" // json error
         )
         var counter = 0
@@ -380,30 +266,17 @@ class VideoCaptureTest {
 
         var exceptionSetCaptureMode = false
         try {
-            thetaRepository.getVideoCaptureBuilder()
-                .build()
+            thetaRepository.getLimitlessIntervalCaptureBuilder().build()
         } catch (e: ThetaRepository.ThetaWebApiException) {
             assertTrue(e.message!!.indexOf("UnitTest", 0, true) >= 0, "")
             exceptionSetCaptureMode = true
         }
         assertTrue(exceptionSetCaptureMode, "setOptions captureMode error response")
 
-        var exceptionSetOption = false
-        try {
-            thetaRepository.getVideoCaptureBuilder()
-                .setMaxRecordableTime(ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_300)
-                .build()
-        } catch (e: ThetaRepository.ThetaWebApiException) {
-            assertTrue(e.message!!.indexOf("UnitTest", 0, true) >= 0, "")
-            exceptionSetOption = true
-        }
-        assertTrue(exceptionSetOption, "setOptions option error response")
-
         // execute not json response
         var exceptionNotJson = false
         try {
-            thetaRepository.getVideoCaptureBuilder()
-                .build()
+            thetaRepository.getLimitlessIntervalCaptureBuilder().build()
         } catch (e: ThetaRepository.ThetaWebApiException) {
             assertTrue(
                 e.message!!.indexOf("json", 0, true) >= 0 || e.message!!.indexOf(
@@ -447,7 +320,7 @@ class VideoCaptureTest {
         // execute status error and json response
         var exceptionStatusJson = false
         try {
-            thetaRepository.getVideoCaptureBuilder()
+            thetaRepository.getLimitlessIntervalCaptureBuilder()
                 .build()
         } catch (e: ThetaRepository.ThetaWebApiException) {
             assertTrue(
@@ -461,9 +334,7 @@ class VideoCaptureTest {
         // execute status error and not json response
         var exceptionStatus = false
         try {
-            thetaRepository.getVideoCaptureBuilder()
-                .setMaxRecordableTime(ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_300)
-                .build()
+            thetaRepository.getLimitlessIntervalCaptureBuilder().build()
         } catch (e: ThetaRepository.ThetaWebApiException) {
             assertTrue(e.message!!.indexOf("503", 0, true) >= 0, "status error")
             exceptionStatus = true
@@ -473,7 +344,7 @@ class VideoCaptureTest {
         // execute timeout exception
         var exceptionOther = false
         try {
-            thetaRepository.getVideoCaptureBuilder()
+            thetaRepository.getLimitlessIntervalCaptureBuilder()
                 .build()
         } catch (e: ThetaRepository.NotConnectedException) {
             assertTrue(e.message!!.indexOf("time", 0, true) >= 0, "timeout exception")
@@ -490,7 +361,8 @@ class VideoCaptureTest {
         // setup
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
-            Resource("src/commonTest/resources/VideoCapture/start_capture_error.json").readText(), // startCapture error
+            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
+            Resource("src/commonTest/resources/LimitlessIntervalCapture/start_capture_error.json").readText(), // startCapture error
             "Not json" // json error
         )
         var counter = 0
@@ -500,27 +372,26 @@ class VideoCaptureTest {
         }
 
         val thetaRepository = ThetaRepository(endpoint)
-        val videoCapture = thetaRepository.getVideoCaptureBuilder()
-            .build()
+        val capture = thetaRepository.getLimitlessIntervalCaptureBuilder().build()
 
         // execute error response
         var deferred = CompletableDeferred<Unit>()
-        videoCapture.startCapture(object : VideoCapture.StartCaptureCallback {
+        capture.startCapture(object : LimitlessIntervalCapture.StartCaptureCallback {
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue(false, "capture video")
+                assertTrue(false, "capture limitless interval")
                 deferred.complete(Unit)
             }
 
             override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(
                     exception.message!!.indexOf("UnitTest", 0, true) >= 0,
-                    "capture video error response"
+                    "capture limitless interval error response"
                 )
                 deferred.complete(Unit)
             }
 
-            override fun onCaptureCompleted(fileUrl: String?) {
-                assertTrue(false, "capture video")
+            override fun onCaptureCompleted(fileUrls: List<String>?) {
+                assertTrue(false, "capture limitless interval")
                 deferred.complete(Unit)
             }
         })
@@ -533,19 +404,19 @@ class VideoCaptureTest {
 
         // execute json error response
         deferred = CompletableDeferred()
-        videoCapture.startCapture(object : VideoCapture.StartCaptureCallback {
+        capture.startCapture(object : LimitlessIntervalCapture.StartCaptureCallback {
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue(false, "capture video")
+                assertTrue(false, "capture limitless interval")
                 deferred.complete(Unit)
             }
 
             override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue(exception.message!!.length >= 0, "capture video json error response")
+                assertTrue(exception.message!!.length >= 0, "capture limitless interval json error response")
                 deferred.complete(Unit)
             }
 
-            override fun onCaptureCompleted(fileUrl: String?) {
-                assertTrue(false, "capture video")
+            override fun onCaptureCompleted(fileUrls: List<String>?) {
+                assertTrue(false, "capture limitless interval")
                 deferred.complete(Unit)
             }
         })
@@ -565,7 +436,8 @@ class VideoCaptureTest {
         // setup
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
-            Resource("src/commonTest/resources/VideoCapture/start_capture_error.json").readText(), // startCapture error
+            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
+            Resource("src/commonTest/resources/LimitlessIntervalCapture/start_capture_error.json").readText(), // startCapture error
             "Status error UnitTest", // status error not json
             "timeout UnitTest" // timeout
         )
@@ -574,22 +446,23 @@ class VideoCaptureTest {
             val index = counter++
             when (index) {
                 0 -> MockApiClient.status = HttpStatusCode.OK
-                1 -> MockApiClient.status = HttpStatusCode.ServiceUnavailable
+                1 -> MockApiClient.status = HttpStatusCode.OK
                 2 -> MockApiClient.status = HttpStatusCode.ServiceUnavailable
-                3 -> throw ConnectTimeoutException("timeout")
+                3 -> MockApiClient.status = HttpStatusCode.ServiceUnavailable
+                4 -> throw ConnectTimeoutException("timeout")
             }
             ByteReadChannel(responseArray[index])
         }
 
         val thetaRepository = ThetaRepository(endpoint)
-        val videoCapture = thetaRepository.getVideoCaptureBuilder()
+        val capture = thetaRepository.getLimitlessIntervalCaptureBuilder()
             .build()
 
         // execute status error and json response
         var deferred = CompletableDeferred<Unit>()
-        videoCapture.startCapture(object : VideoCapture.StartCaptureCallback {
+        capture.startCapture(object : LimitlessIntervalCapture.StartCaptureCallback {
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue(false, "capture video")
+                assertTrue(false, "capture limitless interval")
                 deferred.complete(Unit)
             }
 
@@ -601,8 +474,8 @@ class VideoCaptureTest {
                 deferred.complete(Unit)
             }
 
-            override fun onCaptureCompleted(fileUrl: String?) {
-                assertTrue(false, "capture video")
+            override fun onCaptureCompleted(fileUrls: List<String>?) {
+                assertTrue(false, "capture limitless interval")
                 deferred.complete(Unit)
             }
         })
@@ -615,9 +488,9 @@ class VideoCaptureTest {
 
         // execute status error and not json response
         deferred = CompletableDeferred()
-        videoCapture.startCapture(object : VideoCapture.StartCaptureCallback {
+        capture.startCapture(object : LimitlessIntervalCapture.StartCaptureCallback {
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue(false, "capture video")
+                assertTrue(false, "capture limitless interval")
                 deferred.complete(Unit)
             }
 
@@ -626,8 +499,8 @@ class VideoCaptureTest {
                 deferred.complete(Unit)
             }
 
-            override fun onCaptureCompleted(fileUrl: String?) {
-                assertTrue(false, "capture video")
+            override fun onCaptureCompleted(fileUrls: List<String>?) {
+                assertTrue(false, "capture limitless interval")
                 deferred.complete(Unit)
             }
         })
@@ -640,9 +513,9 @@ class VideoCaptureTest {
 
         // execute timeout exception
         deferred = CompletableDeferred()
-        videoCapture.startCapture(object : VideoCapture.StartCaptureCallback {
+        capture.startCapture(object : LimitlessIntervalCapture.StartCaptureCallback {
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue(false, "capture video")
+                assertTrue(false, "capture limitless interval")
                 deferred.complete(Unit)
             }
 
@@ -651,8 +524,8 @@ class VideoCaptureTest {
                 deferred.complete(Unit)
             }
 
-            override fun onCaptureCompleted(fileUrl: String?) {
-                assertTrue(false, "capture video")
+            override fun onCaptureCompleted(fileUrls: List<String>?) {
+                assertTrue(false, "capture limitless interval")
                 deferred.complete(Unit)
             }
         })
@@ -671,7 +544,7 @@ class VideoCaptureTest {
     fun stopCaptureErrorResponseTest() = runTest {
         // setup
         val responseArray = arrayOf(
-            Resource("src/commonTest/resources/VideoCapture/stop_capture_error.json").readText(), // stopCapture error
+            Resource("src/commonTest/resources/LimitlessIntervalCapture/stop_capture_error.json").readText(), // stopCapture error
             "Not json" // json error
         )
         var counter = 0
@@ -682,9 +555,9 @@ class VideoCaptureTest {
 
         // execute error response
         var deferred = CompletableDeferred<Unit>()
-        var videoCapturing = VideoCapturing(
+        var capturing = LimitlessIntervalCapturing(
             endpoint,
-            object : VideoCapture.StartCaptureCallback {
+            object : LimitlessIntervalCapture.StartCaptureCallback {
                 override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                     assertTrue(
                         exception.message!!.indexOf("UnitTest", 0, true) >= 0,
@@ -698,13 +571,13 @@ class VideoCaptureTest {
                     deferred.complete(Unit)
                 }
 
-                override fun onCaptureCompleted(fileUrl: String?) {
+                override fun onCaptureCompleted(fileUrls: List<String>?) {
                     assertTrue(false, "stop capture")
                     deferred.complete(Unit)
                 }
             }
         )
-        videoCapturing.stopCapture()
+        capturing.stopCapture()
 
         runBlocking {
             withTimeout(1000) {
@@ -714,9 +587,9 @@ class VideoCaptureTest {
 
         // execute json error response
         deferred = CompletableDeferred()
-        videoCapturing = VideoCapturing(
+        capturing = LimitlessIntervalCapturing(
             endpoint,
-            object : VideoCapture.StartCaptureCallback {
+            object : LimitlessIntervalCapture.StartCaptureCallback {
                 override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                     assertTrue(exception.message!!.length >= 0, "stop capture json error response")
                     deferred.complete(Unit)
@@ -727,13 +600,13 @@ class VideoCaptureTest {
                     deferred.complete(Unit)
                 }
 
-                override fun onCaptureCompleted(fileUrl: String?) {
+                override fun onCaptureCompleted(fileUrls: List<String>?) {
                     assertTrue(false, "stop capture")
                     deferred.complete(Unit)
                 }
             }
         )
-        videoCapturing.stopCapture()
+        capturing.stopCapture()
 
         runBlocking {
             withTimeout(1000) {
@@ -749,7 +622,7 @@ class VideoCaptureTest {
     fun stopCaptureExceptionTest() = runTest {
         // setup
         val responseArray = arrayOf(
-            Resource("src/commonTest/resources/VideoCapture/stop_capture_error.json").readText(), // status error & error json
+            Resource("src/commonTest/resources/LimitlessIntervalCapture/stop_capture_error.json").readText(), // status error & error json
             "Status error UnitTest", // status error not json
             "timeout UnitTest" // timeout
         )
@@ -766,9 +639,9 @@ class VideoCaptureTest {
 
         // execute status error and json response
         var deferred = CompletableDeferred<Unit>()
-        var videoCapturing = VideoCapturing(
+        var capturing = LimitlessIntervalCapturing(
             endpoint,
-            object : VideoCapture.StartCaptureCallback {
+            object : LimitlessIntervalCapture.StartCaptureCallback {
                 override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                     assertTrue(
                         exception.message!!.indexOf("UnitTest", 0, true) >= 0,
@@ -782,13 +655,13 @@ class VideoCaptureTest {
                     deferred.complete(Unit)
                 }
 
-                override fun onCaptureCompleted(fileUrl: String?) {
+                override fun onCaptureCompleted(fileUrls: List<String>?) {
                     assertTrue(false, "stop capture")
                     deferred.complete(Unit)
                 }
             }
         )
-        videoCapturing.stopCapture()
+        capturing.stopCapture()
 
         runBlocking {
             withTimeout(1000) {
@@ -798,9 +671,9 @@ class VideoCaptureTest {
 
         // execute status error and not json response
         deferred = CompletableDeferred()
-        videoCapturing = VideoCapturing(
+        capturing = LimitlessIntervalCapturing(
             endpoint,
-            object : VideoCapture.StartCaptureCallback {
+            object : LimitlessIntervalCapture.StartCaptureCallback {
                 override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                     assertTrue(exception.message!!.indexOf("503", 0, true) >= 0, "status error")
                     deferred.complete(Unit)
@@ -811,13 +684,13 @@ class VideoCaptureTest {
                     deferred.complete(Unit)
                 }
 
-                override fun onCaptureCompleted(fileUrl: String?) {
+                override fun onCaptureCompleted(fileUrls: List<String>?) {
                     assertTrue(false, "stop capture")
                     deferred.complete(Unit)
                 }
             }
         )
-        videoCapturing.stopCapture()
+        capturing.stopCapture()
 
         runBlocking {
             withTimeout(1000) {
@@ -827,9 +700,9 @@ class VideoCaptureTest {
 
         // execute timeout exception
         deferred = CompletableDeferred()
-        videoCapturing = VideoCapturing(
+        capturing = LimitlessIntervalCapturing(
             endpoint,
-            object : VideoCapture.StartCaptureCallback {
+            object : LimitlessIntervalCapture.StartCaptureCallback {
                 override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                     assertTrue(
                         exception.message!!.indexOf("time", 0, true) >= 0,
@@ -843,13 +716,13 @@ class VideoCaptureTest {
                     deferred.complete(Unit)
                 }
 
-                override fun onCaptureCompleted(fileUrl: String?) {
+                override fun onCaptureCompleted(fileUrls: List<String>?) {
                     assertTrue(false, "stop capture")
                     deferred.complete(Unit)
                 }
             }
         )
-        videoCapturing.stopCapture()
+        capturing.stopCapture()
 
         runBlocking {
             withTimeout(1000) {

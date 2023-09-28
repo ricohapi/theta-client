@@ -247,6 +247,12 @@ func setVideoCaptureBuilderParams(params: [String: Any], builder: VideoCapture.B
     }
 }
 
+func setLimitlessIntervalCaptureBuilderParams(params: [String: Any], builder: LimitlessIntervalCapture.Builder) {
+    if let value = params[ThetaRepository.OptionNameEnum.captureinterval.name] as? Int32 {
+        builder.setCaptureInterval(interval: value)
+    }
+}
+
 func toBitrate(value: Any) -> ThetaRepositoryBitrate? {
     if value is NSNumber, let intVal = value as? Int32 {
         return ThetaRepository.BitrateNumber(value: intVal)

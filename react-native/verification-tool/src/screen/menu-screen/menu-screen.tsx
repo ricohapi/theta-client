@@ -49,6 +49,14 @@ const MenuScreen: React.FC = ({ navigation }) => {
         },
       },
     },
+    {
+      name: '・limitless interval capture',
+      value: {
+        selectedFunction: async () => {
+          navigation.navigate('limitlessIntervalCapture');
+        },
+      },
+    },
   ];
 
   const functionList: FunctionItem[] = [

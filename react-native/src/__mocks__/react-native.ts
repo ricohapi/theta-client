@@ -14,6 +14,10 @@ export const NativeModules = {
     buildVideoCapture: jest.fn(),
     startVideoCapture: jest.fn(),
     stopVideoCapture: jest.fn(),
+    getLimitlessIntervalCaptureBuilder: jest.fn(),
+    buildLimitlessIntervalCapture: jest.fn(),
+    startLimitlessIntervalCapture: jest.fn(),
+    stopLimitlessIntervalCapture: jest.fn(),
   },
 };
 

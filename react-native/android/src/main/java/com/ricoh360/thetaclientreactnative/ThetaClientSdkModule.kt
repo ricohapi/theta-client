@@ -29,6 +29,9 @@ class ThetaClientReactNativeModule(
   var videoCaptureBuilder: VideoCapture.Builder? = null
   var videoCapture: VideoCapture? = null
   var videoCapturing: VideoCapturing? = null
+  var limitlessIntervalCaptureBuilder: LimitlessIntervalCapture.Builder? = null
+  var limitlessIntervalCapture: LimitlessIntervalCapture? = null
+  var limitlessIntervalCapturing: LimitlessIntervalCapturing? = null
   var theta: ThetaRepository? = null
   var listenerCount: Int = 0
 
@@ -85,6 +88,9 @@ class ThetaClientReactNativeModule(
         videoCaptureBuilder = null
         videoCapture = null
         videoCapturing = null
+        limitlessIntervalCaptureBuilder = null
+        limitlessIntervalCapture = null
+        limitlessIntervalCapturing = null
 
         theta = ThetaRepository.newInstance(
           endpoint,
@@ -850,6 +856,113 @@ class ThetaClientReactNativeModule(
   }
 
   /**
+   * getLimitlessIntervalCaptureBuilder  -  get limitless interval capture builder
+   * @param promise promise to set result
+   */
+  @ReactMethod
+  fun getLimitlessIntervalCaptureBuilder(promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    limitlessIntervalCaptureBuilder = theta?.getLimitlessIntervalCaptureBuilder()
+    promise.resolve(true)
+  }
+
+  /**
+   * buildLimitlessIntervalCapture  -  build limitless interval capture
+   * @param options option to capture limitless interval
+   * @param promise promise to set result
+   */
+  @ReactMethod
+  fun buildLimitlessIntervalCapture(options: ReadableMap, promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    if (limitlessIntervalCaptureBuilder == null) {
+      promise.reject(Exception("no limitlessIntervalCaptureBuilder"))
+      return
+    }
+    launch {
+      try {
+        val iterator = options.keySetIterator()
+        while (iterator.hasNextKey()) {
+          val key = iterator.nextKey()
+          val cvt = converters[key]
+          limitlessIntervalCaptureBuilder?.let {
+            cvt?.setLimitlessIntervalOption(options, it)
+          }
+        }
+        limitlessIntervalCapture = limitlessIntervalCaptureBuilder?.build()
+        promise.resolve(true)
+        limitlessIntervalCaptureBuilder = null
+      } catch (t: Throwable) {
+        promise.reject(t)
+        limitlessIntervalCaptureBuilder = null
+      }
+    }
+  }
+
+  /**
+   * startCapture  -  start capture limitless interval
+   * @param promise promise to set result
+   */
+  @ReactMethod
+  fun startLimitlessIntervalCapture(promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    if (limitlessIntervalCapture == null) {
+      promise.reject(Exception("no limitlessIntervalCapture"))
+      return
+    }
+    class StartCaptureCallback : LimitlessIntervalCapture.StartCaptureCallback {
+      override fun onCaptureCompleted(fileUrls: List<String>?) {
+        promise.resolve(fileUrls?.let {
+          val resultList = Arguments.createArray()
+          it.forEach {
+            resultList.pushString(it)
+          }
+          resultList
+        })
+        limitlessIntervalCapture = null
+        limitlessIntervalCapturing = null
+      }
+
+      override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+        promise.reject(exception)
+        limitlessIntervalCapture = null
+        limitlessIntervalCapturing = null
+      }
+
+      override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+        sendNotifyEvent(
+          toNotify(
+            NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR,
+            toMessageNotifyParam(exception.message ?: exception.toString())
+          )
+        )
+      }
+    }
+    limitlessIntervalCapture?.let {
+      limitlessIntervalCapturing = it.startCapture(StartCaptureCallback())
+    }
+  }
+
+  /**
+   * stopCapture  -  stop capturing limitless interval
+   */
+  @ReactMethod
+  fun stopLimitlessIntervalCapture() {
+    if (theta == null) {
+      throw Exception(messageNotInit)
+    }
+    limitlessIntervalCapturing?.stopCapture()
+  }
+
+  /**
    * getMetadata  -  retrieve meta data from THETA via repository
    * @param promise promise to set result
    */
@@ -1510,5 +1623,6 @@ class ThetaClientReactNativeModule(
     const val EVENT_NOTIFY = "ThetaNotify"
     const val NOTIFY_TIMESHIFT_PROGRESS = "TIME-SHIFT-PROGRESS"
     const val NOTIFY_VIDEO_CAPTURE_STOP_ERROR = "VIDEO-CAPTURE-STOP-ERROR"
+    const val NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR = "LIMITLESS-INTERVAL-CAPTURE-STOP-ERROR"
   }
 }

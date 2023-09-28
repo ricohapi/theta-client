@@ -107,6 +107,27 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
+  Future<void> buildLimitlessIntervalCapture(Map<String, dynamic> options) {
+    return onCallBuildLimitlessIntervalCapture(options);
+  }
+
+  @override
+  Future<void> getLimitlessIntervalCaptureBuilder() {
+    return onCallGetLimitlessIntervalCaptureBuilder();
+  }
+
+  @override
+  Future<List<String>?> startLimitlessIntervalCapture(
+      void Function(Exception exception)? onStopFailed) {
+    return onCallStartLimitlessIntervalCapture(onStopFailed);
+  }
+
+  @override
+  Future<void> stopLimitlessIntervalCapture() {
+    return onCallStopLimitlessIntervalCapture();
+  }
+
+  @override
   Future<Options> getOptions(List<OptionNameEnum> optionNames) {
     return onCallGetOptions(optionNames);
   }
@@ -291,6 +312,12 @@ Future<void> Function(Map<String, dynamic> options) onCallBuildVideoCapture =
 Future<String?> Function(void Function(Exception exception)? onStopFailed)
     onCallStartVideoCapture = (onStopFailed) => Future.value();
 Future<void> Function() onCallStopVideoCapture = Future.value;
+Future<void> Function() onCallGetLimitlessIntervalCaptureBuilder = Future.value;
+Future<void> Function(Map<String, dynamic> options)
+    onCallBuildLimitlessIntervalCapture = Future.value;
+Future<List<String>?> Function(void Function(Exception exception)? onStopFailed)
+    onCallStartLimitlessIntervalCapture = (onStopFailed) => Future.value();
+Future<void> Function() onCallStopLimitlessIntervalCapture = Future.value;
 Future<Options> Function(List<OptionNameEnum> optionNames) onCallGetOptions =
     (optionNames) => Future.value(Options());
 Future<void> Function(Options options) onCallSetOptions = Future.value;
