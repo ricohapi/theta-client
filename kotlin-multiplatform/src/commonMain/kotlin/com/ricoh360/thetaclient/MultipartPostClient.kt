@@ -324,7 +324,7 @@ open class BaseHttpClient {
             }
             chunkSize--
         } else if (contentLength != null) {
-            val length = contentLength!!
+            val length = contentLength ?: 0
             if (length <= 0) {
                 return null
             }
@@ -434,22 +434,25 @@ open class BaseHttpClient {
      * @return The content of the response body
      */
     protected suspend fun readBody() {
-        if(contentLength != null) {
-            val buf = ByteArray(contentLength!!)
+        contentLength?.let {
+            val buf = ByteArray(it)
             for (i in buf.indices) {
                 val byte = readByte()
-                byte?: {
+                byte?.let {
+                    buf[i] = it
+                } ?: let {
                     throw(BaseHttpClientException("response body is too short"))
                 }
-                buf[i]= byte!!
             }
             this.responseBody = buf
-        } else {
+        } ?: run {
             var buf = ByteArray(0)
             do {
                 val byte = readByte()
+                byte?.let {
+                    buf += it
+                }
                 byte?: break
-                buf += byte
             } while(true)
             this.responseBody = buf
         }
