@@ -25,6 +25,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  editorContainerLayout: {
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
   colContainerLayout: {
     flex: 1,
     flexDirection: 'column',

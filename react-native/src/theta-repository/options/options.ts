@@ -19,6 +19,8 @@ import type { Proxy } from './option-proxy';
 import type { ShootingMethodEnum } from './option-shooting-method';
 import type { ShutterSpeedEnum } from './option-shutter-speed';
 import type { TimeShift } from './option-time-shift';
+import type { VideoStitchingEnum } from './option-video-stitching';
+import type { VisibilityReductionEnum } from './option-visibility-reduction';
 import type { WhiteBalanceAutoStrengthEnum } from './option-white-balance-auto-strength';
 import type { WlanFrequencyEnum } from './option-wlan-frequency';
 
@@ -503,6 +505,8 @@ export const OptionNameEnum = {
   IsoAutoHighLimit: 'IsoAutoHighLimit',
   /** language */
   Language: 'Language',
+  /** _latestEnabledExposureDelayTime */
+  LatestEnabledExposureDelayTime: 'LatestEnabledExposureDelayTime',
   /** maxRecordableTime */
   MaxRecordableTime: 'MaxRecordableTime',
   /** networkType */
@@ -539,6 +543,10 @@ export const OptionNameEnum = {
   ShutterVolume: 'ShutterVolume',
   /** username */
   Username: 'Username',
+  /** videoStitching */
+  VideoStitching: 'VideoStitching',
+  /** _visibilityReduction */
+  VisibilityReduction: 'VisibilityReduction',
   /** whiteBalance */
   WhiteBalance: 'WhiteBalance',
   /** _whiteBalanceAutoStrength */
@@ -664,6 +672,8 @@ export type Options = {
   isoAutoHighLimit?: IsoAutoHighLimitEnum;
   /** Language used in camera OS. */
   language?: LanguageEnum;
+  /** Self-timer operating time (sec.) when the self-timer (exposureDelay) was effective. */
+  latestEnabledExposureDelayTime?: ExposureDelayEnum;
   /** Maximum recordable time (in seconds) of the camera. */
   maxRecordableTime?: MaxRecordableTimeEnum;
   /** Network type of the camera */
@@ -705,6 +715,10 @@ export type Options = {
   totalSpace?: number;
   /** User name used for digest authentication when _networkType is set to client mode. */
   username?: String;
+  /** Video stitching during shooting. */
+  videoStitching?: VideoStitchingEnum;
+  /** Reduction visibility of camera body to still image when stitching. */
+  visibilityReduction?: VisibilityReductionEnum;
   /** White balance. */
   whiteBalance?: WhiteBalanceEnum;
   /** White balance auto strength. */

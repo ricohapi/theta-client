@@ -687,6 +687,23 @@ class LanguageConverter : OptionConverter {
 }
 
 /**
+ * LatestEnabledExposureDelayTimeConverter
+ */
+class LatestEnabledExposureDelayTimeConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("latestEnabledExposureDelayTime")?.let {
+      options.latestEnabledExposureDelayTime = ThetaRepository.ExposureDelayEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.latestEnabledExposureDelayTime?.let {
+      objects.putString("latestEnabledExposureDelayTime", it.toString())
+    }
+  }
+}
+
+/**
  * MaxRecordableTimeConverter
  */
 class MaxRecordableTimeConverter : OptionConverter {
@@ -910,6 +927,40 @@ class ShootingMethodConverter : OptionConverter {
   override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
     options.shootingMethod?.let {
       objects.putString("shootingMethod", it.toString())
+    }
+  }
+}
+
+/**
+ * VideoStitchingConverter
+ */
+class VideoStitchingConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("videoStitching")?.let {
+      options.videoStitching = ThetaRepository.VideoStitchingEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.videoStitching?.let {
+      objects.putString("videoStitching", it.toString())
+    }
+  }
+}
+
+/**
+ * VisibilityReductionConverter
+ */
+class VisibilityReductionConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("visibilityReduction")?.let {
+      options.visibilityReduction = ThetaRepository.VisibilityReductionEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.visibilityReduction?.let {
+      objects.putString("visibilityReduction", it.toString())
     }
   }
 }

@@ -1564,6 +1564,10 @@ enum OptionNameEnum {
   /// Option name _language
   language('Language', LanguageEnum),
 
+  /// Option name _latestEnabledExposureDelayTime
+  latestEnabledExposureDelayTime(
+      'LatestEnabledExposureDelayTime', ExposureDelayEnum),
+
   /// Option name _maxRecordableTime
   maxRecordableTime('MaxRecordableTime', MaxRecordableTimeEnum),
 
@@ -1617,6 +1621,12 @@ enum OptionNameEnum {
 
   /// Option name _username
   username('Username', String),
+
+  /// Option name videoStitching
+  videoStitching('VideoStitching', VideoStitchingEnum),
+
+  /// Option name _visibilityReduction
+  visibilityReduction('VisibilityReduction', VisibilityReductionEnum),
 
   /// Option name whiteBalance
   whiteBalance('WhiteBalance', WhiteBalanceEnum),
@@ -3433,6 +3443,55 @@ enum TimeShiftIntervalEnum {
   }
 }
 
+/// Video stitching during shooting.
+enum VideoStitchingEnum {
+  /// Stitching is OFF
+  none('NONE'),
+
+  /// Stitching by the camera is ON
+  ondevice('ONDEVICE');
+
+  final String rawValue;
+
+  const VideoStitchingEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static VideoStitchingEnum? getValue(String rawValue) {
+    return VideoStitchingEnum.values.cast<VideoStitchingEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
+/// Reduction visibility of camera body to still image when stitching.
+enum VisibilityReductionEnum {
+  /// Reduction is ON.
+  on('ON'),
+
+  /// Reduction is OFF.
+  off('OFF');
+
+  final String rawValue;
+
+  const VisibilityReductionEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static VisibilityReductionEnum? getValue(String rawValue) {
+    return VisibilityReductionEnum.values
+        .cast<VisibilityReductionEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
+  }
+}
+
 /// White balance auto strength.
 ///
 /// To set the strength of white balance auto for low color temperature scene.
@@ -3767,6 +3826,8 @@ class Options {
   /// Language used in camera OS.
   LanguageEnum? language;
 
+  ExposureDelayEnum? latestEnabledExposureDelayTime;
+
   /// Maximum recordable time (in seconds) of the camera.
   MaxRecordableTimeEnum? maxRecordableTime;
 
@@ -3829,6 +3890,10 @@ class Options {
 
   /// User name used for digest authentication when _networkType is set to client mode.
   String? username;
+
+  VideoStitchingEnum? videoStitching;
+
+  VisibilityReductionEnum? visibilityReduction;
 
   /// White balance.
   ///
@@ -3911,6 +3976,8 @@ class Options {
         return isoAutoHighLimit as T;
       case OptionNameEnum.language:
         return language as T;
+      case OptionNameEnum.latestEnabledExposureDelayTime:
+        return latestEnabledExposureDelayTime as T;
       case OptionNameEnum.maxRecordableTime:
         return maxRecordableTime as T;
       case OptionNameEnum.networkType:
@@ -3947,6 +4014,10 @@ class Options {
         return totalSpace as T;
       case OptionNameEnum.username:
         return username as T;
+      case OptionNameEnum.videoStitching:
+        return videoStitching as T;
+      case OptionNameEnum.visibilityReduction:
+        return visibilityReduction as T;
       case OptionNameEnum.whiteBalance:
         return whiteBalance as T;
       case OptionNameEnum.whiteBalanceAutoStrength:
@@ -4053,6 +4124,9 @@ class Options {
       case OptionNameEnum.language:
         language = value;
         break;
+      case OptionNameEnum.latestEnabledExposureDelayTime:
+        latestEnabledExposureDelayTime = value;
+        break;
       case OptionNameEnum.maxRecordableTime:
         maxRecordableTime = value;
         break;
@@ -4106,6 +4180,12 @@ class Options {
         break;
       case OptionNameEnum.username:
         username = value;
+        break;
+      case OptionNameEnum.videoStitching:
+        videoStitching = value;
+        break;
+      case OptionNameEnum.visibilityReduction:
+        visibilityReduction = value;
         break;
       case OptionNameEnum.whiteBalance:
         whiteBalance = value;

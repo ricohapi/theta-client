@@ -320,6 +320,10 @@ class ConvertUtils {
         case OptionNameEnum.language:
           result.language = LanguageEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.latestEnabledExposureDelayTime:
+          result.latestEnabledExposureDelayTime =
+              ExposureDelayEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.maxRecordableTime:
           result.maxRecordableTime =
               MaxRecordableTimeEnum.getValue(entry.value);
@@ -374,6 +378,13 @@ class ConvertUtils {
           break;
         case OptionNameEnum.username:
           result.username = entry.value;
+          break;
+        case OptionNameEnum.videoStitching:
+          result.videoStitching = VideoStitchingEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.visibilityReduction:
+          result.visibilityReduction =
+              VisibilityReductionEnum.getValue(entry.value);
           break;
         case OptionNameEnum.whiteBalance:
           result.whiteBalance = WhiteBalanceEnum.getValue(entry.value);
@@ -465,6 +476,10 @@ class ConvertUtils {
     } else if (value is ShutterSpeedEnum) {
       return value.rawValue;
     } else if (value is SleepDelayEnum) {
+      return value.rawValue;
+    } else if (value is VideoStitchingEnum) {
+      return value.rawValue;
+    } else if (value is VisibilityReductionEnum) {
       return value.rawValue;
     } else if (value is WhiteBalanceEnum) {
       return value.rawValue;

@@ -497,6 +497,12 @@ internal data class Options(
     var _languageSupport: List<Language>? = null,
 
     /**
+     * Self-timer operating time (sec.) when the self-timer (exposureDelay) was effective.
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    var _latestEnabledExposureDelayTime: Int? = null,
+
+    /**
      * Maximum recordable time (in seconds) of the camera.
      */
     @Serializable(with = NumberAsIntSerializer::class)

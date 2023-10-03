@@ -15,6 +15,8 @@ import {
   OptionNameEnum,
   Options,
   PresetEnum,
+  VideoStitchingEnum,
+  VisibilityReductionEnum,
   WhiteBalanceEnum,
   getOptions,
   setOptions,
@@ -32,6 +34,8 @@ import {
   MaxRecordableTimeEdit,
   PresetEdit,
   TimeShiftEdit,
+  VideoStitchingEdit,
+  VisibilityReductionEdit,
   WhiteBalanceEdit,
 } from '../../components/options';
 import { ItemSelectorView, type Item } from '../../components/ui/item-list';
@@ -40,7 +44,7 @@ import { NumberEdit } from '../../components/options/number-edit';
 interface OptionItem extends Item {
   value: {
     optionName: OptionNameEnum;
-    editor: (
+    editor?: (
       options: Options,
       onChange: (options: Options) => void
     ) => React.ReactElement;
@@ -151,6 +155,12 @@ const optionList: OptionItem[] = [
     },
   },
   {
+    name: 'latestEnabledExposureDelayTime',
+    value: {
+      optionName: OptionNameEnum.LatestEnabledExposureDelayTime,
+    },
+  },
+  {
     name: 'maxRecordableTime',
     value: {
       optionName: OptionNameEnum.MaxRecordableTime,
@@ -179,6 +189,30 @@ const optionList: OptionItem[] = [
       editor: (options, onChange) => (
         <TimeShiftEdit onChange={onChange} options={options} />
       ),
+    },
+  },
+  {
+    name: 'videoStitching',
+    value: {
+      optionName: OptionNameEnum.VideoStitching,
+      editor: (options, onChange) => (
+        <VideoStitchingEdit onChange={onChange} options={options} />
+      ),
+      defaultValue: {
+        videoStitching: VideoStitchingEnum.NONE,
+      },
+    },
+  },
+  {
+    name: 'visibilityReduction',
+    value: {
+      optionName: OptionNameEnum.VisibilityReduction,
+      editor: (options, onChange) => (
+        <VisibilityReductionEdit onChange={onChange} options={options} />
+      ),
+      defaultValue: {
+        visibilityReduction: VisibilityReductionEnum.OFF,
+      },
     },
   },
   {
@@ -256,17 +290,19 @@ const OptionsScreen: React.FC = ({ navigation }) => {
           />
         </View>
       </View>
-      <View style={styles.contentContainer}>
-        {selectedOption?.value.editor(editOptions || {}, setEditOptions)}
-      </View>
-      <View style={styles.bottomViewContainer}>
-        <View style={styles.rowContainerLayout}>
+      {selectedOption?.value.editor && (
+        <View style={styles.editorContainerLayout}>
+          <View style={styles.contentContainer}>
+            {selectedOption?.value.editor(editOptions || {}, setEditOptions)}
+          </View>
           <Button
             title="Set"
             onPress={onPressSet}
             disabled={editOptions == null}
           />
         </View>
+      )}
+      <View style={styles.bottomViewContainer}>
         <ScrollView style={styles.messageArea}>
           <Text style={styles.messageText}>{message}</Text>
         </ScrollView>

@@ -20,5 +20,7 @@ export * from './option-proxy';
 export * from './option-shooting-method';
 export * from './option-shutter-speed';
 export * from './option-time-shift';
+export * from './option-video-stitching';
+export * from './option-visibility-reduction';
 export * from './option-white-balance-auto-strength';
 export * from './option-wlan-frequency';

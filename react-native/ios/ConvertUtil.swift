@@ -91,6 +91,7 @@ let optionItemNameToEnum = [
     "iso": ThetaRepository.OptionNameEnum.iso,
     "isoAutoHighLimit": ThetaRepository.OptionNameEnum.isoautohighlimit,
     "language": ThetaRepository.OptionNameEnum.language,
+    "latestEnabledExposureDelayTime": ThetaRepository.OptionNameEnum.latestenabledexposuredelaytime,
     "maxRecordableTime": ThetaRepository.OptionNameEnum.maxrecordabletime,
     "networkType": ThetaRepository.OptionNameEnum.networktype,
     "offDelay": ThetaRepository.OptionNameEnum.offdelay,
@@ -109,6 +110,8 @@ let optionItemNameToEnum = [
     "timeShift": ThetaRepository.OptionNameEnum.timeshift,
     "totalSpace": ThetaRepository.OptionNameEnum.totalspace,
     "username": ThetaRepository.OptionNameEnum.username,
+    "videoStitching": ThetaRepository.OptionNameEnum.videostitching,
+    "visibilityReduction": ThetaRepository.OptionNameEnum.visibilityreduction,
     "whiteBalance": ThetaRepository.OptionNameEnum.whitebalance,
     "whiteBalanceAutoStrength": ThetaRepository.OptionNameEnum.whitebalanceautostrength,
     "wlanFrequency": ThetaRepository.OptionNameEnum.wlanfrequency,
@@ -248,6 +251,10 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         options.language = getEnumValue(
             values: ThetaRepository.LanguageEnum.values(), name: value as! String
         )!
+    case ThetaRepository.OptionNameEnum.latestenabledexposuredelaytime.name:
+      options.latestEnabledExposureDelayTime = getEnumValue(
+            values: ThetaRepository.ExposureDelayEnum.values(), name: value as! String
+        )!
     case ThetaRepository.OptionNameEnum.maxrecordabletime.name:
         options.maxRecordableTime = getEnumValue(
             values: ThetaRepository.MaxRecordableTimeEnum.values(), name: value as! String
@@ -306,6 +313,14 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         options.totalSpace = KotlinLong(integerLiteral: value as! Int)
     case ThetaRepository.OptionNameEnum.username.name:
         options.username = value as? String
+    case ThetaRepository.OptionNameEnum.videostitching.name:
+        options.videoStitching = getEnumValue(
+            values: ThetaRepository.VideoStitchingEnum.values(), name: value as! String
+        )!
+    case ThetaRepository.OptionNameEnum.visibilityreduction.name:
+        options.visibilityReduction = getEnumValue(
+            values: ThetaRepository.VisibilityReductionEnum.values(), name: value as! String
+        )!
     case ThetaRepository.OptionNameEnum.whitebalance.name:
         options.whiteBalance = getEnumValue(
             values: ThetaRepository.WhiteBalanceEnum.values(), name: value as! String

@@ -20,4 +20,6 @@ export * from './photo-file-format';
 export * from './preset';
 export * from './time-shift';
 export * from './video-file-format';
+export * from './video-stitching';
+export * from './visibility-reduction';
 export * from './white-balance';

@@ -513,6 +513,8 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         options.isoAutoHighLimit = getEnumValue(values: ThetaRepository.IsoAutoHighLimitEnum.values(), name: value as! String)!
     case ThetaRepository.OptionNameEnum.language.name:
         options.language = getEnumValue(values: ThetaRepository.LanguageEnum.values(), name: value as! String)!
+    case ThetaRepository.OptionNameEnum.latestenabledexposuredelaytime.name:
+        options.latestEnabledExposureDelayTime = getEnumValue(values: ThetaRepository.ExposureDelayEnum.values(), name: value as! String)!
     case ThetaRepository.OptionNameEnum.maxrecordabletime.name:
         options.maxRecordableTime = getEnumValue(values: ThetaRepository.MaxRecordableTimeEnum.values(), name: value as! String)!
     case ThetaRepository.OptionNameEnum.networktype.name:
@@ -553,6 +555,10 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         options.totalSpace = KotlinLong(integerLiteral: value as! Int)
     case ThetaRepository.OptionNameEnum.username.name:
         options.username = value as? String
+    case ThetaRepository.OptionNameEnum.videostitching.name:
+        options.videoStitching = getEnumValue(values: ThetaRepository.VideoStitchingEnum.values(), name: value as! String)!
+    case ThetaRepository.OptionNameEnum.visibilityreduction.name:
+        options.visibilityReduction = getEnumValue(values: ThetaRepository.VisibilityReductionEnum.values(), name: value as! String)!
     case ThetaRepository.OptionNameEnum.whitebalance.name:
         options.whiteBalance = getEnumValue(values: ThetaRepository.WhiteBalanceEnum.values(), name: value as! String)!
     case ThetaRepository.OptionNameEnum.whitebalanceautostrength.name:

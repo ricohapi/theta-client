@@ -451,6 +451,7 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
         OptionNameEnum.Iso -> IsoEnum.values().find { it.name == valueName }
         OptionNameEnum.IsoAutoHighLimit -> ApertureEnum.values().find { it.name == valueName }
         OptionNameEnum.Language -> LanguageEnum.values().find { it.name == valueName }
+        OptionNameEnum.LatestEnabledExposureDelayTime -> ExposureDelayEnum.values().find { it.name == valueName }
         OptionNameEnum.MaxRecordableTime -> MaxRecordableTimeEnum.values().find { it.name == valueName }
         OptionNameEnum.NetworkType -> NetworkTypeEnum.values().find { it.name == valueName }
         OptionNameEnum.OffDelay -> OffDelayEnum.values().find { it.name == valueName }
@@ -460,6 +461,8 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
         OptionNameEnum.ShootingMethod -> ShootingMethodEnum.values().find { it.name == valueName }
         OptionNameEnum.ShutterSpeed -> ShutterSpeedEnum.values().find { it.name == valueName }
         OptionNameEnum.SleepDelay -> SleepDelayEnum.values().find { it.name == valueName }
+        OptionNameEnum.VideoStitching -> VideoStitchingEnum.values().find { it.name == valueName }
+        OptionNameEnum.VisibilityReduction -> VisibilityReductionEnum.values().find { it.name == valueName }
         OptionNameEnum.WhiteBalance -> WhiteBalanceEnum.values().find { it.name == valueName }
         OptionNameEnum.WhiteBalanceAutoStrength -> WhiteBalanceAutoStrengthEnum.values().find { it.name == valueName }
         OptionNameEnum.WlanFrequency -> WlanFrequencyEnum.values().find { it.name == valueName }

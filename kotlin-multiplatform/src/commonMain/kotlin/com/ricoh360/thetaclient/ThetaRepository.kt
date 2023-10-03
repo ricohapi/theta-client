@@ -820,6 +820,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _latestEnabledExposureDelayTime
+         */
+        LatestEnabledExposureDelayTime("_latestEnabledExposureDelayTime", ExposureDelayEnum::class),
+
+        /**
+         * Option name
          * _maxRecordableTime
          */
         MaxRecordableTime("_maxRecordableTime", MaxRecordableTimeEnum::class),
@@ -925,6 +931,18 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          *  _username
          */
         Username("_username", String::class),
+
+        /**
+         * Option name
+         * videoStitching
+         */
+        VideoStitching("videoStitching", VideoStitchingEnum::class),
+
+        /**
+         * Option name
+         * _visibilityReductiong
+         */
+        VisibilityReduction("_visibilityReduction", VisibilityReductionEnum::class),
 
         /**
          * Option name
@@ -1189,6 +1207,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var language: LanguageEnum? = null,
 
         /**
+         * Self-timer operating time (sec.) when the self-timer (exposureDelay) was effective.
+         */
+        var latestEnabledExposureDelayTime: ExposureDelayEnum? = null,
+
+        /**
          * Maximum recordable time (in seconds) of the camera.
          */
         var maxRecordableTime: MaxRecordableTimeEnum? = null,
@@ -1293,6 +1316,16 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var username: String? = null,
 
         /**
+         * Video stitching during shooting.
+         */
+        var videoStitching: VideoStitchingEnum? = null,
+
+        /**
+         * Reduction visibility of camera body to still image when stitching.
+         */
+        var visibilityReduction: VisibilityReductionEnum? = null,
+
+        /**
          * White balance.
          *
          * It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
@@ -1343,6 +1376,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             iso = null,
             isoAutoHighLimit = null,
             language = null,
+            latestEnabledExposureDelayTime = null,
             maxRecordableTime = null,
             networkType = null,
             offDelay = null,
@@ -1361,6 +1395,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             totalSpace = null,
             timeShift = null,
             username = null,
+            videoStitching = null,
+            visibilityReduction = null,
             whiteBalance = null,
             whiteBalanceAutoStrength = null,
             wlanFrequency = null,
@@ -1401,6 +1437,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             iso = options.iso?.let { IsoEnum.get(it) },
             isoAutoHighLimit = options.isoAutoHighLimit?.let { IsoAutoHighLimitEnum.get(it) },
             language = options._language?.let { LanguageEnum.get(it) },
+            latestEnabledExposureDelayTime = options._latestEnabledExposureDelayTime?.let { ExposureDelayEnum.get(it) },
             maxRecordableTime = options._maxRecordableTime?.let { MaxRecordableTimeEnum.get(it) },
             networkType = options._networkType?.let { NetworkTypeEnum.get(it) },
             offDelay = options.offDelay?.let { OffDelayEnum.get(it) },
@@ -1419,6 +1456,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             totalSpace = options.totalSpace,
             shutterVolume = options._shutterVolume,
             username = options._username,
+            videoStitching = options.videoStitching?.let { VideoStitchingEnum.get(it) },
+            visibilityReduction = options._visibilityReduction?.let { VisibilityReductionEnum.get(it) },
             whiteBalance = options.whiteBalance?.let { WhiteBalanceEnum.get(it) },
             whiteBalanceAutoStrength = options._whiteBalanceAutoStrength?.let { WhiteBalanceAutoStrengthEnum.get(it) },
             wlanFrequency = options._wlanFrequency?.let { WlanFrequencyEnum.get(it) },
@@ -1460,6 +1499,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 iso = iso?.value,
                 isoAutoHighLimit = isoAutoHighLimit?.value,
                 _language = language?.value,
+                _latestEnabledExposureDelayTime = latestEnabledExposureDelayTime?.sec,
                 _maxRecordableTime = maxRecordableTime?.sec,
                 _networkType = networkType?.value,
                 offDelay = offDelay?.sec,
@@ -1478,6 +1518,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 shutterSpeed = shutterSpeed?.value,
                 _shutterVolume = shutterVolume,
                 _username = username,
+                videoStitching = videoStitching?.value,
+                _visibilityReduction = visibilityReduction?.value,
                 whiteBalance = whiteBalance?.value,
                 _whiteBalanceAutoStrength = whiteBalanceAutoStrength?.value,
                 _wlanFrequency = wlanFrequency?.value,
@@ -1526,6 +1568,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.Iso -> iso
                 OptionNameEnum.IsoAutoHighLimit -> isoAutoHighLimit
                 OptionNameEnum.Language -> language
+                OptionNameEnum.LatestEnabledExposureDelayTime -> latestEnabledExposureDelayTime
                 OptionNameEnum.MaxRecordableTime -> maxRecordableTime
                 OptionNameEnum.NetworkType -> networkType
                 OptionNameEnum.OffDelay -> offDelay
@@ -1544,6 +1587,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.TimeShift -> timeShift
                 OptionNameEnum.TotalSpace -> totalSpace
                 OptionNameEnum.Username -> username
+                OptionNameEnum.VideoStitching -> videoStitching
+                OptionNameEnum.VisibilityReduction -> visibilityReduction
                 OptionNameEnum.WhiteBalance -> whiteBalance
                 OptionNameEnum.WhiteBalanceAutoStrength -> whiteBalanceAutoStrength
                 OptionNameEnum.WlanFrequency -> wlanFrequency
@@ -1593,6 +1638,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.Iso -> iso = value as IsoEnum
                 OptionNameEnum.IsoAutoHighLimit -> isoAutoHighLimit = value as IsoAutoHighLimitEnum
                 OptionNameEnum.Language -> language = value as LanguageEnum
+                OptionNameEnum.LatestEnabledExposureDelayTime -> latestEnabledExposureDelayTime = value as ExposureDelayEnum
                 OptionNameEnum.MaxRecordableTime -> maxRecordableTime = value as MaxRecordableTimeEnum
                 OptionNameEnum.NetworkType -> networkType = value as NetworkTypeEnum
                 OptionNameEnum.OffDelay -> offDelay = value as OffDelay
@@ -1611,6 +1657,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.TimeShift -> timeShift = value as TimeShiftSetting
                 OptionNameEnum.TotalSpace -> totalSpace = value as Long
                 OptionNameEnum.Username -> username = value as String
+                OptionNameEnum.VideoStitching -> videoStitching = value as VideoStitchingEnum
+                OptionNameEnum.VisibilityReduction -> visibilityReduction = value as VisibilityReductionEnum
                 OptionNameEnum.WhiteBalance -> whiteBalance = value as WhiteBalanceEnum
                 OptionNameEnum.WhiteBalanceAutoStrength -> whiteBalanceAutoStrength = value as WhiteBalanceAutoStrengthEnum
                 OptionNameEnum.WlanFrequency -> wlanFrequency = value as WlanFrequencyEnum
@@ -4902,6 +4950,76 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              */
             fun get(sec: Int): TimeShiftIntervalEnum? {
                 return TimeShiftIntervalEnum.values().firstOrNull { it.sec == sec }
+            }
+        }
+    }
+
+    /**
+     * Video Stitching
+     *
+     * Video stitching during shooting.
+     * For
+     * RICOH THETA X
+     * RICOH THETA Z1
+     * RICOH THETA V
+     *
+     */
+    enum class VideoStitchingEnum(val value: VideoStitching) {
+        /**
+         * Video Stitching
+         * none
+         */
+        NONE(VideoStitching.NONE),
+
+        /**
+         * Video Stitching
+         * ondevice
+         */
+        ONDEVICE(VideoStitching.ONDEVICE);
+
+        companion object {
+            /**
+             * Convert VideoStitching to VideoStitchingEnum
+             *
+             * @param value
+             * @return VideoStitchingEnum
+             */
+            fun get(value: VideoStitching): VideoStitchingEnum? {
+                return VideoStitchingEnum.values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Visibility Reduction
+     *
+     * Reduction visibility of camera body to still image when stitching.
+     * For
+     * RICOH THETA Z1 v1.11.1 or later
+     *
+     */
+    enum class VisibilityReductionEnum(val value: VisibilityReduction) {
+        /**
+         * Video Stitching
+         * none
+         */
+        ON(VisibilityReduction.ON),
+
+        /**
+         * Video Stitching
+         * ondevice
+         */
+        OFF(VisibilityReduction.OFF);
+
+        companion object {
+            /**
+             * Convert VisibilityReduction to VisibilityReductionEnum
+             *
+             * @param value
+             * @return VisibilityReductionEnum
+             */
+            fun get(value: VisibilityReduction): VisibilityReductionEnum? {
+                return VisibilityReductionEnum.values().firstOrNull { it.value == value }
             }
         }
     }

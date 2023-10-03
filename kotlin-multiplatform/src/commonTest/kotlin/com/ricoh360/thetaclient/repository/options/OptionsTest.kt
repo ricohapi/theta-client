@@ -33,6 +33,8 @@ import com.ricoh360.thetaclient.transferred.Proxy
 import com.ricoh360.thetaclient.transferred.ShootingFunction
 import com.ricoh360.thetaclient.transferred.ShootingMethod
 import com.ricoh360.thetaclient.transferred.TimeShift
+import com.ricoh360.thetaclient.transferred.VideoStitching
+import com.ricoh360.thetaclient.transferred.VisibilityReduction
 import com.ricoh360.thetaclient.transferred.WhiteBalance
 import com.ricoh360.thetaclient.transferred.WhiteBalanceAutoStrength
 import kotlin.test.AfterTest
@@ -92,6 +94,7 @@ class OptionsTest {
         val iso = ThetaRepository.IsoEnum.ISO_125
         val isoAutoHighLimit = ThetaRepository.IsoAutoHighLimitEnum.ISO_1000
         val language = ThetaRepository.LanguageEnum.JA
+        val latestEnabledExposureDelayTime = ThetaRepository.ExposureDelayEnum.DELAY_10
         val maxRecordableTime = ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500
         val networkType = ThetaRepository.NetworkTypeEnum.DIRECT
         val offDelay = ThetaRepository.OffDelayEnum.OFF_DELAY_10M
@@ -114,6 +117,8 @@ class OptionsTest {
         )
         val totalSpace = 100L
         val username = "username"
+        val videoStitching = ThetaRepository.VideoStitchingEnum.ONDEVICE
+        val visibilityReduction = ThetaRepository.VisibilityReductionEnum.ON
         val whiteBalance = ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT
         val whiteBalanceAutoStrength = ThetaRepository.WhiteBalanceAutoStrengthEnum.OFF
         val wlanFrequency = ThetaRepository.WlanFrequencyEnum.GHZ_2_4
@@ -149,6 +154,7 @@ class OptionsTest {
             iso = iso,
             isoAutoHighLimit = isoAutoHighLimit,
             language = language,
+            latestEnabledExposureDelayTime = latestEnabledExposureDelayTime,
             maxRecordableTime = maxRecordableTime,
             networkType = networkType,
             offDelay = offDelay,
@@ -167,6 +173,8 @@ class OptionsTest {
             timeShift = timeShift,
             totalSpace = totalSpace,
             username = username,
+            videoStitching = videoStitching,
+            visibilityReduction = visibilityReduction,
             whiteBalance = whiteBalance,
             whiteBalanceAutoStrength = whiteBalanceAutoStrength,
             wlanFrequency = wlanFrequency,
@@ -206,6 +214,7 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Iso), iso, "iso")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.IsoAutoHighLimit), isoAutoHighLimit, "isoAutoHighLimit")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Language), language, "language")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.LatestEnabledExposureDelayTime), latestEnabledExposureDelayTime, "latestEnabledExposureDelayTime")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.MaxRecordableTime), maxRecordableTime, "maxRecordableTime")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.NetworkType), networkType, "networkType")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.OffDelay), offDelay, "offDelay")
@@ -224,6 +233,8 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.TimeShift), timeShift, "timeShift")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.TotalSpace), totalSpace, "totalSpace")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Username), username, "userName")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.VideoStitching), videoStitching, "videoStitching")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.VisibilityReduction), visibilityReduction, "visibilityReduction")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.WhiteBalance), whiteBalance, "whiteBalance")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.WhiteBalanceAutoStrength), whiteBalanceAutoStrength, "whiteBalanceAutoStrength")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.WlanFrequency), wlanFrequency, "wlanFrequency")
@@ -273,6 +284,7 @@ class OptionsTest {
             Pair(ThetaRepository.OptionNameEnum.Iso, ThetaRepository.IsoEnum.ISO_125),
             Pair(ThetaRepository.OptionNameEnum.IsoAutoHighLimit, ThetaRepository.IsoAutoHighLimitEnum.ISO_1000),
             Pair(ThetaRepository.OptionNameEnum.Language, ThetaRepository.LanguageEnum.JA),
+            Pair(ThetaRepository.OptionNameEnum.LatestEnabledExposureDelayTime, ThetaRepository.ExposureDelayEnum.DELAY_10),
             Pair(ThetaRepository.OptionNameEnum.MaxRecordableTime, ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500),
             Pair(ThetaRepository.OptionNameEnum.NetworkType, ThetaRepository.NetworkTypeEnum.ETHERNET),
             Pair(ThetaRepository.OptionNameEnum.OffDelay, ThetaRepository.OffDelayEnum.OFF_DELAY_10M),
@@ -294,6 +306,8 @@ class OptionsTest {
             ),
             Pair(ThetaRepository.OptionNameEnum.TotalSpace, 104L),
             Pair(ThetaRepository.OptionNameEnum.Username, "username"),
+            Pair(ThetaRepository.OptionNameEnum.VideoStitching, ThetaRepository.VideoStitchingEnum.NONE),
+            Pair(ThetaRepository.OptionNameEnum.VisibilityReduction, ThetaRepository.VisibilityReductionEnum.OFF),
             Pair(ThetaRepository.OptionNameEnum.WhiteBalance, ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT),
             Pair(ThetaRepository.OptionNameEnum.WhiteBalanceAutoStrength, ThetaRepository.WhiteBalanceAutoStrengthEnum.ON),
             Pair(ThetaRepository.OptionNameEnum.WlanFrequency, ThetaRepository.WlanFrequencyEnum.GHZ_5),
@@ -361,6 +375,7 @@ class OptionsTest {
         val iso = Pair(125, ThetaRepository.IsoEnum.ISO_125)
         val isoAutoHighLimit = Pair(1000, ThetaRepository.IsoAutoHighLimitEnum.ISO_1000)
         val language = Pair(Language.JA, ThetaRepository.LanguageEnum.JA)
+        val latestEnabledExposureDelayTime = Pair(10, ThetaRepository.ExposureDelayEnum.DELAY_10)
         val maxRecordableTime = Pair(1500, ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500)
         val networkType = Pair(NetworkType.DIRECT, ThetaRepository.NetworkTypeEnum.DIRECT)
         val offDelay = Pair(600, ThetaRepository.OffDelayEnum.OFF_DELAY_10M)
@@ -382,6 +397,8 @@ class OptionsTest {
         )
         val totalSpace = Pair(104L, 104L)
         val username = Pair("username", "username")
+        val videoStitching = Pair(VideoStitching.NONE, ThetaRepository.VideoStitchingEnum.NONE)
+        val visibilityReduction = Pair(VisibilityReduction.OFF, ThetaRepository.VisibilityReductionEnum.OFF)
         val whiteBalance = Pair(WhiteBalance._WARM_WHITE_FLUORESCENT, ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT)
         val whiteBalanceAutoStrength = Pair(WhiteBalanceAutoStrength.OFF, ThetaRepository.WhiteBalanceAutoStrengthEnum.OFF)
 
@@ -415,6 +432,7 @@ class OptionsTest {
             iso = iso.first,
             isoAutoHighLimit = isoAutoHighLimit.first,
             _language = language.first,
+            _latestEnabledExposureDelayTime = latestEnabledExposureDelayTime.first,
             _maxRecordableTime = maxRecordableTime.first,
             _networkType = networkType.first,
             offDelay = offDelay.first,
@@ -433,6 +451,8 @@ class OptionsTest {
             _timeShift = timeShift.first,
             totalSpace = totalSpace.first,
             _username = username.first,
+            videoStitching = videoStitching.first,
+            _visibilityReduction = visibilityReduction.first,
             whiteBalance = whiteBalance.first,
             _whiteBalanceAutoStrength = whiteBalanceAutoStrength.first
         )
@@ -467,6 +487,7 @@ class OptionsTest {
         assertEquals(options.iso, iso.second, "iso")
         assertEquals(options.isoAutoHighLimit, isoAutoHighLimit.second, "isoAutoHighLimit")
         assertEquals(options.language, language.second, "language")
+        assertEquals(options.latestEnabledExposureDelayTime, latestEnabledExposureDelayTime.second, "latestEnabledExposureDelayTime")
         assertEquals(options.maxRecordableTime, maxRecordableTime.second, "aperture")
         assertEquals(options.networkType, networkType.second, "networkType")
         assertEquals(options.offDelay, offDelay.second, "offDelay")
@@ -485,6 +506,8 @@ class OptionsTest {
         assertEquals(options.timeShift, timeShift.second, "timeShift")
         assertEquals(options.totalSpace, totalSpace.second, "totalSpace")
         assertEquals(options.username, username.second, "username")
+        assertEquals(options.videoStitching, videoStitching.second, "videoStitching")
+        assertEquals(options.visibilityReduction, visibilityReduction.second, "visibilityReduction")
         assertEquals(options.whiteBalance, whiteBalance.second, "whiteBalance")
         assertEquals(options.whiteBalanceAutoStrength, whiteBalanceAutoStrength.second, "whiteBalanceAutoStrength")
     }
@@ -542,6 +565,7 @@ class OptionsTest {
         val iso = Pair(125, ThetaRepository.IsoEnum.ISO_125)
         val isoAutoHighLimit = Pair(1000, ThetaRepository.IsoAutoHighLimitEnum.ISO_1000)
         val language = Pair(Language.JA, ThetaRepository.LanguageEnum.JA)
+        val latestEnabledExposureDelayTime = Pair(10, ThetaRepository.ExposureDelayEnum.DELAY_10)
         val maxRecordableTime = Pair(1500, ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500)
         val networkType = Pair(NetworkType.ETHERNET, ThetaRepository.NetworkTypeEnum.ETHERNET)
         val offDelay = Pair(600, ThetaRepository.OffDelayEnum.OFF_DELAY_10M)
@@ -563,6 +587,8 @@ class OptionsTest {
         )
         val totalSpace = Pair(104L, 104L)
         val userName = Pair("username", "username")
+        val videoStitching = Pair(VideoStitching.NONE, ThetaRepository.VideoStitchingEnum.NONE)
+        val visibilityReduction = Pair(VisibilityReduction.OFF, ThetaRepository.VisibilityReductionEnum.OFF)
         val whiteBalance = Pair(WhiteBalance._WARM_WHITE_FLUORESCENT, ThetaRepository.WhiteBalanceEnum.WARM_WHITE_FLUORESCENT)
         val whiteBalanceAutoStrength = Pair(WhiteBalanceAutoStrength.ON, ThetaRepository.WhiteBalanceAutoStrengthEnum.ON)
 
@@ -596,6 +622,7 @@ class OptionsTest {
             iso = iso.second,
             isoAutoHighLimit = isoAutoHighLimit.second,
             language = language.second,
+            latestEnabledExposureDelayTime = latestEnabledExposureDelayTime.second,
             maxRecordableTime = maxRecordableTime.second,
             networkType = networkType.second,
             offDelay = offDelay.second,
@@ -614,6 +641,8 @@ class OptionsTest {
             timeShift = timeShift.second,
             totalSpace = totalSpace.second,
             username = userName.second,
+            videoStitching = videoStitching.second,
+            visibilityReduction = visibilityReduction.second,
             whiteBalance = whiteBalance.second,
             whiteBalanceAutoStrength = whiteBalanceAutoStrength.second
         )
@@ -648,6 +677,7 @@ class OptionsTest {
         assertEquals(options.iso, iso.first, "iso")
         assertEquals(options.isoAutoHighLimit, isoAutoHighLimit.first, "isoAutoHighLimit")
         assertEquals(options._language, language.first, "language")
+        assertEquals(options._latestEnabledExposureDelayTime, latestEnabledExposureDelayTime.first, "latestEnabledExposureDelayTime")
         assertEquals(options._maxRecordableTime, maxRecordableTime.first, "aperture")
         assertEquals(options._networkType, networkType.first, "networkType")
         assertEquals(options.offDelay, offDelay.first, "offDelay")
@@ -666,6 +696,8 @@ class OptionsTest {
         assertEquals(options._timeShift, timeShift.first, "timeShift")
         assertEquals(options.totalSpace, totalSpace.first, "totalSpace")
         assertEquals(options._username, userName.first, "userName")
+        assertEquals(options.videoStitching, videoStitching.first, "videoStitching")
+        assertEquals(options._visibilityReduction, visibilityReduction.first, "visibilityReduction")
         assertEquals(options.whiteBalance, whiteBalance.first, "whiteBalance")
         assertEquals(options._whiteBalanceAutoStrength, whiteBalanceAutoStrength.first, "whiteBalanceAutoStrength")
     }
