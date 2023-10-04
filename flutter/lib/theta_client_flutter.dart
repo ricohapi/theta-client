@@ -1616,6 +1616,13 @@ enum OptionNameEnum {
   /// Option name timeShift
   timeShift('TimeShift', TimeShift),
 
+  /// Option name topBottomCorrection
+  topBottomCorrection('TopBottomCorrection', TopBottomCorrectionOptionEnum),
+
+  /// Option name topBottomCorrectionRotation
+  topBottomCorrectionRotation(
+      'TopBottomCorrectionRotation', TopBottomCorrectionRotation),
+
   /// Option name totalSpace
   totalSpace('TotalSpace', int),
 
@@ -3443,6 +3450,55 @@ enum TimeShiftIntervalEnum {
   }
 }
 
+/// top bottom correction
+///
+/// Sets the top/bottom correction.  For RICOH THETA V and RICOH
+/// THETA Z1, the top/bottom correction can be set only for still
+/// images.  For RICOH THETA X, the top/bottom correction can be
+/// set for both still images and videos.
+enum TopBottomCorrectionOptionEnum {
+  /// Top/bottom correction is performed.
+  apply('APPLY'),
+
+  /// Refer to top/bottom correction when shooting with "ApplyAuto"
+  applyAuto('APPLY_AUTO'),
+
+  /// Top/bottom correction is performed. The parameters used for
+  /// top/bottom correction for the first image are saved and used
+  /// for the 2nd and subsequent images.(RICOH THETA X or later)
+  applySemiauto('APPLY_SEMIAUTO'),
+
+  /// Performs top/bottom correction and then saves the parameters.
+  applySave('APPLY_SAVE'),
+
+  /// Performs top/bottom correction using the saved parameters.
+  applyLoad('APPLY_LOAD'),
+
+  /// Does not perform top/bottom correction.
+  disapply('DISAPPLY'),
+
+  /// Performs the top/bottom correction with the specified front
+  /// position. The front position can be specified with
+  /// _topBottomCorrectionRotation.
+  manual('MANUAL');
+
+  final String rawValue;
+
+  const TopBottomCorrectionOptionEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static TopBottomCorrectionOptionEnum? getValue(String rawValue) {
+    return TopBottomCorrectionOptionEnum.values
+        .cast<TopBottomCorrectionOptionEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
+  }
+}
+
 /// Video stitching during shooting.
 enum VideoStitchingEnum {
   /// Stitching is OFF
@@ -3490,6 +3546,30 @@ enum VisibilityReductionEnum {
         .firstWhere((element) => element?.rawValue == rawValue,
             orElse: () => null);
   }
+}
+
+/// Sets the front position for the top/bottom correction.
+/// Enabled only for _topBottomCorrection Manual.
+class TopBottomCorrectionRotation {
+  /// Specifies the pitch.
+  /// Specified range is -90.0 to +90.0, stepSize is 0.1
+  double pitch;
+
+  /// Specifies the roll.
+  /// Specified range is -180.0 to +180.0, stepSize is 0.1
+  double roll;
+
+  /// Specifies the yaw.
+  /// Specified range is -180.0 to +180.0, stepSize is 0.1
+  double yaw;
+
+  TopBottomCorrectionRotation(this.pitch, this.roll, this.yaw);
+
+  @override
+  bool operator ==(Object other) => hashCode == other.hashCode;
+
+  @override
+  int get hashCode => Object.hashAll([pitch, roll, yaw]);
 }
 
 /// White balance auto strength.
@@ -3885,6 +3965,12 @@ class Options {
   /// TimeShift
   TimeShift? timeShift;
 
+  /// see [TopBottomCorrectionOptionEnum]
+  TopBottomCorrectionOptionEnum? topBottomCorrection;
+
+  /// see [TopBottomCorrectionRotation]
+  TopBottomCorrectionRotation? topBottomCorrectionRotation;
+
   /// Total storage space (byte).
   int? totalSpace;
 
@@ -4010,6 +4096,10 @@ class Options {
         return sleepDelay as T;
       case OptionNameEnum.timeShift:
         return timeShift as T;
+      case OptionNameEnum.topBottomCorrection:
+        return topBottomCorrection as T;
+      case OptionNameEnum.topBottomCorrectionRotation:
+        return topBottomCorrectionRotation as T;
       case OptionNameEnum.totalSpace:
         return totalSpace as T;
       case OptionNameEnum.username:
@@ -4174,6 +4264,12 @@ class Options {
         break;
       case OptionNameEnum.timeShift:
         timeShift = value;
+        break;
+      case OptionNameEnum.topBottomCorrection:
+        topBottomCorrection = value;
+        break;
+      case OptionNameEnum.topBottomCorrectionRotation:
+        topBottomCorrectionRotation = value;
         break;
       case OptionNameEnum.totalSpace:
         totalSpace = value;

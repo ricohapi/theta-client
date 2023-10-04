@@ -1223,6 +1223,48 @@ class RemainingSpaceConverter : OptionConverter {
 }
 
 /**
+ * TopBottomCorrectionConverter
+ */
+class TopBottomCorrectionConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getString("topBottomCorrection")?.let {
+      options.topBottomCorrection = ThetaRepository.TopBottomCorrectionOptionEnum.valueOf(it)
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.topBottomCorrection?.let {
+      objects.putString("topBottomCorrection", it.toString())
+    }
+  }
+}
+
+/**
+ * TopBottomCorrectionRotationConverter
+ */
+class TopBottomCorrectionRotationConverter : OptionConverter {
+  override fun setToTheta(options: ThetaRepository.Options, objects: ReadableMap) {
+    objects.getMap("topBottomCorrectionRotation")?.let {
+      options.topBottomCorrectionRotation = ThetaRepository.TopBottomCorrectionRotation(
+        pitch = it.getDouble("pitch").toFloat(),
+        roll = it.getDouble("roll").toFloat(),
+        yaw = it.getDouble("yaw").toFloat()
+      )
+    }
+  }
+
+  override fun setFromTheta(options: ThetaRepository.Options, objects: WritableMap) {
+    options.topBottomCorrectionRotation?.let {
+      val rotation = Arguments.createMap()
+      rotation.putDouble("pitch", it.pitch.toDouble())
+      rotation.putDouble("roll", it.roll.toDouble())
+      rotation.putDouble("yaw", it.yaw.toDouble())
+      objects.putMap("topBottomCorrectionRotation", rotation)
+    }
+  }
+}
+
+/**
  * TotalSpaceConverter
  */
 class TotalSpaceConverter : OptionConverter {

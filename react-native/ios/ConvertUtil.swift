@@ -52,6 +52,9 @@ let KEY_BURST_COMPENSATION = "burstCompensation"
 let KEY_BURST_MAX_EXPOSURE_TIME = "burstMaxExposureTime"
 let KEY_BURST_ENABLE_ISO_CONTROL = "burstEnableIsoControl"
 let KEY_BURST_ORDER = "burstOrder"
+let KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH = "pitch"
+let KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL = "roll"
+let KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW = "yaw"
 let KEY_TIMESHIFT_CAPTURE_INTERVAL = "_capture_interval"
 
 public class ConvertUtil: NSObject {}
@@ -108,6 +111,8 @@ let optionItemNameToEnum = [
     "shutterVolume": ThetaRepository.OptionNameEnum.shuttervolume,
     "sleepDelay": ThetaRepository.OptionNameEnum.sleepdelay,
     "timeShift": ThetaRepository.OptionNameEnum.timeshift,
+    "topBottomCorrection": ThetaRepository.OptionNameEnum.topbottomcorrection,
+    "topBottomCorrectionRotation": ThetaRepository.OptionNameEnum.topbottomcorrectionrotation,
     "totalSpace": ThetaRepository.OptionNameEnum.totalspace,
     "username": ThetaRepository.OptionNameEnum.username,
     "videoStitching": ThetaRepository.OptionNameEnum.videostitching,
@@ -309,6 +314,10 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         if let params = value as? [String: Any] {
             options.timeShift = toTimeShift(params: params)
         }
+    case ThetaRepository.OptionNameEnum.topbottomcorrection.name:
+        options.topBottomCorrection = getEnumValue(values: ThetaRepository.TopBottomCorrectionOptionEnum.values(), name: value as! String)!
+    case ThetaRepository.OptionNameEnum.topbottomcorrectionrotation.name:
+        options.topBottomCorrectionRotation = toTopBottomCorrectionRotation(params: value as! [String: Any])
     case ThetaRepository.OptionNameEnum.totalspace.name:
         options.totalSpace = KotlinLong(integerLiteral: value as! Int)
     case ThetaRepository.OptionNameEnum.username.name:
@@ -368,7 +377,9 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                           let timeshift = value as? ThetaRepository.TimeShiftSetting
                 {
                     result[key] = convertResult(timeshift: timeshift)
-                } else if let offDelay = value as? ThetaRepository.OffDelaySec {
+                } else if value is ThetaRepository.TopBottomCorrectionRotation, let rotation = value as? ThetaRepository.TopBottomCorrectionRotation {
+                    result[key] = convertResult(rotation: rotation)
+                 } else if let offDelay = value as? ThetaRepository.OffDelaySec {
                     result[key] =
                         offDelay.sec == 0 ? ThetaRepository.OffDelayEnum.disable.name : offDelay.sec
                 } else if let sleepDelay = value as? ThetaRepository.SleepDelaySec {
@@ -761,6 +772,14 @@ func convertResult(timeshift: ThetaRepository.TimeShiftSetting) -> [String: Any]
     return result
 }
 
+func convertResult(rotation: ThetaRepository.TopBottomCorrectionRotation) -> [String: Any] {
+    return [
+        KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH: rotation.pitch,
+        KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL: rotation.roll,
+        KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW: rotation.yaw,
+    ]
+}
+
 func convertResult(exif: ThetaRepository.Exif) -> [String: Any] {
     var result = [String: Any]()
     result["exifVersion"] = exif.exifVersion
@@ -955,6 +974,18 @@ func toTimeShift(params: [String: Any]) -> ThetaRepository.TimeShiftSetting {
         isFrontFirst: toKotlinBoolean(value: params["isFrontFirst"]),
         firstInterval: firstInterval,
         secondInterval: secondInterval
+    )
+}
+
+func toTopBottomCorrectionRotation(params: [String: Any]) -> ThetaRepository.TopBottomCorrectionRotation? {
+    guard let pitch = params[KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH] as? Double,
+          let roll = params[KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL] as? Double,
+          let yaw = params[KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW] as? Double else { return nil }
+
+    return ThetaRepository.TopBottomCorrectionRotation(
+        pitch: Float(pitch),
+        roll: Float(roll),
+        yaw: Float(yaw)
     )
 }
 

@@ -19,6 +19,8 @@ import type { Proxy } from './option-proxy';
 import type { ShootingMethodEnum } from './option-shooting-method';
 import type { ShutterSpeedEnum } from './option-shutter-speed';
 import type { TimeShift } from './option-time-shift';
+import type { TopBottomCorrectionOptionEnum } from './option-top-bottom-correction';
+import type { TopBottomCorrectionRotation } from './option-top-bottom-correction-rotation';
 import type { VideoStitchingEnum } from './option-video-stitching';
 import type { VisibilityReductionEnum } from './option-visibility-reduction';
 import type { WhiteBalanceAutoStrengthEnum } from './option-white-balance-auto-strength';
@@ -537,6 +539,10 @@ export const OptionNameEnum = {
   RemainingSpace: 'RemainingSpace',
   /** timeShift */
   TimeShift: 'TimeShift',
+  /** topBottomCorrection */
+  TopBottomCorrection: 'TopBottomCorrection',
+  /** topBottomCorrectionRotation */
+  TopBottomCorrectionRotation: 'TopBottomCorrectionRotation',
   /** totalSpace */
   TotalSpace: 'TotalSpace',
   /** shutterVolume */
@@ -711,6 +717,13 @@ export type Options = {
   sleepDelay?: SleepDelayEnum;
   /** Time shift shooting */
   timeShift?: TimeShift;
+  /** top bottom correction */
+  topBottomCorrection?: TopBottomCorrectionOptionEnum;
+  /**
+   * Sets the front position for the top/bottom correction.
+   * Enabled only for _topBottomCorrection Manual.
+   */
+  topBottomCorrectionRotation?: TopBottomCorrectionRotation;
   /** Total storage space (byte). */
   totalSpace?: number;
   /** User name used for digest authentication when _networkType is set to client mode. */

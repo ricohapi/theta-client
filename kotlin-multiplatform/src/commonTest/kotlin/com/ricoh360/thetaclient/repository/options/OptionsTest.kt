@@ -33,6 +33,8 @@ import com.ricoh360.thetaclient.transferred.Proxy
 import com.ricoh360.thetaclient.transferred.ShootingFunction
 import com.ricoh360.thetaclient.transferred.ShootingMethod
 import com.ricoh360.thetaclient.transferred.TimeShift
+import com.ricoh360.thetaclient.transferred.TopBottomCorrectionOption
+import com.ricoh360.thetaclient.transferred.TopBottomCorrectionRotation
 import com.ricoh360.thetaclient.transferred.VideoStitching
 import com.ricoh360.thetaclient.transferred.VisibilityReduction
 import com.ricoh360.thetaclient.transferred.WhiteBalance
@@ -115,6 +117,8 @@ class OptionsTest {
             ThetaRepository.TimeShiftIntervalEnum.INTERVAL_0,
             ThetaRepository.TimeShiftIntervalEnum.INTERVAL_1
         )
+        val topBottomCorrection = ThetaRepository.TopBottomCorrectionOptionEnum.APPLY_AUTO
+        val topBottomCorrectionRotation = ThetaRepository.TopBottomCorrectionRotation(1.0f, 2.0f, 3.0f)
         val totalSpace = 100L
         val username = "username"
         val videoStitching = ThetaRepository.VideoStitchingEnum.ONDEVICE
@@ -171,6 +175,8 @@ class OptionsTest {
             shutterVolume = shutterVolume,
             sleepDelay = sleepDelay,
             timeShift = timeShift,
+            topBottomCorrection = topBottomCorrection,
+            topBottomCorrectionRotation = topBottomCorrectionRotation,
             totalSpace = totalSpace,
             username = username,
             videoStitching = videoStitching,
@@ -231,6 +237,8 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ShutterVolume), shutterVolume, "shutterVolume")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.SleepDelay), sleepDelay, "sleepDelay")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.TimeShift), timeShift, "timeShift")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.TopBottomCorrection), topBottomCorrection, "topBottomCorrection")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.TopBottomCorrectionRotation), topBottomCorrectionRotation, "topBottomCorrectionRotation")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.TotalSpace), totalSpace, "totalSpace")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Username), username, "userName")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.VideoStitching), videoStitching, "videoStitching")
@@ -304,6 +312,8 @@ class OptionsTest {
                 ThetaRepository.OptionNameEnum.TimeShift,
                 ThetaRepository.TimeShiftSetting(true, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_2, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_3)
             ),
+            Pair(ThetaRepository.OptionNameEnum.TopBottomCorrection, ThetaRepository.TopBottomCorrectionOptionEnum.APPLY),
+            Pair(ThetaRepository.OptionNameEnum.TopBottomCorrectionRotation, ThetaRepository.TopBottomCorrectionRotation(pitch = 1.0f, roll = 1.0f, yaw = 1.0f)),
             Pair(ThetaRepository.OptionNameEnum.TotalSpace, 104L),
             Pair(ThetaRepository.OptionNameEnum.Username, "username"),
             Pair(ThetaRepository.OptionNameEnum.VideoStitching, ThetaRepository.VideoStitchingEnum.NONE),
@@ -395,6 +405,8 @@ class OptionsTest {
             TimeShift(FirstShootingEnum.FRONT, 4, 5),
             ThetaRepository.TimeShiftSetting(true, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_4, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_5)
         )
+        val topBottomCorrection = Pair(TopBottomCorrectionOption.DISAPPLY, ThetaRepository.TopBottomCorrectionOptionEnum.DISAPPLY)
+        val topBottomCorrectionRotation = Pair(TopBottomCorrectionRotation(3.0f, 2.0f, 1.0f), ThetaRepository.TopBottomCorrectionRotation(3.0f, 2.0f, 1.0f))
         val totalSpace = Pair(104L, 104L)
         val username = Pair("username", "username")
         val videoStitching = Pair(VideoStitching.NONE, ThetaRepository.VideoStitchingEnum.NONE)
@@ -449,6 +461,8 @@ class OptionsTest {
             _shutterVolume = shutterVolume.first,
             sleepDelay = sleepDelay.first,
             _timeShift = timeShift.first,
+            _topBottomCorrection = topBottomCorrection.first,
+            _topBottomCorrectionRotation = topBottomCorrectionRotation.first,
             totalSpace = totalSpace.first,
             _username = username.first,
             videoStitching = videoStitching.first,
@@ -504,6 +518,8 @@ class OptionsTest {
         assertEquals(options.shutterVolume, shutterVolume.second, "shutterVolume")
         assertEquals(options.sleepDelay, sleepDelay.second, "sleepDelay")
         assertEquals(options.timeShift, timeShift.second, "timeShift")
+        assertEquals(options.topBottomCorrection, topBottomCorrection.second, "topBottomCorrection")
+        assertEquals(options.topBottomCorrectionRotation, topBottomCorrectionRotation.second, "topBottomCorrectionRotation")
         assertEquals(options.totalSpace, totalSpace.second, "totalSpace")
         assertEquals(options.username, username.second, "username")
         assertEquals(options.videoStitching, videoStitching.second, "videoStitching")
@@ -585,6 +601,8 @@ class OptionsTest {
             TimeShift(FirstShootingEnum.REAR, 6, 7),
             ThetaRepository.TimeShiftSetting(false, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_6, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_7)
         )
+        val topBottomCorrection = Pair(TopBottomCorrectionOption.MANUAL, ThetaRepository.TopBottomCorrectionOptionEnum.MANUAL)
+        val topBottomCorrectionRotation = Pair(TopBottomCorrectionRotation(0.0f, 0.0f, 0.0f), ThetaRepository.TopBottomCorrectionRotation(0.0f, 0.0f, 0.0f))
         val totalSpace = Pair(104L, 104L)
         val userName = Pair("username", "username")
         val videoStitching = Pair(VideoStitching.NONE, ThetaRepository.VideoStitchingEnum.NONE)
@@ -639,6 +657,8 @@ class OptionsTest {
             shutterVolume = shutterVolume.second,
             sleepDelay = sleepDelay.second,
             timeShift = timeShift.second,
+            topBottomCorrection = topBottomCorrection.second,
+            topBottomCorrectionRotation = topBottomCorrectionRotation.second,
             totalSpace = totalSpace.second,
             username = userName.second,
             videoStitching = videoStitching.second,
@@ -694,6 +714,8 @@ class OptionsTest {
         assertEquals(options._shutterVolume, shutterVolume.first, "shutterVolume")
         assertEquals(options.sleepDelay, sleepDelay.first, "sleepDelay")
         assertEquals(options._timeShift, timeShift.first, "timeShift")
+        assertEquals(options._topBottomCorrection, topBottomCorrection.first, "topBottomCorrection")
+        assertEquals(options._topBottomCorrectionRotation, topBottomCorrectionRotation.first, "topBottomCorrectionRotation")
         assertEquals(options.totalSpace, totalSpace.first, "totalSpace")
         assertEquals(options._username, userName.first, "userName")
         assertEquals(options.videoStitching, videoStitching.first, "videoStitching")

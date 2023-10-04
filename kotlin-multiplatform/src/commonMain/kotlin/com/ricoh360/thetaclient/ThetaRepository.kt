@@ -445,7 +445,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             throw ThetaWebApiException(e.toString())
         } catch (e: ResponseException) {
             throw ThetaWebApiException(e.toString())
-        } catch(e: IllegalArgumentException) {
+        } catch (e: IllegalArgumentException) {
             throw ThetaWebApiException(e.toString())
         } catch (e: Exception) {
             throw NotConnectedException(e.toString())
@@ -930,6 +930,18 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _topBottomCorrection
+         */
+        TopBottomCorrection("_topBottomCorrection", TopBottomCorrectionOptionEnum::class),
+
+        /**
+         * Option name
+         * _topBottomCorrectionRotation
+         */
+        TopBottomCorrectionRotation("_topBottomCorrectionRotation", ThetaRepository.TopBottomCorrectionRotation::class),
+
+        /**
+         * Option name
          * totalSpace
          */
         TotalSpace("totalSpace", Long::class),
@@ -1328,6 +1340,16 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var timeShift: TimeShiftSetting? = null,
 
         /**
+         * @see TopBottomCorrectionOptionEnum
+         */
+        var topBottomCorrection: TopBottomCorrectionOptionEnum? = null,
+
+        /**
+         * @see TopBottomCorrectionRotation
+         */
+        var topBottomCorrectionRotation: TopBottomCorrectionRotation? = null,
+
+        /**
          * Total storage space (byte).
          */
         var totalSpace: Long? = null,
@@ -1424,8 +1446,10 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             remainingPictures = null,
             remainingVideoSeconds = null,
             remainingSpace = null,
-            totalSpace = null,
             timeShift = null,
+            topBottomCorrection = null,
+            topBottomCorrectionRotation = null,
+            totalSpace = null,
             username = null,
             videoStitching = null,
             visibilityReduction = null,
@@ -1485,6 +1509,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             remainingVideoSeconds = options.remainingVideoSeconds,
             remainingSpace = options.remainingSpace,
             timeShift = options._timeShift?.let { TimeShiftSetting(it) },
+            topBottomCorrection = options._topBottomCorrection?.let { TopBottomCorrectionOptionEnum.get(it) },
+            topBottomCorrectionRotation = options._topBottomCorrectionRotation?.let { TopBottomCorrectionRotation(it) },
             totalSpace = options.totalSpace,
             shutterVolume = options._shutterVolume,
             username = options._username,
@@ -1545,6 +1571,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 remainingVideoSeconds = remainingVideoSeconds,
                 remainingSpace = remainingSpace,
                 _timeShift = timeShift?.toTransferredTimeShift(),
+                _topBottomCorrection = topBottomCorrection?.value,
+                _topBottomCorrectionRotation = topBottomCorrectionRotation?.toTransferredTopBottomCorrectionRotation(),
                 totalSpace = totalSpace,
                 _shootingMethod = shootingMethod?.value,
                 shutterSpeed = shutterSpeed?.value,
@@ -1617,6 +1645,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.ShutterVolume -> shutterVolume
                 OptionNameEnum.SleepDelay -> sleepDelay
                 OptionNameEnum.TimeShift -> timeShift
+                OptionNameEnum.TopBottomCorrection -> topBottomCorrection
+                OptionNameEnum.TopBottomCorrectionRotation -> topBottomCorrectionRotation
                 OptionNameEnum.TotalSpace -> totalSpace
                 OptionNameEnum.Username -> username
                 OptionNameEnum.VideoStitching -> videoStitching
@@ -1687,6 +1717,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.RemainingVideoSeconds -> remainingVideoSeconds = value as Int
                 OptionNameEnum.RemainingSpace -> remainingSpace = value as Long
                 OptionNameEnum.TimeShift -> timeShift = value as TimeShiftSetting
+                OptionNameEnum.TopBottomCorrection -> topBottomCorrection = value as TopBottomCorrectionOptionEnum
+                OptionNameEnum.TopBottomCorrectionRotation -> topBottomCorrectionRotation = value as TopBottomCorrectionRotation
                 OptionNameEnum.TotalSpace -> totalSpace = value as Long
                 OptionNameEnum.Username -> username = value as String
                 OptionNameEnum.VideoStitching -> videoStitching = value as VideoStitchingEnum
@@ -4905,7 +4937,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          */
         var secondInterval: TimeShiftIntervalEnum? = null,
     ) {
-        internal constructor(timeShift: com.ricoh360.thetaclient.transferred.TimeShift) : this(
+        internal constructor(timeShift: TimeShift) : this(
             isFrontFirst = timeShift.firstShooting?.let {
                 it == FirstShootingEnum.FRONT
             },
@@ -4923,7 +4955,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          *
          * @return transferred.TimeShift
          */
-        internal fun toTransferredTimeShift(): com.ricoh360.thetaclient.transferred.TimeShift {
+        internal fun toTransferredTimeShift(): TimeShift {
             return TimeShift(
                 firstShooting = isFrontFirst?.let {
                     if (it) FirstShootingEnum.FRONT else FirstShootingEnum.REAR
@@ -4987,6 +5019,67 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * top bottom correction
+     *
+     * Sets the top/bottom correction.  For RICOH THETA V and RICOH
+     * THETA Z1, the top/bottom correction can be set only for still
+     * images.  For RICOH THETA X, the top/bottom correction can be
+     * set for both still images and videos.
+     */
+    enum class TopBottomCorrectionOptionEnum(val value: TopBottomCorrectionOption) {
+        /**
+         * Top/bottom correction is performed.
+         */
+        APPLY(TopBottomCorrectionOption.APPLY),
+
+        /**
+         * Refer to top/bottom correction when shooting with "ApplyAuto"
+         */
+        APPLY_AUTO(TopBottomCorrectionOption.APPLY_AUTO),
+
+        /**
+         * Top/bottom correction is performed. The parameters used for
+         * top/bottom correction for the first image are saved and used
+         * for the 2nd and subsequent images.(RICOH THETA X or later)
+         */
+        APPLY_SEMIAUTO(TopBottomCorrectionOption.APPLY_SEMIAUTO),
+
+        /**
+         * Performs top/bottom correction and then saves the parameters.
+         */
+        APPLY_SAVE(TopBottomCorrectionOption.APPLY_SAVE),
+
+        /**
+         * Performs top/bottom correction using the saved parameters.
+         */
+        APPLY_LOAD(TopBottomCorrectionOption.APPLY_LOAD),
+
+        /**
+         * Does not perform top/bottom correction.
+         */
+        DISAPPLY(TopBottomCorrectionOption.DISAPPLY),
+
+        /**
+         * Performs the top/bottom correction with the specified front
+         * position. The front position can be specified with
+         * _topBottomCorrectionRotation.
+         */
+        MANUAL(TopBottomCorrectionOption.MANUAL);
+
+        companion object {
+            /**
+             * Convert TopBottomCorrectionOption to TopBottomCorrectionOptionEnum
+             *
+             * @param value TopBottomCorrectionOption
+             * @return TopBottomCorrectionOptionEnum
+             */
+            fun get(value: TopBottomCorrectionOption): TopBottomCorrectionOptionEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
      * Video Stitching
      *
      * Video stitching during shooting.
@@ -5023,6 +5116,49 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Sets the front position for the top/bottom correction.
+     * Enabled only for _topBottomCorrection Manual.
+     */
+    data class TopBottomCorrectionRotation(
+        /**
+         * Specifies the pitch.
+         * Specified range is -90.0 to +90.0, stepSize is 0.1
+         */
+        val pitch: Float,
+
+        /**
+         * Specifies the roll.
+         * Specified range is -180.0 to +180.0, stepSize is 0.1
+         */
+        val roll: Float,
+
+        /**
+         * Specifies the yaw.
+         * Specified range is -180.0 to +180.0, stepSize is 0.1
+         */
+        val yaw: Float
+    ) {
+        internal constructor(rotation: com.ricoh360.thetaclient.transferred.TopBottomCorrectionRotation) : this(
+            pitch = rotation.pitch ?: 0f,
+            roll = rotation.roll ?: 0f,
+            yaw = rotation.yaw ?: 0f
+        )
+
+        /**
+         * Convert TopBottomCorrectionRotation to transferred.TopBottomCorrectionRotation. for ThetaApi.
+         *
+         * @return transferred.TopBottomCorrectionRotation
+         */
+        internal fun toTransferredTopBottomCorrectionRotation(): com.ricoh360.thetaclient.transferred.TopBottomCorrectionRotation {
+            return com.ricoh360.thetaclient.transferred.TopBottomCorrectionRotation(
+                pitch = pitch,
+                roll = roll,
+                yaw = yaw
+            )
+        }
+    }
+
+    /**
      * Visibility Reduction
      *
      * Reduction visibility of camera body to still image when stitching.
@@ -5055,7 +5191,6 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             }
         }
     }
-
 
     /**
      * White balance.
@@ -5457,7 +5592,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
-     * Get VideoCapture.Builder for capture video.
+     * Get PhotoCapture.Builder for capture video.
      *
      * @return PhotoCapture.Builder
      */

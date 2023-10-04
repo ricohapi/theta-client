@@ -18,6 +18,8 @@ export * from './iso-auto-high-limit';
 export * from './max-recordable-time';
 export * from './photo-file-format';
 export * from './preset';
+export * from './top-bottom-correction';
+export * from './top-bottom-correction-rotation';
 export * from './time-shift';
 export * from './video-file-format';
 export * from './video-stitching';

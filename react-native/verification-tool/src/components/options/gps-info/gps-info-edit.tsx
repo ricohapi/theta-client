@@ -204,6 +204,6 @@ export const GpsInfoEdit: React.FC<Props> = ({
   );
 };
 
-GpsInfoEdit.displayName = 'TimeShiftEdit';
+GpsInfoEdit.displayName = 'GpsInfoEdit';
 
 export default GpsInfoEdit;

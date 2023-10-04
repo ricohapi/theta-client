@@ -15,6 +15,7 @@ import {
   OptionNameEnum,
   Options,
   PresetEnum,
+  TopBottomCorrectionOptionEnum,
   VideoStitchingEnum,
   VisibilityReductionEnum,
   WhiteBalanceEnum,
@@ -34,6 +35,8 @@ import {
   MaxRecordableTimeEdit,
   PresetEdit,
   TimeShiftEdit,
+  TopBottomCorrectionEdit,
+  TopBottomCorrectionRotationEdit,
   VideoStitchingEdit,
   VisibilityReductionEdit,
   WhiteBalanceEdit,
@@ -192,6 +195,18 @@ const optionList: OptionItem[] = [
     },
   },
   {
+    name: 'topBottomCorrection',
+    value: {
+      optionName: OptionNameEnum.TopBottomCorrection,
+      editor: (options, onChange) => (
+        <TopBottomCorrectionEdit onChange={onChange} options={options} />
+      ),
+      defaultValue: {
+        topBottomCorrection: TopBottomCorrectionOptionEnum.APPLY_AUTO,
+      },
+    },
+  },
+  {
     name: 'videoStitching',
     value: {
       optionName: OptionNameEnum.VideoStitching,
@@ -201,6 +216,18 @@ const optionList: OptionItem[] = [
       defaultValue: {
         videoStitching: VideoStitchingEnum.NONE,
       },
+    },
+  },
+  {
+    name: 'topBottomCorrectionRotation',
+    value: {
+      optionName: OptionNameEnum.TopBottomCorrectionRotation,
+      editor: (options, onChange) => (
+        <TopBottomCorrectionRotationEdit
+          onChange={onChange}
+          options={options}
+        />
+      ),
     },
   },
   {

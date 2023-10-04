@@ -161,6 +161,14 @@ fun toTimeShift(map: Map<String, Any>): TimeShiftSetting {
     return timeShift
 }
 
+fun toTopBottomCorrectionRotation(map: Map<String, Any>): TopBottomCorrectionRotation {
+    return TopBottomCorrectionRotation(
+        pitch = (map["pitch"] as Double).toFloat(),
+        roll = (map["roll"] as Double).toFloat(),
+        yaw = (map["yaw"] as Double).toFloat()
+    )
+}
+
 fun <T> setCaptureBuilderParams(call: MethodCall, builder: Capture.Builder<T>) {
     call.argument<String>(OptionNameEnum.Aperture.name)?.also { enumName ->
         ApertureEnum.values().find { it.name == enumName }?.let {
@@ -305,6 +313,14 @@ fun toResult(timeShift: TimeShiftSetting): Map<String, Any> {
     return result
 }
 
+fun toResult(rotation: TopBottomCorrectionRotation): Map<String, Any> {
+    return mapOf(
+        "pitch" to rotation.pitch,
+        "roll" to rotation.roll,
+        "yaw" to rotation.yaw
+    )
+}
+
 fun toResult(options: Options): Map<String, Any> {
     val result = mutableMapOf<String, Any>()
 
@@ -348,6 +364,10 @@ fun toResult(options: Options): Map<String, Any> {
         } else if (name == OptionNameEnum.TimeShift) {
             options.getValue<TimeShiftSetting>(OptionNameEnum.TimeShift)?.let { timeShift ->
                 result[OptionNameEnum.TimeShift.name] = toResult(timeShift)
+            }
+        } else if (name == OptionNameEnum.TopBottomCorrectionRotation) {
+            options.getValue<TopBottomCorrectionRotation>(OptionNameEnum.TopBottomCorrectionRotation)?.let { rotation ->
+                result[OptionNameEnum.TopBottomCorrectionRotation.name] = toResult(rotation)
             }
         } else if (valueOptions.contains(name)) {
             addOptionsValueToMap<Any>(options, name, result)
@@ -422,6 +442,9 @@ fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
     } else if (name == OptionNameEnum.TimeShift) {
         @Suppress("UNCHECKED_CAST")
         options.setValue(name, toTimeShift(value as Map<String, Any>))
+    } else if (name == OptionNameEnum.TopBottomCorrectionRotation) {
+        @Suppress("UNCHECKED_CAST")
+        options.setValue(name, toTopBottomCorrectionRotation(value as Map<String, Any>))
     } else {
         getOptionValueEnum(name, value as String)?.let {
             options.setValue(name, it)
@@ -461,6 +484,7 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
         OptionNameEnum.ShootingMethod -> ShootingMethodEnum.values().find { it.name == valueName }
         OptionNameEnum.ShutterSpeed -> ShutterSpeedEnum.values().find { it.name == valueName }
         OptionNameEnum.SleepDelay -> SleepDelayEnum.values().find { it.name == valueName }
+        OptionNameEnum.TopBottomCorrection -> TopBottomCorrectionOptionEnum.values().find { it.name == valueName }
         OptionNameEnum.VideoStitching -> VideoStitchingEnum.values().find { it.name == valueName }
         OptionNameEnum.VisibilityReduction -> VisibilityReductionEnum.values().find { it.name == valueName }
         OptionNameEnum.WhiteBalance -> WhiteBalanceEnum.values().find { it.name == valueName }

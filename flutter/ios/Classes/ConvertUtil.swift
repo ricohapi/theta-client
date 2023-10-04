@@ -354,6 +354,14 @@ func toTimeShift(params: [String: Any]) -> ThetaRepository.TimeShiftSetting {
     )
 }
 
+func toTopBottomCorrectionRotation(params: [String: Any]) -> ThetaRepository.TopBottomCorrectionRotation {
+    return ThetaRepository.TopBottomCorrectionRotation(
+        pitch: Float(params["pitch"] as? Double ?? 0),
+        roll: Float(params["roll"] as? Double ?? 0),
+        yaw: Float(params["yaw"] as? Double ?? 0)
+    )
+}
+
 func convertGetOptionsParam(params: [String]) -> [ThetaRepository.OptionNameEnum] {
     var array: [ThetaRepository.OptionNameEnum] = []
     let values = ThetaRepository.OptionNameEnum.values()
@@ -390,6 +398,14 @@ func convertResult(timeshift: ThetaRepository.TimeShiftSetting) -> [String: Any]
     ]
 }
 
+func convertResult(rotation: ThetaRepository.TopBottomCorrectionRotation) -> [String: Any] {
+    return [
+        "pitch": rotation.pitch,
+        "roll": rotation.roll,
+        "yaw": rotation.yaw,
+    ]
+}
+
 func convertResult(options: ThetaRepository.Options) -> [String: Any] {
     var result = [String: Any]()
     let nameList = ThetaRepository.OptionNameEnum.values()
@@ -414,6 +430,8 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                 result[name.name] = convertResult(proxy: proxy)
             } else if value is ThetaRepository.TimeShiftSetting, let timeshift = value as? ThetaRepository.TimeShiftSetting {
                 result[name.name] = convertResult(timeshift: timeshift)
+            } else if value is ThetaRepository.TopBottomCorrectionRotation, let rotation = value as? ThetaRepository.TopBottomCorrectionRotation {
+                result[name.name] = convertResult(rotation: rotation)
             }
         }
     }
@@ -551,6 +569,10 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         if let params = value as? [String: Any] {
             options.timeShift = toTimeShift(params: params)
         }
+    case ThetaRepository.OptionNameEnum.topbottomcorrection.name:
+        options.topBottomCorrection = getEnumValue(values: ThetaRepository.TopBottomCorrectionOptionEnum.values(), name: value as! String)!
+    case ThetaRepository.OptionNameEnum.topbottomcorrectionrotation.name:
+        options.topBottomCorrectionRotation = toTopBottomCorrectionRotation(params: value as! [String: Any])
     case ThetaRepository.OptionNameEnum.totalspace.name:
         options.totalSpace = KotlinLong(integerLiteral: value as! Int)
     case ThetaRepository.OptionNameEnum.username.name:
