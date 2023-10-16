@@ -503,6 +503,12 @@ void main() {
       ],
       [OptionNameEnum.language, 'Language', LanguageEnum.de, 'DE'],
       [
+        OptionNameEnum.latestEnabledExposureDelayTime,
+        'LatestEnabledExposureDelayTime',
+        ExposureDelayEnum.delay1,
+        'DELAY_1'
+      ],
+      [
         OptionNameEnum.maxRecordableTime,
         'MaxRecordableTime',
         MaxRecordableTimeEnum.time_1500,
@@ -575,6 +581,18 @@ void main() {
       ],
       [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
       [OptionNameEnum.username, 'Username', 'username', 'username'],
+      [
+        OptionNameEnum.videoStitching,
+        'VideoStitching',
+        VideoStitchingEnum.none,
+        'NONE'
+      ],
+      [
+        OptionNameEnum.visibilityReduction,
+        'VisibilityReduction',
+        VisibilityReductionEnum.off,
+        'OFF'
+      ],
       [
         OptionNameEnum.whiteBalance,
         'WhiteBalance',
@@ -822,6 +840,18 @@ void main() {
       ],
       [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
       [OptionNameEnum.username, 'Username', 'username', 'username'],
+      [
+        OptionNameEnum.videoStitching,
+        'VideoStitching',
+        VideoStitchingEnum.none,
+        'NONE'
+      ],
+      [
+        OptionNameEnum.visibilityReduction,
+        'VisibilityReduction',
+        VisibilityReductionEnum.off,
+        'OFF'
+      ],
       [
         OptionNameEnum.whiteBalance,
         'WhiteBalance',
