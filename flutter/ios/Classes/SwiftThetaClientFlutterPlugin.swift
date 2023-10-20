@@ -7,6 +7,8 @@ let NOTIFY_LIVE_PREVIEW = 10001
 let NOTIFY_TIME_SHIFT_PROGRESS = 10002
 let NOTIFY_VIDEO_CAPTURE_STOP_ERROR = 10003
 let NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR = 10004
+let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_PROGRESS = 10005
+let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_STOP_ERROR = 10006
 
 public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     public func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -39,6 +41,9 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     var limitlessIntervalCaptureBuilder: LimitlessIntervalCapture.Builder? = nil
     var limitlessIntervalCapture: LimitlessIntervalCapture? = nil
     var limitlessIntervalCapturing: LimitlessIntervalCapturing? = nil
+    var shotCountSpecifiedIntervalCaptureBuilder: ShotCountSpecifiedIntervalCapture.Builder? = nil
+    var shotCountSpecifiedIntervalCapture: ShotCountSpecifiedIntervalCapture? = nil
+    var shotCountSpecifiedIntervalCapturing: ShotCountSpecifiedIntervalCapturing? = nil
 
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "theta_client_flutter", binaryMessenger: registrar.messenger())
@@ -117,6 +122,14 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             startLimitlessIntervalCapture(result: result)
         case "stopLimitlessIntervalCapture":
             stopLimitlessIntervalCapture(result: result)
+        case "getShotCountSpecifiedIntervalCaptureBuilder":
+            getShotCountSpecifiedIntervalCaptureBuilder(call: call, result: result)
+        case "buildShotCountSpecifiedIntervalCapture":
+            buildShotCountSpecifiedIntervalCapture(call: call, result: result)
+        case "startShotCountSpecifiedIntervalCapture":
+            startShotCountSpecifiedIntervalCapture(result: result)
+        case "stopShotCountSpecifiedIntervalCapture":
+            stopShotCountSpecifiedIntervalCapture(result: result)
         case "getOptions":
             getOptions(call: call, result: result)
         case "setOptions":
@@ -183,6 +196,9 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         limitlessIntervalCaptureBuilder = nil
         limitlessIntervalCapture = nil
         limitlessIntervalCapturing = nil
+        shotCountSpecifiedIntervalCaptureBuilder = nil
+        shotCountSpecifiedIntervalCapture = nil
+        shotCountSpecifiedIntervalCapturing = nil
         previewing = false
 
         thetaRepository = try await withCheckedThrowingContinuation { continuation in
@@ -460,14 +476,14 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 self.callback = callback
             }
 
-            func onSuccess(fileUrl: String) {
+            func onSuccess(fileUrl: String?) {
                 callback(fileUrl, nil)
             }
 
             func onProgress(completion _: Float) {}
 
             func onError(exception: ThetaRepository.ThetaRepositoryException) {
-                callback(nil, exception as? Error)
+                callback(nil, exception.asError())
             }
         }
         photoCapture!.takePicture(
@@ -527,14 +543,14 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             }
 
             func onError(exception: ThetaRepository.ThetaRepositoryException) {
-                callback(nil, exception as? Error)
+                callback(nil, exception.asError())
             }
 
             func onProgress(completion: Float) {
                 plugin?.sendNotifyEvent(id: NOTIFY_TIME_SHIFT_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
             }
 
-            func onSuccess(fileUrl_ fileUrl: String?) {
+            func onSuccess(fileUrl: String?) {
                 callback(fileUrl, nil)
             }
         }
@@ -612,7 +628,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             }
 
             func onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                callback(nil, exception as? Error)
+                callback(nil, exception.asError())
             }
 
             func onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
@@ -694,7 +710,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             }
 
             func onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                callback(nil, exception as? Error)
+                callback(nil, exception.asError())
             }
 
             func onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
@@ -722,6 +738,94 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             return
         }
         limitlessIntervalCapturing.stopCapture()
+        result(nil)
+    }
+    
+    func getShotCountSpecifiedIntervalCaptureBuilder(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let thetaRepository else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        if let shotCount = call.arguments as? Int32 {
+            shotCountSpecifiedIntervalCaptureBuilder = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(shotCount: shotCount)
+        }
+        result(nil)
+    }
+
+    func buildShotCountSpecifiedIntervalCapture(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let _ = thetaRepository, let builder = shotCountSpecifiedIntervalCaptureBuilder else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        if let arguments = call.arguments as? [String: Any] {
+            setCaptureBuilderParams(params: arguments, builder: builder)
+            setShotCountSpecifiedIntervalCaptureBuilderParams(params: arguments, builder: builder)
+        }
+        builder.build(completionHandler: { capture, error in
+            if let thetaError = error {
+                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                result(flutterError)
+            } else {
+                self.shotCountSpecifiedIntervalCapture = capture
+                result(nil)
+            }
+        })
+    }
+
+    func startShotCountSpecifiedIntervalCapture(result: @escaping FlutterResult) {
+        guard let _ = thetaRepository, let capture = shotCountSpecifiedIntervalCapture else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        class Callback: ShotCountSpecifiedIntervalCaptureStartCaptureCallback {
+            let callback: (_ urls: [String]?, _ error: Error?) -> Void
+            weak var plugin: SwiftThetaClientFlutterPlugin?
+            init(_ callback: @escaping (_ urls: [String]?, _ error: Error?) -> Void, plugin: SwiftThetaClientFlutterPlugin) {
+                self.callback = callback
+                self.plugin = plugin
+            }
+
+            func onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                callback(nil, exception.asError())
+            }
+
+            func onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                let error = exception.asError()
+                plugin?.sendNotifyEvent(id: NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_STOP_ERROR, params: toMessageNotifyParam(message: error.localizedDescription))
+            }
+
+            func onProgress(completion: Float) {
+                plugin?.sendNotifyEvent(id: NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
+            }
+
+            func onCaptureCompleted(fileUrls: [String]?) {
+                callback(fileUrls, nil)
+            }
+        }
+
+        shotCountSpecifiedIntervalCapturing = capture.startCapture(
+            callback: Callback({ fileUrl, error in
+                                   if let thetaError = error {
+                                       let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                                       result(flutterError)
+                                   } else {
+                                       result(fileUrl)
+                                   }
+                               },
+                               plugin: self)
+        )
+    }
+
+    func stopShotCountSpecifiedIntervalCapture(result: @escaping FlutterResult) {
+        guard let _ = thetaRepository, let capturing = shotCountSpecifiedIntervalCapturing else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        capturing.stopCapture()
         result(nil)
     }
 

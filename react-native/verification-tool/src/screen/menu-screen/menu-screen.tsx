@@ -57,6 +57,14 @@ const MenuScreen: React.FC = ({ navigation }) => {
         },
       },
     },
+    {
+      name: '・interval shooting with the shot count specified',
+      value: {
+        selectedFunction: async () => {
+          navigation.navigate('shotCountSpecifiedIntervalCapture');
+        },
+      },
+    },
   ];
 
   const functionList: FunctionItem[] = [

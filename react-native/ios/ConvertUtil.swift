@@ -547,6 +547,17 @@ func setLimitlessIntervalCaptureBuilderParams(params: [String: Any], builder: Li
     }
 }
 
+func setShotCountSpecifiedIntervalCaptureBuilderParams(params: [String: Any], builder: ShotCountSpecifiedIntervalCapture.Builder) {
+    if let interval = params[KEY_TIMESHIFT_CAPTURE_INTERVAL] as? Int,
+       interval >= 0
+    {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
+    if let value = params[KEY_CAPTURE_INTERVAL] as? Int32 {
+        builder.setCaptureInterval(interval: value)
+    }
+}
+
 // MARK: - Utility
 
 func getEnumValue<T, E: KotlinEnum<T>>(values: KotlinArray<E>, name: String) -> E? {

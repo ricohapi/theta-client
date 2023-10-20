@@ -2,7 +2,7 @@ group 'com.ricoh360.thetaclient.theta_client_flutter'
 version '1.0.0'
 
 buildscript {
-    ext.kotlin_version = '1.6.10'
+    ext.kotlin_version = '1.8.20'
     repositories {
         google()
         mavenCentral()

@@ -18,6 +18,10 @@ export const NativeModules = {
     buildLimitlessIntervalCapture: jest.fn(),
     startLimitlessIntervalCapture: jest.fn(),
     stopLimitlessIntervalCapture: jest.fn(),
+    getShotCountSpecifiedIntervalCaptureBuilder: jest.fn(),
+    buildShotCountSpecifiedIntervalCapture: jest.fn(),
+    startShotCountSpecifiedIntervalCapture: jest.fn(),
+    cancelShotCountSpecifiedIntervalCapture: jest.fn(),
   },
 };
 

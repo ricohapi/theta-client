@@ -56,7 +56,7 @@ class PhotoCapture private constructor(private val endpoint: String, options: Op
          *
          * @param fileUrl URL of the picture taken
          */
-        fun onSuccess(fileUrl: String)
+        fun onSuccess(fileUrl: String?)
 
         /**
          * Called when state "inProgress".
@@ -96,7 +96,11 @@ class PhotoCapture private constructor(private val endpoint: String, options: Op
                 callback.onError(exception = ThetaRepository.ThetaWebApiException(message = e.message ?: e.toString()))
                 return@launch
             } catch (e: ResponseException) {
-                callback.onError(exception = ThetaRepository.ThetaWebApiException.create(exception = e))
+                if (isCanceledShootingResponse(e.response)) {
+                    callback.onSuccess(fileUrl = null) // canceled
+                } else {
+                    callback.onError(exception = ThetaRepository.ThetaWebApiException.create(exception = e))
+                }
                 return@launch
             } catch (e: Exception) {
                 callback.onError(exception = ThetaRepository.NotConnectedException(message = e.message ?: e.toString()))
@@ -104,11 +108,16 @@ class PhotoCapture private constructor(private val endpoint: String, options: Op
             }
 
             if (takePictureResponse.state == CommandState.DONE) {
-                callback.onSuccess(fileUrl = takePictureResponse.results!!.fileUrl)
+                callback.onSuccess(fileUrl = takePictureResponse.results?.fileUrl)
                 return@launch
             }
 
-            callback.onError(exception = ThetaRepository.ThetaWebApiException(message = takePictureResponse.error?.message ?: takePictureResponse.error.toString()))
+            val error = takePictureResponse.error
+            if (error != null && !error.isCanceledShootingCode()) {
+                callback.onError(exception = ThetaRepository.ThetaWebApiException(message = error.message))
+            } else {
+                callback.onSuccess(fileUrl = null) // canceled
+            }
         }
     }
 

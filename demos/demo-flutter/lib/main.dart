@@ -25,6 +25,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   final _thetaClientFlutter = ThetaClientFlutter();
   bool _isInitTheta = false;
   bool _initializing = false;
+  ThetaModel? _thetaModel;
 
   final String endpoint = 'http://192.168.1.1:80/';
 
@@ -76,20 +77,20 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       return;
     }
     bool isInitTheta;
+    ThetaModel? thetaModel;
     try {
+      _initializing = true;
       isInitTheta = await _thetaClientFlutter.isInitialized();
-      if (!isInitTheta) {
-        _initializing = true;
-        debugPrint('start initialize');
-        await _thetaClientFlutter.initialize(endpoint);
+      debugPrint('start initialize');
+      await _thetaClientFlutter.initialize(endpoint);
+      thetaModel = await _thetaClientFlutter.getThetaModel();
 
-        // // Client mode authentication settings
-        // final config = ThetaConfig();
-        // config.clientMode = DigestAuth('THETAXX12345678', '12345678');
-        // await _thetaClientFlutter.initialize(endpoint, config);
+      // // Client mode authentication settings
+      // final config = ThetaConfig();
+      // config.clientMode = DigestAuth('THETAXX12345678', '12345678');
+      // await _thetaClientFlutter.initialize(endpoint, config);
 
-        isInitTheta = true;
-      }
+      isInitTheta = true;
     } on PlatformException {
       if (!mounted) return;
       debugPrint('Error. init');
@@ -103,6 +104,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     setState(() {
       _isInitTheta = isInitTheta;
+      _thetaModel = thetaModel;
     });
   }
 
@@ -114,6 +116,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         platformVersion: _platformVersion,
         isInitialized: _isInitTheta,
         connectTheta: initTheta,
+        thetaModel: _thetaModel,
       ),
     );
   }
@@ -123,16 +126,18 @@ class Home extends StatelessWidget {
   final String platformVersion;
   final bool isInitialized;
   final Function connectTheta;
+  final ThetaModel? thetaModel;
   const Home({Key? key,
     required this.platformVersion,
     required this.isInitialized,
     required this.connectTheta,
+    required this.thetaModel,
     }) : super(key: key);
 
 
   @override
   Widget build(BuildContext context) {
-    String camera = isInitialized ? 'connected!': 'disconnected';
+    String camera = isInitialized ? 'connected! $thetaModel': 'disconnected';
     return Scaffold(
         appBar: AppBar(
           title: const Text('Plugin example app'),

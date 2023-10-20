@@ -4,40 +4,37 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './styles';
 import Button from '../../components/ui/button';
 import {
-  CaptureModeEnum,
   Options,
-  TimeShiftCapture,
-  getTimeShiftCaptureBuilder,
-  setOptions,
+  ShotCountSpecifiedIntervalCapture,
+  getShotCountSpecifiedIntervalCaptureBuilder,
   stopSelfTimer,
 } from 'theta-client-react-native';
 import { CaptureCommonOptionsEdit } from '../../components/capture/capture-common-options';
-import { TimeShiftEdit } from '../../components/options/time-shift';
 import { InputNumber } from '../../components/ui/input-number';
+import { NumberEdit } from 'verification-tool/src/components/options/number-edit';
 
-const TimeShiftCaptureScreen: React.FC = ({ navigation }) => {
+const ShotCountSpecifiedIntervalCaptureScreen: React.FC = ({ navigation }) => {
   const [interval, setInterval] = React.useState<number>();
+  const [shotCount, setShotCount] = React.useState<number>(2);
   const [message, setMessage] = React.useState('progress = 0');
   const [captureOptions, setCaptureOptions] = React.useState<Options>();
   const [isTaking, setIsTaking] = React.useState(false);
-  const [capture, setCapture] = React.useState<TimeShiftCapture>();
+  const [capture, setCapture] =
+    React.useState<ShotCountSpecifiedIntervalCapture>();
 
   const onTake = async () => {
     if (isTaking) {
       return;
     }
 
-    const builder = getTimeShiftCaptureBuilder();
+    const builder = getShotCountSpecifiedIntervalCaptureBuilder(shotCount);
     if (interval != null) {
       builder.setCheckStatusCommandInterval(interval);
     }
-    captureOptions?.timeShift?.isFrontFirst &&
-      builder.setIsFrontFirst(captureOptions.timeShift.isFrontFirst);
-    captureOptions?.timeShift?.firstInterval &&
-      builder.setFirstInterval(captureOptions.timeShift.firstInterval);
-    captureOptions?.timeShift?.secondInterval &&
-      builder.setSecondInterval(captureOptions.timeShift.secondInterval);
 
+    if (captureOptions?.captureInterval != null) {
+      builder.setCaptureInterval(captureOptions.captureInterval);
+    }
     captureOptions?.aperture && builder.setAperture(captureOptions.aperture);
     if (captureOptions?.colorTemperature != null) {
       builder.setColorTemperature(captureOptions.colorTemperature);
@@ -57,9 +54,14 @@ const TimeShiftCaptureScreen: React.FC = ({ navigation }) => {
     captureOptions?.whiteBalance &&
       builder.setWhiteBalance(captureOptions.whiteBalance);
 
-    console.log('TimeShiftCapture interval: ' + interval);
-    console.log('TimeShiftCapture options: ' + JSON.stringify(captureOptions));
-    console.log('TimeShiftCapture builder: ' + JSON.stringify(builder));
+    console.log('ShotCountSpecifiedIntervalCapture interval: ' + interval);
+    console.log(
+      'ShotCountSpecifiedIntervalCapture options: ' +
+        JSON.stringify(captureOptions)
+    );
+    console.log(
+      'ShotCountSpecifiedIntervalCapture builder: ' + JSON.stringify(builder)
+    );
 
     try {
       setCapture(await builder.build());
@@ -67,7 +69,7 @@ const TimeShiftCaptureScreen: React.FC = ({ navigation }) => {
     } catch (error) {
       setIsTaking(false);
       Alert.alert(
-        'TimeShiftCaptureBuilder build error',
+        'ShotCountSpecifiedIntervalCapture build error',
         JSON.stringify(error),
         [{ text: 'OK' }]
       );
@@ -79,22 +81,29 @@ const TimeShiftCaptureScreen: React.FC = ({ navigation }) => {
     setIsTaking(false);
   };
 
-  const startTimeShiftCapture = async () => {
+  const startCapture = async () => {
     if (capture == null) {
       initCapture();
       return;
     }
     try {
-      console.log('startTimeShiftCapture startCapture');
-      const url = await capture.startCapture((completion) => {
-        if (isTaking) return;
-        setMessage(`progress = ${completion}`);
-      });
+      console.log('ShotCountSpecifiedIntervalCapture startCapture');
+      const urls = await capture.startCapture(
+        (completion) => {
+          if (isTaking) return;
+          setMessage(`progress = ${completion}`);
+        },
+        (error) => {
+          Alert.alert('Cancel error', JSON.stringify(error), [{ text: 'OK' }]);
+        }
+      );
       initCapture();
-      if (url) {
-        Alert.alert('TimeShift file url : ', url, [{ text: 'OK' }]);
+      if (urls) {
+        Alert.alert(`file ${urls.length} urls : `, urls.join('\n'), [
+          { text: 'OK' },
+        ]);
       } else {
-        Alert.alert('TimeShift canceled.');
+        Alert.alert('Capture', 'Capture cancel', [{ text: 'OK' }]);
       }
     } catch (error) {
       initCapture();
@@ -127,17 +136,15 @@ const TimeShiftCaptureScreen: React.FC = ({ navigation }) => {
   };
 
   React.useEffect(() => {
-    setOptions({ captureMode: CaptureModeEnum.IMAGE }).catch();
-  }, []);
-
-  React.useEffect(() => {
-    navigation.setOptions({ title: 'TimeShift Capture' });
+    navigation.setOptions({
+      title: 'interval shooting with the shot count specified',
+    });
   }, [navigation]);
 
   React.useEffect(() => {
     if (capture != null && !isTaking) {
       setIsTaking(true);
-      startTimeShiftCapture();
+      startCapture();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [capture]);
@@ -152,7 +159,7 @@ const TimeShiftCaptureScreen: React.FC = ({ navigation }) => {
         <View style={styles.bottomViewContainerLayout}>
           <Button
             style={styles.button}
-            title="take TimeShift"
+            title="start"
             onPress={onTake}
             disabled={isTaking}
           />
@@ -180,11 +187,21 @@ const TimeShiftCaptureScreen: React.FC = ({ navigation }) => {
               setInterval(value);
             }}
           />
-          <TimeShiftEdit
+          <InputNumber
+            title="shot count"
+            placeHolder="Input value"
+            value={shotCount}
+            onChange={(value) => {
+              setShotCount(value ?? 2);
+            }}
+          />
+          <NumberEdit
+            propName={'captureInterval'}
             onChange={(option) => {
               setCaptureOptions(option);
             }}
             options={captureOptions}
+            placeHolder="Input value"
           />
           <CaptureCommonOptionsEdit
             onChange={(option) => {
@@ -198,4 +215,4 @@ const TimeShiftCaptureScreen: React.FC = ({ navigation }) => {
   );
 };
 
-export default TimeShiftCaptureScreen;
+export default ShotCountSpecifiedIntervalCaptureScreen;

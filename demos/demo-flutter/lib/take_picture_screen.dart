@@ -198,13 +198,20 @@ class _TakePictureScreen extends State<TakePictureScreen> with WidgetsBindingObs
       });
       debugPrint('take picture: $fileUrl');
       if (!mounted) return;
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => PhotoScreen(
-          name: 'Take Picture',
-          fileUrl: fileUrl,
+      if (fileUrl != null) {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => PhotoScreen(
+            name: 'Take Picture',
+            fileUrl: fileUrl,
+            )
           )
-        )
-      ).then((value) => startLivePreview());
+        ).then((value) => startLivePreview());
+      } else {
+        setState(() {
+          shooting = true;
+        });
+        debugPrint('takePicture canceled.');
+      }
     }, (exception) {
       setState(() {
         shooting = false;

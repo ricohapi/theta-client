@@ -217,6 +217,38 @@ class LimitlessIntervalCaptureBuilder
   }
 }
 
+/// Builder of ShotCountSpecifiedIntervalCapture
+class ShotCountSpecifiedIntervalCaptureBuilder
+    extends CaptureBuilder<ShotCountSpecifiedIntervalCaptureBuilder> {
+  int _interval = -1;
+
+  ShotCountSpecifiedIntervalCaptureBuilder setCheckStatusCommandInterval(
+      int timeMillis) {
+    _interval = timeMillis;
+    return this;
+  }
+
+  /// Set shooting interval (sec.) for interval shooting.
+  ShotCountSpecifiedIntervalCaptureBuilder setCaptureInterval(int interval) {
+    _options[OptionNameEnum.captureInterval.rawValue] = interval;
+    return this;
+  }
+
+  /// Builds an instance of a ShotCountSpecifiedIntervalCapture that has all the combined parameters of the Options that have been added to the Builder.
+  Future<ShotCountSpecifiedIntervalCapture> build() async {
+    var completer = Completer<ShotCountSpecifiedIntervalCapture>();
+    try {
+      await ThetaClientFlutterPlatform.instance
+          .buildShotCountSpecifiedIntervalCapture(_options, _interval);
+      completer
+          .complete(ShotCountSpecifiedIntervalCapture(_options, _interval));
+    } catch (e) {
+      completer.completeError(e);
+    }
+    return completer.future;
+  }
+}
+
 /// Photo image format used in PhotoCapture.
 enum PhotoFileFormatEnum {
   /// Image File format.

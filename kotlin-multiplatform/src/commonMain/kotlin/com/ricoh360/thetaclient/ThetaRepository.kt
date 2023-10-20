@@ -2,6 +2,7 @@ package com.ricoh360.thetaclient
 
 import com.ricoh360.thetaclient.capture.LimitlessIntervalCapture
 import com.ricoh360.thetaclient.capture.PhotoCapture
+import com.ricoh360.thetaclient.capture.ShotCountSpecifiedIntervalCapture
 import com.ricoh360.thetaclient.capture.TimeShiftCapture
 import com.ricoh360.thetaclient.capture.VideoCapture
 import com.ricoh360.thetaclient.transferred.*
@@ -5616,6 +5617,15 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     fun getLimitlessIntervalCaptureBuilder(): LimitlessIntervalCapture.Builder {
         return LimitlessIntervalCapture.Builder(endpoint, cameraModel)
+    }
+
+    /**
+     * Get ShotCountSpecifiedIntervalCapture.Builder for interval shooting with the shot count specified.
+     * @param shotCount shot count specified
+     * @return ShotCountSpecifiedIntervalCapture.Builder
+     */
+    fun getShotCountSpecifiedIntervalCaptureBuilder(shotCount: Int): ShotCountSpecifiedIntervalCapture.Builder {
+        return ShotCountSpecifiedIntervalCapture.Builder(shotCount, endpoint, cameraModel)
     }
 
     /**

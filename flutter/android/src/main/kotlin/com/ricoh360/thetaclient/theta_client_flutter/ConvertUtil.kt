@@ -7,6 +7,7 @@ import com.ricoh360.thetaclient.capture.PhotoCapture
 import com.ricoh360.thetaclient.capture.TimeShiftCapture
 import com.ricoh360.thetaclient.capture.VideoCapture
 import com.ricoh360.thetaclient.capture.LimitlessIntervalCapture
+import com.ricoh360.thetaclient.capture.ShotCountSpecifiedIntervalCapture
 import io.flutter.plugin.common.MethodCall
 
 const val KEY_CLIENT_MODE = "clientMode"
@@ -178,6 +179,11 @@ fun <T> setCaptureBuilderParams(call: MethodCall, builder: Capture.Builder<T>) {
     call.argument<Int>(OptionNameEnum.ColorTemperature.name)?.also {
         builder.setColorTemperature(it)
     }
+    call.argument<String>(OptionNameEnum.ExposureCompensation.name)?.also { enumName ->
+        ExposureCompensationEnum.values().find { it.name == enumName }?.let {
+            builder.setExposureCompensation(it)
+        }
+    }
     call.argument<String>(OptionNameEnum.ExposureDelay.name)?.also { enumName ->
         ExposureDelayEnum.values().find { it.name == enumName }?.let {
             builder.setExposureDelay(it)
@@ -265,6 +271,17 @@ fun setVideoCaptureBuilderParams(call: MethodCall, builder: VideoCapture.Builder
 }
 
 fun setLimitlessIntervalCaptureBuilderParams(call: MethodCall, builder: LimitlessIntervalCapture.Builder) {
+    call.argument<Int>(OptionNameEnum.CaptureInterval.name)?.also {
+        builder.setCaptureInterval(it)
+    }
+}
+
+fun setShotCountSpecifiedIntervalCaptureBuilderParams(call: MethodCall, builder: ShotCountSpecifiedIntervalCapture.Builder) {
+    call.argument<Int>("_capture_interval")?.let {
+        if (it >= 0) {
+            builder.setCheckStatusCommandInterval(it.toLong())
+        }
+    }
     call.argument<Int>(OptionNameEnum.CaptureInterval.name)?.also {
         builder.setCaptureInterval(it)
     }
@@ -472,7 +489,7 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
         OptionNameEnum.Gain -> GainEnum.values().find { it.name == valueName }
         OptionNameEnum.ImageStitching -> ImageStitchingEnum.values().find { it.name == valueName }
         OptionNameEnum.Iso -> IsoEnum.values().find { it.name == valueName }
-        OptionNameEnum.IsoAutoHighLimit -> ApertureEnum.values().find { it.name == valueName }
+        OptionNameEnum.IsoAutoHighLimit -> IsoAutoHighLimitEnum.values().find { it.name == valueName }
         OptionNameEnum.Language -> LanguageEnum.values().find { it.name == valueName }
         OptionNameEnum.LatestEnabledExposureDelayTime -> ExposureDelayEnum.values().find { it.name == valueName }
         OptionNameEnum.MaxRecordableTime -> MaxRecordableTimeEnum.values().find { it.name == valueName }

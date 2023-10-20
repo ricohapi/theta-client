@@ -72,7 +72,7 @@ class PhotoCapture extends Capture {
   }
 
   /// Take a picture.
-  void takePicture(void Function(String fileUrl) onSuccess,
+  void takePicture(void Function(String? fileUrl) onSuccess,
       void Function(Exception exception) onError) {
     ThetaClientFlutterPlatform.instance
         .takePicture()
@@ -140,7 +140,7 @@ class LimitlessIntervalCapture extends Capture {
   LimitlessIntervalCapture(super.options);
 
   /// Get shooting interval (sec.) for interval shooting.
-  int? setCaptureInterval() =>
+  int? getCaptureInterval() =>
       _options[OptionNameEnum.captureInterval.rawValue];
 
   /// Starts limitless interval capture.
@@ -153,5 +153,37 @@ class LimitlessIntervalCapture extends Capture {
         .then((value) => onCaptureCompleted(value))
         .onError((error, stackTrace) => onCaptureFailed(error as Exception));
     return LimitlessIntervalCapturing();
+  }
+}
+
+/// Capture of interval shooting with the shot count specified
+class ShotCountSpecifiedIntervalCapture extends Capture {
+  final int _interval;
+
+  ShotCountSpecifiedIntervalCapture(super.options, this._interval);
+
+  int getCheckStatusCommandInterval() {
+    return _interval;
+  }
+
+  /// Get shooting interval (sec.) for interval shooting.
+  int? getCaptureInterval() =>
+      _options[OptionNameEnum.captureInterval.rawValue];
+
+  /// Get number of shots for interval shooting.
+  int? getCaptureNumber() => _options[OptionNameEnum.captureNumber.rawValue];
+
+  /// Starts interval shooting with the shot count specified.
+  ShotCountSpecifiedIntervalCapturing startCapture(
+    void Function(List<String>? fileUrls) onSuccess,
+    void Function(double completion) onProgress,
+    void Function(Exception exception) onCaptureFailed,
+    {void Function(Exception exception)? onStopFailed}
+  ) {
+    ThetaClientFlutterPlatform.instance
+        .startShotCountSpecifiedIntervalCapture(onProgress, onStopFailed)
+        .then((value) => onSuccess(value))
+        .onError((error, stackTrace) => onCaptureFailed(error as Exception));
+    return ShotCountSpecifiedIntervalCapturing();
   }
 }

@@ -253,6 +253,17 @@ func setLimitlessIntervalCaptureBuilderParams(params: [String: Any], builder: Li
     }
 }
 
+func setShotCountSpecifiedIntervalCaptureBuilderParams(params: [String: Any], builder: ShotCountSpecifiedIntervalCapture.Builder) {
+    if let interval = params["_capture_interval"] as? Int,
+       interval >= 0
+    {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
+    if let value = params[ThetaRepository.OptionNameEnum.captureinterval.name] as? Int32 {
+        builder.setCaptureInterval(interval: value)
+    }
+}
+
 func toBitrate(value: Any) -> ThetaRepositoryBitrate? {
     if value is NSNumber, let intVal = value as? Int32 {
         return ThetaRepository.BitrateNumber(value: intVal)

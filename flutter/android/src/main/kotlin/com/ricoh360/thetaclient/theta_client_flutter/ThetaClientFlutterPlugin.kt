@@ -9,6 +9,8 @@ import com.ricoh360.thetaclient.capture.VideoCapture
 import com.ricoh360.thetaclient.capture.VideoCapturing
 import com.ricoh360.thetaclient.capture.LimitlessIntervalCapture
 import com.ricoh360.thetaclient.capture.LimitlessIntervalCapturing
+import com.ricoh360.thetaclient.capture.ShotCountSpecifiedIntervalCapture
+import com.ricoh360.thetaclient.capture.ShotCountSpecifiedIntervalCapturing
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
@@ -46,6 +48,9 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
     var limitlessIntervalCaptureBuilder: LimitlessIntervalCapture.Builder? = null
     var limitlessIntervalCapture: LimitlessIntervalCapture? = null
     var limitlessIntervalCapturing: LimitlessIntervalCapturing? = null
+    var shotCountSpecifiedIntervalCaptureBuilder: ShotCountSpecifiedIntervalCapture.Builder? = null
+    var shotCountSpecifiedIntervalCapture: ShotCountSpecifiedIntervalCapture? = null
+    var shotCountSpecifiedIntervalCapturing: ShotCountSpecifiedIntervalCapturing? = null
 
     companion object {
         const val errorCode: String = "Error"
@@ -58,6 +63,8 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         const val notifyIdTimeShiftProgress = 10002
         const val notifyIdVideoCaptureStopError = 10003
         const val notifyIdLimitlessIntervalCaptureStopError = 10004
+        const val notifyIdShotCountSpecifiedIntervalCaptureProgress = 10005
+        const val notifyIdShotCountSpecifiedIntervalCaptureStopError = 10006
     }
 
     fun sendNotifyEvent(id: Int, params: Map<String, Any?>) {
@@ -230,6 +237,24 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 stopLimitlessIntervalCapture(result)
             }
 
+            "getShotCountSpecifiedIntervalCaptureBuilder" -> {
+                getShotCountSpecifiedIntervalCaptureBuilder(call, result)
+            }
+
+            "buildShotCountSpecifiedIntervalCapture" -> {
+                scope.launch {
+                    buildShotCountSpecifiedIntervalCapture(call, result)
+                }
+            }
+
+            "startShotCountSpecifiedIntervalCapture" -> {
+                startShotCountSpecifiedIntervalCapture(result)
+            }
+
+            "stopShotCountSpecifiedIntervalCapture" -> {
+                stopShotCountSpecifiedIntervalCapture(result)
+            }
+
             "getOptions" -> {
                 scope.launch {
                     getOptions(call, result)
@@ -398,6 +423,9 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         limitlessIntervalCaptureBuilder = null
         limitlessIntervalCapture = null
         limitlessIntervalCapturing = null
+        shotCountSpecifiedIntervalCaptureBuilder = null
+        shotCountSpecifiedIntervalCapture = null
+        shotCountSpecifiedIntervalCapturing = null
 
         try {
             endpoint = call.argument<String>("endpoint")!!
@@ -525,7 +553,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             return
         }
         photoCapture!!.takePicture(object : PhotoCapture.TakePictureCallback {
-            override fun onSuccess(fileUrl: String) {
+            override fun onSuccess(fileUrl: String?) {
                 result.success(fileUrl)
             }
 
@@ -714,6 +742,79 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             return
         }
         limitlessIntervalCapturing?.stopCapture()
+        result.success(null)
+    }
+
+    fun getShotCountSpecifiedIntervalCaptureBuilder(call: MethodCall, result: Result) {
+        val theta = thetaRepository
+        if (theta == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        (call.arguments as? Int)?.let {
+            shotCountSpecifiedIntervalCaptureBuilder = theta.getShotCountSpecifiedIntervalCaptureBuilder(it)
+        }
+        result.success(null)
+    }
+
+    suspend fun buildShotCountSpecifiedIntervalCapture(call: MethodCall, result: Result) {
+        val theta = thetaRepository
+        val shotCountSpecifiedIntervalCaptureBuilder = shotCountSpecifiedIntervalCaptureBuilder
+        if (theta == null || shotCountSpecifiedIntervalCaptureBuilder == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        setCaptureBuilderParams(call, shotCountSpecifiedIntervalCaptureBuilder)
+        setShotCountSpecifiedIntervalCaptureBuilderParams(call, shotCountSpecifiedIntervalCaptureBuilder)
+        try {
+            shotCountSpecifiedIntervalCapture = shotCountSpecifiedIntervalCaptureBuilder.build()
+            result.success(null)
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    fun startShotCountSpecifiedIntervalCapture(result: Result) {
+        val theta = thetaRepository
+        val shotCountSpecifiedIntervalCapture = shotCountSpecifiedIntervalCapture
+        if (theta == null || shotCountSpecifiedIntervalCapture == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        shotCountSpecifiedIntervalCapturing =
+            shotCountSpecifiedIntervalCapture.startCapture(object : ShotCountSpecifiedIntervalCapture.StartCaptureCallback {
+                override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    result.error(exception.javaClass.simpleName, exception.message, null)
+                }
+
+                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    sendNotifyEvent(
+                        notifyIdShotCountSpecifiedIntervalCaptureStopError,
+                        toMessageNotifyParam(exception.message ?: exception.toString())
+                    )
+                }
+
+                override fun onProgress(completion: Float) {
+                    sendNotifyEvent(
+                        notifyIdShotCountSpecifiedIntervalCaptureProgress,
+                        toCaptureProgressNotifyParam(completion)
+                    )
+                }
+
+                override fun onCaptureCompleted(fileUrls: List<String>?) {
+                    result.success(fileUrls)
+                }
+            })
+    }
+
+    fun stopShotCountSpecifiedIntervalCapture(result: Result) {
+        val theta = thetaRepository
+        val shotCountSpecifiedIntervalCapturing = shotCountSpecifiedIntervalCapturing
+        if (theta == null || shotCountSpecifiedIntervalCapturing == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        shotCountSpecifiedIntervalCapturing.stopCapture()
         result.success(null)
     }
 

@@ -112,8 +112,16 @@ internal data class CommandError(
     /**
      * Error message
      */
-    val message: String,
-)
+    val message: String
+) {
+    companion object {
+        private const val CODE_CANCELED_SHOOTING = "canceledShooting"
+    }
+
+    fun isCanceledShootingCode(): Boolean {
+        return this.code == CODE_CANCELED_SHOOTING
+    }
+}
 
 /**
  * completion at inProgress status

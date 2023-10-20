@@ -32,6 +32,9 @@ class ThetaClientReactNativeModule(
   var limitlessIntervalCaptureBuilder: LimitlessIntervalCapture.Builder? = null
   var limitlessIntervalCapture: LimitlessIntervalCapture? = null
   var limitlessIntervalCapturing: LimitlessIntervalCapturing? = null
+  var shotCountSpecifiedIntervalCaptureBuilder: ShotCountSpecifiedIntervalCapture.Builder? = null
+  var shotCountSpecifiedIntervalCapture: ShotCountSpecifiedIntervalCapture? = null
+  var shotCountSpecifiedIntervalCapturing: ShotCountSpecifiedIntervalCapturing? = null
   var theta: ThetaRepository? = null
   var listenerCount: Int = 0
 
@@ -91,6 +94,9 @@ class ThetaClientReactNativeModule(
         limitlessIntervalCaptureBuilder = null
         limitlessIntervalCapture = null
         limitlessIntervalCapturing = null
+        shotCountSpecifiedIntervalCaptureBuilder = null
+        shotCountSpecifiedIntervalCapture = null
+        shotCountSpecifiedIntervalCapturing = null
 
         theta = ThetaRepository.newInstance(
           endpoint,
@@ -255,7 +261,7 @@ class ThetaClientReactNativeModule(
         )
         val resultList = Arguments.createArray()
         fileList.forEach {
-          resultList.pushMap(fileInfoFromTheta(it))
+          resultList.pushMap(toResult(fileInfo = it))
         }
         val resultMap = Arguments.createMap()
         resultMap.putArray("fileList", resultList)
@@ -356,127 +362,6 @@ class ThetaClientReactNativeModule(
     }
   }
 
-  /** option converter */
-  private val converters = mapOf(
-    "aiAutoThumbnail" to AiAutoThumbnailConverter(),
-    "aperture" to ApertureConverter(),
-    "bitrate" to BitrateConverter(),
-    "bluetoothPower" to BluetoothPowerConverter(),
-    "burstMode" to BurstModeConverter(),
-    "burstOption" to BurstOptionConverter(),
-    "cameraControlSource" to CameraControlSourceConverter(),
-    "cameraMode" to CameraModeConverter(),
-    "captureInterval" to CaptureIntervalConverter(),
-    "captureMode" to CaptureModeConverter(),
-    "captureNumber" to CaptureNumberConverter(),
-    "colorTemperature" to ColorTemperatureConverter(),
-    "compositeShootingOutputInterval" to CompositeShootingOutputIntervalConverter(),
-    "compositeShootingTime" to CompositeShootingTimeConverter(),
-    "continuousNumber" to ContinuousNumberConverter(),
-    "dateTimeZone" to DateTimeZoneConverter(),
-    "exposureCompensation" to ExposureCompensationConverter(),
-    "exposureDelay" to ExposureDelayConverter(),
-    "exposureProgram" to ExposureProgramConverter(),
-    "faceDetect" to FaceDetectConverter(),
-    "fileFormat" to FileFormatConverter(),
-    "filter" to FilterConverter(),
-    "function" to FunctionConverter(),
-    "gain" to GainConverter(),
-    "gpsInfo" to GpsInfoConverter(),
-    "imageStitching" to ImageStitchingConverter(),
-    "isGpsOn" to IsGpsOnConverter(),
-    "iso" to IsoConverter(),
-    "isoAutoHighLimit" to IsoAutoHighLimitConverter(),
-    "language" to LanguageConverter(),
-    "latestEnabledExposureDelayTime" to LatestEnabledExposureDelayTimeConverter(),
-    "maxRecordableTime" to MaxRecordableTimeConverter(),
-    "networkType" to NetworkTypeConverter(),
-    "offDelay" to OffDelayConverter(),
-    "password" to PasswordConverter(),
-    "powerSaving" to PowerSavingConverter(),
-    "preset" to PresetConverter(),
-    "previewFormat" to PreviewFormatConverter(),
-    "proxy" to ProxyConverter(),
-    "remainingPictures" to RemainingPicturesConverter(),
-    "remainingVideoSeconds" to RemainingVideoSecondsConverter(),
-    "remainingSpace" to RemainingSpaceConverter(),
-    "shootingMethod" to ShootingMethodConverter(),
-    "shutterSpeed" to ShutterSpeedConverter(),
-    "shutterVolume" to ShutterVolumeConverter(),
-    "sleepDelay" to SleepDelayConverter(),
-    "timeShift" to TimeShiftConverter(),
-    "topBottomCorrection" to TopBottomCorrectionConverter(),
-    "topBottomCorrectionRotation" to TopBottomCorrectionRotationConverter(),
-    "totalSpace" to TotalSpaceConverter(),
-    "username" to UsernameConverter(),
-    "videoStitching" to VideoStitchingConverter(),
-    "visibilityReduction" to VisibilityReductionConverter(),
-    "whiteBalance" to WhiteBalanceConverter(),
-    "whiteBalanceAutoStrength" to WhiteBalanceAutoStrengthConverter(),
-    "wlanFrequency" to WlanFrequencyConverter(),
-    "_gpsTagRecording" to GpsTagRecordingConverter(),
-  )
-
-  /** OptionNameEnum to option */
-  private val optionEnumToOption = mapOf(
-    "AiAutoThumbnail" to "aiAutoThumbnail",
-    "Aperture" to "aperture",
-    "Bitrate" to "bitrate",
-    "BluetoothPower" to "bluetoothPower",
-    "BurstMode" to "burstMode",
-    "BurstOption" to "burstOption",
-    "CameraControlSource" to "cameraControlSource",
-    "CameraMode" to "cameraMode",
-    "CaptureInterval" to "captureInterval",
-    "CaptureMode" to "captureMode",
-    "CaptureNumber" to "captureNumber",
-    "ColorTemperature" to "colorTemperature",
-    "CompositeShootingOutputInterval" to "compositeShootingOutputInterval",
-    "CompositeShootingTime" to "compositeShootingTime",
-    "ContinuousNumber" to "continuousNumber",
-    "DateTimeZone" to "dateTimeZone",
-    "ExposureCompensation" to "exposureCompensation",
-    "ExposureDelay" to "exposureDelay",
-    "ExposureProgram" to "exposureProgram",
-    "FaceDetect" to "faceDetect",
-    "FileFormat" to "fileFormat",
-    "Filter" to "filter",
-    "Function" to "function",
-    "Gain" to "gain",
-    "GpsInfo" to "gpsInfo",
-    "ImageStitching" to "imageStitching",
-    "IsGpsOn" to "isGpsOn",
-    "Iso" to "iso",
-    "IsoAutoHighLimit" to "isoAutoHighLimit",
-    "Language" to "language",
-    "LatestEnabledExposureDelayTime" to "latestEnabledExposureDelayTime",
-    "MaxRecordableTime" to "maxRecordableTime",
-    "NetworkType" to "networkType",
-    "OffDelay" to "offDelay",
-    "Password" to "password",
-    "PowerSaving" to "powerSaving",
-    "Preset" to "preset",
-    "PreviewFormat" to "previewFormat",
-    "Proxy" to "proxy",
-    "RemainingPictures" to "remainingPictures",
-    "RemainingVideoSeconds" to "remainingVideoSeconds",
-    "RemainingSpace" to "remainingSpace",
-    "ShootingMethod" to "shootingMethod",
-    "ShutterSpeed" to "shutterSpeed",
-    "ShutterVolume" to "shutterVolume",
-    "SleepDelay" to "sleepDelay",
-    "TimeShift" to "timeShift",
-    "TopBottomCorrection" to "topBottomCorrection",
-    "TopBottomCorrectionRotation" to "topBottomCorrectionRotation",
-    "TotalSpace" to "totalSpace",
-    "Username" to "username",
-    "VideoStitching" to "videoStitching",
-    "VisibilityReduction" to "visibilityReduction",
-    "WhiteBalance" to "whiteBalance",
-    "WhiteBalanceAutoStrength" to "whiteBalanceAutoStrength",
-    "WlanFrequency" to "wlanFrequency",
-  )
-
   /**
    * getOptions  -  get options from THETA via repository
    * @param optionNames option name list to get
@@ -491,18 +376,8 @@ class ThetaClientReactNativeModule(
     }
     launch {
       try {
-        val optionNameList = mutableListOf<ThetaRepository.OptionNameEnum>()
-        for (index in 0..(optionNames.size() - 1)) {
-          val option = optionNames.getString(index)
-          optionNameList.add(ThetaRepository.OptionNameEnum.valueOf(option))
-        }
-        val options = theta.getOptions(optionNameList)
-        val result = Arguments.createMap()
-        for (index in 0..(optionNames.size() - 1)) {
-          val option = optionEnumToOption[optionNames.getString(index)]
-          val cvt = converters[option]
-          cvt?.setFromTheta(options, result)
-        }
+        val response = theta.getOptions(toGetOptionsParam(optionNames = optionNames))
+        val result = toResult(options = response)
         promise.resolve(result)
       } catch (t: Throwable) {
         promise.reject(t)
@@ -525,14 +400,8 @@ class ThetaClientReactNativeModule(
     }
     launch {
       try {
-        val thetaOptions = ThetaRepository.Options()
-        val iterator = options.keySetIterator()
-        while (iterator.hasNextKey()) {
-          val key = iterator.nextKey()
-          val cvt = converters[key]
-          cvt?.setToTheta(thetaOptions, options)
-        }
-        theta.setOptions(thetaOptions)
+        val params = toSetOptionsParam(optionsMap = options)
+        theta.setOptions(params)
         promise.resolve(true)
       } catch (t: Throwable) {
         promise.reject(t)
@@ -595,11 +464,12 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun getPhotoCaptureBuilder(promise: Promise) {
+    val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
     }
-    photoCaptureBuilder = theta?.getPhotoCaptureBuilder()
+    photoCaptureBuilder = theta.getPhotoCaptureBuilder()
     promise.resolve(true)
   }
 
@@ -621,13 +491,11 @@ class ThetaClientReactNativeModule(
     }
     launch {
       try {
-        val iterator = options.keySetIterator()
-        while (iterator.hasNextKey()) {
-          val key = iterator.nextKey()
-          val cvt = converters[key]
-          cvt?.setPhotoOption(options, photoCaptureBuilder!!)
+        photoCaptureBuilder?.let {
+          setCaptureBuilderParams(optionMap = options, builder = it)
+          setPhotoCaptureBuilderParams(optionMap = options, builder = it)
+          photoCapture = it.build()
         }
-        photoCapture = photoCaptureBuilder!!.build()
         promise.resolve(true)
         photoCaptureBuilder = null
       } catch (t: Throwable) {
@@ -652,7 +520,7 @@ class ThetaClientReactNativeModule(
       return
     }
     class TakePictureCallback : PhotoCapture.TakePictureCallback {
-      override fun onSuccess(fileUrl: String) {
+      override fun onSuccess(fileUrl: String?) {
         promise.resolve(fileUrl)
         photoCapture = null
       }
@@ -672,11 +540,12 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun getTimeShiftCaptureBuilder(promise: Promise) {
+    val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
     }
-    timeShiftCaptureBuilder = theta?.getTimeShiftCaptureBuilder()
+    timeShiftCaptureBuilder = theta.getTimeShiftCaptureBuilder()
     promise.resolve(true)
   }
 
@@ -691,34 +560,23 @@ class ThetaClientReactNativeModule(
       promise.reject(Exception(messageNotInit))
       return
     }
-
-    timeShiftCaptureBuilder?.let { builder ->
-      launch {
-        try {
-          val iterator = options.keySetIterator()
-          while (iterator.hasNextKey()) {
-            val key = iterator.nextKey()
-            val cvt = converters[key]
-            cvt?.setTimeShiftOption(options, builder)
-          }
-
-          val interval = if (options.hasKey("_capture_interval")) options.getInt("_capture_interval") else null
-          interval?.let {
-            if (it >= 0) {
-              builder.setCheckStatusCommandInterval(it.toLong())
-            }
-          }
-
-          timeShiftCapture = builder.build()
-          promise.resolve(true)
-          timeShiftCaptureBuilder = null
-        } catch (t: Throwable) {
-          promise.reject(t)
-          timeShiftCaptureBuilder = null
-        }
-      }
-    } ?: run {
+    if (timeShiftCaptureBuilder == null) {
       promise.reject(Exception("no timeShiftCaptureBuilder"))
+      return
+    }
+    launch {
+      try {
+        timeShiftCaptureBuilder?.let {
+          setCaptureBuilderParams(optionMap = options, builder = it)
+          setTimeShiftCaptureBuilderParams(optionMap = options, builder = it)
+          timeShiftCapture = it.build()
+        }
+        promise.resolve(true)
+        timeShiftCaptureBuilder = null
+      } catch (t: Throwable) {
+        promise.reject(t)
+        timeShiftCaptureBuilder = null
+      }
     }
   }
 
@@ -732,28 +590,28 @@ class ThetaClientReactNativeModule(
       promise.reject(Exception(messageNotInit))
       return
     }
-    timeShiftCapture?.let { capture ->
-      class StartCaptureCallback : TimeShiftCapture.StartCaptureCallback {
-        override fun onSuccess(fileUrl: String?) {
-          promise.resolve(fileUrl)
-          timeShiftCapture = null
-        }
-
-        override fun onProgress(completion: Float) {
-          sendNotifyEvent(
-            toNotify(NOTIFY_TIMESHIFT_PROGRESS, toCaptureProgressNotifyParam(value = completion))
-          )
-        }
-
-        override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
-          promise.reject(exception)
-          timeShiftCapture = null
-        }
-      }
-      timeShiftCapturing = capture.startCapture(StartCaptureCallback())
-    } ?: run {
+    if (timeShiftCapture == null) {
       promise.reject(Exception("no timeShiftCapture"))
+      return
     }
+    class StartCaptureCallback : TimeShiftCapture.StartCaptureCallback {
+      override fun onSuccess(fileUrl: String?) {
+        promise.resolve(fileUrl)
+        timeShiftCapture = null
+      }
+
+      override fun onProgress(completion: Float) {
+        sendNotifyEvent(
+          toNotify(NOTIFY_TIMESHIFT_PROGRESS, toCaptureProgressNotifyParam(value = completion))
+        )
+      }
+
+      override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
+        promise.reject(exception)
+        timeShiftCapture = null
+      }
+    }
+    timeShiftCapturing = timeShiftCapture?.startCapture(StartCaptureCallback())
   }
 
   /**
@@ -774,11 +632,12 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun getVideoCaptureBuilder(promise: Promise) {
+    val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
     }
-    videoCaptureBuilder = theta?.getVideoCaptureBuilder()
+    videoCaptureBuilder = theta.getVideoCaptureBuilder()
     promise.resolve(true)
   }
 
@@ -799,13 +658,11 @@ class ThetaClientReactNativeModule(
     }
     launch {
       try {
-        val iterator = options.keySetIterator()
-        while (iterator.hasNextKey()) {
-          val key = iterator.nextKey()
-          val cvt = converters[key]
-          cvt?.setVideoOption(options, videoCaptureBuilder!!)
+        videoCaptureBuilder?.let {
+          setCaptureBuilderParams(optionMap = options, builder = it)
+          setVideoCaptureBuilderParams(optionMap = options, builder = it)
+          videoCapture = it.build()
         }
-        videoCapture = videoCaptureBuilder!!.build()
         promise.resolve(true)
         videoCaptureBuilder = null
       } catch (t: Throwable) {
@@ -851,7 +708,7 @@ class ThetaClientReactNativeModule(
         )
       }
     }
-    videoCapturing = videoCapture!!.startCapture(StartCaptureCallback())
+    videoCapturing = videoCapture?.startCapture(StartCaptureCallback())
   }
 
   /**
@@ -871,11 +728,12 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun getLimitlessIntervalCaptureBuilder(promise: Promise) {
+    val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
     }
-    limitlessIntervalCaptureBuilder = theta?.getLimitlessIntervalCaptureBuilder()
+    limitlessIntervalCaptureBuilder = theta.getLimitlessIntervalCaptureBuilder()
     promise.resolve(true)
   }
 
@@ -896,15 +754,11 @@ class ThetaClientReactNativeModule(
     }
     launch {
       try {
-        val iterator = options.keySetIterator()
-        while (iterator.hasNextKey()) {
-          val key = iterator.nextKey()
-          val cvt = converters[key]
-          limitlessIntervalCaptureBuilder?.let {
-            cvt?.setLimitlessIntervalOption(options, it)
-          }
+        limitlessIntervalCaptureBuilder?.let {
+          setCaptureBuilderParams(optionMap = options, builder = it)
+          setLimitlessIntervalCaptureBuilderParams(optionMap = options, builder = it)
+          limitlessIntervalCapture = it.build()
         }
-        limitlessIntervalCapture = limitlessIntervalCaptureBuilder?.build()
         promise.resolve(true)
         limitlessIntervalCaptureBuilder = null
       } catch (t: Throwable) {
@@ -956,9 +810,7 @@ class ThetaClientReactNativeModule(
         )
       }
     }
-    limitlessIntervalCapture?.let {
-      limitlessIntervalCapturing = it.startCapture(StartCaptureCallback())
-    }
+    limitlessIntervalCapturing = limitlessIntervalCapture?.startCapture(StartCaptureCallback())
   }
 
   /**
@@ -970,6 +822,120 @@ class ThetaClientReactNativeModule(
       throw Exception(messageNotInit)
     }
     limitlessIntervalCapturing?.stopCapture()
+  }
+
+  /**
+   * getShotCountSpecifiedIntervalCaptureBuilder  -  get interval shooting with the shot count specified builder from repository
+   * @param shotCount shotCount shot count specified
+   * @param promise Promise for getShotCountSpecifiedIntervalCaptureBuilder
+   */
+  @ReactMethod
+  fun getShotCountSpecifiedIntervalCaptureBuilder(shotCount: Int, promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    shotCountSpecifiedIntervalCaptureBuilder = theta.getShotCountSpecifiedIntervalCaptureBuilder(shotCount)
+    promise.resolve(true)
+  }
+
+  /**
+   * buildShotCountSpecifiedIntervalCapture  -  build interval shooting with the shot count specified
+   * @param options option to execute interval shooting with the shot count specified
+   * @param promise Promise for buildShotCountSpecifiedIntervalCapture
+   */
+  @ReactMethod
+  fun buildShotCountSpecifiedIntervalCapture(options: ReadableMap, promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    if (shotCountSpecifiedIntervalCaptureBuilder == null) {
+      promise.reject(Exception("no shotCountSpecifiedIntervalCaptureBuilder"))
+      return
+    }
+    launch {
+      try {
+        shotCountSpecifiedIntervalCaptureBuilder?.let {
+          setCaptureBuilderParams(optionMap = options, builder = it)
+          setShotCountSpecifiedIntervalCaptureBuilderParams(optionMap = options, builder = it)
+          shotCountSpecifiedIntervalCapture = it.build()
+        }
+        promise.resolve(true)
+        shotCountSpecifiedIntervalCaptureBuilder = null
+      } catch (t: Throwable) {
+        promise.reject(t)
+        shotCountSpecifiedIntervalCaptureBuilder = null
+      }
+    }
+  }
+
+  /**
+   * startShotCountSpecifiedIntervalCapture  -  start interval shooting with the shot count specified
+   * @param promise promise for startShotCountSpecifiedIntervalCapture
+   */
+  @ReactMethod
+  fun startShotCountSpecifiedIntervalCapture(promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    if (shotCountSpecifiedIntervalCapture == null) {
+      promise.reject(Exception("no shotCountSpecifiedIntervalCapture"))
+      return
+    }
+    class StartCaptureCallback : ShotCountSpecifiedIntervalCapture.StartCaptureCallback {
+      override fun onCaptureCompleted(fileUrls: List<String>?) {
+        promise.resolve(fileUrls?.let {
+          val resultList = Arguments.createArray()
+          it.forEach {
+            resultList.pushString(it)
+          }
+          resultList
+        })
+        shotCountSpecifiedIntervalCapture = null
+      }
+
+      override fun onProgress(completion: Float) {
+        sendNotifyEvent(
+          toNotify(
+            NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_PROGRESS,
+            toCaptureProgressNotifyParam(value = completion)
+          )
+        )
+      }
+
+      override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+        sendNotifyEvent(
+          toNotify(
+            NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_STOP_ERROR,
+            toMessageNotifyParam(exception.message ?: exception.toString())
+          )
+        )
+      }
+
+      override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+        promise.reject(exception)
+        shotCountSpecifiedIntervalCapture = null
+      }
+    }
+    shotCountSpecifiedIntervalCapturing =
+      shotCountSpecifiedIntervalCapture?.startCapture(StartCaptureCallback())
+  }
+
+  /**
+   * cancelShotCountSpecifiedIntervalCapture  -  stop interval shooting with the shot count specified
+   * @param promise promise for cancelShotCountSpecifiedIntervalCapture
+   */
+  @ReactMethod
+  fun cancelShotCountSpecifiedIntervalCapture(promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    shotCountSpecifiedIntervalCapturing?.cancelCapture()
+    promise.resolve(true)
   }
 
   /**
@@ -1159,29 +1125,8 @@ class ThetaClientReactNativeModule(
     }
     launch {
       try {
-        val result = Arguments.createArray()
-        theta.listAccessPoints().forEach {
-          val apinfo = Arguments.createMap()
-          apinfo.putString("ssid", it.ssid)
-          apinfo.putBoolean("ssidStealth", it.ssidStealth)
-          apinfo.putString("authMode", it.authMode.toString())
-          apinfo.putInt("connectionPriority", it.connectionPriority)
-          apinfo.putBoolean("usingDhcp", it.usingDhcp)
-          apinfo.putString("ipAddress", it.ipAddress)
-          apinfo.putString("subnetMask", it.subnetMask)
-          apinfo.putString("defaultGateway", it.defaultGateway)
-
-          it.proxy?.let { proxy ->
-            var options = ThetaRepository.Options(proxy = proxy)
-            val optionsMap = Arguments.createMap()
-            val cvt = converters["proxy"]
-            cvt?.setFromTheta(options, optionsMap)
-            apinfo.putMap("proxy", optionsMap.getMap("proxy"))
-          }
-
-          result.pushMap(apinfo)
-        }
-        promise.resolve(result)
+        val response = theta.listAccessPoints()
+        promise.resolve(toListAccessPointsResult(accessPointList = response))
       } catch (t: Throwable) {
         promise.reject(t)
       }
@@ -1221,7 +1166,7 @@ class ThetaClientReactNativeModule(
           ThetaRepository.AuthModeEnum.valueOf(authMode),
           password,
           connectionPriority,
-          convertMapToProxy(proxyMap = proxy)
+          toProxy(map = proxy)
         )
         promise.resolve(true)
       } catch (t: Throwable) {
@@ -1272,7 +1217,7 @@ class ThetaClientReactNativeModule(
           ipAddress,
           subnetMask,
           defaultGateway,
-          convertMapToProxy(proxyMap = proxy)
+          toProxy(map = proxy)
         )
         promise.resolve(true)
       } catch (t: Throwable) {
@@ -1301,20 +1246,6 @@ class ThetaClientReactNativeModule(
         promise.reject(t)
       }
     }
-  }
-
-  /**
-   * convert ReadableMap to ThetaRepository.Proxy
-   */
-  private fun convertMapToProxy(proxyMap: ReadableMap?): ThetaRepository.Proxy? {
-    return proxyMap?.let {
-      var options = ThetaRepository.Options()
-      val optionsMap = Arguments.createMap()
-      optionsMap.putMap("proxy", it)
-      val cvt = converters["proxy"]
-      cvt?.setToTheta(options, optionsMap)
-      options.proxy
-    } ?: null
   }
 
   /**
@@ -1355,12 +1286,7 @@ class ThetaClientReactNativeModule(
     launch {
       try {
         val options = theta.getMySetting(ThetaRepository.CaptureModeEnum.valueOf(captureMode))
-        val result = Arguments.createMap()
-        converters.forEach {
-          val cvt = it.value
-          cvt?.setFromTheta(options, result)
-        }
-        promise.resolve(result)
+        promise.resolve(toResult(options = options))
       } catch (t: Throwable) {
         promise.reject(t)
       }
@@ -1388,13 +1314,7 @@ class ThetaClientReactNativeModule(
           optionNameList.add(ThetaRepository.OptionNameEnum.valueOf(option))
         }
         val options = theta.getMySetting(optionNameList)
-        val result = Arguments.createMap()
-        for (index in 0..(optionNames.size() - 1)) {
-          val option = optionEnumToOption[optionNames.getString(index)]
-          val cvt = converters[option]
-          cvt?.setFromTheta(options, result)
-        }
-        promise.resolve(result)
+        promise.resolve(toResult(options = options))
       } catch (t: Throwable) {
         promise.reject(t)
       }
@@ -1416,13 +1336,7 @@ class ThetaClientReactNativeModule(
     }
     launch {
       try {
-        val thetaOptions = ThetaRepository.Options()
-        val iterator = options.keySetIterator()
-        while (iterator.hasNextKey()) {
-          val key = iterator.nextKey()
-          val cvt = converters[key]
-          cvt?.setToTheta(thetaOptions, options)
-        }
+        val thetaOptions = toSetOptionsParam(optionsMap = options)
         theta.setMySetting(ThetaRepository.CaptureModeEnum.valueOf(captureMode), thetaOptions)
         promise.resolve(true)
       } catch (t: Throwable) {
@@ -1634,5 +1548,7 @@ class ThetaClientReactNativeModule(
     const val NOTIFY_TIMESHIFT_PROGRESS = "TIME-SHIFT-PROGRESS"
     const val NOTIFY_VIDEO_CAPTURE_STOP_ERROR = "VIDEO-CAPTURE-STOP-ERROR"
     const val NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR = "LIMITLESS-INTERVAL-CAPTURE-STOP-ERROR"
+    const val NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_PROGRESS = "SHOT-COUNT-SPECIFIED-INTERVAL-PROGRESS"
+    const val NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_STOP_ERROR = "SHOT-COUNT-SPECIFIED-INTERVAL-STOP-ERROR"
   }
 }

@@ -35,3 +35,13 @@ class LimitlessIntervalCapturing extends Capturing {
     ThetaClientFlutterPlatform.instance.stopLimitlessIntervalCapture();
   }
 }
+
+/// ShotCountSpecifiedIntervalCapturing
+class ShotCountSpecifiedIntervalCapturing extends Capturing {
+  /// Stops interval shooting with the shot count specified.
+  ///  When call stopCapture() then call property callback.
+  @override
+  void stopCapture() {
+    ThetaClientFlutterPlatform.instance.stopShotCountSpecifiedIntervalCapture();
+  }
+}

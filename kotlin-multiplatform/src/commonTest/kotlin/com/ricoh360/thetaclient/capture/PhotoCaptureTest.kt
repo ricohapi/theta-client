@@ -77,7 +77,7 @@ class PhotoCaptureTest {
 
         var file: String? = null
         photoCapture.takePicture(object : PhotoCapture.TakePictureCallback {
-            override fun onSuccess(fileUrl: String) {
+            override fun onSuccess(fileUrl: String?) {
                 file = fileUrl
                 deferred.complete(Unit)
             }
@@ -95,6 +95,98 @@ class PhotoCaptureTest {
 
         // check result
         assertTrue(file?.startsWith("http://") ?: false, "take picture")
+    }
+
+    /**
+     * Cancel takePicture.
+     */
+    @Test
+    fun cancelTakePictureTest() = runTest {
+        // setup
+        val responseArray = arrayOf(
+            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
+            Resource("src/commonTest/resources/PhotoCapture/takepicture_progress.json").readText(),
+            Resource("src/commonTest/resources/PhotoCapture/takepicture_cancel.json").readText()
+        )
+        var counter = 0
+        MockApiClient.onRequest = { _ ->
+            val index = counter++
+            ByteReadChannel(responseArray[index])
+        }
+        val deferred = CompletableDeferred<Unit>()
+
+        // execute
+        val thetaRepository = ThetaRepository(endpoint)
+        val photoCapture = thetaRepository.getPhotoCaptureBuilder()
+            .build()
+
+        var file: String? = ""
+        photoCapture.takePicture(object : PhotoCapture.TakePictureCallback {
+            override fun onSuccess(fileUrl: String?) {
+                file = fileUrl
+                deferred.complete(Unit)
+            }
+
+            override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
+                assertTrue(false, "error take picture")
+                deferred.complete(Unit)
+            }
+        })
+        runBlocking {
+            withTimeout(5000) {
+                deferred.await()
+            }
+        }
+
+        // check result
+        assertNull(file, "take picture canceled")
+    }
+
+    /**
+     * Cancel takePicture with exception.
+     */
+    @Test
+    fun cancelTakePictureWithExceptionTest() = runTest {
+        // setup
+        val responseArray = arrayOf(
+            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
+            Resource("src/commonTest/resources/PhotoCapture/takepicture_progress.json").readText(),
+            Resource("src/commonTest/resources/PhotoCapture/takepicture_cancel.json").readText()
+        )
+        var counter = 0
+        MockApiClient.onRequest = { _ ->
+            val index = counter++
+
+            MockApiClient.status = if (index == 2) HttpStatusCode.Forbidden else HttpStatusCode.OK
+            ByteReadChannel(responseArray[index])
+        }
+        val deferred = CompletableDeferred<Unit>()
+
+        // execute
+        val thetaRepository = ThetaRepository(endpoint)
+        val photoCapture = thetaRepository.getPhotoCaptureBuilder()
+            .build()
+
+        var file: String? = ""
+        photoCapture.takePicture(object : PhotoCapture.TakePictureCallback {
+            override fun onSuccess(fileUrl: String?) {
+                file = fileUrl
+                deferred.complete(Unit)
+            }
+
+            override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
+                assertTrue(false, "error take picture")
+                deferred.complete(Unit)
+            }
+        })
+        runBlocking {
+            withTimeout(5000) {
+                deferred.await()
+            }
+        }
+
+        // check result
+        assertNull(file, "take picture canceled")
     }
 
     /**
@@ -158,7 +250,7 @@ class PhotoCaptureTest {
 
         var file: String? = null
         photoCapture.takePicture(object : PhotoCapture.TakePictureCallback {
-            override fun onSuccess(fileUrl: String) {
+            override fun onSuccess(fileUrl: String?) {
                 file = fileUrl
                 deferred.complete(Unit)
             }
@@ -934,7 +1026,10 @@ class PhotoCaptureTest {
             thetaRepository.getPhotoCaptureBuilder()
                 .build()
         } catch (e: ThetaRepository.ThetaWebApiException) {
-            assertTrue(e.message!!.indexOf("UnitTest", 0, true) >= 0, "setOptions captureMode error response")
+            assertTrue(
+                e.message!!.indexOf("UnitTest", 0, true) >= 0,
+                "setOptions captureMode error response"
+            )
             exceptionSetCaptureMode = true
         }
         assertTrue(exceptionSetCaptureMode, "setOptions captureMode error response")
@@ -945,7 +1040,10 @@ class PhotoCaptureTest {
                 .setFilter(ThetaRepository.FilterEnum.HDR)
                 .build()
         } catch (e: ThetaRepository.ThetaWebApiException) {
-            assertTrue(e.message!!.indexOf("UnitTest", 0, true) >= 0, "setOptions option error response")
+            assertTrue(
+                e.message!!.indexOf("UnitTest", 0, true) >= 0,
+                "setOptions option error response"
+            )
             exceptionSetOption = true
         }
         assertTrue(exceptionSetOption, "setOptions option error response")
@@ -998,7 +1096,10 @@ class PhotoCaptureTest {
             thetaRepository.getPhotoCaptureBuilder()
                 .build()
         } catch (e: ThetaRepository.ThetaWebApiException) {
-            assertTrue(e.message!!.indexOf("UnitTest", 0, true) >= 0, "status error and json response")
+            assertTrue(
+                e.message!!.indexOf("UnitTest", 0, true) >= 0,
+                "status error and json response"
+            )
             exceptionStatusJson = true
         }
         assertTrue(exceptionStatusJson, "status error and json response")
@@ -1056,13 +1157,16 @@ class PhotoCaptureTest {
         // execute takePicture error response
         var deferred = CompletableDeferred<Unit>()
         photoCapture.takePicture(object : PhotoCapture.TakePictureCallback {
-            override fun onSuccess(fileUrl: String) {
+            override fun onSuccess(fileUrl: String?) {
                 assertTrue(false, "take picture")
                 deferred.complete(Unit)
             }
 
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue(exception.message!!.indexOf("UnitTest", 0, true) >= 0, "take picture error response")
+                assertTrue(
+                    exception.message!!.indexOf("UnitTest", 0, true) >= 0,
+                    "take picture error response"
+                )
                 deferred.complete(Unit)
             }
         })
@@ -1075,13 +1179,16 @@ class PhotoCaptureTest {
         // execute status error response
         deferred = CompletableDeferred()
         photoCapture.takePicture(object : PhotoCapture.TakePictureCallback {
-            override fun onSuccess(fileUrl: String) {
+            override fun onSuccess(fileUrl: String?) {
                 assertTrue(false, "take picture")
                 deferred.complete(Unit)
             }
 
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue(exception.message!!.indexOf("UnitTest", 0, true) >= 0, "take picture progress error response")
+                assertTrue(
+                    exception.message!!.indexOf("UnitTest", 0, true) >= 0,
+                    "take picture progress error response"
+                )
                 deferred.complete(Unit)
             }
         })
@@ -1094,7 +1201,7 @@ class PhotoCaptureTest {
         // execute not json response
         deferred = CompletableDeferred()
         photoCapture.takePicture(object : PhotoCapture.TakePictureCallback {
-            override fun onSuccess(fileUrl: String) {
+            override fun onSuccess(fileUrl: String?) {
                 assertTrue(false, "take picture")
                 deferred.complete(Unit)
             }
@@ -1144,13 +1251,16 @@ class PhotoCaptureTest {
         // execute status error and json response
         var deferred = CompletableDeferred<Unit>()
         photoCapture.takePicture(object : PhotoCapture.TakePictureCallback {
-            override fun onSuccess(fileUrl: String) {
+            override fun onSuccess(fileUrl: String?) {
                 assertTrue(false, "take picture")
                 deferred.complete(Unit)
             }
 
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue(exception.message!!.indexOf("UnitTest", 0, true) >= 0, "status error and json response")
+                assertTrue(
+                    exception.message!!.indexOf("UnitTest", 0, true) >= 0,
+                    "status error and json response"
+                )
                 deferred.complete(Unit)
             }
         })
@@ -1163,7 +1273,7 @@ class PhotoCaptureTest {
         // execute status error and not json response
         deferred = CompletableDeferred()
         photoCapture.takePicture(object : PhotoCapture.TakePictureCallback {
-            override fun onSuccess(fileUrl: String) {
+            override fun onSuccess(fileUrl: String?) {
                 assertTrue(false, "take picture")
                 deferred.complete(Unit)
             }
@@ -1182,7 +1292,7 @@ class PhotoCaptureTest {
         // execute timeout exception
         deferred = CompletableDeferred()
         photoCapture.takePicture(object : PhotoCapture.TakePictureCallback {
-            override fun onSuccess(fileUrl: String) {
+            override fun onSuccess(fileUrl: String?) {
                 assertTrue(false, "take picture")
                 deferred.complete(Unit)
             }

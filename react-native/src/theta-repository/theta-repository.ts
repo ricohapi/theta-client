@@ -17,6 +17,7 @@ import {
   VideoCaptureBuilder,
   TimeShiftCaptureBuilder,
   LimitlessIntervalCaptureBuilder,
+  ShotCountSpecifiedIntervalCaptureBuilder,
 } from '../capture';
 import type { ThetaConfig } from './theta-config';
 import type { ThetaTimeout } from './theta-timeout';
@@ -94,13 +95,26 @@ export function getVideoCaptureBuilder(): VideoCaptureBuilder {
 }
 
 /**
- * Get LimitlessIntervalCapture.Builder for capture video.
+ * Get LimitlessIntervalCapture.Builder for take limitless interval shooting.
  *
  * @function getLimitlessIntervalCaptureBuilder
  * @return created LimitlessIntervalCaptureBuilder instance
  */
 export function getLimitlessIntervalCaptureBuilder(): LimitlessIntervalCaptureBuilder {
   return new LimitlessIntervalCaptureBuilder();
+}
+
+/**
+ * Get ShotCountSpecifiedIntervalCapture.Builder for take interval shooting with the shot count specified.
+ *
+ * @function getShotCountSpecifiedIntervalCaptureBuilder
+ * @param {shotCount} shot count specified
+ * @return created ShotCountSpecifiedIntervalCaptureBuilder instance
+ */
+export function getShotCountSpecifiedIntervalCaptureBuilder(
+  shotCount: number
+): ShotCountSpecifiedIntervalCaptureBuilder {
+  return new ShotCountSpecifiedIntervalCaptureBuilder(shotCount);
 }
 
 /**

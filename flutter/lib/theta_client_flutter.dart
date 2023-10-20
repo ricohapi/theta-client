@@ -146,6 +146,14 @@ class ThetaClientFlutter {
     return LimitlessIntervalCaptureBuilder();
   }
 
+  /// Get ShotCountSpecifiedIntervalCapture.Builder for capture interval shooting with the shot count specified.
+  ShotCountSpecifiedIntervalCaptureBuilder
+      getShotCountSpecifiedIntervalCaptureBuilder(int shotCount) {
+    ThetaClientFlutterPlatform.instance
+        .getShotCountSpecifiedIntervalCaptureBuilder(shotCount);
+    return ShotCountSpecifiedIntervalCaptureBuilder();
+  }
+
   /// Acquires the properties and property support specifications for shooting, the camera, etc.
   ///
   /// Refer to the [options category](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)

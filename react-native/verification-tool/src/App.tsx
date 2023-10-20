@@ -18,6 +18,7 @@ import GetMetadataScreen from './screen/get-metadata-screen/get-metadata-screen'
 import GetInfoScreen from './screen/get-info-screen/get-info-screen';
 import TimeShiftCaptureScreen from './screen/time-shift-capture-screen/time-shift-capture-screen';
 import LimitlessIntervalCaptureScreen from './screen/limitless-interval-capture-screen/limitless-interval-capture-screen';
+import ShotCountSpecifiedIntervalCaptureScreen from './screen/shot-count-specified-interval-capture-screen/shot-count-specified-interval-capture-screen';
 
 const Stack = createNativeStackNavigator();
 
@@ -100,6 +101,11 @@ const App = () => {
           options={{ title: 'TimeShift Capture' }}
           name="timeShiftCapture"
           component={TimeShiftCaptureScreen}
+        />
+        <Stack.Screen
+          options={{ title: 'interval shooting with the shot count specified' }}
+          name="shotCountSpecifiedIntervalCapture"
+          component={ShotCountSpecifiedIntervalCaptureScreen}
         />
         <Stack.Screen
           options={{ title: 'Preview' }}

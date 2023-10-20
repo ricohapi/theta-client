@@ -126,7 +126,7 @@ class Theta {
         completionHandler(response)
     }
 
-    func takePicture(_ callback: @escaping (_ url: String) -> Void) async throws {
+    func takePicture(_ callback: @escaping (_ url: String?) -> Void) async throws {
         try await initialize()
         let photoCapture: PhotoCapture = try await withCheckedThrowingContinuation {continuation in
             thetaRepository!.getPhotoCaptureBuilder()
@@ -144,23 +144,22 @@ class Theta {
             init(_ callback: @escaping (_ url: String?, _ error: Error?) -> Void) {
                 self.callback = callback
             }
-            func onSuccess(fileUrl: String) {
+            func onSuccess(fileUrl: String?) {
                 callback(fileUrl, nil)
             }
             func onProgress(completion: Float) {
             }
             func onError(exception: ThetaException) {
-                callback(nil, exception as? Error)
+                callback(nil, exception.asError())
             }
         }
-        let photoUrl: String = try await withCheckedThrowingContinuation {continuation in
+        let photoUrl: String? = try await withCheckedThrowingContinuation {continuation in
             photoCapture.takePicture(
               callback: Callback {fileUrl, error in
-                  if let photoUrl = fileUrl {
-                      continuation.resume(returning: photoUrl)
-                  }
                   if let thetaError = error {
                       continuation.resume(throwing: thetaError)
+                  } else {
+                      continuation.resume(returning: fileUrl)
                   }
               }
             )

@@ -59,7 +59,11 @@ const PhotoCaptureScreen: React.FC = ({ navigation }) => {
 
       setIsTaking(false);
 
-      Alert.alert('takePicture file url : ', url, [{ text: 'OK' }]);
+      if (url) {
+        Alert.alert('takePicture file url : ', url, [{ text: 'OK' }]);
+      } else {
+        Alert.alert('takePicture canceled.');
+      }
     } catch (error) {
       setIsTaking(false);
       Alert.alert('takePicture error', JSON.stringify(error), [{ text: 'OK' }]);

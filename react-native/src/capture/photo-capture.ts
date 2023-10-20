@@ -15,8 +15,13 @@ export class PhotoCapture {
   /**
    * @return promise of token file url
    */
-  takePicture(): Promise<string> {
-    return ThetaClientReactNative.takePicture();
+  async takePicture(): Promise<string | undefined> {
+    try {
+      const fileUrl = await ThetaClientReactNative.takePicture();
+      return fileUrl ?? undefined;
+    } catch (error) {
+      throw error;
+    }
   }
 }
 
