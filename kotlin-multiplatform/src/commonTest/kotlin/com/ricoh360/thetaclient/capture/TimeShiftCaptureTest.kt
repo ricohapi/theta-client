@@ -316,6 +316,107 @@ class TimeShiftCaptureTest {
     }
 
     /**
+     * cancel shooting.
+     */
+    @Test
+    fun cancelShootingTest() = runTest {
+        // setup
+        val responseArray = arrayOf(
+            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
+            Resource("src/commonTest/resources/TimeShiftCapture/start_capture_progress.json").readText(),
+            Resource("src/commonTest/resources/TimeShiftCapture/start_capture_cancel.json").readText(),
+        )
+        var counter = 0
+        MockApiClient.onRequest = { _ ->
+            val index = counter++
+            ByteReadChannel(responseArray[index])
+        }
+        val deferred = CompletableDeferred<Unit>()
+
+        // execute
+        val thetaRepository = ThetaRepository(endpoint)
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
+        val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder().build()
+
+        var file: String? = ""
+        timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
+            override fun onSuccess(fileUrl: String?) {
+                file = fileUrl
+                deferred.complete(Unit)
+            }
+
+            override fun onProgress(completion: Float) {
+                assertTrue(completion >= 0f, "onProgress")
+            }
+
+            override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
+                assertTrue(false, "error start time-shift")
+                deferred.complete(Unit)
+            }
+        })
+
+        runBlocking {
+            withTimeout(30_000) {
+                deferred.await()
+            }
+        }
+
+        // check result
+        assertNull(file, "cancel time-shift")
+    }
+
+    /**
+     * cancel shooting with exception.
+     */
+    @Test
+    fun cancelShootingWithExceptionTest() = runTest {
+        // setup
+        val responseArray = arrayOf(
+            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
+            Resource("src/commonTest/resources/TimeShiftCapture/start_capture_progress.json").readText(),
+            Resource("src/commonTest/resources/TimeShiftCapture/start_capture_cancel.json").readText(),
+        )
+        var counter = 0
+        MockApiClient.onRequest = { _ ->
+            val index = counter++
+            MockApiClient.status = if (index == 2) HttpStatusCode.Forbidden else HttpStatusCode.OK
+            ByteReadChannel(responseArray[index])
+        }
+        val deferred = CompletableDeferred<Unit>()
+
+        // execute
+        val thetaRepository = ThetaRepository(endpoint)
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
+        val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder().build()
+
+        var file: String? = ""
+        timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
+            override fun onSuccess(fileUrl: String?) {
+                file = fileUrl
+                deferred.complete(Unit)
+            }
+
+            override fun onProgress(completion: Float) {
+                assertTrue(completion >= 0f, "onProgress")
+            }
+
+            override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
+                assertTrue(false, "error start time-shift")
+                deferred.complete(Unit)
+            }
+        })
+
+        runBlocking {
+            withTimeout(30_000) {
+                deferred.await()
+            }
+        }
+
+        // check result
+        assertNull(file, "cancel time-shift")
+    }
+
+    /**
      * Setting CheckStatusCommandInterval.
      */
     @Test

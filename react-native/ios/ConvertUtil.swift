@@ -18,6 +18,7 @@ let KEY_SOCKET_TIMEOUT = "socketTimeout"
 let KEY_THETA_MODEL = "thetaModel"
 let KEY_TIMESHIFT = "timeShift"
 let KEY_APERTURE = "aperture"
+let KEY_CAPTURE_INTERVAL = "captureInterval"
 let KEY_COLOR_TEMPERATURE = "colorTemperature"
 let KEY_EXPOSURE_COMPENSATION = "exposureCompensation"
 let KEY_EXPOSURE_DELAY = "exposureDelay"
@@ -51,7 +52,10 @@ let KEY_BURST_COMPENSATION = "burstCompensation"
 let KEY_BURST_MAX_EXPOSURE_TIME = "burstMaxExposureTime"
 let KEY_BURST_ENABLE_ISO_CONTROL = "burstEnableIsoControl"
 let KEY_BURST_ORDER = "burstOrder"
-let KEY_CAPTURE_INTERVAL = "_capture_interval"
+let KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH = "pitch"
+let KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL = "roll"
+let KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW = "yaw"
+let KEY_TIMESHIFT_CAPTURE_INTERVAL = "_capture_interval"
 
 public class ConvertUtil: NSObject {}
 
@@ -90,6 +94,7 @@ let optionItemNameToEnum = [
     "iso": ThetaRepository.OptionNameEnum.iso,
     "isoAutoHighLimit": ThetaRepository.OptionNameEnum.isoautohighlimit,
     "language": ThetaRepository.OptionNameEnum.language,
+    "latestEnabledExposureDelayTime": ThetaRepository.OptionNameEnum.latestenabledexposuredelaytime,
     "maxRecordableTime": ThetaRepository.OptionNameEnum.maxrecordabletime,
     "networkType": ThetaRepository.OptionNameEnum.networktype,
     "offDelay": ThetaRepository.OptionNameEnum.offdelay,
@@ -106,8 +111,12 @@ let optionItemNameToEnum = [
     "shutterVolume": ThetaRepository.OptionNameEnum.shuttervolume,
     "sleepDelay": ThetaRepository.OptionNameEnum.sleepdelay,
     "timeShift": ThetaRepository.OptionNameEnum.timeshift,
+    "topBottomCorrection": ThetaRepository.OptionNameEnum.topbottomcorrection,
+    "topBottomCorrectionRotation": ThetaRepository.OptionNameEnum.topbottomcorrectionrotation,
     "totalSpace": ThetaRepository.OptionNameEnum.totalspace,
     "username": ThetaRepository.OptionNameEnum.username,
+    "videoStitching": ThetaRepository.OptionNameEnum.videostitching,
+    "visibilityReduction": ThetaRepository.OptionNameEnum.visibilityreduction,
     "whiteBalance": ThetaRepository.OptionNameEnum.whitebalance,
     "whiteBalanceAutoStrength": ThetaRepository.OptionNameEnum.whitebalanceautostrength,
     "wlanFrequency": ThetaRepository.OptionNameEnum.wlanfrequency,
@@ -247,6 +256,10 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         options.language = getEnumValue(
             values: ThetaRepository.LanguageEnum.values(), name: value as! String
         )!
+    case ThetaRepository.OptionNameEnum.latestenabledexposuredelaytime.name:
+        options.latestEnabledExposureDelayTime = getEnumValue(
+            values: ThetaRepository.ExposureDelayEnum.values(), name: value as! String
+        )!
     case ThetaRepository.OptionNameEnum.maxrecordabletime.name:
         options.maxRecordableTime = getEnumValue(
             values: ThetaRepository.MaxRecordableTimeEnum.values(), name: value as! String
@@ -301,10 +314,22 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         if let params = value as? [String: Any] {
             options.timeShift = toTimeShift(params: params)
         }
+    case ThetaRepository.OptionNameEnum.topbottomcorrection.name:
+        options.topBottomCorrection = getEnumValue(values: ThetaRepository.TopBottomCorrectionOptionEnum.values(), name: value as! String)!
+    case ThetaRepository.OptionNameEnum.topbottomcorrectionrotation.name:
+        options.topBottomCorrectionRotation = toTopBottomCorrectionRotation(params: value as! [String: Any])
     case ThetaRepository.OptionNameEnum.totalspace.name:
         options.totalSpace = KotlinLong(integerLiteral: value as! Int)
     case ThetaRepository.OptionNameEnum.username.name:
         options.username = value as? String
+    case ThetaRepository.OptionNameEnum.videostitching.name:
+        options.videoStitching = getEnumValue(
+            values: ThetaRepository.VideoStitchingEnum.values(), name: value as! String
+        )!
+    case ThetaRepository.OptionNameEnum.visibilityreduction.name:
+        options.visibilityReduction = getEnumValue(
+            values: ThetaRepository.VisibilityReductionEnum.values(), name: value as! String
+        )!
     case ThetaRepository.OptionNameEnum.whitebalance.name:
         options.whiteBalance = getEnumValue(
             values: ThetaRepository.WhiteBalanceEnum.values(), name: value as! String
@@ -352,6 +377,8 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                           let timeshift = value as? ThetaRepository.TimeShiftSetting
                 {
                     result[key] = convertResult(timeshift: timeshift)
+                } else if value is ThetaRepository.TopBottomCorrectionRotation, let rotation = value as? ThetaRepository.TopBottomCorrectionRotation {
+                    result[key] = convertResult(rotation: rotation)
                 } else if let offDelay = value as? ThetaRepository.OffDelaySec {
                     result[key] =
                         offDelay.sec == 0 ? ThetaRepository.OffDelayEnum.disable.name : offDelay.sec
@@ -478,7 +505,7 @@ func setPhotoCaptureBuilderParams(params: [String: Any], builder: PhotoCapture.B
 }
 
 func setTimeShiftCaptureBuilderParams(params: [String: Any], builder: TimeShiftCapture.Builder) {
-    if let interval = params[KEY_CAPTURE_INTERVAL] as? Int,
+    if let interval = params[KEY_TIMESHIFT_CAPTURE_INTERVAL] as? Int,
        interval >= 0
     {
         builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
@@ -511,6 +538,23 @@ func setVideoCaptureBuilderParams(params: [String: Any], builder: VideoCapture.B
         ) {
             builder.setFileFormat(fileFormat: enumValue)
         }
+    }
+}
+
+func setLimitlessIntervalCaptureBuilderParams(params: [String: Any], builder: LimitlessIntervalCapture.Builder) {
+    if let value = params[KEY_CAPTURE_INTERVAL] as? Int32 {
+        builder.setCaptureInterval(interval: value)
+    }
+}
+
+func setShotCountSpecifiedIntervalCaptureBuilderParams(params: [String: Any], builder: ShotCountSpecifiedIntervalCapture.Builder) {
+    if let interval = params[KEY_TIMESHIFT_CAPTURE_INTERVAL] as? Int,
+       interval >= 0
+    {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
+    if let value = params[KEY_CAPTURE_INTERVAL] as? Int32 {
+        builder.setCaptureInterval(interval: value)
     }
 }
 
@@ -739,6 +783,14 @@ func convertResult(timeshift: ThetaRepository.TimeShiftSetting) -> [String: Any]
     return result
 }
 
+func convertResult(rotation: ThetaRepository.TopBottomCorrectionRotation) -> [String: Any] {
+    return [
+        KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH: rotation.pitch,
+        KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL: rotation.roll,
+        KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW: rotation.yaw,
+    ]
+}
+
 func convertResult(exif: ThetaRepository.Exif) -> [String: Any] {
     var result = [String: Any]()
     result["exifVersion"] = exif.exifVersion
@@ -933,6 +985,18 @@ func toTimeShift(params: [String: Any]) -> ThetaRepository.TimeShiftSetting {
         isFrontFirst: toKotlinBoolean(value: params["isFrontFirst"]),
         firstInterval: firstInterval,
         secondInterval: secondInterval
+    )
+}
+
+func toTopBottomCorrectionRotation(params: [String: Any]) -> ThetaRepository.TopBottomCorrectionRotation? {
+    guard let pitch = params[KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH] as? Double,
+          let roll = params[KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL] as? Double,
+          let yaw = params[KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW] as? Double else { return nil }
+
+    return ThetaRepository.TopBottomCorrectionRotation(
+        pitch: Float(pitch),
+        roll: Float(roll),
+        yaw: Float(yaw)
     )
 }
 

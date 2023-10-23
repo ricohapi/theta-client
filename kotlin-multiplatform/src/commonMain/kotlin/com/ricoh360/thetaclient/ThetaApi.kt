@@ -19,7 +19,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.io.files.*
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 /**
  * Http client using [Ktor](https://jp.ktor.work/clients/index.html)
@@ -31,6 +35,11 @@ internal object ThetaApi {
 
     val previewClient: PreviewClient // Just for getLivePreview command
         get() = getHPreviewClient()
+
+    val multipartPostClient: MultipartPostClient // just for updateFirmware protcol
+        get() = getMultipartPostClient()
+
+    var requestSemaphore = Semaphore(1)
 
     /**
      * Call [/osc/info](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/protocols/info.md)
@@ -47,7 +56,9 @@ internal object ThetaApi {
     suspend fun callInfoApi(
         endpoint: String,
     ): InfoApiResponse {
-        return httpClient.get(getApiUrl(endpoint, InfoApi.PATH)).body()
+        return syncExecutor(requestSemaphore, ApiClient.timeout.requestTimeout) {
+            httpClient.get(getApiUrl(endpoint, InfoApi.PATH)).body()
+        }
     }
 
     /**
@@ -64,7 +75,9 @@ internal object ThetaApi {
     suspend fun callStateApi(
         endpoint: String,
     ): StateApiResponse {
-        return httpClient.post(getApiUrl(endpoint, StateApi.PATH)).body()
+        return syncExecutor(requestSemaphore, ApiClient.timeout.requestTimeout) {
+            httpClient.post(getApiUrl(endpoint, StateApi.PATH)).body()
+        }
     }
 
     /**
@@ -85,15 +98,53 @@ internal object ThetaApi {
         endpoint: String,
         params: StatusApiParams,
     ): CommandApiResponse {
-        val request = StatusApiRequest(name = params.name, id = params.id)
-        val response = httpClient.post(getApiUrl(endpoint, StatusApi.PATH)) {
-            headers {
-                append("Content-Type", "application/json; charset=utf-8")
-                append("Cache-Control", "no-cache")
+        return syncExecutor(requestSemaphore, ApiClient.timeout.requestTimeout) {
+            val request = StatusApiRequest(name = params.name, id = params.id)
+            val response = httpClient.post(getApiUrl(endpoint, StatusApi.PATH)) {
+                headers {
+                    append("Content-Type", "application/json; charset=utf-8")
+                    append("Cache-Control", "no-cache")
+                }
+                setBody(request)
             }
-            setBody(request)
+            decodeStatusApiResponse(response.bodyAsText())
         }
-        return decodeStatusApiResponse(response.bodyAsText())
+    }
+
+    /**
+     * Call update firmware API which is non-public.
+     * To execute this function, you have to set environment variable THETA_FU_API_PATH
+     * to the path of firmware update API.
+     * @param endpoint Endpoint of Theta web API
+     * @param apiPath The path of firmware update API which is non-public.
+     * @param filePaths List of firmware file path
+     * @param connectionTimeout Timeout (milli seconds) of socket connection
+     * @param socketTimeout Timeout (milli seconds) of socket
+     * @Param callback function to pass the percentage of sent firmware
+     * @return response of update firmware API
+     *
+     * @exception IllegalArgumentException The method has been passed an illegal or inappropriate argument
+     * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
+     * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
+     * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
+     * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
+     */
+    @Throws(Throwable::class)
+    internal suspend fun callUpdateFirmwareApi(
+        endpoint: String,
+        apiPath: String,
+        filePaths: List<String>,
+        connectTimeout: Long,
+        socketTimeout: Long,
+        callback: ((Int) -> Unit)?,
+    ): UpdateFirmwareApiResponse {
+        val DUMMY_RESPONSE = "{\"name\":\"camera.${apiPath}\",\"state\":\"done\"}"
+        if (filePaths.isEmpty()) {
+            throw IllegalArgumentException("Empty filePaths")
+        }
+        val responseBody = multipartPostClient.request(endpoint, apiPath, filePaths, connectTimeout, socketTimeout, callback)
+        return if (responseBody.size > 0) Json.decodeFromString<UpdateFirmwareApiResponse>(String(responseBody))
+        else Json.decodeFromString(DUMMY_RESPONSE) // Theta X does not send response body
     }
 
     /*
@@ -779,12 +830,14 @@ internal object ThetaApi {
         endpoint: String,
         body: CommandApiRequest,
     ): HttpResponse {
-        return httpClient.post(getApiUrl(endpoint, CommandApi.PATH)) {
-            headers {
-                append("Content-Type", "application/json; charset=utf-8")
-                append("Cache-Control", "no-cache")
+        return syncExecutor(requestSemaphore, ApiClient.timeout.requestTimeout) {
+            httpClient.post(getApiUrl(endpoint, CommandApi.PATH)) {
+                headers {
+                    append("Content-Type", "application/json; charset=utf-8")
+                    append("Cache-Control", "no-cache")
+                }
+                setBody(body)
             }
-            setBody(body)
         }
     }
 

@@ -99,6 +99,10 @@ internal class CheckRequest {
             shutterVolume: Int? = null,
             sleepDelay: Int? = null,
             timeShift: TimeShift? = null,
+            topBottomCorrection: TopBottomCorrectionOption? = null,
+            topBottomCorrectionRotation: TopBottomCorrectionRotation? = null,
+            videoStitching: VideoStitching? = null,
+            visibilityReduction: VisibilityReduction? = null,
             whiteBalance: WhiteBalance? = null,
             whiteBalanceAutoStrength: WhiteBalanceAutoStrength? = null,
             wlanFrequency: WlanFrequency? = null,
@@ -238,6 +242,18 @@ internal class CheckRequest {
             }
             timeShift?.let {
                 assertEquals(optionsRequest.parameters.options._timeShift, it, "setOptions timeShift")
+            }
+            topBottomCorrection?.let {
+                assertEquals(optionsRequest.parameters.options._topBottomCorrection, it, "setOptions topBottomCorrection")
+            }
+            topBottomCorrectionRotation?.let {
+                assertEquals(optionsRequest.parameters.options._topBottomCorrectionRotation, it, "setOptions topBottomCorrectionRotation")
+            }
+            videoStitching?.let {
+                assertEquals(optionsRequest.parameters.options.videoStitching, it, "setOptions videoStitching")
+            }
+            visibilityReduction?.let {
+                assertEquals(optionsRequest.parameters.options._visibilityReduction, it, "setOptions visibilityReduction")
             }
             whiteBalance?.let {
                 assertEquals(optionsRequest.parameters.options.whiteBalance, it, "setOptions whiteBalance")

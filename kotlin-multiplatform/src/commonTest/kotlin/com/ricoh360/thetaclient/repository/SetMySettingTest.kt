@@ -53,7 +53,7 @@ class SetMySettingTest {
         }.onSuccess {
             assertTrue(true, "setMySetting")
         }.onFailure {
-            println("setMySetting: ${it.toString()}")
+            println("setMySetting: $it")
             assertTrue(false, "setMySetting")
         }
     }

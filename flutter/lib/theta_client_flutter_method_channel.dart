@@ -10,6 +10,9 @@ import 'theta_client_flutter_platform_interface.dart';
 const notifyIdLivePreview = 10001;
 const notifyIdTimeShiftProgress = 10002;
 const notifyIdVideoCaptureStopError = 10003;
+const notifyIdLimitlessIntervalCaptureStopError = 10004;
+const notifyIdShotCountSpecifiedIntervalCaptureProgress = 10005;
+const notifyIdShotCountSpecifiedIntervalCaptureStopError = 10006;
 
 /// An implementation of [ThetaClientFlutterPlatform] that uses method channels.
 class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
@@ -303,6 +306,115 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   @override
   Future<void> stopVideoCapture() async {
     return methodChannel.invokeMethod<void>('stopVideoCapture');
+  }
+
+  @override
+  Future<void> getLimitlessIntervalCaptureBuilder() async {
+    return methodChannel
+        .invokeMethod<void>('getLimitlessIntervalCaptureBuilder');
+  }
+
+  @override
+  Future<void> buildLimitlessIntervalCapture(
+      Map<String, dynamic> options) async {
+    return methodChannel.invokeMethod<void>('buildLimitlessIntervalCapture',
+        ConvertUtils.convertCaptureParams(options));
+  }
+
+  @override
+  Future<List<String>?> startLimitlessIntervalCapture(
+      void Function(Exception exception)? onStopFailed) async {
+    var completer = Completer<List<String>?>();
+    try {
+      enableNotifyEventReceiver();
+      if (onStopFailed != null) {
+        addNotify(notifyIdLimitlessIntervalCaptureStopError, (params) {
+          final message = params?['message'] as String?;
+          if (message != null) {
+            onStopFailed(Exception(message));
+          }
+        });
+      }
+      final fileUrls = await methodChannel
+          .invokeMethod<List<dynamic>?>('startLimitlessIntervalCapture');
+      removeNotify(notifyIdLimitlessIntervalCaptureStopError);
+      if (fileUrls == null) {
+        completer.complete(null);
+      } else {
+        completer.complete(ConvertUtils.convertStringList(fileUrls));
+      }
+    } catch (e) {
+      removeNotify(notifyIdLimitlessIntervalCaptureStopError);
+      completer.completeError(e);
+    }
+    return completer.future;
+  }
+
+  @override
+  Future<void> stopLimitlessIntervalCapture() async {
+    return methodChannel.invokeMethod<void>('stopLimitlessIntervalCapture');
+  }
+
+  @override
+  Future<void> getShotCountSpecifiedIntervalCaptureBuilder(
+      int shotCount) async {
+    return methodChannel.invokeMethod<void>(
+        'getShotCountSpecifiedIntervalCaptureBuilder', shotCount);
+  }
+
+  @override
+  Future<void> buildShotCountSpecifiedIntervalCapture(
+      Map<String, dynamic> options, int interval) async {
+    final params = ConvertUtils.convertCaptureParams(options);
+    params['_capture_interval'] = interval;
+    return methodChannel.invokeMethod<void>(
+        'buildShotCountSpecifiedIntervalCapture', params);
+  }
+
+  @override
+  Future<List<String>?> startShotCountSpecifiedIntervalCapture(
+      void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed) async {
+    var completer = Completer<List<String>?>();
+    try {
+      enableNotifyEventReceiver();
+      if (onProgress != null) {
+        addNotify(notifyIdShotCountSpecifiedIntervalCaptureProgress, (params) {
+          final completion = params?['completion'] as double?;
+          if (completion != null) {
+            onProgress(completion);
+          }
+        });
+      }
+      if (onStopFailed != null) {
+        addNotify(notifyIdShotCountSpecifiedIntervalCaptureStopError, (params) {
+          final message = params?['message'] as String?;
+          if (message != null) {
+            onStopFailed(Exception(message));
+          }
+        });
+      }
+      final fileUrls = await methodChannel.invokeMethod<List<dynamic>?>(
+          'startShotCountSpecifiedIntervalCapture');
+      removeNotify(notifyIdShotCountSpecifiedIntervalCaptureProgress);
+      removeNotify(notifyIdShotCountSpecifiedIntervalCaptureStopError);
+      if (fileUrls == null) {
+        completer.complete(null);
+      } else {
+        completer.complete(ConvertUtils.convertStringList(fileUrls));
+      }
+    } catch (e) {
+      removeNotify(notifyIdShotCountSpecifiedIntervalCaptureProgress);
+      removeNotify(notifyIdShotCountSpecifiedIntervalCaptureStopError);
+      completer.completeError(e);
+    }
+    return completer.future;
+  }
+
+  @override
+  Future<void> stopShotCountSpecifiedIntervalCapture() async {
+    return methodChannel
+        .invokeMethod<void>('stopShotCountSpecifiedIntervalCapture');
   }
 
   @override

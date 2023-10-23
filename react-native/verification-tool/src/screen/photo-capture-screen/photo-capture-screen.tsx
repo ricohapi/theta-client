@@ -4,9 +4,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './styles';
 import Button from '../../components/ui/button';
 import {
+  CaptureModeEnum,
   Options,
   PhotoFileFormatEnum,
   getPhotoCaptureBuilder,
+  setOptions,
   stopSelfTimer,
 } from 'theta-client-react-native';
 import {
@@ -17,40 +19,38 @@ import {
 import { CaptureCommonOptionsEdit } from '../../components/capture/capture-common-options';
 
 const PhotoCaptureScreen: React.FC = ({ navigation }) => {
-  const [options, setOptions] = React.useState<Options>();
+  const [captureOptions, setCaptureOptions] = React.useState<Options>();
   const [isTaking, setIsTaking] = React.useState(false);
-
-  React.useEffect(() => {
-    navigation.setOptions({ title: 'Photo Capture' });
-  }, [navigation]);
 
   const onTakePhoto = async () => {
     setIsTaking(true);
 
     const builder = getPhotoCaptureBuilder();
-    options?.filter && builder.setFilter(options.filter);
-    options?.fileFormat &&
-      builder.setFileFormat(options.fileFormat as PhotoFileFormatEnum);
-    options?.preset && builder.setPreset(options.preset);
+    captureOptions?.filter && builder.setFilter(captureOptions.filter);
+    captureOptions?.fileFormat &&
+      builder.setFileFormat(captureOptions.fileFormat as PhotoFileFormatEnum);
+    captureOptions?.preset && builder.setPreset(captureOptions.preset);
 
-    options?.aperture && builder.setAperture(options.aperture);
-    if (options?.colorTemperature != null) {
-      builder.setColorTemperature(options.colorTemperature);
+    captureOptions?.aperture && builder.setAperture(captureOptions.aperture);
+    if (captureOptions?.colorTemperature != null) {
+      builder.setColorTemperature(captureOptions.colorTemperature);
     }
-    options?.exposureCompensation &&
-      builder.setExposureCompensation(options.exposureCompensation);
-    options?.exposureDelay && builder.setExposureDelay(options.exposureDelay);
-    options?.exposureProgram &&
-      builder.setExposureProgram(options.exposureProgram);
-    options?.gpsInfo && builder.setGpsInfo(options.gpsInfo);
-    options?._gpsTagRecording &&
-      builder.setGpsTagRecording(options._gpsTagRecording);
-    options?.iso && builder.setIso(options.iso);
-    options?.isoAutoHighLimit &&
-      builder.setIsoAutoHighLimit(options.isoAutoHighLimit);
-    options?.whiteBalance && builder.setWhiteBalance(options.whiteBalance);
+    captureOptions?.exposureCompensation &&
+      builder.setExposureCompensation(captureOptions.exposureCompensation);
+    captureOptions?.exposureDelay &&
+      builder.setExposureDelay(captureOptions.exposureDelay);
+    captureOptions?.exposureProgram &&
+      builder.setExposureProgram(captureOptions.exposureProgram);
+    captureOptions?.gpsInfo && builder.setGpsInfo(captureOptions.gpsInfo);
+    captureOptions?._gpsTagRecording &&
+      builder.setGpsTagRecording(captureOptions._gpsTagRecording);
+    captureOptions?.iso && builder.setIso(captureOptions.iso);
+    captureOptions?.isoAutoHighLimit &&
+      builder.setIsoAutoHighLimit(captureOptions.isoAutoHighLimit);
+    captureOptions?.whiteBalance &&
+      builder.setWhiteBalance(captureOptions.whiteBalance);
 
-    console.log('takePicture options: :' + JSON.stringify(options));
+    console.log('takePicture options: :' + JSON.stringify(captureOptions));
     console.log('takePicture builder: :' + JSON.stringify(builder));
 
     try {
@@ -59,12 +59,11 @@ const PhotoCaptureScreen: React.FC = ({ navigation }) => {
 
       setIsTaking(false);
 
-      Alert.alert('takePicture file url : ', url, [{ text: 'OK' }]);
-
-      // const urls = url.split('/');
-      // navigation.navigate('filePreview', {
-      //     item: { fileUrl: url, name: urls[urls.length - 1] },
-      // });
+      if (url) {
+        Alert.alert('takePicture file url : ', url, [{ text: 'OK' }]);
+      } else {
+        Alert.alert('takePicture canceled.');
+      }
     } catch (error) {
       setIsTaking(false);
       Alert.alert('takePicture error', JSON.stringify(error), [{ text: 'OK' }]);
@@ -80,6 +79,14 @@ const PhotoCaptureScreen: React.FC = ({ navigation }) => {
       ]);
     }
   };
+
+  React.useEffect(() => {
+    setOptions({ captureMode: CaptureModeEnum.IMAGE }).catch();
+  }, []);
+
+  React.useEffect(() => {
+    navigation.setOptions({ title: 'Photo Capture' });
+  }, [navigation]);
 
   return (
     <SafeAreaView
@@ -106,36 +113,36 @@ const PhotoCaptureScreen: React.FC = ({ navigation }) => {
         <ScrollView>
           <FilterEdit
             onChange={(option) => {
-              setOptions((prevState) => ({
+              setCaptureOptions((prevState) => ({
                 ...prevState,
                 filter: option.filter,
               }));
             }}
-            options={options}
+            options={captureOptions}
           />
           <PhotoFileFormatEdit
             onChange={(option) => {
-              setOptions((prevState) => ({
+              setCaptureOptions((prevState) => ({
                 ...prevState,
                 fileFormat: option.fileFormat,
               }));
             }}
-            options={options}
+            options={captureOptions}
           />
           <PresetEdit
             onChange={(option) => {
-              setOptions((prevState) => ({
+              setCaptureOptions((prevState) => ({
                 ...prevState,
                 preset: option.preset,
               }));
             }}
-            options={options}
+            options={captureOptions}
           />
           <CaptureCommonOptionsEdit
             onChange={(option) => {
-              setOptions(option);
+              setCaptureOptions(option);
             }}
-            options={options}
+            options={captureOptions}
           />
         </ScrollView>
       </View>

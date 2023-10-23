@@ -10,10 +10,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-internal const val CHECK_STATE_INTERVAL = 1000L
-internal const val CHECK_STATE_RETRY = 3
-internal const val CHECK_SHOOTING_IDLE_COUNT = 2
-internal const val ERROR_GET_CAPTURE_STATUS = "Capture status cannot be retrieved."
+private const val CHECK_STATE_INTERVAL = 1000L
+private const val CHECK_STATE_RETRY = 3
+private const val CHECK_SHOOTING_IDLE_COUNT = 2
+private const val ERROR_GET_CAPTURE_STATUS = "Capture status cannot be retrieved."
 
 /*
  * VideoCapture

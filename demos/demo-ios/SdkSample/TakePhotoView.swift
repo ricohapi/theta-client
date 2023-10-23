@@ -107,12 +107,15 @@ struct TakePhotoView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             Task {
                 do {
-                    try await theta.takePicture {photoUrl in
-                        let parts = photoUrl.components(separatedBy: "/")
-                        item = FileItem(
-                            name: parts[parts.count - 1],
-                            url: photoUrl
-                        )
+                    try await theta.takePicture { photoUrl in
+                        // When nil, it is canceled.
+                        if let photoUrl {
+                            let parts = photoUrl.components(separatedBy: "/")
+                            item = FileItem(
+                                name: parts[parts.count - 1],
+                                url: photoUrl
+                            )
+                        }
                         isActive = true
                     }
                 } catch {

@@ -1,6 +1,8 @@
 package com.ricoh360.thetaclient
 
+import com.ricoh360.thetaclient.capture.LimitlessIntervalCapture
 import com.ricoh360.thetaclient.capture.PhotoCapture
+import com.ricoh360.thetaclient.capture.ShotCountSpecifiedIntervalCapture
 import com.ricoh360.thetaclient.capture.TimeShiftCapture
 import com.ricoh360.thetaclient.capture.VideoCapture
 import com.ricoh360.thetaclient.transferred.*
@@ -172,7 +174,9 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 }
             }
             restoreConfig = Config()
-            getConfigSetting(restoreConfig!!, cameraModel!!)
+            restoreConfig?.let {
+                getConfigSetting(it, cameraModel)
+            }
             initConfig?.let { setConfigSettings(it) }
         } catch (e: JsonConvertException) {
             throw ThetaWebApiException(e.message ?: e.toString())
@@ -253,10 +257,10 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @exception ThetaWebApiException If an error occurs in THETA.
      */
     @Throws(Throwable::class)
-    internal suspend fun getConfigSetting(config: Config, model: ThetaModel) {
+    internal suspend fun getConfigSetting(config: Config, model: ThetaModel?) {
         val optionNameList = listOfNotNull(
             OptionNameEnum.DateTimeZone.value,
-            if (ThetaModel.isBeforeThetaV(model)) null else OptionNameEnum.Language.value,
+            model?.let { if (ThetaModel.isBeforeThetaV(model)) null else OptionNameEnum.Language.value },
             OptionNameEnum.OffDelay.value,
             OptionNameEnum.SleepDelay.value,
             OptionNameEnum.ShutterVolume.value
@@ -414,6 +418,38 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             throw ThetaWebApiException(e.message ?: e.toString())
         } catch (e: Exception) {
             throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
+    /**
+     * Update the firmware of Theta using non-public API.
+     * In case of Theta SC2, power off and on by hand is needed after this command finishes.
+     * If target Theta is in insufficient charge, Theta may disconnect the socket.
+     *
+     * @param apiPath The path of firmware update API which is non-public.
+     * @param filePaths List of firmware file path.
+     * @param connectionTimeout Timeout (milli seconds) of socket connection
+     * @param socketTimeout Timeout (milli seconds) of socket
+     * @Param callback function to pass the percentage of sent firmware.
+     * After sending firmware, several minutes may be needed to start firmware update.
+     * @exception ThetaWebApiException If an error occurs in THETA.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun updateFirmware(apiPath: String, filePaths: List<String>, connectionTimeout: Long = 20_000L, socketTimeout: Long = 600_000L, callback: ((Int) -> Unit)? = null) {
+        try {
+            val response = ThetaApi.callUpdateFirmwareApi(endpoint, apiPath, filePaths, connectionTimeout, socketTimeout, callback)
+            response.error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException(e.toString())
+        } catch (e: IllegalArgumentException) {
+            throw ThetaWebApiException(e.toString())
+        } catch (e: Exception) {
+            throw NotConnectedException(e.toString())
         }
     }
 
@@ -817,6 +853,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _latestEnabledExposureDelayTime
+         */
+        LatestEnabledExposureDelayTime("_latestEnabledExposureDelayTime", ExposureDelayEnum::class),
+
+        /**
+         * Option name
          * _maxRecordableTime
          */
         MaxRecordableTime("_maxRecordableTime", MaxRecordableTimeEnum::class),
@@ -889,6 +931,18 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _topBottomCorrection
+         */
+        TopBottomCorrection("_topBottomCorrection", TopBottomCorrectionOptionEnum::class),
+
+        /**
+         * Option name
+         * _topBottomCorrectionRotation
+         */
+        TopBottomCorrectionRotation("_topBottomCorrectionRotation", ThetaRepository.TopBottomCorrectionRotation::class),
+
+        /**
+         * Option name
          * totalSpace
          */
         TotalSpace("totalSpace", Long::class),
@@ -922,6 +976,18 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          *  _username
          */
         Username("_username", String::class),
+
+        /**
+         * Option name
+         * videoStitching
+         */
+        VideoStitching("videoStitching", VideoStitchingEnum::class),
+
+        /**
+         * Option name
+         * _visibilityReductiong
+         */
+        VisibilityReduction("_visibilityReduction", VisibilityReductionEnum::class),
 
         /**
          * Option name
@@ -1186,6 +1252,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var language: LanguageEnum? = null,
 
         /**
+         * Self-timer operating time (sec.) when the self-timer (exposureDelay) was effective.
+         */
+        var latestEnabledExposureDelayTime: ExposureDelayEnum? = null,
+
+        /**
          * Maximum recordable time (in seconds) of the camera.
          */
         var maxRecordableTime: MaxRecordableTimeEnum? = null,
@@ -1270,6 +1341,16 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var timeShift: TimeShiftSetting? = null,
 
         /**
+         * @see TopBottomCorrectionOptionEnum
+         */
+        var topBottomCorrection: TopBottomCorrectionOptionEnum? = null,
+
+        /**
+         * @see TopBottomCorrectionRotation
+         */
+        var topBottomCorrectionRotation: TopBottomCorrectionRotation? = null,
+
+        /**
          * Total storage space (byte).
          */
         var totalSpace: Long? = null,
@@ -1288,6 +1369,16 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Can be set by camera.setOptions during direct mode.
          */
         var username: String? = null,
+
+        /**
+         * Video stitching during shooting.
+         */
+        var videoStitching: VideoStitchingEnum? = null,
+
+        /**
+         * Reduction visibility of camera body to still image when stitching.
+         */
+        var visibilityReduction: VisibilityReductionEnum? = null,
 
         /**
          * White balance.
@@ -1340,6 +1431,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             iso = null,
             isoAutoHighLimit = null,
             language = null,
+            latestEnabledExposureDelayTime = null,
             maxRecordableTime = null,
             networkType = null,
             offDelay = null,
@@ -1355,9 +1447,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             remainingPictures = null,
             remainingVideoSeconds = null,
             remainingSpace = null,
-            totalSpace = null,
             timeShift = null,
+            topBottomCorrection = null,
+            topBottomCorrectionRotation = null,
+            totalSpace = null,
             username = null,
+            videoStitching = null,
+            visibilityReduction = null,
             whiteBalance = null,
             whiteBalanceAutoStrength = null,
             wlanFrequency = null,
@@ -1398,6 +1494,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             iso = options.iso?.let { IsoEnum.get(it) },
             isoAutoHighLimit = options.isoAutoHighLimit?.let { IsoAutoHighLimitEnum.get(it) },
             language = options._language?.let { LanguageEnum.get(it) },
+            latestEnabledExposureDelayTime = options._latestEnabledExposureDelayTime?.let { ExposureDelayEnum.get(it) },
             maxRecordableTime = options._maxRecordableTime?.let { MaxRecordableTimeEnum.get(it) },
             networkType = options._networkType?.let { NetworkTypeEnum.get(it) },
             offDelay = options.offDelay?.let { OffDelayEnum.get(it) },
@@ -1413,9 +1510,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             remainingVideoSeconds = options.remainingVideoSeconds,
             remainingSpace = options.remainingSpace,
             timeShift = options._timeShift?.let { TimeShiftSetting(it) },
+            topBottomCorrection = options._topBottomCorrection?.let { TopBottomCorrectionOptionEnum.get(it) },
+            topBottomCorrectionRotation = options._topBottomCorrectionRotation?.let { TopBottomCorrectionRotation(it) },
             totalSpace = options.totalSpace,
             shutterVolume = options._shutterVolume,
             username = options._username,
+            videoStitching = options.videoStitching?.let { VideoStitchingEnum.get(it) },
+            visibilityReduction = options._visibilityReduction?.let { VisibilityReductionEnum.get(it) },
             whiteBalance = options.whiteBalance?.let { WhiteBalanceEnum.get(it) },
             whiteBalanceAutoStrength = options._whiteBalanceAutoStrength?.let { WhiteBalanceAutoStrengthEnum.get(it) },
             wlanFrequency = options._wlanFrequency?.let { WlanFrequencyEnum.get(it) },
@@ -1457,6 +1558,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 iso = iso?.value,
                 isoAutoHighLimit = isoAutoHighLimit?.value,
                 _language = language?.value,
+                _latestEnabledExposureDelayTime = latestEnabledExposureDelayTime?.sec,
                 _maxRecordableTime = maxRecordableTime?.sec,
                 _networkType = networkType?.value,
                 offDelay = offDelay?.sec,
@@ -1470,11 +1572,15 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 remainingVideoSeconds = remainingVideoSeconds,
                 remainingSpace = remainingSpace,
                 _timeShift = timeShift?.toTransferredTimeShift(),
+                _topBottomCorrection = topBottomCorrection?.value,
+                _topBottomCorrectionRotation = topBottomCorrectionRotation?.toTransferredTopBottomCorrectionRotation(),
                 totalSpace = totalSpace,
                 _shootingMethod = shootingMethod?.value,
                 shutterSpeed = shutterSpeed?.value,
                 _shutterVolume = shutterVolume,
                 _username = username,
+                videoStitching = videoStitching?.value,
+                _visibilityReduction = visibilityReduction?.value,
                 whiteBalance = whiteBalance?.value,
                 _whiteBalanceAutoStrength = whiteBalanceAutoStrength?.value,
                 _wlanFrequency = wlanFrequency?.value,
@@ -1523,6 +1629,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.Iso -> iso
                 OptionNameEnum.IsoAutoHighLimit -> isoAutoHighLimit
                 OptionNameEnum.Language -> language
+                OptionNameEnum.LatestEnabledExposureDelayTime -> latestEnabledExposureDelayTime
                 OptionNameEnum.MaxRecordableTime -> maxRecordableTime
                 OptionNameEnum.NetworkType -> networkType
                 OptionNameEnum.OffDelay -> offDelay
@@ -1539,8 +1646,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.ShutterVolume -> shutterVolume
                 OptionNameEnum.SleepDelay -> sleepDelay
                 OptionNameEnum.TimeShift -> timeShift
+                OptionNameEnum.TopBottomCorrection -> topBottomCorrection
+                OptionNameEnum.TopBottomCorrectionRotation -> topBottomCorrectionRotation
                 OptionNameEnum.TotalSpace -> totalSpace
                 OptionNameEnum.Username -> username
+                OptionNameEnum.VideoStitching -> videoStitching
+                OptionNameEnum.VisibilityReduction -> visibilityReduction
                 OptionNameEnum.WhiteBalance -> whiteBalance
                 OptionNameEnum.WhiteBalanceAutoStrength -> whiteBalanceAutoStrength
                 OptionNameEnum.WlanFrequency -> wlanFrequency
@@ -1590,6 +1701,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.Iso -> iso = value as IsoEnum
                 OptionNameEnum.IsoAutoHighLimit -> isoAutoHighLimit = value as IsoAutoHighLimitEnum
                 OptionNameEnum.Language -> language = value as LanguageEnum
+                OptionNameEnum.LatestEnabledExposureDelayTime -> latestEnabledExposureDelayTime = value as ExposureDelayEnum
                 OptionNameEnum.MaxRecordableTime -> maxRecordableTime = value as MaxRecordableTimeEnum
                 OptionNameEnum.NetworkType -> networkType = value as NetworkTypeEnum
                 OptionNameEnum.OffDelay -> offDelay = value as OffDelay
@@ -1606,8 +1718,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.RemainingVideoSeconds -> remainingVideoSeconds = value as Int
                 OptionNameEnum.RemainingSpace -> remainingSpace = value as Long
                 OptionNameEnum.TimeShift -> timeShift = value as TimeShiftSetting
+                OptionNameEnum.TopBottomCorrection -> topBottomCorrection = value as TopBottomCorrectionOptionEnum
+                OptionNameEnum.TopBottomCorrectionRotation -> topBottomCorrectionRotation = value as TopBottomCorrectionRotation
                 OptionNameEnum.TotalSpace -> totalSpace = value as Long
                 OptionNameEnum.Username -> username = value as String
+                OptionNameEnum.VideoStitching -> videoStitching = value as VideoStitchingEnum
+                OptionNameEnum.VisibilityReduction -> visibilityReduction = value as VisibilityReductionEnum
                 OptionNameEnum.WhiteBalance -> whiteBalance = value as WhiteBalanceEnum
                 OptionNameEnum.WhiteBalanceAutoStrength -> whiteBalanceAutoStrength = value as WhiteBalanceAutoStrengthEnum
                 OptionNameEnum.WlanFrequency -> wlanFrequency = value as WlanFrequencyEnum
@@ -4822,7 +4938,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          */
         var secondInterval: TimeShiftIntervalEnum? = null,
     ) {
-        internal constructor(timeShift: com.ricoh360.thetaclient.transferred.TimeShift) : this(
+        internal constructor(timeShift: TimeShift) : this(
             isFrontFirst = timeShift.firstShooting?.let {
                 it == FirstShootingEnum.FRONT
             },
@@ -4840,7 +4956,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          *
          * @return transferred.TimeShift
          */
-        internal fun toTransferredTimeShift(): com.ricoh360.thetaclient.transferred.TimeShift {
+        internal fun toTransferredTimeShift(): TimeShift {
             return TimeShift(
                 firstShooting = isFrontFirst?.let {
                     if (it) FirstShootingEnum.FRONT else FirstShootingEnum.REAR
@@ -4903,6 +5019,179 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         }
     }
 
+    /**
+     * top bottom correction
+     *
+     * Sets the top/bottom correction.  For RICOH THETA V and RICOH
+     * THETA Z1, the top/bottom correction can be set only for still
+     * images.  For RICOH THETA X, the top/bottom correction can be
+     * set for both still images and videos.
+     */
+    enum class TopBottomCorrectionOptionEnum(val value: TopBottomCorrectionOption) {
+        /**
+         * Top/bottom correction is performed.
+         */
+        APPLY(TopBottomCorrectionOption.APPLY),
+
+        /**
+         * Refer to top/bottom correction when shooting with "ApplyAuto"
+         */
+        APPLY_AUTO(TopBottomCorrectionOption.APPLY_AUTO),
+
+        /**
+         * Top/bottom correction is performed. The parameters used for
+         * top/bottom correction for the first image are saved and used
+         * for the 2nd and subsequent images.(RICOH THETA X or later)
+         */
+        APPLY_SEMIAUTO(TopBottomCorrectionOption.APPLY_SEMIAUTO),
+
+        /**
+         * Performs top/bottom correction and then saves the parameters.
+         */
+        APPLY_SAVE(TopBottomCorrectionOption.APPLY_SAVE),
+
+        /**
+         * Performs top/bottom correction using the saved parameters.
+         */
+        APPLY_LOAD(TopBottomCorrectionOption.APPLY_LOAD),
+
+        /**
+         * Does not perform top/bottom correction.
+         */
+        DISAPPLY(TopBottomCorrectionOption.DISAPPLY),
+
+        /**
+         * Performs the top/bottom correction with the specified front
+         * position. The front position can be specified with
+         * _topBottomCorrectionRotation.
+         */
+        MANUAL(TopBottomCorrectionOption.MANUAL);
+
+        companion object {
+            /**
+             * Convert TopBottomCorrectionOption to TopBottomCorrectionOptionEnum
+             *
+             * @param value TopBottomCorrectionOption
+             * @return TopBottomCorrectionOptionEnum
+             */
+            fun get(value: TopBottomCorrectionOption): TopBottomCorrectionOptionEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Video Stitching
+     *
+     * Video stitching during shooting.
+     * For
+     * RICOH THETA X
+     * RICOH THETA Z1
+     * RICOH THETA V
+     *
+     */
+    enum class VideoStitchingEnum(val value: VideoStitching) {
+        /**
+         * Video Stitching
+         * none
+         */
+        NONE(VideoStitching.NONE),
+
+        /**
+         * Video Stitching
+         * ondevice
+         */
+        ONDEVICE(VideoStitching.ONDEVICE);
+
+        companion object {
+            /**
+             * Convert VideoStitching to VideoStitchingEnum
+             *
+             * @param value
+             * @return VideoStitchingEnum
+             */
+            fun get(value: VideoStitching): VideoStitchingEnum? {
+                return VideoStitchingEnum.values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Sets the front position for the top/bottom correction.
+     * Enabled only for _topBottomCorrection Manual.
+     */
+    data class TopBottomCorrectionRotation(
+        /**
+         * Specifies the pitch.
+         * Specified range is -90.0 to +90.0, stepSize is 0.1
+         */
+        val pitch: Float,
+
+        /**
+         * Specifies the roll.
+         * Specified range is -180.0 to +180.0, stepSize is 0.1
+         */
+        val roll: Float,
+
+        /**
+         * Specifies the yaw.
+         * Specified range is -180.0 to +180.0, stepSize is 0.1
+         */
+        val yaw: Float
+    ) {
+        internal constructor(rotation: com.ricoh360.thetaclient.transferred.TopBottomCorrectionRotation) : this(
+            pitch = rotation.pitch ?: 0f,
+            roll = rotation.roll ?: 0f,
+            yaw = rotation.yaw ?: 0f
+        )
+
+        /**
+         * Convert TopBottomCorrectionRotation to transferred.TopBottomCorrectionRotation. for ThetaApi.
+         *
+         * @return transferred.TopBottomCorrectionRotation
+         */
+        internal fun toTransferredTopBottomCorrectionRotation(): com.ricoh360.thetaclient.transferred.TopBottomCorrectionRotation {
+            return com.ricoh360.thetaclient.transferred.TopBottomCorrectionRotation(
+                pitch = pitch,
+                roll = roll,
+                yaw = yaw
+            )
+        }
+    }
+
+    /**
+     * Visibility Reduction
+     *
+     * Reduction visibility of camera body to still image when stitching.
+     * For
+     * RICOH THETA Z1 v1.11.1 or later
+     *
+     */
+    enum class VisibilityReductionEnum(val value: VisibilityReduction) {
+        /**
+         * Video Stitching
+         * none
+         */
+        ON(VisibilityReduction.ON),
+
+        /**
+         * Video Stitching
+         * ondevice
+         */
+        OFF(VisibilityReduction.OFF);
+
+        companion object {
+            /**
+             * Convert VisibilityReduction to VisibilityReductionEnum
+             *
+             * @param value
+             * @return VisibilityReductionEnum
+             */
+            fun get(value: VisibilityReduction): VisibilityReductionEnum? {
+                return VisibilityReductionEnum.values().firstOrNull { it.value == value }
+            }
+        }
+    }
 
     /**
      * White balance.
@@ -5319,6 +5608,24 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     fun getTimeShiftCaptureBuilder(): TimeShiftCapture.Builder {
         return TimeShiftCapture.Builder(endpoint, cameraModel)
+    }
+
+    /**
+     * Get LimitlessIntervalCapture.Builder for capture video.
+     *
+     * @return PhotoCapture.Builder
+     */
+    fun getLimitlessIntervalCaptureBuilder(): LimitlessIntervalCapture.Builder {
+        return LimitlessIntervalCapture.Builder(endpoint, cameraModel)
+    }
+
+    /**
+     * Get ShotCountSpecifiedIntervalCapture.Builder for interval shooting with the shot count specified.
+     * @param shotCount shot count specified
+     * @return ShotCountSpecifiedIntervalCapture.Builder
+     */
+    fun getShotCountSpecifiedIntervalCaptureBuilder(shotCount: Int): ShotCountSpecifiedIntervalCapture.Builder {
+        return ShotCountSpecifiedIntervalCapture.Builder(shotCount, endpoint, cameraModel)
     }
 
     /**

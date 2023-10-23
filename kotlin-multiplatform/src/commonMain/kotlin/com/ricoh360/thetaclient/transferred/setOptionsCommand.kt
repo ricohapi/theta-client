@@ -497,6 +497,12 @@ internal data class Options(
     var _languageSupport: List<Language>? = null,
 
     /**
+     * Self-timer operating time (sec.) when the self-timer (exposureDelay) was effective.
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    var _latestEnabledExposureDelayTime: Int? = null,
+
+    /**
      * Maximum recordable time (in seconds) of the camera.
      */
     @Serializable(with = NumberAsIntSerializer::class)
@@ -698,10 +704,7 @@ internal data class Options(
     /**
      * top bottom correction
      *
-     * Sets the top/bottom correction.  For RICOH THETA V and RICOH
-     * THETA Z1, the top/bottom correction can be set only for still
-     * images.  For RICOH THETA X, the top/bottom correction can be
-     * set for both still images and videos.
+     * @see TopBottomCorrectionOption
      */
     var _topBottomCorrection: TopBottomCorrectionOption? = null,
 
@@ -709,6 +712,11 @@ internal data class Options(
      * Supported top bottom correction
      */
     var _topBottomCorrectionSupport: List<TopBottomCorrectionOption>? = null,
+
+    /**
+     * @see TopBottomCorrectionRotation
+     */
+    var _topBottomCorrectionRotation: TopBottomCorrectionRotation? = null,
 
     /**
      * Total storage space (byte).
@@ -1557,6 +1565,88 @@ enum class FirstShootingEnum {
 }
 
 /**
+ * top bottom correction
+ *
+ * Sets the top/bottom correction.  For RICOH THETA V and RICOH
+ * THETA Z1, the top/bottom correction can be set only for still
+ * images.  For RICOH THETA X, the top/bottom correction can be
+ * set for both still images and videos.
+ */
+@Serializable
+enum class TopBottomCorrectionOption {
+    /**
+     * Top/bottom correction is performed.
+     */
+    @SerialName("Apply")
+    APPLY,
+
+    /**
+     * Refer to top/bottom correction when shooting with "ApplyAuto"
+     */
+    @SerialName("ApplyAuto")
+    APPLY_AUTO,
+
+    /**
+     * Top/bottom correction is performed. The parameters used for
+     * top/bottom correction for the first image are saved and used
+     * for the 2nd and subsequent images.(RICOH THETA X or later)
+     */
+    @SerialName("ApplySemiAuto")
+    APPLY_SEMIAUTO,
+
+    /**
+     * Performs top/bottom correction and then saves the parameters.
+     */
+    @SerialName("ApplySave")
+    APPLY_SAVE,
+
+    /**
+     * Performs top/bottom correction using the saved parameters.
+     */
+    @SerialName("ApplyLoad")
+    APPLY_LOAD,
+
+    /**
+     * Does not perform top/bottom correction.
+     */
+    @SerialName("Disapply")
+    DISAPPLY,
+
+    /**
+     * Performs the top/bottom correction with the specified front
+     * position. The front position can be specified with
+     * _topBottomCorrectionRotation.
+     */
+    @SerialName("Manual")
+    MANUAL,
+}
+
+/**
+ * Sets the front position for the top/bottom correction.
+ * Enabled only for _topBottomCorrection Manual.
+ */
+@Serializable
+internal data class TopBottomCorrectionRotation(
+    /**
+     * Specifies the pitch.
+     * Specified range is -90.0 to +90.0, stepSize is 0.1
+     */
+    val pitch: Float? = null,
+
+    /**
+     * Specifies the roll.
+     * Specified range is -180.0 to +180.0, stepSize is 0.1
+     */
+    val roll: Float? = null,
+
+    /**
+     * Specifies the yaw.
+     * Specified range is -180.0 to +180.0, stepSize is 0.1
+     */
+    val yaw: Float? = null
+)
+
+/**
  * White balance setting
  */
 @Serializable
@@ -1729,58 +1819,6 @@ enum class VideoStitching {
      */
     @SerialName("ondevice")
     ONDEVICE,
-}
-
-/**
- * top bottom correction option setting
- */
-@Serializable
-enum class TopBottomCorrectionOption {
-    /**
-     * Top/bottom correction is performed.
-     */
-    @SerialName("Apply")
-    APPLY,
-
-    /**
-     * Refer to top/bottom correction when shooting with "ApplyAuto"
-     */
-    @SerialName("ApplyAuto")
-    APPLY_AUTO,
-
-    /**
-     * Top/bottom correction is performed. The parameters used for
-     * top/bottom correction for the first image are saved and used
-     * for the 2nd and subsequent images.(RICOH THETA X or later)
-     */
-    @SerialName("ApplySemiAuto")
-    APPLY_SEMIAUTO,
-
-    /**
-     * Performs top/bottom correction and then saves the parameters.
-     */
-    @SerialName("ApplySave")
-    APPLY_SAVE,
-
-    /**
-     * Performs top/bottom correction using the saved parameters.
-     */
-    @SerialName("ApplyLoad")
-    APPLY_LOAD,
-
-    /**
-     * Does not perform top/bottom correction.
-     */
-    @SerialName("Disapply")
-    DISAPPLY,
-
-    /**
-     * Performs the top/bottom correction with the specified front
-     * position. The front position can be specified with
-     * _topBottomCorrectionRotation.
-     */
-    @SerialName("Manual")
-    MANUAL,
 }
 
 /**

@@ -2,6 +2,9 @@ package com.ricoh360.thetaclient.capture
 
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.Options
+import com.ricoh360.thetaclient.transferred.UnknownResponse
+import io.ktor.client.call.body
+import io.ktor.client.statement.HttpResponse
 
 /*
  * Capture
@@ -241,4 +244,15 @@ abstract class Capture internal constructor(internal val options: Options) {
             return this as T
         }
     }
+}
+
+internal suspend fun isCanceledShootingResponse(httpResponse: HttpResponse): Boolean {
+    try {
+        val response: UnknownResponse = httpResponse.body()
+        if (response.error?.isCanceledShootingCode() == true) {
+            return true
+        }
+    } catch (_: Exception) {
+    }
+    return false
 }

@@ -42,7 +42,7 @@ class DeleteMySettingTest {
         }.onSuccess {
             assertTrue(true, "deleteMySetting")
         }.onFailure {
-            println("deleteMySetting: ${it.toString()}")
+            println("deleteMySetting: $it")
             assertTrue(false, "deleteMySetting")
         }
     }

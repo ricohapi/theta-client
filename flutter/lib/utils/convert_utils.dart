@@ -190,6 +190,15 @@ class ConvertUtils {
     return map;
   }
 
+  static Map<String, dynamic> convertTopBottomCorrectionRotationParam(
+      TopBottomCorrectionRotation rotation) {
+    return {
+      'pitch': rotation.pitch,
+      'roll': rotation.roll,
+      'yaw': rotation.yaw,
+    };
+  }
+
   static TimeShift convertTimeShift(Map<dynamic, dynamic> data) {
     var timeShift = TimeShift();
     if (data['isFrontFirst'] != null) {
@@ -219,6 +228,17 @@ class ConvertUtils {
       data['password'],
     );
     return proxy;
+  }
+
+  static TopBottomCorrectionRotation? convertTopBottomCorrectionRotation(
+      Map<dynamic, dynamic>? data) {
+    if (data == null) {
+      return null;
+    }
+
+    var rotation =
+        TopBottomCorrectionRotation(data['pitch'], data['roll'], data['yaw']);
+    return rotation;
   }
 
   static Options convertOptions(Map<dynamic, dynamic> data) {
@@ -320,6 +340,10 @@ class ConvertUtils {
         case OptionNameEnum.language:
           result.language = LanguageEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.latestEnabledExposureDelayTime:
+          result.latestEnabledExposureDelayTime =
+              ExposureDelayEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.maxRecordableTime:
           result.maxRecordableTime =
               MaxRecordableTimeEnum.getValue(entry.value);
@@ -369,11 +393,26 @@ class ConvertUtils {
         case OptionNameEnum.timeShift:
           result.timeShift = convertTimeShift(entry.value);
           break;
+        case OptionNameEnum.topBottomCorrection:
+          result.topBottomCorrection =
+              TopBottomCorrectionOptionEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.topBottomCorrectionRotation:
+          result.topBottomCorrectionRotation =
+              convertTopBottomCorrectionRotation(entry.value);
+          break;
         case OptionNameEnum.totalSpace:
           result.totalSpace = entry.value;
           break;
         case OptionNameEnum.username:
           result.username = entry.value;
+          break;
+        case OptionNameEnum.videoStitching:
+          result.videoStitching = VideoStitchingEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.visibilityReduction:
+          result.visibilityReduction =
+              VisibilityReductionEnum.getValue(entry.value);
           break;
         case OptionNameEnum.whiteBalance:
           result.whiteBalance = WhiteBalanceEnum.getValue(entry.value);
@@ -466,6 +505,12 @@ class ConvertUtils {
       return value.rawValue;
     } else if (value is SleepDelayEnum) {
       return value.rawValue;
+    } else if (value is TopBottomCorrectionOptionEnum) {
+      return value.rawValue;
+    } else if (value is VideoStitchingEnum) {
+      return value.rawValue;
+    } else if (value is VisibilityReductionEnum) {
+      return value.rawValue;
     } else if (value is WhiteBalanceEnum) {
       return value.rawValue;
     } else if (value is WhiteBalanceAutoStrengthEnum) {
@@ -483,6 +528,8 @@ class ConvertUtils {
       return convertProxyParam(value);
     } else if (value is TimeShift) {
       return convertTimeShiftParam(value);
+    } else if (value is TopBottomCorrectionRotation) {
+      return convertTopBottomCorrectionRotationParam(value);
     }
     return null;
   }

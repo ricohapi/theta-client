@@ -905,6 +905,46 @@ void main() {
     }
   });
 
+  test('TopBottomCorrectionOptionEnum', () async {
+    List<List<dynamic>> data = [
+      [TopBottomCorrectionOptionEnum.apply, 'APPLY'],
+      [TopBottomCorrectionOptionEnum.applyAuto, 'APPLY_AUTO'],
+      [TopBottomCorrectionOptionEnum.applySemiauto, 'APPLY_SEMIAUTO'],
+      [TopBottomCorrectionOptionEnum.applySave, 'APPLY_SAVE'],
+      [TopBottomCorrectionOptionEnum.applyLoad, 'APPLY_LOAD'],
+      [TopBottomCorrectionOptionEnum.disapply, 'DISAPPLY'],
+      [TopBottomCorrectionOptionEnum.manual, 'MANUAL'],
+    ];
+    expect(data.length, TopBottomCorrectionOptionEnum.values.length,
+        reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('VideoStitchingEnum', () async {
+    List<List<dynamic>> data = [
+      [VideoStitchingEnum.none, 'NONE'],
+      [VideoStitchingEnum.ondevice, 'ONDEVICE'],
+    ];
+    expect(data.length, VideoStitchingEnum.values.length, reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
+  test('VisibilityReductionEnum', () async {
+    List<List<dynamic>> data = [
+      [VisibilityReductionEnum.on, 'ON'],
+      [VisibilityReductionEnum.off, 'OFF'],
+    ];
+    expect(data.length, VisibilityReductionEnum.values.length,
+        reason: 'enum count');
+    for (int i = 0; i < data.length; i++) {
+      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
+    }
+  });
+
   test('WhiteBalanceEnum', () async {
     List<List<dynamic>> data = [
       [WhiteBalanceEnum.auto, 'AUTO'],

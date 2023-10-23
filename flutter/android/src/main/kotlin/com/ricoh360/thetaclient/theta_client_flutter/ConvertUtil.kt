@@ -6,6 +6,8 @@ import com.ricoh360.thetaclient.capture.Capture
 import com.ricoh360.thetaclient.capture.PhotoCapture
 import com.ricoh360.thetaclient.capture.TimeShiftCapture
 import com.ricoh360.thetaclient.capture.VideoCapture
+import com.ricoh360.thetaclient.capture.LimitlessIntervalCapture
+import com.ricoh360.thetaclient.capture.ShotCountSpecifiedIntervalCapture
 import io.flutter.plugin.common.MethodCall
 
 const val KEY_CLIENT_MODE = "clientMode"
@@ -160,6 +162,14 @@ fun toTimeShift(map: Map<String, Any>): TimeShiftSetting {
     return timeShift
 }
 
+fun toTopBottomCorrectionRotation(map: Map<String, Any>): TopBottomCorrectionRotation {
+    return TopBottomCorrectionRotation(
+        pitch = (map["pitch"] as Double).toFloat(),
+        roll = (map["roll"] as Double).toFloat(),
+        yaw = (map["yaw"] as Double).toFloat()
+    )
+}
+
 fun <T> setCaptureBuilderParams(call: MethodCall, builder: Capture.Builder<T>) {
     call.argument<String>(OptionNameEnum.Aperture.name)?.also { enumName ->
         ApertureEnum.values().find { it.name == enumName }?.let {
@@ -168,6 +178,11 @@ fun <T> setCaptureBuilderParams(call: MethodCall, builder: Capture.Builder<T>) {
     }
     call.argument<Int>(OptionNameEnum.ColorTemperature.name)?.also {
         builder.setColorTemperature(it)
+    }
+    call.argument<String>(OptionNameEnum.ExposureCompensation.name)?.also { enumName ->
+        ExposureCompensationEnum.values().find { it.name == enumName }?.let {
+            builder.setExposureCompensation(it)
+        }
     }
     call.argument<String>(OptionNameEnum.ExposureDelay.name)?.also { enumName ->
         ExposureDelayEnum.values().find { it.name == enumName }?.let {
@@ -255,6 +270,23 @@ fun setVideoCaptureBuilderParams(call: MethodCall, builder: VideoCapture.Builder
     }
 }
 
+fun setLimitlessIntervalCaptureBuilderParams(call: MethodCall, builder: LimitlessIntervalCapture.Builder) {
+    call.argument<Int>(OptionNameEnum.CaptureInterval.name)?.also {
+        builder.setCaptureInterval(it)
+    }
+}
+
+fun setShotCountSpecifiedIntervalCaptureBuilderParams(call: MethodCall, builder: ShotCountSpecifiedIntervalCapture.Builder) {
+    call.argument<Int>("_capture_interval")?.let {
+        if (it >= 0) {
+            builder.setCheckStatusCommandInterval(it.toLong())
+        }
+    }
+    call.argument<Int>(OptionNameEnum.CaptureInterval.name)?.also {
+        builder.setCaptureInterval(it)
+    }
+}
+
 fun toGetOptionsParam(data: List<String>): List<OptionNameEnum> {
     val optionNames = mutableListOf<OptionNameEnum>()
     data.forEach { name ->
@@ -296,6 +328,14 @@ fun toResult(timeShift: TimeShiftSetting): Map<String, Any> {
         result["secondInterval"] = value.toString()
     }
     return result
+}
+
+fun toResult(rotation: TopBottomCorrectionRotation): Map<String, Any> {
+    return mapOf(
+        "pitch" to rotation.pitch,
+        "roll" to rotation.roll,
+        "yaw" to rotation.yaw
+    )
 }
 
 fun toResult(options: Options): Map<String, Any> {
@@ -341,6 +381,10 @@ fun toResult(options: Options): Map<String, Any> {
         } else if (name == OptionNameEnum.TimeShift) {
             options.getValue<TimeShiftSetting>(OptionNameEnum.TimeShift)?.let { timeShift ->
                 result[OptionNameEnum.TimeShift.name] = toResult(timeShift)
+            }
+        } else if (name == OptionNameEnum.TopBottomCorrectionRotation) {
+            options.getValue<TopBottomCorrectionRotation>(OptionNameEnum.TopBottomCorrectionRotation)?.let { rotation ->
+                result[OptionNameEnum.TopBottomCorrectionRotation.name] = toResult(rotation)
             }
         } else if (valueOptions.contains(name)) {
             addOptionsValueToMap<Any>(options, name, result)
@@ -415,6 +459,9 @@ fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
     } else if (name == OptionNameEnum.TimeShift) {
         @Suppress("UNCHECKED_CAST")
         options.setValue(name, toTimeShift(value as Map<String, Any>))
+    } else if (name == OptionNameEnum.TopBottomCorrectionRotation) {
+        @Suppress("UNCHECKED_CAST")
+        options.setValue(name, toTopBottomCorrectionRotation(value as Map<String, Any>))
     } else {
         getOptionValueEnum(name, value as String)?.let {
             options.setValue(name, it)
@@ -442,8 +489,9 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
         OptionNameEnum.Gain -> GainEnum.values().find { it.name == valueName }
         OptionNameEnum.ImageStitching -> ImageStitchingEnum.values().find { it.name == valueName }
         OptionNameEnum.Iso -> IsoEnum.values().find { it.name == valueName }
-        OptionNameEnum.IsoAutoHighLimit -> ApertureEnum.values().find { it.name == valueName }
+        OptionNameEnum.IsoAutoHighLimit -> IsoAutoHighLimitEnum.values().find { it.name == valueName }
         OptionNameEnum.Language -> LanguageEnum.values().find { it.name == valueName }
+        OptionNameEnum.LatestEnabledExposureDelayTime -> ExposureDelayEnum.values().find { it.name == valueName }
         OptionNameEnum.MaxRecordableTime -> MaxRecordableTimeEnum.values().find { it.name == valueName }
         OptionNameEnum.NetworkType -> NetworkTypeEnum.values().find { it.name == valueName }
         OptionNameEnum.OffDelay -> OffDelayEnum.values().find { it.name == valueName }
@@ -453,6 +501,9 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
         OptionNameEnum.ShootingMethod -> ShootingMethodEnum.values().find { it.name == valueName }
         OptionNameEnum.ShutterSpeed -> ShutterSpeedEnum.values().find { it.name == valueName }
         OptionNameEnum.SleepDelay -> SleepDelayEnum.values().find { it.name == valueName }
+        OptionNameEnum.TopBottomCorrection -> TopBottomCorrectionOptionEnum.values().find { it.name == valueName }
+        OptionNameEnum.VideoStitching -> VideoStitchingEnum.values().find { it.name == valueName }
+        OptionNameEnum.VisibilityReduction -> VisibilityReductionEnum.values().find { it.name == valueName }
         OptionNameEnum.WhiteBalance -> WhiteBalanceEnum.values().find { it.name == valueName }
         OptionNameEnum.WhiteBalanceAutoStrength -> WhiteBalanceAutoStrengthEnum.values().find { it.name == valueName }
         OptionNameEnum.WlanFrequency -> WlanFrequencyEnum.values().find { it.name == valueName }

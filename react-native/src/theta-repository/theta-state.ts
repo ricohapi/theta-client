@@ -138,7 +138,7 @@ export type ThetaState = {
   /** Plugin web server state (true: enabled, false: disabled) */
   isPluginWebServer: boolean | null;
   /** Shooting function status*/
-  function: ShootingFunctionEnum;
+  function: ShootingFunctionEnum | null;
   /** My setting changed state */
   isMySettingChanged: boolean | null;
   /** Identifies the microphone used while recording video */

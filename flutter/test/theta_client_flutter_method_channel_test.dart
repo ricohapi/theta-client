@@ -382,6 +382,11 @@ void main() {
       'firstInterval': TimeShiftIntervalEnum.interval_5.toString(),
       'secondInterval': TimeShiftIntervalEnum.interval_10.toString()
     };
+    Map<String, dynamic> topBottomCorrectionRotationMap = {
+      'pitch': 1.0,
+      'roll': 2.0,
+      'yaw': 3.0
+    };
     List<List<dynamic>> data = [
       [
         OptionNameEnum.aiAutoThumbnail,
@@ -498,6 +503,12 @@ void main() {
       ],
       [OptionNameEnum.language, 'Language', LanguageEnum.de, 'DE'],
       [
+        OptionNameEnum.latestEnabledExposureDelayTime,
+        'LatestEnabledExposureDelayTime',
+        ExposureDelayEnum.delay1,
+        'DELAY_1'
+      ],
+      [
         OptionNameEnum.maxRecordableTime,
         'MaxRecordableTime',
         MaxRecordableTimeEnum.time_1500,
@@ -556,8 +567,32 @@ void main() {
             secondInterval: TimeShiftIntervalEnum.interval_10),
         timeShiftMap
       ],
+      [
+        OptionNameEnum.topBottomCorrection,
+        'TopBottomCorrection',
+        TopBottomCorrectionOptionEnum.apply,
+        'APPLY'
+      ],
+      [
+        OptionNameEnum.topBottomCorrectionRotation,
+        'TopBottomCorrectionRotation',
+        TopBottomCorrectionRotation(1.0, 2.0, 3.0),
+        topBottomCorrectionRotationMap
+      ],
       [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
       [OptionNameEnum.username, 'Username', 'username', 'username'],
+      [
+        OptionNameEnum.videoStitching,
+        'VideoStitching',
+        VideoStitchingEnum.none,
+        'NONE'
+      ],
+      [
+        OptionNameEnum.visibilityReduction,
+        'VisibilityReduction',
+        VisibilityReductionEnum.off,
+        'OFF'
+      ],
       [
         OptionNameEnum.whiteBalance,
         'WhiteBalance',
@@ -623,6 +658,11 @@ void main() {
       'isFrontFirst': true,
       'firstInterval': TimeShiftIntervalEnum.interval_5.toString(),
       'secondInterval': TimeShiftIntervalEnum.interval_10.toString()
+    };
+    Map<String, dynamic> topBottomCorrectionRotationMap = {
+      'pitch': 1.0,
+      'roll': 2.0,
+      'yaw': 3.0
     };
     List<List<dynamic>> data = [
       [
@@ -786,8 +826,32 @@ void main() {
             secondInterval: TimeShiftIntervalEnum.interval_10),
         timeShiftMap
       ],
+      [
+        OptionNameEnum.topBottomCorrection,
+        'TopBottomCorrection',
+        TopBottomCorrectionOptionEnum.applyAuto,
+        'APPLY_AUTO'
+      ],
+      [
+        OptionNameEnum.topBottomCorrectionRotation,
+        'TopBottomCorrectionRotation',
+        TopBottomCorrectionRotation(1.0, 2.0, 3.0),
+        topBottomCorrectionRotationMap
+      ],
       [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
       [OptionNameEnum.username, 'Username', 'username', 'username'],
+      [
+        OptionNameEnum.videoStitching,
+        'VideoStitching',
+        VideoStitchingEnum.none,
+        'NONE'
+      ],
+      [
+        OptionNameEnum.visibilityReduction,
+        'VisibilityReduction',
+        VisibilityReductionEnum.off,
+        'OFF'
+      ],
       [
         OptionNameEnum.whiteBalance,
         'WhiteBalance',

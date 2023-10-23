@@ -134,10 +134,24 @@ class ThetaClientFlutter {
     return TimeShiftCaptureBuilder();
   }
 
-  /// Get PhotoCapture.Builder for capture video.
+  /// Get VideoCapture.Builder for capture video.
   VideoCaptureBuilder getVideoCaptureBuilder() {
     ThetaClientFlutterPlatform.instance.getVideoCaptureBuilder();
     return VideoCaptureBuilder();
+  }
+
+  /// Get LimitlessIntervalCapture.Builder for capture limitless interval.
+  LimitlessIntervalCaptureBuilder getLimitlessIntervalCaptureBuilder() {
+    ThetaClientFlutterPlatform.instance.getLimitlessIntervalCaptureBuilder();
+    return LimitlessIntervalCaptureBuilder();
+  }
+
+  /// Get ShotCountSpecifiedIntervalCapture.Builder for capture interval shooting with the shot count specified.
+  ShotCountSpecifiedIntervalCaptureBuilder
+      getShotCountSpecifiedIntervalCaptureBuilder(int shotCount) {
+    ThetaClientFlutterPlatform.instance
+        .getShotCountSpecifiedIntervalCaptureBuilder(shotCount);
+    return ShotCountSpecifiedIntervalCaptureBuilder();
   }
 
   /// Acquires the properties and property support specifications for shooting, the camera, etc.
@@ -1558,6 +1572,10 @@ enum OptionNameEnum {
   /// Option name _language
   language('Language', LanguageEnum),
 
+  /// Option name _latestEnabledExposureDelayTime
+  latestEnabledExposureDelayTime(
+      'LatestEnabledExposureDelayTime', ExposureDelayEnum),
+
   /// Option name _maxRecordableTime
   maxRecordableTime('MaxRecordableTime', MaxRecordableTimeEnum),
 
@@ -1606,11 +1624,24 @@ enum OptionNameEnum {
   /// Option name timeShift
   timeShift('TimeShift', TimeShift),
 
+  /// Option name topBottomCorrection
+  topBottomCorrection('TopBottomCorrection', TopBottomCorrectionOptionEnum),
+
+  /// Option name topBottomCorrectionRotation
+  topBottomCorrectionRotation(
+      'TopBottomCorrectionRotation', TopBottomCorrectionRotation),
+
   /// Option name totalSpace
   totalSpace('TotalSpace', int),
 
   /// Option name _username
   username('Username', String),
+
+  /// Option name videoStitching
+  videoStitching('VideoStitching', VideoStitchingEnum),
+
+  /// Option name _visibilityReduction
+  visibilityReduction('VisibilityReduction', VisibilityReductionEnum),
 
   /// Option name whiteBalance
   whiteBalance('WhiteBalance', WhiteBalanceEnum),
@@ -3427,6 +3458,128 @@ enum TimeShiftIntervalEnum {
   }
 }
 
+/// top bottom correction
+///
+/// Sets the top/bottom correction.  For RICOH THETA V and RICOH
+/// THETA Z1, the top/bottom correction can be set only for still
+/// images.  For RICOH THETA X, the top/bottom correction can be
+/// set for both still images and videos.
+enum TopBottomCorrectionOptionEnum {
+  /// Top/bottom correction is performed.
+  apply('APPLY'),
+
+  /// Refer to top/bottom correction when shooting with "ApplyAuto"
+  applyAuto('APPLY_AUTO'),
+
+  /// Top/bottom correction is performed. The parameters used for
+  /// top/bottom correction for the first image are saved and used
+  /// for the 2nd and subsequent images.(RICOH THETA X or later)
+  applySemiauto('APPLY_SEMIAUTO'),
+
+  /// Performs top/bottom correction and then saves the parameters.
+  applySave('APPLY_SAVE'),
+
+  /// Performs top/bottom correction using the saved parameters.
+  applyLoad('APPLY_LOAD'),
+
+  /// Does not perform top/bottom correction.
+  disapply('DISAPPLY'),
+
+  /// Performs the top/bottom correction with the specified front
+  /// position. The front position can be specified with
+  /// _topBottomCorrectionRotation.
+  manual('MANUAL');
+
+  final String rawValue;
+
+  const TopBottomCorrectionOptionEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static TopBottomCorrectionOptionEnum? getValue(String rawValue) {
+    return TopBottomCorrectionOptionEnum.values
+        .cast<TopBottomCorrectionOptionEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
+  }
+}
+
+/// Video stitching during shooting.
+enum VideoStitchingEnum {
+  /// Stitching is OFF
+  none('NONE'),
+
+  /// Stitching by the camera is ON
+  ondevice('ONDEVICE');
+
+  final String rawValue;
+
+  const VideoStitchingEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static VideoStitchingEnum? getValue(String rawValue) {
+    return VideoStitchingEnum.values.cast<VideoStitchingEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
+/// Reduction visibility of camera body to still image when stitching.
+enum VisibilityReductionEnum {
+  /// Reduction is ON.
+  on('ON'),
+
+  /// Reduction is OFF.
+  off('OFF');
+
+  final String rawValue;
+
+  const VisibilityReductionEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static VisibilityReductionEnum? getValue(String rawValue) {
+    return VisibilityReductionEnum.values
+        .cast<VisibilityReductionEnum?>()
+        .firstWhere((element) => element?.rawValue == rawValue,
+            orElse: () => null);
+  }
+}
+
+/// Sets the front position for the top/bottom correction.
+/// Enabled only for _topBottomCorrection Manual.
+class TopBottomCorrectionRotation {
+  /// Specifies the pitch.
+  /// Specified range is -90.0 to +90.0, stepSize is 0.1
+  double pitch;
+
+  /// Specifies the roll.
+  /// Specified range is -180.0 to +180.0, stepSize is 0.1
+  double roll;
+
+  /// Specifies the yaw.
+  /// Specified range is -180.0 to +180.0, stepSize is 0.1
+  double yaw;
+
+  TopBottomCorrectionRotation(this.pitch, this.roll, this.yaw);
+
+  @override
+  bool operator ==(Object other) => hashCode == other.hashCode;
+
+  @override
+  int get hashCode => Object.hashAll([pitch, roll, yaw]);
+}
+
 /// White balance auto strength.
 ///
 /// To set the strength of white balance auto for low color temperature scene.
@@ -3761,6 +3914,8 @@ class Options {
   /// Language used in camera OS.
   LanguageEnum? language;
 
+  ExposureDelayEnum? latestEnabledExposureDelayTime;
+
   /// Maximum recordable time (in seconds) of the camera.
   MaxRecordableTimeEnum? maxRecordableTime;
 
@@ -3818,11 +3973,21 @@ class Options {
   /// TimeShift
   TimeShift? timeShift;
 
+  /// see [TopBottomCorrectionOptionEnum]
+  TopBottomCorrectionOptionEnum? topBottomCorrection;
+
+  /// see [TopBottomCorrectionRotation]
+  TopBottomCorrectionRotation? topBottomCorrectionRotation;
+
   /// Total storage space (byte).
   int? totalSpace;
 
   /// User name used for digest authentication when _networkType is set to client mode.
   String? username;
+
+  VideoStitchingEnum? videoStitching;
+
+  VisibilityReductionEnum? visibilityReduction;
 
   /// White balance.
   ///
@@ -3905,6 +4070,8 @@ class Options {
         return isoAutoHighLimit as T;
       case OptionNameEnum.language:
         return language as T;
+      case OptionNameEnum.latestEnabledExposureDelayTime:
+        return latestEnabledExposureDelayTime as T;
       case OptionNameEnum.maxRecordableTime:
         return maxRecordableTime as T;
       case OptionNameEnum.networkType:
@@ -3937,10 +4104,18 @@ class Options {
         return sleepDelay as T;
       case OptionNameEnum.timeShift:
         return timeShift as T;
+      case OptionNameEnum.topBottomCorrection:
+        return topBottomCorrection as T;
+      case OptionNameEnum.topBottomCorrectionRotation:
+        return topBottomCorrectionRotation as T;
       case OptionNameEnum.totalSpace:
         return totalSpace as T;
       case OptionNameEnum.username:
         return username as T;
+      case OptionNameEnum.videoStitching:
+        return videoStitching as T;
+      case OptionNameEnum.visibilityReduction:
+        return visibilityReduction as T;
       case OptionNameEnum.whiteBalance:
         return whiteBalance as T;
       case OptionNameEnum.whiteBalanceAutoStrength:
@@ -4047,6 +4222,9 @@ class Options {
       case OptionNameEnum.language:
         language = value;
         break;
+      case OptionNameEnum.latestEnabledExposureDelayTime:
+        latestEnabledExposureDelayTime = value;
+        break;
       case OptionNameEnum.maxRecordableTime:
         maxRecordableTime = value;
         break;
@@ -4095,11 +4273,23 @@ class Options {
       case OptionNameEnum.timeShift:
         timeShift = value;
         break;
+      case OptionNameEnum.topBottomCorrection:
+        topBottomCorrection = value;
+        break;
+      case OptionNameEnum.topBottomCorrectionRotation:
+        topBottomCorrectionRotation = value;
+        break;
       case OptionNameEnum.totalSpace:
         totalSpace = value;
         break;
       case OptionNameEnum.username:
         username = value;
+        break;
+      case OptionNameEnum.videoStitching:
+        videoStitching = value;
+        break;
+      case OptionNameEnum.visibilityReduction:
+        visibilityReduction = value;
         break;
       case OptionNameEnum.whiteBalance:
         whiteBalance = value;

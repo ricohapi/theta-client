@@ -28,11 +28,19 @@ import timber.log.Timber
 fun PreviewScreen(toPhoto: (photoUrl: String) -> Unit, viewModel: ThetaViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
 
     class TakenCallback : PhotoCapture.TakePictureCallback {
-        override fun onSuccess(fileUrl: String) {
+        override fun onSuccess(fileUrl: String?) {
             Timber.i("takePicture onSuccess: $fileUrl")
             val scope = CoroutineScope(Job() + Dispatchers.Main)
-            scope.launch {
-                toPhoto(fileUrl) // need to execute on the main thread.
+            when (fileUrl) {
+                null -> {   // Cancel shooting.
+                    viewModel.startPreview()
+                }
+
+                else -> {
+                    scope.launch {
+                        toPhoto(fileUrl) // need to execute on the main thread.
+                    }
+                }
             }
         }
 

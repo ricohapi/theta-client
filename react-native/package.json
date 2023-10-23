@@ -1,6 +1,6 @@
 {
   "name": "theta-client-react-native",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "This library provides a way to control RICOH THETA using.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -134,7 +134,9 @@
   },
   "eslintIgnore": [
     "node_modules/",
-    "lib/"
+    "lib/",
+    "marzipano.js",
+    "verification-tool/node_modules"
   ],
   "prettier": {
     "quoteProps": "consistent",

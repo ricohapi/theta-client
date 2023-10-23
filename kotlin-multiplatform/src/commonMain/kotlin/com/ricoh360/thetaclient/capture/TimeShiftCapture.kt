@@ -18,7 +18,7 @@ import kotlinx.coroutines.*
 class TimeShiftCapture private constructor(
     private val endpoint: String,
     options: Options,
-    private val checkStatusCommandInterval: Long
+    private val checkStatusCommandInterval: Long,
 ) : Capture(options) {
 
     private val scope = CoroutineScope(Dispatchers.Default)
@@ -97,12 +97,13 @@ class TimeShiftCapture private constructor(
                     }
 
                     if (response.state == CommandState.DONE) {
-                        var fileUrl: String? = when (response.name) {
+                        val fileUrl: String? = when (response.name) {
                             // Theta X returns "results.fileUrls".
                             // Theta SC2 for business (after taking a video) returns "results.fileUrl".
                             "camera.startCapture" -> {
                                 val captureResponse = response as StartCaptureResponse
-                                captureResponse.results?.fileUrls?.firstOrNull() ?: captureResponse.results?.fileUrl
+                                captureResponse.results?.fileUrls?.firstOrNull()
+                                    ?: captureResponse.results?.fileUrl
                             }
                             // Theta SC2 for business after taking a photo
                             "camera.takePicture" -> (response as TakePictureResponse).results?.fileUrl
@@ -111,14 +112,37 @@ class TimeShiftCapture private constructor(
                         callback.onSuccess(fileUrl = fileUrl)
                         return@runBlocking
                     }
-                    callback.onError(exception = ThetaRepository.ThetaWebApiException(message = startCaptureResponse.error?.message ?: startCaptureResponse.error.toString()))
+
+                    val error = response.error
+                    if (error != null && !error.isCanceledShootingCode()) {
+                        callback.onError(exception = ThetaRepository.ThetaWebApiException(message = error.message))
+                    } else {
+                        println("timeShift canceled")
+                        callback.onSuccess(fileUrl = null) // canceled
+                    }
                 }
             } catch (e: JsonConvertException) {
-                callback.onError(exception = ThetaRepository.ThetaWebApiException(message = e.message ?: e.toString()))
+                callback.onError(
+                    exception = ThetaRepository.ThetaWebApiException(
+                        message = e.message ?: e.toString()
+                    )
+                )
             } catch (e: ResponseException) {
-                callback.onError(exception = ThetaRepository.ThetaWebApiException.create(exception = e))
+                if (isCanceledShootingResponse(e.response)) {
+                    callback.onSuccess(fileUrl = null) // canceled
+                } else {
+                    callback.onError(
+                        exception = ThetaRepository.ThetaWebApiException.create(
+                            exception = e
+                        )
+                    )
+                }
             } catch (e: Exception) {
-                callback.onError(exception = ThetaRepository.NotConnectedException(message = e.message ?: e.toString()))
+                callback.onError(
+                    exception = ThetaRepository.NotConnectedException(
+                        message = e.message ?: e.toString()
+                    )
+                )
             }
         }
 
@@ -131,7 +155,10 @@ class TimeShiftCapture private constructor(
      * @property endpoint URL of Theta web API endpoint
      * @property cameraModel Camera model info.
      */
-    class Builder internal constructor(private val endpoint: String, private val cameraModel: ThetaRepository.ThetaModel? = null) : Capture.Builder<Builder>() {
+    class Builder internal constructor(
+        private val endpoint: String,
+        private val cameraModel: ThetaRepository.ThetaModel? = null,
+    ) : Capture.Builder<Builder>() {
         private var interval: Long? = null
 
         /**
@@ -143,11 +170,19 @@ class TimeShiftCapture private constructor(
         suspend fun build(): TimeShiftCapture {
             try {
                 val modeOptions = when (cameraModel) {
-                    ThetaRepository.ThetaModel.THETA_X -> Options(captureMode = CaptureMode.IMAGE, _shootingMethod = ShootingMethod.TIMESHIFT)
+                    ThetaRepository.ThetaModel.THETA_X -> Options(
+                        captureMode = CaptureMode.IMAGE,
+                        _shootingMethod = ShootingMethod.TIMESHIFT
+                    )
+
                     ThetaRepository.ThetaModel.THETA_SC2_B -> Options(
                         captureMode = CaptureMode.PRESET,
                         _preset = Preset.ROOM,
-                        _timeShift = TimeShift(firstShooting = FirstShootingEnum.FRONT, firstInterval = SC2B_DEFAULT_FIRST_INTERVAL, secondInterval = SC2B_DEFAULT_SECOND_INTERVAL),
+                        _timeShift = TimeShift(
+                            firstShooting = FirstShootingEnum.FRONT,
+                            firstInterval = SC2B_DEFAULT_FIRST_INTERVAL,
+                            secondInterval = SC2B_DEFAULT_SECOND_INTERVAL
+                        ),
                         exposureDelay = SC2B_DEFAULT_EXPOSURE_DELAY, // without this option, sometimes shooting is normal but time-shift
                     )
 
@@ -197,7 +232,8 @@ class TimeShiftCapture private constructor(
          */
         fun setIsFrontFirst(isFrontFirst: Boolean): Builder {
             checkAndInitTimeShiftSetting()
-            options._timeShift?.firstShooting = if (isFrontFirst) FirstShootingEnum.FRONT else FirstShootingEnum.REAR
+            options._timeShift?.firstShooting =
+                if (isFrontFirst) FirstShootingEnum.FRONT else FirstShootingEnum.REAR
             return this
         }
 
