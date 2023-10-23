@@ -31,11 +31,11 @@ internal object MockApiClient {
     var onPreviewNextPart: (() -> Pair<ByteArray, Int>)? = null
     var onMultipartPostRequest: (
         (
-            endpoint: String,
-            path: String,
-            filePaths: List<String>,
-            boundary: String
-        ) -> ByteArray
+        endpoint: String,
+        path: String,
+        filePaths: List<String>,
+        boundary: String
+    ) -> ByteArray
     )? = null
     val mockHttpClient = HttpClient(MockEngine) {
         expectSuccess = true

@@ -128,7 +128,8 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
-  Future<void> buildShotCountSpecifiedIntervalCapture(Map<String, dynamic> options, int interval) {
+  Future<void> buildShotCountSpecifiedIntervalCapture(
+      Map<String, dynamic> options, int interval) {
     return onCallBuildShotCountSpecifiedIntervalCapture(options, interval);
   }
 
@@ -141,7 +142,8 @@ class MockThetaClientFlutterPlatform
   Future<List<String>?> startShotCountSpecifiedIntervalCapture(
       void Function(double)? onProgress,
       void Function(Exception exception)? onStopFailed) {
-    return onCallStartShotCountSpecifiedIntervalCapture(onProgress, onStopFailed);
+    return onCallStartShotCountSpecifiedIntervalCapture(
+        onProgress, onStopFailed);
   }
 
   @override
@@ -340,14 +342,17 @@ Future<void> Function(Map<String, dynamic> options)
 Future<List<String>?> Function(void Function(Exception exception)? onStopFailed)
     onCallStartLimitlessIntervalCapture = (onStopFailed) => Future.value();
 Future<void> Function() onCallStopLimitlessIntervalCapture = Future.value;
-Future<void> Function(int shotCount) onCallGetShotCountSpecifiedIntervalCaptureBuilder = Future.value;
+Future<void> Function(int shotCount)
+    onCallGetShotCountSpecifiedIntervalCaptureBuilder = Future.value;
 Future<void> Function(Map<String, dynamic> options, int interval)
-onCallBuildShotCountSpecifiedIntervalCapture = (options, interval) => Future.value();
+    onCallBuildShotCountSpecifiedIntervalCapture =
+    (options, interval) => Future.value();
 Future<List<String>?> Function(void Function(double)? onProgress,
         void Function(Exception exception)? onStopFailed)
     onCallStartShotCountSpecifiedIntervalCapture =
     (onProgress, onStopFailed) => Future.value();
-Future<void> Function() onCallStopShotCountSpecifiedIntervalCapture = Future.value;
+Future<void> Function() onCallStopShotCountSpecifiedIntervalCapture =
+    Future.value;
 Future<Options> Function(List<OptionNameEnum> optionNames) onCallGetOptions =
     (optionNames) => Future.value(Options());
 Future<void> Function(Options options) onCallSetOptions = Future.value;

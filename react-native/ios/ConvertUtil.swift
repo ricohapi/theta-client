@@ -257,7 +257,7 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
             values: ThetaRepository.LanguageEnum.values(), name: value as! String
         )!
     case ThetaRepository.OptionNameEnum.latestenabledexposuredelaytime.name:
-      options.latestEnabledExposureDelayTime = getEnumValue(
+        options.latestEnabledExposureDelayTime = getEnumValue(
             values: ThetaRepository.ExposureDelayEnum.values(), name: value as! String
         )!
     case ThetaRepository.OptionNameEnum.maxrecordabletime.name:
@@ -379,7 +379,7 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                     result[key] = convertResult(timeshift: timeshift)
                 } else if value is ThetaRepository.TopBottomCorrectionRotation, let rotation = value as? ThetaRepository.TopBottomCorrectionRotation {
                     result[key] = convertResult(rotation: rotation)
-                 } else if let offDelay = value as? ThetaRepository.OffDelaySec {
+                } else if let offDelay = value as? ThetaRepository.OffDelaySec {
                     result[key] =
                         offDelay.sec == 0 ? ThetaRepository.OffDelayEnum.disable.name : offDelay.sec
                 } else if let sleepDelay = value as? ThetaRepository.SleepDelaySec {

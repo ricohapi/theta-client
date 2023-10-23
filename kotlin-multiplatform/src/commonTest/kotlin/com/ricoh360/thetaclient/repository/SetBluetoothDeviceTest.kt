@@ -43,7 +43,7 @@ class SetBluetoothDeviceTest {
             assertTrue(true, "setBluetoothDevice")
             assertTrue(it.length > 0, "device name")
         }.onFailure {
-            println("setBluetoothDevice: ${it.toString()}")
+            println("setBluetoothDevice: $it")
             assertTrue(false, "setBluetoothDevice")
         }
     }

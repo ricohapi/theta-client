@@ -916,7 +916,7 @@ void main() {
       [TopBottomCorrectionOptionEnum.manual, 'MANUAL'],
     ];
     expect(data.length, TopBottomCorrectionOptionEnum.values.length,
-            reason: 'enum count');
+        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }

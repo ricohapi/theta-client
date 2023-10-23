@@ -134,6 +134,7 @@ open class BaseHttpClient {
 
         // decimal value of hex "10"
         const val HEX_10 = 16
+
         // decimal value of hex "A"
         const val HEX_A = 10
     }
@@ -179,7 +180,7 @@ open class BaseHttpClient {
     /**
      * close connection
      */
-     fun close() {
+    fun close() {
         runCatching {
             input?.cancel()
         }
@@ -247,7 +248,7 @@ open class BaseHttpClient {
      */
     protected suspend fun writeRequestLine(path: String, method: HttpMethod) {
         var slash = ""
-        if(path.first() != '/') slash = "/"
+        if (path.first() != '/') slash = "/"
         write("${method.value} $slash$path HTTP/1.1\r\n")
     }
 
@@ -441,7 +442,7 @@ open class BaseHttpClient {
                 byte?.let {
                     buf[i] = it
                 } ?: let {
-                    throw(BaseHttpClientException("response body is too short"))
+                    throw (BaseHttpClientException("response body is too short"))
                 }
             }
             this.responseBody = buf
@@ -452,8 +453,8 @@ open class BaseHttpClient {
                 byte?.let {
                     buf += it
                 }
-                byte?: break
-            } while(true)
+                byte ?: break
+            } while (true)
             this.responseBody = buf
         }
     }
@@ -473,7 +474,7 @@ class BaseHttpClientException(
  * HTTP client interface for update firmware
  * This interface is used in unit tests.
  */
-interface MultipartPostClient  {
+interface MultipartPostClient {
     companion object {
         // boundary, can be any uuid, which is constraint of Theta SC2
         const val BOUNDARY = "ab0c85f4-6d89-4a7f-a0a5-115d7f43b5f1"
@@ -510,10 +511,12 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
     companion object {
         // read buffer size for reading firmware file
         const val READ_BUFFER_SIZE = 1024 * 8
+
         // boundary, can be any uuid, which is constraint of Theta SC2
         //const val BOUNDARY = "ab0c85f4-6d89-4a7f-a0a5-115d7f43b5f1"
         // regular expression to get a file name from a file path
         private val regexFileName = Regex("""[^/\\]+$""")
+
         // 100 percentage
         private const val PERCENTAGE_100 = 100
 
@@ -607,8 +610,7 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
          * @param path file path
          * @return file name
          */
-        private fun getFileName(path: String): String
-        {
+        private fun getFileName(path: String): String {
             val fileName = regexFileName.find(path)?.value
             fileName ?: throw IllegalArgumentException("No file name: $path")
             return fileName
@@ -639,7 +641,7 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
          * @param filePath path of the target file
          * @return file size
          */
-        private suspend fun getFileSize(filePath: String): Long = withContext(Dispatchers.Default){
+        private suspend fun getFileSize(filePath: String): Long = withContext(Dispatchers.Default) {
             val buffer = ByteArray(READ_BUFFER_SIZE)
             var size = 0L
             var src: Source? = null
@@ -683,18 +685,18 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
         val authorizationHeader: String? = checkAuthenticationNeeded(endpoint, path, connectionTimeout, socketTimeout)
         requestWithAuth(endpoint, path, filePaths, connectionTimeout, socketTimeout, callback, boundary, authorizationHeader)
         close()
-        val httpStatusCode = HttpStatusCode(this.status, this.statusMessage?: "")
-        if(httpStatusCode.isSuccess() || httpStatusCode.value == 0) {
+        val httpStatusCode = HttpStatusCode(this.status, this.statusMessage ?: "")
+        if (httpStatusCode.isSuccess() || httpStatusCode.value == 0) {
             return this.responseBody ?: byteArrayOf()
-        } else if (httpStatusCode == HttpStatusCode.NotFound){
-            throw(BaseHttpClientException("Request failed: ${this.status} ${this.statusMessage}: API path \"$path\" may be wrong"))
+        } else if (httpStatusCode == HttpStatusCode.NotFound) {
+            throw (BaseHttpClientException("Request failed: ${this.status} ${this.statusMessage}: API path \"$path\" may be wrong"))
         } else {
             val headers = this.responseHeaders?.entries?.joinToString(prefix = "[", postfix = "]") ?: "[no header]"
             var body = "[empty body]"
             this.responseBody?.let {
                 body = String(it)
             }
-            throw(BaseHttpClientException("Request failed: ${this.status} ${this.statusMessage}\n$headers\n$body}"))
+            throw (BaseHttpClientException("Request failed: ${this.status} ${this.statusMessage}\n$headers\n$body}"))
         }
     }
 
@@ -747,7 +749,7 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
                         }
                     }
                     count = src.readAtMostTo(buffer, 0, READ_BUFFER_SIZE)
-                } while(count != -1)
+                } while (count != -1)
             } finally {
                 src?.close()
             }
@@ -760,7 +762,7 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
             readStatusLine()
             readHeaders()
             readBody()
-        } catch(e: Throwable) {
+        } catch (e: Throwable) {
             // Theta X does not send a status line but firmware update is executed.
         } finally {
             close()
@@ -814,9 +816,9 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
                 digestAuth.updateAuthHeaderInfo(authHeader)
                 return digestAuth.makeDigestHeader(path, HttpMethod.Post.value)
             }
-            throw(BaseHttpClientException("No WWW-Authenticate header in the 401 response"))
+            throw (BaseHttpClientException("No WWW-Authenticate header in the 401 response"))
         }
-        throw(BaseHttpClientException("No authentication information is set"))
+        throw (BaseHttpClientException("No authentication information is set"))
     }
 
 

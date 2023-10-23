@@ -870,7 +870,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         limitlessIntervalCapturing.stopCapture()
         resolve(nil)
     }
-    
+
     @objc(getShotCountSpecifiedIntervalCaptureBuilder:withResolver:withRejecter:)
     func getShotCountSpecifiedIntervalCaptureBuilder(
         shotCount: Int,

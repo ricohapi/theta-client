@@ -46,7 +46,7 @@ class UpdateFirmwareTest {
             return@runTest
         }
         println("apiPath: $apiPath")
-        MockApiClient.onMultipartPostRequest = { _, _, _, _, ->
+        MockApiClient.onMultipartPostRequest = { _, _, _, _ ->
             Resource("src/commonTest/resources/updateFirmware/update_firmware.done.json").readText().toByteArray()
         }
 
@@ -58,13 +58,13 @@ class UpdateFirmwareTest {
         }.onSuccess {
             assertTrue(true, "updateFirmware")
         }.onFailure {
-            println("updateThetaFirmware: ${it.toString()}")
+            println("updateThetaFirmware: $it")
             assertTrue(false, "updateFirmware")
         }
     }
 
     companion object {
         // Environment variable name that holds the path of Theta firmware update API.
-        const val FIRMWARE_UPDATE_API_ENV_NAME= "THETA_FU_API_PATH"
+        const val FIRMWARE_UPDATE_API_ENV_NAME = "THETA_FU_API_PATH"
     }
 }

@@ -139,11 +139,11 @@ internal object ThetaApi {
         callback: ((Int) -> Unit)?,
     ): UpdateFirmwareApiResponse {
         val DUMMY_RESPONSE = "{\"name\":\"camera.${apiPath}\",\"state\":\"done\"}"
-        if(filePaths.isEmpty()) {
+        if (filePaths.isEmpty()) {
             throw IllegalArgumentException("Empty filePaths")
         }
         val responseBody = multipartPostClient.request(endpoint, apiPath, filePaths, connectTimeout, socketTimeout, callback)
-        return if(responseBody.size > 0) Json.decodeFromString<UpdateFirmwareApiResponse>(String(responseBody))
+        return if (responseBody.size > 0) Json.decodeFromString<UpdateFirmwareApiResponse>(String(responseBody))
         else Json.decodeFromString(DUMMY_RESPONSE) // Theta X does not send response body
     }
 

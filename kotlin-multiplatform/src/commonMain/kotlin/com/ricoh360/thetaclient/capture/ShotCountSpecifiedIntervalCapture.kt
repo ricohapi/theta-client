@@ -170,7 +170,7 @@ class ShotCountSpecifiedIntervalCapture private constructor(
                 }
 
                 delay(timeMillis = checkStatusCommandInterval)
-                when(cameraModel) {
+                when (cameraModel) {
                     ThetaRepository.ThetaModel.THETA_SC2, ThetaRepository.ThetaModel.THETA_SC2_B -> {
                         monitorCaptureStatus(callback)
                     }

@@ -740,7 +740,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         limitlessIntervalCapturing.stopCapture()
         result(nil)
     }
-    
+
     func getShotCountSpecifiedIntervalCaptureBuilder(call: FlutterMethodCall, result: @escaping FlutterResult) {
         guard let thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)

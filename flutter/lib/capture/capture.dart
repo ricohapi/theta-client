@@ -175,11 +175,10 @@ class ShotCountSpecifiedIntervalCapture extends Capture {
 
   /// Starts interval shooting with the shot count specified.
   ShotCountSpecifiedIntervalCapturing startCapture(
-    void Function(List<String>? fileUrls) onSuccess,
-    void Function(double completion) onProgress,
-    void Function(Exception exception) onCaptureFailed,
-    {void Function(Exception exception)? onStopFailed}
-  ) {
+      void Function(List<String>? fileUrls) onSuccess,
+      void Function(double completion) onProgress,
+      void Function(Exception exception) onCaptureFailed,
+      {void Function(Exception exception)? onStopFailed}) {
     ThetaClientFlutterPlatform.instance
         .startShotCountSpecifiedIntervalCapture(onProgress, onStopFailed)
         .then((value) => onSuccess(value))
