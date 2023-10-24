@@ -4,7 +4,6 @@ import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.capture.*
-import io.ktor.utils.io.core.*
 import kotlinx.coroutines.*
 import java.util.*
 import kotlin.coroutines.*
