@@ -51,6 +51,7 @@ val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "iso" to OptionNameEnum.Iso,
   "isoAutoHighLimit" to OptionNameEnum.IsoAutoHighLimit,
   "language" to OptionNameEnum.Language,
+  "latestEnabledExposureDelayTime" to OptionNameEnum.LatestEnabledExposureDelayTime,
   "maxRecordableTime" to OptionNameEnum.MaxRecordableTime,
   "networkType" to OptionNameEnum.NetworkType,
   "offDelay" to OptionNameEnum.OffDelay,
@@ -69,6 +70,8 @@ val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "timeShift" to OptionNameEnum.TimeShift,
   "totalSpace" to OptionNameEnum.TotalSpace,
   "username" to OptionNameEnum.Username,
+  "videoStitching" to OptionNameEnum.VideoStitching,
+  "visibilityReduction" to OptionNameEnum.VisibilityReduction,
   "whiteBalance" to OptionNameEnum.WhiteBalance,
   "whiteBalanceAutoStrength" to OptionNameEnum.WhiteBalanceAutoStrength,
   "wlanFrequency" to OptionNameEnum.WlanFrequency,
@@ -519,6 +522,7 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
     OptionNameEnum.Iso -> IsoEnum.values().find { it.name == valueName }
     OptionNameEnum.IsoAutoHighLimit -> IsoAutoHighLimitEnum.values().find { it.name == valueName }
     OptionNameEnum.Language -> LanguageEnum.values().find { it.name == valueName }
+    OptionNameEnum.LatestEnabledExposureDelayTime -> ExposureDelayEnum.values().find { it.name == valueName }
     OptionNameEnum.MaxRecordableTime -> MaxRecordableTimeEnum.values().find { it.name == valueName }
     OptionNameEnum.NetworkType -> NetworkTypeEnum.values().find { it.name == valueName }
     OptionNameEnum.OffDelay -> OffDelayEnum.values().find { it.name == valueName }
@@ -528,6 +532,8 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
     OptionNameEnum.ShootingMethod -> ShootingMethodEnum.values().find { it.name == valueName }
     OptionNameEnum.ShutterSpeed -> ShutterSpeedEnum.values().find { it.name == valueName }
     OptionNameEnum.SleepDelay -> SleepDelayEnum.values().find { it.name == valueName }
+    OptionNameEnum.VideoStitching -> VideoStitchingEnum.values().find { it.name == valueName }
+    OptionNameEnum.VisibilityReduction -> VisibilityReductionEnum.values().find { it.name == valueName }
     OptionNameEnum.WhiteBalance -> WhiteBalanceEnum.values().find { it.name == valueName }
     OptionNameEnum.WhiteBalanceAutoStrength -> WhiteBalanceAutoStrengthEnum.values().find { it.name == valueName }
     OptionNameEnum.WlanFrequency -> WlanFrequencyEnum.values().find { it.name == valueName }
