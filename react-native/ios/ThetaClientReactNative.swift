@@ -42,6 +42,7 @@ class ThetaClientReactNative: RCTEventEmitter {
     static let EVENT_NOTIFY = "ThetaNotify"
 
     static let NOTIFY_TIMESHIFT_PROGRESS = "TIME-SHIFT-PROGRESS"
+    static let NOTIFY_TIMESHIFT_STOP_ERROR = "TIME-SHIFT-STOP-ERROR"
     static let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_PROGRESS = "SHOT-COUNT-SPECIFIED-INTERVAL-PROGRESS"
     static let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_STOP_ERROR = "SHOT-COUNT-SPECIFIED-INTERVAL-STOP-ERROR"
     static let NOTIFY_VIDEO_CAPTURE_STOP_ERROR = "VIDEO-CAPTURE-STOP-ERROR"
@@ -584,8 +585,19 @@ class ThetaClientReactNative: RCTEventEmitter {
                 self.client = client
             }
 
-            func onError(exception: ThetaRepository.ThetaRepositoryException) {
+            func onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 callback(nil, exception.asError())
+            }
+
+            func onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                let error = exception.asError()
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_TIMESHIFT_STOP_ERROR,
+                        params: toMessageNotifyParam(value: error.localizedDescription)
+                    )
+                )
             }
 
             func onProgress(completion: Float) {
@@ -598,7 +610,7 @@ class ThetaClientReactNative: RCTEventEmitter {
                 )
             }
 
-            func onSuccess(fileUrl: String?) {
+            func onCaptureCompleted(fileUrl: String?) {
                 callback(fileUrl, nil)
             }
         }

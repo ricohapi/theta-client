@@ -60,11 +60,12 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
 
         const val eventNameNotify = "theta_client_flutter/theta_notify"
         const val notifyIdLivePreview = 10001
-        const val notifyIdTimeShiftProgress = 10002
+        const val notifyIdTimeShiftProgress = 10011
+        const val notifyIdTimeShiftStopError = 10012
         const val notifyIdVideoCaptureStopError = 10003
         const val notifyIdLimitlessIntervalCaptureStopError = 10004
-        const val notifyIdShotCountSpecifiedIntervalCaptureProgress = 10005
-        const val notifyIdShotCountSpecifiedIntervalCaptureStopError = 10006
+        const val notifyIdShotCountSpecifiedIntervalCaptureProgress = 10021
+        const val notifyIdShotCountSpecifiedIntervalCaptureStopError = 10022
     }
 
     fun sendNotifyEvent(id: Int, params: Map<String, Any?>) {
@@ -599,8 +600,15 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         }
         timeShiftCapturing =
             timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
-                override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
+                override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
                     result.error(exception.javaClass.simpleName, exception.message, null)
+                }
+
+                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    sendNotifyEvent(
+                        notifyIdTimeShiftStopError,
+                        toMessageNotifyParam(exception.message ?: exception.toString())
+                    )
                 }
 
                 override fun onProgress(completion: Float) {
@@ -610,7 +618,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     )
                 }
 
-                override fun onSuccess(fileUrl: String?) {
+                override fun onCaptureCompleted(fileUrl: String?) {
                     result.success(fileUrl)
                 }
             })

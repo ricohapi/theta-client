@@ -99,19 +99,19 @@ void main() {
       'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.MP4'
     ];
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      expect(platform.notifyList.containsKey(10005), true,
+      expect(platform.notifyList.containsKey(10021), true,
           reason: 'add notify progress');
 
       // native event
       platform.onNotify({
-        'id': 10005,
+        'id': 10021,
         'params': {
           'completion': 0.1,
         },
       });
       await Future.delayed(const Duration(milliseconds: 10));
       platform.onNotify({
-        'id': 10005,
+        'id': 10021,
         'params': {
           'completion': 0.2,
         },
@@ -129,7 +129,7 @@ void main() {
     var result = await resultCapture.timeout(const Duration(seconds: 5));
     expect(result, fileUrls);
     expect(progressCount, 2);
-    expect(platform.notifyList.containsKey(10005), false,
+    expect(platform.notifyList.containsKey(10021), false,
         reason: 'remove notify progress');
   });
 
@@ -138,13 +138,13 @@ void main() {
       'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.MP4'
     ];
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      expect(platform.notifyList.containsKey(10006), true,
+      expect(platform.notifyList.containsKey(10022), true,
           reason: 'add notify stop error');
 
       await Future.delayed(const Duration(milliseconds: 1));
       // native event
       platform.onNotify({
-        'id': 10006,
+        'id': 10022,
         'params': {
           'message': "stop error",
         },
@@ -159,7 +159,7 @@ void main() {
     });
     var result = await resultCapture.timeout(const Duration(seconds: 5));
     expect(result, fileUrls);
-    expect(platform.notifyList.containsKey(10006), false,
+    expect(platform.notifyList.containsKey(10022), false,
         reason: 'remove notify stop error');
     expect(isOnStopFailed, true);
   });

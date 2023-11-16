@@ -8,11 +8,12 @@ import 'package:theta_client_flutter/utils/convert_utils.dart';
 import 'theta_client_flutter_platform_interface.dart';
 
 const notifyIdLivePreview = 10001;
-const notifyIdTimeShiftProgress = 10002;
+const notifyIdTimeShiftProgress = 10011;
+const notifyIdTimeShiftStopError = 10012;
 const notifyIdVideoCaptureStopError = 10003;
 const notifyIdLimitlessIntervalCaptureStopError = 10004;
-const notifyIdShotCountSpecifiedIntervalCaptureProgress = 10005;
-const notifyIdShotCountSpecifiedIntervalCaptureStopError = 10006;
+const notifyIdShotCountSpecifiedIntervalCaptureProgress = 10021;
+const notifyIdShotCountSpecifiedIntervalCaptureStopError = 10022;
 
 /// An implementation of [ThetaClientFlutterPlatform] that uses method channels.
 class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
@@ -238,8 +239,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   }
 
   @override
-  Future<String?> startTimeShiftCapture(
-      void Function(double)? onProgress) async {
+  Future<String?> startTimeShiftCapture(void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed) async {
     var completer = Completer<String?>();
     try {
       enableNotifyEventReceiver();
@@ -251,12 +252,22 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           }
         });
       }
+      if (onStopFailed != null) {
+        addNotify(notifyIdTimeShiftStopError, (params) {
+          final message = params?['message'] as String?;
+          if (message != null) {
+            onStopFailed(Exception(message));
+          }
+        });
+      }
       final fileUrl =
           await methodChannel.invokeMethod<String>('startTimeShiftCapture');
       removeNotify(notifyIdTimeShiftProgress);
+      removeNotify(notifyIdTimeShiftStopError);
       completer.complete(fileUrl);
     } catch (e) {
       removeNotify(notifyIdTimeShiftProgress);
+      removeNotify(notifyIdTimeShiftStopError);
       completer.completeError(e);
     }
     return completer.future;

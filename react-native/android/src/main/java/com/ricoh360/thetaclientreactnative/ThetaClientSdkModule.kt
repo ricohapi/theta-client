@@ -594,7 +594,7 @@ class ThetaClientReactNativeModule(
       return
     }
     class StartCaptureCallback : TimeShiftCapture.StartCaptureCallback {
-      override fun onSuccess(fileUrl: String?) {
+      override fun onCaptureCompleted(fileUrl: String?) {
         promise.resolve(fileUrl)
         timeShiftCapture = null
       }
@@ -605,9 +605,18 @@ class ThetaClientReactNativeModule(
         )
       }
 
-      override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
+      override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
         promise.reject(exception)
         timeShiftCapture = null
+      }
+
+      override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+        sendNotifyEvent(
+          toNotify(
+            NOTIFY_TIMESHIFT_STOP_ERROR,
+            toMessageNotifyParam(exception.message ?: exception.toString())
+          )
+        )
       }
     }
     timeShiftCapturing = timeShiftCapture?.startCapture(StartCaptureCallback())
@@ -1545,6 +1554,7 @@ class ThetaClientReactNativeModule(
     const val EVENT_NAME = "ThetaFrameEvent"
     const val EVENT_NOTIFY = "ThetaNotify"
     const val NOTIFY_TIMESHIFT_PROGRESS = "TIME-SHIFT-PROGRESS"
+    const val NOTIFY_TIMESHIFT_STOP_ERROR = "TIME-SHIFT-STOP-ERROR"
     const val NOTIFY_VIDEO_CAPTURE_STOP_ERROR = "VIDEO-CAPTURE-STOP-ERROR"
     const val NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR = "LIMITLESS-INTERVAL-CAPTURE-STOP-ERROR"
     const val NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_PROGRESS = "SHOT-COUNT-SPECIFIED-INTERVAL-PROGRESS"

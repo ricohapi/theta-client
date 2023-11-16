@@ -4,11 +4,12 @@ import UIKit
 
 let EVENT_NOTIFY = "theta_client_flutter/theta_notify"
 let NOTIFY_LIVE_PREVIEW = 10001
-let NOTIFY_TIME_SHIFT_PROGRESS = 10002
+let NOTIFY_TIME_SHIFT_PROGRESS = 10011
+let NOTIFY_TIME_SHIFT_STOP_ERROR = 10011
 let NOTIFY_VIDEO_CAPTURE_STOP_ERROR = 10003
 let NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR = 10004
-let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_PROGRESS = 10005
-let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_STOP_ERROR = 10006
+let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_PROGRESS = 10021
+let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_STOP_ERROR = 10022
 
 public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     public func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -541,16 +542,21 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 self.callback = callback
                 self.plugin = plugin
             }
-
-            func onError(exception: ThetaRepository.ThetaRepositoryException) {
+            
+            func onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 callback(nil, exception.asError())
             }
-
+            
+            func onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                let error = exception.asError()
+                plugin?.sendNotifyEvent(id: NOTIFY_TIME_SHIFT_STOP_ERROR, params: toMessageNotifyParam(message: error.localizedDescription))
+            }
+            
             func onProgress(completion: Float) {
                 plugin?.sendNotifyEvent(id: NOTIFY_TIME_SHIFT_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
             }
-
-            func onSuccess(fileUrl: String?) {
+            
+            func onCaptureCompleted(fileUrl: String?) {
                 callback(fileUrl, nil)
             }
         }

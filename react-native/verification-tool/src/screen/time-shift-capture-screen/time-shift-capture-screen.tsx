@@ -86,10 +86,15 @@ const TimeShiftCaptureScreen: React.FC = ({ navigation }) => {
     }
     try {
       console.log('startTimeShiftCapture startCapture');
-      const url = await capture.startCapture((completion) => {
-        if (isTaking) return;
-        setMessage(`progress = ${completion}`);
-      });
+      const url = await capture.startCapture(
+        (completion) => {
+          if (isTaking) return;
+          setMessage(`progress = ${completion}`);
+        },
+        (error) => {
+          Alert.alert('Cancel error', JSON.stringify(error), [{ text: 'OK' }]);
+        }
+      );
       initCapture();
       if (url) {
         Alert.alert('TimeShift file url : ', url, [{ text: 'OK' }]);

@@ -8,10 +8,17 @@ import {
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 const NOTIFY_NAME = 'TIME-SHIFT-PROGRESS';
+const NOTIFY_STOP_ERROR = 'TIME-SHIFT-STOP-ERROR';
 
 interface CaptureProgressNotify extends BaseNotify {
   params?: {
     completion: number;
+  };
+}
+
+interface CaptureStopErrorNotify extends BaseNotify {
+  params?: {
+    message: string;
   };
 }
 
@@ -26,15 +33,25 @@ export class TimeShiftCapture {
   /**
    * start time-shift
    * @param onProgress the block for time-shift onProgress
+   * @param onStopFailed the block for error of cancelCapture
    * @return promise of captured file url
    */
   async startCapture(
-    onProgress?: (completion?: number) => void
+    onProgress?: (completion?: number) => void,
+    onStopFailed?: (error: any) => void
   ): Promise<string | undefined> {
     if (onProgress) {
       this.notify.addNotify(NOTIFY_NAME, (event: CaptureProgressNotify) => {
         onProgress(event.params?.completion);
       });
+    }
+    if (onStopFailed) {
+      this.notify.addNotify(
+        NOTIFY_STOP_ERROR,
+        (event: CaptureStopErrorNotify) => {
+          onStopFailed(event.params);
+        }
+      );
     }
 
     return new Promise<string | undefined>(async (resolve, reject) => {
@@ -47,6 +64,7 @@ export class TimeShiftCapture {
         })
         .finally(() => {
           this.notify.removeNotify(NOTIFY_NAME);
+          this.notify.removeNotify(NOTIFY_STOP_ERROR);
         });
     });
   }

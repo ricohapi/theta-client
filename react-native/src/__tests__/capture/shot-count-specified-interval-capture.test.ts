@@ -198,7 +198,7 @@ describe('interval shooting with the shot count specified', () => {
     jest
       .mocked(thetaClient.buildShotCountSpecifiedIntervalCapture)
       .mockImplementation(jest.fn(async () => {}));
-    const testUrl = 'http://192.168.1.1/files/100RICOH/R100.JPG';
+    const testUrls = ['http://192.168.1.1/files/100RICOH/R100.JPG'];
 
     const sendProgress = (progress: number) => {
       notifyCallback({
@@ -214,17 +214,17 @@ describe('interval shooting with the shot count specified', () => {
       .mockImplementation(
         jest.fn(async () => {
           sendProgress(0.5);
-          return testUrl;
+          return testUrls;
         })
       );
 
     const capture = await builder.build();
     let isOnProgress = false;
-    const fileUrl = await capture.startCapture((completion) => {
+    const fileUrls = await capture.startCapture((completion) => {
       expect(completion).toBe(0.5);
       isOnProgress = true;
     });
-    expect(fileUrl).toBe(testUrl);
+    expect(fileUrls).toBe(testUrls);
 
     let done: (value: unknown) => void;
     const promise = new Promise((resolve) => {
@@ -258,7 +258,7 @@ describe('interval shooting with the shot count specified', () => {
     jest
       .mocked(thetaClient.buildShotCountSpecifiedIntervalCapture)
       .mockImplementation(jest.fn(async () => {}));
-    const testUrl = 'http://192.168.1.1/files/100RICOH/R100.JPG';
+    const testUrls = ['http://192.168.1.1/files/100RICOH/R100.JPG'];
 
     const sendStopError = (message: string) => {
       notifyCallback({
@@ -274,20 +274,20 @@ describe('interval shooting with the shot count specified', () => {
       .mockImplementation(
         jest.fn(async () => {
           sendStopError('stop error');
-          return testUrl;
+          return testUrls;
         })
       );
 
     const capture = await builder.build();
     let isOnStopError = false;
-    const fileUrl = await capture.startCapture(
+    const fileUrls = await capture.startCapture(
       () => {},
       (error) => {
         expect(error.message).toBe('stop error');
         isOnStopError = true;
       }
     );
-    expect(fileUrl).toBe(testUrl);
+    expect(fileUrls).toBe(testUrls);
 
     let done: (value: unknown) => void;
     const promise = new Promise((resolve) => {
