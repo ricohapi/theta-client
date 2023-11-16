@@ -153,6 +153,29 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
+  Future<void> buildCompositeIntervalCapture(
+      Map<String, dynamic> options, int interval) {
+    return onCallBuildCompositeIntervalCapture(options, interval);
+  }
+
+  @override
+  Future<void> getCompositeIntervalCaptureBuilder(int shootingTimeSec) {
+    return onCallGetCompositeIntervalCaptureBuilder(shootingTimeSec);
+  }
+
+  @override
+  Future<List<String>?> startCompositeIntervalCapture(
+      void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed) {
+    return onCallStartCompositeIntervalCapture(onProgress, onStopFailed);
+  }
+
+  @override
+  Future<void> stopCompositeIntervalCapture() {
+    return onCallStopCompositeIntervalCapture();
+  }
+
+  @override
   Future<Options> getOptions(List<OptionNameEnum> optionNames) {
     return onCallGetOptions(optionNames);
   }
@@ -354,6 +377,15 @@ Future<List<String>?> Function(void Function(double)? onProgress,
     (onProgress, onStopFailed) => Future.value();
 Future<void> Function() onCallStopShotCountSpecifiedIntervalCapture =
     Future.value;
+Future<void> Function(int shootingTimeSec)
+    onCallGetCompositeIntervalCaptureBuilder = Future.value;
+Future<void> Function(Map<String, dynamic> options, int interval)
+    onCallBuildCompositeIntervalCapture = (options, interval) => Future.value();
+Future<List<String>?> Function(void Function(double)? onProgress,
+        void Function(Exception exception)? onStopFailed)
+    onCallStartCompositeIntervalCapture =
+    (onProgress, onStopFailed) => Future.value();
+Future<void> Function() onCallStopCompositeIntervalCapture = Future.value;
 Future<Options> Function(List<OptionNameEnum> optionNames) onCallGetOptions =
     (optionNames) => Future.value(Options());
 Future<void> Function(Options options) onCallSetOptions = Future.value;

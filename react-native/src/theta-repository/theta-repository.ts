@@ -18,6 +18,7 @@ import {
   TimeShiftCaptureBuilder,
   LimitlessIntervalCaptureBuilder,
   ShotCountSpecifiedIntervalCaptureBuilder,
+  CompositeIntervalCaptureBuilder,
 } from '../capture';
 import type { ThetaConfig } from './theta-config';
 import type { ThetaTimeout } from './theta-timeout';
@@ -115,6 +116,19 @@ export function getShotCountSpecifiedIntervalCaptureBuilder(
   shotCount: number
 ): ShotCountSpecifiedIntervalCaptureBuilder {
   return new ShotCountSpecifiedIntervalCaptureBuilder(shotCount);
+}
+
+/**
+ * Get CompositeIntervalCapture.Builder for take interval composite shooting.
+ *
+ * @function getCompositeIntervalCaptureBuilder
+ * @param {shootingTimeSec} Shooting time for interval composite shooting (sec)
+ * @return created CompositeIntervalCaptureBuilder instance
+ */
+export function getCompositeIntervalCaptureBuilder(
+  shootingTimeSec: number
+): CompositeIntervalCaptureBuilder {
+  return new CompositeIntervalCaptureBuilder(shootingTimeSec);
 }
 
 /**

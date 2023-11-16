@@ -19,6 +19,7 @@ let KEY_THETA_MODEL = "thetaModel"
 let KEY_TIMESHIFT = "timeShift"
 let KEY_APERTURE = "aperture"
 let KEY_CAPTURE_INTERVAL = "captureInterval"
+let KEY_COMPOSITE_SHOOTING_OUTPUT_INTERVAL = "compositeShootingOutputInterval"
 let KEY_COLOR_TEMPERATURE = "colorTemperature"
 let KEY_EXPOSURE_COMPENSATION = "exposureCompensation"
 let KEY_EXPOSURE_DELAY = "exposureDelay"
@@ -555,6 +556,17 @@ func setShotCountSpecifiedIntervalCaptureBuilderParams(params: [String: Any], bu
     }
     if let value = params[KEY_CAPTURE_INTERVAL] as? Int32 {
         builder.setCaptureInterval(interval: value)
+    }
+}
+
+func setCompositeIntervalCaptureBuilderParams(params: [String: Any], builder: CompositeIntervalCapture.Builder) {
+    if let interval = params[KEY_TIMESHIFT_CAPTURE_INTERVAL] as? Int,
+       interval >= 0
+    {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
+    if let value = params[KEY_COMPOSITE_SHOOTING_OUTPUT_INTERVAL] as? Int32 {
+        builder.setCompositeShootingOutputInterval(sec: value)
     }
 }
 

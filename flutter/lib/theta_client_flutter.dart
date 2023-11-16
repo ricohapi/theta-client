@@ -154,6 +154,14 @@ class ThetaClientFlutter {
     return ShotCountSpecifiedIntervalCaptureBuilder();
   }
 
+  /// Get getCompositeIntervalCapture.Builder for capture interval composite shooting.
+  CompositeIntervalCaptureBuilder
+  getCompositeIntervalCaptureBuilder(int shootingTimeSec) {
+    ThetaClientFlutterPlatform.instance
+        .getCompositeIntervalCaptureBuilder(shootingTimeSec);
+    return CompositeIntervalCaptureBuilder();
+  }
+
   /// Acquires the properties and property support specifications for shooting, the camera, etc.
   ///
   /// Refer to the [options category](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)

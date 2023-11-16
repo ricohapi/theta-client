@@ -2,12 +2,7 @@ package com.ricoh360.thetaclient.theta_client_flutter
 
 import com.ricoh360.thetaclient.DigestAuth
 import com.ricoh360.thetaclient.ThetaRepository.*
-import com.ricoh360.thetaclient.capture.Capture
-import com.ricoh360.thetaclient.capture.PhotoCapture
-import com.ricoh360.thetaclient.capture.TimeShiftCapture
-import com.ricoh360.thetaclient.capture.VideoCapture
-import com.ricoh360.thetaclient.capture.LimitlessIntervalCapture
-import com.ricoh360.thetaclient.capture.ShotCountSpecifiedIntervalCapture
+import com.ricoh360.thetaclient.capture.*
 import io.flutter.plugin.common.MethodCall
 
 const val KEY_CLIENT_MODE = "clientMode"
@@ -284,6 +279,17 @@ fun setShotCountSpecifiedIntervalCaptureBuilderParams(call: MethodCall, builder:
     }
     call.argument<Int>(OptionNameEnum.CaptureInterval.name)?.also {
         builder.setCaptureInterval(it)
+    }
+}
+
+fun setCompositeIntervalCaptureBuilderParams(call: MethodCall, builder: CompositeIntervalCapture.Builder) {
+    call.argument<Int>("_capture_interval")?.let {
+        if (it >= 0) {
+            builder.setCheckStatusCommandInterval(it.toLong())
+        }
+    }
+    call.argument<Int>(OptionNameEnum.CompositeShootingOutputInterval.name)?.also {
+        builder.setCompositeShootingOutputInterval(it)
     }
 }
 

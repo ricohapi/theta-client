@@ -34,6 +34,9 @@ class ThetaClientReactNativeModule(
   var shotCountSpecifiedIntervalCaptureBuilder: ShotCountSpecifiedIntervalCapture.Builder? = null
   var shotCountSpecifiedIntervalCapture: ShotCountSpecifiedIntervalCapture? = null
   var shotCountSpecifiedIntervalCapturing: ShotCountSpecifiedIntervalCapturing? = null
+  var compositeIntervalCaptureBuilder: CompositeIntervalCapture.Builder? = null
+  var compositeIntervalCapture: CompositeIntervalCapture? = null
+  var compositeIntervalCapturing: CompositeIntervalCapturing? = null
   var theta: ThetaRepository? = null
   var listenerCount: Int = 0
 
@@ -96,6 +99,9 @@ class ThetaClientReactNativeModule(
         shotCountSpecifiedIntervalCaptureBuilder = null
         shotCountSpecifiedIntervalCapture = null
         shotCountSpecifiedIntervalCapturing = null
+        compositeIntervalCaptureBuilder = null
+        compositeIntervalCapture = null
+        compositeIntervalCapturing = null
 
         theta = ThetaRepository.newInstance(
           endpoint,
@@ -947,6 +953,119 @@ class ThetaClientReactNativeModule(
   }
 
   /**
+   * getCompositeIntervalCaptureBuilder  -  get interval composite shooting builder from repository
+   * @param shootingTimeSec Shooting time for interval composite shooting (sec)
+   * @param promise Promise for getCompositeIntervalCaptureBuilder
+   */
+  @ReactMethod
+  fun getCompositeIntervalCaptureBuilder(shootingTimeSec: Int, promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    compositeIntervalCaptureBuilder = theta.getCompositeIntervalCaptureBuilder(shootingTimeSec)
+    promise.resolve(true)
+  }
+
+  /**
+   * buildCompositeIntervalCapture  -  build interval composite shooting
+   * @param options option to execute interval shooting with the shot count specified
+   * @param promise Promise for buildCompositeIntervalCapture
+   */
+  @ReactMethod
+  fun buildCompositeIntervalCapture(options: ReadableMap, promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    if (compositeIntervalCaptureBuilder == null) {
+      promise.reject(Exception("no compositeIntervalCaptureBuilder"))
+      return
+    }
+    launch {
+      try {
+        compositeIntervalCaptureBuilder?.let {
+          setCaptureBuilderParams(optionMap = options, builder = it)
+          setCompositeIntervalCaptureBuilderParams(optionMap = options, builder = it)
+          compositeIntervalCapture = it.build()
+        }
+        promise.resolve(true)
+        compositeIntervalCaptureBuilder = null
+      } catch (t: Throwable) {
+        promise.reject(t)
+        compositeIntervalCaptureBuilder = null
+      }
+    }
+  }
+
+  /**
+   * startCompositeIntervalCapture  -  start interval composite shooting
+   * @param promise promise for startCompositeIntervalCapture
+   */
+  @ReactMethod
+  fun startCompositeIntervalCapture(promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    if (compositeIntervalCapture == null) {
+      promise.reject(Exception("no compositeIntervalCapture"))
+      return
+    }
+    class StartCaptureCallback : CompositeIntervalCapture.StartCaptureCallback {
+      override fun onCaptureCompleted(fileUrls: List<String>?) {
+        promise.resolve(fileUrls?.let {
+          val resultList = Arguments.createArray()
+          it.forEach {
+            resultList.pushString(it)
+          }
+          resultList
+        })
+        compositeIntervalCapture = null
+      }
+
+      override fun onProgress(completion: Float) {
+        sendNotifyEvent(
+          toNotify(
+            NOTIFY_COMPOSITE_INTERVAL_PROGRESS,
+            toCaptureProgressNotifyParam(value = completion)
+          )
+        )
+      }
+
+      override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+        sendNotifyEvent(
+          toNotify(
+            NOTIFY_COMPOSITE_INTERVAL_STOP_ERROR,
+            toMessageNotifyParam(exception.message ?: exception.toString())
+          )
+        )
+      }
+
+      override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+        promise.reject(exception)
+        compositeIntervalCapture = null
+      }
+    }
+    compositeIntervalCapturing = compositeIntervalCapture?.startCapture(StartCaptureCallback())
+  }
+
+  /**
+   * cancelCompositeIntervalCapture  -  stop interval composite shooting
+   * @param promise promise for cancelCompositeIntervalCapture
+   */
+  @ReactMethod
+  fun cancelCompositeIntervalCapture(promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    compositeIntervalCapturing?.cancelCapture()
+    promise.resolve(true)
+  }
+
+  /**
    * getMetadata  -  retrieve meta data from THETA via repository
    * @param promise promise to set result
    */
@@ -1559,5 +1678,7 @@ class ThetaClientReactNativeModule(
     const val NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR = "LIMITLESS-INTERVAL-CAPTURE-STOP-ERROR"
     const val NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_PROGRESS = "SHOT-COUNT-SPECIFIED-INTERVAL-PROGRESS"
     const val NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_STOP_ERROR = "SHOT-COUNT-SPECIFIED-INTERVAL-STOP-ERROR"
+    const val NOTIFY_COMPOSITE_INTERVAL_PROGRESS = "COMPOSITE-INTERVAL-PROGRESS"
+    const val NOTIFY_COMPOSITE_INTERVAL_STOP_ERROR = "COMPOSITE-INTERVAL-STOP-ERROR"
   }
 }

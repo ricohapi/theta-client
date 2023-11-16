@@ -22,6 +22,10 @@ export const NativeModules = {
     buildShotCountSpecifiedIntervalCapture: jest.fn(),
     startShotCountSpecifiedIntervalCapture: jest.fn(),
     cancelShotCountSpecifiedIntervalCapture: jest.fn(),
+    getCompositeIntervalCaptureBuilder: jest.fn(),
+    buildCompositeIntervalCapture: jest.fn(),
+    startCompositeIntervalCapture: jest.fn(),
+    cancelCompositeIntervalCapture: jest.fn(),
   },
 };
 

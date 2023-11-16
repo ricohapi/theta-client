@@ -8,12 +8,7 @@ import com.facebook.react.bridge.WritableMap
 import com.facebook.react.bridge.WritableArray
 import com.ricoh360.thetaclient.DigestAuth
 import com.ricoh360.thetaclient.ThetaRepository.*
-import com.ricoh360.thetaclient.capture.Capture
-import com.ricoh360.thetaclient.capture.PhotoCapture
-import com.ricoh360.thetaclient.capture.TimeShiftCapture
-import com.ricoh360.thetaclient.capture.VideoCapture
-import com.ricoh360.thetaclient.capture.LimitlessIntervalCapture
-import com.ricoh360.thetaclient.capture.ShotCountSpecifiedIntervalCapture
+import com.ricoh360.thetaclient.capture.*
 
 const val KEY_NOTIFY_NAME = "name"
 const val KEY_NOTIFY_PARAMS = "params"
@@ -202,6 +197,18 @@ fun setShotCountSpecifiedIntervalCaptureBuilderParams(optionMap: ReadableMap, bu
   }
   if (optionMap.hasKey("captureInterval")) {
     builder.setCaptureInterval(optionMap.getInt("captureInterval"))
+  }
+}
+
+fun setCompositeIntervalCaptureBuilderParams(optionMap: ReadableMap, builder: CompositeIntervalCapture.Builder) {
+  val interval = if (optionMap.hasKey("_capture_interval")) optionMap.getInt("_capture_interval") else null
+  interval?.let {
+    if (it >= 0) {
+      builder.setCheckStatusCommandInterval(it.toLong())
+    }
+  }
+  if (optionMap.hasKey("compositeShootingOutputInterval")) {
+    builder.setCompositeShootingOutputInterval(optionMap.getInt("compositeShootingOutputInterval"))
   }
 }
 

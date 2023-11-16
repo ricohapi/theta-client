@@ -18,6 +18,9 @@ let MESSAGE_NO_LIMITLESS_INTERVAL_CAPTURING = "no limitlessIntervalCapturing."
 let MESSAGE_NO_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE = "No shotCountSpecifiedIntervalCapture."
 let MESSAGE_NO_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_BUILDER = "no shotCountSpecifiedIntervalCaptureBuilder."
 let MESSAGE_NO_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURING = "no shotCountSpecifiedIntervalCapturing."
+let MESSAGE_NO_COMPOSITE_INTERVAL_CAPTURE = "No compositeIntervalCapture."
+let MESSAGE_NO_COMPOSITE_INTERVAL_CAPTURE_BUILDER = "no compositeIntervalCaptureBuilder."
+let MESSAGE_NO_COMPOSITE_INTERVAL_CAPTURING = "no compositeIntervalCapturing."
 
 @objc(ThetaClientReactNative)
 class ThetaClientReactNative: RCTEventEmitter {
@@ -37,6 +40,9 @@ class ThetaClientReactNative: RCTEventEmitter {
     var shotCountSpecifiedIntervalCaptureBuilder: ShotCountSpecifiedIntervalCapture.Builder?
     var shotCountSpecifiedIntervalCapture: ShotCountSpecifiedIntervalCapture?
     var shotCountSpecifiedIntervalCapturing: ShotCountSpecifiedIntervalCapturing?
+    var compositeIntervalCaptureBuilder: CompositeIntervalCapture.Builder?
+    var compositeIntervalCapture: CompositeIntervalCapture?
+    var compositeIntervalCapturing: CompositeIntervalCapturing?
 
     static let EVENT_FRAME = "ThetaFrameEvent"
     static let EVENT_NOTIFY = "ThetaNotify"
@@ -47,7 +53,9 @@ class ThetaClientReactNative: RCTEventEmitter {
     static let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_STOP_ERROR = "SHOT-COUNT-SPECIFIED-INTERVAL-STOP-ERROR"
     static let NOTIFY_VIDEO_CAPTURE_STOP_ERROR = "VIDEO-CAPTURE-STOP-ERROR"
     static let NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR = "LIMITLESS-INTERVAL-CAPTURE-STOP-ERROR"
-
+    static let NOTIFY_COMPOSITE_INTERVAL_PROGRESS = "COMPOSITE-INTERVAL-PROGRESS"
+    static let NOTIFY_COMPOSITE_INTERVAL_STOP_ERROR = "COMPOSITE-INTERVAL-STOP-ERROR"
+    
     @objc
     override func supportedEvents() -> [String]! {
         return [ThetaClientReactNative.EVENT_FRAME, ThetaClientReactNative.EVENT_NOTIFY]
@@ -88,6 +96,9 @@ class ThetaClientReactNative: RCTEventEmitter {
         shotCountSpecifiedIntervalCaptureBuilder = nil
         shotCountSpecifiedIntervalCapture = nil
         shotCountSpecifiedIntervalCapturing = nil
+        compositeIntervalCaptureBuilder = nil
+        compositeIntervalCapture = nil
+        compositeIntervalCapturing = nil
         previewing = false
 
         Task {
@@ -1010,6 +1021,136 @@ class ThetaClientReactNative: RCTEventEmitter {
             return
         }
         shotCountSpecifiedIntervalCapturing.cancelCapture()
+        resolve(nil)
+    }
+    
+    @objc(getCompositeIntervalCaptureBuilder:withResolver:withRejecter:)
+    func getCompositeIntervalCaptureBuilder(
+        shootingTimeSec: Int,
+        resolve: RCTPromiseResolveBlock,
+        reject: RCTPromiseRejectBlock
+    ) {
+        guard let thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        compositeIntervalCaptureBuilder = thetaRepository.getCompositeIntervalCaptureBuilder(shootingTimeSec: Int32(shootingTimeSec))
+        resolve(nil)
+    }
+
+    @objc(buildCompositeIntervalCapture:withResolver:withRejecter:)
+    func buildCompositeIntervalCapture(
+        options: [AnyHashable: Any]?,
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let _ = thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        guard let compositeIntervalCaptureBuilder else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NO_COMPOSITE_INTERVAL_CAPTURE_BUILDER, nil)
+            return
+        }
+
+        if let options = options as? [String: Any] {
+            setCaptureBuilderParams(params: options, builder: compositeIntervalCaptureBuilder)
+            setCompositeIntervalCaptureBuilderParams(params: options, builder: compositeIntervalCaptureBuilder)
+        }
+        compositeIntervalCaptureBuilder.build { capture, error in
+            if let error {
+                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+            } else if let capture {
+                self.compositeIntervalCapture = capture
+                self.compositeIntervalCaptureBuilder = nil
+                resolve(true)
+            } else {
+                reject(ERROR_CODE_ERROR, MESSAGE_NO_COMPOSITE_INTERVAL_CAPTURE, nil)
+            }
+        }
+    }
+
+    @objc(startCompositeIntervalCapture:withRejecter:)
+    func startCompositeIntervalCapture(
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let _ = thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        guard let compositeIntervalCapture else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NO_COMPOSITE_INTERVAL_CAPTURE, nil)
+            return
+        }
+
+        class Callback: CompositeIntervalCaptureStartCaptureCallback {
+            let callback: (_ urls: [String]?, _ error: Error?) -> Void
+            weak var client: ThetaClientReactNative?
+            init(
+                _ callback: @escaping (_ urls: [String]?, _ error: Error?) -> Void,
+                client: ThetaClientReactNative
+            ) {
+                self.callback = callback
+                self.client = client
+            }
+
+            func onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                callback(nil, exception.asError())
+            }
+
+            func onProgress(completion: Float) {
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_COMPOSITE_INTERVAL_PROGRESS,
+                        params: toCaptureProgressNotifyParam(value: completion)
+                    )
+                )
+            }
+
+            func onCaptureCompleted(fileUrls: [String]?) {
+                callback(fileUrls, nil)
+            }
+
+            func onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                let error = exception.asError()
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_COMPOSITE_INTERVAL_STOP_ERROR,
+                        params: toMessageNotifyParam(value: error.localizedDescription)
+                    )
+                )
+            }
+        }
+
+        compositeIntervalCapturing = compositeIntervalCapture.startCapture(
+            callback: Callback(
+                { url, error in
+                    if let error {
+                        reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                    } else {
+                        resolve(url)
+                    }
+                }, client: self
+            ))
+    }
+
+    @objc(cancelCompositeIntervalCapture:withRejecter:)
+    func cancelCompositeIntervalCapture(
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let _ = thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        guard let compositeIntervalCapturing else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NO_COMPOSITE_INTERVAL_CAPTURING, nil)
+            return
+        }
+        compositeIntervalCapturing.cancelCapture()
         resolve(nil)
     }
 

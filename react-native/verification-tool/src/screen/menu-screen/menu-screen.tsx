@@ -65,6 +65,14 @@ const MenuScreen: React.FC = ({ navigation }) => {
         },
       },
     },
+    {
+      name: '・interval composite shooting',
+      value: {
+        selectedFunction: async () => {
+          navigation.navigate('compositeIntervalCapture');
+        },
+      },
+    },
   ];
 
   const functionList: FunctionItem[] = [

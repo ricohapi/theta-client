@@ -1,10 +1,6 @@
 package com.ricoh360.thetaclient
 
-import com.ricoh360.thetaclient.capture.LimitlessIntervalCapture
-import com.ricoh360.thetaclient.capture.PhotoCapture
-import com.ricoh360.thetaclient.capture.ShotCountSpecifiedIntervalCapture
-import com.ricoh360.thetaclient.capture.TimeShiftCapture
-import com.ricoh360.thetaclient.capture.VideoCapture
+import com.ricoh360.thetaclient.capture.*
 import com.ricoh360.thetaclient.transferred.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
@@ -5593,9 +5589,9 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
-     * Get PhotoCapture.Builder for capture video.
+     * Get VideoCapture.Builder for capture video.
      *
-     * @return PhotoCapture.Builder
+     * @return VideoCapture.Builder
      */
     fun getVideoCaptureBuilder(): VideoCapture.Builder {
         return VideoCapture.Builder(endpoint)
@@ -5613,7 +5609,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Get LimitlessIntervalCapture.Builder for capture video.
      *
-     * @return PhotoCapture.Builder
+     * @return LimitlessIntervalCapture.Builder
      */
     fun getLimitlessIntervalCaptureBuilder(): LimitlessIntervalCapture.Builder {
         return LimitlessIntervalCapture.Builder(endpoint, cameraModel)
@@ -5626,6 +5622,15 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     fun getShotCountSpecifiedIntervalCaptureBuilder(shotCount: Int): ShotCountSpecifiedIntervalCapture.Builder {
         return ShotCountSpecifiedIntervalCapture.Builder(shotCount, endpoint, cameraModel)
+    }
+
+    /**
+     * Get CompositeIntervalCapture.Builder for interval composite shooting.
+     *
+     * @return CompositeIntervalCapture.Builder
+     */
+    fun getCompositeIntervalCaptureBuilder(shootingTimeSec: Int): CompositeIntervalCapture.Builder {
+        return CompositeIntervalCapture.Builder(shootingTimeSec, endpoint)
     }
 
     /**

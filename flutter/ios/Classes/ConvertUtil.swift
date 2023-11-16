@@ -264,6 +264,17 @@ func setShotCountSpecifiedIntervalCaptureBuilderParams(params: [String: Any], bu
     }
 }
 
+func setCompositeIntervalCaptureBuilderParams(params: [String: Any], builder: CompositeIntervalCapture.Builder) {
+    if let interval = params["_capture_interval"] as? Int,
+       interval >= 0
+    {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
+    if let value = params[ThetaRepository.OptionNameEnum.compositeshootingoutputinterval.name] as? Int32 {
+        builder.setCompositeShootingOutputInterval(sec: value)
+    }
+}
+
 func toBitrate(value: Any) -> ThetaRepositoryBitrate? {
     if value is NSNumber, let intVal = value as? Int32 {
         return ThetaRepository.BitrateNumber(value: intVal)
