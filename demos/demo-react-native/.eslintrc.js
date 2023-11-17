@@ -13,4 +13,5 @@ module.exports = {
       },
     },
   ],
+  ignorePatterns: ['marzipano.js'],
 };
