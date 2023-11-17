@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.ricoh360.thetaclient" />
+<manifest package="com.ricoh360.thetaclient" xmlns:android="http://schemas.android.com/apk/res/android" />
