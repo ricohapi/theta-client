@@ -59,6 +59,7 @@ internal class CheckRequest {
             request: HttpRequestData,
             aiAutoThumbnail: AiAutoThumbnail? = null,
             aperture: Float? = null,
+            autoBracket: AutoBracket? = null,
             bitrate: String? = null,
             bluetoothPower: BluetoothPower? = null,
             burstMode: BurstMode? = null,
@@ -122,6 +123,9 @@ internal class CheckRequest {
             }
             aperture?.let {
                 assertEquals(optionsRequest.parameters.options.aperture, it, "setOptions aperture")
+            }
+            autoBracket?.let {
+                assertEquals(optionsRequest.parameters.options._autoBracket, it, "setOptions autoBracket")
             }
             bitrate?.let {
                 assertEquals(optionsRequest.parameters.options._bitrate, it, "setOptions bitrate")

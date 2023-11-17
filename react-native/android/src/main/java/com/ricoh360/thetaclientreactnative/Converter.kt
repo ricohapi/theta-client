@@ -18,6 +18,7 @@ const val KEY_NOTIFY_PARAM_MESSAGE = "message"
 val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "aiAutoThumbnail" to OptionNameEnum.AiAutoThumbnail,
   "aperture" to OptionNameEnum.Aperture,
+  "autoBracket" to OptionNameEnum.AutoBracket,
   "bitrate" to OptionNameEnum.Bitrate,
   "bluetoothPower" to OptionNameEnum.BluetoothPower,
   "burstMode" to OptionNameEnum.BurstMode,
@@ -241,7 +242,11 @@ fun toResult(options: Options): WritableMap {
     OptionNameEnum.Username
   )
   OptionNameEnum.values().forEach { name ->
-    if (name == OptionNameEnum.Bitrate) {
+    if (name == OptionNameEnum.AutoBracket) {
+      options.autoBracket?.let {
+        result.putArray("autoBracket", toResult(autoBracket = it))
+      }
+    } else if (name == OptionNameEnum.Bitrate) {
       options.bitrate?.let { bitrate ->
         if (bitrate is BitrateEnum) {
           result.putString("bitrate", bitrate.toString())
@@ -296,6 +301,38 @@ fun <T> addOptionsValueToMap(options: Options, name: OptionNameEnum, objects: Wr
       }
     }
   }
+}
+
+fun toResult(autoBracket: BracketSettingList): WritableArray {
+  val resultList = Arguments.createArray()
+
+  autoBracket.list?.forEach { bracketSetting ->
+    val result = Arguments.createMap()
+    bracketSetting.aperture?.name?.let { name ->
+      result.putString("aperture", name)
+    }
+    bracketSetting.colorTemperature?.let { value ->
+      result.putInt("colorTemperature", value)
+    }
+    bracketSetting.exposureCompensation?.name?.let { name ->
+      result.putString("exposureCompensation", name)
+    }
+    bracketSetting.exposureProgram?.name?.let { name ->
+      result.putString("exposureProgram", name)
+    }
+    bracketSetting.iso?.name?.let { name ->
+      result.putString("iso", name)
+    }
+    bracketSetting.shutterSpeed?.name?.let { name ->
+      result.putString("shutterSpeed", name)
+    }
+    bracketSetting.whiteBalance?.name?.let { name ->
+      result.putString("whiteBalance", name)
+    }
+    resultList.pushMap(result)
+  }
+
+  return resultList
 }
 
 fun toResult(burstOption: BurstOption): WritableMap {
@@ -473,6 +510,10 @@ fun setOptionValue(options: Options, name: OptionNameEnum, optionsMap: ReadableM
     options.setValue(name, optionsMap.getDouble(key).toLong())
   } else if (boolOptions.contains(name)) {
     options.setValue(name, optionsMap.getBoolean(key))
+  } else if (name == OptionNameEnum.AutoBracket) {
+    optionsMap.getArray(key)?.let {
+      options.setValue(name, toAutoBracket(list = it))
+    }
   } else if (name == OptionNameEnum.Bitrate) {
     val type = optionsMap.getType(key)
     if (type == ReadableType.Number) {
@@ -567,6 +608,26 @@ fun toListAccessPointsResult(accessPointList: List<AccessPoint>): WritableArray 
     result.pushMap(apinfo)
   }
   return result
+}
+
+fun toAutoBracket(list: ReadableArray): BracketSettingList {
+  val autoBracket = BracketSettingList()
+  for(i in 0 until list.size()) {
+    list.getMap(i)?.let { setting ->
+      autoBracket.add(
+        BracketSetting(
+          aperture = setting.getString("aperture")?.let { ApertureEnum.valueOf(it) },
+          colorTemperature = if (setting.hasKey("colorTemperature")) setting.getInt("colorTemperature") else null,
+          exposureCompensation = setting.getString("exposureCompensation")?.let { ExposureCompensationEnum.valueOf(it) },
+          exposureProgram = setting.getString("exposureProgram")?.let { ExposureProgramEnum.valueOf(it) },
+          iso = setting.getString("iso")?.let { IsoEnum.valueOf(it) },
+          shutterSpeed = setting.getString("shutterSpeed")?.let { ShutterSpeedEnum.valueOf(it) },
+          whiteBalance = setting.getString("whiteBalance")?.let { WhiteBalanceEnum.valueOf(it) },
+        )
+      )
+    }
+  }
+  return autoBracket
 }
 
 fun toProxy(map: ReadableMap?): Proxy? {

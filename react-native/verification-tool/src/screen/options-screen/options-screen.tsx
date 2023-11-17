@@ -24,6 +24,7 @@ import {
 } from 'theta-client-react-native';
 import {
   ApertureEdit,
+  AutoBracketEdit,
   CaptureModeEdit,
   ExposureCompensationEdit,
   ExposureDelayEdit,
@@ -64,6 +65,17 @@ const optionList: OptionItem[] = [
         <ApertureEdit onChange={onChange} options={options} />
       ),
       defaultValue: { aperture: ApertureEnum.APERTURE_AUTO },
+    },
+  },
+  {
+    name: 'autoBracket',
+    value: {
+      optionName: OptionNameEnum.AutoBracket,
+      editor: (options, onChange) => (
+        <ScrollView style={styles.autoBracketEditorLayout}>
+          <AutoBracketEdit onChange={onChange} options={options} />
+        </ScrollView>
+      ),
     },
   },
   {

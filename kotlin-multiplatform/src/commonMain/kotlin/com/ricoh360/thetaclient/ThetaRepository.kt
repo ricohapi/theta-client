@@ -670,6 +670,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _autoBracket
+         */
+        AutoBracket("_autoBracket", BracketSettingList::class),
+
+        /**
+         * Option name
          * _bitrate
          */
         Bitrate("_bitrate", ThetaRepository.Bitrate::class),
@@ -1018,6 +1024,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Aperture value.
          */
         var aperture: ApertureEnum? = null,
+
+        /**
+         * Multi bracket shooting setting.
+         */
+        var autoBracket: BracketSettingList? = null,
 
         /**
          * @see Bitrate
@@ -1399,6 +1410,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         constructor() : this(
             aiAutoThumbnail = null,
             aperture = null,
+            autoBracket = null,
             bitrate = null,
             bluetoothPower = null,
             burstMode = null,
@@ -1458,6 +1470,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         internal constructor(options: com.ricoh360.thetaclient.transferred.Options) : this(
             aiAutoThumbnail = options._aiAutoThumbnail?.let { AiAutoThumbnailEnum.get(it) },
             aperture = options.aperture?.let { ApertureEnum.get(it) },
+            autoBracket = options._autoBracket?.let { BracketSettingList.get(it) },
             bitrate = options._bitrate?.let { BitrateEnum.get(it) },
             bluetoothPower = options._bluetoothPower?.let { BluetoothPowerEnum.get(it) },
             burstMode = options._burstMode?.let { BurstModeEnum.get(it) },
@@ -1526,6 +1539,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             return Options(
                 _aiAutoThumbnail = aiAutoThumbnail?.value,
                 aperture = aperture?.value,
+                _autoBracket = autoBracket?.toTransferredAutoBracket(),
                 _bitrate = bitrate?.rawValue,
                 _bluetoothPower = bluetoothPower?.value,
                 _burstMode = burstMode?.value,
@@ -1597,6 +1611,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             return when (name) {
                 OptionNameEnum.AiAutoThumbnail -> aiAutoThumbnail
                 OptionNameEnum.Aperture -> aperture
+                OptionNameEnum.AutoBracket -> autoBracket
                 OptionNameEnum.Bitrate -> bitrate
                 OptionNameEnum.BluetoothPower -> bluetoothPower
                 OptionNameEnum.BurstMode -> burstMode
@@ -1669,6 +1684,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             when (name) {
                 OptionNameEnum.AiAutoThumbnail -> aiAutoThumbnail = value as AiAutoThumbnailEnum
                 OptionNameEnum.Aperture -> aperture = value as ApertureEnum
+                OptionNameEnum.AutoBracket -> autoBracket = value as BracketSettingList
                 OptionNameEnum.Bitrate -> bitrate = value as Bitrate
                 OptionNameEnum.BluetoothPower -> bluetoothPower = value as BluetoothPowerEnum
                 OptionNameEnum.BurstMode -> burstMode = value as BurstModeEnum
@@ -1816,6 +1832,108 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             }
         }
     }
+
+    /**
+     * List of [BracketSetting] used for multi bracket shooting.
+     * Size of the list must be 2 to 13 (THETA X and SC2), or 2 to 19 (THETA Z1 and V).
+     */
+    data class BracketSettingList(val list: MutableList<BracketSetting> = mutableListOf()) {
+        fun add(setting: BracketSetting): BracketSettingList {
+            list.add(setting)
+            return this
+        }
+
+        companion object {
+            /**
+             * Convert AutoBracket to BracketSettingList
+             */
+            internal fun get(autoBracket: AutoBracket): BracketSettingList {
+                val list = BracketSettingList()
+                autoBracket._bracketParameters.forEach { param ->
+                    val setting = BracketSetting(
+                        aperture = param.aperture?.let { ApertureEnum.get(it) },
+                        colorTemperature = param._colorTemperature,
+                        exposureCompensation = param.exposureCompensation?.let { ExposureCompensationEnum.get(it) },
+                        exposureProgram = param.exposureProgram?.let { ExposureProgramEnum.get(it) },
+                        iso = param.iso?.let { IsoEnum.get(it) },
+                        shutterSpeed = param.shutterSpeed?.let { ShutterSpeedEnum.get(it) },
+                        whiteBalance = param.whiteBalance?.let { WhiteBalanceEnum.get(it) }
+                    )
+                    list.add(setting)
+                }
+                return list
+            }
+        }
+
+        /**
+         * Generate transferred AutoBracket instance.
+         *
+         * @return com.ricoh360.thetaclient.transferred.[AutoBracket]
+         */
+        internal fun toTransferredAutoBracket(): AutoBracket {
+            val bracketParamList: MutableList<BracketParameter> = mutableListOf()
+            list.forEach {
+                val bracketParam = BracketParameter(
+                    aperture = it.aperture?.value,
+                    _colorTemperature = it.colorTemperature,
+                    exposureCompensation = it.exposureCompensation?.value,
+                    exposureProgram = it.exposureProgram?.value,
+                    iso = it.iso?.value,
+                    shutterSpeed = it.shutterSpeed?.value,
+                    whiteBalance = it.whiteBalance?.value
+                )
+                bracketParamList.add(bracketParam)
+            }
+            return AutoBracket(list.size, bracketParamList)
+        }
+    }
+
+    /**
+     * Parameters for multi bracket shooting.
+     */
+    data class BracketSetting (
+        /**
+         * Aperture value.
+         * Theta X and SC2 do not support.
+         */
+        var aperture: ApertureEnum? = null,
+
+        /**
+         * Color temperature of the camera (Kelvin).
+         * Support value is 2500 to 10000 in 100-Kelvin units.
+         */
+        var colorTemperature: Int? = null,
+
+        /**
+         * Exposure compensation.
+         * Theta SC2 does not support.
+         */
+        var exposureCompensation: ExposureCompensationEnum? = null,
+
+        /**
+         * Exposure program. The exposure settings that take priority can be selected.
+         * Mandatory to Theta Z1 and V.
+         * Theta SC2 does not support.
+         */
+        var exposureProgram: ExposureProgramEnum? = null,
+
+        /**
+         * ISO sensitivity.
+         */
+        var iso: IsoEnum? = null,
+
+        /**
+         * Shutter speed.
+         */
+        var shutterSpeed: ShutterSpeedEnum? = null,
+
+        /**
+         * White balance.
+         * Mandatory to Theta Z1 and V.
+         * Theta SC2 does not support.
+         */
+        var whiteBalance: WhiteBalanceEnum? = null,
+    )
 
     /**
      * Movie bit rate.

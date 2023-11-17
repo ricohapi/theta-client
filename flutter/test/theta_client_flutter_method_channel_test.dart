@@ -364,6 +364,17 @@ void main() {
   });
 
   test('getOptions', () async {
+    List<Map<String, dynamic>> bracketSetting = [
+      {
+        'aperture': 'APERTURE_2_1',
+        'colorTemperature': 5000,
+        'exposureCompensation': 'ZERO',
+        'exposureProgram': 'MANUAL',
+        'iso': 'ISO_400',
+        'shutterSpeed': 'SHUTTER_SPEED_ONE_OVER_250',
+        'whiteBalance': 'AUTO'
+      }
+    ];
     Map<String, dynamic> gpsInfoMap = {
       'latitude': 1.0,
       'longitude': 2.0,
@@ -399,6 +410,21 @@ void main() {
         'Aperture',
         ApertureEnum.aperture_2_0,
         'APERTURE_2_0'
+      ],
+      [
+        OptionNameEnum.autoBracket,
+        'AutoBracket',
+        [
+          BracketSetting(
+              ApertureEnum.aperture_2_1,
+              5000,
+              ExposureCompensationEnum.zero,
+              ExposureProgramEnum.manual,
+              IsoEnum.iso400,
+              ShutterSpeedEnum.shutterSpeedOneOver_250,
+              WhiteBalanceEnum.auto)
+        ],
+        bracketSetting
       ],
       [OptionNameEnum.bitrate, 'Bitrate', Bitrate.fine, 'FINE'],
       [
@@ -632,15 +658,26 @@ void main() {
 
     expect(options, isNotNull);
     expect(options.aperture, data[1][2]);
-    expect(options.cameraControlSource, data[5][2]);
-    expect(options.cameraMode, data[6][2]);
-    expect(options.captureMode, data[7][2]);
+    expect(options.cameraControlSource, data[6][2]);
+    expect(options.cameraMode, data[7][2]);
+    expect(options.captureMode, data[8][2]);
     for (int i = 0; i < data.length; i++) {
       expect(options.getValue(data[i][0]), data[i][2], reason: data[i][1]);
     }
   });
 
   test('setOptions', () async {
+    List<Map<String, dynamic>> autoBracketMap = [
+      {
+        'aperture': 'APERTURE_2_1',
+        'colorTemperature': 5000,
+        'exposureCompensation': 'ZERO',
+        'exposureProgram': 'MANUAL',
+        'iso': 'ISO_400',
+        'shutterSpeed': 'SHUTTER_SPEED_ONE_OVER_250',
+        'whiteBalance': 'AUTO'
+      }
+    ];
     Map<String, dynamic> gpsInfoMap = {
       'latitude': 1.0,
       'longitude': 2.0,
@@ -676,6 +713,21 @@ void main() {
         'Aperture',
         ApertureEnum.aperture_2_0,
         'APERTURE_2_0'
+      ],
+      [
+        OptionNameEnum.autoBracket,
+        'AutoBracket',
+        [
+          BracketSetting(
+              ApertureEnum.aperture_2_1,
+              5000,
+              ExposureCompensationEnum.zero,
+              ExposureProgramEnum.manual,
+              IsoEnum.iso400,
+              ShutterSpeedEnum.shutterSpeedOneOver_250,
+              WhiteBalanceEnum.auto)
+        ],
+        autoBracketMap,
       ],
       [OptionNameEnum.bitrate, 'Bitrate', Bitrate.fine, 'FINE'],
       [

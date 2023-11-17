@@ -119,6 +119,16 @@ internal data class Options(
     var apertureSupport: List<Float>? = null,
 
     /**
+     * Multi bracket shooting setting
+     */
+    var _autoBracket: AutoBracket? = null,
+
+    /**
+     * Supported AutoBracket.
+     */
+    var _autoBracketSupport: AutoBracket? = null,
+
+    /**
      * Movie bit rate.
      */
     var _bitrate: String? = null,
@@ -780,6 +790,81 @@ internal data class Options(
      * Supported WlanFrequency
      */
     var _wlanFrequencySupport: List<WlanFrequency>? = null,
+)
+
+/**
+ * Multi bracket shooting setting
+ *
+ * [_bracketNumber] is the only supported value that can be acquired by camera.getOptions.
+ * For [_bracketParameters], all parameters must be specified.
+ */
+@Serializable
+internal data class AutoBracket (
+    /**
+     * Number of shots in multi bracket shooting.
+     * 2 to 13 (THETA X and SC2);
+     * 2 to 19 (THETA Z1 and V).
+     */
+    val _bracketNumber: Int,
+
+    /**
+     * Parameter array specified for multi bracket shooting.
+     */
+    val _bracketParameters: List<BracketParameter>,
+)
+
+/**
+ * Parameter array specified for multi bracket shooting
+ */
+@Serializable
+internal data class BracketParameter (
+    /**
+     * Aperture value.
+     * Theta X and SC2 do not support.
+     */
+    var aperture: Float? = null,
+
+    /**
+     * Color temperature of the camera (Kelvin).
+     * 2500 to 10000. In 100-Kelvin units.
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    var _colorTemperature: Int? = null,
+
+    /**
+     * Exposure compensation (EV).
+     * Theta SC2 does not support.
+     */
+    var exposureCompensation: Float? = null,
+
+    /**
+     * Exposure program.
+     * 1: Manual program, 2: Normal program, 3: Aperture priority program,
+     * 4: Shutter priority program, 9: ISO priority program.
+     *
+     * Mandatory to Theta Z1 and V.
+     * Theta SC2 does not support.
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    var exposureProgram: Int? = null,
+
+    /**
+     * ISO sensitivity.
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    var iso: Int? = null,
+
+    /**
+     * Shutter speed (sec).
+     */
+    var shutterSpeed: Double? = null,
+
+    /**
+     * White balance.
+     * Mandatory to Theta Z1 and V.
+     * Theta SC2 does not support.
+     */
+    var whiteBalance: WhiteBalance? = null,
 )
 
 /**

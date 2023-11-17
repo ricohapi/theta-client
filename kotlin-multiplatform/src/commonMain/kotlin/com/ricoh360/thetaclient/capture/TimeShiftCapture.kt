@@ -123,6 +123,8 @@ class TimeShiftCapture private constructor(
                     val error = response.error
                     if (error != null && !error.isCanceledShootingCode()) {
                         callback.onCaptureFailed(exception = ThetaRepository.ThetaWebApiException(message = error.message))
+                    } else if (response.name == "unknown") {
+                        callback.onCaptureFailed(exception = ThetaRepository.ThetaWebApiException(message = "Unknown response"))
                     } else {
                         println("timeShift canceled")
                         callback.onCaptureCompleted(fileUrl = null) // canceled

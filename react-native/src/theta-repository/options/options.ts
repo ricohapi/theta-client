@@ -1,5 +1,6 @@
 import type { AiAutoThumbnailEnum } from './option-ai-auto-thumbnail';
 import type { BitrateEnum } from './option-bitrate';
+import type { BracketSetting } from './option-auto-bracket';
 import type { BurstModeEnum } from './option-burst-mode';
 import type { BurstOption } from './option-burst-option';
 import type { CameraControlSourceEnum } from './option-camera-control-source';
@@ -451,6 +452,8 @@ export const OptionNameEnum = {
   AiAutoThumbnail: 'AiAutoThumbnail',
   /** aperture */
   Aperture: 'Aperture',
+  /** autoBracket */
+  AutoBracket: 'AutoBracket',
   /** _bitrate*/
   Bitrate: 'Bitrate',
   /** _bluetoothPower*/
@@ -571,6 +574,8 @@ export type Options = {
   aiAutoThumbnail?: AiAutoThumbnailEnum;
   /** Aperture value. */
   aperture?: ApertureEnum;
+  /**  */
+  autoBracket?: BracketSetting[];
   /** Bitrate */
   bitrate?: BitrateEnum;
   /** BluetoothPower */

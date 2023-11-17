@@ -2,7 +2,9 @@ package com.ricoh360.thetaclient.repository.options
 
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.AiAutoThumbnail
+import com.ricoh360.thetaclient.transferred.AutoBracket
 import com.ricoh360.thetaclient.transferred.BluetoothPower
+import com.ricoh360.thetaclient.transferred.BracketParameter
 import com.ricoh360.thetaclient.transferred.BurstBracketStep
 import com.ricoh360.thetaclient.transferred.BurstCaptureNum
 import com.ricoh360.thetaclient.transferred.BurstCompensation
@@ -61,6 +63,21 @@ class OptionsTest {
     fun optionsPrimaryConstructorTest() {
         val aiAutoThumbnail = ThetaRepository.AiAutoThumbnailEnum.ON
         val aperture = ThetaRepository.ApertureEnum.APERTURE_2_1
+        val autoBracket = ThetaRepository.BracketSettingList().add(
+            ThetaRepository.BracketSetting(
+                exposureProgram = ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM,
+                whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
+            )
+        ).add(
+            ThetaRepository.BracketSetting(
+                aperture = ThetaRepository.ApertureEnum.APERTURE_2_0,
+                colorTemperature = 6800,
+                exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
+                iso = ThetaRepository.IsoEnum.ISO_800,
+                shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_ONE_OVER_100,
+                whiteBalance = ThetaRepository.WhiteBalanceEnum.CLOUDY_DAYLIGHT,
+            )
+        )
         val bitrate = ThetaRepository.BitrateEnum.FINE
         val bluetoothPower = ThetaRepository.BluetoothPowerEnum.ON
         val burstMode = ThetaRepository.BurstModeEnum.ON
@@ -130,6 +147,7 @@ class OptionsTest {
         val options = ThetaRepository.Options(
             aiAutoThumbnail = aiAutoThumbnail,
             aperture = aperture,
+            autoBracket = autoBracket,
             bitrate = bitrate,
             bluetoothPower = bluetoothPower,
             burstMode = burstMode,
@@ -192,6 +210,7 @@ class OptionsTest {
 
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.AiAutoThumbnail), aiAutoThumbnail, "aiAutoThumbnail")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Aperture), aperture, "aperture")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.AutoBracket), autoBracket, "autoBracket")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Bitrate), bitrate, "bitrate")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.BluetoothPower), bluetoothPower, "bluetoothPower")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.BurstMode), burstMode, "burstMode")
@@ -256,6 +275,23 @@ class OptionsTest {
         val values = listOf(
             Pair(ThetaRepository.OptionNameEnum.AiAutoThumbnail, ThetaRepository.AiAutoThumbnailEnum.OFF),
             Pair(ThetaRepository.OptionNameEnum.Aperture, ThetaRepository.ApertureEnum.APERTURE_2_1),
+            Pair(ThetaRepository.OptionNameEnum.AutoBracket,
+                ThetaRepository.BracketSettingList().add(
+                    ThetaRepository.BracketSetting(
+                        exposureProgram = ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM,
+                        whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
+                    )
+                ).add(
+                    ThetaRepository.BracketSetting(
+                        aperture = ThetaRepository.ApertureEnum.APERTURE_2_0,
+                        colorTemperature = 6800,
+                        exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
+                        iso = ThetaRepository.IsoEnum.ISO_800,
+                        shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_ONE_OVER_100,
+                        whiteBalance = ThetaRepository.WhiteBalanceEnum.CLOUDY_DAYLIGHT,
+                    )
+                )
+            ),
             Pair(ThetaRepository.OptionNameEnum.Bitrate, ThetaRepository.BitrateEnum.FINE),
             Pair(ThetaRepository.OptionNameEnum.BluetoothPower, ThetaRepository.BluetoothPowerEnum.ON),
             Pair(ThetaRepository.OptionNameEnum.BurstMode, ThetaRepository.BurstModeEnum.ON),
@@ -339,6 +375,36 @@ class OptionsTest {
     fun optionsSecondaryConstructorTest() {
         val aiAutoThumbnail = Pair(AiAutoThumbnail.OFF, ThetaRepository.AiAutoThumbnailEnum.OFF)
         val aperture = Pair(2.1f, ThetaRepository.ApertureEnum.APERTURE_2_1)
+        val autoBracket = Pair(
+            AutoBracket(
+                2, listOf(
+                    BracketParameter(exposureProgram = 2, whiteBalance = WhiteBalance.DAYLIGHT),
+                    BracketParameter(
+                        aperture = 2.0F,
+                        _colorTemperature = 6800,
+                        exposureProgram = 1,
+                        iso = 800,
+                        shutterSpeed = 0.01,
+                        whiteBalance = WhiteBalance.CLOUDY_DAYLIGHT,
+                    )
+                )
+            ),
+            ThetaRepository.BracketSettingList().add(
+                ThetaRepository.BracketSetting(
+                    exposureProgram = ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM,
+                    whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
+                )
+            ).add(
+                ThetaRepository.BracketSetting(
+                    aperture = ThetaRepository.ApertureEnum.APERTURE_2_0,
+                    colorTemperature = 6800,
+                    exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
+                    iso = ThetaRepository.IsoEnum.ISO_800,
+                    shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_ONE_OVER_100,
+                    whiteBalance = ThetaRepository.WhiteBalanceEnum.CLOUDY_DAYLIGHT,
+                )
+            )
+        )
         val bitrate = Pair("Fine", ThetaRepository.BitrateEnum.FINE)
         val bluetoothPower = Pair(BluetoothPower.ON, ThetaRepository.BluetoothPowerEnum.ON)
         val burstMode = Pair(BurstMode.ON, ThetaRepository.BurstModeEnum.ON)
@@ -417,6 +483,7 @@ class OptionsTest {
         val orgOptions = Options(
             _aiAutoThumbnail = aiAutoThumbnail.first,
             aperture = aperture.first,
+            _autoBracket = autoBracket.first,
             _bitrate = bitrate.first,
             _bluetoothPower = bluetoothPower.first,
             _burstMode = burstMode.first,
@@ -474,6 +541,7 @@ class OptionsTest {
 
         assertEquals(options.aiAutoThumbnail, aiAutoThumbnail.second, "aiAutoThumbnail")
         assertEquals(options.aperture, aperture.second, "aperture")
+        assertEquals(options.autoBracket, autoBracket.second, "autoBracket")
         assertEquals(options.bitrate, bitrate.second, "bitrate")
         assertEquals(options.bluetoothPower, bluetoothPower.second, "bluetoothPower")
         assertEquals(options.burstMode, burstMode.second, "burstMode")
@@ -532,6 +600,36 @@ class OptionsTest {
     fun optionsConvertTest() {
         val aiAutoThumbnail = Pair(AiAutoThumbnail.ON, ThetaRepository.AiAutoThumbnailEnum.ON)
         val aperture = Pair(2.1f, ThetaRepository.ApertureEnum.APERTURE_2_1)
+        val autoBracket = Pair(
+            AutoBracket(
+                2, listOf(
+                    BracketParameter(exposureProgram = 2, whiteBalance = WhiteBalance.DAYLIGHT),
+                    BracketParameter(
+                        aperture = 2.0F,
+                        _colorTemperature = 6800,
+                        exposureProgram = 1,
+                        iso = 800,
+                        shutterSpeed = 0.01,
+                        whiteBalance = WhiteBalance.CLOUDY_DAYLIGHT,
+                    )
+                )
+            ),
+            ThetaRepository.BracketSettingList().add(
+                ThetaRepository.BracketSetting(
+                    exposureProgram = ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM,
+                    whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
+                )
+            ).add(
+                ThetaRepository.BracketSetting(
+                    aperture = ThetaRepository.ApertureEnum.APERTURE_2_0,
+                    colorTemperature = 6800,
+                    exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
+                    iso = ThetaRepository.IsoEnum.ISO_800,
+                    shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_ONE_OVER_100,
+                    whiteBalance = ThetaRepository.WhiteBalanceEnum.CLOUDY_DAYLIGHT,
+                )
+            )
+        )
         val bitrate = Pair("Fine", ThetaRepository.BitrateEnum.FINE)
         val bluetoothPower = Pair(BluetoothPower.ON, ThetaRepository.BluetoothPowerEnum.ON)
         val burstMode = Pair(BurstMode.ON, ThetaRepository.BurstModeEnum.ON)
@@ -613,6 +711,7 @@ class OptionsTest {
         val orgOptions = ThetaRepository.Options(
             aiAutoThumbnail = aiAutoThumbnail.second,
             aperture = aperture.second,
+            autoBracket = autoBracket.second,
             bitrate = bitrate.second,
             bluetoothPower = bluetoothPower.second,
             burstMode = burstMode.second,
@@ -670,6 +769,7 @@ class OptionsTest {
 
         assertEquals(options._aiAutoThumbnail, aiAutoThumbnail.first, "aiAutoThumbnail")
         assertEquals(options.aperture, aperture.first, "aperture")
+        assertEquals(options._autoBracket, autoBracket.first, "autoBracket")
         assertEquals(options._bitrate, bitrate.first, "bitrate")
         assertEquals(options._bluetoothPower, bluetoothPower.first, "bluetoothPower")
         assertEquals(options._burstMode, burstMode.first, "burstMode")

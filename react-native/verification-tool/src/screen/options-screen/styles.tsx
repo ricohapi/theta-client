@@ -62,6 +62,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     margin: 10,
   },
+  autoBracketEditorLayout: {
+    height: 300,
+  },
 });
 
 export default styles;

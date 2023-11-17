@@ -6,6 +6,7 @@ export interface OptionEditProps {
 }
 
 export * from './aperture';
+export * from './auto-bracket';
 export * from './capture-mode';
 export * from './exposure-compensation';
 export * from './exposure-delay';

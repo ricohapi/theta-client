@@ -102,6 +102,46 @@ fun toResult(fileInfoList: List<FileInfo>): List<Map<String, Any>> {
     return result
 }
 
+fun toAutoBracket(list: List<Map<String, Any>>): BracketSettingList {
+    val autoBracket = BracketSettingList()
+
+    list.forEach { map ->
+        autoBracket.add(
+            BracketSetting(
+                aperture = (map["aperture"] as? String)?.let { ApertureEnum.valueOf(it) },
+                colorTemperature = map["colorTemperature"] as? Int,
+                exposureCompensation = (map["exposureCompensation"] as? String)?.let { ExposureCompensationEnum.valueOf(it) },
+                exposureProgram = (map["exposureProgram"] as? String)?.let { ExposureProgramEnum.valueOf(it) },
+                iso = (map["iso"] as? String)?.let { IsoEnum.valueOf(it) },
+                shutterSpeed = (map["shutterSpeed"] as? String)?.let { ShutterSpeedEnum.valueOf(it) },
+                whiteBalance = (map["whiteBalance"] as? String)?.let { WhiteBalanceEnum.valueOf(it) },
+            )
+        )
+    }
+
+    return autoBracket
+}
+
+fun toResult(autoBracket: BracketSettingList): List<Map<String, Any?>> {
+    val resultList: MutableList<Map<String, Any?>> = mutableListOf()
+
+    autoBracket.list.forEach { bracketSetting ->
+        resultList.add(
+            mapOf(
+                "aperture" to bracketSetting.aperture?.name,
+                "colorTemperature" to bracketSetting.colorTemperature,
+                "exposureCompensation" to bracketSetting.exposureCompensation?.name,
+                "exposureProgram" to bracketSetting.exposureProgram?.name,
+                "iso" to bracketSetting.iso?.name,
+                "shutterSpeed" to bracketSetting.shutterSpeed?.name,
+                "whiteBalance" to bracketSetting.whiteBalance?.name
+            )
+        )
+    }
+
+    return resultList
+}
+
 fun toBurstOption(map: Map<String, Any>): BurstOption {
     return BurstOption(
         burstCaptureNum = (map["burstCaptureNum"] as? String)?.let { BurstCaptureNumEnum.valueOf(it) },
@@ -364,7 +404,11 @@ fun toResult(options: Options): Map<String, Any> {
         OptionNameEnum.Username
     )
     OptionNameEnum.values().forEach { name ->
-        if (name == OptionNameEnum.Bitrate) {
+        if (name == OptionNameEnum.AutoBracket) {
+            options.getValue<BracketSettingList>(OptionNameEnum.AutoBracket)?.let { autoBracket ->
+                result[OptionNameEnum.AutoBracket.name] = toResult(autoBracket)
+            }
+        } else if (name == OptionNameEnum.Bitrate) {
             options.getValue<Bitrate>(OptionNameEnum.Bitrate)?.let { bitrate ->
                 if (bitrate is BitrateEnum) {
                     result[OptionNameEnum.Bitrate.name] = bitrate.toString()
@@ -446,6 +490,9 @@ fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
             optionValue = value.toLong()
         }
         options.setValue(name, optionValue)
+    } else if (name == OptionNameEnum.AutoBracket) {
+        @Suppress("UNCHECKED_CAST")
+        options.setValue(name, toAutoBracket(value as List<Map<String, Any>>))
     } else if (name == OptionNameEnum.Bitrate) {
         @Suppress("UNCHECKED_CAST")
         if (value is Int) {

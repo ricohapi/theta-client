@@ -2,6 +2,60 @@ import 'package:theta_client_flutter/digest_auth.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
 class ConvertUtils {
+  static List<BracketSetting>? convertAutoBracketOption(List<dynamic>? data) {
+    if (data == null) {
+      return null;
+    }
+
+    var autoBracket = List<BracketSetting>.empty(growable: true);
+
+    for (var element in data.cast<Map<dynamic, dynamic>>()) {
+      autoBracket.add(BracketSetting(
+          (element['aperture'] != null)
+              ? ApertureEnum.getValue(element['aperture'] as String)
+              : null,
+          element['colorTemperature'],
+          (element['exposureCompensation'] != null)
+              ? ExposureCompensationEnum.getValue(
+                  element['exposureCompensation'] as String)
+              : null,
+          (element['exposureProgram'] != null)
+              ? ExposureProgramEnum.getValue(
+                  element['exposureProgram'] as String)
+              : null,
+          (element['iso'] != null)
+              ? IsoEnum.getValue(element['iso'] as String)
+              : null,
+          (element['shutterSpeed'] != null)
+              ? ShutterSpeedEnum.getValue(element['shutterSpeed'] as String)
+              : null,
+          (element['whiteBalance'] != null)
+              ? WhiteBalanceEnum.getValue(element['whiteBalance'] as String)
+              : null));
+    }
+
+    return autoBracket;
+  }
+
+  static List<Map<String, dynamic>> convertAutoBracketOptionParam(
+      List<BracketSetting> bracketSetting) {
+    var list = List<Map<String, dynamic>>.empty(growable: true);
+
+    for (var bracketSetting in bracketSetting) {
+      list.add({
+        'aperture': bracketSetting.aperture?.rawValue,
+        'colorTemperature': bracketSetting.colorTemperature,
+        'exposureCompensation': bracketSetting.exposureCompensation?.rawValue,
+        'exposureProgram': bracketSetting.exposureProgram?.rawValue,
+        'iso': bracketSetting.iso?.rawValue,
+        'shutterSpeed': bracketSetting.shutterSpeed?.rawValue,
+        'whiteBalance': bracketSetting.whiteBalance?.rawValue,
+      });
+    }
+
+    return list;
+  }
+
   static BurstOption? convertBurstOption(Map<dynamic, dynamic>? data) {
     if (data == null) {
       return null;
@@ -252,6 +306,9 @@ class ConvertUtils {
         case OptionNameEnum.aperture:
           result.aperture = ApertureEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.autoBracket:
+          result.autoBracket = convertAutoBracketOption(entry.value);
+          break;
         case OptionNameEnum.bitrate:
           result.bitrate = (entry.value is int)
               ? BitrateNumber(entry.value)
@@ -451,6 +508,8 @@ class ConvertUtils {
       return value.rawValue;
     } else if (value is BluetoothPowerEnum) {
       return value.rawValue;
+    } else if (value is List<BracketSetting>) {
+      return convertAutoBracketOptionParam(value);
     } else if (value is BurstModeEnum) {
       return value.rawValue;
     } else if (value is BurstOption) {
