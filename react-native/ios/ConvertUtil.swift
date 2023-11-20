@@ -1000,59 +1000,59 @@ func toAutoBracket(params: [[String: Any]]) -> ThetaRepository.BracketSettingLis
     let autoBracket = ThetaRepository.BracketSettingList(list: NSMutableArray())
     
     params.forEach { map in
-        let aperture: ThetaRepository.ApertureEnum? = {
+        let aperture = {
             if let name = map["aperture"] as? String {
-                getEnumValue(values: ThetaRepository.ApertureEnum.values(), name: name)
+                return getEnumValue(values: ThetaRepository.ApertureEnum.values(), name: name)
             } else {
-                nil
+                return nil
             }
         }()
         
-        let colorTemperature: KotlinInt? = {
+        let colorTemperature = {
             if let value = map["colorTemperature"] as? Int {
-                toKotlinInt(value: value)
+                return toKotlinInt(value: value)
             } else {
-                nil
+                return nil
             }
         }()
         
-        let exposureCompensation: ThetaRepository.ExposureCompensationEnum? = {
+        let exposureCompensation = {
             if let name = map["exposureCompensation"] as? String {
-                getEnumValue(values: ThetaRepository.ExposureCompensationEnum.values(), name: name)
+                return getEnumValue(values: ThetaRepository.ExposureCompensationEnum.values(), name: name)
             } else {
-                nil
+                return nil
             }
         }()
         
-        let exposureProgram: ThetaRepository.ExposureProgramEnum? = {
+        let exposureProgram = {
             if let name = map["exposureProgram"] as? String {
-                getEnumValue(values: ThetaRepository.ExposureProgramEnum.values(), name: name)
+                return getEnumValue(values: ThetaRepository.ExposureProgramEnum.values(), name: name)
             } else {
-                nil
+                return nil
             }
         }()
         
-        let iso: ThetaRepository.IsoEnum? = {
+        let iso = {
             if let name = map["iso"] as? String {
-                getEnumValue(values: ThetaRepository.IsoEnum.values(), name: name)
+                return getEnumValue(values: ThetaRepository.IsoEnum.values(), name: name)
             } else {
-                nil
+                return nil
             }
         }()
         
-        let shutterSpeed: ThetaRepository.ShutterSpeedEnum? = {
+        let shutterSpeed = {
             if let name = map["shutterSpeed"] as? String {
-                getEnumValue(values: ThetaRepository.ShutterSpeedEnum.values(), name: name)
+                return getEnumValue(values: ThetaRepository.ShutterSpeedEnum.values(), name: name)
             } else {
-                nil
+                return nil
             }
         }()
         
-        let whiteBalance: ThetaRepository.WhiteBalanceEnum? = {
+        let whiteBalance = {
             if let name = map["whiteBalance"] as? String {
-                getEnumValue(values: ThetaRepository.WhiteBalanceEnum.values(), name: name)
+                return getEnumValue(values: ThetaRepository.WhiteBalanceEnum.values(), name: name)
             } else {
-                nil
+                return nil
             }
         }()
         
