@@ -1,12 +1,11 @@
+import 'dart:async';
+
 import 'package:demo_flutter/capture_video_screen.dart';
 import 'package:demo_flutter/file_list_screen.dart';
 import 'package:demo_flutter/message_box.dart';
 import 'package:demo_flutter/take_picture_screen.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
-
 import 'package:flutter/services.dart';
-import 'package:theta_client_flutter/digest_auth.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
 void main() {
@@ -59,8 +58,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Future<void> initPlatformState() async {
     String platformVersion;
     try {
-      platformVersion =
-          await _thetaClientFlutter.getPlatformVersion() ?? 'Unknown platform version';
+      platformVersion = await _thetaClientFlutter.getPlatformVersion() ??
+          'Unknown platform version';
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
@@ -127,17 +126,18 @@ class Home extends StatelessWidget {
   final bool isInitialized;
   final Function connectTheta;
   final ThetaModel? thetaModel;
-  const Home({Key? key,
+
+  const Home({
+    Key? key,
     required this.platformVersion,
     required this.isInitialized,
     required this.connectTheta,
     required this.thetaModel,
-    }) : super(key: key);
-
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    String camera = isInitialized ? 'connected! $thetaModel': 'disconnected';
+    String camera = isInitialized ? 'connected! $thetaModel' : 'disconnected';
     return Scaffold(
         appBar: AppBar(
           title: const Text('Plugin example app'),
@@ -150,43 +150,43 @@ class Home extends StatelessWidget {
                 Text('Running on: $platformVersion\n'),
                 Text('Camera: $camera\n'),
                 TextButton(
-                  onPressed: isInitialized ? null: () {
-                    connectTheta();
-                  },
+                  onPressed: isInitialized
+                      ? null
+                      : () {
+                          connectTheta();
+                        },
                   child: const Text('Connect'),
-                  
                 ),
                 TextButton(
-                  onPressed: !isInitialized ? null: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const TakePictureScreen())
-                    );
-                  },
+                  onPressed: !isInitialized
+                      ? null
+                      : () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) => const TakePictureScreen()));
+                        },
                   child: const Text('Take Picture'),
-                  
                 ),
                 TextButton(
-                  onPressed: !isInitialized ? null: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const CaptureVideoScreen())
-                    );
-                  },
+                  onPressed: !isInitialized
+                      ? null
+                      : () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) => const CaptureVideoScreen()));
+                        },
                   child: const Text('Capture Video'),
-                  
                 ),
                 TextButton(
-                  onPressed: !isInitialized ? null: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const FileListScreen())
-                    );
-                  },
+                  onPressed: !isInitialized
+                      ? null
+                      : () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) => const FileListScreen()));
+                        },
                   child: const Text('File List'),
-                  
                 ),
               ],
             ),
           ),
-        )
-    );
+        ));
   }
 }

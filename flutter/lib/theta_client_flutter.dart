@@ -155,8 +155,8 @@ class ThetaClientFlutter {
   }
 
   /// Get getCompositeIntervalCapture.Builder for capture interval composite shooting.
-  CompositeIntervalCaptureBuilder
-  getCompositeIntervalCaptureBuilder(int shootingTimeSec) {
+  CompositeIntervalCaptureBuilder getCompositeIntervalCaptureBuilder(
+      int shootingTimeSec) {
     ThetaClientFlutterPlatform.instance
         .getCompositeIntervalCaptureBuilder(shootingTimeSec);
     return CompositeIntervalCaptureBuilder();

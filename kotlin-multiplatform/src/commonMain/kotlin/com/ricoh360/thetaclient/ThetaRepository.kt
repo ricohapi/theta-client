@@ -1891,7 +1891,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Parameters for multi bracket shooting.
      */
-    data class BracketSetting (
+    data class BracketSetting(
         /**
          * Aperture value.
          * Theta X and SC2 do not support.

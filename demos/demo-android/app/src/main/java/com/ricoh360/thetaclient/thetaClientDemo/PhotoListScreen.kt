@@ -1,13 +1,20 @@
 package com.ricoh360.thetaclient.thetaClientDemo
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
@@ -26,7 +33,7 @@ fun PhotoListScreen(
     toPhoto: (fileName: String, photoUrl: String) -> Unit,
     viewModel: ThetaViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
-    val oscInfo : ThetaRepository.ThetaInfo? by viewModel.thetaInfoState.collectAsState(initial = null)
+    val oscInfo: ThetaRepository.ThetaInfo? by viewModel.thetaInfoState.collectAsState(initial = null)
     val thetaFiles: ThetaRepository.ThetaFiles? by viewModel.thetaFilesState.collectAsState(initial = null)
 
     ThetaSimpleAndroidAppTheme {
@@ -40,9 +47,11 @@ fun PhotoListScreen(
             thetaFiles?.also {
                 val thumbWidth = 100.dp
                 val pad = 24.dp
-                LazyColumn(modifier = Modifier
-                    .fillMaxSize()
-                    .padding(pad)) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(pad)
+                ) {
                     items(it.fileList) { file ->
                         Row(horizontalArrangement = Arrangement.Center) {
                             ThumbnailImage(

@@ -50,7 +50,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     var compositeIntervalCaptureBuilder: CompositeIntervalCapture.Builder? = nil
     var compositeIntervalCapture: CompositeIntervalCapture? = nil
     var compositeIntervalCapturing: CompositeIntervalCapturing? = nil
-    
+
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "theta_client_flutter", binaryMessenger: registrar.messenger())
         let instance = SwiftThetaClientFlutterPlugin()
@@ -558,20 +558,20 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 self.callback = callback
                 self.plugin = plugin
             }
-            
+
             func onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 callback(nil, exception.asError())
             }
-            
+
             func onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 let error = exception.asError()
                 plugin?.sendNotifyEvent(id: NOTIFY_TIME_SHIFT_STOP_ERROR, params: toMessageNotifyParam(message: error.localizedDescription))
             }
-            
+
             func onProgress(completion: Float) {
                 plugin?.sendNotifyEvent(id: NOTIFY_TIME_SHIFT_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
             }
-            
+
             func onCaptureCompleted(fileUrl: String?) {
                 callback(fileUrl, nil)
             }
@@ -850,7 +850,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         capturing.stopCapture()
         result(nil)
     }
-    
+
     func getCompositeIntervalCaptureBuilder(call: FlutterMethodCall, result: @escaping FlutterResult) {
         guard let thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
@@ -862,7 +862,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
         result(nil)
     }
-    
+
     func buildCompositeIntervalCapture(call: FlutterMethodCall, result: @escaping FlutterResult) {
         guard let _ = thetaRepository, let builder = compositeIntervalCaptureBuilder else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
@@ -883,7 +883,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             }
         })
     }
-    
+
     func startCompositeIntervalCapture(result: @escaping FlutterResult) {
         guard let _ = thetaRepository, let capture = compositeIntervalCapture else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
@@ -897,38 +897,38 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 self.callback = callback
                 self.plugin = plugin
             }
-            
+
             func onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 callback(nil, exception.asError())
             }
-            
+
             func onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 let error = exception.asError()
                 plugin?.sendNotifyEvent(id: NOTIFY_COMPOSITE_INTERVAL_STOP_ERROR, params: toMessageNotifyParam(message: error.localizedDescription))
             }
-            
+
             func onProgress(completion: Float) {
                 plugin?.sendNotifyEvent(id: NOTIFY_COMPOSITE_INTERVAL_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
             }
-            
+
             func onCaptureCompleted(fileUrls: [String]?) {
                 callback(fileUrls, nil)
             }
         }
-        
+
         compositeIntervalCapturing = capture.startCapture(
             callback: Callback({ fileUrl, error in
-                if let thetaError = error {
-                    let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
-                    result(flutterError)
-                } else {
-                    result(fileUrl)
-                }
-            },
+                                   if let thetaError = error {
+                                       let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                                       result(flutterError)
+                                   } else {
+                                       result(fileUrl)
+                                   }
+                               },
                                plugin: self)
         )
     }
-    
+
     func stopCompositeIntervalCapture(result: @escaping FlutterResult) {
         guard let _ = thetaRepository, let capturing = compositeIntervalCapturing else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)

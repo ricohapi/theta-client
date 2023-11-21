@@ -3,7 +3,7 @@ package com.ricoh360.thetaclient.thetaClientDemo
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import com.ricoh360.thetaclient.thetaClientDemo.ui.theme.ThetaSimpleAndroidAppTheme
 import timber.log.Timber
 
@@ -19,7 +19,7 @@ fun PhotoScreen(fileName: String?, photoUrl: String?) {
     ThetaSimpleAndroidAppTheme {
         Scaffold(
             topBar = {
-                TopAppBar(title = { Text(fileName?: "") })
+                TopAppBar(title = { Text(fileName ?: "") })
             }
         ) {
             photoUrl?.let {

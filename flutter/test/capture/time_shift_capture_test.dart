@@ -172,8 +172,7 @@ void main() {
       return Future.value();
     };
 
-    var builder = thetaClientPlugin
-        .getTimeShiftCaptureBuilder();
+    var builder = thetaClientPlugin.getTimeShiftCaptureBuilder();
     var capture = await builder.build();
     var isOnStopFailed = false;
     var capturing = capture.startCapture(

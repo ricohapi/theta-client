@@ -14,7 +14,8 @@ class CaptureVideoScreen extends StatefulWidget {
   }
 }
 
-class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingObserver {
+class _CaptureVideoScreen extends State<CaptureVideoScreen>
+    with WidgetsBindingObserver {
   final _thetaClientFlutter = ThetaClientFlutter();
 
   Uint8List frameData = Uint8List(0);
@@ -30,6 +31,7 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingO
     WidgetsBinding.instance.addObserver(this);
     initialize();
   }
+
   @override
   void deactivate() {
     WidgetsBinding.instance.removeObserver(this);
@@ -42,10 +44,10 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingO
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-      onResume();
+        onResume();
         break;
       case AppLifecycleState.paused:
-      onPause();
+        onPause();
         break;
       default:
         break;
@@ -54,12 +56,11 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingO
 
   void onResume() {
     debugPrint('onResume');
-    _thetaClientFlutter.isInitialized()
-      .then((isInit) {
-        if (isInit) {
-          startLivePreview();
-        }
-      });
+    _thetaClientFlutter.isInitialized().then((isInit) {
+      if (isInit) {
+        startLivePreview();
+      }
+    });
   }
 
   void onPause() {
@@ -70,40 +71,35 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingO
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        child: Scaffold(
-          appBar: AppBar(
-            title: const Text('Capture Video')
-            ),
-          body: Stack(
-            fit: StackFit.expand,
-            children: [
-              Container(
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Capture Video')),
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            Container(
                 color: Colors.black,
                 child: Center(
-                  child:
-                    shooting ? const Text(
-                        'Capturing...',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                      ),
-                    ):
-                    Image.memory(
-                      frameData,
-                      errorBuilder: (a, b, c) {
-                        return Container(
-                          color: Colors.black,
-                        );
-                      },
-                      gaplessPlayback: true,
-                    )
-                  ,
-                )
-              ),
-              Container(
+                  child: shooting
+                      ? const Text(
+                          'Capturing...',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Image.memory(
+                          frameData,
+                          errorBuilder: (a, b, c) {
+                            return Container(
+                              color: Colors.black,
+                            );
+                          },
+                          gaplessPlayback: true,
+                        ),
+                )),
+            Container(
                 alignment: const Alignment(0, 0.8),
-                child:
-                MaterialButton(
+                child: MaterialButton(
                   height: 80,
                   shape: const CircleBorder(),
                   color: shooting ? Colors.white : Colors.red,
@@ -114,13 +110,12 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingO
                     }
                     startVideoCapture();
                   },
-                )
-              ),
-            ],
-          ),
+                )),
+          ],
         ),
-        onWillPop: () => backButtonPress(context),
-      );
+      ),
+      onWillPop: () => backButtonPress(context),
+    );
   }
 
   Future<bool> backButtonPress(BuildContext context) async {
@@ -133,20 +128,18 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingO
     debugPrint('init CaptureVideo');
     // initialize VideoCapture
     builder = _thetaClientFlutter.getVideoCaptureBuilder();
-    builder!.build()
-      .then((value) {
-        videoCapture = value;
-        debugPrint('Ready VideoCapture');
-        Future.delayed(const Duration(milliseconds: 500), (){}).then((value) {
-          // Wait because it can fail.
-          startLivePreview();
-        });
-      })
-      .onError((error, stackTrace) {
-        MessageBox.show(context, 'Error VideoCaptureBuilder', () {
-          backScreen();
-        });
+    builder!.build().then((value) {
+      videoCapture = value;
+      debugPrint('Ready VideoCapture');
+      Future.delayed(const Duration(milliseconds: 500), () {}).then((value) {
+        // Wait because it can fail.
+        startLivePreview();
       });
+    }).onError((error, stackTrace) {
+      MessageBox.show(context, 'Error VideoCaptureBuilder', () {
+        backScreen();
+      });
+    });
 
     debugPrint('initializing...');
   }
@@ -161,16 +154,14 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingO
 
   void startLivePreview() {
     previewing = true;
-    _thetaClientFlutter.getLivePreview(frameHandler)
-      .then((value) {
-        debugPrint('LivePreview end.');
-      })
-      .onError((error, stackTrace) {
-        debugPrint('Error getLivePreview.');
-        MessageBox.show(context, 'Error getLivePreview', () {
-          backScreen();
-        });
+    _thetaClientFlutter.getLivePreview(frameHandler).then((value) {
+      debugPrint('LivePreview end.');
+    }).onError((error, stackTrace) {
+      debugPrint('Error getLivePreview.');
+      MessageBox.show(context, 'Error getLivePreview', () {
+        backScreen();
       });
+    });
     debugPrint('LivePreview starting..');
   }
 
@@ -188,7 +179,7 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingO
       return;
     }
     if (shooting) {
-        debugPrint('already shooting');
+      debugPrint('already shooting');
       return;
     }
     setState(() {
@@ -197,7 +188,6 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingO
 
     // Stops while shooting is in progress
     stopLivePreview();
-
 
     videoCapturing = videoCapture?.startCapture((fileUrl) {
       setState(() {
@@ -208,13 +198,13 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingO
 
       if (fileUrl != null) {
         final uri = Uri.parse(fileUrl);
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => VideoScreen(
-            name: uri.pathSegments.last,
-            fileUrl: fileUrl,
-            )
-          )
-        ).then((value) => startLivePreview());
+        Navigator.of(context)
+            .push(MaterialPageRoute(
+                builder: (_) => VideoScreen(
+                      name: uri.pathSegments.last,
+                      fileUrl: fileUrl,
+                    )))
+            .then((value) => startLivePreview());
       }
     }, (exception) {
       setState(() {
@@ -222,7 +212,6 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingO
       });
       startLivePreview();
       debugPrint(exception.toString());
-
     }, onStopFailed: (exception) {
       debugPrint(exception.toString());
       MessageBox.show(context, 'Error. stopCapture.\n$exception');
@@ -231,7 +220,7 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen> with WidgetsBindingO
 
   void stopVideoCapture() {
     if (!shooting || videoCapturing == null) {
-        debugPrint('Not start capture.');
+      debugPrint('Not start capture.');
       return;
     }
     debugPrint("stopVideoCapture");

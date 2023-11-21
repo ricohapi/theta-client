@@ -799,7 +799,7 @@ internal data class Options(
  * For [_bracketParameters], all parameters must be specified.
  */
 @Serializable
-internal data class AutoBracket (
+internal data class AutoBracket(
     /**
      * Number of shots in multi bracket shooting.
      * 2 to 13 (THETA X and SC2);
@@ -817,7 +817,7 @@ internal data class AutoBracket (
  * Parameter array specified for multi bracket shooting
  */
 @Serializable
-internal data class BracketParameter (
+internal data class BracketParameter(
     /**
      * Aperture value.
      * Theta X and SC2 do not support.

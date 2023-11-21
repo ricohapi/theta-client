@@ -11,7 +11,7 @@ import WebKit
 class Viewer360: WKWebView, WKNavigationDelegate {
     var imageUrl: String?
     var isInitialized = false
-    
+
     override init(frame: CGRect, configuration: WKWebViewConfiguration) {
         super.init(frame: frame, configuration: configuration)
         loadViewer()
@@ -29,31 +29,30 @@ class Viewer360: WKWebView, WKNavigationDelegate {
         super.init(coder: coder)
         loadViewer()
     }
-    
+
     func loadViewer() {
         navigationDelegate = self
         let path: String = Bundle.main.path(forResource: "index", ofType: "html")!
-        let localHtmlUrl: URL = URL(fileURLWithPath: path, isDirectory: false)
+        let localHtmlUrl = URL(fileURLWithPath: path, isDirectory: false)
         loadFileURL(localHtmlUrl, allowingReadAccessTo: localHtmlUrl)
         configuration.userContentController = WKUserContentController()
     }
-    
+
     func updateImage(imageUrl: String) {
         self.imageUrl = imageUrl
         callUpdate()
     }
-    
+
     func callUpdate() {
         if isInitialized && imageUrl != nil {
             evaluateJavaScript("update('\(imageUrl!)');")
         }
     }
-    
+
     // MARK: - WKNavigationDelegate
-    
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+
+    func webView(_: WKWebView, didFinish _: WKNavigation!) {
         isInitialized = true
-        callUpdate();
+        callUpdate()
     }
-    
 }

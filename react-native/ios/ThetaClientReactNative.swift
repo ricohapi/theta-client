@@ -55,7 +55,7 @@ class ThetaClientReactNative: RCTEventEmitter {
     static let NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR = "LIMITLESS-INTERVAL-CAPTURE-STOP-ERROR"
     static let NOTIFY_COMPOSITE_INTERVAL_PROGRESS = "COMPOSITE-INTERVAL-PROGRESS"
     static let NOTIFY_COMPOSITE_INTERVAL_STOP_ERROR = "COMPOSITE-INTERVAL-STOP-ERROR"
-    
+
     @objc
     override func supportedEvents() -> [String]! {
         return [ThetaClientReactNative.EVENT_FRAME, ThetaClientReactNative.EVENT_NOTIFY]
@@ -1023,7 +1023,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         shotCountSpecifiedIntervalCapturing.cancelCapture()
         resolve(nil)
     }
-    
+
     @objc(getCompositeIntervalCaptureBuilder:withResolver:withRejecter:)
     func getCompositeIntervalCaptureBuilder(
         shootingTimeSec: Int,

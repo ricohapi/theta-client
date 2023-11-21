@@ -275,7 +275,8 @@ class OptionsTest {
         val values = listOf(
             Pair(ThetaRepository.OptionNameEnum.AiAutoThumbnail, ThetaRepository.AiAutoThumbnailEnum.OFF),
             Pair(ThetaRepository.OptionNameEnum.Aperture, ThetaRepository.ApertureEnum.APERTURE_2_1),
-            Pair(ThetaRepository.OptionNameEnum.AutoBracket,
+            Pair(
+                ThetaRepository.OptionNameEnum.AutoBracket,
                 ThetaRepository.BracketSettingList().add(
                     ThetaRepository.BracketSetting(
                         exposureProgram = ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM,

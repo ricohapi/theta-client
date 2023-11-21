@@ -13,7 +13,8 @@ class TakePictureScreen extends StatefulWidget {
   }
 }
 
-class _TakePictureScreen extends State<TakePictureScreen> with WidgetsBindingObserver {
+class _TakePictureScreen extends State<TakePictureScreen>
+    with WidgetsBindingObserver {
   final _thetaClientFlutter = ThetaClientFlutter();
 
   Uint8List frameData = Uint8List(0);
@@ -28,6 +29,7 @@ class _TakePictureScreen extends State<TakePictureScreen> with WidgetsBindingObs
     WidgetsBinding.instance.addObserver(this);
     initialize();
   }
+
   @override
   void deactivate() {
     WidgetsBinding.instance.removeObserver(this);
@@ -40,10 +42,10 @@ class _TakePictureScreen extends State<TakePictureScreen> with WidgetsBindingObs
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-      onResume();
+        onResume();
         break;
       case AppLifecycleState.paused:
-      onPause();
+        onPause();
         break;
       default:
         break;
@@ -52,12 +54,11 @@ class _TakePictureScreen extends State<TakePictureScreen> with WidgetsBindingObs
 
   void onResume() {
     debugPrint('onResume');
-    _thetaClientFlutter.isInitialized()
-      .then((isInit) {
-        if (isInit) {
-          startLivePreview();
-        }
-      });
+    _thetaClientFlutter.isInitialized().then((isInit) {
+      if (isInit) {
+        startLivePreview();
+      }
+    });
   }
 
   void onPause() {
@@ -68,39 +69,35 @@ class _TakePictureScreen extends State<TakePictureScreen> with WidgetsBindingObs
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        child: Scaffold(
-          appBar: AppBar(
-            title: const Text('Take Picture')
-            ),
-          body: Stack(
-            fit: StackFit.expand,
-            children: [
-              Container(
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Take Picture')),
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            Container(
                 color: Colors.black,
                 child: Center(
-                  child:
-                    shooting ? const Text(
-                      'Take Picture...',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                      ),
-                    ):
-                    Image.memory(
-                      frameData,
-                      errorBuilder: (a, b, c) {
-                        return Container(
-                          color: Colors.black,
-                        );
-                      },
-                      gaplessPlayback: true,
-                    ),
-                )
-              ),
-              Container(
+                  child: shooting
+                      ? const Text(
+                          'Take Picture...',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Image.memory(
+                          frameData,
+                          errorBuilder: (a, b, c) {
+                            return Container(
+                              color: Colors.black,
+                            );
+                          },
+                          gaplessPlayback: true,
+                        ),
+                )),
+            Container(
                 alignment: const Alignment(0, 0.8),
-                child:
-                MaterialButton(
+                child: MaterialButton(
                   height: 80,
                   shape: const CircleBorder(),
                   color: Colors.white,
@@ -111,13 +108,12 @@ class _TakePictureScreen extends State<TakePictureScreen> with WidgetsBindingObs
                     }
                     takePicture();
                   },
-                )
-              ),
-            ],
-          ),
+                )),
+          ],
         ),
-        onWillPop: () => backButtonPress(context),
-      );
+      ),
+      onWillPop: () => backButtonPress(context),
+    );
   }
 
   Future<bool> backButtonPress(BuildContext context) async {
@@ -130,20 +126,18 @@ class _TakePictureScreen extends State<TakePictureScreen> with WidgetsBindingObs
     debugPrint('init TakePicture');
     // initialize PhotoCapture
     builder = _thetaClientFlutter.getPhotoCaptureBuilder();
-    builder!.build()
-      .then((value) {
-        photoCapture = value;
-        debugPrint('Ready PhotoCapture');
-        Future.delayed(const Duration(milliseconds: 500), (){}).then((value) {
-          // Wait because it can fail.
-          startLivePreview();
-        });
-      })
-      .onError((error, stackTrace) {
-        MessageBox.show(context, 'Error PhotoCaptureBuilder', () {
-          backScreen();
-        });
+    builder!.build().then((value) {
+      photoCapture = value;
+      debugPrint('Ready PhotoCapture');
+      Future.delayed(const Duration(milliseconds: 500), () {}).then((value) {
+        // Wait because it can fail.
+        startLivePreview();
       });
+    }).onError((error, stackTrace) {
+      MessageBox.show(context, 'Error PhotoCaptureBuilder', () {
+        backScreen();
+      });
+    });
 
     debugPrint('initializing...');
   }
@@ -158,16 +152,14 @@ class _TakePictureScreen extends State<TakePictureScreen> with WidgetsBindingObs
 
   void startLivePreview() {
     previewing = true;
-    _thetaClientFlutter.getLivePreview(frameHandler)
-      .then((value) {
-        debugPrint('LivePreview end.');
-      })
-      .onError((error, stackTrace) {
-        debugPrint('Error getLivePreview.$error');
-        MessageBox.show(context, 'Error getLivePreview', () {
-          backScreen();
-        });
+    _thetaClientFlutter.getLivePreview(frameHandler).then((value) {
+      debugPrint('LivePreview end.');
+    }).onError((error, stackTrace) {
+      debugPrint('Error getLivePreview.$error');
+      MessageBox.show(context, 'Error getLivePreview', () {
+        backScreen();
       });
+    });
     debugPrint('LivePreview starting..');
   }
 
@@ -182,7 +174,7 @@ class _TakePictureScreen extends State<TakePictureScreen> with WidgetsBindingObs
 
   void takePicture() {
     if (shooting) {
-        debugPrint('already shooting');
+      debugPrint('already shooting');
       return;
     }
     setState(() {
@@ -199,13 +191,13 @@ class _TakePictureScreen extends State<TakePictureScreen> with WidgetsBindingObs
       debugPrint('take picture: $fileUrl');
       if (!mounted) return;
       if (fileUrl != null) {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => PhotoScreen(
-            name: 'Take Picture',
-            fileUrl: fileUrl,
-            )
-          )
-        ).then((value) => startLivePreview());
+        Navigator.of(context)
+            .push(MaterialPageRoute(
+                builder: (_) => PhotoScreen(
+                      name: 'Take Picture',
+                      fileUrl: fileUrl,
+                    )))
+            .then((value) => startLivePreview());
       } else {
         setState(() {
           shooting = true;

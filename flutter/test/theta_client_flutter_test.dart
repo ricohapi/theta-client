@@ -351,7 +351,8 @@ Future<String?> Function() onCallTakePicture = Future.value;
 Future<void> Function() onCallGetTimeShiftCaptureBuilder = Future.value;
 Future<void> Function(Map<String, dynamic> options, int interval)
     onCallBuildTimeShiftCapture = (options, interval) => Future.value();
-Future<String?> Function(void Function(double)? onProgress, void Function(Exception exception)? onStopFailed)
+Future<String?> Function(void Function(double)? onProgress,
+        void Function(Exception exception)? onStopFailed)
     onCallStartTimeShiftCapture = (onProgress, onStopFailed) => Future.value();
 Future<void> Function() onCallStopTimeShiftCapture = Future.value;
 Future<void> Function() onCallGetVideoCaptureBuilder = Future.value;
