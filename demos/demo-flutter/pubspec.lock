@@ -211,7 +211,7 @@ packages:
       path: "packages/theta_client_flutter"
       relative: true
     source: path
-    version: "1.5.0"
+    version: "1.6.0"
   vector_math:
     dependency: transitive
     description:
