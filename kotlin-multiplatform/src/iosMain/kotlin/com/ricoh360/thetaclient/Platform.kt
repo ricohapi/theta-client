@@ -21,14 +21,15 @@ actual class Platform actual constructor() {
 actual typealias FrameSource = NSData
 
 /** fixed NSData */
-internal val data: NSMutableData = NSMutableData.create(length = 10)!!
+internal val data: NSMutableData = NSMutableData.create(length = 10u)!!
 
 /**
  * convert [packet] to NSData frame source data
  */
+@OptIn(ExperimentalForeignApi::class)
 actual fun frameFrom(packet: Pair<ByteArray, Int>): FrameSource {
     packet.first.usePinned {
-        val range = NSMakeRange(0, data.length)
+        val range = NSMakeRange(0u, data.length)
         data.replaceBytesInRange(
             range = range,
             withBytes = it.addressOf(0),

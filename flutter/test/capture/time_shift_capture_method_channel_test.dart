@@ -48,7 +48,7 @@ void main() {
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       return fileUrl;
     });
-    expect(await platform.startTimeShiftCapture(null), fileUrl);
+    expect(await platform.startTimeShiftCapture(null, null), fileUrl);
   });
 
   test('startTimeShiftCapture no file', () async {
@@ -56,7 +56,7 @@ void main() {
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       return fileUrl;
     });
-    expect(await platform.startTimeShiftCapture(null), null);
+    expect(await platform.startTimeShiftCapture(null, null), null);
   });
 
   test('startTimeShiftCapture exception', () async {
@@ -64,7 +64,7 @@ void main() {
       throw Exception('test error');
     });
     try {
-      await platform.startTimeShiftCapture(null);
+      await platform.startTimeShiftCapture(null, null);
       expect(true, false, reason: 'not exception');
     } catch (error) {
       expect(error.toString().contains('test error'), true);
@@ -76,19 +76,19 @@ void main() {
         'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.MP4';
 
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      expect(platform.notifyList.containsKey(10002), true,
+      expect(platform.notifyList.containsKey(10011), true,
           reason: 'add notify progress');
 
       // native event
       platform.onNotify({
-        'id': 10002,
+        'id': 10011,
         'params': {
           'completion': 0.1,
         },
       });
       await Future.delayed(const Duration(milliseconds: 10));
       platform.onNotify({
-        'id': 10002,
+        'id': 10011,
         'params': {
           'completion': 0.2,
         },
@@ -101,11 +101,11 @@ void main() {
     int progressCount = 0;
     var resultCapture = platform.startTimeShiftCapture((completion) {
       progressCount++;
-    });
+    }, null);
     var result = await resultCapture.timeout(const Duration(seconds: 5));
     expect(result, fileUrl);
     expect(progressCount, 2);
-    expect(platform.notifyList.containsKey(10002), false,
+    expect(platform.notifyList.containsKey(10011), false,
         reason: 'remove notify progress');
   });
 }

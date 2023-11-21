@@ -264,6 +264,111 @@ func setShotCountSpecifiedIntervalCaptureBuilderParams(params: [String: Any], bu
     }
 }
 
+func toAutoBracket(params: [[String: Any]]) -> ThetaRepository.BracketSettingList {
+    let autoBracket = ThetaRepository.BracketSettingList(list: NSMutableArray())
+    
+    params.forEach { map in
+        let aperture = {
+            if let name = map["aperture"] as? String {
+                return getEnumValue(values: ThetaRepository.ApertureEnum.values(), name: name)
+            } else {
+                return nil
+            }
+        }()
+        
+        let colorTemperature = {
+            if let value = map["colorTemperature"] as? Int {
+                return toKotlinInt(value: value)
+            } else {
+                return nil
+            }
+        }()
+        
+        let exposureCompensation = {
+            if let name = map["exposureCompensation"] as? String {
+                return getEnumValue(values: ThetaRepository.ExposureCompensationEnum.values(), name: name)
+            } else {
+                return nil
+            }
+        }()
+        
+        let exposureProgram = {
+            if let name = map["exposureProgram"] as? String {
+                return getEnumValue(values: ThetaRepository.ExposureProgramEnum.values(), name: name)
+            } else {
+                return nil
+            }
+        }()
+        
+        let iso = {
+            if let name = map["iso"] as? String {
+                return getEnumValue(values: ThetaRepository.IsoEnum.values(), name: name)
+            } else {
+                return nil
+            }
+        }()
+        
+        let shutterSpeed = {
+            if let name = map["shutterSpeed"] as? String {
+                return getEnumValue(values: ThetaRepository.ShutterSpeedEnum.values(), name: name)
+            } else {
+                return nil
+            }
+        }()
+        
+        let whiteBalance = {
+            if let name = map["whiteBalance"] as? String {
+                return getEnumValue(values: ThetaRepository.WhiteBalanceEnum.values(), name: name)
+            } else {
+                return nil
+            }
+        }()
+        
+        autoBracket.add(setting: ThetaRepository.BracketSetting(
+            aperture: aperture,
+            colorTemperature: colorTemperature,
+            exposureCompensation: exposureCompensation,
+            exposureProgram: exposureProgram,
+            iso: iso,
+            shutterSpeed: shutterSpeed,
+            whiteBalance: whiteBalance
+        ))
+    }
+    
+    return autoBracket
+}
+
+func convertResult(autoBracket: ThetaRepository.BracketSettingList) -> [[String: Any]] {
+    var resultList = [[String: Any]]()
+    
+    autoBracket.list.forEach { bracketSetting in
+        if let setting = bracketSetting as? ThetaRepository.BracketSetting {
+            resultList.append([
+                "aperture": setting.aperture?.name,
+                "colorTemperature": setting.colorTemperature?.intValue,
+                "exposureCompensation": setting.exposureCompensation?.name,
+                "exposureProgram": setting.exposureProgram?.name,
+                "iso": setting.iso?.name,
+                "shutterSpeed": setting.shutterSpeed?.name,
+                "whiteBalance": setting.whiteBalance?.name,
+            ])
+        }
+    }
+    
+    return resultList
+}
+
+func setCompositeIntervalCaptureBuilderParams(params: [String: Any], builder: CompositeIntervalCapture.Builder) {
+    if let interval = params["_capture_interval"] as? Int,
+       interval >= 0
+    {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
+    if let value = params[ThetaRepository.OptionNameEnum.compositeshootingoutputinterval.name] as? Int32 {
+        builder.setCompositeShootingOutputInterval(sec: value)
+    }
+}
+
 func toBitrate(value: Any) -> ThetaRepositoryBitrate? {
     if value is NSNumber, let intVal = value as? Int32 {
         return ThetaRepository.BitrateNumber(value: intVal)
@@ -432,6 +537,8 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                 result[name.name] = value
             } else if let bitrate = value as? ThetaRepository.BitrateNumber {
                 result[name.name] = bitrate.value
+            } else if value is ThetaRepository.BracketSettingList, let autoBracket = value as? ThetaRepository.BracketSettingList {
+                result[name.name] = convertResult(autoBracket: autoBracket)
             } else if value is ThetaRepository.BurstOption, let burstOption = value as? ThetaRepository.BurstOption {
                 result[name.name] = convertResult(burstOption: burstOption)
             } else if value is ThetaRepository.GpsInfo {
@@ -484,6 +591,10 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         options.aiAutoThumbnail = getEnumValue(values: ThetaRepository.AiAutoThumbnailEnum.values(), name: value as! String)!
     case ThetaRepository.OptionNameEnum.aperture.name:
         options.aperture = getEnumValue(values: ThetaRepository.ApertureEnum.values(), name: value as! String)!
+    case ThetaRepository.OptionNameEnum.autobracket.name:
+        if let params = value as? [[String:Any]] {
+            options.autoBracket = toAutoBracket(params: params)
+        }
     case ThetaRepository.OptionNameEnum.bitrate.name:
         options.bitrate = toBitrate(value: value)
     case ThetaRepository.OptionNameEnum.bluetoothpower.name:

@@ -107,7 +107,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
         'buildTimeShiftCapture() has not been implemented.');
   }
 
-  Future<String?> startTimeShiftCapture(void Function(double)? onProgress) {
+  Future<String?> startTimeShiftCapture(void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed) {
     throw UnimplementedError(
         'startTimeShiftCapture() has not been implemented.');
   }
@@ -177,6 +178,29 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
   Future<void> stopShotCountSpecifiedIntervalCapture() {
     throw UnimplementedError(
         'stopShotCountSpecifiedIntervalCapture() has not been implemented.');
+  }
+
+  Future<void> getCompositeIntervalCaptureBuilder(int shootingTimeSec) {
+    throw UnimplementedError(
+        'getCompositeIntervalCaptureBuilder() has not been implemented.');
+  }
+
+  Future<void> buildCompositeIntervalCapture(
+      Map<String, dynamic> options, int interval) {
+    throw UnimplementedError(
+        'buildCompositeIntervalCapture() has not been implemented.');
+  }
+
+  Future<List<String>?> startCompositeIntervalCapture(
+      void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed) {
+    throw UnimplementedError(
+        'startCompositeIntervalCapture() has not been implemented.');
+  }
+
+  Future<void> stopCompositeIntervalCapture() {
+    throw UnimplementedError(
+        'stopCompositeIntervalCapture() has not been implemented.');
   }
 
   Future<Options> getOptions(List<OptionNameEnum> optionNames) {

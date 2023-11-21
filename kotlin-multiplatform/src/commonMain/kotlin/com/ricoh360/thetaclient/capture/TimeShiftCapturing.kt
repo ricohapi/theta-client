@@ -36,17 +36,17 @@ class TimeShiftCapturing internal constructor(
             try {
                 response = ThetaApi.callStopCaptureCommand(endpoint = endpoint)
                 response.error?.let {
-                    callback.onError(exception = ThetaRepository.ThetaWebApiException(message = it.message))
+                    callback.onStopFailed(exception = ThetaRepository.ThetaWebApiException(message = it.message))
                     return@launch
                 }
             } catch (e: JsonConvertException) {
-                callback.onError(exception = ThetaRepository.ThetaWebApiException(message = e.message ?: e.toString()))
+                callback.onStopFailed(exception = ThetaRepository.ThetaWebApiException(message = e.message ?: e.toString()))
                 return@launch
             } catch (e: ResponseException) {
-                callback.onError(exception = ThetaRepository.ThetaWebApiException.create(exception = e))
+                callback.onStopFailed(exception = ThetaRepository.ThetaWebApiException.create(exception = e))
                 return@launch
             } catch (e: Exception) {
-                callback.onError(exception = ThetaRepository.NotConnectedException(message = e.message ?: e.toString()))
+                callback.onStopFailed(exception = ThetaRepository.NotConnectedException(message = e.message ?: e.toString()))
                 return@launch
             }
         }

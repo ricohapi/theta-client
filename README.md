@@ -1,5 +1,14 @@
 # THETA Client
 
+[![theta-client CI with Gradle](https://github.com/ricohapi/theta-client/actions/workflows/buildAndTest.yaml/badge.svg)](https://github.com/ricohapi/theta-client/actions/workflows/buildAndTest.yaml)
+[![KDoc](https://img.shields.io/badge/API_reference-KDoc-green.svg)](https://ricohapi.github.io/theta-client/)
+
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.10-navy.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
+[![Swift](https://img.shields.io/badge/for_Swift-5-FF9900.svg)](https://kotlinlang.org)
+[![Flutter](https://img.shields.io/badge/for_Flutter->=2.5.0-blue.svg)](https://ricohapi.github.io/theta-client/)
+[![React Native](https://img.shields.io/badge/for_React_Native-0.70.8-aqua.svg)](https://ricohapi.github.io/theta-client/)
+
+
 This library provides a way to control RICOH THETA using [RICOH THETA API v2.1](https://github.com/ricohapi/theta-api-specs/tree/main/theta-web-api-v2.1).
 Your app can perform the following actions:
 * Take a photo and video
@@ -54,8 +63,16 @@ theta-client$ ./gradlew testReleaseUnitTest
 ```
 
 ## How to Use
-See tutorials in `docs` directory and [KDoc](https://ricohapi.github.io/theta-client/) of this library.
+See tutorials in `docs` directory and [API reference](https://ricohapi.github.io/theta-client/) of this library.
+Demo applications in `demos` directory may help you understand how to use this library.
 
+## Verification tool
+A tool, written in React Native, is prepared to verify the responses and behavior of Theta to verious requests.
+Using this verification tool, you can select and send a command with its parameters then its response is displayed in JSON converted from Android or iOS object.
+
+![menu screen](docs/assets/screen_menu.jpg)
+![info screen](docs/assets/screen_info.jpg)
+![capture screen](docs/assets/screen_capture.jpg)
 
 ## License
 

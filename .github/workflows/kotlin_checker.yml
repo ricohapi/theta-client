@@ -10,6 +10,11 @@ jobs:
         with:
           ruby-version: "2.7"
           architecture: "x64"
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: "17"
+          distribution: "temurin"
       - name: install danger
         run: |
           gem install bundler

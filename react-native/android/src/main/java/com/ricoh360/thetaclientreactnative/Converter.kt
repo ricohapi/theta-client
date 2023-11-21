@@ -8,12 +8,7 @@ import com.facebook.react.bridge.WritableMap
 import com.facebook.react.bridge.WritableArray
 import com.ricoh360.thetaclient.DigestAuth
 import com.ricoh360.thetaclient.ThetaRepository.*
-import com.ricoh360.thetaclient.capture.Capture
-import com.ricoh360.thetaclient.capture.PhotoCapture
-import com.ricoh360.thetaclient.capture.TimeShiftCapture
-import com.ricoh360.thetaclient.capture.VideoCapture
-import com.ricoh360.thetaclient.capture.LimitlessIntervalCapture
-import com.ricoh360.thetaclient.capture.ShotCountSpecifiedIntervalCapture
+import com.ricoh360.thetaclient.capture.*
 
 const val KEY_NOTIFY_NAME = "name"
 const val KEY_NOTIFY_PARAMS = "params"
@@ -23,6 +18,7 @@ const val KEY_NOTIFY_PARAM_MESSAGE = "message"
 val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "aiAutoThumbnail" to OptionNameEnum.AiAutoThumbnail,
   "aperture" to OptionNameEnum.Aperture,
+  "autoBracket" to OptionNameEnum.AutoBracket,
   "bitrate" to OptionNameEnum.Bitrate,
   "bluetoothPower" to OptionNameEnum.BluetoothPower,
   "burstMode" to OptionNameEnum.BurstMode,
@@ -51,6 +47,7 @@ val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "iso" to OptionNameEnum.Iso,
   "isoAutoHighLimit" to OptionNameEnum.IsoAutoHighLimit,
   "language" to OptionNameEnum.Language,
+  "latestEnabledExposureDelayTime" to OptionNameEnum.LatestEnabledExposureDelayTime,
   "maxRecordableTime" to OptionNameEnum.MaxRecordableTime,
   "networkType" to OptionNameEnum.NetworkType,
   "offDelay" to OptionNameEnum.OffDelay,
@@ -69,6 +66,8 @@ val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "timeShift" to OptionNameEnum.TimeShift,
   "totalSpace" to OptionNameEnum.TotalSpace,
   "username" to OptionNameEnum.Username,
+  "videoStitching" to OptionNameEnum.VideoStitching,
+  "visibilityReduction" to OptionNameEnum.VisibilityReduction,
   "whiteBalance" to OptionNameEnum.WhiteBalance,
   "whiteBalanceAutoStrength" to OptionNameEnum.WhiteBalanceAutoStrength,
   "wlanFrequency" to OptionNameEnum.WlanFrequency,
@@ -202,6 +201,18 @@ fun setShotCountSpecifiedIntervalCaptureBuilderParams(optionMap: ReadableMap, bu
   }
 }
 
+fun setCompositeIntervalCaptureBuilderParams(optionMap: ReadableMap, builder: CompositeIntervalCapture.Builder) {
+  val interval = if (optionMap.hasKey("_capture_interval")) optionMap.getInt("_capture_interval") else null
+  interval?.let {
+    if (it >= 0) {
+      builder.setCheckStatusCommandInterval(it.toLong())
+    }
+  }
+  if (optionMap.hasKey("compositeShootingOutputInterval")) {
+    builder.setCompositeShootingOutputInterval(optionMap.getInt("compositeShootingOutputInterval"))
+  }
+}
+
 fun toGetOptionsParam(optionNames: ReadableArray): MutableList<OptionNameEnum> {
   val optionNameList = mutableListOf<OptionNameEnum>()
   for (index in 0..(optionNames.size() - 1)) {
@@ -231,7 +242,11 @@ fun toResult(options: Options): WritableMap {
     OptionNameEnum.Username
   )
   OptionNameEnum.values().forEach { name ->
-    if (name == OptionNameEnum.Bitrate) {
+    if (name == OptionNameEnum.AutoBracket) {
+      options.autoBracket?.let {
+        result.putArray("autoBracket", toResult(autoBracket = it))
+      }
+    } else if (name == OptionNameEnum.Bitrate) {
       options.bitrate?.let { bitrate ->
         if (bitrate is BitrateEnum) {
           result.putString("bitrate", bitrate.toString())
@@ -286,6 +301,38 @@ fun <T> addOptionsValueToMap(options: Options, name: OptionNameEnum, objects: Wr
       }
     }
   }
+}
+
+fun toResult(autoBracket: BracketSettingList): WritableArray {
+  val resultList = Arguments.createArray()
+
+  autoBracket.list?.forEach { bracketSetting ->
+    val result = Arguments.createMap()
+    bracketSetting.aperture?.name?.let { name ->
+      result.putString("aperture", name)
+    }
+    bracketSetting.colorTemperature?.let { value ->
+      result.putInt("colorTemperature", value)
+    }
+    bracketSetting.exposureCompensation?.name?.let { name ->
+      result.putString("exposureCompensation", name)
+    }
+    bracketSetting.exposureProgram?.name?.let { name ->
+      result.putString("exposureProgram", name)
+    }
+    bracketSetting.iso?.name?.let { name ->
+      result.putString("iso", name)
+    }
+    bracketSetting.shutterSpeed?.name?.let { name ->
+      result.putString("shutterSpeed", name)
+    }
+    bracketSetting.whiteBalance?.name?.let { name ->
+      result.putString("whiteBalance", name)
+    }
+    resultList.pushMap(result)
+  }
+
+  return resultList
 }
 
 fun toResult(burstOption: BurstOption): WritableMap {
@@ -463,6 +510,10 @@ fun setOptionValue(options: Options, name: OptionNameEnum, optionsMap: ReadableM
     options.setValue(name, optionsMap.getDouble(key).toLong())
   } else if (boolOptions.contains(name)) {
     options.setValue(name, optionsMap.getBoolean(key))
+  } else if (name == OptionNameEnum.AutoBracket) {
+    optionsMap.getArray(key)?.let {
+      options.setValue(name, toAutoBracket(list = it))
+    }
   } else if (name == OptionNameEnum.Bitrate) {
     val type = optionsMap.getType(key)
     if (type == ReadableType.Number) {
@@ -519,6 +570,7 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
     OptionNameEnum.Iso -> IsoEnum.values().find { it.name == valueName }
     OptionNameEnum.IsoAutoHighLimit -> IsoAutoHighLimitEnum.values().find { it.name == valueName }
     OptionNameEnum.Language -> LanguageEnum.values().find { it.name == valueName }
+    OptionNameEnum.LatestEnabledExposureDelayTime -> ExposureDelayEnum.values().find { it.name == valueName }
     OptionNameEnum.MaxRecordableTime -> MaxRecordableTimeEnum.values().find { it.name == valueName }
     OptionNameEnum.NetworkType -> NetworkTypeEnum.values().find { it.name == valueName }
     OptionNameEnum.OffDelay -> OffDelayEnum.values().find { it.name == valueName }
@@ -528,6 +580,8 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
     OptionNameEnum.ShootingMethod -> ShootingMethodEnum.values().find { it.name == valueName }
     OptionNameEnum.ShutterSpeed -> ShutterSpeedEnum.values().find { it.name == valueName }
     OptionNameEnum.SleepDelay -> SleepDelayEnum.values().find { it.name == valueName }
+    OptionNameEnum.VideoStitching -> VideoStitchingEnum.values().find { it.name == valueName }
+    OptionNameEnum.VisibilityReduction -> VisibilityReductionEnum.values().find { it.name == valueName }
     OptionNameEnum.WhiteBalance -> WhiteBalanceEnum.values().find { it.name == valueName }
     OptionNameEnum.WhiteBalanceAutoStrength -> WhiteBalanceAutoStrengthEnum.values().find { it.name == valueName }
     OptionNameEnum.WlanFrequency -> WlanFrequencyEnum.values().find { it.name == valueName }
@@ -554,6 +608,26 @@ fun toListAccessPointsResult(accessPointList: List<AccessPoint>): WritableArray 
     result.pushMap(apinfo)
   }
   return result
+}
+
+fun toAutoBracket(list: ReadableArray): BracketSettingList {
+  val autoBracket = BracketSettingList()
+  for(i in 0 until list.size()) {
+    list.getMap(i)?.let { setting ->
+      autoBracket.add(
+        BracketSetting(
+          aperture = setting.getString("aperture")?.let { ApertureEnum.valueOf(it) },
+          colorTemperature = if (setting.hasKey("colorTemperature")) setting.getInt("colorTemperature") else null,
+          exposureCompensation = setting.getString("exposureCompensation")?.let { ExposureCompensationEnum.valueOf(it) },
+          exposureProgram = setting.getString("exposureProgram")?.let { ExposureProgramEnum.valueOf(it) },
+          iso = setting.getString("iso")?.let { IsoEnum.valueOf(it) },
+          shutterSpeed = setting.getString("shutterSpeed")?.let { ShutterSpeedEnum.valueOf(it) },
+          whiteBalance = setting.getString("whiteBalance")?.let { WhiteBalanceEnum.valueOf(it) },
+        )
+      )
+    }
+  }
+  return autoBracket
 }
 
 fun toProxy(map: ReadableMap?): Proxy? {

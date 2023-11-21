@@ -121,6 +121,20 @@ RCT_EXTERN_METHOD(startShotCountSpecifiedIntervalCapture:(RCTPromiseResolveBlock
 RCT_EXTERN_METHOD(cancelShotCountSpecifiedIntervalCapture:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(getCompositeIntervalCaptureBuilder:(int)shootingTimeSec
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(buildCompositeIntervalCapture:(NSDictionary*)options
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(startCompositeIntervalCapture:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(cancelCompositeIntervalCapture:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(getMetadata:(NSString*)fileUrl
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)

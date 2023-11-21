@@ -1,7 +1,7 @@
 apply plugin: "com.android.application"
+apply plugin: "com.facebook.react"
 
 import com.android.build.OutputFile
-import org.apache.tools.ant.taskdefs.condition.Os
 
 /**
  * The react.gradle file registers a task for each build variant (e.g. bundleDebugJsAndAssets
@@ -155,6 +155,7 @@ android {
             }
             if (!enableSeparateBuildPerCPUArchitecture) {
                 ndk {
+                    //noinspection ChromeOsAbiSupport
                     abiFilters (*reactNativeArchitectures())
                 }
             }
@@ -207,6 +208,7 @@ android {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
             universalApk false  // If true, also generate a universal APK
+            //noinspection ChromeOsAbiSupport
             include (*reactNativeArchitectures())
         }
     }
@@ -246,15 +248,21 @@ android {
 
         }
     }
+
+    sourceSets {
+        main {
+            assets.srcDirs = ["../../web/Web.bundle"]
+        }
+    }
 }
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
-    //noinspection GradleDynamicVersion
-    implementation "com.facebook.react:react-native:+"  // From node_modules
+    // The version of react-native is set by the React Native Gradle Plugin
+    implementation("com.facebook.react:react-android")
 
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'
@@ -270,10 +278,7 @@ dependencies {
     }
 
     if (enableHermes) {
-        //noinspection GradleDynamicVersion
-        implementation("com.facebook.react:hermes-engine:+") { // From node_modules
-            exclude group:'com.facebook.fbjni'
-        }
+        implementation("com.facebook.react:hermes-android")
     } else {
         implementation jscFlavor
     }
@@ -283,7 +288,7 @@ if (isNewArchitectureEnabled()) {
     // If new architecture is enabled, we let you build RN from source
     // Otherwise we fallback to a prebuilt .aar bundled in the NPM package.
     // This will be applied to all the imported transtitive dependency.
-    configurations.all {
+    configurations.configureEach {
         resolutionStrategy.dependencySubstitution {
             substitute(module("com.facebook.react:react-native"))
                     .using(project(":ReactAndroid"))
@@ -297,7 +302,7 @@ if (isNewArchitectureEnabled()) {
 
 // Run this once to be able to run the application with BUCK
 // puts all compile dependencies into folder libs for BUCK to use
-task copyDownloadableDepsToLibs(type: Copy) {
+tasks.register('copyDownloadableDepsToLibs', Copy) {
     from configurations.implementation
     into 'libs'
 }

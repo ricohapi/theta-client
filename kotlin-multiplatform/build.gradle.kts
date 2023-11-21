@@ -1,37 +1,46 @@
-
 import org.jetbrains.dokka.versioning.VersioningConfiguration
 import org.jetbrains.dokka.versioning.VersioningPlugin
 import java.util.Properties
 
 plugins {
     kotlin("multiplatform")
-    kotlin("plugin.serialization") version "1.7.20"
+    kotlin("plugin.serialization") version "1.9.10"
     id("com.android.library")
     id("maven-publish")
-    id("org.jetbrains.dokka")
+    id("org.jetbrains.dokka") version "1.9.10"
     kotlin("native.cocoapods")
     signing
-    id("io.gitlab.arturbosch.detekt").version("1.19.0")
+    id("io.gitlab.arturbosch.detekt").version("1.23.3")
 }
 
 dependencies {
-    dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.8.20")
+    dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.10")
 }
 
-val theta_client_version = "1.5.0"
+val thetaClientVersion = "1.5.0"
+group = "com.ricoh360.thetaclient"
+version = thetaClientVersion
+
 // Init publish property
 initProp()
 
 kotlin {
-    android()
+    androidTarget {
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
+        }
+        publishLibraryVariants("release")
+    }
 
     cocoapods {
         summary = "THETA Client"
         homepage = "https://github.com/ricohapi/theta-client"
         name = "THETAClient"
         authors = "Ricoh Co, Ltd."
-        version = theta_client_version
-        source = "{ :http => 'https://github.com/ricohapi/theta-client/releases/download/${theta_client_version}/THETAClient.xcframework.zip' }"
+        version = thetaClientVersion
+        source = "{ :http => 'https://github.com/ricohapi/theta-client/releases/download/${thetaClientVersion}/THETAClient.xcframework.zip' }"
         license = "MIT"
         ios.deploymentTarget = "14.0"
         framework {
@@ -45,34 +54,33 @@ kotlin {
     iosSimulatorArm64()
 
     sourceSets {
-        val coroutines_version = "1.6.4"
-        val coroutines_mtversion = "1.6.4-native-mt"
-        val ktor_version = "2.1.2"
+        val coroutinesVersion = "1.6.4"
+        val ktorVersion = "2.1.2"
         val kryptoVersion = "3.4.0"
 
         val commonMain by getting {
             dependencies {
                 // Works as common dependency as well as the platform one
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_mtversion")
-                implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.2.1")
-                api("io.ktor:ktor-client-core:$ktor_version") // Applications need to use ByteReadPacket class
-                implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
-                implementation("io.ktor:ktor-client-cio:$ktor_version")
-                implementation("io.ktor:ktor-client-logging:$ktor_version")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+                implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.3.0")
+                api("io.ktor:ktor-client-core:$ktorVersion") // Applications need to use ByteReadPacket class
+                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+                implementation("io.ktor:ktor-client-cio:$ktorVersion")
+                implementation("io.ktor:ktor-client-logging:$ktorVersion")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("com.soywiz.korlibs.krypto:krypto:$kryptoVersion")
             }
         }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
-                implementation("io.ktor:ktor-client-mock:$ktor_version")
-                implementation("com.goncalossilva:resources:0.2.2")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
+                implementation("io.ktor:ktor-client-mock:$ktorVersion")
+                implementation("com.goncalossilva:resources:0.4.0")
             }
         }
         val androidMain by getting
-        val androidTest by getting
+        val androidUnitTest by getting
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
@@ -95,11 +103,11 @@ kotlin {
 }
 
 android {
-    compileSdk = 32
+    namespace = "com.ricoh360.thetaclient"
+    compileSdk = 33
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
         minSdk = 26
-        targetSdk = 32
         setProperty("archivesBaseName", "theta-client")
     }
 }
@@ -114,44 +122,38 @@ val javadocJar by tasks.registering(Jar::class) {
 afterEvaluate {
     initProp()
     publishing {
-        publications {
-            // Creates a Maven publication called "release".
-            create<MavenPublication>("release") {
-                // Applies the component for the release build variant.
-                from(components["release"])
-                artifact(javadocJar.get())
-                groupId = "com.ricoh360.thetaclient"
-                artifactId = "theta-client"
-                version = theta_client_version
-                pom {
-                    name.set("theta-client")
-                    description.set("This library provides a way to control RICOH THETA using RICOH THETA API v2.1")
-                    url.set("https://github.com/ricohapi/theta-client")
-                    licenses {
-                        license {
-                            name.set("MIT")
-                            url.set("https://github.com/ricohapi/theta-client/blob/main/LICENSE")
-                        }
-                    }
-                    developers {
-                        developer {
-                            organization.set("RICOH360")
-                            organizationUrl.set("https://github.com/ricohapi/theta-client")
-                        }
-                    }
-                    scm {
-                        connection.set("scm:git:git@github.com:ricohapi/theta-client.git")
-                        developerConnection.set("scm:git:git@github.com:ricohapi/theta-client.git")
-                        url.set("https://github.com/ricohapi/theta-client/tree/main")
-                    }
+        publications.withType(MavenPublication::class) {
+            artifact(javadocJar.get())
+            when (name) {
+                "androidRelease" -> {
+                    artifactId = "theta-client"
+                }
+
+                else -> {
+                    artifactId = "theta-client-$name"
                 }
             }
-            create<MavenPublication>("debug") {
-                // Applies the component for the debug build variant.
-                from(components["debug"])
-                groupId = "com.ricoh360.thetaclient"
-                artifactId = "theta-client-debug"
-                version = theta_client_version
+            pom {
+                name.set("theta-client")
+                description.set("This library provides a way to control RICOH THETA using RICOH THETA API v2.1")
+                url.set("https://github.com/ricohapi/theta-client")
+                licenses {
+                    license {
+                        name.set("MIT")
+                        url.set("https://github.com/ricohapi/theta-client/blob/main/LICENSE")
+                    }
+                }
+                developers {
+                    developer {
+                        organization.set("RICOH360")
+                        organizationUrl.set("https://github.com/ricohapi/theta-client")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:git@github.com:ricohapi/theta-client.git")
+                    developerConnection.set("scm:git:git@github.com:ricohapi/theta-client.git")
+                    url.set("https://github.com/ricohapi/theta-client/tree/main")
+                }
             }
         }
         repositories {
@@ -181,7 +183,7 @@ detekt {
     ignoreFailures = false
     buildUponDefaultConfig = true // preconfigure defaults
     allRules = false // activate all available (even unstable) rules.
-    config = files("$rootDir/config/detekt.yml") // config file
+    config.setFrom("$rootDir/config/detekt.yml") // config file
     baseline = file("$rootDir/config/baseline.xml")
     source = files(
         "$rootDir/kotlin-multiplatform/src/commonMain/",
@@ -225,12 +227,12 @@ fun getExtraString(name: String): String? {
 tasks.dokkaHtml.configure {
     moduleName.set("theta-client")
 
-    if(project.properties["version"].toString() != theta_client_version) {
+    if (project.properties["version"].toString() != thetaClientVersion) {
         throw GradleException("The release version does not match the version defined in Gradle.")
     }
 
     val pagesDir = file(project.properties["workspace"].toString()).resolve("gh-pages")
-    val currentVersion = theta_client_version
+    val currentVersion = thetaClientVersion
     val currentDocsDir = pagesDir.resolve("docs")
     val docVersionsDir = pagesDir.resolve("version")
     outputDirectory.set(currentDocsDir)

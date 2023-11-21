@@ -6,5 +6,12 @@ pluginManagement {
     }
 }
 
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
 rootProject.name = "theta-client"
 include(":kotlin-multiplatform")

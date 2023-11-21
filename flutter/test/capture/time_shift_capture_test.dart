@@ -67,7 +67,7 @@ void main() {
 
     const imageUrl = 'http://test.JPG';
 
-    onCallStartTimeShiftCapture = (onProgress) {
+    onCallStartTimeShiftCapture = (onProgress, onStopFailed) {
       return Future.value(imageUrl);
     };
 
@@ -95,7 +95,7 @@ void main() {
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     var completer = Completer<String>();
-    onCallStartTimeShiftCapture = (onProgress) {
+    onCallStartTimeShiftCapture = (onProgress, onStopFailed) {
       return completer.future;
     };
     onCallStopTimeShiftCapture = () {
@@ -127,7 +127,7 @@ void main() {
     const imageUrl = 'http://test.mp4';
 
     var completer = Completer<String>();
-    onCallStartTimeShiftCapture = (onProgress) {
+    onCallStartTimeShiftCapture = (onProgress, onStopFailed) {
       return completer.future;
     };
     onCallStopTimeShiftCapture = () {
@@ -151,5 +151,45 @@ void main() {
     capturing.stopCapture();
     await Future.delayed(const Duration(milliseconds: 10), () {});
     expect(fileUrl, imageUrl);
+  });
+
+  test('call onStopFailed', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    var completer = Completer<void>();
+
+    void Function(Exception exception)? paramStopFailed;
+
+    onCallStartTimeShiftCapture = (onProgress, onStopFailed) {
+      paramStopFailed = onStopFailed;
+      return Completer<String>().future;
+    };
+    onCallStopTimeShiftCapture = () {
+      paramStopFailed?.call(Exception("on stop error."));
+      return Future.value();
+    };
+
+    var builder = thetaClientPlugin
+        .getTimeShiftCaptureBuilder();
+    var capture = await builder.build();
+    var isOnStopFailed = false;
+    var capturing = capture.startCapture(
+        (fileUrl) {
+          expect(false, isTrue, reason: 'startCapture');
+        },
+        (completion) {},
+        (exception) {},
+        onStopFailed: (exception) {
+          expect(exception, isNotNull, reason: 'Error. stopCapture');
+          isOnStopFailed = true;
+          completer.complete(null);
+        });
+
+    capturing.stopCapture();
+    await completer.future.timeout(const Duration(milliseconds: 10));
+    expect(isOnStopFailed, true);
   });
 }

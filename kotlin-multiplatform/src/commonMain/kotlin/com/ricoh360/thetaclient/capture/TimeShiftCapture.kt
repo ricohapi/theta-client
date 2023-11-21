@@ -41,13 +41,6 @@ class TimeShiftCapture private constructor(
      */
     interface StartCaptureCallback {
         /**
-         * Called when successful.
-         *
-         * @param fileUrl URL of the time-shift. When the time-shift is canceled, this URL will be null.
-         */
-        fun onSuccess(fileUrl: String?)
-
-        /**
          * Called when state "inProgress".
          *
          * @param completion Progress rate of command executed
@@ -55,11 +48,25 @@ class TimeShiftCapture private constructor(
         fun onProgress(completion: Float)
 
         /**
+         * Called when stopCapture error occurs.
+         *
+         * @param exception Exception of error occurs
+         */
+        fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException)
+
+        /**
          * Called when error occurs.
          *
          * @param exception Exception of error occurs
          */
-        fun onError(exception: ThetaRepository.ThetaRepositoryException)
+        fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException)
+
+        /**
+         * Called when successful.
+         *
+         * @param fileUrl URL of the time-shift. When the time-shift is canceled, this URL will be null.
+         */
+        fun onCaptureCompleted(fileUrl: String?)
     }
 
     /**
@@ -109,36 +116,38 @@ class TimeShiftCapture private constructor(
                             "camera.takePicture" -> (response as TakePictureResponse).results?.fileUrl
                             else -> null
                         }
-                        callback.onSuccess(fileUrl = fileUrl)
+                        callback.onCaptureCompleted(fileUrl = fileUrl)
                         return@runBlocking
                     }
 
                     val error = response.error
                     if (error != null && !error.isCanceledShootingCode()) {
-                        callback.onError(exception = ThetaRepository.ThetaWebApiException(message = error.message))
+                        callback.onCaptureFailed(exception = ThetaRepository.ThetaWebApiException(message = error.message))
+                    } else if (response.name == "unknown") {
+                        callback.onCaptureFailed(exception = ThetaRepository.ThetaWebApiException(message = "Unknown response"))
                     } else {
                         println("timeShift canceled")
-                        callback.onSuccess(fileUrl = null) // canceled
+                        callback.onCaptureCompleted(fileUrl = null) // canceled
                     }
                 }
             } catch (e: JsonConvertException) {
-                callback.onError(
+                callback.onCaptureFailed(
                     exception = ThetaRepository.ThetaWebApiException(
                         message = e.message ?: e.toString()
                     )
                 )
             } catch (e: ResponseException) {
                 if (isCanceledShootingResponse(e.response)) {
-                    callback.onSuccess(fileUrl = null) // canceled
+                    callback.onCaptureCompleted(fileUrl = null) // canceled
                 } else {
-                    callback.onError(
+                    callback.onCaptureFailed(
                         exception = ThetaRepository.ThetaWebApiException.create(
                             exception = e
                         )
                     )
                 }
             } catch (e: Exception) {
-                callback.onError(
+                callback.onCaptureFailed(
                     exception = ThetaRepository.NotConnectedException(
                         message = e.message ?: e.toString()
                     )

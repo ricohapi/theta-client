@@ -9,7 +9,7 @@ abstract class Capturing {
 /// TimeShiftCapturing
 class TimeShiftCapturing extends Capturing {
   /// Stops TimeShift capture.
-  ///  When call stopCapture() then call property callback.
+  /// When call stopCapture() then call property callback.
   @override
   void stopCapture() {
     ThetaClientFlutterPlatform.instance.stopTimeShiftCapture();
@@ -19,7 +19,7 @@ class TimeShiftCapturing extends Capturing {
 /// VideoCapturing
 class VideoCapturing extends Capturing {
   /// Stops video capture.
-  ///  When call stopCapture() then call property callback.
+  /// When call stopCapture() then call property callback.
   @override
   void stopCapture() {
     ThetaClientFlutterPlatform.instance.stopVideoCapture();
@@ -29,7 +29,7 @@ class VideoCapturing extends Capturing {
 /// LimitlessIntervalCapturing
 class LimitlessIntervalCapturing extends Capturing {
   /// Stops limitless interval capture.
-  ///  When call stopCapture() then call property callback.
+  /// When call stopCapture() then call property callback.
   @override
   void stopCapture() {
     ThetaClientFlutterPlatform.instance.stopLimitlessIntervalCapture();
@@ -39,9 +39,19 @@ class LimitlessIntervalCapturing extends Capturing {
 /// ShotCountSpecifiedIntervalCapturing
 class ShotCountSpecifiedIntervalCapturing extends Capturing {
   /// Stops interval shooting with the shot count specified.
-  ///  When call stopCapture() then call property callback.
+  /// When call stopCapture() then call property callback.
   @override
   void stopCapture() {
     ThetaClientFlutterPlatform.instance.stopShotCountSpecifiedIntervalCapture();
+  }
+}
+
+/// CompositeIntervalCapturing
+class CompositeIntervalCapturing extends Capturing {
+  /// Stops interval composite shooting.
+  /// When call stopCapture() then call property callback.
+  @override
+  void stopCapture() {
+    ThetaClientFlutterPlatform.instance.stopCompositeIntervalCapture();
   }
 }

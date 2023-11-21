@@ -32,6 +32,7 @@ export class ShotCountSpecifiedIntervalCapture {
   /**
    * start interval shooting with the shot count specified
    * @param onProgress the block for interval shooting with the shot count specified onProgress
+   * @param onStopFailed the block for error of cancelCapture
    * @return promise of captured file url
    */
   async startCapture(

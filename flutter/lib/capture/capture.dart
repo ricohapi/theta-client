@@ -97,14 +97,14 @@ class TimeShiftCapture extends Capture {
 
   /// Starts TimeShift capture.
   TimeShiftCapturing startCapture(
-    void Function(String? fileUrl) onSuccess,
-    void Function(double completion) onProgress,
-    void Function(Exception exception) onError,
-  ) {
+      void Function(String? fileUrl) onCaptureCompleted,
+      void Function(double completion) onProgress,
+      void Function(Exception exception) onCaptureFailed,
+      {void Function(Exception exception)? onStopFailed}) {
     ThetaClientFlutterPlatform.instance
-        .startTimeShiftCapture(onProgress)
-        .then((value) => onSuccess(value))
-        .onError((error, stackTrace) => onError(error as Exception));
+        .startTimeShiftCapture(onProgress, onStopFailed)
+        .then((value) => onCaptureCompleted(value))
+        .onError((error, stackTrace) => onCaptureFailed(error as Exception));
     return TimeShiftCapturing();
   }
 }
@@ -184,5 +184,37 @@ class ShotCountSpecifiedIntervalCapture extends Capture {
         .then((value) => onSuccess(value))
         .onError((error, stackTrace) => onCaptureFailed(error as Exception));
     return ShotCountSpecifiedIntervalCapturing();
+  }
+}
+
+/// Capture of interval composite shooting
+class CompositeIntervalCapture extends Capture {
+  final int _interval;
+
+  CompositeIntervalCapture(super.options, this._interval);
+
+  int getCheckStatusCommandInterval() {
+    return _interval;
+  }
+
+  /// Get In-progress save interval for interval composite shooting (sec).
+  int? getCompositeShootingOutputInterval() =>
+      _options[OptionNameEnum.compositeShootingOutputInterval.rawValue];
+
+  /// Get Shooting time for interval composite shooting (sec).
+  int? getCompositeShootingTime() =>
+      _options[OptionNameEnum.compositeShootingTime.rawValue];
+
+  /// Starts interval composite shooting.
+  CompositeIntervalCapturing startCapture(
+      void Function(List<String>? fileUrls) onSuccess,
+      void Function(double completion) onProgress,
+      void Function(Exception exception) onCaptureFailed,
+      {void Function(Exception exception)? onStopFailed}) {
+    ThetaClientFlutterPlatform.instance
+        .startCompositeIntervalCapture(onProgress, onStopFailed)
+        .then((value) => onSuccess(value))
+        .onError((error, stackTrace) => onCaptureFailed(error as Exception));
+    return CompositeIntervalCapturing();
   }
 }

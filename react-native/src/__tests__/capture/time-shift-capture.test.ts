@@ -235,4 +235,65 @@ describe('time shift capture', () => {
 
     return promise;
   });
+
+  test('stop error events', async () => {
+    let notifyCallback: (notify: BaseNotify) => void = () => {
+      expect(true).toBeFalsy();
+    };
+    jest.mocked(NativeEventEmitter_addListener).mockImplementation(
+      jest.fn((_, callback) => {
+        notifyCallback = callback;
+        return {
+          remove: jest.fn(),
+        };
+      })
+    );
+
+    await initialize();
+    const builder = getTimeShiftCaptureBuilder();
+    jest
+      .mocked(thetaClient.buildShotCountSpecifiedIntervalCapture)
+      .mockImplementation(jest.fn(async () => {}));
+    const testUrl = 'http://192.168.1.1/files/100RICOH/R100.JPG';
+
+    const sendStopError = (message: string) => {
+      notifyCallback({
+        name: 'TIME-SHIFT-STOP-ERROR',
+        params: {
+          message,
+        },
+      });
+    };
+
+    jest.mocked(thetaClient.startTimeShiftCapture).mockImplementation(
+      jest.fn(async () => {
+        sendStopError('stop error');
+        return testUrl;
+      })
+    );
+
+    const capture = await builder.build();
+    let isOnStopError = false;
+    const fileUrl = await capture.startCapture(
+      () => {},
+      (error) => {
+        expect(error.message).toBe('stop error');
+        isOnStopError = true;
+      }
+    );
+    expect(fileUrl).toBe(testUrl);
+
+    let done: (value: unknown) => void;
+    const promise = new Promise((resolve) => {
+      done = resolve;
+    });
+
+    setTimeout(() => {
+      expect(NotifyController.instance.notifyList.size).toBe(0);
+      expect(isOnStopError).toBeTruthy();
+      done(0);
+    }, 1);
+
+    return promise;
+  });
 });

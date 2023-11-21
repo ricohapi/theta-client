@@ -2,15 +2,7 @@ package com.ricoh360.thetaclient.theta_client_flutter
 
 import android.util.Log
 import com.ricoh360.thetaclient.ThetaRepository
-import com.ricoh360.thetaclient.capture.PhotoCapture
-import com.ricoh360.thetaclient.capture.TimeShiftCapture
-import com.ricoh360.thetaclient.capture.TimeShiftCapturing
-import com.ricoh360.thetaclient.capture.VideoCapture
-import com.ricoh360.thetaclient.capture.VideoCapturing
-import com.ricoh360.thetaclient.capture.LimitlessIntervalCapture
-import com.ricoh360.thetaclient.capture.LimitlessIntervalCapturing
-import com.ricoh360.thetaclient.capture.ShotCountSpecifiedIntervalCapture
-import com.ricoh360.thetaclient.capture.ShotCountSpecifiedIntervalCapturing
+import com.ricoh360.thetaclient.capture.*
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
@@ -51,6 +43,9 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
     var shotCountSpecifiedIntervalCaptureBuilder: ShotCountSpecifiedIntervalCapture.Builder? = null
     var shotCountSpecifiedIntervalCapture: ShotCountSpecifiedIntervalCapture? = null
     var shotCountSpecifiedIntervalCapturing: ShotCountSpecifiedIntervalCapturing? = null
+    var compositeIntervalCaptureBuilder: CompositeIntervalCapture.Builder? = null
+    var compositeIntervalCapture: CompositeIntervalCapture? = null
+    var compositeIntervalCapturing: CompositeIntervalCapturing? = null
 
     companion object {
         const val errorCode: String = "Error"
@@ -60,11 +55,14 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
 
         const val eventNameNotify = "theta_client_flutter/theta_notify"
         const val notifyIdLivePreview = 10001
-        const val notifyIdTimeShiftProgress = 10002
+        const val notifyIdTimeShiftProgress = 10011
+        const val notifyIdTimeShiftStopError = 10012
         const val notifyIdVideoCaptureStopError = 10003
         const val notifyIdLimitlessIntervalCaptureStopError = 10004
-        const val notifyIdShotCountSpecifiedIntervalCaptureProgress = 10005
-        const val notifyIdShotCountSpecifiedIntervalCaptureStopError = 10006
+        const val notifyIdShotCountSpecifiedIntervalCaptureProgress = 10021
+        const val notifyIdShotCountSpecifiedIntervalCaptureStopError = 10022
+        const val notifyIdCompositeIntervalCaptureProgress = 10031;
+        const val notifyIdCompositeIntervalCaptureStopError = 10032;
     }
 
     fun sendNotifyEvent(id: Int, params: Map<String, Any?>) {
@@ -255,6 +253,24 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 stopShotCountSpecifiedIntervalCapture(result)
             }
 
+            "getCompositeIntervalCaptureBuilder" -> {
+                getCompositeIntervalCaptureBuilder(call, result)
+            }
+
+            "buildCompositeIntervalCapture" -> {
+                scope.launch {
+                    buildCompositeIntervalCapture(call, result)
+                }
+            }
+
+            "startCompositeIntervalCapture" -> {
+                startCompositeIntervalCapture(result)
+            }
+
+            "stopCompositeIntervalCapture" -> {
+                stopCompositeIntervalCapture(result)
+            }
+
             "getOptions" -> {
                 scope.launch {
                     getOptions(call, result)
@@ -426,6 +442,9 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         shotCountSpecifiedIntervalCaptureBuilder = null
         shotCountSpecifiedIntervalCapture = null
         shotCountSpecifiedIntervalCapturing = null
+        compositeIntervalCaptureBuilder = null
+        compositeIntervalCapture = null
+        compositeIntervalCapturing = null
 
         try {
             endpoint = call.argument<String>("endpoint")!!
@@ -599,8 +618,15 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         }
         timeShiftCapturing =
             timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
-                override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
+                override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
                     result.error(exception.javaClass.simpleName, exception.message, null)
+                }
+
+                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    sendNotifyEvent(
+                        notifyIdTimeShiftStopError,
+                        toMessageNotifyParam(exception.message ?: exception.toString())
+                    )
                 }
 
                 override fun onProgress(completion: Float) {
@@ -610,7 +636,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     )
                 }
 
-                override fun onSuccess(fileUrl: String?) {
+                override fun onCaptureCompleted(fileUrl: String?) {
                     result.success(fileUrl)
                 }
             })
@@ -815,6 +841,79 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             return
         }
         shotCountSpecifiedIntervalCapturing.stopCapture()
+        result.success(null)
+    }
+
+    fun getCompositeIntervalCaptureBuilder(call: MethodCall, result: Result) {
+        val theta = thetaRepository
+        if (theta == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        (call.arguments as? Int)?.let {
+            compositeIntervalCaptureBuilder = theta.getCompositeIntervalCaptureBuilder(it)
+        }
+        result.success(null)
+    }
+
+    suspend fun buildCompositeIntervalCapture(call: MethodCall, result: Result) {
+        val theta = thetaRepository
+        val compositeIntervalCaptureBuilder = compositeIntervalCaptureBuilder
+        if (theta == null || compositeIntervalCaptureBuilder == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        setCaptureBuilderParams(call, compositeIntervalCaptureBuilder)
+        setCompositeIntervalCaptureBuilderParams(call, compositeIntervalCaptureBuilder)
+        try {
+            compositeIntervalCapture = compositeIntervalCaptureBuilder.build()
+            result.success(null)
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    fun startCompositeIntervalCapture(result: Result) {
+        val theta = thetaRepository
+        val compositeIntervalCapture = compositeIntervalCapture
+        if (theta == null || compositeIntervalCapture == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        compositeIntervalCapturing =
+            compositeIntervalCapture.startCapture(object : CompositeIntervalCapture.StartCaptureCallback {
+                override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    result.error(exception.javaClass.simpleName, exception.message, null)
+                }
+
+                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    sendNotifyEvent(
+                        notifyIdCompositeIntervalCaptureStopError,
+                        toMessageNotifyParam(exception.message ?: exception.toString())
+                    )
+                }
+
+                override fun onProgress(completion: Float) {
+                    sendNotifyEvent(
+                        notifyIdCompositeIntervalCaptureProgress,
+                        toCaptureProgressNotifyParam(completion)
+                    )
+                }
+
+                override fun onCaptureCompleted(fileUrls: List<String>?) {
+                    result.success(fileUrls)
+                }
+            })
+    }
+
+    fun stopCompositeIntervalCapture(result: Result) {
+        val theta = thetaRepository
+        val compositeIntervalCapturing = compositeIntervalCapturing
+        if (theta == null || compositeIntervalCapturing == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        compositeIntervalCapturing.stopCapture()
         result.success(null)
     }
 

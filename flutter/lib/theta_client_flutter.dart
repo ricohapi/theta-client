@@ -154,6 +154,14 @@ class ThetaClientFlutter {
     return ShotCountSpecifiedIntervalCaptureBuilder();
   }
 
+  /// Get getCompositeIntervalCapture.Builder for capture interval composite shooting.
+  CompositeIntervalCaptureBuilder
+  getCompositeIntervalCaptureBuilder(int shootingTimeSec) {
+    ThetaClientFlutterPlatform.instance
+        .getCompositeIntervalCaptureBuilder(shootingTimeSec);
+    return CompositeIntervalCaptureBuilder();
+  }
+
   /// Acquires the properties and property support specifications for shooting, the camera, etc.
   ///
   /// Refer to the [options category](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
@@ -1483,6 +1491,9 @@ enum OptionNameEnum {
   /// Option name _aiAutoThumbnail
   aiAutoThumbnail('AiAutoThumbnail', AiAutoThumbnailEnum),
 
+  /// Option name _autoBracket
+  autoBracket('AutoBracket', List<BracketSetting>),
+
   /// Option name aperture
   aperture('Aperture', ApertureEnum),
 
@@ -1819,6 +1830,53 @@ class BitrateNumber extends Bitrate {
   final int value;
 
   BitrateNumber(this.value) : super._internal(value.toString());
+}
+
+/// BracketSetting value.
+class BracketSetting {
+  /// Aperture value.
+  final ApertureEnum? aperture;
+
+  /// Color temperature of the camera (Kelvin).
+  final int? colorTemperature;
+
+  /// Exposure compensation (EV).
+  final ExposureCompensationEnum? exposureCompensation;
+
+  /// Exposure program.
+  final ExposureProgramEnum? exposureProgram;
+
+  /// ISO sensitivity.
+  final IsoEnum? iso;
+
+  /// Shutter speed (sec).
+  final ShutterSpeedEnum? shutterSpeed;
+
+  /// White balance.
+  final WhiteBalanceEnum? whiteBalance;
+
+  BracketSetting(
+      this.aperture,
+      this.colorTemperature,
+      this.exposureCompensation,
+      this.exposureProgram,
+      this.iso,
+      this.shutterSpeed,
+      this.whiteBalance);
+
+  @override
+  bool operator ==(Object other) => hashCode == other.hashCode;
+
+  @override
+  int get hashCode => Object.hashAll([
+        aperture,
+        colorTemperature,
+        exposureCompensation,
+        exposureProgram,
+        iso,
+        shutterSpeed,
+        whiteBalance
+      ]);
 }
 
 /// Camera control source.
@@ -3733,6 +3791,9 @@ class Options {
   /// Aperture value.
   ApertureEnum? aperture;
 
+  /// Multi bracket shooting setting.
+  List<BracketSetting>? autoBracket;
+
   /// see [Bitrate]
   Bitrate? bitrate;
 
@@ -4014,6 +4075,8 @@ class Options {
         return aiAutoThumbnail as T;
       case OptionNameEnum.aperture:
         return aperture as T;
+      case OptionNameEnum.autoBracket:
+        return autoBracket as T;
       case OptionNameEnum.bitrate:
         return bitrate as T;
       case OptionNameEnum.bluetoothPower:
@@ -4137,6 +4200,9 @@ class Options {
         break;
       case OptionNameEnum.aperture:
         aperture = value;
+        break;
+      case OptionNameEnum.autoBracket:
+        autoBracket = value;
         break;
       case OptionNameEnum.bitrate:
         bitrate = value;
