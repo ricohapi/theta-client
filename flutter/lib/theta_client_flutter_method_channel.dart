@@ -431,8 +431,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   }
 
   @override
-  Future<void> getCompositeIntervalCaptureBuilder(
-      int shootingTimeSec) async {
+  Future<void> getCompositeIntervalCaptureBuilder(int shootingTimeSec) async {
     return methodChannel.invokeMethod<void>(
         'getCompositeIntervalCaptureBuilder', shootingTimeSec);
   }
@@ -469,7 +468,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           }
         });
       }
-      final fileUrls = await methodChannel.invokeMethod<List<dynamic>?>('startCompositeIntervalCapture');
+      final fileUrls = await methodChannel
+          .invokeMethod<List<dynamic>?>('startCompositeIntervalCapture');
       removeNotify(notifyIdCompositeIntervalCaptureProgress);
       removeNotify(notifyIdCompositeIntervalCaptureStopError);
       if (fileUrls == null) {
@@ -487,8 +487,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<void> stopCompositeIntervalCapture() async {
-    return methodChannel
-        .invokeMethod<void>('stopCompositeIntervalCapture');
+    return methodChannel.invokeMethod<void>('stopCompositeIntervalCapture');
   }
 
   @override

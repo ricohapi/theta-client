@@ -92,6 +92,7 @@ class TimeShiftCaptureTest {
                 assertTrue(false, "error start time-shift")
                 deferred.complete(Unit)
             }
+
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(false, "error start time-shift")
                 deferred.complete(Unit)
@@ -170,6 +171,7 @@ class TimeShiftCaptureTest {
                 assertTrue(false, "error start time-shift")
                 deferred.complete(Unit)
             }
+
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(false, "error start time-shift")
                 deferred.complete(Unit)

@@ -4,7 +4,9 @@ import 'package:video_player/video_player.dart';
 class VideoScreen extends StatefulWidget {
   final String name;
   final String fileUrl;
-  const VideoScreen({Key? key,
+
+  const VideoScreen({
+    Key? key,
     required this.name,
     required this.fileUrl,
   }) : super(key: key);
@@ -30,9 +32,7 @@ class _VideoScreen extends State<VideoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title: Text('Video: ${widget.name}')
-        ),
+      appBar: AppBar(title: Text('Video: ${widget.name}')),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -46,8 +46,8 @@ class _VideoScreen extends State<VideoScreen> {
               IconButton(
                 onPressed: () {
                   _controller
-                    .seekTo(Duration.zero)
-                    .then((_) => _controller.play());
+                      .seekTo(Duration.zero)
+                      .then((_) => _controller.play());
                 },
                 icon: const Icon(Icons.refresh),
               ),

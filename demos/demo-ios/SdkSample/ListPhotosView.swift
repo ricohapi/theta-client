@@ -4,7 +4,7 @@
 //
 import SwiftUI
 
-class FileItem:Identifiable {
+class FileItem: Identifiable {
     var name: String
     var url: String
     var thumbnail: String
@@ -20,28 +20,28 @@ struct ListPhotosView: View {
     @State var files: [FileItem] = []
 
     var body: some View {
-        List(files) {item in
+        List(files) { item in
             HStack {
-                AsyncImage(url: URL(string: item.thumbnail)) {image in
+                AsyncImage(url: URL(string: item.thumbnail)) { image in
                     image.resizable()
                 } placeholder: {
                     ProgressView()
                 }
-                  .frame(width: 80, height: 40)
+                .frame(width: 80, height: 40)
                 Text(item.name)
                 NavigationLink(destination: PhotoSphereView(item)) {}
             }
         }
         .refreshable {
             Task {
-                await listPhotos {newFiles in
+                await listPhotos { newFiles in
                     files = newFiles
                 }
             }
         }
-        .onAppear() {
+        .onAppear {
             Task {
-                await listPhotos {newFiles in
+                await listPhotos { newFiles in
                     files = newFiles
                 }
             }
@@ -49,17 +49,16 @@ struct ListPhotosView: View {
         .navigationBarBackButtonHidden(true)
         .navigationTitle(getTitle())
         .navigationBarItems(
-          leading:
+            leading:
             HStack {
                 Button(action: {
                            self.presentation.wrappedValue.dismiss()
                        },
                        label: {
                            Image("chevron")
-                             .resizable()
-                             .frame(width: 24, height: 24)
-                       }
-                )
+                               .resizable()
+                               .frame(width: 24, height: 24)
+                       })
             }
         )
         .listStyle(.plain)
@@ -67,15 +66,15 @@ struct ListPhotosView: View {
 
     func listPhotos(_ done: @escaping (_ files: [FileItem]) -> Void) async {
         do {
-            try await theta.listPhotos {response in
+            try await theta.listPhotos { response in
                 var newFiles: [FileItem] = []
                 response.forEach {
                     newFiles.append(
-                      FileItem(
-                        name: $0.name,
-                        url: $0.fileUrl,
-                        thumbnail: $0.thumbnailUrl
-                      ))
+                        FileItem(
+                            name: $0.name,
+                            url: $0.fileUrl,
+                            thumbnail: $0.thumbnailUrl
+                        ))
                 }
                 done(newFiles)
             }

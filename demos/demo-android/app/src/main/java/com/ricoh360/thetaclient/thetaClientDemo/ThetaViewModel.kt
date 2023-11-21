@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ricoh360.thetaclient.DigestAuth
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.capture.PhotoCapture
 import io.ktor.client.utils.*
@@ -26,10 +25,10 @@ class ThetaViewModel(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
     private var thetaRepository: ThetaRepository
-    private val _thetaInfoState =  MutableStateFlow<ThetaRepository.ThetaInfo?>(null)
+    private val _thetaInfoState = MutableStateFlow<ThetaRepository.ThetaInfo?>(null)
     val thetaInfoState: StateFlow<ThetaRepository.ThetaInfo?> = _thetaInfoState
     private val _thetaFilesState = MutableStateFlow<ThetaRepository.ThetaFiles?>(null)
-    val thetaFilesState: StateFlow<ThetaRepository.ThetaFiles?>  = _thetaFilesState
+    val thetaFilesState: StateFlow<ThetaRepository.ThetaFiles?> = _thetaFilesState
 
     private val _previewFlow = MutableStateFlow<Bitmap?>(null)
     val previewFlow: StateFlow<Bitmap?> = _previewFlow
@@ -97,7 +96,7 @@ class ThetaViewModel(
         previewJob = viewModelScope.launch(ioDispatcher) {
             runCatching {
                 thetaRepository.getLivePreview { frame: Pair<ByteArray, Int> ->
-                    if(!isActive) {
+                    if (!isActive) {
                         Timber.d("Terminate preview")
                         return@getLivePreview false
                     }
@@ -112,7 +111,7 @@ class ThetaViewModel(
         }
     }
 
-    fun stopPreview () {
+    fun stopPreview() {
         previewJob?.let {
             it.cancel()
             previewJob = null

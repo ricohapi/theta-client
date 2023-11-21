@@ -2,8 +2,8 @@
 //  ThetaSdk.swift
 //  SdkSample
 //
-import UIKit
 import THETAClient
+import UIKit
 
 typealias ThetaHandlerWithError<T> = (_ response: T?, _ error: Error?) -> Void
 typealias ThetaHandler<T> = (_ response: T) -> Void
@@ -19,16 +19,16 @@ let theta = Theta()
 
 class Theta {
     static let endPoint: String = "http://192.168.1.1"
-    var thetaRepository: ThetaRepository? = nil
-    var lastInfo: ThetaInfo? = nil
+    var thetaRepository: ThetaRepository?
+    var lastInfo: ThetaInfo?
 
     func reset() {
         thetaRepository = nil
     }
 
     func initialize() async throws {
-        if (thetaRepository != nil) {
-            return;
+        if thetaRepository != nil {
+            return
         }
         var config: ThetaRepository.Config?
 
@@ -36,12 +36,12 @@ class Theta {
 //        config = ThetaRepository.Config()
 //        config.clientMode = DigestAuth(username: "THETAXX12345678", password: "12345678")
 
-        thetaRepository = try await withCheckedThrowingContinuation {continuation in
+        thetaRepository = try await withCheckedThrowingContinuation { continuation in
             ThetaRepository.Companion.shared.doNewInstance(
-              endpoint:Self.endPoint,
-              config:config,
-              timeout:nil
-            ) {resp, error in
+                endpoint: Self.endPoint,
+                config: config,
+                timeout: nil
+            ) { resp, error in
                 if let response = resp {
                     continuation.resume(returning: response)
                 }
@@ -54,8 +54,8 @@ class Theta {
 
     func info(_ completionHandler: @escaping ThetaHandler<ThetaInfo>) async throws {
         try await initialize()
-        let response: ThetaInfo = try await withCheckedThrowingContinuation {continuation in
-            thetaRepository!.getThetaInfo {resp, error in
+        let response: ThetaInfo = try await withCheckedThrowingContinuation { continuation in
+            thetaRepository!.getThetaInfo { resp, error in
                 if let response = resp {
                     continuation.resume(returning: response)
                 }
@@ -67,19 +67,20 @@ class Theta {
         lastInfo = response
         completionHandler(response)
     }
-    
+
     func livePreview(frameHandler: @escaping ThetaFrameHandler) async throws {
         try await initialize()
         class FrameHandler: KotlinSuspendFunction1 {
-            static let FrameInterval = CFTimeInterval(1.0/10.0)
+            static let FrameInterval = CFTimeInterval(1.0 / 10.0)
             let handler: ThetaFrameHandler
             var last: CFTimeInterval = 0
             init(_ handler: @escaping ThetaFrameHandler) {
                 self.handler = handler
             }
+
             func invoke(p1: Any?) async throws -> Any? {
                 let now = CACurrentMediaTime()
-                if (now - last > Self.FrameInterval) {
+                if now - last > Self.FrameInterval {
                     var result = false
                     autoreleasepool {
                         if let frameData = p1 as? KotlinPair<KotlinByteArray, KotlinInt> {
@@ -96,10 +97,10 @@ class Theta {
                 }
             }
         }
-        let _:Bool = try await withCheckedThrowingContinuation {continuation in
+        let _: Bool = try await withCheckedThrowingContinuation { continuation in
             thetaRepository!.getLivePreview(
-              frameHandler: FrameHandler(frameHandler)
-            ) {error in
+                frameHandler: FrameHandler(frameHandler)
+            ) { error in
                 if let thetaError = error {
                     continuation.resume(throwing: thetaError)
                 } else {
@@ -112,59 +113,61 @@ class Theta {
     func listPhotos(_ completionHandler: @escaping ThetaHandler<[ThetaFileInfo]>) async throws {
         try await initialize()
         let response: [ThetaFileInfo]
-          = try await withCheckedThrowingContinuation {continuation in
-              thetaRepository!.listFiles(fileType: ThetaFileType.image, startPosition: 0,
-                                         entryCount: 1000) {resp, error in
-                  if let response = resp {
-                      continuation.resume(returning: response.fileList)
-                  }
-                  if let thetaError = error {
-                      continuation.resume(throwing: thetaError)
-                  }
-              }
-          }
+            = try await withCheckedThrowingContinuation { continuation in
+                thetaRepository!.listFiles(fileType: ThetaFileType.image, startPosition: 0,
+                                           entryCount: 1000)
+                { resp, error in
+                    if let response = resp {
+                        continuation.resume(returning: response.fileList)
+                    }
+                    if let thetaError = error {
+                        continuation.resume(throwing: thetaError)
+                    }
+                }
+            }
         completionHandler(response)
     }
 
     func takePicture(_ callback: @escaping (_ url: String?) -> Void) async throws {
         try await initialize()
-        let photoCapture: PhotoCapture = try await withCheckedThrowingContinuation {continuation in
+        let photoCapture: PhotoCapture = try await withCheckedThrowingContinuation { continuation in
             thetaRepository!.getPhotoCaptureBuilder()
-              .build {capture, error in
-                  if let photoCapture = capture {
-                      continuation.resume(returning: photoCapture)
-                  }
-                  if let thetaError = error {
-                      continuation.resume(throwing: thetaError)
-                  }
-              }
+                .build { capture, error in
+                    if let photoCapture = capture {
+                        continuation.resume(returning: photoCapture)
+                    }
+                    if let thetaError = error {
+                        continuation.resume(throwing: thetaError)
+                    }
+                }
         }
         class Callback: PhotoCaptureTakePictureCallback {
             let callback: (_ url: String?, _ error: Error?) -> Void
             init(_ callback: @escaping (_ url: String?, _ error: Error?) -> Void) {
                 self.callback = callback
             }
+
             func onSuccess(fileUrl: String?) {
                 callback(fileUrl, nil)
             }
-            func onProgress(completion: Float) {
-            }
+
+            func onProgress(completion _: Float) {}
+
             func onError(exception: ThetaException) {
                 callback(nil, exception.asError())
             }
         }
-        let photoUrl: String? = try await withCheckedThrowingContinuation {continuation in
+        let photoUrl: String? = try await withCheckedThrowingContinuation { continuation in
             photoCapture.takePicture(
-              callback: Callback {fileUrl, error in
-                  if let thetaError = error {
-                      continuation.resume(throwing: thetaError)
-                  } else {
-                      continuation.resume(returning: fileUrl)
-                  }
-              }
+                callback: Callback { fileUrl, error in
+                    if let thetaError = error {
+                        continuation.resume(throwing: thetaError)
+                    } else {
+                        continuation.resume(returning: fileUrl)
+                    }
+                }
             )
         }
         callback(photoUrl)
     }
 }
-

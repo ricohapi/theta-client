@@ -612,7 +612,7 @@ fun toListAccessPointsResult(accessPointList: List<AccessPoint>): WritableArray 
 
 fun toAutoBracket(list: ReadableArray): BracketSettingList {
   val autoBracket = BracketSettingList()
-  for(i in 0 until list.size()) {
+  for (i in 0 until list.size()) {
     list.getMap(i)?.let { setting ->
       autoBracket.add(
         BracketSetting(

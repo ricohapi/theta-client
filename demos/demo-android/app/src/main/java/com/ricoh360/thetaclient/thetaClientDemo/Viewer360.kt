@@ -4,25 +4,33 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.view.ViewGroup
-import android.webkit.*
+import android.webkit.JavascriptInterface
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
+import android.webkit.WebSettings
+import android.webkit.WebView
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.webkit.WebViewClientCompat
-import androidx.webkit.WebViewAssetLoader
-import androidx.webkit.WebResourceErrorCompat
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
-
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.request.*
-import io.ktor.http.*
+import androidx.webkit.WebResourceErrorCompat
+import androidx.webkit.WebViewAssetLoader
+import androidx.webkit.WebViewClientCompat
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.request.get
+import io.ktor.http.isSuccess
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
-import java.util.*
+import java.util.Base64
 
 /**
  * Viewer for equirectangular image
@@ -70,7 +78,7 @@ fun Viewer360Core(photoDataUrl: String) {
     /**
      * Injecting object to WebView's JavaScript.
      */
-    class JsObject() {
+    class JsObject {
         @JavascriptInterface
         fun getPhotoUrl(): String {
             Timber.d("called getPhotoUrl(): ${photoDataUrl.substring(0, 40)}...")
@@ -125,7 +133,7 @@ fun Viewer360Core(photoDataUrl: String) {
             WebView(context).apply {
                 settings.allowFileAccess = true
                 settings.javaScriptEnabled = true
-                settings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE)
+                settings.mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
                 addJavascriptInterface(JsObject(), "injectedObject")
                 webViewClient = LocalContentWebViewClient(assetLoader)
                 layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
@@ -164,7 +172,7 @@ suspend fun getPhotoDataUrl(photoUrl: String): String? = withContext(Dispatchers
     var dataUrl: String? = null
     HttpClient(CIO).use { httpClient ->
         val response = httpClient.get(photoUrl)
-        if(response.status.isSuccess()) {
+        if (response.status.isSuccess()) {
             val byteArray: ByteArray = response.body()
             dataUrl = DATA_URL_PREFIX + Base64.getEncoder().encodeToString(downSizeImage(byteArray))
         } else {
@@ -201,7 +209,7 @@ fun downSizeImage(image: ByteArray): ByteArray {
     }
     BitmapFactory.decodeByteArray(image, 0, image.size, options)
     Timber.d("Jpeg width; ${options.outWidth}")
-    if(options.outWidth > MAX_WIDTH) {
+    if (options.outWidth > MAX_WIDTH) {
         val scaleFactor = MAX_WIDTH / options.outWidth.toFloat()
         val scale = Matrix()
         scale.postScale(scaleFactor, scaleFactor)

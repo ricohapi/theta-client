@@ -9,11 +9,11 @@ import WebKit
 struct SphereView: UIViewRepresentable {
     var urlString: String
 
-    func makeUIView(context: Context) -> Viewer360 {
+    func makeUIView(context _: Context) -> Viewer360 {
         return Viewer360(frame: .zero)
     }
-    
-    func updateUIView(_ uiView: Viewer360, context: Context) {
+
+    func updateUIView(_ uiView: Viewer360, context _: Context) {
         guard URL(string: urlString) != nil else {
             return
         }
@@ -22,6 +22,6 @@ struct SphereView: UIViewRepresentable {
 
     static func jpegDataToDataUrl(data: Data) -> String {
         let DATA_URL_PREFIX = "data:image/jpeg;base64,"
-        return DATA_URL_PREFIX + data.base64EncodedString();
+        return DATA_URL_PREFIX + data.base64EncodedString()
     }
 }

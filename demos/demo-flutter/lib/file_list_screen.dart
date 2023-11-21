@@ -8,12 +8,11 @@ import 'message_box.dart';
 
 class FileListScreen extends StatefulWidget {
   const FileListScreen({Key? key}) : super(key: key);
-  
+
   @override
   State<StatefulWidget> createState() {
     return _FileListScreen();
   }
-  
 }
 
 class _FileListScreen extends State<FileListScreen> {
@@ -51,54 +50,46 @@ class _FileListScreen extends State<FileListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title: const Text('File List')
-        ),
-      body: ListView.builder(
-        itemCount: _fileInfoList.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(_fileInfoList[index].name),
-            onTap: () {
-              debugPrint('index $index');
-              final fileUrl = _fileInfoList[index].fileUrl;
-              // fileUrl.endsWith('.MP4')/
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) =>
-                  fileUrl.endsWith('.MP4') ?
-                    VideoScreen(
-                      name: _fileInfoList[index].name,
-                      fileUrl: fileUrl,
-                    ) :
-                    PhotoScreen(
-                      name: _fileInfoList[index].name,
-                      fileUrl: fileUrl,
-                    )
-                )
-              );
-            },
-            leading: Image.network(
-              _fileInfoList[index].thumbnailUrl,
-              width: 128,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Container(
-                  width: 128,
-                  color: Colors.white,
-                  child: const Text('loading...')
-                );
+        appBar: AppBar(title: const Text('File List')),
+        body: ListView.builder(
+          itemCount: _fileInfoList.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text(_fileInfoList[index].name),
+              onTap: () {
+                debugPrint('index $index');
+                final fileUrl = _fileInfoList[index].fileUrl;
+                // fileUrl.endsWith('.MP4')/
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => fileUrl.endsWith('.MP4')
+                        ? VideoScreen(
+                            name: _fileInfoList[index].name,
+                            fileUrl: fileUrl,
+                          )
+                        : PhotoScreen(
+                            name: _fileInfoList[index].name,
+                            fileUrl: fileUrl,
+                          )));
               },
-              errorBuilder: (a, b, c) {
-                return Container(
-                  width: 128,
-                  color: Colors.white,
-                  child: const Text('Error')
-                );
-              },
-            ),
-          );
-        },
-      )
-    );
+              leading: Image.network(
+                _fileInfoList[index].thumbnailUrl,
+                width: 128,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Container(
+                      width: 128,
+                      color: Colors.white,
+                      child: const Text('loading...'));
+                },
+                errorBuilder: (a, b, c) {
+                  return Container(
+                      width: 128,
+                      color: Colors.white,
+                      child: const Text('Error'));
+                },
+              ),
+            );
+          },
+        ));
   }
 }

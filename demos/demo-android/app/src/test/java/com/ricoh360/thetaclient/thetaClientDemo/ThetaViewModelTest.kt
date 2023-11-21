@@ -2,7 +2,6 @@ package com.ricoh360.thetaclient.thetaClientDemo
 
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.capture.PhotoCapture
-import com.ricoh360.thetaclient.thetaClientDemo.ThetaViewModel
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -34,15 +33,15 @@ internal class ThetaViewModelTest {
         assertNotNull(files, "thetaFilesState")
     }
 
-   /*
-    @Test
-    @kotlinx.coroutines.ExperimentalCoroutinesApi
-     fun previewTest() = runTest {
-        vm.startPreview()
-        val bitmap = vm.previewFlow.drop(1).first()
-        assertNotNull(bitmap, "preview")
-        vm.stopPreview()
-    } */
+    /*
+     @Test
+     @kotlinx.coroutines.ExperimentalCoroutinesApi
+      fun previewTest() = runTest {
+         vm.startPreview()
+         val bitmap = vm.previewFlow.drop(1).first()
+         assertNotNull(bitmap, "preview")
+         vm.stopPreview()
+     } */
 
     @Test
     fun shootingTest() = runTest {
