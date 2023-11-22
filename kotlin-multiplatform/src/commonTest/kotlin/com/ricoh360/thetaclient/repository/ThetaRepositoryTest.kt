@@ -798,7 +798,7 @@ class ThetaRepositoryTest {
         MockApiClient.onRequest = { _ ->
             counter += 1
             runBlocking {
-                delay(200)
+                delay(500)
             }
             counter -= 1
             ByteReadChannel(jsonString)
