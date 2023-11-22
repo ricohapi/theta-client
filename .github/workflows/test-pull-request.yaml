@@ -1,11 +1,8 @@
-name: theta-client CI with Gradle
+name: pull request unit test
 
 on:
-  push:
-    branches: [ "main" ]
-    paths:
-     - 'kotlin-multiplatform/**'
   workflow_dispatch:
+  pull_request:
 
 permissions:
   contents: read
@@ -23,7 +20,7 @@ jobs:
     - name: Build and Test with Gradle
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
-        arguments: publishToMavenLocal podPublishXCFramework testReleaseUnitTest
+        arguments: testReleaseUnitTest
     - name: Archive code coverage results
       if: always()
       uses: actions/upload-artifact@v1

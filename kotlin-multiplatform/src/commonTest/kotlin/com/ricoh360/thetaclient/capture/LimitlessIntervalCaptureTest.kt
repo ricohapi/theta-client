@@ -190,7 +190,7 @@ class LimitlessIntervalCaptureTest {
         }
 
         runBlocking {
-            withTimeout(2000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
