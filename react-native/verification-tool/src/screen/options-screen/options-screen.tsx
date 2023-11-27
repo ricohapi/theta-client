@@ -290,7 +290,10 @@ const OptionsScreen: React.FC = ({ navigation }) => {
       setMessage(JSON.stringify(options));
       setEditOptions(options);
     } catch (error) {
-      setMessage(JSON.stringify(error));
+      if (error instanceof Error) {
+        setMessage(error.name + ': ' + error.message);
+      }
+      console.log('failed getOptions()');
     }
   };
 
@@ -303,7 +306,10 @@ const OptionsScreen: React.FC = ({ navigation }) => {
       await setOptions(editOptions);
       setMessage('OK.\n' + JSON.stringify(editOptions));
     } catch (error) {
-      setMessage(JSON.stringify(error));
+      if (error instanceof Error) {
+        setMessage(error.name + ': ' + error.message);
+      }
+      console.log('failed setOptions()');
     }
   };
 
