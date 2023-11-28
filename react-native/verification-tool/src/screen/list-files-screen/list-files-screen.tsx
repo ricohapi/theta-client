@@ -7,6 +7,8 @@ import Button from '../../components/ui/button';
 import { ListFilesView } from '../../components/list-files-view';
 import { ItemSelectorView } from '../../components/ui/item-list';
 import { InputNumber } from '../../components/ui/input-number';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../App';
 
 interface ListFilesProps {
   fileType: FileTypeEnum;
@@ -24,10 +26,9 @@ export const CommandEnum = {
   ALL: 'ALL',
 } as const;
 
-/** type definition of FileTypeEnum */
-export type FileTypeEnum = (typeof FileTypeEnum)[keyof typeof FileTypeEnum];
-
-const ListFilesScreen: React.FC = ({ navigation }) => {
+const ListFilesScreen: React.FC<
+  NativeStackScreenProps<RootStackParamList, 'listFiles'>
+> = ({ navigation }) => {
   const [fileType, setFileType] = useState(FileTypeEnum.ALL);
   const [startPosition, setStartPosition] = useState(0);
   const [entryCount, setEntryCount] = useState(100);

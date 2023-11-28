@@ -20,8 +20,30 @@ import TimeShiftCaptureScreen from './screen/time-shift-capture-screen/time-shif
 import LimitlessIntervalCaptureScreen from './screen/limitless-interval-capture-screen/limitless-interval-capture-screen';
 import ShotCountSpecifiedIntervalCaptureScreen from './screen/shot-count-specified-interval-capture-screen/shot-count-specified-interval-capture-screen';
 import CompositeIntervalCaptureScreen from './screen/composite-interval-capture-screen/composite-interval-capture-screen';
+import type { FileInfo } from 'theta-client-react-native';
 
-const Stack = createNativeStackNavigator();
+export type RootStackParamList = {
+  menu: undefined;
+  getInfo: undefined;
+  listFiles: undefined;
+  deleteFiles: undefined;
+  getMetadata: undefined;
+  livePreview: undefined;
+  videoConvert: undefined;
+  options: undefined;
+  commands: undefined;
+  photoCapture: undefined;
+  videoCapture: undefined;
+  limitlessIntervalCapture: undefined;
+  timeShiftCapture: undefined;
+  shotCountSpecifiedIntervalCapture: undefined;
+  compositeIntervalCapture: undefined;
+  filePreview: {
+    item: FileInfo;
+  };
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const screenOptions = {
   headerStyle: {

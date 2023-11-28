@@ -12,8 +12,15 @@ import {
 import { CaptureCommonOptionsEdit } from '../../components/capture/capture-common-options';
 import { InputNumber } from '../../components/ui/input-number';
 import { NumberEdit } from 'verification-tool/src/components/options/number-edit';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../App';
 
-const ShotCountSpecifiedIntervalCaptureScreen: React.FC = ({ navigation }) => {
+const ShotCountSpecifiedIntervalCaptureScreen: React.FC<
+  NativeStackScreenProps<
+    RootStackParamList,
+    'shotCountSpecifiedIntervalCapture'
+  >
+> = ({ navigation }) => {
   const [interval, setInterval] = React.useState<number>();
   const [shotCount, setShotCount] = React.useState<number>(2);
   const [message, setMessage] = React.useState('progress = 0');

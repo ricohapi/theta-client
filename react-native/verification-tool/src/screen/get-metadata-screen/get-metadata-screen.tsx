@@ -5,8 +5,12 @@ import styles from './styles';
 import { FileTypeEnum, FileInfo, getMetadata } from 'theta-client-react-native';
 import Button from '../../components/ui/button';
 import { ListFilesView } from '../../components/list-files-view';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../App';
 
-const GetMetadataScreen: React.FC = ({ navigation }) => {
+const GetMetadataScreen: React.FC<
+  NativeStackScreenProps<RootStackParamList, 'getMetadata'>
+> = ({ navigation }) => {
   const [selectedFile, setSelectedFile] = useState<FileInfo>();
   const [message, setMessage] = React.useState('');
 

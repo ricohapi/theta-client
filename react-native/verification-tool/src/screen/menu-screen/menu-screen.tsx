@@ -6,6 +6,8 @@ import styles from './styles';
 import Button from '../../components/ui/button';
 import { ItemListPopupView } from '../../components/ui/item-list/item-list-popup-view';
 import type { Item } from '../../components/ui/item-list';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../App';
 
 interface CaptureItem extends Item {
   value: {
@@ -19,7 +21,9 @@ interface FunctionItem extends Item {
   };
 }
 
-const MenuScreen: React.FC = ({ navigation }) => {
+const MenuScreen: React.FC<
+  NativeStackScreenProps<RootStackParamList, 'menu'>
+> = ({ navigation }) => {
   const [message, setMessage] = React.useState('');
   const [isShowCaptureList, setShowCaptureList] =
     React.useState<boolean>(false);

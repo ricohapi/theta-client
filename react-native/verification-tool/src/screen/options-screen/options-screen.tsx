@@ -44,6 +44,8 @@ import {
 } from '../../components/options';
 import { ItemSelectorView, type Item } from '../../components/ui/item-list';
 import { NumberEdit } from '../../components/options/number-edit';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../App';
 
 interface OptionItem extends Item {
   value: {
@@ -266,7 +268,9 @@ const optionList: OptionItem[] = [
   },
 ];
 
-const OptionsScreen: React.FC = ({ navigation }) => {
+const OptionsScreen: React.FC<
+  NativeStackScreenProps<RootStackParamList, 'options'>
+> = ({ navigation }) => {
   const [selectedOption, setSelectedOption] = React.useState<OptionItem>();
   const [message, setMessage] = React.useState('');
   const [editOptions, setEditOptions] = React.useState<Options>();

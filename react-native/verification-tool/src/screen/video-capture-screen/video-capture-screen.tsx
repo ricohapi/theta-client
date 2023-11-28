@@ -17,8 +17,12 @@ import {
   VideoFileFormatEdit,
 } from '../../components/options';
 import { CaptureCommonOptionsEdit } from '../../components/capture/capture-common-options';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../App';
 
-const VideoCaptureScreen: React.FC = ({ navigation }) => {
+const VideoCaptureScreen: React.FC<
+  NativeStackScreenProps<RootStackParamList, 'videoCapture'>
+> = ({ navigation }) => {
   const [captureOptions, setCaptureOptions] = React.useState<Options>();
   const [isTaking, setIsTaking] = React.useState(false);
   const [capture, setCapture] = React.useState<VideoCapture>();

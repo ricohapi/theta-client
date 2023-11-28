@@ -14,8 +14,12 @@ import {
 import { CaptureCommonOptionsEdit } from '../../components/capture/capture-common-options';
 import { TimeShiftEdit } from '../../components/options/time-shift';
 import { InputNumber } from '../../components/ui/input-number';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../App';
 
-const TimeShiftCaptureScreen: React.FC = ({ navigation }) => {
+const TimeShiftCaptureScreen: React.FC<
+  NativeStackScreenProps<RootStackParamList, 'timeShiftCapture'>
+> = ({ navigation }) => {
   const [interval, setInterval] = React.useState<number>();
   const [message, setMessage] = React.useState('progress = 0');
   const [captureOptions, setCaptureOptions] = React.useState<Options>();

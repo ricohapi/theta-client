@@ -17,8 +17,12 @@ import {
   PresetEdit,
 } from '../../components/options';
 import { CaptureCommonOptionsEdit } from '../../components/capture/capture-common-options';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../App';
 
-const PhotoCaptureScreen: React.FC = ({ navigation }) => {
+const PhotoCaptureScreen: React.FC<
+  NativeStackScreenProps<RootStackParamList, 'photoCapture'>
+> = ({ navigation }) => {
   const [captureOptions, setCaptureOptions] = React.useState<Options>();
   const [isTaking, setIsTaking] = React.useState(false);
 
