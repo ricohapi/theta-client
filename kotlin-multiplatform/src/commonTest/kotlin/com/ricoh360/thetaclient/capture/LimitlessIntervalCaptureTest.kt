@@ -38,6 +38,7 @@ class LimitlessIntervalCaptureTest {
             Resource("src/commonTest/resources/LimitlessIntervalCapture/start_capture_done.json").readText(),
             Resource("src/commonTest/resources/LimitlessIntervalCapture/stop_capture_done.json").readText()
         )
+        val deferredStart = CompletableDeferred<Unit>()
         var counter = 0
         MockApiClient.onRequest = { request ->
             val index = counter++
@@ -61,6 +62,9 @@ class LimitlessIntervalCaptureTest {
                 }
 
                 else -> {
+                    if (!deferredStart.isCompleted) {
+                        deferredStart.complete(Unit)
+                    }
                     if (CheckRequest.getCommandName(request) == "camera.stopCapture") {
                         CheckRequest.checkCommandName(request, "camera.stopCapture")
                         response = responseArray[3]
@@ -98,8 +102,11 @@ class LimitlessIntervalCaptureTest {
                 deferred.complete(Unit)
             }
         })
+
         runBlocking {
-            delay(100)
+            withTimeout(5000) {
+                deferredStart.await()
+            }
         }
         capturing.stopCapture()
 
@@ -168,7 +175,7 @@ class LimitlessIntervalCaptureTest {
 
         assertNull(capture.getCaptureInterval(), "set option captureInterval")
 
-        var files: List<String>? = null
+        var files: List<String>? = listOf()
         capture.startCapture(object : LimitlessIntervalCapture.StartCaptureCallback {
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(false, "error stop capture")
@@ -185,9 +192,6 @@ class LimitlessIntervalCaptureTest {
                 deferred.complete(Unit)
             }
         })
-        runBlocking {
-            delay(100)
-        }
 
         runBlocking {
             withTimeout(5000) {

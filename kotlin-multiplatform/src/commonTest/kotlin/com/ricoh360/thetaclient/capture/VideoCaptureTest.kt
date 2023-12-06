@@ -37,6 +37,7 @@ class VideoCaptureTest {
             Resource("src/commonTest/resources/VideoCapture/start_capture_done.json").readText(),
             Resource("src/commonTest/resources/VideoCapture/stop_capture_done.json").readText()
         )
+        val deferredStart = CompletableDeferred<Unit>()
         var counter = 0
         MockApiClient.onRequest = { request ->
             val index = counter++
@@ -59,6 +60,9 @@ class VideoCaptureTest {
                         CheckRequest.checkCommandName(request, "camera.stopCapture")
                         response = responseArray[2]
                     } else if (request.url.encodedPath == "/osc/state") {
+                        if (!deferredStart.isCompleted) {
+                            deferredStart.complete(Unit)
+                        }
                         response =
                             Resource("src/commonTest/resources/VideoCapture/state_shooting.json").readText()
                     }
@@ -95,7 +99,9 @@ class VideoCaptureTest {
             }
         })
         runBlocking {
-            delay(100)
+            withTimeout(5000) {
+                deferredStart.await()
+            }
         }
         capturing.stopCapture()
 
@@ -177,9 +183,6 @@ class VideoCaptureTest {
                 deferred.complete(Unit)
             }
         })
-        runBlocking {
-            delay(100)
-        }
 
         runBlocking {
             withTimeout(5000) {
