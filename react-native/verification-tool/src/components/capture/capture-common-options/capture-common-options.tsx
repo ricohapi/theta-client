@@ -1,18 +1,19 @@
 import * as React from 'react';
 import type { OptionEditProps } from '../../options';
 import { View } from 'react-native';
-import {
-  ApertureEdit,
-  ExposureCompensationEdit,
-  ExposureDelayEdit,
-  ExposureProgramEdit,
-  GpsInfoEdit,
-  GpsTagRecordingEdit,
-  IsoEdit,
-  IsoAutoHighLimitEdit,
-  WhiteBalanceEdit,
-} from '../../../components/options';
+import { GpsInfoEdit } from '../../../components/options';
 import { NumberEdit } from '../../../components/options/number-edit';
+import { EnumEdit } from '../../options/enum-edit';
+import {
+  ApertureEnum,
+  ExposureCompensationEnum,
+  ExposureDelayEnum,
+  ExposureProgramEnum,
+  GpsTagRecordingEnum,
+  IsoAutoHighLimitEnum,
+  IsoEnum,
+  WhiteBalanceEnum,
+} from 'theta-client-react-native';
 
 export const CaptureCommonOptionsEdit: React.FC<OptionEditProps> = ({
   onChange,
@@ -20,107 +21,89 @@ export const CaptureCommonOptionsEdit: React.FC<OptionEditProps> = ({
 }) => {
   return (
     <View>
-      <ApertureEdit
-        onChange={(option) => {
-          const newOptions = {
-            ...options,
-            aperture: option.aperture,
-          };
-          newOptions && onChange(newOptions);
+      <EnumEdit
+        title={'aperture'}
+        option={options?.aperture}
+        onChange={(aperture) => {
+          onChange({ ...options, aperture });
         }}
-        options={options}
+        optionEnum={ApertureEnum}
       />
       <NumberEdit
         propName={'colorTemperature'}
         onChange={(option) => {
-          const newOptions = {
+          onChange({
             ...options,
             colorTemperature: option.colorTemperature,
-          };
-          newOptions && onChange(newOptions);
+          });
         }}
         options={options}
         placeHolder="Input value"
       />
-      <ExposureCompensationEdit
-        onChange={(option) => {
-          const newOptions = {
-            ...options,
-            exposureCompensation: option.exposureCompensation,
-          };
-          newOptions && onChange(newOptions);
+      <EnumEdit
+        title={'exposureCompensation'}
+        option={options?.exposureCompensation}
+        onChange={(exposureCompensation) => {
+          onChange({ ...options, exposureCompensation });
         }}
-        options={options}
+        optionEnum={ExposureCompensationEnum}
       />
-      <ExposureDelayEdit
-        onChange={(option) => {
-          const newOptions = {
-            ...options,
-            exposureDelay: option.exposureDelay,
-          };
-          newOptions && onChange(newOptions);
+      <EnumEdit
+        title={'exposureDelay'}
+        option={options?.exposureDelay}
+        onChange={(exposureDelay) => {
+          onChange({ ...options, exposureDelay });
         }}
-        options={options}
+        optionEnum={ExposureDelayEnum}
       />
-      <ExposureProgramEdit
-        onChange={(option) => {
-          const newOptions = {
-            ...options,
-            exposureProgram: option.exposureProgram,
-          };
-          newOptions && onChange(newOptions);
+      <EnumEdit
+        title={'exposureProgram'}
+        option={options?.exposureProgram}
+        onChange={(exposureProgram) => {
+          onChange({ ...options, exposureProgram });
         }}
-        options={options}
+        optionEnum={ExposureProgramEnum}
       />
       <GpsInfoEdit
         onChange={(option) => {
-          const newOptions = {
+          onChange({
             ...options,
             gpsInfo: option.gpsInfo,
-          };
-          newOptions && onChange(newOptions);
+          });
         }}
         options={options}
       />
-      <GpsTagRecordingEdit
-        onChange={(option) => {
-          const newOptions = {
-            ...options,
-            _gpsTagRecording: option._gpsTagRecording,
-          };
-          newOptions && onChange(newOptions);
+      <EnumEdit
+        title={'_gpsTagRecording'}
+        option={options?._gpsTagRecording}
+        onChange={(_gpsTagRecording) => {
+          onChange({ ...options, _gpsTagRecording });
         }}
-        options={options}
+        optionEnum={GpsTagRecordingEnum}
       />
-      <IsoEdit
-        onChange={(option) => {
-          const newOptions = {
-            ...options,
-            iso: option.iso,
-          };
-          newOptions && onChange(newOptions);
+      <EnumEdit
+        title={'iso'}
+        option={options?.iso}
+        onChange={(iso) => {
+          onChange({ ...options, iso });
         }}
-        options={options}
+        optionEnum={IsoEnum}
       />
-      <IsoAutoHighLimitEdit
-        onChange={(option) => {
-          const newOptions = {
-            ...options,
-            isoAutoHighLimit: option.isoAutoHighLimit,
-          };
-          newOptions && onChange(newOptions);
+      <EnumEdit
+        title={'isoAutoHighLimit'}
+        option={options?.isoAutoHighLimit}
+        onChange={(isoAutoHighLimit) => {
+          onChange({ ...options, isoAutoHighLimit });
         }}
-        options={options}
+        optionEnum={IsoAutoHighLimitEnum}
       />
-      <WhiteBalanceEdit
-        onChange={(option) => {
-          const newOptions = {
-            ...options,
-            whiteBalance: option.whiteBalance,
-          };
-          newOptions && onChange(newOptions);
+      <EnumEdit
+        title={'whiteBalance'}
+        option={options?.whiteBalance}
+        onChange={(whiteBalance) => {
+          onChange({ ...options, whiteBalance });
         }}
-        options={options}
+        optionEnum={WhiteBalanceEnum}
       />
     </View>
   );

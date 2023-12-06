@@ -5,20 +5,18 @@ import styles from './styles';
 import Button from '../../components/ui/button';
 import {
   CaptureModeEnum,
+  FilterEnum,
   Options,
   PhotoFileFormatEnum,
+  PresetEnum,
   getPhotoCaptureBuilder,
   setOptions,
   stopSelfTimer,
 } from 'theta-client-react-native';
-import {
-  FilterEdit,
-  PhotoFileFormatEdit,
-  PresetEdit,
-} from '../../components/options';
 import { CaptureCommonOptionsEdit } from '../../components/capture/capture-common-options';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../App';
+import { EnumEdit } from '../../components/options';
 
 const PhotoCaptureScreen: React.FC<
   NativeStackScreenProps<RootStackParamList, 'photoCapture'>
@@ -115,32 +113,38 @@ const PhotoCaptureScreen: React.FC<
       </View>
       <View style={styles.contentContainer}>
         <ScrollView>
-          <FilterEdit
-            onChange={(option) => {
+          <EnumEdit
+            title={'filter'}
+            option={captureOptions?.filter}
+            onChange={(filter) => {
               setCaptureOptions((prevState) => ({
                 ...prevState,
-                filter: option.filter,
+                filter,
               }));
             }}
-            options={captureOptions}
+            optionEnum={FilterEnum}
           />
-          <PhotoFileFormatEdit
-            onChange={(option) => {
+          <EnumEdit
+            title={'fileFormat'}
+            option={captureOptions?.fileFormat}
+            onChange={(fileFormat) => {
               setCaptureOptions((prevState) => ({
                 ...prevState,
-                fileFormat: option.fileFormat,
+                fileFormat,
               }));
             }}
-            options={captureOptions}
+            optionEnum={PhotoFileFormatEnum}
           />
-          <PresetEdit
-            onChange={(option) => {
+          <EnumEdit
+            title={'preset'}
+            option={captureOptions?.preset}
+            onChange={(preset) => {
               setCaptureOptions((prevState) => ({
                 ...prevState,
-                preset: option.preset,
+                preset,
               }));
             }}
-            options={captureOptions}
+            optionEnum={PresetEnum}
           />
           <CaptureCommonOptionsEdit
             onChange={(option) => {

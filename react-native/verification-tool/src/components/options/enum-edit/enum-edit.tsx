@@ -1,36 +1,35 @@
 import * as React from 'react';
-import type { OptionEditProps } from '..';
-import { Item, ItemSelectorView } from '../../ui/item-list';
+import { ItemSelectorView } from '../../ui/item-list';
 
-interface Props extends OptionEditProps {
-  enumList: Item[];
-  propName: string;
+interface Props<T> {
+  title: string;
+  option: T;
+  onChange: (option: T) => void;
+  optionEnum: Record<string, T>;
 }
 
-export const EnumEdit: React.FC<Props> = ({
-  propName,
-  enumList,
+export const EnumEdit = <T,>({
+  title,
+  option,
   onChange,
-  options,
-}) => {
+  optionEnum,
+}: Props<T>) => {
+  const enumList = [
+    { name: '[undefined]', value: undefined },
+    ...Object.entries(optionEnum).map((item) => {
+      return { name: item[0], value: item[1] };
+    }),
+  ];
+
   return (
     <ItemSelectorView
       itemList={enumList}
-      title={propName}
+      title={title}
       onSelected={(item) => {
-        let option = { [propName]: item.value };
-        onChange(option);
+        onChange(item.value);
       }}
       selectedItem={enumList.find((item) => {
-        if (options != null) {
-          const option = Object.entries(options).find(
-            (element) => element[0] === propName
-          );
-          if (option != null) {
-            return item.value === option[1];
-          }
-        }
-        return false;
+        return item.value === option;
       })}
     />
   );
