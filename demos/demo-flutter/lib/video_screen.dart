@@ -23,7 +23,7 @@ class _VideoScreen extends State<VideoScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(widget.fileUrl);
+    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.fileUrl));
     _controller.initialize().then((_) {
       setState(() {});
     });

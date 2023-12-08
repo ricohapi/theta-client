@@ -10,11 +10,13 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() {
-    channel.setMockMethodCallHandler(null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
   });
 
   tearDown(() {
-    channel.setMockMethodCallHandler(null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
   });
 
   test('Bitrate const', () async {
@@ -40,7 +42,8 @@ void main() {
   });
 
   test('getOptions', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       Map<String, dynamic> optionMap = {};
       optionMap['Bitrate'] = 'FINE';
       return Future.value(optionMap);
@@ -50,7 +53,8 @@ void main() {
   });
 
   test('getOptions number', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       Map<String, dynamic> optionMap = {};
       optionMap['Bitrate'] = 10;
       return Future.value(optionMap);
@@ -61,7 +65,8 @@ void main() {
   });
 
   test('setOptions', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['Bitrate'], 'AUTO', reason: 'quality');
       return Future.value();
@@ -72,7 +77,8 @@ void main() {
   });
 
   test('setOptions number', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['Bitrate'], 10, reason: 'number');
       return Future.value();

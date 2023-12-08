@@ -32,6 +32,7 @@ class _FileListScreen extends State<FileListScreen> {
       var result = await _thetaClientFlutter.listFiles(FileTypeEnum.all, 10000);
       fileInfoList = result.fileList;
     } on PlatformException {
+      if (!mounted) return;
       Navigator.pop(context);
       MessageBox.show(context, 'Error listFiles', () {
         Navigator.pop(context);
