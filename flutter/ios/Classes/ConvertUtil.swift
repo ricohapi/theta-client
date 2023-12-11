@@ -442,6 +442,15 @@ func toGpsInfo(params: [String: Any]) -> ThetaRepository.GpsInfo {
     )
 }
 
+func toOffDelay(value: Any) -> ThetaRepositoryOffDelay? {
+    if let strValue = value as? String {
+        return getEnumValue(values: ThetaRepository.OffDelayEnum.values(), name: strValue)
+    } else if let intValue = value as? Int32 {
+        return ThetaRepository.OffDelaySec(sec: intValue)
+    }
+    return nil
+}
+
 func toProxy(params: [String: Any]) -> ThetaRepository.Proxy {
     return ThetaRepository.Proxy(
         use: params["use"] as? Bool ?? false,
@@ -450,6 +459,15 @@ func toProxy(params: [String: Any]) -> ThetaRepository.Proxy {
         userid: params["userid"] as? String,
         password: params["password"] as? String
     )
+}
+
+func toSleepDelay(value: Any) -> ThetaRepositorySleepDelay? {
+    if let strValue = value as? String {
+        return getEnumValue(values: ThetaRepository.SleepDelayEnum.values(), name: strValue)
+    } else if let intValue = value as? Int32 {
+        return ThetaRepository.SleepDelaySec(sec: intValue)
+    }
+    return nil
 }
 
 func toTimeShift(params: [String: Any]) -> ThetaRepository.TimeShiftSetting {
@@ -544,8 +562,20 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
             } else if value is ThetaRepository.GpsInfo {
                 let gpsInfo = value as! ThetaRepository.GpsInfo
                 result[name.name] = convertResult(gpsInfo: gpsInfo)
+            } else if let offDelay = value as? ThetaRepositoryOffDelay {
+                if let enumValue = offDelay as? ThetaRepository.OffDelayEnum {
+                    result[name.name] = enumValue.name
+                } else {
+                    result[name.name] = offDelay.sec
+                }
             } else if value is ThetaRepository.Proxy, let proxy = value as? ThetaRepository.Proxy {
                 result[name.name] = convertResult(proxy: proxy)
+            } else if let sleepDelay = value as? ThetaRepositorySleepDelay {
+                if let enumValue = sleepDelay as? ThetaRepository.SleepDelayEnum {
+                    result[name.name] = enumValue.name
+                } else {
+                    result[name.name] = sleepDelay.sec
+                }
             } else if value is ThetaRepository.TimeShiftSetting, let timeshift = value as? ThetaRepository.TimeShiftSetting {
                 result[name.name] = convertResult(timeshift: timeshift)
             } else if value is ThetaRepository.TopBottomCorrectionRotation, let rotation = value as? ThetaRepository.TopBottomCorrectionRotation {
@@ -660,7 +690,7 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.networktype.name:
         options.networkType = getEnumValue(values: ThetaRepository.NetworkTypeEnum.values(), name: value as! String)!
     case ThetaRepository.OptionNameEnum.offdelay.name:
-        options.offDelay = getEnumValue(values: ThetaRepository.OffDelayEnum.values(), name: value as! String)!
+        options.offDelay = toOffDelay(value: value)
     case ThetaRepository.OptionNameEnum.password.name:
         options.password = value as? String
     case ThetaRepository.OptionNameEnum.powersaving.name:
@@ -686,7 +716,7 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.shuttervolume.name:
         options.shutterVolume = KotlinInt(integerLiteral: value as! Int)
     case ThetaRepository.OptionNameEnum.sleepdelay.name:
-        options.sleepDelay = getEnumValue(values: ThetaRepository.SleepDelayEnum.values(), name: value as! String)!
+        options.sleepDelay = toSleepDelay(value: value)
     case ThetaRepository.OptionNameEnum.timeshift.name:
         if let params = value as? [String: Any] {
             options.timeShift = toTimeShift(params: params)
@@ -731,9 +761,9 @@ func toConfig(params: [String: Any]) -> ThetaRepository.Config {
         case ThetaRepository.OptionNameEnum.language.name:
             config.language = getEnumValue(values: ThetaRepository.LanguageEnum.values(), name: value as! String)!
         case ThetaRepository.OptionNameEnum.offdelay.name:
-            config.offDelay = getEnumValue(values: ThetaRepository.OffDelayEnum.values(), name: value as! String)!
+            config.offDelay = toOffDelay(value: value)
         case ThetaRepository.OptionNameEnum.sleepdelay.name:
-            config.sleepDelay = getEnumValue(values: ThetaRepository.SleepDelayEnum.values(), name: value as! String)!
+            config.sleepDelay = toSleepDelay(value: value)
         case ThetaRepository.OptionNameEnum.shuttervolume.name:
             config.shutterVolume = KotlinInt(integerLiteral: value as! Int)
         case KEY_CLIENT_MODE:

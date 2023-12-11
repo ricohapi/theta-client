@@ -262,9 +262,25 @@ fun toResult(options: Options): WritableMap {
       options.gpsInfo?.let {
         result.putMap("gpsInfo", toResult(gpsInfo = it))
       }
+    } else if (name == OptionNameEnum.OffDelay) {
+      options.offDelay?.let {
+        if (it is OffDelayEnum) {
+          result.putString("offDelay", it.name)
+        }else  if (it is OffDelaySec) {
+          result.putInt("offDelay", it.sec)
+        }
+      }
     } else if (name == OptionNameEnum.Proxy) {
       options.proxy?.let {
         result.putMap("proxy", toResult(proxy = it))
+      }
+    } else if (name == OptionNameEnum.SleepDelay) {
+      options.sleepDelay?.let {
+        if (it is SleepDelayEnum) {
+          result.putString("sleepDelay", it.name)
+        }else  if (it is SleepDelaySec) {
+          result.putInt("sleepDelay", it.sec)
+        }
       }
     } else if (name == OptionNameEnum.TimeShift) {
       options.timeShift?.let {
@@ -531,9 +547,17 @@ fun setOptionValue(options: Options, name: OptionNameEnum, optionsMap: ReadableM
     optionsMap.getMap(key)?.let {
       options.setValue(name, toGpsInfo(map = it))
     }
+  } else if (name == OptionNameEnum.OffDelay) {
+    toOffDelay(optionsMap)?.let {
+      options.setValue(name, it)
+    }
   } else if (name == OptionNameEnum.Proxy) {
     optionsMap.getMap(key)?.let {
       options.setValue(name, toProxy(map = it) as Any)
+    }
+  } else if (name == OptionNameEnum.SleepDelay) {
+    toSleepDelay(optionsMap)?.let {
+      options.setValue(name, it)
     }
   } else if (name == OptionNameEnum.TimeShift) {
     optionsMap.getMap(key)?.let {
@@ -675,13 +699,9 @@ fun configToTheta(objects: ReadableMap): Config {
     config.language = LanguageEnum.valueOf(it)
   }
 
-  objects.getString("offDelay")?.let {
-    config.offDelay = OffDelayEnum.valueOf(it)
-  }
+  config.offDelay = toOffDelay(objects)
 
-  objects.getString("sleepDelay")?.let {
-    config.sleepDelay = SleepDelayEnum.valueOf(it)
-  }
+  config.sleepDelay = toSleepDelay(objects)
 
   config.shutterVolume = if (objects.hasKey("shutterVolume")) {
     objects.getInt("shutterVolume")
@@ -718,4 +738,38 @@ fun timeoutToTheta(objects: ReadableMap): Timeout {
     objects.getInt("requestTimeout").toLong(),
     objects.getInt("socketTimeout").toLong(),
   )
+}
+
+fun toOffDelay(objects: ReadableMap): OffDelay? {
+  when (objects.getType("offDelay")) {
+    ReadableType.String -> {
+      (objects.getString("offDelay"))?.let { value ->
+        return getOptionValueEnum(OptionNameEnum.OffDelay, value) as? OffDelayEnum
+      }
+    }
+
+    ReadableType.Number -> {
+      return OffDelaySec(objects.getInt("offDelay"))
+    }
+
+    else -> {}
+  }
+  return null
+}
+
+fun toSleepDelay(objects: ReadableMap): SleepDelay? {
+  when (objects.getType("sleepDelay")) {
+    ReadableType.String -> {
+      (objects.getString("sleepDelay"))?.let { value ->
+        return getOptionValueEnum(OptionNameEnum.SleepDelay, value) as? SleepDelayEnum
+      }
+    }
+
+    ReadableType.Number -> {
+      return SleepDelaySec(objects.getInt("sleepDelay"))
+    }
+
+    else -> {}
+  }
+  return null
 }

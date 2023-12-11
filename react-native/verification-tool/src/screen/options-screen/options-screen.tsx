@@ -13,15 +13,19 @@ import {
   IsoAutoHighLimitEnum,
   IsoEnum,
   MaxRecordableTimeEnum,
+  OffDelayEnum,
   OptionNameEnum,
   Options,
   PresetEnum,
+  SleepDelayEnum,
   TopBottomCorrectionOptionEnum,
   VideoStitchingEnum,
   VisibilityReductionEnum,
   WhiteBalanceEnum,
   getOptions,
+  offDelayToSeconds,
   setOptions,
+  sleepDelayToSeconds,
 } from 'theta-client-react-native';
 import {
   AutoBracketEdit,
@@ -34,6 +38,7 @@ import { ItemSelectorView, type Item } from '../../components/ui/item-list';
 import { NumberEdit } from '../../components/options/number-edit';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../App';
+import { InputNumber } from '../../components/ui/input-number';
 
 interface OptionItem extends Item {
   value: {
@@ -43,6 +48,7 @@ interface OptionItem extends Item {
       onChange: (options: Options) => void
     ) => React.ReactElement;
     defaultValue?: Options;
+    onWillSet?: (options: Options) => void;
   };
 }
 
@@ -241,6 +247,51 @@ const optionList: OptionItem[] = [
     },
   },
   {
+    name: 'offDelay enum',
+    value: {
+      optionName: OptionNameEnum.OffDelay,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'offDelay'}
+          option={options.offDelay}
+          onChange={(offDelay) => {
+            onChange({ offDelay });
+          }}
+          optionEnum={OffDelayEnum}
+        />
+      ),
+      defaultValue: { offDelay: OffDelayEnum.DISABLE },
+    },
+  },
+  {
+    name: 'offDelay number',
+    value: {
+      optionName: OptionNameEnum.OffDelay,
+      editor: (options, onChange) => (
+        <InputNumber
+          title={'offDelay'}
+          onChange={(newValue) => {
+            onChange({ offDelay: newValue });
+          }}
+          value={
+            typeof options.offDelay === 'string'
+              ? offDelayToSeconds(options.offDelay as OffDelayEnum)
+              : typeof options.offDelay === 'number'
+              ? options.offDelay
+              : 0
+          }
+        />
+      ),
+      onWillSet: (options: Options) => {
+        if (typeof options.offDelay === 'string') {
+          options.offDelay = offDelayToSeconds(
+            options.offDelay as OffDelayEnum
+          );
+        }
+      },
+    },
+  },
+  {
     name: 'preset',
     value: {
       optionName: OptionNameEnum.Preset,
@@ -255,6 +306,51 @@ const optionList: OptionItem[] = [
         />
       ),
       defaultValue: { preset: PresetEnum.FACE },
+    },
+  },
+  {
+    name: 'sleepDelay enum',
+    value: {
+      optionName: OptionNameEnum.SleepDelay,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'sleepDelay'}
+          option={options.sleepDelay}
+          onChange={(sleepDelay) => {
+            onChange({ sleepDelay });
+          }}
+          optionEnum={SleepDelayEnum}
+        />
+      ),
+      defaultValue: { sleepDelay: SleepDelayEnum.DISABLE },
+    },
+  },
+  {
+    name: 'sleepDelay number',
+    value: {
+      optionName: OptionNameEnum.SleepDelay,
+      editor: (options, onChange) => (
+        <InputNumber
+          title={'sleepDelay'}
+          onChange={(newValue) => {
+            onChange({ sleepDelay: newValue });
+          }}
+          value={
+            typeof options.sleepDelay === 'string'
+              ? sleepDelayToSeconds(options.sleepDelay as SleepDelayEnum)
+              : typeof options.sleepDelay === 'number'
+              ? options.sleepDelay
+              : 0
+          }
+        />
+      ),
+      onWillSet: (options: Options) => {
+        if (typeof options.sleepDelay === 'string') {
+          options.sleepDelay = sleepDelayToSeconds(
+            options.sleepDelay as SleepDelayEnum
+          );
+        }
+      },
     },
   },
   {
@@ -391,6 +487,7 @@ const OptionsScreen: React.FC<
     if (selectedOption == null || editOptions == null) {
       return;
     }
+    selectedOption.value.onWillSet?.(editOptions);
     console.log('call setOptions(): ' + JSON.stringify(editOptions));
     try {
       await setOptions(editOptions);

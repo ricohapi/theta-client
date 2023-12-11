@@ -769,20 +769,6 @@ void main() {
     }
   });
 
-  test('OffDelayEnum', () async {
-    List<List<dynamic>> data = [
-      [OffDelayEnum.disable, 'DISABLE'],
-      [OffDelayEnum.offDelay_5m, 'OFF_DELAY_5M'],
-      [OffDelayEnum.offDelay_10m, 'OFF_DELAY_10M'],
-      [OffDelayEnum.offDelay_15m, 'OFF_DELAY_15M'],
-      [OffDelayEnum.offDelay_30m, 'OFF_DELAY_30M'],
-    ];
-    expect(data.length, OffDelayEnum.values.length, reason: 'enum count');
-    for (int i = 0; i < data.length; i++) {
-      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
-    }
-  });
-
   test('PowerSavingEnum', () async {
     List<List<dynamic>> data = [
       [PowerSavingEnum.on, 'ON'],
@@ -837,20 +823,6 @@ void main() {
       [ShootingMethodEnum.burst, 'BURST'],
     ];
     expect(data.length, ShootingMethodEnum.values.length, reason: 'enum count');
-    for (int i = 0; i < data.length; i++) {
-      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
-    }
-  });
-
-  test('SleepDelayEnum', () async {
-    List<List<dynamic>> data = [
-      [SleepDelayEnum.sleepDelay_3m, 'SLEEP_DELAY_3M'],
-      [SleepDelayEnum.sleepDelay_5m, 'SLEEP_DELAY_5M'],
-      [SleepDelayEnum.sleepDelay_7m, 'SLEEP_DELAY_7M'],
-      [SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
-      [SleepDelayEnum.disable, 'DISABLE'],
-    ];
-    expect(data.length, SleepDelayEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }

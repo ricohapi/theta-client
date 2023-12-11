@@ -26,6 +26,8 @@ import type { VideoStitchingEnum } from './option-video-stitching';
 import type { VisibilityReductionEnum } from './option-visibility-reduction';
 import type { WhiteBalanceAutoStrengthEnum } from './option-white-balance-auto-strength';
 import type { WlanFrequencyEnum } from './option-wlan-frequency';
+import { OffDelayEnum } from './option-off-delay';
+import { SleepDelayEnum } from './option-sleep-delay';
 
 /** Aperture value. */
 export const ApertureEnum = {
@@ -375,44 +377,6 @@ export const MaxRecordableTimeEnum = {
 /** type definition of MaxRecordableTimeEnum */
 export type MaxRecordableTimeEnum =
   (typeof MaxRecordableTimeEnum)[keyof typeof MaxRecordableTimeEnum];
-
-/** Length of standby time before the camera automatically powers OFF. */
-export const OffDelayEnum = {
-  /** Do not turn power off. */
-  DISABLE: 'DISABLE',
-  /** Power off after 5 minutes.(300sec) */
-  OFF_DELAY_5M: 'OFF_DELAY_5M',
-  /** Power off after 10 minutes.(600sec) */
-  OFF_DELAY_10M: 'OFF_DELAY_10M',
-  /** Power off after 15 minutes.(900sec) */
-  OFF_DELAY_15M: 'OFF_DELAY_15M',
-  /** Power off after 30 minutes.(1,800sec) */
-  OFF_DELAY_30M: 'OFF_DELAY_30M',
-} as const;
-
-/** type definition of OffDelayEnum */
-export type OffDelayEnum =
-  | (typeof OffDelayEnum)[keyof typeof OffDelayEnum]
-  | number;
-
-/** Length of standby time before the camera enters the sleep mode. */
-export const SleepDelayEnum = {
-  /** Do not turn sleep mode. */
-  DISABLE: 'DISABLE',
-  /** sleep mode after 3 minutes.(180seconds) */
-  SLEEP_DELAY_3M: 'SLEEP_DELAY_3M',
-  /** sleep mode after 5 minutes.(300seconds) */
-  SLEEP_DELAY_5M: 'SLEEP_DELAY_5M',
-  /** sleep mode after 7 minutes.(420seconds) */
-  SLEEP_DELAY_7M: 'SLEEP_DELAY_7M',
-  /** sleep mode after 10 minutes.(600seconds) */
-  SLEEP_DELAY_10M: 'SLEEP_DELAY_10M',
-} as const;
-
-/** type definition of SleepDelayEnum */
-export type SleepDelayEnum =
-  | (typeof SleepDelayEnum)[keyof typeof SleepDelayEnum]
-  | number;
 
 /** White balance. */
 export const WhiteBalanceEnum = {

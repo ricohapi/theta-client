@@ -275,9 +275,7 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
             values: ThetaRepository.NetworkTypeEnum.values(), name: value as! String
         )!
     case ThetaRepository.OptionNameEnum.offdelay.name:
-        options.offDelay = getEnumValue(
-            values: ThetaRepository.OffDelayEnum.values(), name: value as! String
-        )!
+        options.offDelay = toOffDelay(value: value)
     case ThetaRepository.OptionNameEnum.password.name:
         options.password = value as? String
     case ThetaRepository.OptionNameEnum.powersaving.name:
@@ -313,9 +311,7 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.shuttervolume.name:
         options.shutterVolume = KotlinInt(integerLiteral: value as! Int)
     case ThetaRepository.OptionNameEnum.sleepdelay.name:
-        options.sleepDelay = getEnumValue(
-            values: ThetaRepository.SleepDelayEnum.values(), name: value as! String
-        )!
+        options.sleepDelay = toSleepDelay(value: value)
     case ThetaRepository.OptionNameEnum.timeshift.name:
         if let params = value as? [String: Any] {
             options.timeShift = toTimeShift(params: params)
@@ -945,6 +941,30 @@ func toBitrate(value: Any) -> ThetaRepositoryBitrate? {
     }
 }
 
+func toOffDelay(value: Any) -> ThetaRepositoryOffDelay? {
+    if value is NSNumber, let intVal = value as? Int32 {
+        return ThetaRepository.OffDelaySec(sec: intVal)
+    } else if let name = value as? String,
+              let enumValue = getEnumValue(values: ThetaRepository.OffDelayEnum.values(), name: name)
+    {
+        return enumValue
+    } else {
+        return nil
+    }
+}
+
+func toSleepDelay(value: Any) -> ThetaRepositorySleepDelay? {
+    if value is NSNumber, let intVal = value as? Int32 {
+        return ThetaRepository.SleepDelaySec(sec: intVal)
+    } else if let name = value as? String,
+              let enumValue = getEnumValue(values: ThetaRepository.SleepDelayEnum.values(), name: name)
+    {
+        return enumValue
+    } else {
+        return nil
+    }
+}
+
 func toBurstOption(params: [String: Any]) -> ThetaRepository.BurstOption {
     var burstCaptureNum: ThetaRepository.BurstCaptureNumEnum? = nil
     if let name = params["burstCaptureNum"] as? String {
@@ -1149,13 +1169,9 @@ func toConfig(params: [String: Any]) -> ThetaRepository.Config {
                 values: ThetaRepository.LanguageEnum.values(), name: value as? String ?? ""
             )
         case KEY_OFF_DELAY:
-            config.offDelay = getEnumValue(
-                values: ThetaRepository.OffDelayEnum.values(), name: value as? String ?? ""
-            )
+            config.offDelay = toOffDelay(value: value)
         case KEY_SLEEP_DELAY:
-            config.sleepDelay = getEnumValue(
-                values: ThetaRepository.SleepDelayEnum.values(), name: value as? String ?? ""
-            )
+            config.sleepDelay = toSleepDelay(value: value)
         case KEY_SHUTTER_VOLUME:
             if let value = value as? Int {
                 config.shutterVolume = KotlinInt(integerLiteral: value)
