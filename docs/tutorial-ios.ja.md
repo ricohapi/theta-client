@@ -841,35 +841,41 @@ Task {
   | it   | イタリア語 |      |
   | ko   | 韓国語     |      |
 
-- スリープモードに入るまでの時間(分) - sleepDelay:ThetaRepository.SleepDelayEnum/SleepDelaySec
+- スリープモードに入るまでの時間(秒) - sleepDelay:ThetaRepository.SleepDelayEnum/SleepDelaySec
 
   - ThetaRepository.SleepDelayEnum
 
-    | 値            | 設定値(分) | 備考           |
-    | ------------- | ---------: | -------------- |
-    | disable       |          0 | 自動オフしない |
-    | sleepDelay3m  |          3 |                |
-    | sleepDelay5m  |          5 |                |
-    | sleepDelay7m  |          7 |                |
-    | sleepDelay10m |         10 |                |
+    | 値             | 設定値(秒) | 備考      |
+    |---------------|-------:|---------|
+    | disable       |  65535 | 自動オフしない |
+    | sleepDelay3m  |    180 |         |
+    | sleepDelay5m  |    300 |         |
+    | sleepDelay7m  |    420 |         |
+    | sleepDelay10m |    600 |         |
 
   - ThetaRepository.SleepDelaySec(sec:Int)
-    - 0〜1800 (秒)
+    - RICOH THETA V以降の場合
+      - 60 ～ 65534、または 65535 (スリープ モードを無効にする場合)。
+    - RICOH THETA SまたはSCの場合
+      - 30 ～ 1800、または 65535 (スリープ モードを無効にする場合)。
 
-- スリープから自動電源オフまでの時間(分) offDelay:ThetaRepository.OffDelayEnum/OffDelaySec
+- スリープから自動電源オフまでの時間(秒) offDelay:ThetaRepository.OffDelayEnum/OffDelaySec
 
   - ThetaRepository.OffDelayEnum
 
-    | 値          | 設定値(分) | 備考           |
-    | ----------- | ---------: | -------------- |
-    | disable     |          0 | 自動オフしない |
-    | offDelay5m  |          5 |                |
-    | offDelay10m |         10 |                |
-    | offDelay15m |         15 |                |
-    | offDelay30m |         30 |                |
+    | 値           | 設定値(秒) | 備考      |
+    |-------------|-------:|---------|
+    | disable     |  65535 | 自動オフしない |
+    | offDelay5m  |    300 |         |
+    | offDelay10m |    600 |         |
+    | offDelay15m |    900 |         |
+    | offDelay30m |   1800 |         |
 
   - ThetaRepository.OffDelaySec(sec:Int)
-    - 0〜1800 (秒) デフォルトは 3 分(180 秒)
+    - RICOH THETA V以降の場合
+      - 0、または600以上2592000以下（単位：秒）の60の倍数、または65535。65535を設定・取得した場合は0を返します（自動電源オフを無効にする場合）。
+    - RICOH THETA SまたはSCの場合
+      - 30 ～ 1800、または 65535 (自動電源オフを無効にする場合)。
 
 - シャッター音 - shutterVolume:Int
   - 0 - 100

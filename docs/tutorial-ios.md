@@ -860,37 +860,41 @@ Ignored even if specified in THETA S or THETA SC.
 | it    | Italian        |         |
 | ko    | Korean         |         |     |
 
-- Time to enter sleep mode (minutes): `sleepDelay:ThetaRepository.SleepDelayEnum/SleepDelaySec`
+- Time to enter sleep mode (seconds): `sleepDelay:ThetaRepository.SleepDelayEnum/SleepDelaySec`
 
   - ThetaRepository.SleepDelayEnum
 
-| Value         | Set value (minutes) | Remarks                      |
-| ------------- | ------------------: | ---------------------------- |
-| disable       |                   0 | Not automatically turned off |
-| sleepDelay3m  |                   3 |                              |
-| sleepDelay5m  |                   5 |                              |
-| sleepDelay7m  |                   7 |                              |
-| sleepDelay10m |                  10 |                              |
+    | Value         | Set value (seconds) | Remarks                      |
+    |---------------|--------------------:|------------------------------|
+    | disable       |               65535 | Not automatically turned off |
+    | sleepDelay3m  |                 180 |                              |
+    | sleepDelay5m  |                 300 |                              |
+    | sleepDelay7m  |                 420 |                              |
+    | sleepDelay10m |                 600 |                              |
 
-- ThetaRepository.SleepDelaySec(sec:Int)
+  - ThetaRepository.SleepDelaySec(sec:Int)
+    - For RICOH THETA V or later
+      - 60 to 65534, or 65535 (to disable the sleep mode).
+    - For RICOH THETA S or SC
+      - 30 to 1800, or 65535 (to disable the sleep mode).
 
-  - 0 to 1800 (seconds)
-
-- Time from sleep to auto power off (minutes): `OffDelay:ThetaRepository.OffDelayEnum/OffDelaySec`
+- Time from sleep to auto power off (seconds): `OffDelay:ThetaRepository.OffDelayEnum/OffDelaySec`
 
   - ThetaRepository.OffDelayEnum
 
-| Value       | Set value (minutes) | Remarks                      |
-| ----------- | ------------------: | ---------------------------- |
-| disable     |                   0 | Not automatically turned off |
-| offDelay5m  |                   5 |                              |
-| offDelay10m |                  10 |                              |
-| offDelay15m |                  15 |                              |
-| offDelay30m |                  30 |                              |
+    | Value       | Set value (seconds) | Remarks                      |
+    |-------------|--------------------:|------------------------------|
+    | disable     |               65535 | Not automatically turned off |
+    | offDelay5m  |                 300 |                              |
+    | offDelay10m |                 600 |                              |
+    | offDelay15m |                 900 |                              |
+    | offDelay30m |                1800 |                              |
 
-- ThetaRepository.OffDelaySec(sec:Int)
-
-  - 0 to 1800 (seconds)
+  - ThetaRepository.OffDelaySec(sec:Int)
+    - For RICOH THETA V or later
+      - 0, or a value that is a multiple of 60 out of 600 or more and 2592000 or less (unit: second), or 65535. Return 0 when 65535 is set and obtained (Do not turn power OFF).
+    - For RICOH THETA S or SC
+      - 30 or more and 1800 or less (unit: seconds), 65535 (Do not turn power OFF).
 
 - Shutter sound: `shutterVolume:Int`
   - 0 - 100
