@@ -6,10 +6,10 @@ class VideoScreen extends StatefulWidget {
   final String fileUrl;
 
   const VideoScreen({
-    Key? key,
+    super.key,
     required this.name,
     required this.fileUrl,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() {

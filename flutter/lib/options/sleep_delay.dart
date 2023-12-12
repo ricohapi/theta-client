@@ -4,6 +4,7 @@ class SleepDelayEnum {
   final int sec;
 
   SleepDelayEnum._internal(String rateStr, this.sec) : rawValue = rateStr;
+
   SleepDelayEnum._internalSec(this.sec) : rawValue = sec;
 
   @override
@@ -28,8 +29,8 @@ class SleepDelayEnum {
   static final sleepDelay_7m = SleepDelayEnum._internal('SLEEP_DELAY_7M', 420);
 
   /// Sleep mode after 10 minutes.(600sec)
-  static final sleepDelay_10m = SleepDelayEnum._internal('SLEEP_DELAY_10M', 600);
-
+  static final sleepDelay_10m =
+      SleepDelayEnum._internal('SLEEP_DELAY_10M', 600);
 
   static final values = [
     disable,
@@ -60,6 +61,5 @@ class SleepDelayEnum {
 /// For RICOH THETA S or SC
 /// 30 to 1800, or 65535 (to disable the sleep mode)
 class SleepDelaySec extends SleepDelayEnum {
-
-  SleepDelaySec(int sec) : super._internalSec(sec);
+  SleepDelaySec(super.sec) : super._internalSec();
 }

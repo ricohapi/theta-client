@@ -10,11 +10,13 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() {
-    channel.setMockMethodCallHandler(null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
   });
 
   tearDown(() {
-    channel.setMockMethodCallHandler(null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
   });
 
   test('SleepDelayEnum const', () async {
@@ -45,17 +47,20 @@ void main() {
   });
 
   test('getOptions', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       Map<String, dynamic> optionMap = {};
       optionMap['SleepDelay'] = 'SLEEP_DELAY_5M';
       return Future.value(optionMap);
     });
     Options options = await platform.getOptions([OptionNameEnum.sleepDelay]);
-    expect(options.sleepDelay?.rawValue, 'SLEEP_DELAY_5M', reason: 'sleepDelay const');
+    expect(options.sleepDelay?.rawValue, 'SLEEP_DELAY_5M',
+        reason: 'sleepDelay const');
   });
 
   test('getOptions number', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.arguments, ['SleepDelay']);
       Map<String, dynamic> optionMap = {};
       optionMap['SleepDelay'] = 600;
@@ -67,7 +72,8 @@ void main() {
   });
 
   test('setOptions const', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['SleepDelay'], 'SLEEP_DELAY_3M', reason: 'const');
       return Future.value();
@@ -78,7 +84,8 @@ void main() {
   });
 
   test('setOptions number', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['SleepDelay'], 420, reason: 'number');
       return Future.value();

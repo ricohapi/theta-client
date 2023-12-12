@@ -7,7 +7,7 @@ import 'package:theta_client_flutter/theta_client_flutter.dart';
 import 'message_box.dart';
 
 class FileListScreen extends StatefulWidget {
-  const FileListScreen({Key? key}) : super(key: key);
+  const FileListScreen({super.key});
 
   @override
   State<StatefulWidget> createState() {

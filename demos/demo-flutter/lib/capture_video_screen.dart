@@ -6,7 +6,7 @@ import 'package:theta_client_flutter/theta_client_flutter.dart';
 import 'message_box.dart';
 
 class CaptureVideoScreen extends StatefulWidget {
-  const CaptureVideoScreen({Key? key}) : super(key: key);
+  const CaptureVideoScreen({super.key});
 
   @override
   State<StatefulWidget> createState() {

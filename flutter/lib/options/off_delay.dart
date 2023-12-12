@@ -6,6 +6,7 @@ class OffDelayEnum {
   final int sec;
 
   OffDelayEnum._internal(String rateStr, this.sec) : rawValue = rateStr;
+
   OffDelayEnum._internalSec(this.sec) : rawValue = sec;
 
   @override
@@ -61,6 +62,5 @@ class OffDelayEnum {
 /// For RICOH THETA S or SC
 /// 30 or more and 1800 or less (unit: seconds), 65535 (Do not turn power OFF).
 class OffDelaySec extends OffDelayEnum {
-
-  OffDelaySec(int sec) : super._internalSec(sec);
+  OffDelaySec(super.sec) : super._internalSec();
 }

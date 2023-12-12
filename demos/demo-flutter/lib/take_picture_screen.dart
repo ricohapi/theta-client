@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
 class TakePictureScreen extends StatefulWidget {
-  const TakePictureScreen({Key? key}) : super(key: key);
+  const TakePictureScreen({super.key});
 
   @override
   State<StatefulWidget> createState() {

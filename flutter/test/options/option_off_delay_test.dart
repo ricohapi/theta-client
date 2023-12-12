@@ -10,11 +10,13 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() {
-    channel.setMockMethodCallHandler(null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
   });
 
   tearDown(() {
-    channel.setMockMethodCallHandler(null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
   });
 
   test('OffDelayEnum const', () async {
@@ -45,17 +47,20 @@ void main() {
   });
 
   test('getOptions', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       Map<String, dynamic> optionMap = {};
       optionMap['OffDelay'] = 'OFF_DELAY_5M';
       return Future.value(optionMap);
     });
     Options options = await platform.getOptions([OptionNameEnum.offDelay]);
-    expect(options.offDelay?.rawValue, 'OFF_DELAY_5M', reason: 'offDelay const');
+    expect(options.offDelay?.rawValue, 'OFF_DELAY_5M',
+        reason: 'offDelay const');
   });
 
   test('getOptions number', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.arguments, ['OffDelay']);
       Map<String, dynamic> optionMap = {};
       optionMap['OffDelay'] = 600;
@@ -67,7 +72,8 @@ void main() {
   });
 
   test('setOptions const', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['OffDelay'], 'OFF_DELAY_15M', reason: 'const');
       return Future.value();
@@ -78,7 +84,8 @@ void main() {
   });
 
   test('setOptions number', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['OffDelay'], 1800, reason: 'number');
       return Future.value();
