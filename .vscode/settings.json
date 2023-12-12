@@ -1,0 +1,11 @@
+{
+  "[dart]": {
+    "editor.formatOnSave": true
+  },
+
+  "[javascript][javascriptreact][typescript][typescriptreact]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    }
+  }
+}
