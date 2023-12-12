@@ -5,3 +5,4 @@ export * from './time-shift-capture';
 export * from './limitless-interval-capture';
 export * from './shot-count-specified-interval-capture';
 export * from './composite-interval-capture';
+export * from './burst-capture';

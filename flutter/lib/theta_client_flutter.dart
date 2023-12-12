@@ -164,6 +164,24 @@ class ThetaClientFlutter {
     return CompositeIntervalCaptureBuilder();
   }
 
+  /// Get BurstCapture.Builder for burst shooting
+  BurstCaptureBuilder getBurstCaptureBuilder(
+      BurstCaptureNumEnum burstCaptureNum,
+      BurstBracketStepEnum burstBracketStep,
+      BurstCompensationEnum burstCompensation,
+      BurstMaxExposureTimeEnum burstMaxExposureTime,
+      BurstEnableIsoControlEnum burstEnableIsoControl,
+      BurstOrderEnum burstOrder) {
+    ThetaClientFlutterPlatform.instance.getBurstCaptureBuilder(
+        burstCaptureNum,
+        burstBracketStep,
+        burstCompensation,
+        burstMaxExposureTime,
+        burstEnableIsoControl,
+        burstOrder);
+    return BurstCaptureBuilder();
+  }
+
   /// Acquires the properties and property support specifications for shooting, the camera, etc.
   ///
   /// Refer to the [options category](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)

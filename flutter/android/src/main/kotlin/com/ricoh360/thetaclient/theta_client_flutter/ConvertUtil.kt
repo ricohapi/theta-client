@@ -355,6 +355,19 @@ fun setCompositeIntervalCaptureBuilderParams(call: MethodCall, builder: Composit
     }
 }
 
+fun setBurstCaptureBuilderParams(call: MethodCall, builder: BurstCapture.Builder) {
+    call.argument<Int>("_capture_interval")?.let {
+        if (it >= 0) {
+            builder.setCheckStatusCommandInterval(it.toLong())
+        }
+    }
+    call.argument<String>(OptionNameEnum.BurstMode.name)?.let { enumName ->
+        BurstModeEnum.values().find { it.name == enumName }?.let {
+            builder.setBurstMode(it)
+        }
+    }
+}
+
 fun toGetOptionsParam(data: List<String>): List<OptionNameEnum> {
     val optionNames = mutableListOf<OptionNameEnum>()
     data.forEach { name ->

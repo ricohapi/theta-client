@@ -47,6 +47,7 @@ let KEY_PROXY_URL = "url"
 let KEY_PROXY_PORT = "port"
 let KEY_PROXY_USER_ID = "userid"
 let KEY_PROXY_PASSWORD = "password"
+let KEY_BURST_MODE = "burstMode"
 let KEY_BURST_CAPTURE_NUM = "burstCaptureNum"
 let KEY_BURST_BRACKET_STEP = "burstBracketStep"
 let KEY_BURST_COMPENSATION = "burstCompensation"
@@ -572,6 +573,21 @@ func setCompositeIntervalCaptureBuilderParams(params: [String: Any], builder: Co
     }
     if let value = params[KEY_COMPOSITE_SHOOTING_OUTPUT_INTERVAL] as? Int32 {
         builder.setCompositeShootingOutputInterval(sec: value)
+    }
+}
+
+func setBurstCaptureBuilderParams(params: [String: Any], builder: BurstCapture.Builder) {
+    if let interval = params[KEY_TIMESHIFT_CAPTURE_INTERVAL] as? Int,
+       interval >= 0
+    {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
+    if let value = params[KEY_BURST_MODE] as? String {
+        if let enumValue = getEnumValue(values: ThetaRepository.BurstModeEnum.values(),
+                                        name: value)
+        {
+            builder.setBurstMode(mode: enumValue)
+        }
     }
 }
 

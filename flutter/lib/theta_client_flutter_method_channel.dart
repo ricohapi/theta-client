@@ -16,6 +16,8 @@ const notifyIdShotCountSpecifiedIntervalCaptureProgress = 10021;
 const notifyIdShotCountSpecifiedIntervalCaptureStopError = 10022;
 const notifyIdCompositeIntervalCaptureProgress = 10031;
 const notifyIdCompositeIntervalCaptureStopError = 10032;
+const notifyIdBurstCaptureProgress = 10051;
+const notifyIdBurstCaptureStopError = 10052;
 
 /// An implementation of [ThetaClientFlutterPlatform] that uses method channels.
 class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
@@ -488,6 +490,77 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   @override
   Future<void> stopCompositeIntervalCapture() async {
     return methodChannel.invokeMethod<void>('stopCompositeIntervalCapture');
+  }
+
+  @override
+  Future<void> getBurstCaptureBuilder(
+      BurstCaptureNumEnum burstCaptureNum,
+      BurstBracketStepEnum burstBracketStep,
+      BurstCompensationEnum burstCompensation,
+      BurstMaxExposureTimeEnum burstMaxExposureTime,
+      BurstEnableIsoControlEnum burstEnableIsoControl,
+      BurstOrderEnum burstOrder) async {
+    final Map params = <String, dynamic>{
+      'burstCaptureNum': burstCaptureNum.rawValue,
+      'burstBracketStep': burstBracketStep.rawValue,
+      'burstCompensation': burstCompensation.rawValue,
+      'burstMaxExposureTime': burstMaxExposureTime.rawValue,
+      'burstEnableIsoControl': burstEnableIsoControl.rawValue,
+      'burstOrder': burstOrder.rawValue,
+    };
+    return methodChannel.invokeMethod<void>('getBurstCaptureBuilder', params);
+  }
+
+  @override
+  Future<void> buildBurstCapture(
+      Map<String, dynamic> options, int interval) async {
+    final params = ConvertUtils.convertCaptureParams(options);
+    params['_capture_interval'] = interval;
+    return methodChannel.invokeMethod<void>('buildBurstCapture', params);
+  }
+
+  @override
+  Future<List<String>?> startBurstCapture(void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed) async {
+    var completer = Completer<List<String>?>();
+    try {
+      enableNotifyEventReceiver();
+      if (onProgress != null) {
+        addNotify(notifyIdBurstCaptureProgress, (params) {
+          final completion = params?['completion'] as double?;
+          if (completion != null) {
+            onProgress(completion);
+          }
+        });
+      }
+      if (onStopFailed != null) {
+        addNotify(notifyIdBurstCaptureStopError, (params) {
+          final message = params?['message'] as String?;
+          if (message != null) {
+            onStopFailed(Exception(message));
+          }
+        });
+      }
+      final fileUrls =
+          await methodChannel.invokeMethod<List<dynamic>?>('startBurstCapture');
+      removeNotify(notifyIdBurstCaptureProgress);
+      removeNotify(notifyIdBurstCaptureStopError);
+      if (fileUrls == null) {
+        completer.complete(null);
+      } else {
+        completer.complete(ConvertUtils.convertStringList(fileUrls));
+      }
+    } catch (e) {
+      removeNotify(notifyIdBurstCaptureProgress);
+      removeNotify(notifyIdBurstCaptureStopError);
+      completer.completeError(e);
+    }
+    return completer.future;
+  }
+
+  @override
+  Future<void> stopBurstCapture() async {
+    return methodChannel.invokeMethod<void>('stopBurstCapture');
   }
 
   @override

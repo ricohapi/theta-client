@@ -213,6 +213,18 @@ fun setCompositeIntervalCaptureBuilderParams(optionMap: ReadableMap, builder: Co
   }
 }
 
+fun setBurstCaptureBuilderParams(optionMap: ReadableMap, builder: BurstCapture.Builder) {
+  val interval = if (optionMap.hasKey("_capture_interval")) optionMap.getInt("_capture_interval") else null
+  interval?.let {
+    if (it >= 0) {
+      builder.setCheckStatusCommandInterval(it.toLong())
+    }
+  }
+  optionMap.getString("burstMode")?.let {
+    builder.setBurstMode(BurstModeEnum.valueOf(it))
+  }
+}
+
 fun toGetOptionsParam(optionNames: ReadableArray): MutableList<OptionNameEnum> {
   val optionNameList = mutableListOf<OptionNameEnum>()
   for (index in 0..(optionNames.size() - 1)) {

@@ -369,6 +369,19 @@ func setCompositeIntervalCaptureBuilderParams(params: [String: Any], builder: Co
     }
 }
 
+func setBurstCaptureBuilderParams(params: [String: Any], builder: BurstCapture.Builder) {
+    if let interval = params["_capture_interval"] as? Int,
+       interval >= 0
+    {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
+    if let value = params[ThetaRepository.OptionNameEnum.burstmode.name] as? String {
+        if let enumValue = getEnumValue(values: ThetaRepository.BurstModeEnum.values(), name: value) {
+            builder.setBurstMode(mode: enumValue)
+        }
+    }
+}
+
 func toBitrate(value: Any) -> ThetaRepositoryBitrate? {
     if value is NSNumber, let intVal = value as? Int32 {
         return ThetaRepository.BitrateNumber(value: intVal)

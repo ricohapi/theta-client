@@ -26,6 +26,10 @@ export const NativeModules = {
     buildCompositeIntervalCapture: jest.fn(),
     startCompositeIntervalCapture: jest.fn(),
     cancelCompositeIntervalCapture: jest.fn(),
+    getBurstCaptureBuilder: jest.fn(),
+    buildBurstCapture: jest.fn(),
+    startBurstCapture: jest.fn(),
+    cancelBurstCapture: jest.fn(),
   },
 };
 

@@ -12,6 +12,8 @@ let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_PROGRESS = 10021
 let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_STOP_ERROR = 10022
 let NOTIFY_COMPOSITE_INTERVAL_PROGRESS = 10031
 let NOTIFY_COMPOSITE_INTERVAL_STOP_ERROR = 10032
+let NOTIFY_BURST_PROGRESS = 10051
+let NOTIFY_BURST_STOP_ERROR = 10052
 
 public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     public func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -50,6 +52,9 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     var compositeIntervalCaptureBuilder: CompositeIntervalCapture.Builder? = nil
     var compositeIntervalCapture: CompositeIntervalCapture? = nil
     var compositeIntervalCapturing: CompositeIntervalCapturing? = nil
+    var burstCaptureBuilder: BurstCapture.Builder? = nil
+    var burstCapture: BurstCapture? = nil
+    var burstCapturing: BurstCapturing? = nil
 
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "theta_client_flutter", binaryMessenger: registrar.messenger())
@@ -144,6 +149,14 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             startCompositeIntervalCapture(result: result)
         case "stopCompositeIntervalCapture":
             stopCompositeIntervalCapture(result: result)
+        case "getBurstCaptureBuilder":
+            getBurstCaptureBuilder(call: call, result: result)
+        case "buildBurstCapture":
+            buildBurstCapture(call: call, result: result)
+        case "startBurstCapture":
+            startBurstCapture(result: result)
+        case "stopBurstCapture":
+            stopBurstCapture(result: result)
         case "getOptions":
             getOptions(call: call, result: result)
         case "setOptions":
@@ -931,6 +944,117 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
 
     func stopCompositeIntervalCapture(result: @escaping FlutterResult) {
         guard let _ = thetaRepository, let capturing = compositeIntervalCapturing else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        capturing.stopCapture()
+        result(nil)
+    }
+
+    func getBurstCaptureBuilder(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let thetaRepository else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        guard
+            let arguments = call.arguments as? [String: Any],
+            let burstCaptureNum = arguments["burstCaptureNum"] as? String,
+            let burstCaptureNumVal = getEnumValue(values: ThetaRepository.BurstCaptureNumEnum.values(), name: burstCaptureNum),
+            let burstBracketStep = arguments["burstBracketStep"] as? String,
+            let burstBracketStepVal = getEnumValue(values: ThetaRepository.BurstBracketStepEnum.values(), name: burstBracketStep),
+            let burstCompensation = arguments["burstCompensation"] as? String,
+            let burstCompensationVal = getEnumValue(values: ThetaRepository.BurstCompensationEnum.values(), name: burstCompensation),
+            let burstMaxExposureTime = arguments["burstMaxExposureTime"] as? String,
+            let burstMaxExposureTimeVal = getEnumValue(values: ThetaRepository.BurstMaxExposureTimeEnum.values(), name: burstMaxExposureTime),
+            let burstEnableIsoControl = arguments["burstEnableIsoControl"] as? String,
+            let burstEnableIsoControlVal = getEnumValue(values: ThetaRepository.BurstEnableIsoControlEnum.values(), name: burstEnableIsoControl),
+            let burstOrder = arguments["burstOrder"] as? String,
+            let burstOrderVal = getEnumValue(values: ThetaRepository.BurstOrderEnum.values(), name: burstOrder)
+        else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoArgument, details: nil)
+            result(flutterError)
+            return
+        }
+
+        burstCaptureBuilder = thetaRepository.getBurstCaptureBuilder(burstCaptureNum: burstCaptureNumVal,
+                                                                     burstBracketStep: burstBracketStepVal,
+                                                                     burstCompensation: burstCompensationVal,
+                                                                     burstMaxExposureTime: burstMaxExposureTimeVal,
+                                                                     burstEnableIsoControl: burstEnableIsoControlVal,
+                                                                     burstOrder: burstOrderVal)
+        result(nil)
+    }
+
+    func buildBurstCapture(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let _ = thetaRepository, let builder = burstCaptureBuilder else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        if let arguments = call.arguments as? [String: Any] {
+            setCaptureBuilderParams(params: arguments, builder: builder)
+            setBurstCaptureBuilderParams(params: arguments, builder: builder)
+        }
+        builder.build(completionHandler: { capture, error in
+            if let thetaError = error {
+                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                result(flutterError)
+            } else {
+                self.burstCapture = capture
+                result(nil)
+            }
+        })
+    }
+
+    func startBurstCapture(result: @escaping FlutterResult) {
+        guard let _ = thetaRepository, let capture = burstCapture else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        class Callback: BurstCaptureStartCaptureCallback {
+            let callback: (_ urls: [String]?, _ error: Error?) -> Void
+            weak var plugin: SwiftThetaClientFlutterPlugin?
+            init(_ callback: @escaping (_ urls: [String]?, _ error: Error?) -> Void, plugin: SwiftThetaClientFlutterPlugin) {
+                self.callback = callback
+                self.plugin = plugin
+            }
+
+            func onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                callback(nil, exception.asError())
+            }
+
+            func onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                let error = exception.asError()
+                plugin?.sendNotifyEvent(id: NOTIFY_BURST_STOP_ERROR, params: toMessageNotifyParam(message: error.localizedDescription))
+            }
+
+            func onProgress(completion: Float) {
+                plugin?.sendNotifyEvent(id: NOTIFY_BURST_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
+            }
+
+            func onCaptureCompleted(fileUrls: [String]?) {
+                callback(fileUrls, nil)
+            }
+        }
+
+        burstCapturing = capture.startCapture(
+            callback: Callback({ fileUrl, error in
+                                   if let thetaError = error {
+                                       let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                                       result(flutterError)
+                                   } else {
+                                       result(fileUrl)
+                                   }
+                               },
+                               plugin: self)
+        )
+    }
+
+    func stopBurstCapture(result: @escaping FlutterResult) {
+        guard let _ = thetaRepository, let capturing = burstCapturing else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return

@@ -5735,6 +5735,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
     /**
      * Get ShotCountSpecifiedIntervalCapture.Builder for interval shooting with the shot count specified.
+     *
      * @param shotCount shot count specified
      * @return ShotCountSpecifiedIntervalCapture.Builder
      */
@@ -5745,10 +5746,41 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Get CompositeIntervalCapture.Builder for interval composite shooting.
      *
+     * @param shootingTimeSec Shooting time for interval composite shooting (sec)
      * @return CompositeIntervalCapture.Builder
      */
     fun getCompositeIntervalCaptureBuilder(shootingTimeSec: Int): CompositeIntervalCapture.Builder {
         return CompositeIntervalCapture.Builder(shootingTimeSec, endpoint)
+    }
+
+    /**
+     * Get BurstCapture.Builder for burst shooting.
+     *
+     * @param burstCaptureNum Number of shots for burst shooting
+     * @param burstBracketStep Bracket value range between each shot for burst shooting
+     * @param burstCompensation Exposure compensation for the base image and entire shooting for burst shooting
+     * @param burstMaxExposureTime Maximum exposure time for burst shooting
+     * @param burstEnableIsoControl Adjustment with ISO sensitivity for burst shooting
+     * @param burstOrder Shooting order for burst shooting
+     * @return BurstCapture.Builder
+     */
+    fun getBurstCaptureBuilder(
+        burstCaptureNum: BurstCaptureNumEnum,
+        burstBracketStep: BurstBracketStepEnum,
+        burstCompensation: BurstCompensationEnum,
+        burstMaxExposureTime: BurstMaxExposureTimeEnum,
+        burstEnableIsoControl: BurstEnableIsoControlEnum,
+        burstOrder: BurstOrderEnum
+    ): BurstCapture.Builder {
+        return BurstCapture.Builder(
+            burstCaptureNum = burstCaptureNum.value,
+            burstBracketStep = burstBracketStep.value,
+            burstCompensation = burstCompensation.value,
+            burstMaxExposureTime = burstMaxExposureTime.value,
+            burstEnableIsoControl = burstEnableIsoControl.value,
+            burstOrder = burstOrder.value,
+            endpoint = endpoint
+        )
     }
 
     /**

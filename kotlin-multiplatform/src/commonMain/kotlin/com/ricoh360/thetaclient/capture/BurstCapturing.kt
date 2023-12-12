@@ -9,15 +9,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-/*
- * CompositeIntervalCapturing
- *
- * @property endpoint URL of Theta web API endpoint
- * @property callback Success or failure of the call
- */
-class CompositeIntervalCapturing internal constructor(
+class BurstCapturing internal constructor(
     private val endpoint: String,
-    private val callback: CompositeIntervalCapture.StartCaptureCallback
+    private val callback: BurstCapture.StartCaptureCallback
 ) : Capturing() {
 
     private val scope = CoroutineScope(Dispatchers.Default)
@@ -27,7 +21,7 @@ class CompositeIntervalCapturing internal constructor(
     }
 
     /**
-     * Stops interval composite shooting
+     * Stops burst shooting
      * When call stopCapture() then call property callback.
      */
     override fun stopCapture() {

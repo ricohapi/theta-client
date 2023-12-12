@@ -77,6 +77,14 @@ const MenuScreen: React.FC<
         },
       },
     },
+    {
+      name: '・burst shooting',
+      value: {
+        selectedFunction: async () => {
+          navigation.navigate('burstCapture');
+        },
+      },
+    },
   ];
 
   const functionList: FunctionItem[] = [

@@ -913,7 +913,7 @@ enum class BurstMode {
  * only For RICOH THETA Z1 firmware v2.10.1 or later
  */
 @Serializable
-internal data class BurstOption(
+data class BurstOption(
     /**
      * @see BurstCaptureNum
      */

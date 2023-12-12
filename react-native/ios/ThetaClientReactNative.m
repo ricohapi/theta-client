@@ -135,6 +135,25 @@ RCT_EXTERN_METHOD(startCompositeIntervalCapture:(RCTPromiseResolveBlock)resolve
 RCT_EXTERN_METHOD(cancelCompositeIntervalCapture:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(getBurstCaptureBuilder:(NSString*)burstCaptureNum
+                  burstBracketStep:(NSString*)burstBracketStep
+                  burstCompensation:(NSString*)burstCompensation
+                  burstMaxExposureTime:(NSString*)burstMaxExposureTime
+                  burstEnableIsoControl:(NSString*)burstEnableIsoControl
+                  burstOrder:(NSString*)burstOrder
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(buildBurstCapture:(NSDictionary*)options
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(startBurstCapture:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(cancelBurstCapture:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(getMetadata:(NSString*)fileUrl
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)

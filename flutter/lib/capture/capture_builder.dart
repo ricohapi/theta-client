@@ -280,6 +280,35 @@ class CompositeIntervalCaptureBuilder
   }
 }
 
+/// Builder of BurstCapture
+class BurstCaptureBuilder extends CaptureBuilder<BurstCaptureBuilder> {
+  int _interval = -1;
+
+  BurstCaptureBuilder setCheckStatusCommandInterval(int timeMillis) {
+    _interval = timeMillis;
+    return this;
+  }
+
+  /// BurstMode setting.
+  BurstCaptureBuilder setBurstMode(BurstModeEnum mode) {
+    _options[OptionNameEnum.burstMode.rawValue] = mode;
+    return this;
+  }
+
+  /// Builds an instance of a BurstCapture that has all the combined parameters of the Options that have been added to the Builder.
+  Future<BurstCapture> build() async {
+    var completer = Completer<BurstCapture>();
+    try {
+      await ThetaClientFlutterPlatform.instance
+          .buildBurstCapture(_options, _interval);
+      completer.complete(BurstCapture(_options, _interval));
+    } catch (e) {
+      completer.completeError(e);
+    }
+    return completer.future;
+  }
+}
+
 /// Photo image format used in PhotoCapture.
 enum PhotoFileFormatEnum {
   /// Image File format.

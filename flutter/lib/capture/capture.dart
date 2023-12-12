@@ -218,3 +218,34 @@ class CompositeIntervalCapture extends Capture {
     return CompositeIntervalCapturing();
   }
 }
+
+/// Capture of burst shooting
+class BurstCapture extends Capture {
+  final int _interval;
+
+  BurstCapture(super.options, this._interval);
+
+  int getCheckStatusCommandInterval() {
+    return _interval;
+  }
+
+  /// Get Burst shooting setting.
+  BurstOption? getBurstOption() =>
+      _options[OptionNameEnum.burstOption.rawValue];
+
+  /// Get BurstMode setting.
+  BurstModeEnum? getBurstMode() => _options[OptionNameEnum.burstMode.rawValue];
+
+  /// Starts burst shooting
+  BurstCapturing startCapture(
+      void Function(List<String>? fileUrls) onSuccess,
+      void Function(double completion) onProgress,
+      void Function(Exception exception) onCaptureFailed,
+      {void Function(Exception exception)? onStopFailed}) {
+    ThetaClientFlutterPlatform.instance
+        .startBurstCapture(onProgress, onStopFailed)
+        .then((value) => onSuccess(value))
+        .onError((error, stackTrace) => onCaptureFailed(error as Exception));
+    return BurstCapturing();
+  }
+}
