@@ -70,6 +70,7 @@ let optionItemNameToEnum = [
     "autoBracket": ThetaRepository.OptionNameEnum.autobracket,
     "bitrate": ThetaRepository.OptionNameEnum.bitrate,
     "bluetoothPower": ThetaRepository.OptionNameEnum.bluetoothpower,
+    "bluetoothRole": ThetaRepository.OptionNameEnum.bluetoothrole,
     "burstMode": ThetaRepository.OptionNameEnum.burstmode,
     "burstOption": ThetaRepository.OptionNameEnum.burstoption,
     "cameraControlSource": ThetaRepository.OptionNameEnum.cameracontrolsource,
@@ -174,6 +175,10 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.bluetoothpower.name:
         options.bluetoothPower = getEnumValue(
             values: ThetaRepository.BluetoothPowerEnum.values(), name: value as! String
+        )!
+    case ThetaRepository.OptionNameEnum.bluetoothrole.name:
+        options.bluetoothRole = getEnumValue(
+            values: ThetaRepository.BluetoothRoleEnum.values(), name: value as! String
         )!
     case ThetaRepository.OptionNameEnum.burstmode.name:
         options.burstMode = getEnumValue(

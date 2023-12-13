@@ -62,6 +62,7 @@ internal class CheckRequest {
             autoBracket: AutoBracket? = null,
             bitrate: String? = null,
             bluetoothPower: BluetoothPower? = null,
+            bluetoothRole: BluetoothRole? = null,
             burstMode: BurstMode? = null,
             burstOption: BurstOption? = null,
             cameraControlSource: CameraControlSource? = null,
@@ -132,6 +133,9 @@ internal class CheckRequest {
             }
             bluetoothPower?.let {
                 assertEquals(optionsRequest.parameters.options._bluetoothPower, it, "setOptions bluetoothPower")
+            }
+            bluetoothRole?.let {
+                assertEquals(optionsRequest.parameters.options._bluetoothRole, it, "setOptions bluetoothRole")
             }
             burstMode?.let {
                 assertEquals(optionsRequest.parameters.options._burstMode, it, "setOptions burstMode")

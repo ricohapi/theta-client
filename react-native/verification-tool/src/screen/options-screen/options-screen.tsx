@@ -5,6 +5,7 @@ import styles from './styles';
 import Button from '../../components/ui/button';
 import {
   ApertureEnum,
+  BluetoothRoleEnum,
   CaptureModeEnum,
   ExposureCompensationEnum,
   ExposureDelayEnum,
@@ -78,6 +79,22 @@ const optionList: OptionItem[] = [
         <ScrollView style={styles.autoBracketEditorLayout}>
           <AutoBracketEdit onChange={onChange} options={options} />
         </ScrollView>
+      ),
+    },
+  },
+  {
+    name: 'bluetoothRole',
+    value: {
+      optionName: OptionNameEnum.BluetoothRole,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'bluetoothRole'}
+          option={options?.bluetoothRole}
+          onChange={(bluetoothRole) => {
+            onChange({ bluetoothRole });
+          }}
+          optionEnum={BluetoothRoleEnum}
+        />
       ),
     },
   },

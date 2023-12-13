@@ -642,6 +642,8 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         options.bitrate = toBitrate(value: value)
     case ThetaRepository.OptionNameEnum.bluetoothpower.name:
         options.bluetoothPower = getEnumValue(values: ThetaRepository.BluetoothPowerEnum.values(), name: value as! String)!
+    case ThetaRepository.OptionNameEnum.bluetoothrole.name:
+        options.bluetoothRole = getEnumValue(values: ThetaRepository.BluetoothRoleEnum.values(), name: value as! String)!
     case ThetaRepository.OptionNameEnum.burstmode.name:
         options.burstMode = getEnumValue(values: ThetaRepository.BurstModeEnum.values(), name: value as! String)!
     case ThetaRepository.OptionNameEnum.burstoption.name:

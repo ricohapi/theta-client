@@ -1,5 +1,6 @@
 import type { AiAutoThumbnailEnum } from './option-ai-auto-thumbnail';
 import type { BitrateEnum } from './option-bitrate';
+import type { BluetoothRoleEnum } from './option-bluetooth-role';
 import type { BracketSetting } from './option-auto-bracket';
 import type { BurstModeEnum } from './option-burst-mode';
 import type { BurstOption } from './option-burst-option';
@@ -422,6 +423,8 @@ export const OptionNameEnum = {
   Bitrate: 'Bitrate',
   /** _bluetoothPower*/
   BluetoothPower: 'BluetoothPower',
+  /** _bluetoothRole*/
+  BluetoothRole: 'BluetoothRole',
   /** _burstMode*/
   BurstMode: 'BurstMode',
   /** _burstOption*/
@@ -544,6 +547,8 @@ export type Options = {
   bitrate?: BitrateEnum;
   /** BluetoothPower */
   bluetoothPower?: BluetoothPowerEnum;
+  /** BluetoothRole */
+  bluetoothRole?: BluetoothRoleEnum;
   /** BurstMode */
   burstMode?: BurstModeEnum;
   /** BurstOption */

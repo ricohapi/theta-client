@@ -146,6 +146,13 @@ internal data class Options(
     var _bluetoothPower: BluetoothPower? = null,
 
     /**
+     * Role of the Bluetooth module.
+     *
+     * @see BluetoothRole
+     */
+    var _bluetoothRole: BluetoothRole? = null,
+
+    /**
      * burst mode
      *
      * @see BurstMode
@@ -883,6 +890,30 @@ enum class BluetoothPower {
      */
     @SerialName("OFF")
     OFF,
+}
+
+/**
+ * Role of the Bluetooth module
+ */
+@Serializable
+enum class BluetoothRole {
+    /**
+     * Central: ON, Peripheral: OFF
+     */
+    @SerialName("Central")
+    CENTRAL,
+
+    /**
+     * Central: OFF, Peripheral: ON
+     */
+    @SerialName("Peripheral")
+    PERIPHERAL,
+
+    /**
+     * Central: ON, Peripheral: ON
+     */
+    @SerialName("Central_Peripheral")
+    CENTRAL_PERIPHERAL,
 }
 
 /**

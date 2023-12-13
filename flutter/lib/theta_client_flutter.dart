@@ -1526,6 +1526,9 @@ enum OptionNameEnum {
   /// Option name _bluetoothPower
   bluetoothPower('BluetoothPower', BluetoothPowerEnum),
 
+  /// Option name _bluetoothRole
+  bluetoothRole('BluetoothRole', BluetoothRoleEnum),
+
   /// Option name _burstOption
   burstOption('BurstOption', BurstOption),
 
@@ -3738,6 +3741,9 @@ class Options {
   /// see [BluetoothPowerEnum]
   BluetoothPowerEnum? bluetoothPower;
 
+  /// Role of the Bluetooth module.
+  BluetoothRoleEnum? bluetoothRole;
+
   /// BurstMode setting.
   /// When this is set to ON, burst shooting is enabled,
   /// and a screen dedicated to burst shooting is displayed in Live View.
@@ -4019,6 +4025,8 @@ class Options {
         return bitrate as T;
       case OptionNameEnum.bluetoothPower:
         return bluetoothPower as T;
+      case OptionNameEnum.bluetoothRole:
+        return bluetoothRole as T;
       case OptionNameEnum.burstMode:
         return burstMode as T;
       case OptionNameEnum.burstOption:
@@ -4147,6 +4155,9 @@ class Options {
         break;
       case OptionNameEnum.bluetoothPower:
         bluetoothPower = value;
+        break;
+      case OptionNameEnum.bluetoothRole:
+        bluetoothRole = value;
         break;
       case OptionNameEnum.burstMode:
         burstMode = value;

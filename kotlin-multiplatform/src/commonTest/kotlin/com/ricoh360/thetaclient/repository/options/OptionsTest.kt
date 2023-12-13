@@ -4,6 +4,7 @@ import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.AiAutoThumbnail
 import com.ricoh360.thetaclient.transferred.AutoBracket
 import com.ricoh360.thetaclient.transferred.BluetoothPower
+import com.ricoh360.thetaclient.transferred.BluetoothRole
 import com.ricoh360.thetaclient.transferred.BracketParameter
 import com.ricoh360.thetaclient.transferred.BurstBracketStep
 import com.ricoh360.thetaclient.transferred.BurstCaptureNum
@@ -80,6 +81,7 @@ class OptionsTest {
         )
         val bitrate = ThetaRepository.BitrateEnum.FINE
         val bluetoothPower = ThetaRepository.BluetoothPowerEnum.ON
+        val bluetoothRole = ThetaRepository.BluetoothRoleEnum.CENTRAL
         val burstMode = ThetaRepository.BurstModeEnum.ON
         val burstOption = ThetaRepository.BurstOption(
             burstCaptureNum = ThetaRepository.BurstCaptureNumEnum.BURST_CAPTURE_NUM_1,
@@ -150,6 +152,7 @@ class OptionsTest {
             autoBracket = autoBracket,
             bitrate = bitrate,
             bluetoothPower = bluetoothPower,
+            bluetoothRole = bluetoothRole,
             burstMode = burstMode,
             burstOption = burstOption,
             cameraControlSource = cameraControlSource,
@@ -213,6 +216,7 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.AutoBracket), autoBracket, "autoBracket")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Bitrate), bitrate, "bitrate")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.BluetoothPower), bluetoothPower, "bluetoothPower")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.BluetoothRole), bluetoothRole, "bluetoothRole")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.BurstMode), burstMode, "burstMode")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.BurstOption), burstOption, "burstOption")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CameraControlSource), cameraControlSource, "cameraControlSource")
@@ -295,6 +299,7 @@ class OptionsTest {
             ),
             Pair(ThetaRepository.OptionNameEnum.Bitrate, ThetaRepository.BitrateEnum.FINE),
             Pair(ThetaRepository.OptionNameEnum.BluetoothPower, ThetaRepository.BluetoothPowerEnum.ON),
+            Pair(ThetaRepository.OptionNameEnum.BluetoothRole, ThetaRepository.BluetoothRoleEnum.CENTRAL),
             Pair(ThetaRepository.OptionNameEnum.BurstMode, ThetaRepository.BurstModeEnum.ON),
             Pair(
                 ThetaRepository.OptionNameEnum.BurstOption, ThetaRepository.BurstOption(
@@ -408,6 +413,7 @@ class OptionsTest {
         )
         val bitrate = Pair("Fine", ThetaRepository.BitrateEnum.FINE)
         val bluetoothPower = Pair(BluetoothPower.ON, ThetaRepository.BluetoothPowerEnum.ON)
+        val bluetoothRole = Pair(BluetoothRole.CENTRAL, ThetaRepository.BluetoothRoleEnum.CENTRAL)
         val burstMode = Pair(BurstMode.ON, ThetaRepository.BurstModeEnum.ON)
         val burstOption = Pair(
             BurstOption(
@@ -487,6 +493,7 @@ class OptionsTest {
             _autoBracket = autoBracket.first,
             _bitrate = bitrate.first,
             _bluetoothPower = bluetoothPower.first,
+            _bluetoothRole = bluetoothRole.first,
             _burstMode = burstMode.first,
             _burstOption = burstOption.first,
             _cameraControlSource = cameraControlSource.first,
@@ -545,6 +552,7 @@ class OptionsTest {
         assertEquals(options.autoBracket, autoBracket.second, "autoBracket")
         assertEquals(options.bitrate, bitrate.second, "bitrate")
         assertEquals(options.bluetoothPower, bluetoothPower.second, "bluetoothPower")
+        assertEquals(options.bluetoothRole, bluetoothRole.second, "bluetoothRole")
         assertEquals(options.burstMode, burstMode.second, "burstMode")
         assertEquals(options.burstOption, burstOption.second, "burstOption")
         assertEquals(options.cameraControlSource, cameraControlSource.second, "cameraControlSource")
@@ -633,6 +641,7 @@ class OptionsTest {
         )
         val bitrate = Pair("Fine", ThetaRepository.BitrateEnum.FINE)
         val bluetoothPower = Pair(BluetoothPower.ON, ThetaRepository.BluetoothPowerEnum.ON)
+        val bluetoothRole = Pair(BluetoothRole.CENTRAL, ThetaRepository.BluetoothRoleEnum.CENTRAL)
         val burstMode = Pair(BurstMode.ON, ThetaRepository.BurstModeEnum.ON)
         val burstOption = Pair(
             BurstOption(
@@ -715,6 +724,7 @@ class OptionsTest {
             autoBracket = autoBracket.second,
             bitrate = bitrate.second,
             bluetoothPower = bluetoothPower.second,
+            bluetoothRole = bluetoothRole.second,
             burstMode = burstMode.second,
             burstOption = burstOption.second,
             cameraControlSource = cameraControlSource.second,
@@ -773,6 +783,7 @@ class OptionsTest {
         assertEquals(options._autoBracket, autoBracket.first, "autoBracket")
         assertEquals(options._bitrate, bitrate.first, "bitrate")
         assertEquals(options._bluetoothPower, bluetoothPower.first, "bluetoothPower")
+        assertEquals(options._bluetoothRole, bluetoothRole.first, "bluetoothRole")
         assertEquals(options._burstMode, burstMode.first, "burstMode")
         assertEquals(options._burstOption, burstOption.first, "burstOption")
         assertEquals(options._cameraControlSource, cameraControlSource.first, "cameraControlSource")

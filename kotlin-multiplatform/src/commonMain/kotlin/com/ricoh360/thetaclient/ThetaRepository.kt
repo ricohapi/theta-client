@@ -687,6 +687,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         BluetoothPower("_bluetoothPower", BluetoothPowerEnum::class),
 
         /**
+         * Option name
+         * _bluetoothRole
+         */
+        BluetoothRole("_bluetoothRole", BluetoothRoleEnum::class),
+
+        /**
          * _burstMode
          */
         BurstMode("_burstMode", BurstModeEnum::class),
@@ -1039,6 +1045,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Bluetooth power.
          */
         var bluetoothPower: BluetoothPowerEnum? = null,
+
+        /**
+         * @see BluetoothRole
+         */
+        var bluetoothRole: BluetoothRoleEnum? = null,
 
         /**
          * @see BurstModeEnum
@@ -1413,6 +1424,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             autoBracket = null,
             bitrate = null,
             bluetoothPower = null,
+            bluetoothRole = null,
             burstMode = null,
             burstOption = null,
             cameraControlSource = null,
@@ -1473,6 +1485,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             autoBracket = options._autoBracket?.let { BracketSettingList.get(it) },
             bitrate = options._bitrate?.let { BitrateEnum.get(it) },
             bluetoothPower = options._bluetoothPower?.let { BluetoothPowerEnum.get(it) },
+            bluetoothRole = options._bluetoothRole?.let { BluetoothRoleEnum.get(it) },
             burstMode = options._burstMode?.let { BurstModeEnum.get(it) },
             burstOption = options._burstOption?.let { BurstOption(it) },
             cameraControlSource = options._cameraControlSource?.let { CameraControlSourceEnum.get(it) },
@@ -1542,6 +1555,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _autoBracket = autoBracket?.toTransferredAutoBracket(),
                 _bitrate = bitrate?.rawValue,
                 _bluetoothPower = bluetoothPower?.value,
+                _bluetoothRole = bluetoothRole?.value,
                 _burstMode = burstMode?.value,
                 _burstOption = burstOption?.toTransferredBurstOption(),
                 _cameraControlSource = cameraControlSource?.value,
@@ -1614,6 +1628,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.AutoBracket -> autoBracket
                 OptionNameEnum.Bitrate -> bitrate
                 OptionNameEnum.BluetoothPower -> bluetoothPower
+                OptionNameEnum.BluetoothRole -> bluetoothRole
                 OptionNameEnum.BurstMode -> burstMode
                 OptionNameEnum.BurstOption -> burstOption
                 OptionNameEnum.CameraControlSource -> cameraControlSource
@@ -1687,6 +1702,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.AutoBracket -> autoBracket = value as BracketSettingList
                 OptionNameEnum.Bitrate -> bitrate = value as Bitrate
                 OptionNameEnum.BluetoothPower -> bluetoothPower = value as BluetoothPowerEnum
+                OptionNameEnum.BluetoothRole -> bluetoothRole = value as BluetoothRoleEnum
                 OptionNameEnum.BurstMode -> burstMode = value as BurstModeEnum
                 OptionNameEnum.BurstOption -> burstOption = value as BurstOption
                 OptionNameEnum.CameraControlSource -> cameraControlSource = value as CameraControlSourceEnum
@@ -2081,6 +2097,38 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Role of the Bluetooth module.
+     */
+    enum class BluetoothRoleEnum(val value: BluetoothRole) {
+        /**
+         * Central: ON, Peripheral: OFF
+         */
+        CENTRAL(BluetoothRole.CENTRAL),
+
+        /**
+         * Central: OFF, Peripheral: ON
+         */
+        PERIPHERAL(BluetoothRole.PERIPHERAL),
+
+        /**
+         * Central: ON, Peripheral: ON
+         */
+        CENTRAL_PERIPHERAL(BluetoothRole.CENTRAL_PERIPHERAL);
+
+        companion object {
+            /**
+             * Convert BluetoothRole to BluetoothRoleEnum
+             *
+             * @param value BluetoothRole
+             * @return BluetoothRoleEnum
+             */
+            fun get(value: BluetoothRole): BluetoothRoleEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
      * BurstMode setting.
      * When this is set to ON, burst shooting is enabled,
      * and a screen dedicated to burst shooting is displayed in Live View.
@@ -2103,7 +2151,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * Convert BurstMode to BurstModeEnum
              *
              * @param value BurstMode
-             * @return BluetoothPowerEnum
+             * @return BurstModeEnum
              */
             fun get(value: BurstMode): BurstModeEnum? {
                 return values().firstOrNull { it.value == value }

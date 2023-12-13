@@ -2,6 +2,7 @@ export * from './options';
 export * from './option-ai-auto-thumbnail';
 export * from './option-auto-bracket';
 export * from './option-bitrate';
+export * from './option-bluetooth-role';
 export * from './option-burst-mode';
 export * from './option-burst-option';
 export * from './option-camera-control-source';

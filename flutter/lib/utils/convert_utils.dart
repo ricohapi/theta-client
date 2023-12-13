@@ -317,6 +317,9 @@ class ConvertUtils {
         case OptionNameEnum.bluetoothPower:
           result.bluetoothPower = BluetoothPowerEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.bluetoothRole:
+          result.bluetoothRole = BluetoothRoleEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.burstMode:
           result.burstMode = BurstModeEnum.getValue(entry.value);
           break;
@@ -507,6 +510,8 @@ class ConvertUtils {
     } else if (value is Bitrate) {
       return value.rawValue;
     } else if (value is BluetoothPowerEnum) {
+      return value.rawValue;
+    } else if (value is BluetoothRoleEnum) {
       return value.rawValue;
     } else if (value is List<BracketSetting>) {
       return convertAutoBracketOptionParam(value);
