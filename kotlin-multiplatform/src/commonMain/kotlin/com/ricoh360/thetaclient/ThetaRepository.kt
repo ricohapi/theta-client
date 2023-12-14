@@ -1853,10 +1853,31 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * List of [BracketSetting] used for multi bracket shooting.
      * Size of the list must be 2 to 13 (THETA X and SC2), or 2 to 19 (THETA Z1 and V).
      */
-    data class BracketSettingList(val list: MutableList<BracketSetting> = mutableListOf()) {
+    class BracketSettingList(originalList: List<BracketSetting>) {
+        constructor() : this(listOf())
+        private val settingList: MutableList<BracketSetting> = originalList.toMutableList()
+        val list: List<BracketSetting>
+            get() = settingList.toList()
+
         fun add(setting: BracketSetting): BracketSettingList {
-            list.add(setting)
+            settingList.add(setting)
             return this
+        }
+
+        override fun toString(): String {
+            return list.toString()
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other is BracketSettingList) {
+                return other.list == list
+            }
+            return false
+        }
+
+        override fun hashCode(): Int {
+            return list.hashCode()
         }
 
         companion object {

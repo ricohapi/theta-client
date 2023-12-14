@@ -142,6 +142,64 @@ class AutoBracketTest {
     }
 
     /**
+     * Set option autoBracket with originalList.
+     */
+    @Test
+    fun setOptionAutoBracketWithOriginalListTest() = runTest {
+        //val value = Pair(ThetaRepository.AutoBracketEnum.=MEMBER=, AutoBracket.=MEMBER=)
+        val list = ThetaRepository.BracketSettingList(listOf(
+            ThetaRepository.BracketSetting(
+                exposureProgram = ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM,
+                whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
+            )
+        ))
+        list.add(
+            ThetaRepository.BracketSetting(
+                aperture = ThetaRepository.ApertureEnum.APERTURE_2_0,
+                colorTemperature = 6800,
+                exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
+                iso = ThetaRepository.IsoEnum.ISO_800,
+                shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_ONE_OVER_100,
+                whiteBalance = ThetaRepository.WhiteBalanceEnum.CLOUDY_DAYLIGHT,
+            )
+        )
+
+        val transferred = AutoBracket(
+            2, listOf(
+                BracketParameter(exposureProgram = 2, whiteBalance = WhiteBalance.DAYLIGHT),
+                BracketParameter(
+                    aperture = 2.0F,
+                    _colorTemperature = 6800,
+                    exposureProgram = 1,
+                    iso = 800,
+                    shutterSpeed = 0.01,
+                    whiteBalance = WhiteBalance.CLOUDY_DAYLIGHT
+                )
+            )
+        )
+
+
+        MockApiClient.onRequest = { request ->
+            // check request
+            CheckRequest.checkSetOptions(request, autoBracket = transferred)
+            ByteReadChannel(Resource("src/commonTest/resources/setOptions/set_options_done.json").readText())
+        }
+
+        val thetaRepository = ThetaRepository(endpoint)
+        val options = ThetaRepository.Options(
+            autoBracket = list
+        )
+        kotlin.runCatching {
+            thetaRepository.setOptions(options)
+        }.onSuccess {
+            assertTrue(true, "setOptions AutoBracket")
+        }.onFailure {
+            println(it.toString())
+            assertTrue(false, "setOptions AutoBracket")
+        }
+    }
+
+    /**
      * Convert ThetaRepository.Options to Options.
      */
     @Test
@@ -154,6 +212,60 @@ class AutoBracketTest {
                         whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
                     )
                 ).add(
+                    ThetaRepository.BracketSetting(
+                        aperture = ThetaRepository.ApertureEnum.APERTURE_2_0,
+                        colorTemperature = 6800,
+                        exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
+                        iso = ThetaRepository.IsoEnum.ISO_800,
+                        shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_ONE_OVER_100,
+                        whiteBalance = ThetaRepository.WhiteBalanceEnum.CLOUDY_DAYLIGHT,
+                    )
+                ),
+                AutoBracket(
+                    2, listOf(
+                        BracketParameter(exposureProgram = 2, whiteBalance = WhiteBalance.DAYLIGHT),
+                        BracketParameter(
+                            aperture = 2.0F,
+                            _colorTemperature = 6800,
+                            exposureProgram = 1,
+                            iso = 800,
+                            shutterSpeed = 0.01,
+                            whiteBalance = WhiteBalance.CLOUDY_DAYLIGHT,
+                        )
+                    )
+                ),
+            ),
+        )
+
+        values.forEach {
+            val orgOptions = Options(
+                _autoBracket = it.second
+            )
+            val options = ThetaRepository.Options(orgOptions)
+            assertEquals(options.autoBracket, it.first, "autoBracket ${it.second}")
+        }
+        values.forEach {
+            val orgOptions = ThetaRepository.Options(
+                autoBracket = it.first
+            )
+            val options = orgOptions.toOptions()
+            assertEquals(options._autoBracket, it.second, "autoBracket ${it.second}")
+        }
+    }
+
+    /**
+     * Convert ThetaRepository.Options to Options with originalList.
+     */
+    @Test
+    fun convertOptionAutoBracketWithOriginalListTest() = runTest {
+        val values = listOf(
+            Pair(
+                ThetaRepository.BracketSettingList(listOf(
+                    ThetaRepository.BracketSetting(
+                        exposureProgram = ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM,
+                        whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
+                    )
+                )).add(
                     ThetaRepository.BracketSetting(
                         aperture = ThetaRepository.ApertureEnum.APERTURE_2_0,
                         colorTemperature = 6800,

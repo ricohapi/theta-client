@@ -265,7 +265,7 @@ func setShotCountSpecifiedIntervalCaptureBuilderParams(params: [String: Any], bu
 }
 
 func toAutoBracket(params: [[String: Any]]) -> ThetaRepository.BracketSettingList {
-    let autoBracket = ThetaRepository.BracketSettingList(list: NSMutableArray())
+    let autoBracket = ThetaRepository.BracketSettingList()
 
     params.forEach { map in
         let aperture = {
