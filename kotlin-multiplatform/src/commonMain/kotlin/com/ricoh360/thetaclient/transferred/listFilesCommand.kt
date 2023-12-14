@@ -281,7 +281,7 @@ internal data class CameraFileInfo(
  * theta projection type
  */
 @Serializable
-enum class _ProjectionType {
+internal enum class _ProjectionType {
     /**
      * Equirectangular type
      */
@@ -305,7 +305,7 @@ enum class _ProjectionType {
  * list file type
  */
 @Serializable
-enum class FileType {
+internal enum class FileType {
     /**
      * All types
      */
@@ -329,7 +329,7 @@ enum class FileType {
  * list files to sort order
  */
 @Serializable
-enum class SortOrder {
+internal enum class SortOrder {
     /**
      * newest order (default)
      */
@@ -347,7 +347,7 @@ enum class SortOrder {
  * Specifies the storage
  */
 @Serializable
-enum class Storage {
+internal enum class Storage {
     /**
      * internal storage
      */

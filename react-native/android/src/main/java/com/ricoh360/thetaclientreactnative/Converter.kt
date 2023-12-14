@@ -383,22 +383,22 @@ fun toResult(autoBracket: BracketSettingList): WritableArray {
 
 fun toResult(burstOption: BurstOption): WritableMap {
   val result = Arguments.createMap()
-  burstOption.burstCaptureNum?.value?.name?.let { name ->
+  burstOption.burstCaptureNum?.name?.let { name ->
     result.putString("burstCaptureNum", name)
   }
-  burstOption.burstBracketStep?.value?.name?.let { name ->
+  burstOption.burstBracketStep?.name?.let { name ->
     result.putString("burstBracketStep", name)
   }
-  burstOption.burstCompensation?.value?.name?.let { name ->
+  burstOption.burstCompensation?.name?.let { name ->
     result.putString("burstCompensation", name)
   }
-  burstOption.burstMaxExposureTime?.value?.name?.let { name ->
+  burstOption.burstMaxExposureTime?.name?.let { name ->
     result.putString("burstMaxExposureTime", name)
   }
-  burstOption.burstEnableIsoControl?.value?.name?.let { name ->
+  burstOption.burstEnableIsoControl?.name?.let { name ->
     result.putString("burstEnableIsoControl", name)
   }
-  burstOption.burstOrder?.value?.name?.let { name ->
+  burstOption.burstOrder?.name?.let { name ->
     result.putString("burstOrder", name)
   }
   return result

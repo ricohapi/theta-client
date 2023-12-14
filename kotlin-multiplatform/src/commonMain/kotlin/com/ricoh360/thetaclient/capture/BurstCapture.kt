@@ -48,12 +48,12 @@ class BurstCapture private constructor(
     /**
      * Get Burst shooting setting.
      */
-    fun getBurstOption() = options._burstOption
+    fun getBurstOption() = options._burstOption?.let { ThetaRepository.BurstOption(it) }
 
     /**
      * Get BurstMode setting.
      */
-    fun getBurstMode() = options._burstMode
+    fun getBurstMode() = options._burstMode?.let { ThetaRepository.BurstModeEnum.get(it) }
 
     // TODO: Add get photo option property
 

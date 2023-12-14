@@ -355,7 +355,7 @@ class BurstCaptureTest {
             .build()
 
         // check result
-        assertEquals(capture.getBurstMode(), BurstMode.OFF, "set option _burstMode OFF")
+        assertEquals(capture.getBurstMode(), ThetaRepository.BurstModeEnum.OFF, "set option _burstMode OFF")
     }
 
     /**

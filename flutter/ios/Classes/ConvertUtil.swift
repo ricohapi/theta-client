@@ -513,14 +513,14 @@ func toBurstOption(params: [String: Any]) -> ThetaRepository.BurstOption {
     )
 }
 
-func convertResult(burstOption: ThetaRepository.BurstOption) -> [String: Any] {
+func convertResult(burstOption: ThetaRepository.BurstOption) -> [String: Any?] {
     return [
-        "burstCaptureNum": burstOption.burstCaptureNum?.value.name,
-        "burstBracketStep": burstOption.burstBracketStep?.value.name,
-        "burstCompensation": burstOption.burstCompensation?.value.name,
-        "burstMaxExposureTime": burstOption.burstMaxExposureTime?.value.name,
-        "burstEnableIsoControl": burstOption.burstEnableIsoControl?.value.name,
-        "burstOrder": burstOption.burstOrder?.value.name,
+        "burstCaptureNum": burstOption.burstCaptureNum?.name,
+        "burstBracketStep": burstOption.burstBracketStep?.name,
+        "burstCompensation": burstOption.burstCompensation?.name,
+        "burstMaxExposureTime": burstOption.burstMaxExposureTime?.name,
+        "burstEnableIsoControl": burstOption.burstEnableIsoControl?.name,
+        "burstOrder": burstOption.burstOrder?.name,
     ]
 }
 

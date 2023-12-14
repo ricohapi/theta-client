@@ -878,7 +878,7 @@ internal data class BracketParameter(
  * bluetooth power
  */
 @Serializable
-enum class BluetoothPower {
+internal enum class BluetoothPower {
     /**
      * Power ON status
      */
@@ -896,7 +896,7 @@ enum class BluetoothPower {
  * Role of the Bluetooth module
  */
 @Serializable
-enum class BluetoothRole {
+internal enum class BluetoothRole {
     /**
      * Central: ON, Peripheral: OFF
      */
@@ -924,7 +924,7 @@ enum class BluetoothRole {
  * only For RICOH THETA Z1 firmware v2.10.1 or later
  */
 @Serializable
-enum class BurstMode {
+internal enum class BurstMode {
     /**
      * BurstMode ON
      */
@@ -944,7 +944,7 @@ enum class BurstMode {
  * only For RICOH THETA Z1 firmware v2.10.1 or later
  */
 @Serializable
-data class BurstOption(
+internal data class BurstOption(
     /**
      * @see BurstCaptureNum
      */
@@ -981,7 +981,7 @@ data class BurstOption(
  * 1, 3, 5, 7, 9
  */
 @Serializable(with = BurstCaptureNumSerializer::class)
-enum class BurstCaptureNum(val value: Int) {
+internal enum class BurstCaptureNum(val value: Int) {
     BURST_CAPTURE_NUM_1(1),
     BURST_CAPTURE_NUM_3(3),
     BURST_CAPTURE_NUM_5(5),
@@ -1017,7 +1017,7 @@ internal object BurstCaptureNumSerializer : KSerializer<BurstCaptureNum> {
  * 0.0, 0.3, 0.7, 1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0
  */
 @Serializable(with = BurstBracketStepSerializer::class)
-enum class BurstBracketStep(val value: Float) {
+internal enum class BurstBracketStep(val value: Float) {
     BRACKET_STEP_0_0(0.0F),
     BRACKET_STEP_0_3(0.3F),
     BRACKET_STEP_0_7(0.7F),
@@ -1059,7 +1059,7 @@ internal object BurstBracketStepSerializer : KSerializer<BurstBracketStep> {
  * 0.0, 0.3, 0.7, 1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 4.3, 4.7, 5.0
  */
 @Serializable(with = BurstCompensationSerializer::class)
-enum class BurstCompensation(val value: Float) {
+internal enum class BurstCompensation(val value: Float) {
     BURST_COMPENSATION_DOWN_5_0(-5.0f),
     BURST_COMPENSATION_DOWN_4_7(-4.7f),
     BURST_COMPENSATION_DOWN_4_3(-4.3f),
@@ -1121,7 +1121,7 @@ internal object BurstCompensationSerializer : KSerializer<BurstCompensation> {
  * 0.5, 0.625, 0.76923076, 1, 1.3, 1.6, 2, 2.5, 3.2, 4, 5, 6, 8, 10, 13, 15, 20, 25, 30, 40, 50, 60
  */
 @Serializable(with = BurstMaxExposureTimeSerializer::class)
-enum class BurstMaxExposureTime(val value: Double) {
+internal enum class BurstMaxExposureTime(val value: Double) {
     MAX_EXPOSURE_TIME_0_5(0.5),
     MAX_EXPOSURE_TIME_0_625(0.625),
     MAX_EXPOSURE_TIME_0_76923076(0.76923076),
@@ -1174,7 +1174,7 @@ internal object BurstMaxExposureTimeSerializer : KSerializer<BurstMaxExposureTim
  * 0: Do not adjust with ISO sensitivity, 1: Adjust with ISO sensitivity
  */
 @Serializable(with = BurstEnableIsoControlSerializer::class)
-enum class BurstEnableIsoControl(val value: Int) {
+internal enum class BurstEnableIsoControl(val value: Int) {
     OFF(0),
     ON(1);
 
@@ -1207,7 +1207,7 @@ internal object BurstEnableIsoControlSerializer : KSerializer<BurstEnableIsoCont
  * 0: '0' → '-' → '+', 1: '-' → '0' → '+'
  */
 @Serializable(with = BurstOrderSerializer::class)
-enum class BurstOrder(val value: Int) {
+internal enum class BurstOrder(val value: Int) {
     BURST_BRACKET_ORDER_0(0),
     BURST_BRACKET_ORDER_1(1);
 
@@ -1243,7 +1243,7 @@ internal object BurstOrderSerializer : KSerializer<BurstOrder> {
  * For RICOH THETA X
  */
 @Serializable
-enum class CameraControlSource {
+internal enum class CameraControlSource {
     /**
      * Operation is possible with the camera. Locks the smartphone
      * application UI (supported app only).
@@ -1266,7 +1266,7 @@ enum class CameraControlSource {
  * For RICOH THETA X
  */
 @Serializable
-enum class CameraMode {
+internal enum class CameraMode {
     /**
      * shooting screen
      */
@@ -1296,7 +1296,7 @@ enum class CameraMode {
  * capture Mode
  */
 @Serializable
-enum class CaptureMode {
+internal enum class CaptureMode {
     /**
      * 	Still image capture mode
      */
@@ -1335,7 +1335,7 @@ enum class CaptureMode {
  * - RICOH THETA X
  */
 @Serializable
-enum class FaceDetect {
+internal enum class FaceDetect {
     /**
      * Face detection ON
      */
@@ -1358,7 +1358,7 @@ enum class FaceDetect {
  * - RICOH THETA V
  */
 @Serializable
-enum class Gain {
+internal enum class Gain {
     /**
      * Normal mode
      */
@@ -1383,7 +1383,7 @@ enum class Gain {
  * AI auto thumbnail setting
  */
 @Serializable
-enum class AiAutoThumbnail {
+internal enum class AiAutoThumbnail {
     /**
      * AI auto setting ON
      */
@@ -1401,7 +1401,7 @@ enum class AiAutoThumbnail {
  * Microphone channel setting
  */
 @Serializable
-enum class MicrophoneChannel {
+internal enum class MicrophoneChannel {
     /**
      * 360 degree spatial audio + monaural
      */
@@ -1419,7 +1419,7 @@ enum class MicrophoneChannel {
  * Network type setting supported by Theta V, Z1, and X.
  */
 @Serializable
-enum class NetworkType {
+internal enum class NetworkType {
     /**
      * Direct mode
      */
@@ -1449,7 +1449,7 @@ enum class NetworkType {
  * Power saving mode
  */
 @Serializable
-enum class PowerSaving {
+internal enum class PowerSaving {
     /**
      * Power saving mode ON
      */
@@ -1465,7 +1465,7 @@ enum class PowerSaving {
  * Shooting Method setting
  */
 @Serializable
-enum class ShootingMethod {
+internal enum class ShootingMethod {
     /**
      * Normal shooting
      */
@@ -1528,7 +1528,7 @@ enum class ShootingMethod {
  * Preset mode for Theta SC2 and Theta SC2 for business.
  */
 @Serializable
-enum class Preset {
+internal enum class Preset {
     /**
      * Preset "Face" mode suitable for portrait shooting just for Theta SC2.
      *
@@ -1666,7 +1666,7 @@ internal data class TimeShift(
  * On time shift shooting, specify which side is shot first.
  */
 @Serializable
-enum class FirstShootingEnum {
+internal enum class FirstShootingEnum {
     /**
      * first shoot the front side
      */
@@ -1689,7 +1689,7 @@ enum class FirstShootingEnum {
  * set for both still images and videos.
  */
 @Serializable
-enum class TopBottomCorrectionOption {
+internal enum class TopBottomCorrectionOption {
     /**
      * Top/bottom correction is performed.
      */
@@ -1766,7 +1766,7 @@ internal data class TopBottomCorrectionRotation(
  * White balance setting
  */
 @Serializable
-enum class WhiteBalance {
+internal enum class WhiteBalance {
     /**
      * Automatic
      */
@@ -1850,7 +1850,7 @@ enum class WhiteBalance {
  * For RICOH THETA Z1 firmware v2.20.3 or later
  */
 @Serializable
-enum class WhiteBalanceAutoStrength {
+internal enum class WhiteBalanceAutoStrength {
     /**
      * correct tint for low color temperature scene
      */
@@ -1868,7 +1868,7 @@ enum class WhiteBalanceAutoStrength {
  * Wireless LAN frequency of the camera supported by Theta V, Z1 and X.
  */
 @Serializable(with = WlanFrequencySerializer::class)
-enum class WlanFrequency(val frequency: Double) {
+internal enum class WlanFrequency(val frequency: Double) {
     /**
      * 2.4GHz
      */
@@ -1902,7 +1902,7 @@ internal object WlanFrequencySerializer : KSerializer<WlanFrequency> {
  * Visibility reduction setting
  */
 @Serializable
-enum class VisibilityReduction {
+internal enum class VisibilityReduction {
     /**
      * Reduction is ON.
      */
@@ -1921,7 +1921,7 @@ enum class VisibilityReduction {
  * Video stitching setting
  */
 @Serializable
-enum class VideoStitching {
+internal enum class VideoStitching {
     /**
      * Stitching is OFF. Recorded video is saved in Dual-Fisheye
      * format.
@@ -1941,7 +1941,7 @@ enum class VideoStitching {
  * supported language in camera OS
  */
 @Serializable
-enum class Language {
+internal enum class Language {
     /**
      * English: en-US
      */
@@ -2001,7 +2001,7 @@ enum class Language {
  * gps position information
  */
 @Serializable
-enum class GpsTagRecording {
+internal enum class GpsTagRecording {
     /**
      * Assign position information
      */
@@ -2088,7 +2088,7 @@ internal data class GpsInfo(
  * image filter setting
  */
 @Serializable
-enum class ImageFilter {
+internal enum class ImageFilter {
     /**
      * No filter
      */
@@ -2134,7 +2134,7 @@ enum class ImageFilter {
  * Media type setting
  */
 @Serializable
-enum class MediaType {
+internal enum class MediaType {
     /**
      * jpeg image
      */
@@ -2210,7 +2210,7 @@ internal data class ShutterVolumeSupport(
  * image stitching setting
  */
 @Serializable
-enum class ImageStitching {
+internal enum class ImageStitching {
     /**
      * Refer to stitching when shooting with "auto"
      */

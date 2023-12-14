@@ -190,7 +190,7 @@ internal data class CameraState(
  * Capture status
  */
 @Serializable
-enum class CaptureStatus {
+internal enum class CaptureStatus {
     /**
      * shooting: Performing continuously shoots,
      */
@@ -244,7 +244,7 @@ enum class CaptureStatus {
  * Charging state
  */
 @Serializable
-enum class ChargingState {
+internal enum class ChargingState {
     /**
      * battery charging
      */
@@ -268,7 +268,7 @@ enum class ChargingState {
  * shooting function
  */
 @Serializable
-enum class ShootingFunction {
+internal enum class ShootingFunction {
     /**
      * normal
      */
@@ -292,7 +292,7 @@ enum class ShootingFunction {
  * Microphone option
  */
 @Serializable
-enum class MicrophoneOption {
+internal enum class MicrophoneOption {
     /**
      * Auto
      */
@@ -316,7 +316,7 @@ enum class MicrophoneOption {
  * Storage option
  */
 @Serializable
-enum class StorageOption {
+internal enum class StorageOption {
     /**
      * Record to internal memory
      */
@@ -334,7 +334,7 @@ enum class StorageOption {
  * Camera error
  */
 @Serializable
-enum class CameraError {
+internal enum class CameraError {
     /**
      * RICOH THETA X or later
      * 0x00000001: Insufficient memory

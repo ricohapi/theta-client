@@ -299,7 +299,7 @@ internal data class XmpInfo(
  * projection type
  */
 @Serializable
-enum class ProjectionType {
+internal enum class ProjectionType {
     /**
      * equirectangular
      */

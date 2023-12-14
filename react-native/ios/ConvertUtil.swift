@@ -833,22 +833,22 @@ func convertResult(thetaState: ThetaRepository.ThetaState) -> [String: Any?] {
 func convertResult(burstOption: ThetaRepository.BurstOption) -> [String: Any] {
     var result: [String: Any] = [:]
     if let burstCaptureNum = burstOption.burstCaptureNum {
-        result[KEY_BURST_CAPTURE_NUM] = burstCaptureNum.value.name
+        result[KEY_BURST_CAPTURE_NUM] = burstCaptureNum.name
     }
     if let burstBracketStep = burstOption.burstBracketStep {
-        result[KEY_BURST_BRACKET_STEP] = burstBracketStep.value.name
+        result[KEY_BURST_BRACKET_STEP] = burstBracketStep.name
     }
     if let burstCompensation = burstOption.burstCompensation {
-        result[KEY_BURST_COMPENSATION] = burstCompensation.value.name
+        result[KEY_BURST_COMPENSATION] = burstCompensation.name
     }
     if let burstMaxExposureTime = burstOption.burstMaxExposureTime {
-        result[KEY_BURST_MAX_EXPOSURE_TIME] = burstMaxExposureTime.value.name
+        result[KEY_BURST_MAX_EXPOSURE_TIME] = burstMaxExposureTime.name
     }
     if let burstEnableIsoControl = burstOption.burstEnableIsoControl {
-        result[KEY_BURST_ENABLE_ISO_CONTROL] = burstEnableIsoControl.value.name
+        result[KEY_BURST_ENABLE_ISO_CONTROL] = burstEnableIsoControl.name
     }
     if let burstOrder = burstOption.burstOrder {
-        result[KEY_BURST_ORDER] = burstOrder.value.name
+        result[KEY_BURST_ORDER] = burstOrder.name
     }
     return result
 }

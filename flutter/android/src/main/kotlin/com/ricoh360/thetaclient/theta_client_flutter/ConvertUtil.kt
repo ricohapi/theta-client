@@ -155,12 +155,12 @@ fun toBurstOption(map: Map<String, Any>): BurstOption {
 
 fun toResult(burstOption: BurstOption): Map<String, Any?> {
     return mapOf(
-        "burstCaptureNum" to burstOption.burstCaptureNum?.value?.name,
-        "burstBracketStep" to burstOption.burstBracketStep?.value?.name,
-        "burstCompensation" to burstOption.burstCompensation?.value?.name,
-        "burstMaxExposureTime" to burstOption.burstMaxExposureTime?.value?.name,
-        "burstEnableIsoControl" to burstOption.burstEnableIsoControl?.value?.name,
-        "burstOrder" to burstOption.burstOrder?.value?.name
+        "burstCaptureNum" to burstOption.burstCaptureNum?.name,
+        "burstBracketStep" to burstOption.burstBracketStep?.name,
+        "burstCompensation" to burstOption.burstCompensation?.name,
+        "burstMaxExposureTime" to burstOption.burstMaxExposureTime?.name,
+        "burstEnableIsoControl" to burstOption.burstEnableIsoControl?.name,
+        "burstOrder" to burstOption.burstOrder?.name
     )
 }
 
