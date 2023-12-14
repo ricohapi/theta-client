@@ -755,6 +755,9 @@ fun timeoutToTheta(objects: ReadableMap): Timeout {
 }
 
 fun toOffDelay(objects: ReadableMap): OffDelay? {
+  if (!objects.hasKey("offDelay")) {
+    return null
+  }
   when (objects.getType("offDelay")) {
     ReadableType.String -> {
       (objects.getString("offDelay"))?.let { value ->
@@ -772,6 +775,9 @@ fun toOffDelay(objects: ReadableMap): OffDelay? {
 }
 
 fun toSleepDelay(objects: ReadableMap): SleepDelay? {
+  if (!objects.hasKey("sleepDelay")) {
+    return null
+  }
   when (objects.getType("sleepDelay")) {
     ReadableType.String -> {
       (objects.getString("sleepDelay"))?.let { value ->
