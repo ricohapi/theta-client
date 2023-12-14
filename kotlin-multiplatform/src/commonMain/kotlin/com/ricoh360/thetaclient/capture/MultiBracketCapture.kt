@@ -390,14 +390,15 @@ class MultiBracketCapture private constructor(
                     else -> shutterSpeed
                 },
                 whiteBalance = when (cameraModel) {
-                    ThetaRepository.ThetaModel.THETA_X -> whiteBalance
                     ThetaRepository.ThetaModel.THETA_SC2,
                     ThetaRepository.ThetaModel.THETA_SC2_B,
                     ThetaRepository.ThetaModel.THETA_S,
                     ThetaRepository.ThetaModel.THETA_SC -> null
 
-                    else -> whiteBalance ?: ThetaRepository.WhiteBalanceEnum.AUTO
-                }
+                    else -> colorTemperature?.let {
+                        ThetaRepository.WhiteBalanceEnum.COLOR_TEMPERATURE
+                    } ?: whiteBalance ?: ThetaRepository.WhiteBalanceEnum.AUTO
+                },
             )
             bracketSettings.add(bracketSetting)
             return this

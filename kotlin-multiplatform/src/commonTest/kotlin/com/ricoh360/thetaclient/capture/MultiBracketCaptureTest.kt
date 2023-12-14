@@ -76,6 +76,9 @@ class MultiBracketCaptureTest {
                 colorTemperature = 5000,
                 exposureCompensation = ThetaRepository.ExposureCompensationEnum.M0_3,
             ).addBracketParameters(
+                colorTemperature = 4000,
+                whiteBalance = ThetaRepository.WhiteBalanceEnum.CLOUDY_DAYLIGHT,
+            ).addBracketParameters(
                 exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
                 shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_ONE_OVER_100,
                 iso = ThetaRepository.IsoEnum.ISO_800,
