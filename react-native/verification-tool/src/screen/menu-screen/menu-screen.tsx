@@ -85,6 +85,14 @@ const MenuScreen: React.FC<
         },
       },
     },
+    {
+      name: '・multi bracket shooting',
+      value: {
+        selectedFunction: async () => {
+          navigation.navigate('multiBracketCapture');
+        },
+      },
+    },
   ];
 
   const functionList: FunctionItem[] = [

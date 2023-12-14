@@ -382,6 +382,84 @@ func setBurstCaptureBuilderParams(params: [String: Any], builder: BurstCapture.B
     }
 }
 
+func setMultiBracketCaptureBuilderParams(params: [String: Any], builder: MultiBracketCapture.Builder) {
+    if let interval = params["_capture_interval"] as? Int,
+       interval >= 0
+    {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
+
+    if let autoBracket = params[ThetaRepository.OptionNameEnum.autobracket.name] as? [[String: Any]] {
+        autoBracket.forEach { map in
+            let aperture = {
+                if let name = map["aperture"] as? String {
+                    return getEnumValue(values: ThetaRepository.ApertureEnum.values(), name: name)
+                } else {
+                    return nil
+                }
+            }()
+
+            let colorTemperature = {
+                if let value = map["colorTemperature"] as? Int {
+                    return toKotlinInt(value: value)
+                } else {
+                    return nil
+                }
+            }()
+
+            let exposureCompensation = {
+                if let name = map["exposureCompensation"] as? String {
+                    return getEnumValue(values: ThetaRepository.ExposureCompensationEnum.values(), name: name)
+                } else {
+                    return nil
+                }
+            }()
+
+            let exposureProgram = {
+                if let name = map["exposureProgram"] as? String {
+                    return getEnumValue(values: ThetaRepository.ExposureProgramEnum.values(), name: name)
+                } else {
+                    return nil
+                }
+            }()
+
+            let iso = {
+                if let name = map["iso"] as? String {
+                    return getEnumValue(values: ThetaRepository.IsoEnum.values(), name: name)
+                } else {
+                    return nil
+                }
+            }()
+
+            let shutterSpeed = {
+                if let name = map["shutterSpeed"] as? String {
+                    return getEnumValue(values: ThetaRepository.ShutterSpeedEnum.values(), name: name)
+                } else {
+                    return nil
+                }
+            }()
+
+            let whiteBalance = {
+                if let name = map["whiteBalance"] as? String {
+                    return getEnumValue(values: ThetaRepository.WhiteBalanceEnum.values(), name: name)
+                } else {
+                    return nil
+                }
+            }()
+
+            builder.addBracketParameters(
+                aperture: aperture,
+                colorTemperature: colorTemperature,
+                exposureCompensation: exposureCompensation,
+                exposureProgram: exposureProgram,
+                iso: iso,
+                shutterSpeed: shutterSpeed,
+                whiteBalance: whiteBalance
+            )
+        }
+    }
+}
+
 func toBitrate(value: Any) -> ThetaRepositoryBitrate? {
     if value is NSNumber, let intVal = value as? Int32 {
         return ThetaRepository.BitrateNumber(value: intVal)

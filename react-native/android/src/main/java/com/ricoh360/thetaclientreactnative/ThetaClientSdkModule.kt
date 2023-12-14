@@ -41,6 +41,9 @@ class ThetaClientReactNativeModule(
   var burstCaptureBuilder: BurstCapture.Builder? = null
   var burstCapture: BurstCapture? = null
   var burstCapturing: BurstCapturing? = null
+  var multiBracketCaptureBuilder: MultiBracketCapture.Builder? = null
+  var multiBracketCapture: MultiBracketCapture? = null
+  var multiBracketCapturing: MultiBracketCapturing? = null
   var theta: ThetaRepository? = null
   var listenerCount: Int = 0
 
@@ -109,6 +112,9 @@ class ThetaClientReactNativeModule(
         burstCaptureBuilder = null
         burstCapture = null
         burstCapturing = null
+        multiBracketCaptureBuilder = null
+        multiBracketCapture = null
+        multiBracketCapturing = null
 
         theta = ThetaRepository.newInstance(
           endpoint,
@@ -1208,6 +1214,118 @@ class ThetaClientReactNativeModule(
   }
 
   /**
+   * getMultiBracketCaptureBuilder  -  get multi bracket shooting builder from repository
+   * @param promise Promise for getMultiBracketCaptureBuilder
+   */
+  @ReactMethod
+  fun getMultiBracketCaptureBuilder(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    multiBracketCaptureBuilder = theta.getMultiBracketCaptureBuilder()
+    promise.resolve(true)
+  }
+
+  /**
+   * buildMultiBracketCapture  -  build multi bracket shooting
+   * @param options option to execute multi bracket shooting
+   * @param promise Promise for buildMultiBracketCapture
+   */
+  @ReactMethod
+  fun buildMultiBracketCapture(options: ReadableMap, promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    if (multiBracketCaptureBuilder == null) {
+      promise.reject(Exception("no MultiBracketCaptureBuilder"))
+      return
+    }
+    launch {
+      try {
+        multiBracketCaptureBuilder?.let {
+          setCaptureBuilderParams(optionMap = options, builder = it)
+          setMultiBracketCaptureBuilderParams(optionMap = options, builder = it)
+          multiBracketCapture = it.build()
+        }
+        promise.resolve(true)
+        multiBracketCaptureBuilder = null
+      } catch (t: Throwable) {
+        promise.reject(t)
+        multiBracketCaptureBuilder = null
+      }
+    }
+  }
+
+  /**
+   * startMultiBracketCapture  -  start multi bracket shooting
+   * @param promise promise for startMultiBracketCapture
+   */
+  @ReactMethod
+  fun startMultiBracketCapture(promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    if (multiBracketCapture == null) {
+      promise.reject(Exception("no multiBracketCapture"))
+      return
+    }
+    class StartCaptureCallback : MultiBracketCapture.StartCaptureCallback {
+      override fun onCaptureCompleted(fileUrls: List<String>?) {
+        promise.resolve(fileUrls?.let {
+          val resultList = Arguments.createArray()
+          it.forEach {
+            resultList.pushString(it)
+          }
+          resultList
+        })
+        multiBracketCapture = null
+      }
+
+      override fun onProgress(completion: Float) {
+        sendNotifyEvent(
+          toNotify(
+            NOTIFY_MULTI_BRACKET_PROGRESS,
+            toCaptureProgressNotifyParam(value = completion)
+          )
+        )
+      }
+
+      override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+        sendNotifyEvent(
+          toNotify(
+            NOTIFY_MULTI_BRACKET_STOP_ERROR,
+            toMessageNotifyParam(exception.message ?: exception.toString())
+          )
+        )
+      }
+
+      override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+        promise.reject(exception)
+        multiBracketCapture = null
+      }
+    }
+    multiBracketCapturing = multiBracketCapture?.startCapture(StartCaptureCallback())
+  }
+
+  /**
+   * cancelMultiBracketCapture  -  stop multi bracket shooting
+   * @param promise promise for cancelMultiBracketCapture
+   */
+  @ReactMethod
+  fun cancelMultiBracketCapture(promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    multiBracketCapturing?.cancelCapture()
+    promise.resolve(true)
+  }
+
+  /**
    * getMetadata  -  retrieve meta data from THETA via repository
    * @param promise promise to set result
    */
@@ -1824,5 +1942,7 @@ class ThetaClientReactNativeModule(
     const val NOTIFY_COMPOSITE_INTERVAL_STOP_ERROR = "COMPOSITE-INTERVAL-STOP-ERROR"
     const val NOTIFY_BURST_PROGRESS = "BURST-PROGRESS"
     const val NOTIFY_BURST_STOP_ERROR = "BURST-STOP-ERROR"
+    const val NOTIFY_MULTI_BRACKET_PROGRESS = "MULTI-BRACKET-PROGRESS"
+    const val NOTIFY_MULTI_BRACKET_STOP_ERROR = "MULTI-BRACKET-STOP-ERROR"
   }
 }

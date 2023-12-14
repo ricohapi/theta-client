@@ -226,6 +226,23 @@ fun setBurstCaptureBuilderParams(optionMap: ReadableMap, builder: BurstCapture.B
   }
 }
 
+fun setMultiBracketCaptureBuilderParams(optionMap: ReadableMap, builder: MultiBracketCapture.Builder) {
+  val settingArray = optionMap.getArray("autoBracket") ?: return
+  for (i in 0 until settingArray.size()) {
+    settingArray.getMap(i)?.let { setting ->
+      builder.addBracketParameters(
+        aperture = setting.getString("aperture")?.let { ApertureEnum.valueOf(it) },
+        colorTemperature = if (setting.hasKey("colorTemperature")) setting.getInt("colorTemperature") else null,
+        exposureCompensation = setting.getString("exposureCompensation")?.let { ExposureCompensationEnum.valueOf(it) },
+        exposureProgram = setting.getString("exposureProgram")?.let { ExposureProgramEnum.valueOf(it) },
+        iso = setting.getString("iso")?.let { IsoEnum.valueOf(it) },
+        shutterSpeed = setting.getString("shutterSpeed")?.let { ShutterSpeedEnum.valueOf(it) },
+        whiteBalance = setting.getString("whiteBalance")?.let { WhiteBalanceEnum.valueOf(it) },
+      )
+    }
+  }
+}
+
 fun toGetOptionsParam(optionNames: ReadableArray): MutableList<OptionNameEnum> {
   val optionNameList = mutableListOf<OptionNameEnum>()
   for (index in 0..(optionNames.size() - 1)) {

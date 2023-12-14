@@ -65,3 +65,13 @@ class BurstCapturing extends Capturing {
     ThetaClientFlutterPlatform.instance.stopBurstCapture();
   }
 }
+
+/// MultiBracketCapturing
+class MultiBracketCapturing extends Capturing {
+  /// Stops multi bracket shooting.
+  /// When call stopCapture() then call property callback.
+  @override
+  void stopCapture() {
+    ThetaClientFlutterPlatform.instance.stopMultiBracketCapture();
+  }
+}

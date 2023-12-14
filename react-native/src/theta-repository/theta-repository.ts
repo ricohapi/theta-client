@@ -26,6 +26,7 @@ import {
   ShotCountSpecifiedIntervalCaptureBuilder,
   CompositeIntervalCaptureBuilder,
   BurstCaptureBuilder,
+  MultiBracketCaptureBuilder,
 } from '../capture';
 import type { ThetaConfig } from './theta-config';
 import type { ThetaTimeout } from './theta-timeout';
@@ -161,6 +162,16 @@ export function getBurstCaptureBuilder(
     burstEnableIsoControl,
     burstOrder
   );
+}
+
+/**
+ * Get MultiBracketCapture.Builder for take multi bracket shooting.
+ *
+ * @function getMultiBracketCaptureBuilder
+ * @return created MultiBracketCaptureBuilder instance
+ */
+export function getMultiBracketCaptureBuilder(): MultiBracketCaptureBuilder {
+  return new MultiBracketCaptureBuilder();
 }
 
 /**

@@ -227,6 +227,29 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('stopBurstCapture() has not been implemented.');
   }
 
+  Future<void> getMultiBracketCaptureBuilder() {
+    throw UnimplementedError(
+        'getMultiBracketCaptureBuilder() has not been implemented.');
+  }
+
+  Future<void> buildMultiBracketCapture(
+      Map<String, dynamic> options, int interval) {
+    throw UnimplementedError(
+        'buildMultiBracketCapture() has not been implemented.');
+  }
+
+  Future<List<String>?> startMultiBracketCapture(
+      void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed) {
+    throw UnimplementedError(
+        'startMultiBracketCapture() has not been implemented.');
+  }
+
+  Future<void> stopMultiBracketCapture() {
+    throw UnimplementedError(
+        'stopMultiBracketCapture() has not been implemented.');
+  }
+
   Future<Options> getOptions(List<OptionNameEnum> optionNames) {
     throw UnimplementedError('getOptions() has not been implemented.');
   }

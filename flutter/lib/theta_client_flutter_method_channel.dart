@@ -16,6 +16,9 @@ const notifyIdShotCountSpecifiedIntervalCaptureProgress = 10021;
 const notifyIdShotCountSpecifiedIntervalCaptureStopError = 10022;
 const notifyIdCompositeIntervalCaptureProgress = 10031;
 const notifyIdCompositeIntervalCaptureStopError = 10032;
+const notifyIdMultiBracketCaptureProgress = 10041;
+const notifyIdMultiBracketCaptureStopError = 10042;
+
 const notifyIdBurstCaptureProgress = 10051;
 const notifyIdBurstCaptureStopError = 10052;
 
@@ -561,6 +564,66 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   @override
   Future<void> stopBurstCapture() async {
     return methodChannel.invokeMethod<void>('stopBurstCapture');
+  }
+
+  @override
+  Future<void> getMultiBracketCaptureBuilder() async {
+    return methodChannel.invokeMethod<void>(
+        'getMultiBracketCaptureBuilder');
+  }
+
+  @override
+  Future<void> buildMultiBracketCapture(
+      Map<String, dynamic> options, int interval) async {
+    final params = ConvertUtils.convertCaptureParams(options);
+    params['_capture_interval'] = interval;
+    return methodChannel.invokeMethod<void>(
+        'buildMultiBracketCapture', params);
+  }
+
+  @override
+  Future<List<String>?> startMultiBracketCapture(
+      void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed) async {
+    var completer = Completer<List<String>?>();
+    try {
+      enableNotifyEventReceiver();
+      if (onProgress != null) {
+        addNotify(notifyIdMultiBracketCaptureProgress, (params) {
+          final completion = params?['completion'] as double?;
+          if (completion != null) {
+            onProgress(completion);
+          }
+        });
+      }
+      if (onStopFailed != null) {
+        addNotify(notifyIdMultiBracketCaptureStopError, (params) {
+          final message = params?['message'] as String?;
+          if (message != null) {
+            onStopFailed(Exception(message));
+          }
+        });
+      }
+      final fileUrls = await methodChannel
+          .invokeMethod<List<dynamic>?>('startMultiBracketCapture');
+      removeNotify(notifyIdMultiBracketCaptureProgress);
+      removeNotify(notifyIdMultiBracketCaptureStopError);
+      if (fileUrls == null) {
+        completer.complete(null);
+      } else {
+        completer.complete(ConvertUtils.convertStringList(fileUrls));
+      }
+    } catch (e) {
+      removeNotify(notifyIdMultiBracketCaptureProgress);
+      removeNotify(notifyIdMultiBracketCaptureStopError);
+      completer.completeError(e);
+    }
+    return completer.future;
+  }
+
+  @override
+  Future<void> stopMultiBracketCapture() async {
+    return methodChannel.invokeMethod<void>('stopMultiBracketCapture');
   }
 
   @override

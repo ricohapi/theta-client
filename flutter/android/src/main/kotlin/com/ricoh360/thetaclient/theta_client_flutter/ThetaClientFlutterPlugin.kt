@@ -49,6 +49,9 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
     var burstCaptureBuilder: BurstCapture.Builder? = null
     var burstCapture: BurstCapture? = null
     var burstCapturing: BurstCapturing? = null
+    var multiBracketCaptureBuilder: MultiBracketCapture.Builder? = null
+    var multiBracketCapture: MultiBracketCapture? = null
+    var multiBracketCapturing: MultiBracketCapturing? = null
 
     companion object {
         const val errorCode: String = "Error"
@@ -66,6 +69,8 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         const val notifyIdShotCountSpecifiedIntervalCaptureStopError = 10022
         const val notifyIdCompositeIntervalCaptureProgress = 10031;
         const val notifyIdCompositeIntervalCaptureStopError = 10032;
+        const val notifyIdMultiBracketCaptureProgress = 10041;
+        const val notifyIdMultiBracketCaptureStopError = 10042;
         const val notifyIdBurstCaptureProgress = 10051;
         const val notifyIdBurstCaptureStopError = 10052;
     }
@@ -294,6 +299,24 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 stopBurstCapture(result)
             }
 
+            "getMultiBracketCaptureBuilder" -> {
+                getMultiBracketCaptureBuilder(result)
+            }
+
+            "buildMultiBracketCapture" -> {
+                scope.launch {
+                    buildMultiBracketCapture(call, result)
+                }
+            }
+
+            "startMultiBracketCapture" -> {
+                startMultiBracketCapture(result)
+            }
+
+            "stopMultiBracketCapture" -> {
+                stopMultiBracketCapture(result)
+            }
+
             "getOptions" -> {
                 scope.launch {
                     getOptions(call, result)
@@ -471,6 +494,9 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         burstCaptureBuilder = null
         burstCapture = null
         burstCapturing = null
+        multiBracketCaptureBuilder = null
+        multiBracketCapture = null
+        multiBracketCapturing = null
 
         try {
             endpoint = call.argument<String>("endpoint")!!
@@ -1047,6 +1073,77 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             return
         }
         burstCapturing.stopCapture()
+        result.success(null)
+    }
+
+    fun getMultiBracketCaptureBuilder(result: Result) {
+        val theta = thetaRepository
+        if (theta == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        multiBracketCaptureBuilder = theta.getMultiBracketCaptureBuilder()
+        result.success(null)
+    }
+
+    suspend fun buildMultiBracketCapture(call: MethodCall, result: Result) {
+        val theta = thetaRepository
+        val multiBracketCaptureBuilder = multiBracketCaptureBuilder
+        if (theta == null || multiBracketCaptureBuilder == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        setCaptureBuilderParams(call, multiBracketCaptureBuilder)
+        setMultiBracketCaptureBuilderParams(call, multiBracketCaptureBuilder)
+        try {
+            multiBracketCapture = multiBracketCaptureBuilder.build()
+            result.success(null)
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    fun startMultiBracketCapture(result: Result) {
+        val theta = thetaRepository
+        val multiBracketCapture = multiBracketCapture
+        if (theta == null || multiBracketCapture == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        multiBracketCapturing =
+            multiBracketCapture.startCapture(object : MultiBracketCapture.StartCaptureCallback {
+                override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    result.error(exception.javaClass.simpleName, exception.message, null)
+                }
+
+                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    sendNotifyEvent(
+                        notifyIdMultiBracketCaptureStopError,
+                        toMessageNotifyParam(exception.message ?: exception.toString())
+                    )
+                }
+
+                override fun onProgress(completion: Float) {
+                    sendNotifyEvent(
+                        notifyIdMultiBracketCaptureProgress,
+                        toCaptureProgressNotifyParam(completion)
+                    )
+                }
+
+                override fun onCaptureCompleted(fileUrls: List<String>?) {
+                    result.success(fileUrls)
+                }
+            })
+    }
+
+    fun stopMultiBracketCapture(result: Result) {
+        val theta = thetaRepository
+        val multiBracketCapturing = multiBracketCapturing
+        if (theta == null || multiBracketCapturing == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        multiBracketCapturing.stopCapture()
         result.success(null)
     }
 

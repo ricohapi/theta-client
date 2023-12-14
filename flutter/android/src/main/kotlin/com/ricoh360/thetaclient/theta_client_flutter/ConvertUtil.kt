@@ -368,6 +368,28 @@ fun setBurstCaptureBuilderParams(call: MethodCall, builder: BurstCapture.Builder
     }
 }
 
+fun setMultiBracketCaptureBuilderParams(call: MethodCall, builder: MultiBracketCapture.Builder) {
+    call.argument<Int>("_capture_interval")?.let {
+        if (it >= 0) {
+            builder.setCheckStatusCommandInterval(it.toLong())
+        }
+    }
+    call.argument<List<Map<String, Any>>>(OptionNameEnum.AutoBracket.name)?.also {
+        val autoBracket = toAutoBracket(it)
+        autoBracket.list.forEach { setting ->
+            builder.addBracketParameters(
+                aperture = setting.aperture,
+                colorTemperature = setting.colorTemperature,
+                exposureCompensation = setting.exposureCompensation,
+                exposureProgram = setting.exposureProgram,
+                iso = setting.iso,
+                shutterSpeed = setting.shutterSpeed,
+                whiteBalance = setting.whiteBalance,
+            )
+        }
+    }
+}
+
 fun toGetOptionsParam(data: List<String>): List<OptionNameEnum> {
     val optionNames = mutableListOf<OptionNameEnum>()
     data.forEach { name ->

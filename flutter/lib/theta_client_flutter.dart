@@ -182,6 +182,13 @@ class ThetaClientFlutter {
     return BurstCaptureBuilder();
   }
 
+  /// Get getMultiBracketCapture.Builder for capture interval composite shooting.
+  MultiBracketCaptureBuilder getMultiBracketCaptureBuilder() {
+    ThetaClientFlutterPlatform.instance
+        .getMultiBracketCaptureBuilder();
+    return MultiBracketCaptureBuilder();
+  }
+
   /// Acquires the properties and property support specifications for shooting, the camera, etc.
   ///
   /// Refer to the [options category](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
@@ -1878,14 +1885,14 @@ class BracketSetting {
   /// White balance.
   final WhiteBalanceEnum? whiteBalance;
 
-  BracketSetting(
+  BracketSetting({
       this.aperture,
       this.colorTemperature,
       this.exposureCompensation,
       this.exposureProgram,
       this.iso,
       this.shutterSpeed,
-      this.whiteBalance);
+      this.whiteBalance});
 
   @override
   bool operator ==(Object other) => hashCode == other.hashCode;

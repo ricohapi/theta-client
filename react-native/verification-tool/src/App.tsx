@@ -21,6 +21,7 @@ import LimitlessIntervalCaptureScreen from './screen/limitless-interval-capture-
 import ShotCountSpecifiedIntervalCaptureScreen from './screen/shot-count-specified-interval-capture-screen/shot-count-specified-interval-capture-screen';
 import CompositeIntervalCaptureScreen from './screen/composite-interval-capture-screen/composite-interval-capture-screen';
 import BurstCaptureScreen from './screen/burst-capture-screen/burst-capture-screen';
+import MultiBracketCaptureScreen from './screen/multi-bracket-capture-screen/multi-bracket-capture-screen';
 import type { FileInfo } from 'theta-client-react-native';
 
 export type RootStackParamList = {
@@ -40,6 +41,7 @@ export type RootStackParamList = {
   shotCountSpecifiedIntervalCapture: undefined;
   compositeIntervalCapture: undefined;
   burstCapture: undefined;
+  multiBracketCapture: undefined;
   filePreview: {
     item: FileInfo;
   };
@@ -141,6 +143,11 @@ const App = () => {
           options={{ title: 'burst shooting' }}
           name="burstCapture"
           component={BurstCaptureScreen}
+        />
+        <Stack.Screen
+          options={{ title: 'MultiBracket Capture' }}
+          name="multiBracketCapture"
+          component={MultiBracketCaptureScreen}
         />
         <Stack.Screen
           options={{ title: 'Preview' }}

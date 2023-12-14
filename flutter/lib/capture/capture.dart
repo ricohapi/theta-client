@@ -249,3 +249,27 @@ class BurstCapture extends Capture {
     return BurstCapturing();
   }
 }
+
+/// Capture of multi bracket shooting
+class MultiBracketCapture extends Capture {
+  final int _interval;
+
+  MultiBracketCapture(super.options, this._interval);
+
+  int getCheckStatusCommandInterval() {
+    return _interval;
+  }
+
+  /// Starts interval composite shooting.
+  MultiBracketCapturing startCapture(
+      void Function(List<String>? fileUrls) onSuccess,
+      void Function(double completion) onProgress,
+      void Function(Exception exception) onCaptureFailed,
+      {void Function(Exception exception)? onStopFailed}) {
+    ThetaClientFlutterPlatform.instance
+        .startMultiBracketCapture(onProgress, onStopFailed)
+        .then((value) => onSuccess(value))
+        .onError((error, stackTrace) => onCaptureFailed(error as Exception));
+    return MultiBracketCapturing();
+  }
+}

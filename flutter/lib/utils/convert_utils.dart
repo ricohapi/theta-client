@@ -11,25 +11,25 @@ class ConvertUtils {
 
     for (var element in data.cast<Map<dynamic, dynamic>>()) {
       autoBracket.add(BracketSetting(
-          (element['aperture'] != null)
+          aperture: (element['aperture'] != null)
               ? ApertureEnum.getValue(element['aperture'] as String)
               : null,
-          element['colorTemperature'],
-          (element['exposureCompensation'] != null)
+          colorTemperature: element['colorTemperature'],
+          exposureCompensation: (element['exposureCompensation'] != null)
               ? ExposureCompensationEnum.getValue(
                   element['exposureCompensation'] as String)
               : null,
-          (element['exposureProgram'] != null)
+          exposureProgram: (element['exposureProgram'] != null)
               ? ExposureProgramEnum.getValue(
                   element['exposureProgram'] as String)
               : null,
-          (element['iso'] != null)
+          iso: (element['iso'] != null)
               ? IsoEnum.getValue(element['iso'] as String)
               : null,
-          (element['shutterSpeed'] != null)
+          shutterSpeed: (element['shutterSpeed'] != null)
               ? ShutterSpeedEnum.getValue(element['shutterSpeed'] as String)
               : null,
-          (element['whiteBalance'] != null)
+          whiteBalance: (element['whiteBalance'] != null)
               ? WhiteBalanceEnum.getValue(element['whiteBalance'] as String)
               : null));
     }
@@ -192,6 +192,8 @@ class ConvertUtils {
         result[entry.key] = convertGpsInfoParam(entry.value);
       } else if (entry.value.runtimeType == TimeShift) {
         result[entry.key] = convertTimeShiftParam(entry.value);
+      } else if (entry.value.runtimeType == List<BracketSetting>) {
+        result[entry.key] = convertAutoBracketParam(entry.value);
       } else if (entry.value.runtimeType == int ||
           entry.value.runtimeType == double) {
         result[entry.key] = entry.value;
@@ -242,6 +244,36 @@ class ConvertUtils {
       map['secondInterval'] = timeShift.secondInterval.toString();
     }
     return map;
+  }
+
+  static List<Map<String, dynamic>> convertAutoBracketParam(List<BracketSetting> settingList) {
+    List<Map<String, dynamic>> list = [];
+    for (var setting in settingList) {
+      var map = <String, dynamic>{};
+      if(setting.aperture != null) {
+        map['aperture'] = setting.aperture.toString();
+      }
+      if(setting.colorTemperature != null) {
+        map['colorTemperature'] = setting.colorTemperature;
+      }
+      if(setting.exposureCompensation != null) {
+        map['exposureCompensation'] = setting.exposureCompensation.toString();
+      }
+      if(setting.exposureProgram != null) {
+        map['exposureProgram'] = setting.exposureProgram.toString();
+      }
+      if(setting.iso != null) {
+        map['iso'] = setting.iso.toString();
+      }
+      if(setting.shutterSpeed != null) {
+        map['shutterSpeed'] = setting.shutterSpeed.toString();
+      }
+      if(setting.whiteBalance != null) {
+        map['whiteBalance'] = setting.whiteBalance.toString();
+      }
+      list.add(map);
+    }
+    return list;
   }
 
   static Map<String, dynamic> convertTopBottomCorrectionRotationParam(

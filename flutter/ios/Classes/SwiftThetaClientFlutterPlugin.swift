@@ -12,6 +12,8 @@ let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_PROGRESS = 10021
 let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_STOP_ERROR = 10022
 let NOTIFY_COMPOSITE_INTERVAL_PROGRESS = 10031
 let NOTIFY_COMPOSITE_INTERVAL_STOP_ERROR = 10032
+let NOTIFY_MULTI_BRACKET_INTERVAL_PROGRESS = 10041
+let NOTIFY_MULTI_BRACKET_INTERVAL_STOP_ERROR = 10042
 let NOTIFY_BURST_PROGRESS = 10051
 let NOTIFY_BURST_STOP_ERROR = 10052
 
@@ -55,6 +57,9 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     var burstCaptureBuilder: BurstCapture.Builder? = nil
     var burstCapture: BurstCapture? = nil
     var burstCapturing: BurstCapturing? = nil
+    var multiBracketCaptureBuilder: MultiBracketCapture.Builder? = nil
+    var multiBracketCapture: MultiBracketCapture? = nil
+    var multiBracketCapturing: MultiBracketCapturing? = nil
 
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "theta_client_flutter", binaryMessenger: registrar.messenger())
@@ -157,6 +162,14 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             startBurstCapture(result: result)
         case "stopBurstCapture":
             stopBurstCapture(result: result)
+        case "getMultiBracketCaptureBuilder":
+            getMultiBracketCaptureBuilder(call: call, result: result)
+        case "buildMultiBracketCapture":
+            buildMultiBracketCapture(call: call, result: result)
+        case "startMultiBracketCapture":
+            startMultiBracketCapture(result: result)
+        case "stopMultiBracketCapture":
+            stopMultiBracketCapture(result: result)
         case "getOptions":
             getOptions(call: call, result: result)
         case "setOptions":
@@ -1055,6 +1068,92 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
 
     func stopBurstCapture(result: @escaping FlutterResult) {
         guard let _ = thetaRepository, let capturing = burstCapturing else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        capturing.stopCapture()
+        result(nil)
+    }
+
+    func getMultiBracketCaptureBuilder(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let thetaRepository else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        multiBracketCaptureBuilder = thetaRepository.getMultiBracketCaptureBuilder()
+        result(nil)
+    }
+
+    func buildMultiBracketCapture(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let _ = thetaRepository, let builder = multiBracketCaptureBuilder else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        if let arguments = call.arguments as? [String: Any] {
+            setCaptureBuilderParams(params: arguments, builder: builder)
+            setMultiBracketCaptureBuilderParams(params: arguments, builder: builder)
+        }
+        builder.build(completionHandler: { capture, error in
+            if let thetaError = error {
+                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                result(flutterError)
+            } else {
+                self.multiBracketCapture = capture
+                result(nil)
+            }
+        })
+    }
+
+    func startMultiBracketCapture(result: @escaping FlutterResult) {
+        guard let _ = thetaRepository, let capture = multiBracketCapture else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        class Callback: MultiBracketCaptureStartCaptureCallback {
+            let callback: (_ urls: [String]?, _ error: Error?) -> Void
+            weak var plugin: SwiftThetaClientFlutterPlugin?
+            init(_ callback: @escaping (_ urls: [String]?, _ error: Error?) -> Void, plugin: SwiftThetaClientFlutterPlugin) {
+                self.callback = callback
+                self.plugin = plugin
+            }
+
+            func onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                callback(nil, exception.asError())
+            }
+
+            func onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                let error = exception.asError()
+                plugin?.sendNotifyEvent(id: NOTIFY_MULTI_BRACKET_INTERVAL_STOP_ERROR, params: toMessageNotifyParam(message: error.localizedDescription))
+            }
+
+            func onProgress(completion: Float) {
+                plugin?.sendNotifyEvent(id: NOTIFY_MULTI_BRACKET_INTERVAL_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
+            }
+
+            func onCaptureCompleted(fileUrls: [String]?) {
+                callback(fileUrls, nil)
+            }
+        }
+
+        multiBracketCapturing = capture.startCapture(
+            callback: Callback({ fileUrl, error in
+                                   if let thetaError = error {
+                                       let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                                       result(flutterError)
+                                   } else {
+                                       result(fileUrl)
+                                   }
+                               },
+                               plugin: self)
+        )
+    }
+
+    func stopMultiBracketCapture(result: @escaping FlutterResult) {
+        guard let _ = thetaRepository, let capturing = multiBracketCapturing else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return

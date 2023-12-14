@@ -5792,6 +5792,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Get MultiBracketCapture.Builder for multi bracket shooting.
+     */
+    fun getMultiBracketCaptureBuilder(): MultiBracketCapture.Builder {
+        return MultiBracketCapture.Builder(endpoint, cameraModel)
+    }
+
+    /**
      * Get CompositeIntervalCapture.Builder for interval composite shooting.
      *
      * @param shootingTimeSec Shooting time for interval composite shooting (sec)

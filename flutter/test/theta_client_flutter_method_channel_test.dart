@@ -426,13 +426,13 @@ void main() {
         'AutoBracket',
         [
           BracketSetting(
-              ApertureEnum.aperture_2_1,
-              5000,
-              ExposureCompensationEnum.zero,
-              ExposureProgramEnum.manual,
-              IsoEnum.iso400,
-              ShutterSpeedEnum.shutterSpeedOneOver_250,
-              WhiteBalanceEnum.auto)
+              aperture: ApertureEnum.aperture_2_1,
+              colorTemperature: 5000,
+              exposureCompensation: ExposureCompensationEnum.zero,
+              exposureProgram: ExposureProgramEnum.manual,
+              iso: IsoEnum.iso400,
+              shutterSpeed: ShutterSpeedEnum.shutterSpeedOneOver_250,
+              whiteBalance: WhiteBalanceEnum.auto)
         ],
         bracketSetting
       ],
@@ -730,13 +730,13 @@ void main() {
         'AutoBracket',
         [
           BracketSetting(
-              ApertureEnum.aperture_2_1,
-              5000,
-              ExposureCompensationEnum.zero,
-              ExposureProgramEnum.manual,
-              IsoEnum.iso400,
-              ShutterSpeedEnum.shutterSpeedOneOver_250,
-              WhiteBalanceEnum.auto)
+              aperture: ApertureEnum.aperture_2_1,
+              colorTemperature: 5000,
+              exposureCompensation: ExposureCompensationEnum.zero,
+              exposureProgram: ExposureProgramEnum.manual,
+              iso: IsoEnum.iso400,
+              shutterSpeed: ShutterSpeedEnum.shutterSpeedOneOver_250,
+              whiteBalance: WhiteBalanceEnum.auto)
         ],
         autoBracketMap,
       ],

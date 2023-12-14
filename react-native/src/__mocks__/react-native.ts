@@ -30,6 +30,10 @@ export const NativeModules = {
     buildBurstCapture: jest.fn(),
     startBurstCapture: jest.fn(),
     cancelBurstCapture: jest.fn(),
+    getMultiBracketCaptureBuilder: jest.fn(),
+    buildMultiBracketCapture: jest.fn(),
+    startMultiBracketCapture: jest.fn(),
+    cancelMultiBracketCapture: jest.fn(),
   },
 };
 

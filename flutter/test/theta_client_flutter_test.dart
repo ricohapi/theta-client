@@ -203,6 +203,29 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
+  Future<void> buildMultiBracketCapture(
+      Map<String, dynamic> options, int interval) {
+    return onCallBuildMultiBracketCapture(options, interval);
+  }
+
+  @override
+  Future<void> getMultiBracketCaptureBuilder() {
+    return onCallGetMultiBracketCaptureBuilder();
+  }
+
+  @override
+  Future<List<String>?> startMultiBracketCapture(
+      void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed) {
+    return onCallStartMultiBracketCapture(onProgress, onStopFailed);
+  }
+
+  @override
+  Future<void> stopMultiBracketCapture() {
+    return onCallStopMultiBracketCapture();
+  }
+
+  @override
   Future<Options> getOptions(List<OptionNameEnum> optionNames) {
     return onCallGetOptions(optionNames);
   }
@@ -421,6 +444,15 @@ Future<List<String>?> Function(void Function(double)? onProgress,
         void Function(Exception exception)? onStopFailed)
     onCallStartBurstCapture = (onProgress, onStopFailed) => Future.value();
 Future<void> Function() onCallStopBurstCapture = Future.value;
+Future<void> Function()
+    onCallGetMultiBracketCaptureBuilder = Future.value;
+Future<void> Function(Map<String, dynamic> options, int interval)
+    onCallBuildMultiBracketCapture = (options, interval) => Future.value();
+Future<List<String>?> Function(void Function(double)? onProgress,
+        void Function(Exception exception)? onStopFailed)
+    onCallStartMultiBracketCapture =
+    (onProgress, onStopFailed) => Future.value();
+Future<void> Function() onCallStopMultiBracketCapture = Future.value;
 Future<Options> Function(List<OptionNameEnum> optionNames) onCallGetOptions =
     (optionNames) => Future.value(Options());
 Future<void> Function(Options options) onCallSetOptions = Future.value;
