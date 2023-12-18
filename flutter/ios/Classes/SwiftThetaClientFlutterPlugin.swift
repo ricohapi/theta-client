@@ -16,6 +16,7 @@ let NOTIFY_MULTI_BRACKET_INTERVAL_PROGRESS = 10041
 let NOTIFY_MULTI_BRACKET_INTERVAL_STOP_ERROR = 10042
 let NOTIFY_BURST_PROGRESS = 10051
 let NOTIFY_BURST_STOP_ERROR = 10052
+let NOTIFY_CONTINUOUS_PROGRESS = 10061
 
 public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     public func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -60,6 +61,8 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     var multiBracketCaptureBuilder: MultiBracketCapture.Builder? = nil
     var multiBracketCapture: MultiBracketCapture? = nil
     var multiBracketCapturing: MultiBracketCapturing? = nil
+    var continuousCaptureBuilder: ContinuousCapture.Builder? = nil
+    var continuousCapture: ContinuousCapture? = nil
 
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "theta_client_flutter", binaryMessenger: registrar.messenger())
@@ -170,6 +173,12 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             startMultiBracketCapture(result: result)
         case "stopMultiBracketCapture":
             stopMultiBracketCapture(result: result)
+        case "getContinuousCaptureBuilder":
+            getContinuousCaptureBuilder(result: result)
+        case "buildContinuousCapture":
+            buildContinuousCapture(call: call, result: result)
+        case "startContinuousCapture":
+            startContinuousCapture(result: result)
         case "getOptions":
             getOptions(call: call, result: result)
         case "setOptions":
@@ -964,6 +973,8 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         capturing.stopCapture()
         result(nil)
     }
+    
+    // MARK: - BurstCapture
 
     func getBurstCaptureBuilder(call: FlutterMethodCall, result: @escaping FlutterResult) {
         guard let thetaRepository else {
@@ -1075,7 +1086,8 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         capturing.stopCapture()
         result(nil)
     }
-
+    
+    // MARK: - MultiBracketCapture
     func getMultiBracketCaptureBuilder(call: FlutterMethodCall, result: @escaping FlutterResult) {
         guard let thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
@@ -1106,7 +1118,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             }
         })
     }
-
+    
     func startMultiBracketCapture(result: @escaping FlutterResult) {
         guard let _ = thetaRepository, let capture = multiBracketCapture else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
@@ -1138,7 +1150,6 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 callback(fileUrls, nil)
             }
         }
-
         multiBracketCapturing = capture.startCapture(
             callback: Callback({ fileUrl, error in
                                    if let thetaError = error {
@@ -1151,7 +1162,6 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                                plugin: self)
         )
     }
-
     func stopMultiBracketCapture(result: @escaping FlutterResult) {
         guard let _ = thetaRepository, let capturing = multiBracketCapturing else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
@@ -1162,6 +1172,81 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         result(nil)
     }
 
+    // MARK: - ContinuousCapture
+
+    func getContinuousCaptureBuilder(result: @escaping FlutterResult) {
+        guard let thetaRepository else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        continuousCaptureBuilder = thetaRepository.getContinuousCaptureBuilder()
+        result(nil)
+    }
+
+    func buildContinuousCapture(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let _ = thetaRepository, let builder = continuousCaptureBuilder else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        if let arguments = call.arguments as? [String: Any] {
+            setCaptureBuilderParams(params: arguments, builder: builder)
+            setContinuousCaptureBuilderParams(params: arguments, builder: builder)
+        }
+        builder.build(completionHandler: { capture, error in
+            if let thetaError = error {
+                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                result(flutterError)
+            } else {
+                self.continuousCapture = capture
+                result(nil)
+            }
+        })
+    }
+
+    func startContinuousCapture(result: @escaping FlutterResult) {
+        guard let _ = thetaRepository, let capture = continuousCapture else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        class Callback: ContinuousCaptureStartCaptureCallback {
+            let callback: (_ urls: [String]?, _ error: Error?) -> Void
+            weak var plugin: SwiftThetaClientFlutterPlugin?
+            init(_ callback: @escaping (_ urls: [String]?, _ error: Error?) -> Void, plugin: SwiftThetaClientFlutterPlugin) {
+                self.callback = callback
+                self.plugin = plugin
+            }
+
+            func onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                callback(nil, exception.asError())
+            }
+
+            func onProgress(completion: Float) {
+                plugin?.sendNotifyEvent(id: NOTIFY_CONTINUOUS_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
+            }
+
+            func onCaptureCompleted(fileUrls: [String]?) {
+                callback(fileUrls, nil)
+            }
+        }
+
+        capture.startCapture(
+            callback: Callback({ fileUrl, error in
+                                   if let thetaError = error {
+                                       let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                                       result(flutterError)
+                                   } else {
+                                       result(fileUrl)
+                                   }
+                               },
+                               plugin: self)
+        )
+    }
+    
+    // MARK: -
+    
     func getOptions(call: FlutterMethodCall, result: @escaping FlutterResult) {
         if thetaRepository == nil {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)

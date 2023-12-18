@@ -34,6 +34,10 @@ export const NativeModules = {
     buildMultiBracketCapture: jest.fn(),
     startMultiBracketCapture: jest.fn(),
     cancelMultiBracketCapture: jest.fn(),
+    getContinuousCaptureBuilder: jest.fn(),
+    buildContinuousCapture: jest.fn(),
+    startContinuousCapture: jest.fn(),
+    getOptions: jest.fn(),
   },
 };
 

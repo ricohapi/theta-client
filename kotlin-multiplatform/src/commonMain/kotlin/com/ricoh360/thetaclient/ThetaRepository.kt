@@ -5860,6 +5860,15 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Get ContinuousCapture.Builder for continuous shooting.
+     *
+     * @return ContinuousCapture.Builder
+     */
+    fun getContinuousCaptureBuilder(): ContinuousCapture.Builder {
+        return ContinuousCapture.Builder(theta = this, endpoint = endpoint)
+    }
+
+    /**
      * Base exception of ThetaRepository
      */
     abstract class ThetaRepositoryException(message: String) : RuntimeException(message)

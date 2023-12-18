@@ -26,36 +26,32 @@ void main() {
     );
   });
 
-  test('buildMultiBracketCapture', () async {
-    Map<String, dynamic> settingMap1 = {
-      'aperture': 'APERTURE_AUTO',
-      'colorTemperature': 5000,
-      'exposureCompensation': 'P0_7',
-      'exposureProgram': 'NORMAL_PROGRAM',
-      'iso': 'ISO_100',
-      'shutterSpeed': 'SHUTTER_SPEED_AUTO',
-      'whiteBalance': 'DAYLIGHT'
+  test('buildContinuousCapture', () async {
+    Map<String, dynamic> gpsInfoMap = {
+      'latitude': 1.0,
+      'longitude': 2.0,
+      'altitude': 3.0,
+      'dateTimeZone': '2022:01:01 00:01:00+09:00'
     };
-    Map<String, dynamic> settingMap2 = {
-      'colorTemperature': 6000,
-    };
-    List<Map<String, dynamic>> settingList = [settingMap1, settingMap2];
     List<List<dynamic>> data = [
+      ['Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
+      ['ColorTemperature', 2, 2],
+      ['ExposureCompensation', ExposureCompensationEnum.m0_3, 'M0_3'],
+      ['ExposureDelay', ExposureDelayEnum.delay1, 'DELAY_1'],
       [
-        'AutoBracket',
-        [
-          BracketSetting(
-              aperture: ApertureEnum.apertureAuto,
-              colorTemperature: 5000,
-              exposureCompensation: ExposureCompensationEnum.p0_7,
-              exposureProgram: ExposureProgramEnum.normalProgram,
-              iso: IsoEnum.iso100,
-              shutterSpeed: ShutterSpeedEnum.shutterSpeedAuto,
-              whiteBalance: WhiteBalanceEnum.daylight),
-          BracketSetting(colorTemperature: 6000)
-        ],
-        settingList
-      ]
+        'ExposureProgram',
+        ExposureProgramEnum.aperturePriority,
+        'APERTURE_PRIORITY'
+      ],
+      [
+        'GpsInfo',
+        GpsInfo(1.0, 2.0, 3.0, '2022:01:01 00:01:00+09:00'),
+        gpsInfoMap
+      ],
+      ['GpsTagRecording', GpsTagRecordingEnum.on, 'ON'],
+      ['Iso', IsoEnum.iso50, 'ISO_50'],
+      ['IsoAutoHighLimit', IsoAutoHighLimitEnum.iso200, 'ISO_200'],
+      ['WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
     ];
 
     Map<String, dynamic> options = {};
@@ -72,36 +68,36 @@ void main() {
       }
       return Future.value();
     });
-    await platform.buildMultiBracketCapture(options, 1);
+    await platform.buildContinuousCapture(options, 1);
   });
 
-  test('startMultiBracketCapture', () async {
+  test('startContinuousCapture', () async {
     const fileUrls = [
-      'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.MP4'
+      'http://192.168.1.1/files/150100624436344d4201375fda9dc400/100RICOH/R0013336.MP4'
     ];
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       return fileUrls;
     });
-    expect(await platform.startMultiBracketCapture(null, null), fileUrls);
+    expect(await platform.startContinuousCapture(null), fileUrls);
   });
 
-  test('startMultiBracketCapture no file', () async {
+  test('startContinuousCapture no file', () async {
     const fileUrls = null;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       return fileUrls;
     });
-    expect(await platform.startMultiBracketCapture(null, null), null);
+    expect(await platform.startContinuousCapture(null), null);
   });
 
-  test('startMultiBracketCapture exception', () async {
+  test('startContinuousCapture exception', () async {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       throw Exception('test error');
     });
     try {
-      await platform.startMultiBracketCapture(null, null);
+      await platform.startContinuousCapture(null);
       expect(true, false, reason: 'not exception');
     } catch (error) {
       expect(error.toString().contains('test error'), true);
@@ -110,23 +106,23 @@ void main() {
 
   test('progress of capture', () async {
     const fileUrls = [
-      'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.MP4'
+      'http://192.168.1.1/files/150100624436344d4201375fda9dc400/100RICOH/R0013336.MP4'
     ];
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-      expect(platform.notifyList.containsKey(10041), true,
+      expect(platform.notifyList.containsKey(10061), true,
           reason: 'add notify progress');
 
       // native event
       platform.onNotify({
-        'id': 10041,
+        'id': 10061,
         'params': {
           'completion': 0.1,
         },
       });
       await Future.delayed(const Duration(milliseconds: 10));
       platform.onNotify({
-        'id': 10041,
+        'id': 10061,
         'params': {
           'completion': 0.2,
         },
@@ -137,44 +133,13 @@ void main() {
     });
 
     int progressCount = 0;
-    var resultCapture = platform.startMultiBracketCapture((completion) {
+    var resultCapture = platform.startContinuousCapture((completion) {
       progressCount++;
-    }, null);
+    });
     var result = await resultCapture.timeout(const Duration(seconds: 5));
     expect(result, fileUrls);
     expect(progressCount, 2);
-    expect(platform.notifyList.containsKey(10041), false,
+    expect(platform.notifyList.containsKey(10061), false,
         reason: 'remove notify progress');
-  });
-
-  test('call onStopFailed', () async {
-    const fileUrls = [
-      'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.MP4'
-    ];
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-      expect(platform.notifyList.containsKey(10042), true,
-          reason: 'add notify stop error');
-
-      await Future.delayed(const Duration(milliseconds: 1));
-      // native event
-      platform.onNotify({
-        'id': 10042,
-        'params': {
-          'message': "stop error",
-        },
-      });
-      return fileUrls;
-    });
-
-    var isOnStopFailed = false;
-    var resultCapture = platform.startMultiBracketCapture(null, (exception) {
-      isOnStopFailed = true;
-    });
-    var result = await resultCapture.timeout(const Duration(seconds: 5));
-    expect(result, fileUrls);
-    expect(platform.notifyList.containsKey(10042), false,
-        reason: 'remove notify stop error');
-    expect(isOnStopFailed, true);
   });
 }

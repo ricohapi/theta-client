@@ -52,6 +52,8 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
     var multiBracketCaptureBuilder: MultiBracketCapture.Builder? = null
     var multiBracketCapture: MultiBracketCapture? = null
     var multiBracketCapturing: MultiBracketCapturing? = null
+    var continuousCaptureBuilder: ContinuousCapture.Builder? = null
+    var continuousCapture: ContinuousCapture? = null
 
     companion object {
         const val errorCode: String = "Error"
@@ -73,6 +75,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         const val notifyIdMultiBracketCaptureStopError = 10042;
         const val notifyIdBurstCaptureProgress = 10051;
         const val notifyIdBurstCaptureStopError = 10052;
+        const val notifyIdContinuousCaptureProgress = 10061;
     }
 
     fun sendNotifyEvent(id: Int, params: Map<String, Any?>) {
@@ -317,6 +320,20 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 stopMultiBracketCapture(result)
             }
 
+            "getContinuousCaptureBuilder" -> {
+                getContinuousCaptureBuilder(result)
+            }
+
+            "buildContinuousCapture" -> {
+                scope.launch {
+                    buildContinuousCapture(call, result)
+                }
+            }
+
+            "startContinuousCapture" -> {
+                startContinuousCapture(result)
+            }
+
             "getOptions" -> {
                 scope.launch {
                     getOptions(call, result)
@@ -497,6 +514,8 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         multiBracketCaptureBuilder = null
         multiBracketCapture = null
         multiBracketCapturing = null
+        continuousCaptureBuilder = null
+        continuousCapture = null
 
         try {
             endpoint = call.argument<String>("endpoint")!!
@@ -1145,6 +1164,58 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         }
         multiBracketCapturing.stopCapture()
         result.success(null)
+    }
+
+    fun getContinuousCaptureBuilder(result: Result) {
+        val theta = thetaRepository
+        if (theta == null) {
+            result.error(errorCode, "theta " + messageNotInit, null)
+            return
+        }
+        continuousCaptureBuilder = theta.getContinuousCaptureBuilder()
+        result.success(null)
+    }
+
+    suspend fun buildContinuousCapture(call: MethodCall, result: Result) {
+        val theta = thetaRepository
+        val continuousCaptureBuilder = continuousCaptureBuilder
+        if (theta == null || continuousCaptureBuilder == null) {
+            result.error(errorCode, "continuousCaptureBuilder " + messageNotInit, null)
+            return
+        }
+        setCaptureBuilderParams(call, continuousCaptureBuilder)
+        setContinuousCaptureBuilderParams(call, continuousCaptureBuilder)
+        try {
+            continuousCapture = continuousCaptureBuilder.build()
+            result.success(null)
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    fun startContinuousCapture(result: Result) {
+        val theta = thetaRepository
+        val continuousCapture = continuousCapture
+        if (theta == null || continuousCapture == null) {
+            result.error(errorCode, "continuousCapture " + messageNotInit, null)
+            return
+        }
+        continuousCapture.startCapture(object : ContinuousCapture.StartCaptureCallback {
+            override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                result.error(exception.javaClass.simpleName, exception.message, null)
+            }
+
+            override fun onProgress(completion: Float) {
+                sendNotifyEvent(
+                    notifyIdContinuousCaptureProgress,
+                    toCaptureProgressNotifyParam(completion)
+                )
+            }
+
+            override fun onCaptureCompleted(fileUrls: List<String>?) {
+                result.success(fileUrls)
+            }
+        })
     }
 
     suspend fun listFiles(call: MethodCall, result: Result) {

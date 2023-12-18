@@ -12,7 +12,7 @@ import type {
   BurstMaxExposureTimeEnum,
   BurstModeEnum,
   BurstOrderEnum,
-} from 'src/theta-repository/options';
+} from '../theta-repository/options';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 const NOTIFY_PROGRESS = 'BURST-PROGRESS';

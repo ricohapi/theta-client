@@ -273,3 +273,38 @@ class MultiBracketCapture extends Capture {
     return MultiBracketCapturing();
   }
 }
+
+/// Capture of continuous shooting
+class ContinuousCapture extends Capture {
+  final int _interval;
+
+  ContinuousCapture(super.options, this._interval);
+
+  int getCheckStatusCommandInterval() {
+    return _interval;
+  }
+
+  /// Get photo file format.
+  PhotoFileFormatEnum? getFileFormat() {
+    return _options[TagNameEnum.photoFileFormat.rawValue];
+  }
+
+  /// Get Number of shots for continuous shooting.
+  Future<ContinuousNumberEnum> getContinuousNumber() async {
+    return (await ThetaClientFlutterPlatform.instance
+                .getOptions([OptionNameEnum.continuousNumber]))
+            .continuousNumber ??
+        ContinuousNumberEnum.unsupported;
+  }
+
+  /// Starts continuous shooting
+  void startCapture(
+      void Function(List<String>? fileUrls) onSuccess,
+      void Function(double completion) onProgress,
+      void Function(Exception exception) onCaptureFailed) {
+    ThetaClientFlutterPlatform.instance
+        .startContinuousCapture(onProgress)
+        .then((value) => onSuccess(value))
+        .onError((error, stackTrace) => onCaptureFailed(error as Exception));
+  }
+}

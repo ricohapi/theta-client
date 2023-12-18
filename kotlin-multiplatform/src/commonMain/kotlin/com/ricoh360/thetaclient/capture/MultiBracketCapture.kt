@@ -14,6 +14,8 @@ import com.ricoh360.thetaclient.transferred.ShootingMode
 import com.ricoh360.thetaclient.transferred.StartCaptureParams
 import com.ricoh360.thetaclient.transferred.StartCaptureResponse
 import com.ricoh360.thetaclient.transferred.StatusApiParams
+import com.ricoh360.thetaclient.transferred.UnknownResponse
+import io.ktor.client.call.body
 import io.ktor.client.plugins.ResponseException
 import io.ktor.serialization.JsonConvertException
 import kotlinx.coroutines.CoroutineScope
@@ -137,11 +139,24 @@ class MultiBracketCapture private constructor(
                 )
             )
         } catch (e: ResponseException) {
-            callback.onCaptureFailed(
-                exception = ThetaRepository.ThetaWebApiException.create(
-                    exception = e
+            try {
+                val error: UnknownResponse = e.response.body()
+                if (error.error?.isCanceledShootingCode() == true) {
+                    callback.onCaptureCompleted(fileUrls = null) // canceled
+                } else {
+                    callback.onCaptureFailed(
+                        exception = ThetaRepository.ThetaWebApiException.create(
+                            exception = e
+                        )
+                    )
+                }
+            } catch (exception: Exception) {
+                callback.onCaptureFailed(
+                    exception = ThetaRepository.ThetaWebApiException(
+                        message = exception.message ?: exception.toString()
+                    )
                 )
-            )
+            }
         } catch (e: Exception) {
             callback.onCaptureFailed(
                 exception = ThetaRepository.NotConnectedException(

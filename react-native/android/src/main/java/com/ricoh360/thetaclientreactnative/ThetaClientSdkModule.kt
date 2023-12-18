@@ -44,6 +44,8 @@ class ThetaClientReactNativeModule(
   var multiBracketCaptureBuilder: MultiBracketCapture.Builder? = null
   var multiBracketCapture: MultiBracketCapture? = null
   var multiBracketCapturing: MultiBracketCapturing? = null
+  var continuousCaptureBuilder: ContinuousCapture.Builder? = null
+  var continuousCapture: ContinuousCapture? = null
   var theta: ThetaRepository? = null
   var listenerCount: Int = 0
 
@@ -115,6 +117,8 @@ class ThetaClientReactNativeModule(
         multiBracketCaptureBuilder = null
         multiBracketCapture = null
         multiBracketCapturing = null
+        continuousCaptureBuilder = null
+        continuousCapture = null
 
         theta = ThetaRepository.newInstance(
           endpoint,
@@ -1326,6 +1330,97 @@ class ThetaClientReactNativeModule(
   }
 
   /**
+   * getContinuousCaptureBuilder  -  get continuous shooting builder from repository
+   *
+   * @param promise Promise for getContinuousCaptureBuilder
+   */
+  @ReactMethod
+  fun getContinuousCaptureBuilder(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+
+    continuousCaptureBuilder = theta.getContinuousCaptureBuilder()
+    promise.resolve(true)
+  }
+
+  /**
+   * buildContinuousCapture  -  build continuous shooting
+   * @param options option to execute continuous shooting
+   * @param promise Promise for buildContinuousCapture
+   */
+  @ReactMethod
+  fun buildContinuousCapture(options: ReadableMap, promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    if (continuousCaptureBuilder == null) {
+      promise.reject(Exception("no continuousCaptureBuilder"))
+      return
+    }
+    launch {
+      try {
+        continuousCaptureBuilder?.let {
+          setCaptureBuilderParams(optionMap = options, builder = it)
+          setContinuousCaptureBuilderParams(optionMap = options, builder = it)
+          continuousCapture = it.build()
+        }
+        promise.resolve(true)
+        continuousCaptureBuilder = null
+      } catch (t: Throwable) {
+        promise.reject(t)
+        continuousCaptureBuilder = null
+      }
+    }
+  }
+
+  /**
+   * startContinuousCapture  -  start continuous shooting
+   * @param promise promise for startContinuousCapture
+   */
+  @ReactMethod
+  fun startContinuousCapture(promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    if (continuousCapture == null) {
+      promise.reject(Exception("no continuousCapture"))
+      return
+    }
+    class StartCaptureCallback : ContinuousCapture.StartCaptureCallback {
+      override fun onCaptureCompleted(fileUrls: List<String>?) {
+        promise.resolve(fileUrls?.let {
+          val resultList = Arguments.createArray()
+          it.forEach {
+            resultList.pushString(it)
+          }
+          resultList
+        })
+        continuousCapture = null
+      }
+
+      override fun onProgress(completion: Float) {
+        sendNotifyEvent(
+          toNotify(
+            NOTIFY_CONTINUOUS_PROGRESS,
+            toCaptureProgressNotifyParam(value = completion)
+          )
+        )
+      }
+
+      override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+        promise.reject(exception)
+        continuousCapture = null
+      }
+    }
+    continuousCapture?.startCapture(StartCaptureCallback())
+  }
+
+  /**
    * getMetadata  -  retrieve meta data from THETA via repository
    * @param promise promise to set result
    */
@@ -1944,5 +2039,6 @@ class ThetaClientReactNativeModule(
     const val NOTIFY_BURST_STOP_ERROR = "BURST-STOP-ERROR"
     const val NOTIFY_MULTI_BRACKET_PROGRESS = "MULTI-BRACKET-PROGRESS"
     const val NOTIFY_MULTI_BRACKET_STOP_ERROR = "MULTI-BRACKET-STOP-ERROR"
+    const val NOTIFY_CONTINUOUS_PROGRESS = "CONTINUOUS-PROGRESS"
   }
 }

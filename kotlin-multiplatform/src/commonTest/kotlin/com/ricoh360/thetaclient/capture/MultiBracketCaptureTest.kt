@@ -326,55 +326,55 @@ class MultiBracketCaptureTest {
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
         val capture = thetaRepository.getMultiBracketCaptureBuilder()
-        .addBracketParameters(
-            colorTemperature = 5000,
-            exposureCompensation = ThetaRepository.ExposureCompensationEnum.M0_3,
-        ).addBracketParameters(
-            exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
-            shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_1,
-            iso = ThetaRepository.IsoEnum.ISO_100,
-            whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
-        ).addBracketParameters(
-            exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
-            shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_1,
-            iso = ThetaRepository.IsoEnum.ISO_100,
-            whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
-        ).addBracketParameters(
-            exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
-            shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_1,
-            iso = ThetaRepository.IsoEnum.ISO_100,
-            whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
-        ).addBracketParameters(
-            exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
-            shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_1,
-            iso = ThetaRepository.IsoEnum.ISO_100,
-            whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
-        ).addBracketParameters(
-            exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
-            shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_1,
-            iso = ThetaRepository.IsoEnum.ISO_100,
-            whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
-        ).addBracketParameters(
-            exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
-            shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_1,
-            iso = ThetaRepository.IsoEnum.ISO_100,
-            whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
-        ).addBracketParameters(
-            exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
-            shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_1,
-            iso = ThetaRepository.IsoEnum.ISO_100,
-            whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
-        ).addBracketParameters(
-            exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
-            shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_1,
-            iso = ThetaRepository.IsoEnum.ISO_100,
-            whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
-        ).addBracketParameters(
-            exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
-            shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_1,
-            iso = ThetaRepository.IsoEnum.ISO_100,
-            whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
-        ).build()
+            .addBracketParameters(
+                colorTemperature = 5000,
+                exposureCompensation = ThetaRepository.ExposureCompensationEnum.M0_3,
+            ).addBracketParameters(
+                exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
+                shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_1,
+                iso = ThetaRepository.IsoEnum.ISO_100,
+                whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
+            ).addBracketParameters(
+                exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
+                shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_1,
+                iso = ThetaRepository.IsoEnum.ISO_100,
+                whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
+            ).addBracketParameters(
+                exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
+                shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_1,
+                iso = ThetaRepository.IsoEnum.ISO_100,
+                whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
+            ).addBracketParameters(
+                exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
+                shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_1,
+                iso = ThetaRepository.IsoEnum.ISO_100,
+                whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
+            ).addBracketParameters(
+                exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
+                shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_1,
+                iso = ThetaRepository.IsoEnum.ISO_100,
+                whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
+            ).addBracketParameters(
+                exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
+                shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_1,
+                iso = ThetaRepository.IsoEnum.ISO_100,
+                whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
+            ).addBracketParameters(
+                exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
+                shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_1,
+                iso = ThetaRepository.IsoEnum.ISO_100,
+                whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
+            ).addBracketParameters(
+                exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
+                shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_1,
+                iso = ThetaRepository.IsoEnum.ISO_100,
+                whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
+            ).addBracketParameters(
+                exposureProgram = ThetaRepository.ExposureProgramEnum.MANUAL,
+                shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_1,
+                iso = ThetaRepository.IsoEnum.ISO_100,
+                whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
+            ).build()
 
         var files: List<String>? = null
         val capturing =

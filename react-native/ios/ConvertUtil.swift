@@ -607,7 +607,7 @@ func setMultiBracketCaptureBuilderParams(params: [String: Any], builder: MultiBr
                     return nil
                 }
             }()
-
+            
             let colorTemperature = {
                 if let value = map["colorTemperature"] as? Int {
                     return toKotlinInt(value: value)
@@ -615,7 +615,7 @@ func setMultiBracketCaptureBuilderParams(params: [String: Any], builder: MultiBr
                     return nil
                 }
             }()
-
+            
             let exposureCompensation = {
                 if let name = map["exposureCompensation"] as? String {
                     return getEnumValue(values: ThetaRepository.ExposureCompensationEnum.values(), name: name)
@@ -623,7 +623,7 @@ func setMultiBracketCaptureBuilderParams(params: [String: Any], builder: MultiBr
                     return nil
                 }
             }()
-
+            
             let exposureProgram = {
                 if let name = map["exposureProgram"] as? String {
                     return getEnumValue(values: ThetaRepository.ExposureProgramEnum.values(), name: name)
@@ -631,7 +631,7 @@ func setMultiBracketCaptureBuilderParams(params: [String: Any], builder: MultiBr
                     return nil
                 }
             }()
-
+            
             let iso = {
                 if let name = map["iso"] as? String {
                     return getEnumValue(values: ThetaRepository.IsoEnum.values(), name: name)
@@ -639,7 +639,7 @@ func setMultiBracketCaptureBuilderParams(params: [String: Any], builder: MultiBr
                     return nil
                 }
             }()
-
+            
             let shutterSpeed = {
                 if let name = map["shutterSpeed"] as? String {
                     return getEnumValue(values: ThetaRepository.ShutterSpeedEnum.values(), name: name)
@@ -647,7 +647,7 @@ func setMultiBracketCaptureBuilderParams(params: [String: Any], builder: MultiBr
                     return nil
                 }
             }()
-
+            
             let whiteBalance = {
                 if let name = map["whiteBalance"] as? String {
                     return getEnumValue(values: ThetaRepository.WhiteBalanceEnum.values(), name: name)
@@ -655,7 +655,7 @@ func setMultiBracketCaptureBuilderParams(params: [String: Any], builder: MultiBr
                     return nil
                 }
             }()
-
+            
             builder.addBracketParameters(
                 aperture: aperture,
                 colorTemperature: colorTemperature,
@@ -665,6 +665,21 @@ func setMultiBracketCaptureBuilderParams(params: [String: Any], builder: MultiBr
                 shutterSpeed: shutterSpeed,
                 whiteBalance: whiteBalance
             )
+        }
+    }
+}
+
+func setContinuousCaptureBuilderParams(params: [String: Any], builder: ContinuousCapture.Builder) {
+    if let interval = params[KEY_TIMESHIFT_CAPTURE_INTERVAL] as? Int,
+       interval >= 0
+    {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
+    if let value = params[KEY_FILE_FORMAT] as? String {
+        if let enumValue = getEnumValue(
+            values: ThetaRepository.PhotoFileFormatEnum.values(), name: value
+        ) {
+            builder.setFileFormat(fileFormat: enumValue)
         }
     }
 }

@@ -7,6 +7,7 @@ import {
   ApertureEnum,
   BluetoothRoleEnum,
   CaptureModeEnum,
+  ContinuousNumberEnum,
   ExposureCompensationEnum,
   ExposureDelayEnum,
   ExposureProgramEnum,
@@ -126,6 +127,23 @@ const optionList: OptionItem[] = [
           options={options}
         />
       ),
+    },
+  },
+  {
+    name: 'continuousNumber',
+    value: {
+      optionName: OptionNameEnum.ContinuousNumber,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'continuousNumber'}
+          option={options.continuousNumber}
+          onChange={(continuousNumber) => {
+            onChange({ continuousNumber });
+          }}
+          optionEnum={ContinuousNumberEnum}
+        />
+      ),
+      defaultValue: { continuousNumber: ContinuousNumberEnum.OFF },
     },
   },
   {

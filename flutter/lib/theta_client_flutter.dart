@@ -184,9 +184,14 @@ class ThetaClientFlutter {
 
   /// Get getMultiBracketCapture.Builder for capture interval composite shooting.
   MultiBracketCaptureBuilder getMultiBracketCaptureBuilder() {
-    ThetaClientFlutterPlatform.instance
-        .getMultiBracketCaptureBuilder();
+    ThetaClientFlutterPlatform.instance.getMultiBracketCaptureBuilder();
     return MultiBracketCaptureBuilder();
+  }
+
+  /// Get ContinuousCaptureBuilder.Builder for capture limitless interval.
+  ContinuousCaptureBuilder getContinuousCaptureBuilder() {
+    ThetaClientFlutterPlatform.instance.getContinuousCaptureBuilder();
+    return ContinuousCaptureBuilder();
   }
 
   /// Acquires the properties and property support specifications for shooting, the camera, etc.
@@ -1885,8 +1890,8 @@ class BracketSetting {
   /// White balance.
   final WhiteBalanceEnum? whiteBalance;
 
-  BracketSetting({
-      this.aperture,
+  BracketSetting(
+      {this.aperture,
       this.colorTemperature,
       this.exposureCompensation,
       this.exposureProgram,

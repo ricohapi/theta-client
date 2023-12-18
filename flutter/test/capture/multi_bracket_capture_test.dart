@@ -20,8 +20,7 @@ void main() {
         MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
-    var builder =
-        thetaClientPlugin.getMultiBracketCaptureBuilder();
+    var builder = thetaClientPlugin.getMultiBracketCaptureBuilder();
     expect(builder, isNotNull);
   });
 
@@ -33,14 +32,13 @@ void main() {
 
     List<BracketSetting> settings = [
       BracketSetting(
-        aperture: ApertureEnum.apertureAuto,
-        colorTemperature: 5000,
-        exposureCompensation: ExposureCompensationEnum.p0_7,
-        exposureProgram: ExposureProgramEnum.normalProgram,
-        iso: IsoEnum.iso100,
-        shutterSpeed: ShutterSpeedEnum.shutterSpeedAuto,
-        whiteBalance: WhiteBalanceEnum.daylight
-      ),
+          aperture: ApertureEnum.apertureAuto,
+          colorTemperature: 5000,
+          exposureCompensation: ExposureCompensationEnum.p0_7,
+          exposureProgram: ExposureProgramEnum.normalProgram,
+          iso: IsoEnum.iso100,
+          shutterSpeed: ShutterSpeedEnum.shutterSpeedAuto,
+          whiteBalance: WhiteBalanceEnum.daylight),
       BracketSetting(colorTemperature: 6000)
     ];
 
@@ -67,8 +65,7 @@ void main() {
       return Future.value(imageUrls);
     };
 
-    var builder =
-        thetaClientPlugin.getMultiBracketCaptureBuilder();
+    var builder = thetaClientPlugin.getMultiBracketCaptureBuilder();
     var capture = await builder.build();
     List<String>? fileUrls;
     capture.startCapture(
@@ -97,13 +94,11 @@ void main() {
       return completer.future;
     };
     onCallStopMultiBracketCapture = () {
-      completer
-          .completeError(Exception('Error. startMultiBracketCapture'));
+      completer.completeError(Exception('Error. startMultiBracketCapture'));
       return Future.value();
     };
 
-    var builder =
-        thetaClientPlugin.getMultiBracketCaptureBuilder();
+    var builder = thetaClientPlugin.getMultiBracketCaptureBuilder();
     var capture = await builder.build();
     var capturing = capture.startCapture(
         (fileUrl) {
@@ -135,8 +130,7 @@ void main() {
       return Future.value();
     };
 
-    var builder =
-        thetaClientPlugin.getMultiBracketCaptureBuilder();
+    var builder = thetaClientPlugin.getMultiBracketCaptureBuilder();
     var capture = await builder.build();
     List<String>? fileUrls;
     var capturing = capture.startCapture(
@@ -173,8 +167,7 @@ void main() {
       return Future.value();
     };
 
-    var builder =
-        thetaClientPlugin.getMultiBracketCaptureBuilder();
+    var builder = thetaClientPlugin.getMultiBracketCaptureBuilder();
     var capture = await builder.build();
     var isOnStopFailed = false;
     var capturing = capture.startCapture(
@@ -209,8 +202,7 @@ void main() {
       return Completer<List<String>>().future;
     };
 
-    var builder =
-        thetaClientPlugin.getMultiBracketCaptureBuilder();
+    var builder = thetaClientPlugin.getMultiBracketCaptureBuilder();
     var capture = await builder.build();
     var isOnProgress = false;
     capture.startCapture((fileUrl) {

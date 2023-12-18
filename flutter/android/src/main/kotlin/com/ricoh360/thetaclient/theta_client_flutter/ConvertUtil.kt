@@ -390,6 +390,19 @@ fun setMultiBracketCaptureBuilderParams(call: MethodCall, builder: MultiBracketC
     }
 }
 
+fun setContinuousCaptureBuilderParams(call: MethodCall, builder: ContinuousCapture.Builder) {
+    call.argument<Int>("_capture_interval")?.let {
+        if (it >= 0) {
+            builder.setCheckStatusCommandInterval(it.toLong())
+        }
+    }
+    call.argument<String>("PhotoFileFormat")?.let { enumName ->
+        PhotoFileFormatEnum.values().find { it.name == enumName }?.let {
+            builder.setFileFormat(it)
+        }
+    }
+}
+
 fun toGetOptionsParam(data: List<String>): List<OptionNameEnum> {
     val optionNames = mutableListOf<OptionNameEnum>()
     data.forEach { name ->

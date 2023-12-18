@@ -18,9 +18,9 @@ const notifyIdCompositeIntervalCaptureProgress = 10031;
 const notifyIdCompositeIntervalCaptureStopError = 10032;
 const notifyIdMultiBracketCaptureProgress = 10041;
 const notifyIdMultiBracketCaptureStopError = 10042;
-
 const notifyIdBurstCaptureProgress = 10051;
 const notifyIdBurstCaptureStopError = 10052;
+const notifyIdContinuousCaptureProgress = 10061;
 
 /// An implementation of [ThetaClientFlutterPlatform] that uses method channels.
 class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
@@ -568,8 +568,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<void> getMultiBracketCaptureBuilder() async {
-    return methodChannel.invokeMethod<void>(
-        'getMultiBracketCaptureBuilder');
+    return methodChannel.invokeMethod<void>('getMultiBracketCaptureBuilder');
   }
 
   @override
@@ -577,8 +576,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       Map<String, dynamic> options, int interval) async {
     final params = ConvertUtils.convertCaptureParams(options);
     params['_capture_interval'] = interval;
-    return methodChannel.invokeMethod<void>(
-        'buildMultiBracketCapture', params);
+    return methodChannel.invokeMethod<void>('buildMultiBracketCapture', params);
   }
 
   @override
@@ -624,6 +622,48 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   @override
   Future<void> stopMultiBracketCapture() async {
     return methodChannel.invokeMethod<void>('stopMultiBracketCapture');
+  }
+
+  @override
+  Future<void> getContinuousCaptureBuilder() async {
+    return methodChannel.invokeMethod<void>('getContinuousCaptureBuilder');
+  }
+
+  @override
+  Future<void> buildContinuousCapture(
+      Map<String, dynamic> options, int interval) async {
+    final params = ConvertUtils.convertCaptureParams(options);
+    params['_capture_interval'] = interval;
+    return methodChannel.invokeMethod<void>('buildContinuousCapture', params);
+  }
+
+  @override
+  Future<List<String>?> startContinuousCapture(
+      void Function(double)? onProgress) async {
+    var completer = Completer<List<String>?>();
+    try {
+      enableNotifyEventReceiver();
+      if (onProgress != null) {
+        addNotify(notifyIdContinuousCaptureProgress, (params) {
+          final completion = params?['completion'] as double?;
+          if (completion != null) {
+            onProgress(completion);
+          }
+        });
+      }
+      final fileUrls = await methodChannel
+          .invokeMethod<List<dynamic>?>('startContinuousCapture');
+      removeNotify(notifyIdContinuousCaptureProgress);
+      if (fileUrls == null) {
+        completer.complete(null);
+      } else {
+        completer.complete(ConvertUtils.convertStringList(fileUrls));
+      }
+    } catch (e) {
+      removeNotify(notifyIdContinuousCaptureProgress);
+      completer.completeError(e);
+    }
+    return completer.future;
   }
 
   @override

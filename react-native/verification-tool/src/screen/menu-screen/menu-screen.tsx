@@ -93,6 +93,14 @@ const MenuScreen: React.FC<
         },
       },
     },
+    {
+      name: '・continuous shooting',
+      value: {
+        selectedFunction: async () => {
+          navigation.navigate('continuousCapture');
+        },
+      },
+    },
   ];
 
   const functionList: FunctionItem[] = [

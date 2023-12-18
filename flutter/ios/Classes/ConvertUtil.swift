@@ -388,7 +388,6 @@ func setMultiBracketCaptureBuilderParams(params: [String: Any], builder: MultiBr
     {
         builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
     }
-
     if let autoBracket = params[ThetaRepository.OptionNameEnum.autobracket.name] as? [[String: Any]] {
         autoBracket.forEach { map in
             let aperture = {
@@ -456,6 +455,19 @@ func setMultiBracketCaptureBuilderParams(params: [String: Any], builder: MultiBr
                 shutterSpeed: shutterSpeed,
                 whiteBalance: whiteBalance
             )
+        }
+    }
+}
+
+func setContinuousCaptureBuilderParams(params: [String: Any], builder: ContinuousCapture.Builder) {
+    if let interval = params["_capture_interval"] as? Int,
+       interval >= 0
+    {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
+    if let value = params["PhotoFileFormat"] as? String {
+        if let enumValue = getEnumValue(values: ThetaRepository.PhotoFileFormatEnum.values(), name: value) {
+            builder.setFileFormat(fileFormat: enumValue)
         }
     }
 }

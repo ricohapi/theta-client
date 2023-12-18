@@ -26,6 +26,7 @@ import {
   ShotCountSpecifiedIntervalCaptureBuilder,
   CompositeIntervalCaptureBuilder,
   BurstCaptureBuilder,
+  ContinuousCaptureBuilder,
   MultiBracketCaptureBuilder,
 } from '../capture';
 import type { ThetaConfig } from './theta-config';
@@ -172,6 +173,16 @@ export function getBurstCaptureBuilder(
  */
 export function getMultiBracketCaptureBuilder(): MultiBracketCaptureBuilder {
   return new MultiBracketCaptureBuilder();
+}
+
+/**
+ * Get ContinuousCapture.Builder for take limitless interval shooting.
+ *
+ * @function getContinuousCaptureBuilder
+ * @return created ContinuousCaptureBuilder instance
+ */
+export function getContinuousCaptureBuilder(): ContinuousCaptureBuilder {
+  return new ContinuousCaptureBuilder();
 }
 
 /**

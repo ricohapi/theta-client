@@ -243,6 +243,18 @@ fun setMultiBracketCaptureBuilderParams(optionMap: ReadableMap, builder: MultiBr
   }
 }
 
+fun setContinuousCaptureBuilderParams(optionMap: ReadableMap, builder: ContinuousCapture.Builder) {
+  val interval = if (optionMap.hasKey("_capture_interval")) optionMap.getInt("_capture_interval") else null
+  interval?.let {
+    if (it >= 0) {
+      builder.setCheckStatusCommandInterval(it.toLong())
+    }
+  }
+  optionMap.getString("fileFormat")?.let {
+    builder.setFileFormat(PhotoFileFormatEnum.valueOf(it))
+  }
+}
+
 fun toGetOptionsParam(optionNames: ReadableArray): MutableList<OptionNameEnum> {
   val optionNameList = mutableListOf<OptionNameEnum>()
   for (index in 0..(optionNames.size() - 1)) {
@@ -296,7 +308,7 @@ fun toResult(options: Options): WritableMap {
       options.offDelay?.let {
         if (it is OffDelayEnum) {
           result.putString("offDelay", it.name)
-        }else  if (it is OffDelaySec) {
+        } else if (it is OffDelaySec) {
           result.putInt("offDelay", it.sec)
         }
       }
@@ -308,7 +320,7 @@ fun toResult(options: Options): WritableMap {
       options.sleepDelay?.let {
         if (it is SleepDelayEnum) {
           result.putString("sleepDelay", it.name)
-        }else  if (it is SleepDelaySec) {
+        } else if (it is SleepDelaySec) {
           result.putInt("sleepDelay", it.sec)
         }
       }

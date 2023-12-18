@@ -246,29 +246,30 @@ class ConvertUtils {
     return map;
   }
 
-  static List<Map<String, dynamic>> convertAutoBracketParam(List<BracketSetting> settingList) {
+  static List<Map<String, dynamic>> convertAutoBracketParam(
+      List<BracketSetting> settingList) {
     List<Map<String, dynamic>> list = [];
     for (var setting in settingList) {
       var map = <String, dynamic>{};
-      if(setting.aperture != null) {
+      if (setting.aperture != null) {
         map['aperture'] = setting.aperture.toString();
       }
-      if(setting.colorTemperature != null) {
+      if (setting.colorTemperature != null) {
         map['colorTemperature'] = setting.colorTemperature;
       }
-      if(setting.exposureCompensation != null) {
+      if (setting.exposureCompensation != null) {
         map['exposureCompensation'] = setting.exposureCompensation.toString();
       }
-      if(setting.exposureProgram != null) {
+      if (setting.exposureProgram != null) {
         map['exposureProgram'] = setting.exposureProgram.toString();
       }
-      if(setting.iso != null) {
+      if (setting.iso != null) {
         map['iso'] = setting.iso.toString();
       }
-      if(setting.shutterSpeed != null) {
+      if (setting.shutterSpeed != null) {
         map['shutterSpeed'] = setting.shutterSpeed.toString();
       }
-      if(setting.whiteBalance != null) {
+      if (setting.whiteBalance != null) {
         map['whiteBalance'] = setting.whiteBalance.toString();
       }
       list.add(map);
