@@ -1855,6 +1855,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     class BracketSettingList(originalList: List<BracketSetting>) {
         constructor() : this(listOf())
+
         private val settingList: MutableList<BracketSetting> = originalList.toMutableList()
         val list: List<BracketSetting>
             get() = settingList.toList()

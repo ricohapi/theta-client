@@ -5,7 +5,7 @@
 - Add following descriptions to the `dependencies` of your module's `build.gradle`.
 
   ```
-  implementation "com.ricoh360.thetaclient:theta-client:1.0.0"
+  implementation "com.ricoh360.thetaclient:theta-client:1.7.0"
   ```
 
 - Connect the wireless LAN between THETA and the smartphone that runs on the application using this SDK.

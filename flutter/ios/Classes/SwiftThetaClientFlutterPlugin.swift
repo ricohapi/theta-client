@@ -973,7 +973,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         capturing.stopCapture()
         result(nil)
     }
-    
+
     // MARK: - BurstCapture
 
     func getBurstCaptureBuilder(call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -1086,9 +1086,10 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         capturing.stopCapture()
         result(nil)
     }
-    
+
     // MARK: - MultiBracketCapture
-    func getMultiBracketCaptureBuilder(call: FlutterMethodCall, result: @escaping FlutterResult) {
+
+    func getMultiBracketCaptureBuilder(call _: FlutterMethodCall, result: @escaping FlutterResult) {
         guard let thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
@@ -1118,7 +1119,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             }
         })
     }
-    
+
     func startMultiBracketCapture(result: @escaping FlutterResult) {
         guard let _ = thetaRepository, let capture = multiBracketCapture else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
@@ -1162,6 +1163,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                                plugin: self)
         )
     }
+
     func stopMultiBracketCapture(result: @escaping FlutterResult) {
         guard let _ = thetaRepository, let capturing = multiBracketCapturing else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
@@ -1244,9 +1246,9 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                                plugin: self)
         )
     }
-    
+
     // MARK: -
-    
+
     func getOptions(call: FlutterMethodCall, result: @escaping FlutterResult) {
         if thetaRepository == nil {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)

@@ -147,12 +147,14 @@ class AutoBracketTest {
     @Test
     fun setOptionAutoBracketWithOriginalListTest() = runTest {
         //val value = Pair(ThetaRepository.AutoBracketEnum.=MEMBER=, AutoBracket.=MEMBER=)
-        val list = ThetaRepository.BracketSettingList(listOf(
-            ThetaRepository.BracketSetting(
-                exposureProgram = ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM,
-                whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
+        val list = ThetaRepository.BracketSettingList(
+            listOf(
+                ThetaRepository.BracketSetting(
+                    exposureProgram = ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM,
+                    whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
+                )
             )
-        ))
+        )
         list.add(
             ThetaRepository.BracketSetting(
                 aperture = ThetaRepository.ApertureEnum.APERTURE_2_0,
@@ -260,12 +262,14 @@ class AutoBracketTest {
     fun convertOptionAutoBracketWithOriginalListTest() = runTest {
         val values = listOf(
             Pair(
-                ThetaRepository.BracketSettingList(listOf(
-                    ThetaRepository.BracketSetting(
-                        exposureProgram = ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM,
-                        whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
+                ThetaRepository.BracketSettingList(
+                    listOf(
+                        ThetaRepository.BracketSetting(
+                            exposureProgram = ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM,
+                            whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
+                        )
                     )
-                )).add(
+                ).add(
                     ThetaRepository.BracketSetting(
                         aperture = ThetaRepository.ApertureEnum.APERTURE_2_0,
                         colorTemperature = 6800,

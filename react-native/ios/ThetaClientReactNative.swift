@@ -76,7 +76,7 @@ class ThetaClientReactNative: RCTEventEmitter {
     static let NOTIFY_MULTI_BRACKET_PROGRESS = "MULTI-BRACKET-PROGRESS"
     static let NOTIFY_MULTI_BRACKET_STOP_ERROR = "MULTI-BRACKET-STOP-ERROR"
     static let NOTIFY_CONTINUOUS_PROGRESS = "CONTINUOUS-PROGRESS"
-    
+
     @objc
     override func supportedEvents() -> [String]! {
         return [ThetaClientReactNative.EVENT_FRAME, ThetaClientReactNative.EVENT_NOTIFY]
@@ -1184,7 +1184,7 @@ class ThetaClientReactNative: RCTEventEmitter {
     }
 
     // MARK: - BurstCapture
-    
+
     @objc(getBurstCaptureBuilder:burstBracketStep:burstCompensation:burstMaxExposureTime:burstEnableIsoControl:burstOrder:withResolver:withRejecter:)
     func getBurstCaptureBuilder(
         burstCaptureNum: String,
@@ -1336,9 +1336,9 @@ class ThetaClientReactNative: RCTEventEmitter {
         burstCapturing.cancelCapture()
         resolve(nil)
     }
-    
+
     // MARK: - MultiBracketCapture
-    
+
     @objc(getMultiBracketCaptureBuilder:withRejecter:)
     func getMultiBracketCaptureBuilder(
         resolve: RCTPromiseResolveBlock,
@@ -1351,7 +1351,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         multiBracketCaptureBuilder = thetaRepository.getMultiBracketCaptureBuilder()
         resolve(nil)
     }
-    
+
     @objc(buildMultiBracketCapture:withResolver:withRejecter:)
     func buildMultiBracketCapture(
         options: [AnyHashable: Any]?,
@@ -1366,7 +1366,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             reject(ERROR_CODE_ERROR, MESSAGE_NO_MULTI_BRACKET_CAPTURE_BUILDER, nil)
             return
         }
-        
+
         if let options = options as? [String: Any] {
             setCaptureBuilderParams(params: options, builder: multiBracketCaptureBuilder)
             setMultiBracketCaptureBuilderParams(params: options, builder: multiBracketCaptureBuilder)
@@ -1383,7 +1383,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             }
         }
     }
-    
+
     @objc(startMultiBracketCapture:withRejecter:)
     func startMultiBracketCapture(
         resolve: @escaping RCTPromiseResolveBlock,
@@ -1397,7 +1397,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             reject(ERROR_CODE_ERROR, MESSAGE_NO_MULTI_BRACKET_CAPTURE, nil)
             return
         }
-        
+
         class Callback: MultiBracketCaptureStartCaptureCallback {
             let callback: (_ urls: [String]?, _ error: Error?) -> Void
             weak var client: ThetaClientReactNative?
@@ -1408,11 +1408,11 @@ class ThetaClientReactNative: RCTEventEmitter {
                 self.callback = callback
                 self.client = client
             }
-            
+
             func onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 callback(nil, exception.asError())
             }
-            
+
             func onProgress(completion: Float) {
                 client?.sendEvent(
                     withName: ThetaClientReactNative.EVENT_NOTIFY,
@@ -1422,11 +1422,11 @@ class ThetaClientReactNative: RCTEventEmitter {
                     )
                 )
             }
-            
+
             func onCaptureCompleted(fileUrls: [String]?) {
                 callback(fileUrls, nil)
             }
-            
+
             func onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 let error = exception.asError()
                 client?.sendEvent(
@@ -1438,7 +1438,7 @@ class ThetaClientReactNative: RCTEventEmitter {
                 )
             }
         }
-        
+
         multiBracketCapturing = multiBracketCapture.startCapture(
             callback: Callback(
                 { url, error in
@@ -1450,7 +1450,7 @@ class ThetaClientReactNative: RCTEventEmitter {
                 }, client: self
             ))
     }
-    
+
     @objc(cancelMultiBracketCapture:withRejecter:)
     func cancelMultiBracketCapture(
         resolve: @escaping RCTPromiseResolveBlock,
@@ -1467,9 +1467,9 @@ class ThetaClientReactNative: RCTEventEmitter {
         multiBracketCapturing.cancelCapture()
         resolve(nil)
     }
-    
+
     // MARK: - ContinuousCapture
-    
+
     @objc(getContinuousCaptureBuilder:withRejecter:)
     func getContinuousCaptureBuilder(
         resolve: RCTPromiseResolveBlock,
@@ -1482,7 +1482,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         continuousCaptureBuilder = thetaRepository.getContinuousCaptureBuilder()
         resolve(nil)
     }
-    
+
     @objc(buildContinuousCapture:withResolver:withRejecter:)
     func buildContinuousCapture(
         options: [AnyHashable: Any]?,
@@ -1572,7 +1572,7 @@ class ThetaClientReactNative: RCTEventEmitter {
     }
 
     // MARK: -
-    
+
     @objc(getMetadata:withResolver:withRejecter:)
     func getMetadata(
         fileUrl: String,
