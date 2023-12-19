@@ -203,6 +203,70 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
         'stopCompositeIntervalCapture() has not been implemented.');
   }
 
+  Future<void> getBurstCaptureBuilder(
+      BurstCaptureNumEnum burstCaptureNum,
+      BurstBracketStepEnum burstBracketStep,
+      BurstCompensationEnum burstCompensation,
+      BurstMaxExposureTimeEnum burstMaxExposureTime,
+      BurstEnableIsoControlEnum burstEnableIsoControl,
+      BurstOrderEnum burstOrder) {
+    throw UnimplementedError(
+        'getBurstCaptureBuilder() has not been implemented.');
+  }
+
+  Future<void> buildBurstCapture(Map<String, dynamic> options, int interval) {
+    throw UnimplementedError('buildBurstCapture() has not been implemented.');
+  }
+
+  Future<List<String>?> startBurstCapture(void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed) {
+    throw UnimplementedError('startBurstCapture() has not been implemented.');
+  }
+
+  Future<void> stopBurstCapture() {
+    throw UnimplementedError('stopBurstCapture() has not been implemented.');
+  }
+
+  Future<void> getMultiBracketCaptureBuilder() {
+    throw UnimplementedError(
+        'getMultiBracketCaptureBuilder() has not been implemented.');
+  }
+
+  Future<void> buildMultiBracketCapture(
+      Map<String, dynamic> options, int interval) {
+    throw UnimplementedError(
+        'buildMultiBracketCapture() has not been implemented.');
+  }
+
+  Future<List<String>?> startMultiBracketCapture(
+      void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed) {
+    throw UnimplementedError(
+        'startMultiBracketCapture() has not been implemented.');
+  }
+
+  Future<void> stopMultiBracketCapture() {
+    throw UnimplementedError(
+        'stopMultiBracketCapture() has not been implemented.');
+  }
+
+  Future<void> getContinuousCaptureBuilder() {
+    throw UnimplementedError(
+        'getContinuousCaptureBuilder() has not been implemented.');
+  }
+
+  Future<void> buildContinuousCapture(
+      Map<String, dynamic> options, int interval) {
+    throw UnimplementedError(
+        'buildContinuousCapture() has not been implemented.');
+  }
+
+  Future<List<String>?> startContinuousCapture(
+      void Function(double)? onProgress) {
+    throw UnimplementedError(
+        'startContinuousCapture() has not been implemented.');
+  }
+
   Future<Options> getOptions(List<OptionNameEnum> optionNames) {
     throw UnimplementedError('getOptions() has not been implemented.');
   }

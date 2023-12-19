@@ -6,7 +6,7 @@ import 'package:theta_client_flutter/theta_client_flutter.dart';
 import 'message_box.dart';
 
 class CaptureVideoScreen extends StatefulWidget {
-  const CaptureVideoScreen({Key? key}) : super(key: key);
+  const CaptureVideoScreen({super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -70,7 +70,8 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
+    return PopScope(
+      canPop: true,
       child: Scaffold(
         appBar: AppBar(title: const Text('Capture Video')),
         body: Stack(
@@ -114,7 +115,9 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen>
           ],
         ),
       ),
-      onWillPop: () => backButtonPress(context),
+      onPopInvoked: (didPop) async {
+        backButtonPress(context);
+      },
     );
   }
 

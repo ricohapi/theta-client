@@ -11,6 +11,7 @@ internal class CaptureStatusMonitor(
     val endpoint: String,
     var onChangeStatus: ((newStatus: CaptureStatus, oldStatus: CaptureStatus?) -> Unit),
     var onError: ((error: Throwable) -> Unit),
+    val checkStateInterval: Long = CHECK_STATE_INTERVAL,
 ) {
     private var isStartMonitor = false
     private val scope = CoroutineScope(Dispatchers.Default)
@@ -46,7 +47,7 @@ internal class CaptureStatusMonitor(
                         updateStatus(status)
                     }
                 }
-                delay(CHECK_STATE_INTERVAL)
+                delay(checkStateInterval)
             }
         }
     }
@@ -72,9 +73,8 @@ internal class CaptureStatusMonitor(
                 lastException = null
                 return stateResponse.state._captureStatus
             } catch (e: Throwable) {
-                println("getCaptureStatus retry: $retry")
                 lastException = e
-                delay(CHECK_STATE_INTERVAL)
+                delay(checkStateInterval)
             }
             retry -= 1
         }

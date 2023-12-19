@@ -14,13 +14,17 @@ import {
 import Button from '../../components/ui/button';
 import { ListFilesView } from '../../components/list-files-view';
 import { Item, ItemSelectorView } from '../../components/ui/item-list';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../App';
 
 interface ListFilesProps {
   fileType: FileTypeEnum;
   isMultiselect: boolean;
 }
 
-const DeleteFilesScreen: React.FC = ({ navigation }) => {
+const DeleteFilesScreen: React.FC<
+  NativeStackScreenProps<RootStackParamList, 'deleteFiles'>
+> = ({ navigation }) => {
   const [deleteType, setDeleteType] = useState<Item>();
   const [selectedFiles, setSelectedFiles] = React.useState<FileInfo[]>([]);
   const [message, setMessage] = React.useState('');

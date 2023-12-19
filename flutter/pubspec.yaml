@@ -1,11 +1,11 @@
 name: theta_client_flutter
 description: THETA Client Flutter plugin project.
-version: 1.6.0
+version: 1.7.0
 homepage:
 
 environment:
-  sdk: '>=2.18.5 <3.0.0'
-  flutter: ">=2.5.0"
+  sdk: '>=3.2.3 <4.0.0'
+  flutter: '>=3.3.0'
 
 dependencies:
   flutter:
@@ -15,7 +15,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

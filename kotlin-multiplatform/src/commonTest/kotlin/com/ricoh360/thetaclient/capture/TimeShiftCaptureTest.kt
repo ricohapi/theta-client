@@ -75,7 +75,9 @@ class TimeShiftCaptureTest {
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
-        val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder().build()
+        val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
+            .build()
 
         var file: String? = null
         timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
@@ -154,7 +156,9 @@ class TimeShiftCaptureTest {
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_SC2_B
-        val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder().build()
+        val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
+            .build()
 
         var file: String? = null
         timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
@@ -233,7 +237,9 @@ class TimeShiftCaptureTest {
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_SC2_B
-        val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder().build()
+        val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
+            .build()
 
         var file: String? = null
         timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
@@ -291,13 +297,16 @@ class TimeShiftCaptureTest {
         }
 
         val deferred = CompletableDeferred<Unit>()
+        val deferredStart = CompletableDeferred<Unit>()
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
-        val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder().build()
+        val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
+            .build()
 
-        var file: String? = null
+        var file: String? = ""
         val capturing = timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
             override fun onCaptureCompleted(fileUrl: String?) {
                 file = fileUrl
@@ -306,6 +315,9 @@ class TimeShiftCaptureTest {
 
             override fun onProgress(completion: Float) {
                 assertEquals(completion, 0f, "onProgress")
+                if (!deferredStart.isCompleted) {
+                    deferredStart.complete(Unit)
+                }
             }
 
             override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
@@ -320,19 +332,22 @@ class TimeShiftCaptureTest {
         })
 
         runBlocking {
-            delay(1000)
+            withTimeout(1000) {
+                deferredStart.await()
+            }
         }
 
         capturing.cancelCapture()
 
         runBlocking {
-            withTimeout(7000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
 
         // check result
-        assertTrue(file == null, "cancel time-shift")
+        assertTrue(isStop, "cancel time-shift is stop")
+        assertNull(file, "cancel time-shift")
     }
 
     /**
@@ -356,7 +371,9 @@ class TimeShiftCaptureTest {
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
-        val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder().build()
+        val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
+            .build()
 
         var file: String? = ""
         timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
@@ -412,7 +429,9 @@ class TimeShiftCaptureTest {
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
-        val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder().build()
+        val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
+            .build()
 
         var file: String? = ""
         timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
@@ -852,6 +871,7 @@ class TimeShiftCaptureTest {
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
             Resource("src/commonTest/resources/TimeShiftCapture/start_capture_progress.json").readText(),
+            Resource("src/commonTest/resources/TimeShiftCapture/start_capture_progress.json").readText(),
             Resource("src/commonTest/resources/TimeShiftCapture/stop_capture_error.json").readText(), // stopCapture error
             "Not json" // json error
         )
@@ -861,12 +881,17 @@ class TimeShiftCaptureTest {
             ByteReadChannel(responseArray[index])
         }
         val deferred = CompletableDeferred<Unit>()
+        val deferredStart = CompletableDeferred<Unit>()
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
-        val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder().build()
+        val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
+            .build()
 
+        var isCaptureFailed = false
+        var isStopFailed = false
         val capturing = timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
             override fun onCaptureCompleted(fileUrl: String?) {
                 assertTrue(false, "capture time-shift")
@@ -874,20 +899,25 @@ class TimeShiftCaptureTest {
             }
 
             override fun onProgress(completion: Float) {
+                deferredStart.complete(Unit)
             }
 
             override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                isCaptureFailed = true
                 assertTrue((exception.message?.indexOf("Unknown", 0, true) ?: -1) >= 0, "stop capture error response")
                 deferred.complete(Unit)
             }
 
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                isStopFailed = true
                 assertTrue((exception.message?.indexOf("UnitTest", 0, true) ?: -1) >= 0, "stop capture error response")
             }
         })
 
         runBlocking {
-            delay(100)
+            withTimeout(1000) {
+                deferredStart.await()
+            }
         }
 
         capturing.cancelCapture()
@@ -897,6 +927,8 @@ class TimeShiftCaptureTest {
                 deferred.await()
             }
         }
+        assertTrue(isStopFailed, "isStopFailed")
+        assertTrue(isCaptureFailed, "isCaptureFailed")
     }
 
     /**
@@ -1004,7 +1036,7 @@ class TimeShiftCaptureTest {
         capturing.cancelCapture()
 
         runBlocking {
-            withTimeout(5000) {
+            withTimeout(1000) {
                 deferred.await()
             }
         }

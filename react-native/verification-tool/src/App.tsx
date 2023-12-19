@@ -20,8 +20,36 @@ import TimeShiftCaptureScreen from './screen/time-shift-capture-screen/time-shif
 import LimitlessIntervalCaptureScreen from './screen/limitless-interval-capture-screen/limitless-interval-capture-screen';
 import ShotCountSpecifiedIntervalCaptureScreen from './screen/shot-count-specified-interval-capture-screen/shot-count-specified-interval-capture-screen';
 import CompositeIntervalCaptureScreen from './screen/composite-interval-capture-screen/composite-interval-capture-screen';
+import BurstCaptureScreen from './screen/burst-capture-screen/burst-capture-screen';
+import ContinuousCaptureScreen from './screen/continuous-capture-screen/continuous-capture-screen';
+import MultiBracketCaptureScreen from './screen/multi-bracket-capture-screen/multi-bracket-capture-screen';
+import type { FileInfo } from 'theta-client-react-native';
 
-const Stack = createNativeStackNavigator();
+export type RootStackParamList = {
+  menu: undefined;
+  getInfo: undefined;
+  listFiles: undefined;
+  deleteFiles: undefined;
+  getMetadata: undefined;
+  livePreview: undefined;
+  videoConvert: undefined;
+  options: undefined;
+  commands: undefined;
+  photoCapture: undefined;
+  videoCapture: undefined;
+  limitlessIntervalCapture: undefined;
+  timeShiftCapture: undefined;
+  shotCountSpecifiedIntervalCapture: undefined;
+  compositeIntervalCapture: undefined;
+  burstCapture: undefined;
+  continuousCapture: undefined;
+  multiBracketCapture: undefined;
+  filePreview: {
+    item: FileInfo;
+  };
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const screenOptions = {
   headerStyle: {
@@ -112,6 +140,21 @@ const App = () => {
           options={{ title: 'interval composite shooting' }}
           name="compositeIntervalCapture"
           component={CompositeIntervalCaptureScreen}
+        />
+        <Stack.Screen
+          options={{ title: 'burst shooting' }}
+          name="burstCapture"
+          component={BurstCaptureScreen}
+        />
+        <Stack.Screen
+          options={{ title: 'MultiBracket Capture' }}
+          name="multiBracketCapture"
+          component={MultiBracketCaptureScreen}
+        />
+        <Stack.Screen
+          options={{ title: 'continuous shooting' }}
+          name="continuousCapture"
+          component={ContinuousCaptureScreen}
         />
         <Stack.Screen
           options={{ title: 'Preview' }}

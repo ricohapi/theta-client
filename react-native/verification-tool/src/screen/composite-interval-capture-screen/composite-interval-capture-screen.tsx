@@ -12,8 +12,12 @@ import {
 import { CaptureCommonOptionsEdit } from '../../components/capture/capture-common-options';
 import { InputNumber } from '../../components/ui/input-number';
 import { NumberEdit } from 'verification-tool/src/components/options/number-edit';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../App';
 
-const CompositeIntervalCaptureScreen: React.FC = ({ navigation }) => {
+const CompositeIntervalCaptureScreen: React.FC<
+  NativeStackScreenProps<RootStackParamList, 'compositeIntervalCapture'>
+> = ({ navigation }) => {
   const [interval, setInterval] = React.useState<number>();
   const [shootingTimeSec, setShootingTimeSec] = React.useState<number>(600);
   const [message, setMessage] = React.useState('progress = 0');

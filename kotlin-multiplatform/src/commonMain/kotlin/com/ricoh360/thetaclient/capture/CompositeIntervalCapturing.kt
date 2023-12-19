@@ -27,7 +27,7 @@ class CompositeIntervalCapturing internal constructor(
     }
 
     /**
-     * Stops interval shooting with the shot count specified
+     * Stops interval composite shooting
      * When call stopCapture() then call property callback.
      */
     override fun stopCapture() {

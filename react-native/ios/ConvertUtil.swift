@@ -47,6 +47,7 @@ let KEY_PROXY_URL = "url"
 let KEY_PROXY_PORT = "port"
 let KEY_PROXY_USER_ID = "userid"
 let KEY_PROXY_PASSWORD = "password"
+let KEY_BURST_MODE = "burstMode"
 let KEY_BURST_CAPTURE_NUM = "burstCaptureNum"
 let KEY_BURST_BRACKET_STEP = "burstBracketStep"
 let KEY_BURST_COMPENSATION = "burstCompensation"
@@ -57,6 +58,7 @@ let KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH = "pitch"
 let KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL = "roll"
 let KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW = "yaw"
 let KEY_TIMESHIFT_CAPTURE_INTERVAL = "_capture_interval"
+let KEY_AUTO_BRACKET = "autoBracket"
 
 public class ConvertUtil: NSObject {}
 
@@ -69,6 +71,7 @@ let optionItemNameToEnum = [
     "autoBracket": ThetaRepository.OptionNameEnum.autobracket,
     "bitrate": ThetaRepository.OptionNameEnum.bitrate,
     "bluetoothPower": ThetaRepository.OptionNameEnum.bluetoothpower,
+    "bluetoothRole": ThetaRepository.OptionNameEnum.bluetoothrole,
     "burstMode": ThetaRepository.OptionNameEnum.burstmode,
     "burstOption": ThetaRepository.OptionNameEnum.burstoption,
     "cameraControlSource": ThetaRepository.OptionNameEnum.cameracontrolsource,
@@ -174,6 +177,10 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         options.bluetoothPower = getEnumValue(
             values: ThetaRepository.BluetoothPowerEnum.values(), name: value as! String
         )!
+    case ThetaRepository.OptionNameEnum.bluetoothrole.name:
+        options.bluetoothRole = getEnumValue(
+            values: ThetaRepository.BluetoothRoleEnum.values(), name: value as! String
+        )!
     case ThetaRepository.OptionNameEnum.burstmode.name:
         options.burstMode = getEnumValue(
             values: ThetaRepository.BurstModeEnum.values(), name: value as! String
@@ -275,9 +282,7 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
             values: ThetaRepository.NetworkTypeEnum.values(), name: value as! String
         )!
     case ThetaRepository.OptionNameEnum.offdelay.name:
-        options.offDelay = getEnumValue(
-            values: ThetaRepository.OffDelayEnum.values(), name: value as! String
-        )!
+        options.offDelay = toOffDelay(value: value)
     case ThetaRepository.OptionNameEnum.password.name:
         options.password = value as? String
     case ThetaRepository.OptionNameEnum.powersaving.name:
@@ -313,9 +318,7 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.shuttervolume.name:
         options.shutterVolume = KotlinInt(integerLiteral: value as! Int)
     case ThetaRepository.OptionNameEnum.sleepdelay.name:
-        options.sleepDelay = getEnumValue(
-            values: ThetaRepository.SleepDelayEnum.values(), name: value as! String
-        )!
+        options.sleepDelay = toSleepDelay(value: value)
     case ThetaRepository.OptionNameEnum.timeshift.name:
         if let params = value as? [String: Any] {
             options.timeShift = toTimeShift(params: params)
@@ -579,6 +582,108 @@ func setCompositeIntervalCaptureBuilderParams(params: [String: Any], builder: Co
     }
 }
 
+func setBurstCaptureBuilderParams(params: [String: Any], builder: BurstCapture.Builder) {
+    if let interval = params[KEY_TIMESHIFT_CAPTURE_INTERVAL] as? Int,
+       interval >= 0
+    {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
+    if let value = params[KEY_BURST_MODE] as? String {
+        if let enumValue = getEnumValue(values: ThetaRepository.BurstModeEnum.values(),
+                                        name: value)
+        {
+            builder.setBurstMode(mode: enumValue)
+        }
+    }
+}
+
+func setMultiBracketCaptureBuilderParams(params: [String: Any], builder: MultiBracketCapture.Builder) {
+    if let autoBracket = params[KEY_AUTO_BRACKET] as? [[String: Any]] {
+        autoBracket.forEach { map in
+            let aperture = {
+                if let name = map["aperture"] as? String {
+                    return getEnumValue(values: ThetaRepository.ApertureEnum.values(), name: name)
+                } else {
+                    return nil
+                }
+            }()
+
+            let colorTemperature = {
+                if let value = map["colorTemperature"] as? Int {
+                    return toKotlinInt(value: value)
+                } else {
+                    return nil
+                }
+            }()
+
+            let exposureCompensation = {
+                if let name = map["exposureCompensation"] as? String {
+                    return getEnumValue(values: ThetaRepository.ExposureCompensationEnum.values(), name: name)
+                } else {
+                    return nil
+                }
+            }()
+
+            let exposureProgram = {
+                if let name = map["exposureProgram"] as? String {
+                    return getEnumValue(values: ThetaRepository.ExposureProgramEnum.values(), name: name)
+                } else {
+                    return nil
+                }
+            }()
+
+            let iso = {
+                if let name = map["iso"] as? String {
+                    return getEnumValue(values: ThetaRepository.IsoEnum.values(), name: name)
+                } else {
+                    return nil
+                }
+            }()
+
+            let shutterSpeed = {
+                if let name = map["shutterSpeed"] as? String {
+                    return getEnumValue(values: ThetaRepository.ShutterSpeedEnum.values(), name: name)
+                } else {
+                    return nil
+                }
+            }()
+
+            let whiteBalance = {
+                if let name = map["whiteBalance"] as? String {
+                    return getEnumValue(values: ThetaRepository.WhiteBalanceEnum.values(), name: name)
+                } else {
+                    return nil
+                }
+            }()
+
+            builder.addBracketParameters(
+                aperture: aperture,
+                colorTemperature: colorTemperature,
+                exposureCompensation: exposureCompensation,
+                exposureProgram: exposureProgram,
+                iso: iso,
+                shutterSpeed: shutterSpeed,
+                whiteBalance: whiteBalance
+            )
+        }
+    }
+}
+
+func setContinuousCaptureBuilderParams(params: [String: Any], builder: ContinuousCapture.Builder) {
+    if let interval = params[KEY_TIMESHIFT_CAPTURE_INTERVAL] as? Int,
+       interval >= 0
+    {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
+    if let value = params[KEY_FILE_FORMAT] as? String {
+        if let enumValue = getEnumValue(
+            values: ThetaRepository.PhotoFileFormatEnum.values(), name: value
+        ) {
+            builder.setFileFormat(fileFormat: enumValue)
+        }
+    }
+}
+
 // MARK: - Utility
 
 func getEnumValue<T, E: KotlinEnum<T>>(values: KotlinArray<E>, name: String) -> E? {
@@ -743,22 +848,22 @@ func convertResult(thetaState: ThetaRepository.ThetaState) -> [String: Any?] {
 func convertResult(burstOption: ThetaRepository.BurstOption) -> [String: Any] {
     var result: [String: Any] = [:]
     if let burstCaptureNum = burstOption.burstCaptureNum {
-        result[KEY_BURST_CAPTURE_NUM] = burstCaptureNum.value.name
+        result[KEY_BURST_CAPTURE_NUM] = burstCaptureNum.name
     }
     if let burstBracketStep = burstOption.burstBracketStep {
-        result[KEY_BURST_BRACKET_STEP] = burstBracketStep.value.name
+        result[KEY_BURST_BRACKET_STEP] = burstBracketStep.name
     }
     if let burstCompensation = burstOption.burstCompensation {
-        result[KEY_BURST_COMPENSATION] = burstCompensation.value.name
+        result[KEY_BURST_COMPENSATION] = burstCompensation.name
     }
     if let burstMaxExposureTime = burstOption.burstMaxExposureTime {
-        result[KEY_BURST_MAX_EXPOSURE_TIME] = burstMaxExposureTime.value.name
+        result[KEY_BURST_MAX_EXPOSURE_TIME] = burstMaxExposureTime.name
     }
     if let burstEnableIsoControl = burstOption.burstEnableIsoControl {
-        result[KEY_BURST_ENABLE_ISO_CONTROL] = burstEnableIsoControl.value.name
+        result[KEY_BURST_ENABLE_ISO_CONTROL] = burstEnableIsoControl.name
     }
     if let burstOrder = burstOption.burstOrder {
-        result[KEY_BURST_ORDER] = burstOrder.value.name
+        result[KEY_BURST_ORDER] = burstOrder.name
     }
     return result
 }
@@ -945,6 +1050,30 @@ func toBitrate(value: Any) -> ThetaRepositoryBitrate? {
     }
 }
 
+func toOffDelay(value: Any) -> ThetaRepositoryOffDelay? {
+    if value is NSNumber, let intVal = value as? Int32 {
+        return ThetaRepository.OffDelaySec(sec: intVal)
+    } else if let name = value as? String,
+              let enumValue = getEnumValue(values: ThetaRepository.OffDelayEnum.values(), name: name)
+    {
+        return enumValue
+    } else {
+        return nil
+    }
+}
+
+func toSleepDelay(value: Any) -> ThetaRepositorySleepDelay? {
+    if value is NSNumber, let intVal = value as? Int32 {
+        return ThetaRepository.SleepDelaySec(sec: intVal)
+    } else if let name = value as? String,
+              let enumValue = getEnumValue(values: ThetaRepository.SleepDelayEnum.values(), name: name)
+    {
+        return enumValue
+    } else {
+        return nil
+    }
+}
+
 func toBurstOption(params: [String: Any]) -> ThetaRepository.BurstOption {
     var burstCaptureNum: ThetaRepository.BurstCaptureNumEnum? = nil
     if let name = params["burstCaptureNum"] as? String {
@@ -997,7 +1126,7 @@ func toBurstOption(params: [String: Any]) -> ThetaRepository.BurstOption {
 }
 
 func toAutoBracket(params: [[String: Any]]) -> ThetaRepository.BracketSettingList {
-    let autoBracket = ThetaRepository.BracketSettingList(list: NSMutableArray())
+    let autoBracket = ThetaRepository.BracketSettingList()
 
     params.forEach { map in
         let aperture = {
@@ -1149,13 +1278,9 @@ func toConfig(params: [String: Any]) -> ThetaRepository.Config {
                 values: ThetaRepository.LanguageEnum.values(), name: value as? String ?? ""
             )
         case KEY_OFF_DELAY:
-            config.offDelay = getEnumValue(
-                values: ThetaRepository.OffDelayEnum.values(), name: value as? String ?? ""
-            )
+            config.offDelay = toOffDelay(value: value)
         case KEY_SLEEP_DELAY:
-            config.sleepDelay = getEnumValue(
-                values: ThetaRepository.SleepDelayEnum.values(), name: value as? String ?? ""
-            )
+            config.sleepDelay = toSleepDelay(value: value)
         case KEY_SHUTTER_VOLUME:
             if let value = value as? Int {
                 config.shutterVolume = KotlinInt(integerLiteral: value)

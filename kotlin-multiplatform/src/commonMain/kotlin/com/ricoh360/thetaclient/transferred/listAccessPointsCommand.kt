@@ -134,7 +134,7 @@ internal data class AccessPoint(
  * authentication mode
  */
 @Serializable
-enum class AuthenticationMode {
+internal enum class AuthenticationMode {
     /**
      * no authetication required
      */
@@ -158,7 +158,7 @@ enum class AuthenticationMode {
  * ip address allocation
  */
 @Serializable
-enum class IpAddressAllocation {
+internal enum class IpAddressAllocation {
     /**
      * dynamic ip address allocation
      */

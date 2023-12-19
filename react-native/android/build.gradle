@@ -135,7 +135,7 @@ dependencies {
   implementation "com.facebook.react:react-native:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
-  implementation "com.ricoh360.thetaclient:theta-client:1.6.0"
+  implementation "com.ricoh360.thetaclient:theta-client:1.7.0"
 
 // From node_modules
 }

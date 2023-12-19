@@ -5,10 +5,10 @@ class PhotoScreen extends StatelessWidget {
   final String fileUrl;
 
   const PhotoScreen({
-    Key? key,
+    super.key,
     required this.name,
     required this.fileUrl,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

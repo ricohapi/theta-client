@@ -4,11 +4,13 @@ import 'package:flutter/foundation.dart';
 import 'package:theta_client_flutter/digest_auth.dart';
 
 import 'capture/capture_builder.dart';
+import 'options/importer.dart';
 import 'theta_client_flutter_platform_interface.dart';
 
 export 'capture/capture.dart';
 export 'capture/capture_builder.dart';
 export 'capture/capturing.dart';
+export 'options/importer.dart';
 
 /// Handle Theta web APIs.
 class ThetaClientFlutter {
@@ -160,6 +162,36 @@ class ThetaClientFlutter {
     ThetaClientFlutterPlatform.instance
         .getCompositeIntervalCaptureBuilder(shootingTimeSec);
     return CompositeIntervalCaptureBuilder();
+  }
+
+  /// Get BurstCapture.Builder for burst shooting
+  BurstCaptureBuilder getBurstCaptureBuilder(
+      BurstCaptureNumEnum burstCaptureNum,
+      BurstBracketStepEnum burstBracketStep,
+      BurstCompensationEnum burstCompensation,
+      BurstMaxExposureTimeEnum burstMaxExposureTime,
+      BurstEnableIsoControlEnum burstEnableIsoControl,
+      BurstOrderEnum burstOrder) {
+    ThetaClientFlutterPlatform.instance.getBurstCaptureBuilder(
+        burstCaptureNum,
+        burstBracketStep,
+        burstCompensation,
+        burstMaxExposureTime,
+        burstEnableIsoControl,
+        burstOrder);
+    return BurstCaptureBuilder();
+  }
+
+  /// Get getMultiBracketCapture.Builder for capture interval composite shooting.
+  MultiBracketCaptureBuilder getMultiBracketCaptureBuilder() {
+    ThetaClientFlutterPlatform.instance.getMultiBracketCaptureBuilder();
+    return MultiBracketCaptureBuilder();
+  }
+
+  /// Get ContinuousCaptureBuilder.Builder for capture limitless interval.
+  ContinuousCaptureBuilder getContinuousCaptureBuilder() {
+    ThetaClientFlutterPlatform.instance.getContinuousCaptureBuilder();
+    return ContinuousCaptureBuilder();
   }
 
   /// Acquires the properties and property support specifications for shooting, the camera, etc.
@@ -1506,6 +1538,9 @@ enum OptionNameEnum {
   /// Option name _bluetoothPower
   bluetoothPower('BluetoothPower', BluetoothPowerEnum),
 
+  /// Option name _bluetoothRole
+  bluetoothRole('BluetoothRole', BluetoothRoleEnum),
+
   /// Option name _burstOption
   burstOption('BurstOption', BurstOption),
 
@@ -1856,13 +1891,13 @@ class BracketSetting {
   final WhiteBalanceEnum? whiteBalance;
 
   BracketSetting(
-      this.aperture,
+      {this.aperture,
       this.colorTemperature,
       this.exposureCompensation,
       this.exposureProgram,
       this.iso,
       this.shutterSpeed,
-      this.whiteBalance);
+      this.whiteBalance});
 
   @override
   bool operator ==(Object other) => hashCode == other.hashCode;
@@ -2888,48 +2923,6 @@ enum NetworkTypeEnum {
   }
 }
 
-/// Length of standby time before the camera automatically powers OFF.
-///
-/// For RICOH THETA V or later
-enum OffDelayEnum {
-  /// Do not turn power off.
-  disable('DISABLE', 65535),
-
-  /// Power off after 5 minutes.(300sec)
-  offDelay_5m('OFF_DELAY_5M', 300),
-
-  /// Power off after 10 minutes.(600sec)
-  offDelay_10m('OFF_DELAY_10M', 600),
-
-  /// Power off after 15 minutes.(900sec)
-  offDelay_15m('OFF_DELAY_15M', 900),
-
-  /// Power off after 30 minutes.(1,800sec)
-  offDelay_30m('OFF_DELAY_30M', 1800);
-
-  final String rawValue;
-  final int sec;
-
-  const OffDelayEnum(this.rawValue, this.sec);
-
-  @override
-  String toString() {
-    return rawValue;
-  }
-
-  static OffDelayEnum? getValueWithSec(int sec) {
-    return OffDelayEnum.values
-        .cast<OffDelayEnum?>()
-        .firstWhere((element) => element?.sec == sec, orElse: () => null);
-  }
-
-  static OffDelayEnum? getValue(String rawValue) {
-    return OffDelayEnum.values.cast<OffDelayEnum?>().firstWhere(
-        (element) => element?.rawValue == rawValue,
-        orElse: () => null);
-  }
-}
-
 /// PowerSaving
 ///
 /// For Theta X only
@@ -3315,46 +3308,6 @@ enum ShutterSpeedEnum {
 
   static ShutterSpeedEnum? getValue(String rawValue) {
     return ShutterSpeedEnum.values.cast<ShutterSpeedEnum?>().firstWhere(
-        (element) => element?.rawValue == rawValue,
-        orElse: () => null);
-  }
-}
-
-/// Length of standby time before the camera enters the sleep mode.
-enum SleepDelayEnum {
-  /// Do not turn sleep mode.
-  disable('DISABLE', 65535),
-
-  /// Sleep mode after 3 minutes.(180sec)
-  sleepDelay_3m('SLEEP_DELAY_3M', 180),
-
-  /// Sleep mode after 5 minutes.(300sec)
-  sleepDelay_5m('SLEEP_DELAY_5M', 300),
-
-  /// Sleep mode after 7 minutes.(420sec)
-  sleepDelay_7m('SLEEP_DELAY_7M', 420),
-
-  /// Sleep mode after 10 minutes.(600sec)
-  sleepDelay_10m('SLEEP_DELAY_10M', 600);
-
-  final String rawValue;
-  final int sec;
-
-  const SleepDelayEnum(this.rawValue, this.sec);
-
-  @override
-  String toString() {
-    return rawValue;
-  }
-
-  static SleepDelayEnum? getValueWithSec(int sec) {
-    return SleepDelayEnum.values
-        .cast<SleepDelayEnum?>()
-        .firstWhere((element) => element?.sec == sec, orElse: () => null);
-  }
-
-  static SleepDelayEnum? getValue(String rawValue) {
-    return SleepDelayEnum.values.cast<SleepDelayEnum?>().firstWhere(
         (element) => element?.rawValue == rawValue,
         orElse: () => null);
   }
@@ -3800,6 +3753,9 @@ class Options {
   /// see [BluetoothPowerEnum]
   BluetoothPowerEnum? bluetoothPower;
 
+  /// Role of the Bluetooth module.
+  BluetoothRoleEnum? bluetoothRole;
+
   /// BurstMode setting.
   /// When this is set to ON, burst shooting is enabled,
   /// and a screen dedicated to burst shooting is displayed in Live View.
@@ -4081,6 +4037,8 @@ class Options {
         return bitrate as T;
       case OptionNameEnum.bluetoothPower:
         return bluetoothPower as T;
+      case OptionNameEnum.bluetoothRole:
+        return bluetoothRole as T;
       case OptionNameEnum.burstMode:
         return burstMode as T;
       case OptionNameEnum.burstOption:
@@ -4209,6 +4167,9 @@ class Options {
         break;
       case OptionNameEnum.bluetoothPower:
         bluetoothPower = value;
+        break;
+      case OptionNameEnum.bluetoothRole:
+        bluetoothRole = value;
         break;
       case OptionNameEnum.burstMode:
         burstMode = value;

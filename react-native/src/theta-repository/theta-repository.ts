@@ -11,6 +11,12 @@ import type {
   Options,
   CaptureModeEnum,
   Proxy,
+  BurstCaptureNumEnum,
+  BurstBracketStepEnum,
+  BurstCompensationEnum,
+  BurstMaxExposureTimeEnum,
+  BurstEnableIsoControlEnum,
+  BurstOrderEnum,
 } from './options';
 import {
   PhotoCaptureBuilder,
@@ -19,6 +25,9 @@ import {
   LimitlessIntervalCaptureBuilder,
   ShotCountSpecifiedIntervalCaptureBuilder,
   CompositeIntervalCaptureBuilder,
+  BurstCaptureBuilder,
+  ContinuousCaptureBuilder,
+  MultiBracketCaptureBuilder,
 } from '../capture';
 import type { ThetaConfig } from './theta-config';
 import type { ThetaTimeout } from './theta-timeout';
@@ -129,6 +138,51 @@ export function getCompositeIntervalCaptureBuilder(
   shootingTimeSec: number
 ): CompositeIntervalCaptureBuilder {
   return new CompositeIntervalCaptureBuilder(shootingTimeSec);
+}
+
+/**
+ * Get BurstCapture.Builder for take burst shooting.
+ *
+ * @function getBurstCaptureBuilder
+ * @param burstOption Burst shooting setting.
+ * @return created BurstCaptureBuilder instance
+ */
+export function getBurstCaptureBuilder(
+  burstCaptureNum: BurstCaptureNumEnum,
+  burstBracketStep: BurstBracketStepEnum,
+  burstCompensation: BurstCompensationEnum,
+  burstMaxExposureTime: BurstMaxExposureTimeEnum,
+  burstEnableIsoControl: BurstEnableIsoControlEnum,
+  burstOrder: BurstOrderEnum
+): BurstCaptureBuilder {
+  return new BurstCaptureBuilder(
+    burstCaptureNum,
+    burstBracketStep,
+    burstCompensation,
+    burstMaxExposureTime,
+    burstEnableIsoControl,
+    burstOrder
+  );
+}
+
+/**
+ * Get MultiBracketCapture.Builder for take multi bracket shooting.
+ *
+ * @function getMultiBracketCaptureBuilder
+ * @return created MultiBracketCaptureBuilder instance
+ */
+export function getMultiBracketCaptureBuilder(): MultiBracketCaptureBuilder {
+  return new MultiBracketCaptureBuilder();
+}
+
+/**
+ * Get ContinuousCapture.Builder for take limitless interval shooting.
+ *
+ * @function getContinuousCaptureBuilder
+ * @return created ContinuousCaptureBuilder instance
+ */
+export function getContinuousCaptureBuilder(): ContinuousCaptureBuilder {
+  return new ContinuousCaptureBuilder();
 }
 
 /**

@@ -11,6 +11,8 @@ import {
 } from 'theta-client-react-native';
 import Button from '../../components/ui/button';
 import { ItemListView, type Item } from '../../components/ui/item-list';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../App';
 
 interface CommandItem extends Item {
   value: {
@@ -89,7 +91,9 @@ const commandList: CommandItem[] = [
   },
 ];
 
-const GetInfoScreen: React.FC = ({ navigation }) => {
+const GetInfoScreen: React.FC<
+  NativeStackScreenProps<RootStackParamList, 'getInfo'>
+> = ({ navigation }) => {
   const [selectedCommand, setSelectedCommand] = useState<CommandItem>();
   const [message, setMessage] = React.useState('');
 

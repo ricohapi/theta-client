@@ -830,29 +830,41 @@ _thetaClientFlutter.setOptions(options)
   | zhCN | 中国語     |      |
   | zhTW | 中国語台湾 |      |
 
-- スリープモードに入るまでの時間(分) - sleepDelay:SleepDelayEnum
+- スリープモードに入るまでの時間(秒) - sleepDelay:SleepDelayEnum/SleepDelaySec
 
   - SleepDelayEnum
 
-    | 値             | 設定値(秒) | 備考           |
-    | -------------- | ---------: | -------------- |
-    | disable        |      65535 | 自動オフしない |
-    | sleepDelay_3m  |        180 |                |
-    | sleepDelay_5m  |        300 |                |
-    | sleepDelay_7m  |        420 |                |
-    | sleepDelay_10m |        600 |                |
+    | 値              | 設定値(秒) | 備考      |
+    |----------------|-------:|---------|
+    | disable        |  65535 | 自動オフしない |
+    | sleepDelay_3m  |    180 |         |
+    | sleepDelay_5m  |    300 |         |
+    | sleepDelay_7m  |    420 |         |
+    | sleepDelay_10m |    600 |         |
 
-- スリープから自動電源オフまでの時間(秒) offDelay:OffDelayEnum
+  - SleepDelaySec(sec:int)
+    - RICOH THETA V以降の場合
+      - 60 ～ 65534、または 65535 (スリープ モードを無効にする場合)。
+    - RICOH THETA SまたはSCの場合
+      - 30 ～ 1800、または 65535 (スリープ モードを無効にする場合)。
+
+- スリープから自動電源オフまでの時間(秒) offDelay:OffDelayEnum/OffDelaySec
 
   - OffDelayEnum
 
-    | 値           | 設定値(秒) | 備考           |
-    | ------------ | ---------: | -------------- |
-    | DISABLE      |      65535 | 自動オフしない |
-    | offDelay_5m  |        300 |                |
-    | offDelay_10m |        600 |                |
-    | offDelay_15m |        900 |                |
-    | offDelay_30m |       1800 |                |
+    | 値            | 設定値(秒) | 備考      |
+    |--------------|-------:|---------|
+    | DISABLE      |  65535 | 自動オフしない |
+    | offDelay_5m  |    300 |         |
+    | offDelay_10m |    600 |         |
+    | offDelay_15m |    900 |         |
+    | offDelay_30m |   1800 |         |
+
+  - OffDelaySec(sec:int)
+    - RICOH THETA V以降の場合
+      - 0、または600以上2592000以下（単位：秒）の60の倍数、または65535。65535を設定・取得した場合は0を返します（自動電源オフを無効にする場合）。
+    - RICOH THETA SまたはSCの場合
+      - 30 ～ 1800、または 65535 (自動電源オフを無効にする場合)。
 
 - シャッター音 - shutterVolume:int
   - 0 - 100

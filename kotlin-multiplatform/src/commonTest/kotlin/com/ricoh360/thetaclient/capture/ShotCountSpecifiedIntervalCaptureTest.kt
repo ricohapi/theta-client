@@ -68,7 +68,9 @@ class ShotCountSpecifiedIntervalCaptureTest {
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
-        val capture = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(2).build()
+        val capture = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(2)
+            .setCheckStatusCommandInterval(100)
+            .build()
 
         var files: List<String>? = null
         capture.startCapture(object : ShotCountSpecifiedIntervalCapture.StartCaptureCallback {
@@ -129,7 +131,9 @@ class ShotCountSpecifiedIntervalCaptureTest {
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_SC2
-        val capture = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(2).build()
+        val capture = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(2)
+            .setCheckStatusCommandInterval(100)
+            .build()
 
         var files: List<String>? = null
         capture.startCapture(object : ShotCountSpecifiedIntervalCapture.StartCaptureCallback {
@@ -190,7 +194,9 @@ class ShotCountSpecifiedIntervalCaptureTest {
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_SC2_B
-        val capture = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(2).build()
+        val capture = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(2)
+            .setCheckStatusCommandInterval(100)
+            .build()
 
         var files: List<String>? = null
         capture.startCapture(object : ShotCountSpecifiedIntervalCapture.StartCaptureCallback {
@@ -254,9 +260,12 @@ class ShotCountSpecifiedIntervalCaptureTest {
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
-        val capture = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(10).build()
+        val capture = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(10)
+            .setCheckStatusCommandInterval(100)
+            .build()
 
         var files: List<String>? = null
+        val deferredStart = CompletableDeferred<Unit>()
         val capturing =
             capture.startCapture(object : ShotCountSpecifiedIntervalCapture.StartCaptureCallback {
                 override fun onCaptureCompleted(fileUrls: List<String>?) {
@@ -266,6 +275,9 @@ class ShotCountSpecifiedIntervalCaptureTest {
 
                 override fun onProgress(completion: Float) {
                     assertEquals(completion, 0f, "onProgress")
+                    if (!deferredStart.isCompleted) {
+                        deferredStart.complete(Unit)
+                    }
                 }
 
                 override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
@@ -279,20 +291,23 @@ class ShotCountSpecifiedIntervalCaptureTest {
             })
 
         runBlocking {
-            delay(1000)
+            withTimeout(1000) {
+                deferredStart.await()
+            }
         }
 
         capturing.cancelCapture()
 
         runBlocking {
-            withTimeout(7000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
 
         // check result
+        assertTrue(isStop, "call stopCapture")
         assertTrue(
-            files?.isEmpty() == true || files == null,
+            files?.isEmpty() ?: false,
             "cancel interval shooting with the shot count specified"
         )
     }
@@ -320,7 +335,9 @@ class ShotCountSpecifiedIntervalCaptureTest {
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
-        val capture = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(2).build()
+        val capture = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(2)
+            .setCheckStatusCommandInterval(100)
+            .build()
 
         var files: List<String>? = listOf()
         capture.startCapture(object : ShotCountSpecifiedIntervalCapture.StartCaptureCallback {
@@ -376,8 +393,10 @@ class ShotCountSpecifiedIntervalCaptureTest {
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
-        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
-        val capture = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(2).build()
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_SC2
+        val capture = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(2)
+            .setCheckStatusCommandInterval(100)
+            .build()
 
         var files: List<String>? = listOf()
         capture.startCapture(object : ShotCountSpecifiedIntervalCapture.StartCaptureCallback {
@@ -782,8 +801,6 @@ class ShotCountSpecifiedIntervalCaptureTest {
     fun stopCaptureErrorResponseTest() = runTest {
         // setup
         val responseArray = arrayOf(
-            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
-            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
             Resource("src/commonTest/resources/ShotCountSpecifiedIntervalCapture/stop_capture_error.json").readText(), // stopCapture error
             "Not json" // json error
         )
@@ -797,10 +814,9 @@ class ShotCountSpecifiedIntervalCaptureTest {
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
-        val capture = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(2).build()
 
         var capturing =
-            capture.startCapture(object : ShotCountSpecifiedIntervalCapture.StartCaptureCallback {
+            ShotCountSpecifiedIntervalCapturing(endpoint, object : ShotCountSpecifiedIntervalCapture.StartCaptureCallback {
                 override fun onCaptureCompleted(fileUrls: List<String>?) {
                     assertTrue(false, "capture interval shooting with the shot count specified")
                     deferred.complete(Unit)
@@ -810,21 +826,18 @@ class ShotCountSpecifiedIntervalCaptureTest {
                 }
 
                 override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    assertTrue(false, "onCaptureFailed")
+                    deferred.complete(Unit)
+                }
+
+                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                     assertTrue(
                         (exception.message?.indexOf("UnitTest", 0, true) ?: -1) >= 0,
                         "stop capture error response"
                     )
                     deferred.complete(Unit)
                 }
-
-                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                    assertTrue(false, "onStopFailed")
-                }
             })
-
-        runBlocking {
-            delay(100)
-        }
 
         capturing.cancelCapture()
 
@@ -836,7 +849,7 @@ class ShotCountSpecifiedIntervalCaptureTest {
 
         deferred = CompletableDeferred()
         capturing =
-            capture.startCapture(object : ShotCountSpecifiedIntervalCapture.StartCaptureCallback {
+            ShotCountSpecifiedIntervalCapturing(endpoint, object : ShotCountSpecifiedIntervalCapture.StartCaptureCallback {
                 override fun onCaptureCompleted(fileUrls: List<String>?) {
                     assertTrue(false, "capture interval shooting with the shot count specified")
                     deferred.complete(Unit)
@@ -846,21 +859,18 @@ class ShotCountSpecifiedIntervalCaptureTest {
                 }
 
                 override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    assertTrue(false, "onCaptureFailed")
+                    deferred.complete(Unit)
+                }
+
+                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                     assertTrue(
                         (exception.message?.length ?: -1) >= 0,
                         "stop capture json error response"
                     )
                     deferred.complete(Unit)
                 }
-
-                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                    assertTrue(false, "onStopFailed")
-                }
             })
-
-        runBlocking {
-            delay(100)
-        }
 
         capturing.cancelCapture()
 

@@ -135,6 +135,48 @@ RCT_EXTERN_METHOD(startCompositeIntervalCapture:(RCTPromiseResolveBlock)resolve
 RCT_EXTERN_METHOD(cancelCompositeIntervalCapture:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(getBurstCaptureBuilder:(NSString*)burstCaptureNum
+                  burstBracketStep:(NSString*)burstBracketStep
+                  burstCompensation:(NSString*)burstCompensation
+                  burstMaxExposureTime:(NSString*)burstMaxExposureTime
+                  burstEnableIsoControl:(NSString*)burstEnableIsoControl
+                  burstOrder:(NSString*)burstOrder
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(buildBurstCapture:(NSDictionary*)options
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(startBurstCapture:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(cancelBurstCapture:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getMultiBracketCaptureBuilder:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(buildMultiBracketCapture:(NSDictionary*)options
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(startMultiBracketCapture:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(cancelMultiBracketCapture:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getContinuousCaptureBuilder:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(buildContinuousCapture:(NSDictionary*)options
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(startContinuousCapture:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(getMetadata:(NSString*)fileUrl
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)

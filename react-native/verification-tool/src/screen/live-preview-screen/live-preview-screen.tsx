@@ -17,8 +17,12 @@ import {
 import { useIsFocused } from '@react-navigation/native';
 import Button from '../../components/ui/button';
 import WebView from 'react-native-webview';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../App';
 
-const LivePreviewScreen: React.FC = () => {
+const LivePreviewScreen: React.FC<
+  NativeStackScreenProps<RootStackParamList, 'livePreview'>
+> = () => {
   const isFocused = useIsFocused();
   const [dataUrl, setDataUrl] = React.useState<string | undefined>();
   const [previewing, setPreviewing] = React.useState<boolean>(false);

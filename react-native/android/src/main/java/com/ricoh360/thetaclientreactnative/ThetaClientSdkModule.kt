@@ -3,6 +3,7 @@ package com.ricoh360.thetaclientreactnative
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.ricoh360.thetaclient.ThetaRepository
+import com.ricoh360.thetaclient.ThetaRepository.*
 import com.ricoh360.thetaclient.capture.*
 import kotlinx.coroutines.*
 import java.util.*
@@ -37,6 +38,14 @@ class ThetaClientReactNativeModule(
   var compositeIntervalCaptureBuilder: CompositeIntervalCapture.Builder? = null
   var compositeIntervalCapture: CompositeIntervalCapture? = null
   var compositeIntervalCapturing: CompositeIntervalCapturing? = null
+  var burstCaptureBuilder: BurstCapture.Builder? = null
+  var burstCapture: BurstCapture? = null
+  var burstCapturing: BurstCapturing? = null
+  var multiBracketCaptureBuilder: MultiBracketCapture.Builder? = null
+  var multiBracketCapture: MultiBracketCapture? = null
+  var multiBracketCapturing: MultiBracketCapturing? = null
+  var continuousCaptureBuilder: ContinuousCapture.Builder? = null
+  var continuousCapture: ContinuousCapture? = null
   var theta: ThetaRepository? = null
   var listenerCount: Int = 0
 
@@ -102,6 +111,14 @@ class ThetaClientReactNativeModule(
         compositeIntervalCaptureBuilder = null
         compositeIntervalCapture = null
         compositeIntervalCapturing = null
+        burstCaptureBuilder = null
+        burstCapture = null
+        burstCapturing = null
+        multiBracketCaptureBuilder = null
+        multiBracketCapture = null
+        multiBracketCapturing = null
+        continuousCaptureBuilder = null
+        continuousCapture = null
 
         theta = ThetaRepository.newInstance(
           endpoint,
@@ -970,7 +987,7 @@ class ThetaClientReactNativeModule(
 
   /**
    * buildCompositeIntervalCapture  -  build interval composite shooting
-   * @param options option to execute interval shooting with the shot count specified
+   * @param options option to execute interval composite shooting
    * @param promise Promise for buildCompositeIntervalCapture
    */
   @ReactMethod
@@ -1063,6 +1080,344 @@ class ThetaClientReactNativeModule(
     }
     compositeIntervalCapturing?.cancelCapture()
     promise.resolve(true)
+  }
+
+  /**
+   * getBurstCaptureBuilder  -  get burst shooting builder from repository
+   *
+   * @param burstCaptureNum Number of shots for burst shooting
+   * @param burstBracketStep Bracket value range between each shot for burst shooting
+   * @param burstCompensation Exposure compensation for the base image and entire shooting for burst shooting
+   * @param burstMaxExposureTime Maximum exposure time for burst shooting
+   * @param burstEnableIsoControl Adjustment with ISO sensitivity for burst shooting
+   * @param burstOrder Shooting order for burst shooting
+   * @param promise Promise for getBurstCaptureBuilder
+   */
+  @ReactMethod
+  fun getBurstCaptureBuilder(
+    burstCaptureNum: String,
+    burstBracketStep: String,
+    burstCompensation: String,
+    burstMaxExposureTime: String,
+    burstEnableIsoControl: String,
+    burstOrder: String,
+    promise: Promise
+  ) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+
+    burstCaptureBuilder = theta.getBurstCaptureBuilder(
+      burstCaptureNum = ThetaRepository.BurstCaptureNumEnum.valueOf(burstCaptureNum),
+      burstBracketStep = ThetaRepository.BurstBracketStepEnum.valueOf(burstBracketStep),
+      burstCompensation = ThetaRepository.BurstCompensationEnum.valueOf(burstCompensation),
+      burstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.valueOf(burstMaxExposureTime),
+      burstEnableIsoControl = ThetaRepository.BurstEnableIsoControlEnum.valueOf(burstEnableIsoControl),
+      burstOrder = ThetaRepository.BurstOrderEnum.valueOf(burstOrder)
+    )
+    promise.resolve(true)
+  }
+
+  /**
+   * buildBurstCapture  -  build burst shooting
+   * @param options option to execute burst shooting
+   * @param promise Promise for buildBurstCapture
+   */
+  @ReactMethod
+  fun buildBurstCapture(options: ReadableMap, promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    if (burstCaptureBuilder == null) {
+      promise.reject(Exception("no burstCaptureBuilder"))
+      return
+    }
+    launch {
+      try {
+        burstCaptureBuilder?.let {
+          setCaptureBuilderParams(optionMap = options, builder = it)
+          setBurstCaptureBuilderParams(optionMap = options, builder = it)
+          burstCapture = it.build()
+        }
+        promise.resolve(true)
+        burstCaptureBuilder = null
+      } catch (t: Throwable) {
+        promise.reject(t)
+        burstCaptureBuilder = null
+      }
+    }
+  }
+
+  /**
+   * startBurstCapture  -  start burst shooting
+   * @param promise promise for startBurstCapture
+   */
+  @ReactMethod
+  fun startBurstCapture(promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    if (burstCapture == null) {
+      promise.reject(Exception("no burstCapture"))
+      return
+    }
+    class StartCaptureCallback : BurstCapture.StartCaptureCallback {
+      override fun onCaptureCompleted(fileUrls: List<String>?) {
+        promise.resolve(fileUrls?.let {
+          val resultList = Arguments.createArray()
+          it.forEach {
+            resultList.pushString(it)
+          }
+          resultList
+        })
+        burstCapture = null
+      }
+
+      override fun onProgress(completion: Float) {
+        sendNotifyEvent(
+          toNotify(
+            NOTIFY_BURST_PROGRESS,
+            toCaptureProgressNotifyParam(value = completion)
+          )
+        )
+      }
+
+      override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+        sendNotifyEvent(
+          toNotify(
+            NOTIFY_BURST_STOP_ERROR,
+            toMessageNotifyParam(exception.message ?: exception.toString())
+          )
+        )
+      }
+
+      override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+        promise.reject(exception)
+        burstCapture = null
+      }
+    }
+    burstCapturing = burstCapture?.startCapture(StartCaptureCallback())
+  }
+
+  /**
+   * cancelBurstCapture  -  stop burst shooting
+   * @param promise promise for cancelBurstCapture
+   */
+  @ReactMethod
+  fun cancelBurstCapture(promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    burstCapturing?.cancelCapture()
+    promise.resolve(true)
+  }
+
+  /**
+   * getMultiBracketCaptureBuilder  -  get multi bracket shooting builder from repository
+   * @param promise Promise for getMultiBracketCaptureBuilder
+   */
+  @ReactMethod
+  fun getMultiBracketCaptureBuilder(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    multiBracketCaptureBuilder = theta.getMultiBracketCaptureBuilder()
+    promise.resolve(true)
+  }
+
+  /**
+   * buildMultiBracketCapture  -  build multi bracket shooting
+   * @param options option to execute multi bracket shooting
+   * @param promise Promise for buildMultiBracketCapture
+   */
+  @ReactMethod
+  fun buildMultiBracketCapture(options: ReadableMap, promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    if (multiBracketCaptureBuilder == null) {
+      promise.reject(Exception("no MultiBracketCaptureBuilder"))
+      return
+    }
+    launch {
+      try {
+        multiBracketCaptureBuilder?.let {
+          setCaptureBuilderParams(optionMap = options, builder = it)
+          setMultiBracketCaptureBuilderParams(optionMap = options, builder = it)
+          multiBracketCapture = it.build()
+        }
+        promise.resolve(true)
+        multiBracketCaptureBuilder = null
+      } catch (t: Throwable) {
+        promise.reject(t)
+        multiBracketCaptureBuilder = null
+      }
+    }
+  }
+
+  /**
+   * startMultiBracketCapture  -  start multi bracket shooting
+   * @param promise promise for startMultiBracketCapture
+   */
+  @ReactMethod
+  fun startMultiBracketCapture(promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    if (multiBracketCapture == null) {
+      promise.reject(Exception("no multiBracketCapture"))
+      return
+    }
+    class StartCaptureCallback : MultiBracketCapture.StartCaptureCallback {
+      override fun onCaptureCompleted(fileUrls: List<String>?) {
+        promise.resolve(fileUrls?.let {
+          val resultList = Arguments.createArray()
+          it.forEach {
+            resultList.pushString(it)
+          }
+          resultList
+        })
+        multiBracketCapture = null
+      }
+
+      override fun onProgress(completion: Float) {
+        sendNotifyEvent(
+          toNotify(
+            NOTIFY_MULTI_BRACKET_PROGRESS,
+            toCaptureProgressNotifyParam(value = completion)
+          )
+        )
+      }
+
+      override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+        sendNotifyEvent(
+          toNotify(
+            NOTIFY_MULTI_BRACKET_STOP_ERROR,
+            toMessageNotifyParam(exception.message ?: exception.toString())
+          )
+        )
+      }
+
+      override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+        promise.reject(exception)
+        multiBracketCapture = null
+      }
+    }
+    multiBracketCapturing = multiBracketCapture?.startCapture(StartCaptureCallback())
+  }
+
+  /**
+   * cancelMultiBracketCapture  -  stop multi bracket shooting
+   * @param promise promise for cancelMultiBracketCapture
+   */
+  @ReactMethod
+  fun cancelMultiBracketCapture(promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    multiBracketCapturing?.cancelCapture()
+    promise.resolve(true)
+  }
+
+  /**
+   * getContinuousCaptureBuilder  -  get continuous shooting builder from repository
+   *
+   * @param promise Promise for getContinuousCaptureBuilder
+   */
+  @ReactMethod
+  fun getContinuousCaptureBuilder(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+
+    continuousCaptureBuilder = theta.getContinuousCaptureBuilder()
+    promise.resolve(true)
+  }
+
+  /**
+   * buildContinuousCapture  -  build continuous shooting
+   * @param options option to execute continuous shooting
+   * @param promise Promise for buildContinuousCapture
+   */
+  @ReactMethod
+  fun buildContinuousCapture(options: ReadableMap, promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    if (continuousCaptureBuilder == null) {
+      promise.reject(Exception("no continuousCaptureBuilder"))
+      return
+    }
+    launch {
+      try {
+        continuousCaptureBuilder?.let {
+          setCaptureBuilderParams(optionMap = options, builder = it)
+          setContinuousCaptureBuilderParams(optionMap = options, builder = it)
+          continuousCapture = it.build()
+        }
+        promise.resolve(true)
+        continuousCaptureBuilder = null
+      } catch (t: Throwable) {
+        promise.reject(t)
+        continuousCaptureBuilder = null
+      }
+    }
+  }
+
+  /**
+   * startContinuousCapture  -  start continuous shooting
+   * @param promise promise for startContinuousCapture
+   */
+  @ReactMethod
+  fun startContinuousCapture(promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    if (continuousCapture == null) {
+      promise.reject(Exception("no continuousCapture"))
+      return
+    }
+    class StartCaptureCallback : ContinuousCapture.StartCaptureCallback {
+      override fun onCaptureCompleted(fileUrls: List<String>?) {
+        promise.resolve(fileUrls?.let {
+          val resultList = Arguments.createArray()
+          it.forEach {
+            resultList.pushString(it)
+          }
+          resultList
+        })
+        continuousCapture = null
+      }
+
+      override fun onProgress(completion: Float) {
+        sendNotifyEvent(
+          toNotify(
+            NOTIFY_CONTINUOUS_PROGRESS,
+            toCaptureProgressNotifyParam(value = completion)
+          )
+        )
+      }
+
+      override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+        promise.reject(exception)
+        continuousCapture = null
+      }
+    }
+    continuousCapture?.startCapture(StartCaptureCallback())
   }
 
   /**
@@ -1680,5 +2035,10 @@ class ThetaClientReactNativeModule(
     const val NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_STOP_ERROR = "SHOT-COUNT-SPECIFIED-INTERVAL-STOP-ERROR"
     const val NOTIFY_COMPOSITE_INTERVAL_PROGRESS = "COMPOSITE-INTERVAL-PROGRESS"
     const val NOTIFY_COMPOSITE_INTERVAL_STOP_ERROR = "COMPOSITE-INTERVAL-STOP-ERROR"
+    const val NOTIFY_BURST_PROGRESS = "BURST-PROGRESS"
+    const val NOTIFY_BURST_STOP_ERROR = "BURST-STOP-ERROR"
+    const val NOTIFY_MULTI_BRACKET_PROGRESS = "MULTI-BRACKET-PROGRESS"
+    const val NOTIFY_MULTI_BRACKET_STOP_ERROR = "MULTI-BRACKET-STOP-ERROR"
+    const val NOTIFY_CONTINUOUS_PROGRESS = "CONTINUOUS-PROGRESS"
   }
 }

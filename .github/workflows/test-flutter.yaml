@@ -1,0 +1,23 @@
+name: Test flutter
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-13
+    steps:
+    - uses: actions/checkout@v3
+    - name: flutter
+      uses: subosito/flutter-action@v2.3.0
+      with:
+        architecture: arm64
+    - name: test-flutter
+      run: |
+        cd ./flutter
+        flutter pub get
+        flutter test

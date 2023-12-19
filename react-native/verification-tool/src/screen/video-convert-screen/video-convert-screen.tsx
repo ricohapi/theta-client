@@ -12,8 +12,12 @@ import {
 import Button from '../../components/ui/button';
 import { TitledSwitch } from '../../components/ui/titled-switch';
 import { ListFilesView } from '../../components/list-files-view';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../App';
 
-const VideoConvertScreen: React.FC = ({ navigation }) => {
+const VideoConvertScreen: React.FC<
+  NativeStackScreenProps<RootStackParamList, 'videoConvert'>
+> = ({ navigation }) => {
   const [converting, setConverting] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<FileInfo>();
   const [message, setMessage] = React.useState('');

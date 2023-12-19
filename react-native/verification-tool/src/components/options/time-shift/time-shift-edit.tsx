@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { TimeShift, TimeShiftIntervalEnum } from 'theta-client-react-native';
-import type { OptionEditProps } from '..';
+import { EnumEdit, type OptionEditProps } from '..';
 import { View } from 'react-native';
-import { ItemSelectorView } from '../../ui/item-list';
 import { TitledSwitch } from '../../ui/titled-switch';
 
 export const TimeShiftEdit: React.FC<OptionEditProps> = ({
@@ -19,64 +18,42 @@ export const TimeShiftEdit: React.FC<OptionEditProps> = ({
     setEditTimeSHift(timeShift);
   }, [options]);
 
-  const intervalList = [
-    { name: '[undefined]', value: undefined },
-    { name: 'INTERVAL_0', value: TimeShiftIntervalEnum.INTERVAL_0 },
-    { name: 'INTERVAL_1', value: TimeShiftIntervalEnum.INTERVAL_1 },
-    { name: 'INTERVAL_2', value: TimeShiftIntervalEnum.INTERVAL_2 },
-    { name: 'INTERVAL_3', value: TimeShiftIntervalEnum.INTERVAL_3 },
-    { name: 'INTERVAL_4', value: TimeShiftIntervalEnum.INTERVAL_4 },
-    { name: 'INTERVAL_5', value: TimeShiftIntervalEnum.INTERVAL_5 },
-    { name: 'INTERVAL_6', value: TimeShiftIntervalEnum.INTERVAL_6 },
-    { name: 'INTERVAL_7', value: TimeShiftIntervalEnum.INTERVAL_7 },
-    { name: 'INTERVAL_8', value: TimeShiftIntervalEnum.INTERVAL_8 },
-    { name: 'INTERVAL_9', value: TimeShiftIntervalEnum.INTERVAL_9 },
-    { name: 'INTERVAL_10', value: TimeShiftIntervalEnum.INTERVAL_10 },
-  ];
-
   return (
     <View>
       <TitledSwitch
         title="isFrontFirst"
         value={editTimeShift.isFrontFirst}
-        onChange={(newValue) => {
-          const timeShift = { ...editTimeShift };
-          timeShift.isFrontFirst = newValue;
+        onChange={(isFrontFirst) => {
+          const timeShift = { ...editTimeShift, isFrontFirst };
           setEditTimeSHift(timeShift);
           onChange({
-            timeShift: timeShift,
+            timeShift,
           });
         }}
       />
-      <ItemSelectorView
-        itemList={intervalList}
+      <EnumEdit
         title={'firstInterval'}
-        onSelected={(item) => {
-          const timeShift = { ...editTimeShift };
-          timeShift.firstInterval = item.value;
+        option={editTimeShift.firstInterval}
+        onChange={(firstInterval) => {
+          const timeShift = { ...editTimeShift, firstInterval };
           setEditTimeSHift(timeShift);
           onChange({
-            timeShift: timeShift,
+            timeShift,
           });
         }}
-        selectedItem={intervalList.find(
-          (item) => item.value === editTimeShift.firstInterval
-        )}
+        optionEnum={TimeShiftIntervalEnum}
       />
-      <ItemSelectorView
-        itemList={intervalList}
+      <EnumEdit
         title={'secondInterval'}
-        onSelected={(item) => {
-          const timeShift = { ...editTimeShift };
-          timeShift.secondInterval = item.value;
+        option={editTimeShift.secondInterval}
+        onChange={(secondInterval) => {
+          const timeShift = { ...editTimeShift, secondInterval };
           setEditTimeSHift(timeShift);
           onChange({
-            timeShift: timeShift,
+            timeShift,
           });
         }}
-        selectedItem={intervalList.find(
-          (item) => item.value === editTimeShift.secondInterval
-        )}
+        optionEnum={TimeShiftIntervalEnum}
       />
     </View>
   );

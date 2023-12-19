@@ -280,6 +280,104 @@ class CompositeIntervalCaptureBuilder
   }
 }
 
+/// Builder of BurstCapture
+class BurstCaptureBuilder extends CaptureBuilder<BurstCaptureBuilder> {
+  int _interval = -1;
+
+  BurstCaptureBuilder setCheckStatusCommandInterval(int timeMillis) {
+    _interval = timeMillis;
+    return this;
+  }
+
+  /// BurstMode setting.
+  BurstCaptureBuilder setBurstMode(BurstModeEnum mode) {
+    _options[OptionNameEnum.burstMode.rawValue] = mode;
+    return this;
+  }
+
+  /// Builds an instance of a BurstCapture that has all the combined parameters of the Options that have been added to the Builder.
+  Future<BurstCapture> build() async {
+    var completer = Completer<BurstCapture>();
+    try {
+      await ThetaClientFlutterPlatform.instance
+          .buildBurstCapture(_options, _interval);
+      completer.complete(BurstCapture(_options, _interval));
+    } catch (e) {
+      completer.completeError(e);
+    }
+    return completer.future;
+  }
+}
+
+/// Builder of MultiBracketCapture
+class MultiBracketCaptureBuilder
+    extends CaptureBuilder<MultiBracketCaptureBuilder> {
+  int _interval = -1;
+
+  MultiBracketCaptureBuilder setCheckStatusCommandInterval(int timeMillis) {
+    _interval = timeMillis;
+    return this;
+  }
+
+  /// Set capture settings for each shooting.
+  ///
+  /// Number of settings have to be 2 to 13.
+  ///
+  /// For Theta SC2, S and SC, other settings than iso, shutterSpeed and
+  /// colorTemperature are ignored.
+  /// For Theta X, exposureProgram and exposureCompensation are ignored
+  /// so that always manual program.
+  /// For others than Theta Z1, aperture is ignored.
+  /// To setting parameters that are not specified, default values are used.
+  MultiBracketCaptureBuilder setBracketSettings(List<BracketSetting> settings) {
+    _options[OptionNameEnum.autoBracket.rawValue] = settings;
+    return this;
+  }
+
+  /// Builds an instance of a MultiBracketCapture that has all the combined parameters of the Options that have been added to the Builder.
+  Future<MultiBracketCapture> build() async {
+    var completer = Completer<MultiBracketCapture>();
+    try {
+      await ThetaClientFlutterPlatform.instance
+          .buildMultiBracketCapture(_options, _interval);
+      completer.complete(MultiBracketCapture(_options, _interval));
+    } catch (e) {
+      completer.completeError(e);
+    }
+    return completer.future;
+  }
+}
+
+/// Builder of ContinuousCapture
+class ContinuousCaptureBuilder
+    extends CaptureBuilder<ContinuousCaptureBuilder> {
+  int _interval = -1;
+
+  ContinuousCaptureBuilder setCheckStatusCommandInterval(int timeMillis) {
+    _interval = timeMillis;
+    return this;
+  }
+
+  /// Set photo file format.
+  ContinuousCaptureBuilder setFileFormat(PhotoFileFormatEnum fileFormat) {
+    _options[TagNameEnum.photoFileFormat.rawValue] = fileFormat;
+    return this;
+  }
+
+  /// Builds an instance of a ContinuousCapture that has all the combined parameters of the Options that have been added to the Builder.
+  Future<ContinuousCapture> build() async {
+    var completer = Completer<ContinuousCapture>();
+    try {
+      await ThetaClientFlutterPlatform.instance
+          .buildContinuousCapture(_options, _interval);
+      completer.complete(ContinuousCapture(_options, _interval));
+    } catch (e) {
+      completer.completeError(e);
+    }
+    return completer.future;
+  }
+}
+
 /// Photo image format used in PhotoCapture.
 enum PhotoFileFormatEnum {
   /// Image File format.

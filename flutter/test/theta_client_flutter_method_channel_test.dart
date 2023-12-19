@@ -11,15 +11,18 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() {
-    channel.setMockMethodCallHandler(null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
   });
 
   tearDown(() {
-    channel.setMockMethodCallHandler(null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
   });
 
   test('getPlatformVersion', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       return '42';
     });
     expect(await platform.getPlatformVersion(), '42');
@@ -27,7 +30,8 @@ void main() {
 
   test('getThetaModel', () async {
     const thetaModel = ThetaModel.thetaZ1;
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       return thetaModel.rawValue;
     });
 
@@ -36,7 +40,8 @@ void main() {
   });
 
   test('getThetaModel null', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       return null;
     });
 
@@ -65,7 +70,8 @@ void main() {
     var endpoints = <String, int>{'httpPort': 80, 'httpUpdatesPort': 80};
     const apiLevel = [2];
     const thetaModel = ThetaModel.thetaZ1;
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       final Map info = <String, dynamic>{
         'manufacturer': manufacturer,
         'model': model,
@@ -137,7 +143,8 @@ void main() {
       return stringList;
     }
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       final Map state = <String, dynamic>{
         'fingerprint': fingerprint,
         'batteryLevel': batteryLevel,
@@ -199,7 +206,8 @@ void main() {
     const apiVersion = 2;
     const isSdCard = true;
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       final Map state = <String, dynamic>{
         'fingerprint': fingerprint,
         'batteryLevel': batteryLevel,
@@ -256,7 +264,8 @@ void main() {
         'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG?type=thumb';
 
     int index = 0;
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['fileType'], fileTypes[index].rawValue);
       expect(arguments['entryCount'], entryCount);
@@ -320,7 +329,8 @@ void main() {
     const storageID = 'a0123456789';
 
     int index = 0;
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['fileType'], FileTypeEnum.image.rawValue);
       expect(arguments['entryCount'], entryCount);
@@ -416,13 +426,13 @@ void main() {
         'AutoBracket',
         [
           BracketSetting(
-              ApertureEnum.aperture_2_1,
-              5000,
-              ExposureCompensationEnum.zero,
-              ExposureProgramEnum.manual,
-              IsoEnum.iso400,
-              ShutterSpeedEnum.shutterSpeedOneOver_250,
-              WhiteBalanceEnum.auto)
+              aperture: ApertureEnum.aperture_2_1,
+              colorTemperature: 5000,
+              exposureCompensation: ExposureCompensationEnum.zero,
+              exposureProgram: ExposureProgramEnum.manual,
+              iso: IsoEnum.iso400,
+              shutterSpeed: ShutterSpeedEnum.shutterSpeedOneOver_250,
+              whiteBalance: WhiteBalanceEnum.auto)
         ],
         bracketSetting
       ],
@@ -647,7 +657,8 @@ void main() {
       optionNames.add(data[i][0]);
     }
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as List<dynamic>;
       for (int i = 0; i < data.length; i++) {
         expect(arguments[i], data[i][1], reason: data[i][1]);
@@ -719,13 +730,13 @@ void main() {
         'AutoBracket',
         [
           BracketSetting(
-              ApertureEnum.aperture_2_1,
-              5000,
-              ExposureCompensationEnum.zero,
-              ExposureProgramEnum.manual,
-              IsoEnum.iso400,
-              ShutterSpeedEnum.shutterSpeedOneOver_250,
-              WhiteBalanceEnum.auto)
+              aperture: ApertureEnum.aperture_2_1,
+              colorTemperature: 5000,
+              exposureCompensation: ExposureCompensationEnum.zero,
+              exposureProgram: ExposureProgramEnum.manual,
+              iso: IsoEnum.iso400,
+              shutterSpeed: ShutterSpeedEnum.shutterSpeedOneOver_250,
+              whiteBalance: WhiteBalanceEnum.auto)
         ],
         autoBracketMap,
       ],
@@ -936,7 +947,8 @@ void main() {
       options.setValue(data[i][0], data[i][2]);
     }
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       for (int i = 0; i < data.length; i++) {
         expect(arguments[data[i][1]], data[i][3], reason: data[i][1]);
@@ -951,7 +963,8 @@ void main() {
   test('initialize endpoint', () async {
     const endpoint = 'http://dummy/';
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['endpoint'], endpoint);
       expect(arguments['config'], isNull);
@@ -970,7 +983,8 @@ void main() {
     config.sleepDelay = SleepDelayEnum.sleepDelay_10m;
     config.shutterVolume = 3;
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['endpoint'], endpoint);
       expect(arguments['timeout'], isNull);
@@ -995,7 +1009,8 @@ void main() {
     const password = "1234567";
     config.clientMode = DigestAuth(username, password);
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['endpoint'], endpoint);
       expect(arguments['timeout'], isNull);
@@ -1021,7 +1036,8 @@ void main() {
     const username = "THETAXX1234567";
     config.clientMode = DigestAuth(username);
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['endpoint'], endpoint);
       expect(arguments['timeout'], isNull);
@@ -1048,7 +1064,8 @@ void main() {
     timeout.requestTimeout = 20;
     timeout.socketTimeout = 30;
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['endpoint'], endpoint);
       expect(arguments['config'], isNull);
@@ -1070,7 +1087,8 @@ void main() {
       'image3.jpg',
     ];
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'deleteFiles');
       var arguments = methodCall.arguments as List<dynamic>;
       expect(arguments[0], files[0]);
@@ -1083,7 +1101,8 @@ void main() {
   });
 
   test('deleteAllFiles', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'deleteAllFiles');
       return Future.value();
     });
@@ -1091,7 +1110,8 @@ void main() {
   });
 
   test('deleteAllImageFiles', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'deleteAllImageFiles');
       return Future.value();
     });
@@ -1099,7 +1119,8 @@ void main() {
   });
 
   test('deleteAllVideoFiles', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'deleteAllVideoFiles');
       return Future.value();
     });
@@ -1132,7 +1153,8 @@ void main() {
       }
     };
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'getMetadata');
       return Future.value(metadataMap);
     });
@@ -1150,7 +1172,8 @@ void main() {
   });
 
   test('reset', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'reset');
       return Future.value();
     });
@@ -1158,7 +1181,8 @@ void main() {
   });
 
   test('stopSelfTimer', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'stopSelfTimer');
       return Future.value();
     });
@@ -1170,7 +1194,8 @@ void main() {
     String result = 'http://dummy_result.MP4';
     bool toLowResolution = true;
     bool applyTopBottomCorrection = true;
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'convertVideoFormats');
 
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
@@ -1186,7 +1211,8 @@ void main() {
   });
 
   test('cancelVideoConvert', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'cancelVideoConvert');
       return Future.value();
     });
@@ -1194,7 +1220,8 @@ void main() {
   });
 
   test('finishWlan', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'finishWlan');
       return Future.value();
     });
@@ -1234,7 +1261,8 @@ void main() {
         'proxy': {'use': true, 'url': 'xxx', 'port': 8081, 'userid': 'abc'},
       },
     ];
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'listAccessPoints');
       return Future.value(data);
     });
@@ -1268,7 +1296,8 @@ void main() {
     const connectionPriority = 2;
     var proxy = Proxy(true, 'https://xxx', 8081, 'abc', 'pwpwpwp111');
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'setAccessPointDynamically');
 
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
@@ -1299,7 +1328,8 @@ void main() {
     const defaultGateway = '192.168.1.3';
     var proxy = Proxy(true, 'https://xxx', 8081, 'abc', 'pwpwpwp111');
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'setAccessPointStatically');
 
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
@@ -1332,7 +1362,8 @@ void main() {
 
   test('deleteAccessPoint', () async {
     const ssid = 'ssid_test';
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'deleteAccessPoint');
       expect(methodCall.arguments, ssid);
       return Future.value();
@@ -1403,7 +1434,8 @@ void main() {
       optionNames.add(data[i][0]);
     }
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['captureMode'], CaptureModeEnum.image.rawValue);
       return Future.value(optionMap);
@@ -1481,7 +1513,8 @@ void main() {
       optionNames.add(data[i][0]);
     }
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments['optionNames'] as List<dynamic>;
       for (int i = 0; i < data.length; i++) {
         expect(arguments[i], data[i][1], reason: data[i][1]);
@@ -1565,7 +1598,8 @@ void main() {
       options.setValue(data[i][0], data[i][2]);
     }
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['captureMode'], CaptureModeEnum.image.rawValue);
 
@@ -1581,7 +1615,8 @@ void main() {
   });
 
   test('deleteMySetting', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'deleteMySetting');
       expect(
           methodCall.arguments['captureMode'], CaptureModeEnum.image.rawValue);
@@ -1632,7 +1667,8 @@ void main() {
         "hasWebServer": false
       }
     ];
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'listPlugins');
       return Future.value(data);
     });
@@ -1654,7 +1690,8 @@ void main() {
   test('setPlugin', () async {
     const packageName = 'android.example.com.tflitecamerademo';
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'setPlugin');
 
       var arguments = methodCall.arguments as String;
@@ -1667,7 +1704,8 @@ void main() {
   test('startPlugin', () async {
     const packageName = 'android.example.com.tflitecamerademo';
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'startPlugin');
 
       var arguments = methodCall.arguments as String;
@@ -1678,7 +1716,8 @@ void main() {
   });
 
   test('stopPlugin', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'stopPlugin');
       return Future.value();
     });
@@ -1699,7 +1738,8 @@ void main() {
     </body>
     </html>
     """;
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'getPluginLicense');
 
       var arguments = methodCall.arguments as String;
@@ -1717,7 +1757,8 @@ void main() {
       "com.theta360.undersidecover"
     ];
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'getPluginOrders');
       return Future.value(plugins);
     });
@@ -1728,7 +1769,8 @@ void main() {
   test('setPluginOrders', () async {
     const packageNames = ['android.example.com.tflitecamerademo'];
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'setPluginOrders');
 
       var arguments = methodCall.arguments as List<dynamic>;
@@ -1743,7 +1785,8 @@ void main() {
   test('setBluetoothDevice', () async {
     const name = '10107709';
     const uuid = '00000000-1111-2222-3333-555555555555';
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'setBluetoothDevice');
 
       var arguments = methodCall.arguments as String;

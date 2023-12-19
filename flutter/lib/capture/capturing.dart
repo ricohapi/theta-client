@@ -55,3 +55,23 @@ class CompositeIntervalCapturing extends Capturing {
     ThetaClientFlutterPlatform.instance.stopCompositeIntervalCapture();
   }
 }
+
+/// BurstCapturing
+class BurstCapturing extends Capturing {
+  /// Stops burst shooting
+  /// When call stopCapture() then call property callback.
+  @override
+  void stopCapture() {
+    ThetaClientFlutterPlatform.instance.stopBurstCapture();
+  }
+}
+
+/// MultiBracketCapturing
+class MultiBracketCapturing extends Capturing {
+  /// Stops multi bracket shooting.
+  /// When call stopCapture() then call property callback.
+  @override
+  void stopCapture() {
+    ThetaClientFlutterPlatform.instance.stopMultiBracketCapture();
+  }
+}

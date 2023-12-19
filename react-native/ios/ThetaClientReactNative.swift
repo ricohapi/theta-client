@@ -21,6 +21,14 @@ let MESSAGE_NO_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURING = "no shotCountSpecifiedI
 let MESSAGE_NO_COMPOSITE_INTERVAL_CAPTURE = "No compositeIntervalCapture."
 let MESSAGE_NO_COMPOSITE_INTERVAL_CAPTURE_BUILDER = "no compositeIntervalCaptureBuilder."
 let MESSAGE_NO_COMPOSITE_INTERVAL_CAPTURING = "no compositeIntervalCapturing."
+let MESSAGE_NO_BURST_CAPTURE = "No burstCapture."
+let MESSAGE_NO_BURST_CAPTURE_BUILDER = "no burstCaptureBuilder."
+let MESSAGE_NO_BURST_CAPTURING = "no burstCapturing."
+let MESSAGE_NO_MULTI_BRACKET_CAPTURE = "No multiBracketCapture."
+let MESSAGE_NO_MULTI_BRACKET_CAPTURE_BUILDER = "no multiBracketCaptureBuilder."
+let MESSAGE_NO_MULTI_BRACKET_CAPTURING = "no multiBracketCapturing."
+let MESSAGE_NO_CONTINUOUS_CAPTURE = "No continuousCapture."
+let MESSAGE_NO_CONTINUOUS_CAPTURE_BUILDER = "no continuousCaptureBuilder."
 
 @objc(ThetaClientReactNative)
 class ThetaClientReactNative: RCTEventEmitter {
@@ -43,6 +51,14 @@ class ThetaClientReactNative: RCTEventEmitter {
     var compositeIntervalCaptureBuilder: CompositeIntervalCapture.Builder?
     var compositeIntervalCapture: CompositeIntervalCapture?
     var compositeIntervalCapturing: CompositeIntervalCapturing?
+    var burstCaptureBuilder: BurstCapture.Builder?
+    var burstCapture: BurstCapture?
+    var burstCapturing: BurstCapturing?
+    var multiBracketCaptureBuilder: MultiBracketCapture.Builder?
+    var multiBracketCapture: MultiBracketCapture?
+    var multiBracketCapturing: MultiBracketCapturing?
+    var continuousCaptureBuilder: ContinuousCapture.Builder?
+    var continuousCapture: ContinuousCapture?
 
     static let EVENT_FRAME = "ThetaFrameEvent"
     static let EVENT_NOTIFY = "ThetaNotify"
@@ -55,6 +71,11 @@ class ThetaClientReactNative: RCTEventEmitter {
     static let NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR = "LIMITLESS-INTERVAL-CAPTURE-STOP-ERROR"
     static let NOTIFY_COMPOSITE_INTERVAL_PROGRESS = "COMPOSITE-INTERVAL-PROGRESS"
     static let NOTIFY_COMPOSITE_INTERVAL_STOP_ERROR = "COMPOSITE-INTERVAL-STOP-ERROR"
+    static let NOTIFY_BURST_PROGRESS = "BURST-PROGRESS"
+    static let NOTIFY_BURST_STOP_ERROR = "BURST-STOP-ERROR"
+    static let NOTIFY_MULTI_BRACKET_PROGRESS = "MULTI-BRACKET-PROGRESS"
+    static let NOTIFY_MULTI_BRACKET_STOP_ERROR = "MULTI-BRACKET-STOP-ERROR"
+    static let NOTIFY_CONTINUOUS_PROGRESS = "CONTINUOUS-PROGRESS"
 
     @objc
     override func supportedEvents() -> [String]! {
@@ -99,6 +120,14 @@ class ThetaClientReactNative: RCTEventEmitter {
         compositeIntervalCaptureBuilder = nil
         compositeIntervalCapture = nil
         compositeIntervalCapturing = nil
+        burstCaptureBuilder = nil
+        burstCapture = nil
+        burstCapturing = nil
+        multiBracketCaptureBuilder = nil
+        multiBracketCapture = nil
+        multiBracketCapturing = nil
+        continuousCaptureBuilder = nil
+        continuousCapture = nil
         previewing = false
 
         Task {
@@ -1153,6 +1182,396 @@ class ThetaClientReactNative: RCTEventEmitter {
         compositeIntervalCapturing.cancelCapture()
         resolve(nil)
     }
+
+    // MARK: - BurstCapture
+
+    @objc(getBurstCaptureBuilder:burstBracketStep:burstCompensation:burstMaxExposureTime:burstEnableIsoControl:burstOrder:withResolver:withRejecter:)
+    func getBurstCaptureBuilder(
+        burstCaptureNum: String,
+        burstBracketStep: String,
+        burstCompensation: String,
+        burstMaxExposureTime: String,
+        burstEnableIsoControl: String,
+        burstOrder: String,
+        resolve: RCTPromiseResolveBlock,
+        reject: RCTPromiseRejectBlock
+    ) {
+        guard let thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        guard
+            let burstCaptureNumVal = getEnumValue(values: ThetaRepository.BurstCaptureNumEnum.values(), name: burstCaptureNum),
+            let burstBracketStepVal = getEnumValue(values: ThetaRepository.BurstBracketStepEnum.values(), name: burstBracketStep),
+            let burstCompensationVal = getEnumValue(values: ThetaRepository.BurstCompensationEnum.values(), name: burstCompensation),
+            let burstMaxExposureTimeVal = getEnumValue(values: ThetaRepository.BurstMaxExposureTimeEnum.values(), name: burstMaxExposureTime),
+            let burstEnableIsoControlVal = getEnumValue(values: ThetaRepository.BurstEnableIsoControlEnum.values(), name: burstEnableIsoControl),
+            let burstOrderVal = getEnumValue(values: ThetaRepository.BurstOrderEnum.values(), name: burstOrder)
+        else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NO_ARGUMENT, nil)
+            return
+        }
+
+        burstCaptureBuilder = thetaRepository.getBurstCaptureBuilder(burstCaptureNum: burstCaptureNumVal,
+                                                                     burstBracketStep: burstBracketStepVal,
+                                                                     burstCompensation: burstCompensationVal,
+                                                                     burstMaxExposureTime: burstMaxExposureTimeVal,
+                                                                     burstEnableIsoControl: burstEnableIsoControlVal,
+                                                                     burstOrder: burstOrderVal)
+        resolve(nil)
+    }
+
+    @objc(buildBurstCapture:withResolver:withRejecter:)
+    func buildBurstCapture(
+        options: [AnyHashable: Any]?,
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let _ = thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        guard let burstCaptureBuilder else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NO_BURST_CAPTURE_BUILDER, nil)
+            return
+        }
+
+        if let options = options as? [String: Any] {
+            setCaptureBuilderParams(params: options, builder: burstCaptureBuilder)
+            setBurstCaptureBuilderParams(params: options, builder: burstCaptureBuilder)
+        }
+        burstCaptureBuilder.build { capture, error in
+            if let error {
+                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+            } else if let capture {
+                self.burstCapture = capture
+                self.burstCaptureBuilder = nil
+                resolve(true)
+            } else {
+                reject(ERROR_CODE_ERROR, MESSAGE_NO_BURST_CAPTURE, nil)
+            }
+        }
+    }
+
+    @objc(startBurstCapture:withRejecter:)
+    func startBurstCapture(
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let _ = thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        guard let burstCapture else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NO_BURST_CAPTURE, nil)
+            return
+        }
+
+        class Callback: BurstCaptureStartCaptureCallback {
+            let callback: (_ urls: [String]?, _ error: Error?) -> Void
+            weak var client: ThetaClientReactNative?
+            init(
+                _ callback: @escaping (_ urls: [String]?, _ error: Error?) -> Void,
+                client: ThetaClientReactNative
+            ) {
+                self.callback = callback
+                self.client = client
+            }
+
+            func onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                callback(nil, exception.asError())
+            }
+
+            func onProgress(completion: Float) {
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_BURST_PROGRESS,
+                        params: toCaptureProgressNotifyParam(value: completion)
+                    )
+                )
+            }
+
+            func onCaptureCompleted(fileUrls: [String]?) {
+                callback(fileUrls, nil)
+            }
+
+            func onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                let error = exception.asError()
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_BURST_STOP_ERROR,
+                        params: toMessageNotifyParam(value: error.localizedDescription)
+                    )
+                )
+            }
+        }
+
+        burstCapturing = burstCapture.startCapture(
+            callback: Callback(
+                { url, error in
+                    if let error {
+                        reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                    } else {
+                        resolve(url)
+                    }
+                }, client: self
+            ))
+    }
+
+    @objc(cancelBurstCapture:withRejecter:)
+    func cancelBurstCapture(
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let _ = thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        guard let burstCapturing else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NO_BURST_CAPTURING, nil)
+            return
+        }
+        burstCapturing.cancelCapture()
+        resolve(nil)
+    }
+
+    // MARK: - MultiBracketCapture
+
+    @objc(getMultiBracketCaptureBuilder:withRejecter:)
+    func getMultiBracketCaptureBuilder(
+        resolve: RCTPromiseResolveBlock,
+        reject: RCTPromiseRejectBlock
+    ) {
+        guard let thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        multiBracketCaptureBuilder = thetaRepository.getMultiBracketCaptureBuilder()
+        resolve(nil)
+    }
+
+    @objc(buildMultiBracketCapture:withResolver:withRejecter:)
+    func buildMultiBracketCapture(
+        options: [AnyHashable: Any]?,
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let _ = thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        guard let multiBracketCaptureBuilder else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NO_MULTI_BRACKET_CAPTURE_BUILDER, nil)
+            return
+        }
+
+        if let options = options as? [String: Any] {
+            setCaptureBuilderParams(params: options, builder: multiBracketCaptureBuilder)
+            setMultiBracketCaptureBuilderParams(params: options, builder: multiBracketCaptureBuilder)
+        }
+        multiBracketCaptureBuilder.build { capture, error in
+            if let error {
+                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+            } else if let capture {
+                self.multiBracketCapture = capture
+                self.multiBracketCaptureBuilder = nil
+                resolve(true)
+            } else {
+                reject(ERROR_CODE_ERROR, MESSAGE_NO_MULTI_BRACKET_CAPTURE, nil)
+            }
+        }
+    }
+
+    @objc(startMultiBracketCapture:withRejecter:)
+    func startMultiBracketCapture(
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let _ = thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        guard let multiBracketCapture else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NO_MULTI_BRACKET_CAPTURE, nil)
+            return
+        }
+
+        class Callback: MultiBracketCaptureStartCaptureCallback {
+            let callback: (_ urls: [String]?, _ error: Error?) -> Void
+            weak var client: ThetaClientReactNative?
+            init(
+                _ callback: @escaping (_ urls: [String]?, _ error: Error?) -> Void,
+                client: ThetaClientReactNative
+            ) {
+                self.callback = callback
+                self.client = client
+            }
+
+            func onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                callback(nil, exception.asError())
+            }
+
+            func onProgress(completion: Float) {
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_MULTI_BRACKET_PROGRESS,
+                        params: toCaptureProgressNotifyParam(value: completion)
+                    )
+                )
+            }
+
+            func onCaptureCompleted(fileUrls: [String]?) {
+                callback(fileUrls, nil)
+            }
+
+            func onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                let error = exception.asError()
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_MULTI_BRACKET_STOP_ERROR,
+                        params: toMessageNotifyParam(value: error.localizedDescription)
+                    )
+                )
+            }
+        }
+
+        multiBracketCapturing = multiBracketCapture.startCapture(
+            callback: Callback(
+                { url, error in
+                    if let error {
+                        reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                    } else {
+                        resolve(url)
+                    }
+                }, client: self
+            ))
+    }
+
+    @objc(cancelMultiBracketCapture:withRejecter:)
+    func cancelMultiBracketCapture(
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let _ = thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        guard let multiBracketCapturing else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NO_MULTI_BRACKET_CAPTURING, nil)
+            return
+        }
+        multiBracketCapturing.cancelCapture()
+        resolve(nil)
+    }
+
+    // MARK: - ContinuousCapture
+
+    @objc(getContinuousCaptureBuilder:withRejecter:)
+    func getContinuousCaptureBuilder(
+        resolve: RCTPromiseResolveBlock,
+        reject: RCTPromiseRejectBlock
+    ) {
+        guard let thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        continuousCaptureBuilder = thetaRepository.getContinuousCaptureBuilder()
+        resolve(nil)
+    }
+
+    @objc(buildContinuousCapture:withResolver:withRejecter:)
+    func buildContinuousCapture(
+        options: [AnyHashable: Any]?,
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let _ = thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        guard let continuousCaptureBuilder else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NO_CONTINUOUS_CAPTURE_BUILDER, nil)
+            return
+        }
+
+        if let options = options as? [String: Any] {
+            setCaptureBuilderParams(params: options, builder: continuousCaptureBuilder)
+            setContinuousCaptureBuilderParams(params: options, builder: continuousCaptureBuilder)
+        }
+        continuousCaptureBuilder.build { capture, error in
+            if let error {
+                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+            } else if let capture {
+                self.continuousCapture = capture
+                self.continuousCaptureBuilder = nil
+                resolve(true)
+            } else {
+                reject(ERROR_CODE_ERROR, MESSAGE_NO_BURST_CAPTURE, nil)
+            }
+        }
+    }
+
+    @objc(startContinuousCapture:withRejecter:)
+    func startContinuousCapture(
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let _ = thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        guard let continuousCapture else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NO_CONTINUOUS_CAPTURE, nil)
+            return
+        }
+
+        class Callback: ContinuousCaptureStartCaptureCallback {
+            let callback: (_ urls: [String]?, _ error: Error?) -> Void
+            weak var client: ThetaClientReactNative?
+            init(
+                _ callback: @escaping (_ urls: [String]?, _ error: Error?) -> Void,
+                client: ThetaClientReactNative
+            ) {
+                self.callback = callback
+                self.client = client
+            }
+
+            func onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                callback(nil, exception.asError())
+            }
+
+            func onProgress(completion: Float) {
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_CONTINUOUS_PROGRESS,
+                        params: toCaptureProgressNotifyParam(value: completion)
+                    )
+                )
+            }
+
+            func onCaptureCompleted(fileUrls: [String]?) {
+                callback(fileUrls, nil)
+            }
+        }
+
+        continuousCapture.startCapture(
+            callback: Callback(
+                { url, error in
+                    if let error {
+                        reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                    } else {
+                        resolve(url)
+                    }
+                }, client: self
+            ))
+    }
+
+    // MARK: -
 
     @objc(getMetadata:withResolver:withRejecter:)
     func getMetadata(

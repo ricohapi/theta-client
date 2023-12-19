@@ -5,45 +5,42 @@ import styles from './styles';
 import Button from '../../components/ui/button';
 import {
   ApertureEnum,
+  BluetoothRoleEnum,
   CaptureModeEnum,
+  ContinuousNumberEnum,
   ExposureCompensationEnum,
   ExposureDelayEnum,
   ExposureProgramEnum,
+  FilterEnum,
   IsoAutoHighLimitEnum,
   IsoEnum,
   MaxRecordableTimeEnum,
+  OffDelayEnum,
   OptionNameEnum,
   Options,
   PresetEnum,
+  SleepDelayEnum,
   TopBottomCorrectionOptionEnum,
   VideoStitchingEnum,
   VisibilityReductionEnum,
   WhiteBalanceEnum,
   getOptions,
+  offDelayToSeconds,
   setOptions,
+  sleepDelayToSeconds,
 } from 'theta-client-react-native';
 import {
-  ApertureEdit,
   AutoBracketEdit,
-  CaptureModeEdit,
-  ExposureCompensationEdit,
-  ExposureDelayEdit,
-  ExposureProgramEdit,
-  FilterEdit,
   GpsInfoEdit,
-  IsoAutoHighLimitEdit,
-  IsoEdit,
-  MaxRecordableTimeEdit,
-  PresetEdit,
   TimeShiftEdit,
-  TopBottomCorrectionEdit,
   TopBottomCorrectionRotationEdit,
-  VideoStitchingEdit,
-  VisibilityReductionEdit,
-  WhiteBalanceEdit,
+  EnumEdit,
 } from '../../components/options';
 import { ItemSelectorView, type Item } from '../../components/ui/item-list';
 import { NumberEdit } from '../../components/options/number-edit';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../App';
+import { InputNumber } from '../../components/ui/input-number';
 
 interface OptionItem extends Item {
   value: {
@@ -53,6 +50,7 @@ interface OptionItem extends Item {
       onChange: (options: Options) => void
     ) => React.ReactElement;
     defaultValue?: Options;
+    onWillSet?: (options: Options) => void;
   };
 }
 
@@ -62,7 +60,14 @@ const optionList: OptionItem[] = [
     value: {
       optionName: OptionNameEnum.Aperture,
       editor: (options, onChange) => (
-        <ApertureEdit onChange={onChange} options={options} />
+        <EnumEdit
+          title={'aperture'}
+          option={options?.aperture}
+          onChange={(aperture) => {
+            onChange({ aperture });
+          }}
+          optionEnum={ApertureEnum}
+        />
       ),
       defaultValue: { aperture: ApertureEnum.APERTURE_AUTO },
     },
@@ -79,11 +84,34 @@ const optionList: OptionItem[] = [
     },
   },
   {
+    name: 'bluetoothRole',
+    value: {
+      optionName: OptionNameEnum.BluetoothRole,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'bluetoothRole'}
+          option={options?.bluetoothRole}
+          onChange={(bluetoothRole) => {
+            onChange({ bluetoothRole });
+          }}
+          optionEnum={BluetoothRoleEnum}
+        />
+      ),
+    },
+  },
+  {
     name: 'captureMode',
     value: {
       optionName: OptionNameEnum.CaptureMode,
       editor: (options, onChange) => (
-        <CaptureModeEdit onChange={onChange} options={options} />
+        <EnumEdit
+          title={'captureMode'}
+          option={options?.captureMode}
+          onChange={(captureMode) => {
+            onChange({ captureMode });
+          }}
+          optionEnum={CaptureModeEnum}
+        />
       ),
       defaultValue: { captureMode: CaptureModeEnum.IMAGE },
     },
@@ -102,11 +130,35 @@ const optionList: OptionItem[] = [
     },
   },
   {
+    name: 'continuousNumber',
+    value: {
+      optionName: OptionNameEnum.ContinuousNumber,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'continuousNumber'}
+          option={options.continuousNumber}
+          onChange={(continuousNumber) => {
+            onChange({ continuousNumber });
+          }}
+          optionEnum={ContinuousNumberEnum}
+        />
+      ),
+      defaultValue: { continuousNumber: ContinuousNumberEnum.OFF },
+    },
+  },
+  {
     name: 'exposureCompensation',
     value: {
       optionName: OptionNameEnum.ExposureCompensation,
       editor: (options, onChange) => (
-        <ExposureCompensationEdit onChange={onChange} options={options} />
+        <EnumEdit
+          title={'exposureCompensation'}
+          option={options.exposureCompensation}
+          onChange={(exposureCompensation) => {
+            onChange({ exposureCompensation });
+          }}
+          optionEnum={ExposureCompensationEnum}
+        />
       ),
       defaultValue: { exposureCompensation: ExposureCompensationEnum.ZERO },
     },
@@ -116,7 +168,14 @@ const optionList: OptionItem[] = [
     value: {
       optionName: OptionNameEnum.ExposureDelay,
       editor: (options, onChange) => (
-        <ExposureDelayEdit onChange={onChange} options={options} />
+        <EnumEdit
+          title={'exposureDelay'}
+          option={options?.exposureDelay}
+          onChange={(exposureDelay) => {
+            onChange({ exposureDelay });
+          }}
+          optionEnum={ExposureDelayEnum}
+        />
       ),
       defaultValue: { exposureDelay: ExposureDelayEnum.DELAY_OFF },
     },
@@ -126,7 +185,14 @@ const optionList: OptionItem[] = [
     value: {
       optionName: OptionNameEnum.ExposureProgram,
       editor: (options, onChange) => (
-        <ExposureProgramEdit onChange={onChange} options={options} />
+        <EnumEdit
+          title={'exposureProgram'}
+          option={options.exposureProgram}
+          onChange={(exposureProgram) => {
+            onChange({ exposureProgram });
+          }}
+          optionEnum={ExposureProgramEnum}
+        />
       ),
       defaultValue: { exposureProgram: ExposureProgramEnum.NORMAL_PROGRAM },
     },
@@ -136,7 +202,14 @@ const optionList: OptionItem[] = [
     value: {
       optionName: OptionNameEnum.Filter,
       editor: (options, onChange) => (
-        <FilterEdit onChange={onChange} options={options} />
+        <EnumEdit
+          title={'filter'}
+          option={options.filter}
+          onChange={(filter) => {
+            onChange({ filter });
+          }}
+          optionEnum={FilterEnum}
+        />
       ),
     },
   },
@@ -154,7 +227,14 @@ const optionList: OptionItem[] = [
     value: {
       optionName: OptionNameEnum.Iso,
       editor: (options, onChange) => (
-        <IsoEdit onChange={onChange} options={options} />
+        <EnumEdit
+          title={'iso'}
+          option={options.iso}
+          onChange={(iso) => {
+            onChange({ iso });
+          }}
+          optionEnum={IsoEnum}
+        />
       ),
       defaultValue: { iso: IsoEnum.ISO_AUTO },
     },
@@ -164,7 +244,14 @@ const optionList: OptionItem[] = [
     value: {
       optionName: OptionNameEnum.IsoAutoHighLimit,
       editor: (options, onChange) => (
-        <IsoAutoHighLimitEdit onChange={onChange} options={options} />
+        <EnumEdit
+          title={'isoAutoHighLimit'}
+          option={options.isoAutoHighLimit}
+          onChange={(isoAutoHighLimit) => {
+            onChange({ isoAutoHighLimit });
+          }}
+          optionEnum={IsoAutoHighLimitEnum}
+        />
       ),
       defaultValue: { isoAutoHighLimit: IsoAutoHighLimitEnum.ISO_100 },
     },
@@ -180,10 +267,62 @@ const optionList: OptionItem[] = [
     value: {
       optionName: OptionNameEnum.MaxRecordableTime,
       editor: (options, onChange) => (
-        <MaxRecordableTimeEdit onChange={onChange} options={options} />
+        <EnumEdit
+          title={'maxRecordableTime'}
+          option={options.maxRecordableTime}
+          onChange={(maxRecordableTime) => {
+            onChange({ maxRecordableTime });
+          }}
+          optionEnum={MaxRecordableTimeEnum}
+        />
       ),
       defaultValue: {
         maxRecordableTime: MaxRecordableTimeEnum.RECORDABLE_TIME_1500,
+      },
+    },
+  },
+  {
+    name: 'offDelay enum',
+    value: {
+      optionName: OptionNameEnum.OffDelay,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'offDelay'}
+          option={options.offDelay}
+          onChange={(offDelay) => {
+            onChange({ offDelay });
+          }}
+          optionEnum={OffDelayEnum}
+        />
+      ),
+      defaultValue: { offDelay: OffDelayEnum.DISABLE },
+    },
+  },
+  {
+    name: 'offDelay number',
+    value: {
+      optionName: OptionNameEnum.OffDelay,
+      editor: (options, onChange) => (
+        <InputNumber
+          title={'offDelay'}
+          onChange={(newValue) => {
+            onChange({ offDelay: newValue });
+          }}
+          value={
+            typeof options.offDelay === 'string'
+              ? offDelayToSeconds(options.offDelay as OffDelayEnum)
+              : typeof options.offDelay === 'number'
+              ? options.offDelay
+              : 0
+          }
+        />
+      ),
+      onWillSet: (options: Options) => {
+        if (typeof options.offDelay === 'string') {
+          options.offDelay = offDelayToSeconds(
+            options.offDelay as OffDelayEnum
+          );
+        }
       },
     },
   },
@@ -192,9 +331,61 @@ const optionList: OptionItem[] = [
     value: {
       optionName: OptionNameEnum.Preset,
       editor: (options, onChange) => (
-        <PresetEdit onChange={onChange} options={options} />
+        <EnumEdit
+          title={'preset'}
+          option={options.preset}
+          onChange={(preset) => {
+            onChange({ preset });
+          }}
+          optionEnum={PresetEnum}
+        />
       ),
       defaultValue: { preset: PresetEnum.FACE },
+    },
+  },
+  {
+    name: 'sleepDelay enum',
+    value: {
+      optionName: OptionNameEnum.SleepDelay,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'sleepDelay'}
+          option={options.sleepDelay}
+          onChange={(sleepDelay) => {
+            onChange({ sleepDelay });
+          }}
+          optionEnum={SleepDelayEnum}
+        />
+      ),
+      defaultValue: { sleepDelay: SleepDelayEnum.DISABLE },
+    },
+  },
+  {
+    name: 'sleepDelay number',
+    value: {
+      optionName: OptionNameEnum.SleepDelay,
+      editor: (options, onChange) => (
+        <InputNumber
+          title={'sleepDelay'}
+          onChange={(newValue) => {
+            onChange({ sleepDelay: newValue });
+          }}
+          value={
+            typeof options.sleepDelay === 'string'
+              ? sleepDelayToSeconds(options.sleepDelay as SleepDelayEnum)
+              : typeof options.sleepDelay === 'number'
+              ? options.sleepDelay
+              : 0
+          }
+        />
+      ),
+      onWillSet: (options: Options) => {
+        if (typeof options.sleepDelay === 'string') {
+          options.sleepDelay = sleepDelayToSeconds(
+            options.sleepDelay as SleepDelayEnum
+          );
+        }
+      },
     },
   },
   {
@@ -211,7 +402,14 @@ const optionList: OptionItem[] = [
     value: {
       optionName: OptionNameEnum.TopBottomCorrection,
       editor: (options, onChange) => (
-        <TopBottomCorrectionEdit onChange={onChange} options={options} />
+        <EnumEdit
+          title={'topBottomCorrection'}
+          option={options.topBottomCorrection}
+          onChange={(topBottomCorrection) => {
+            onChange({ topBottomCorrection });
+          }}
+          optionEnum={TopBottomCorrectionOptionEnum}
+        />
       ),
       defaultValue: {
         topBottomCorrection: TopBottomCorrectionOptionEnum.APPLY_AUTO,
@@ -223,7 +421,14 @@ const optionList: OptionItem[] = [
     value: {
       optionName: OptionNameEnum.VideoStitching,
       editor: (options, onChange) => (
-        <VideoStitchingEdit onChange={onChange} options={options} />
+        <EnumEdit
+          title={'videoStitching'}
+          option={options.videoStitching}
+          onChange={(videoStitching) => {
+            onChange({ videoStitching });
+          }}
+          optionEnum={VideoStitchingEnum}
+        />
       ),
       defaultValue: {
         videoStitching: VideoStitchingEnum.NONE,
@@ -247,7 +452,14 @@ const optionList: OptionItem[] = [
     value: {
       optionName: OptionNameEnum.VisibilityReduction,
       editor: (options, onChange) => (
-        <VisibilityReductionEdit onChange={onChange} options={options} />
+        <EnumEdit
+          title={'visibilityReduction'}
+          option={options.visibilityReduction}
+          onChange={(visibilityReduction) => {
+            onChange({ visibilityReduction });
+          }}
+          optionEnum={VisibilityReductionEnum}
+        />
       ),
       defaultValue: {
         visibilityReduction: VisibilityReductionEnum.OFF,
@@ -259,14 +471,23 @@ const optionList: OptionItem[] = [
     value: {
       optionName: OptionNameEnum.WhiteBalance,
       editor: (options, onChange) => (
-        <WhiteBalanceEdit onChange={onChange} options={options} />
+        <EnumEdit
+          title={'whiteBalance'}
+          option={options.whiteBalance}
+          onChange={(whiteBalance) => {
+            onChange({ whiteBalance });
+          }}
+          optionEnum={WhiteBalanceEnum}
+        />
       ),
       defaultValue: { whiteBalance: WhiteBalanceEnum.AUTO },
     },
   },
 ];
 
-const OptionsScreen: React.FC = ({ navigation }) => {
+const OptionsScreen: React.FC<
+  NativeStackScreenProps<RootStackParamList, 'options'>
+> = ({ navigation }) => {
   const [selectedOption, setSelectedOption] = React.useState<OptionItem>();
   const [message, setMessage] = React.useState('');
   const [editOptions, setEditOptions] = React.useState<Options>();
@@ -290,7 +511,10 @@ const OptionsScreen: React.FC = ({ navigation }) => {
       setMessage(JSON.stringify(options));
       setEditOptions(options);
     } catch (error) {
-      setMessage(JSON.stringify(error));
+      if (error instanceof Error) {
+        setMessage(error.name + ': ' + error.message);
+      }
+      console.log('failed getOptions()');
     }
   };
 
@@ -298,12 +522,16 @@ const OptionsScreen: React.FC = ({ navigation }) => {
     if (selectedOption == null || editOptions == null) {
       return;
     }
+    selectedOption.value.onWillSet?.(editOptions);
     console.log('call setOptions(): ' + JSON.stringify(editOptions));
     try {
       await setOptions(editOptions);
       setMessage('OK.\n' + JSON.stringify(editOptions));
     } catch (error) {
-      setMessage(JSON.stringify(error));
+      if (error instanceof Error) {
+        setMessage(error.name + ': ' + error.message);
+      }
+      console.log('failed setOptions()');
     }
   };
 

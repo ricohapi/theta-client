@@ -11,8 +11,12 @@ import {
 } from 'theta-client-react-native';
 import { CaptureCommonOptionsEdit } from '../../components/capture/capture-common-options';
 import { NumberEdit } from 'verification-tool/src/components/options/number-edit';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../App';
 
-const LimitlessIntervalCaptureScreen: React.FC = ({ navigation }) => {
+const LimitlessIntervalCaptureScreen: React.FC<
+  NativeStackScreenProps<RootStackParamList, 'limitlessIntervalCapture'>
+> = ({ navigation }) => {
   const [options, setOptions] = React.useState<Options>();
   const [isTaking, setIsTaking] = React.useState(false);
   const [capture, setCapture] = React.useState<LimitlessIntervalCapture>();

@@ -1,0 +1,8 @@
+{
+    "error": {
+        "code": "canceledShooting",
+        "message": "shooting is canceled."
+    },
+    "name": "camera.startCapture",
+    "state": "error"
+}

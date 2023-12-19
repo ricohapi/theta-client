@@ -9,6 +9,7 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -55,6 +56,11 @@ fun PreviewScreen(toPhoto: (photoUrl: String) -> Unit, viewModel: ThetaViewModel
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.startPreview()
+        //viewModel.startPreviewWithCallback()
+    }
+
     DisposableEffect(LocalLifecycleOwner.current) {
         onDispose {
             viewModel.stopPreview()
@@ -76,8 +82,6 @@ fun PreviewScreen(toPhoto: (photoUrl: String) -> Unit, viewModel: ThetaViewModel
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                viewModel.startPreview()
-                //viewModel.startPreviewWithCallback()
                 val bitmap by viewModel.previewFlow.collectAsState()
                 bitmap?.let {
                     // Viewer360(bitmap!!)

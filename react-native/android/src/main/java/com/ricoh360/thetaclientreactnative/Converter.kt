@@ -21,6 +21,7 @@ val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "autoBracket" to OptionNameEnum.AutoBracket,
   "bitrate" to OptionNameEnum.Bitrate,
   "bluetoothPower" to OptionNameEnum.BluetoothPower,
+  "bluetoothRole" to OptionNameEnum.BluetoothRole,
   "burstMode" to OptionNameEnum.BurstMode,
   "burstOption" to OptionNameEnum.BurstOption,
   "cameraControlSource" to OptionNameEnum.CameraControlSource,
@@ -213,6 +214,47 @@ fun setCompositeIntervalCaptureBuilderParams(optionMap: ReadableMap, builder: Co
   }
 }
 
+fun setBurstCaptureBuilderParams(optionMap: ReadableMap, builder: BurstCapture.Builder) {
+  val interval = if (optionMap.hasKey("_capture_interval")) optionMap.getInt("_capture_interval") else null
+  interval?.let {
+    if (it >= 0) {
+      builder.setCheckStatusCommandInterval(it.toLong())
+    }
+  }
+  optionMap.getString("burstMode")?.let {
+    builder.setBurstMode(BurstModeEnum.valueOf(it))
+  }
+}
+
+fun setMultiBracketCaptureBuilderParams(optionMap: ReadableMap, builder: MultiBracketCapture.Builder) {
+  val settingArray = optionMap.getArray("autoBracket") ?: return
+  for (i in 0 until settingArray.size()) {
+    settingArray.getMap(i)?.let { setting ->
+      builder.addBracketParameters(
+        aperture = setting.getString("aperture")?.let { ApertureEnum.valueOf(it) },
+        colorTemperature = if (setting.hasKey("colorTemperature")) setting.getInt("colorTemperature") else null,
+        exposureCompensation = setting.getString("exposureCompensation")?.let { ExposureCompensationEnum.valueOf(it) },
+        exposureProgram = setting.getString("exposureProgram")?.let { ExposureProgramEnum.valueOf(it) },
+        iso = setting.getString("iso")?.let { IsoEnum.valueOf(it) },
+        shutterSpeed = setting.getString("shutterSpeed")?.let { ShutterSpeedEnum.valueOf(it) },
+        whiteBalance = setting.getString("whiteBalance")?.let { WhiteBalanceEnum.valueOf(it) },
+      )
+    }
+  }
+}
+
+fun setContinuousCaptureBuilderParams(optionMap: ReadableMap, builder: ContinuousCapture.Builder) {
+  val interval = if (optionMap.hasKey("_capture_interval")) optionMap.getInt("_capture_interval") else null
+  interval?.let {
+    if (it >= 0) {
+      builder.setCheckStatusCommandInterval(it.toLong())
+    }
+  }
+  optionMap.getString("fileFormat")?.let {
+    builder.setFileFormat(PhotoFileFormatEnum.valueOf(it))
+  }
+}
+
 fun toGetOptionsParam(optionNames: ReadableArray): MutableList<OptionNameEnum> {
   val optionNameList = mutableListOf<OptionNameEnum>()
   for (index in 0..(optionNames.size() - 1)) {
@@ -262,9 +304,25 @@ fun toResult(options: Options): WritableMap {
       options.gpsInfo?.let {
         result.putMap("gpsInfo", toResult(gpsInfo = it))
       }
+    } else if (name == OptionNameEnum.OffDelay) {
+      options.offDelay?.let {
+        if (it is OffDelayEnum) {
+          result.putString("offDelay", it.name)
+        } else if (it is OffDelaySec) {
+          result.putInt("offDelay", it.sec)
+        }
+      }
     } else if (name == OptionNameEnum.Proxy) {
       options.proxy?.let {
         result.putMap("proxy", toResult(proxy = it))
+      }
+    } else if (name == OptionNameEnum.SleepDelay) {
+      options.sleepDelay?.let {
+        if (it is SleepDelayEnum) {
+          result.putString("sleepDelay", it.name)
+        } else if (it is SleepDelaySec) {
+          result.putInt("sleepDelay", it.sec)
+        }
       }
     } else if (name == OptionNameEnum.TimeShift) {
       options.timeShift?.let {
@@ -337,22 +395,22 @@ fun toResult(autoBracket: BracketSettingList): WritableArray {
 
 fun toResult(burstOption: BurstOption): WritableMap {
   val result = Arguments.createMap()
-  burstOption.burstCaptureNum?.value?.name?.let { name ->
+  burstOption.burstCaptureNum?.name?.let { name ->
     result.putString("burstCaptureNum", name)
   }
-  burstOption.burstBracketStep?.value?.name?.let { name ->
+  burstOption.burstBracketStep?.name?.let { name ->
     result.putString("burstBracketStep", name)
   }
-  burstOption.burstCompensation?.value?.name?.let { name ->
+  burstOption.burstCompensation?.name?.let { name ->
     result.putString("burstCompensation", name)
   }
-  burstOption.burstMaxExposureTime?.value?.name?.let { name ->
+  burstOption.burstMaxExposureTime?.name?.let { name ->
     result.putString("burstMaxExposureTime", name)
   }
-  burstOption.burstEnableIsoControl?.value?.name?.let { name ->
+  burstOption.burstEnableIsoControl?.name?.let { name ->
     result.putString("burstEnableIsoControl", name)
   }
-  burstOption.burstOrder?.value?.name?.let { name ->
+  burstOption.burstOrder?.name?.let { name ->
     result.putString("burstOrder", name)
   }
   return result
@@ -531,9 +589,17 @@ fun setOptionValue(options: Options, name: OptionNameEnum, optionsMap: ReadableM
     optionsMap.getMap(key)?.let {
       options.setValue(name, toGpsInfo(map = it))
     }
+  } else if (name == OptionNameEnum.OffDelay) {
+    toOffDelay(optionsMap)?.let {
+      options.setValue(name, it)
+    }
   } else if (name == OptionNameEnum.Proxy) {
     optionsMap.getMap(key)?.let {
       options.setValue(name, toProxy(map = it) as Any)
+    }
+  } else if (name == OptionNameEnum.SleepDelay) {
+    toSleepDelay(optionsMap)?.let {
+      options.setValue(name, it)
     }
   } else if (name == OptionNameEnum.TimeShift) {
     optionsMap.getMap(key)?.let {
@@ -553,6 +619,7 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
     OptionNameEnum.AiAutoThumbnail -> AiAutoThumbnailEnum.values().find { it.name == valueName }
     OptionNameEnum.Aperture -> ApertureEnum.values().find { it.name == valueName }
     OptionNameEnum.BluetoothPower -> BluetoothPowerEnum.values().find { it.name == valueName }
+    OptionNameEnum.BluetoothRole -> BluetoothRoleEnum.values().find { it.name == valueName }
     OptionNameEnum.BurstMode -> BurstModeEnum.values().find { it.name == valueName }
     OptionNameEnum.CameraControlSource -> CameraControlSourceEnum.values().find { it.name == valueName }
     OptionNameEnum.CameraMode -> CameraModeEnum.values().find { it.name == valueName }
@@ -675,13 +742,9 @@ fun configToTheta(objects: ReadableMap): Config {
     config.language = LanguageEnum.valueOf(it)
   }
 
-  objects.getString("offDelay")?.let {
-    config.offDelay = OffDelayEnum.valueOf(it)
-  }
+  config.offDelay = toOffDelay(objects)
 
-  objects.getString("sleepDelay")?.let {
-    config.sleepDelay = SleepDelayEnum.valueOf(it)
-  }
+  config.sleepDelay = toSleepDelay(objects)
 
   config.shutterVolume = if (objects.hasKey("shutterVolume")) {
     objects.getInt("shutterVolume")
@@ -718,4 +781,44 @@ fun timeoutToTheta(objects: ReadableMap): Timeout {
     objects.getInt("requestTimeout").toLong(),
     objects.getInt("socketTimeout").toLong(),
   )
+}
+
+fun toOffDelay(objects: ReadableMap): OffDelay? {
+  if (!objects.hasKey("offDelay")) {
+    return null
+  }
+  when (objects.getType("offDelay")) {
+    ReadableType.String -> {
+      (objects.getString("offDelay"))?.let { value ->
+        return getOptionValueEnum(OptionNameEnum.OffDelay, value) as? OffDelayEnum
+      }
+    }
+
+    ReadableType.Number -> {
+      return OffDelaySec(objects.getInt("offDelay"))
+    }
+
+    else -> {}
+  }
+  return null
+}
+
+fun toSleepDelay(objects: ReadableMap): SleepDelay? {
+  if (!objects.hasKey("sleepDelay")) {
+    return null
+  }
+  when (objects.getType("sleepDelay")) {
+    ReadableType.String -> {
+      (objects.getString("sleepDelay"))?.let { value ->
+        return getOptionValueEnum(OptionNameEnum.SleepDelay, value) as? SleepDelayEnum
+      }
+    }
+
+    ReadableType.Number -> {
+      return SleepDelaySec(objects.getInt("sleepDelay"))
+    }
+
+    else -> {}
+  }
+  return null
 }

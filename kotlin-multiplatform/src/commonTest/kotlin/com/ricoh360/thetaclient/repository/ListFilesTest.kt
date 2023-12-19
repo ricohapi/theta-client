@@ -34,7 +34,7 @@ class ListFilesTest {
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    fun checkRequest(request: HttpRequestData, fileType: FileType, startPosition: Int, entryCount: Int, storage: Storage? = null) {
+    internal fun checkRequest(request: HttpRequestData, fileType: FileType, startPosition: Int, entryCount: Int, storage: Storage? = null) {
         val body = request.body as TextContent
         val js = Json {
             encodeDefaults = true // Encode properties with default value.

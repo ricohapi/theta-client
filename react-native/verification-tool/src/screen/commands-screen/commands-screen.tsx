@@ -5,6 +5,8 @@ import styles from './styles';
 import { reset, restoreSettings, finishWlan } from 'theta-client-react-native';
 import Button from '../../components/ui/button';
 import { ItemListView, type Item } from '../../components/ui/item-list';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../App';
 
 interface CommandItem extends Item {
   value: {
@@ -54,7 +56,9 @@ const commandList: CommandItem[] = [
   },
 ];
 
-const CommandsScreen: React.FC = ({ navigation }) => {
+const CommandsScreen: React.FC<
+  NativeStackScreenProps<RootStackParamList, 'commands'>
+> = ({ navigation }) => {
   const [selectedCommand, setSelectedCommand] = useState<CommandItem>();
   const [message, setMessage] = React.useState('');
 

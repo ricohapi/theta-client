@@ -687,6 +687,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         BluetoothPower("_bluetoothPower", BluetoothPowerEnum::class),
 
         /**
+         * Option name
+         * _bluetoothRole
+         */
+        BluetoothRole("_bluetoothRole", BluetoothRoleEnum::class),
+
+        /**
          * _burstMode
          */
         BurstMode("_burstMode", BurstModeEnum::class),
@@ -1039,6 +1045,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Bluetooth power.
          */
         var bluetoothPower: BluetoothPowerEnum? = null,
+
+        /**
+         * @see BluetoothRole
+         */
+        var bluetoothRole: BluetoothRoleEnum? = null,
 
         /**
          * @see BurstModeEnum
@@ -1413,6 +1424,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             autoBracket = null,
             bitrate = null,
             bluetoothPower = null,
+            bluetoothRole = null,
             burstMode = null,
             burstOption = null,
             cameraControlSource = null,
@@ -1473,6 +1485,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             autoBracket = options._autoBracket?.let { BracketSettingList.get(it) },
             bitrate = options._bitrate?.let { BitrateEnum.get(it) },
             bluetoothPower = options._bluetoothPower?.let { BluetoothPowerEnum.get(it) },
+            bluetoothRole = options._bluetoothRole?.let { BluetoothRoleEnum.get(it) },
             burstMode = options._burstMode?.let { BurstModeEnum.get(it) },
             burstOption = options._burstOption?.let { BurstOption(it) },
             cameraControlSource = options._cameraControlSource?.let { CameraControlSourceEnum.get(it) },
@@ -1542,6 +1555,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _autoBracket = autoBracket?.toTransferredAutoBracket(),
                 _bitrate = bitrate?.rawValue,
                 _bluetoothPower = bluetoothPower?.value,
+                _bluetoothRole = bluetoothRole?.value,
                 _burstMode = burstMode?.value,
                 _burstOption = burstOption?.toTransferredBurstOption(),
                 _cameraControlSource = cameraControlSource?.value,
@@ -1614,6 +1628,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.AutoBracket -> autoBracket
                 OptionNameEnum.Bitrate -> bitrate
                 OptionNameEnum.BluetoothPower -> bluetoothPower
+                OptionNameEnum.BluetoothRole -> bluetoothRole
                 OptionNameEnum.BurstMode -> burstMode
                 OptionNameEnum.BurstOption -> burstOption
                 OptionNameEnum.CameraControlSource -> cameraControlSource
@@ -1687,6 +1702,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.AutoBracket -> autoBracket = value as BracketSettingList
                 OptionNameEnum.Bitrate -> bitrate = value as Bitrate
                 OptionNameEnum.BluetoothPower -> bluetoothPower = value as BluetoothPowerEnum
+                OptionNameEnum.BluetoothRole -> bluetoothRole = value as BluetoothRoleEnum
                 OptionNameEnum.BurstMode -> burstMode = value as BurstModeEnum
                 OptionNameEnum.BurstOption -> burstOption = value as BurstOption
                 OptionNameEnum.CameraControlSource -> cameraControlSource = value as CameraControlSourceEnum
@@ -1746,7 +1762,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * AI auto thumbnail setting.
      */
-    enum class AiAutoThumbnailEnum(val value: AiAutoThumbnail) {
+    enum class AiAutoThumbnailEnum(internal val value: AiAutoThumbnail) {
         /**
          * AI auto setting ON
          */
@@ -1764,7 +1780,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value AI auto thumbnail setting.
              * @return AiAutoThumbnailEnum
              */
-            fun get(value: AiAutoThumbnail): AiAutoThumbnailEnum? {
+            internal fun get(value: AiAutoThumbnail): AiAutoThumbnailEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -1837,10 +1853,32 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * List of [BracketSetting] used for multi bracket shooting.
      * Size of the list must be 2 to 13 (THETA X and SC2), or 2 to 19 (THETA Z1 and V).
      */
-    data class BracketSettingList(val list: MutableList<BracketSetting> = mutableListOf()) {
+    class BracketSettingList(originalList: List<BracketSetting>) {
+        constructor() : this(listOf())
+
+        private val settingList: MutableList<BracketSetting> = originalList.toMutableList()
+        val list: List<BracketSetting>
+            get() = settingList.toList()
+
         fun add(setting: BracketSetting): BracketSettingList {
-            list.add(setting)
+            settingList.add(setting)
             return this
+        }
+
+        override fun toString(): String {
+            return list.toString()
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other is BracketSettingList) {
+                return other.list == list
+            }
+            return false
+        }
+
+        override fun hashCode(): Int {
+            return list.hashCode()
         }
 
         companion object {
@@ -2056,7 +2094,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * bluetooth power.
      */
-    enum class BluetoothPowerEnum(val value: BluetoothPower) {
+    enum class BluetoothPowerEnum(internal val value: BluetoothPower) {
         /**
          * bluetooth ON
          */
@@ -2074,7 +2112,39 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value bluetooth power.
              * @return BluetoothPowerEnum
              */
-            fun get(value: BluetoothPower): BluetoothPowerEnum? {
+            internal fun get(value: BluetoothPower): BluetoothPowerEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Role of the Bluetooth module.
+     */
+    enum class BluetoothRoleEnum(internal val value: BluetoothRole) {
+        /**
+         * Central: ON, Peripheral: OFF
+         */
+        CENTRAL(BluetoothRole.CENTRAL),
+
+        /**
+         * Central: OFF, Peripheral: ON
+         */
+        PERIPHERAL(BluetoothRole.PERIPHERAL),
+
+        /**
+         * Central: ON, Peripheral: ON
+         */
+        CENTRAL_PERIPHERAL(BluetoothRole.CENTRAL_PERIPHERAL);
+
+        companion object {
+            /**
+             * Convert BluetoothRole to BluetoothRoleEnum
+             *
+             * @param value BluetoothRole
+             * @return BluetoothRoleEnum
+             */
+            internal fun get(value: BluetoothRole): BluetoothRoleEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -2087,7 +2157,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      *
      * only For RICOH THETA Z1 firmware v2.10.1 or later
      */
-    enum class BurstModeEnum(val value: BurstMode) {
+    enum class BurstModeEnum(internal val value: BurstMode) {
         /**
          * BurstMode ON
          */
@@ -2103,9 +2173,9 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * Convert BurstMode to BurstModeEnum
              *
              * @param value BurstMode
-             * @return BluetoothPowerEnum
+             * @return BurstModeEnum
              */
-            fun get(value: BurstMode): BurstModeEnum? {
+            internal fun get(value: BurstMode): BurstModeEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -2177,7 +2247,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * Number of shots for burst shooting
      * 1, 3, 5, 7, 9
      */
-    enum class BurstCaptureNumEnum(val value: BurstCaptureNum) {
+    enum class BurstCaptureNumEnum(internal val value: BurstCaptureNum) {
         BURST_CAPTURE_NUM_1(BurstCaptureNum.BURST_CAPTURE_NUM_1),
         BURST_CAPTURE_NUM_3(BurstCaptureNum.BURST_CAPTURE_NUM_3),
         BURST_CAPTURE_NUM_5(BurstCaptureNum.BURST_CAPTURE_NUM_5),
@@ -2191,7 +2261,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value BurstCaptureNum
              * @return BurstCaptureNumEnum
              */
-            fun get(value: BurstCaptureNum): BurstCaptureNumEnum? {
+            internal fun get(value: BurstCaptureNum): BurstCaptureNumEnum? {
                 return values().firstOrNull { it.value == value }
             }
 
@@ -2211,7 +2281,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * Bracket value range between each shot for burst shooting
      * 0.0, 0.3, 0.7, 1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0
      */
-    enum class BurstBracketStepEnum(val value: BurstBracketStep) {
+    enum class BurstBracketStepEnum(internal val value: BurstBracketStep) {
         BRACKET_STEP_0_0(BurstBracketStep.BRACKET_STEP_0_0),
         BRACKET_STEP_0_3(BurstBracketStep.BRACKET_STEP_0_3),
         BRACKET_STEP_0_7(BurstBracketStep.BRACKET_STEP_0_7),
@@ -2230,7 +2300,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value BurstBracketStep
              * @return BurstBracketStepEnum
              */
-            fun get(value: BurstBracketStep): BurstBracketStepEnum? {
+            internal fun get(value: BurstBracketStep): BurstBracketStepEnum? {
                 return values().firstOrNull { it.value == value }
             }
 
@@ -2251,7 +2321,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * -5.0, -4.7, -4,3, -4.0, -3.7, -3,3, -3.0, -2.7, -2,3, -2.0, -1.7, -1,3, -1.0, -0.7, -0,3,
      * 0.0, 0.3, 0.7, 1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 4.3, 4.7, 5.0
      */
-    enum class BurstCompensationEnum(val value: BurstCompensation) {
+    enum class BurstCompensationEnum(internal val value: BurstCompensation) {
         BURST_COMPENSATION_DOWN_5_0(BurstCompensation.BURST_COMPENSATION_DOWN_5_0),
         BURST_COMPENSATION_DOWN_4_7(BurstCompensation.BURST_COMPENSATION_DOWN_4_7),
         BURST_COMPENSATION_DOWN_4_3(BurstCompensation.BURST_COMPENSATION_DOWN_4_3),
@@ -2291,7 +2361,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value BurstCompensation
              * @return BurstCompensationEnum
              */
-            fun get(value: BurstCompensation): BurstCompensationEnum? {
+            internal fun get(value: BurstCompensation): BurstCompensationEnum? {
                 return values().firstOrNull { it.value == value }
             }
 
@@ -2311,7 +2381,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * Maximum exposure time for burst shooting
      * 0.5, 0.625, 0.76923076, 1, 1.3, 1.6, 2, 2.5, 3.2, 4, 5, 6, 8, 10, 13, 15, 20, 25, 30, 40, 50, 60
      */
-    enum class BurstMaxExposureTimeEnum(val value: BurstMaxExposureTime) {
+    enum class BurstMaxExposureTimeEnum(internal val value: BurstMaxExposureTime) {
         MAX_EXPOSURE_TIME_0_5(BurstMaxExposureTime.MAX_EXPOSURE_TIME_0_5),
         MAX_EXPOSURE_TIME_0_625(BurstMaxExposureTime.MAX_EXPOSURE_TIME_0_625),
         MAX_EXPOSURE_TIME_0_76923076(BurstMaxExposureTime.MAX_EXPOSURE_TIME_0_76923076),
@@ -2342,7 +2412,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value BurstMaxExposureTime
              * @return BurstMaxExposureTimeEnum
              */
-            fun get(value: BurstMaxExposureTime): BurstMaxExposureTimeEnum? {
+            internal fun get(value: BurstMaxExposureTime): BurstMaxExposureTimeEnum? {
                 return values().firstOrNull { it.value == value }
             }
 
@@ -2362,7 +2432,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * Adjustment with ISO sensitivity for burst shooting
      * 0: Do not adjust with ISO sensitivity, 1: Adjust with ISO sensitivity
      */
-    enum class BurstEnableIsoControlEnum(val value: BurstEnableIsoControl) {
+    enum class BurstEnableIsoControlEnum(internal val value: BurstEnableIsoControl) {
         OFF(BurstEnableIsoControl.OFF),
         ON(BurstEnableIsoControl.ON);
 
@@ -2373,7 +2443,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value BurstEnableIsoControl
              * @return BurstEnableIsoControlEnum
              */
-            fun get(value: BurstEnableIsoControl): BurstEnableIsoControlEnum? {
+            internal fun get(value: BurstEnableIsoControl): BurstEnableIsoControlEnum? {
                 return values().firstOrNull { it.value == value }
             }
 
@@ -2393,7 +2463,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * Shooting order for burst shooting
      * 0: '0' → '-' → '+', 1: '-' → '0' → '+'
      */
-    enum class BurstOrderEnum(val value: BurstOrder) {
+    enum class BurstOrderEnum(internal val value: BurstOrder) {
         BURST_BRACKET_ORDER_0(BurstOrder.BURST_BRACKET_ORDER_0),
         BURST_BRACKET_ORDER_1(BurstOrder.BURST_BRACKET_ORDER_1);
 
@@ -2404,7 +2474,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value BurstOrder
              * @return BurstOrderEnum
              */
-            fun get(value: BurstOrder): BurstOrderEnum? {
+            internal fun get(value: BurstOrder): BurstOrderEnum? {
                 return values().firstOrNull { it.value == value }
             }
 
@@ -2427,7 +2497,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      *
      * For RICOH THETA X
      */
-    enum class CameraControlSourceEnum(val value: CameraControlSource) {
+    enum class CameraControlSourceEnum(internal val value: CameraControlSource) {
         /**
          * Operation is possible with the camera. Locks the smartphone
          * application UI (supported app only).
@@ -2447,7 +2517,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value camera control source
              * @return CameraControlSourceEnum
              */
-            fun get(value: CameraControlSource): CameraControlSourceEnum? {
+            internal fun get(value: CameraControlSource): CameraControlSourceEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -2459,7 +2529,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      *
      * For RICOH THETA X
      */
-    enum class CameraModeEnum(val value: CameraMode) {
+    enum class CameraModeEnum(internal val value: CameraMode) {
         /**
          * shooting screen
          */
@@ -2487,7 +2557,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value Camera mode.
              * @return CameraModeEnum
              */
-            fun get(value: CameraMode): CameraModeEnum? {
+            internal fun get(value: CameraMode): CameraModeEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -2496,7 +2566,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Shooting mode.
      */
-    enum class CaptureModeEnum(val value: CaptureMode) {
+    enum class CaptureModeEnum(internal val value: CaptureMode) {
         /**
          * Shooting mode.
          * Still image capture mode
@@ -2535,7 +2605,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value Shooting mode.
              * @return CaptureModeEnum
              */
-            fun get(value: CaptureMode): CaptureModeEnum? {
+            internal fun get(value: CaptureMode): CaptureModeEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -2905,7 +2975,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * For
      * - RICOH THETA X
      */
-    enum class FaceDetectEnum(val value: FaceDetect) {
+    enum class FaceDetectEnum(internal val value: FaceDetect) {
         /**
          * Face detection ON
          */
@@ -2923,13 +2993,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value FaceDetect
              * @return FaceDetectEnum
              */
-            fun get(value: FaceDetect): FaceDetectEnum? {
+            internal fun get(value: FaceDetect): FaceDetectEnum? {
                 return FaceDetectEnum.values().firstOrNull { it.value == value }
             }
         }
     }
 
-    enum class FileFormatTypeEnum(val mediaType: MediaType) {
+    enum class FileFormatTypeEnum(internal val mediaType: MediaType) {
         /**
          * jpeg image
          */
@@ -3475,7 +3545,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Image processing filter.
      */
-    enum class FilterEnum(val filter: ImageFilter) {
+    enum class FilterEnum(internal val filter: ImageFilter) {
         /**
          * Image processing filter. No filter.
          */
@@ -3513,7 +3583,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param filter Image processing filter for ThetaApi.
              * @return FilterEnum
              */
-            fun get(filter: ImageFilter): FilterEnum? {
+            internal fun get(filter: ImageFilter): FilterEnum? {
                 return values().firstOrNull { it.filter == filter }
             }
         }
@@ -3527,7 +3597,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * - RICOH THETA Z1
      * - RICOH THETA V
      */
-    enum class GainEnum(val value: Gain) {
+    enum class GainEnum(internal val value: Gain) {
         /**
          * Normal mode
          */
@@ -3551,7 +3621,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value Gain
              * @return GainEnum
              */
-            fun get(value: Gain): GainEnum? {
+            internal fun get(value: Gain): GainEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -3638,7 +3708,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      *
      * For RICOH THETA X
      */
-    enum class GpsTagRecordingEnum(val value: GpsTagRecording) {
+    enum class GpsTagRecordingEnum(internal val value: GpsTagRecording) {
         /**
          * Position information assigning ON.
          */
@@ -3656,7 +3726,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value Turns position information assigning for ThetaApi.
              * @return GpsTagRecordingEnum
              */
-            fun get(value: GpsTagRecording): GpsTagRecordingEnum? {
+            internal fun get(value: GpsTagRecording): GpsTagRecordingEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -3666,7 +3736,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * Still image stitching setting during shooting.
      * For Theta X, Z1 and V.
      */
-    enum class ImageStitchingEnum(val value: ImageStitching) {
+    enum class ImageStitchingEnum(internal val value: ImageStitching) {
         /**
          * Refer to stitching when shooting with "auto"
          */
@@ -3718,7 +3788,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value
              * @return ImageStitchingEnum
              */
-            fun get(value: ImageStitching): ImageStitchingEnum? {
+            internal fun get(value: ImageStitching): ImageStitchingEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -4061,7 +4131,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Language used in camera OS.
      */
-    enum class LanguageEnum(val value: Language) {
+    enum class LanguageEnum(internal val value: Language) {
         /**
          * Language used in camera OS.
          * de
@@ -4123,7 +4193,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value Language.
              * @return LanguageEnum
              */
-            fun get(value: Language): LanguageEnum? {
+            internal fun get(value: Language): LanguageEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -4177,7 +4247,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Network type supported by Theta V, Z1 and X.
      */
-    enum class NetworkTypeEnum(val value: NetworkType) {
+    enum class NetworkTypeEnum(internal val value: NetworkType) {
         /**
          * Direct mode
          */
@@ -4205,7 +4275,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value Network type.
              * @return NetworkTypeEnum
              */
-            fun get(value: NetworkType): NetworkTypeEnum? {
+            internal fun get(value: NetworkType): NetworkTypeEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -4298,7 +4368,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      *
      * For Theta X only.
      */
-    enum class PowerSavingEnum(val value: PowerSaving) {
+    enum class PowerSavingEnum(internal val value: PowerSaving) {
         /**
          * Power saving mode ON
          */
@@ -4316,7 +4386,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value
              * @return PowerSavingEnum
              */
-            fun get(value: PowerSaving): PowerSavingEnum? {
+            internal fun get(value: PowerSaving): PowerSavingEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -4325,7 +4395,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Preset mode of Theta SC2 and Theta SC2 for business.
      */
-    enum class PresetEnum(val value: Preset) {
+    enum class PresetEnum(internal val value: Preset) {
         /**
          * Preset "Face" mode suitable for portrait shooting just for Theta SC2.
          *
@@ -4369,7 +4439,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value
              * @return PresetEnum
              */
-            fun get(value: Preset): PresetEnum? {
+            internal fun get(value: Preset): PresetEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -4482,7 +4552,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * - RICOH THETA X
      * - RICOH THETA Z1
      */
-    enum class ShootingFunctionEnum(val value: ShootingFunction) {
+    enum class ShootingFunctionEnum(internal val value: ShootingFunction) {
         /**
          * Normal shooting function
          */
@@ -4505,7 +4575,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value Function
              * @return FunctionEnum
              */
-            fun get(value: ShootingFunction): ShootingFunctionEnum? {
+            internal fun get(value: ShootingFunction): ShootingFunctionEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -4520,7 +4590,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      *
      * For Theta X and Z1 only.
      */
-    enum class ShootingMethodEnum(val value: ShootingMethod) {
+    enum class ShootingMethodEnum(internal val value: ShootingMethod) {
         /**
          * Normal shooting
          */
@@ -4573,7 +4643,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value
              * @return ShootingMethodEnum
              */
-            fun get(value: ShootingMethod): ShootingMethodEnum? {
+            internal fun get(value: ShootingMethod): ShootingMethodEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -5141,7 +5211,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * images.  For RICOH THETA X, the top/bottom correction can be
      * set for both still images and videos.
      */
-    enum class TopBottomCorrectionOptionEnum(val value: TopBottomCorrectionOption) {
+    enum class TopBottomCorrectionOptionEnum(internal val value: TopBottomCorrectionOption) {
         /**
          * Top/bottom correction is performed.
          */
@@ -5188,7 +5258,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value TopBottomCorrectionOption
              * @return TopBottomCorrectionOptionEnum
              */
-            fun get(value: TopBottomCorrectionOption): TopBottomCorrectionOptionEnum? {
+            internal fun get(value: TopBottomCorrectionOption): TopBottomCorrectionOptionEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -5204,7 +5274,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * RICOH THETA V
      *
      */
-    enum class VideoStitchingEnum(val value: VideoStitching) {
+    enum class VideoStitchingEnum(internal val value: VideoStitching) {
         /**
          * Video Stitching
          * none
@@ -5224,7 +5294,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value
              * @return VideoStitchingEnum
              */
-            fun get(value: VideoStitching): VideoStitchingEnum? {
+            internal fun get(value: VideoStitching): VideoStitchingEnum? {
                 return VideoStitchingEnum.values().firstOrNull { it.value == value }
             }
         }
@@ -5281,7 +5351,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * RICOH THETA Z1 v1.11.1 or later
      *
      */
-    enum class VisibilityReductionEnum(val value: VisibilityReduction) {
+    enum class VisibilityReductionEnum(internal val value: VisibilityReduction) {
         /**
          * Video Stitching
          * none
@@ -5301,7 +5371,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value
              * @return VisibilityReductionEnum
              */
-            fun get(value: VisibilityReduction): VisibilityReductionEnum? {
+            internal fun get(value: VisibilityReduction): VisibilityReductionEnum? {
                 return VisibilityReductionEnum.values().firstOrNull { it.value == value }
             }
         }
@@ -5313,7 +5383,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
      * Shooting settings are retained separately for both the Still image shooting mode and Video shooting mode.
      */
-    enum class WhiteBalanceEnum(val value: WhiteBalance) {
+    enum class WhiteBalanceEnum(internal val value: WhiteBalance) {
         /**
          * White balance.
          * Automatic
@@ -5397,7 +5467,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value Maximum recordable time.
              * @return WhiteBalanceEnum
              */
-            fun get(value: WhiteBalance): WhiteBalanceEnum? {
+            internal fun get(value: WhiteBalance): WhiteBalanceEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -5412,7 +5482,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      *
      * For RICOH THETA Z1 firmware v2.20.3 or later
      */
-    enum class WhiteBalanceAutoStrengthEnum(val value: WhiteBalanceAutoStrength) {
+    enum class WhiteBalanceAutoStrengthEnum(internal val value: WhiteBalanceAutoStrength) {
         /**
          * correct tint for low color temperature scene
          */
@@ -5430,7 +5500,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value White balance auto strength
              * @return WhiteBalanceAutoStrengthEnum
              */
-            fun get(value: WhiteBalanceAutoStrength): WhiteBalanceAutoStrengthEnum? {
+            internal fun get(value: WhiteBalanceAutoStrength): WhiteBalanceAutoStrengthEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -5439,7 +5509,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Wireless LAN frequency of the camera supported by Theta V, Z1 and X.
      */
-    enum class WlanFrequencyEnum(val value: WlanFrequency) {
+    enum class WlanFrequencyEnum(internal val value: WlanFrequency) {
         /**
          * 2.4GHz
          */
@@ -5457,7 +5527,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value wlan frequency
              * @return  WlanFrequencyEnum
              */
-            fun get(value: WlanFrequency): WlanFrequencyEnum? {
+            internal fun get(value: WlanFrequency): WlanFrequencyEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
@@ -5467,7 +5537,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * File type in Theta.
      */
-    enum class FileTypeEnum(val value: FileType) {
+    enum class FileTypeEnum(internal val value: FileType) {
         /**
          * File type in Theta.
          *
@@ -5493,7 +5563,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Specifies the storage
      */
-    enum class StorageEnum(val value: Storage) {
+    enum class StorageEnum(internal val value: Storage) {
         /**
          * internal storage
          */
@@ -5513,7 +5583,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * THETA projection type
      */
-    enum class ProjectionTypeEnum(val value: _ProjectionType) {
+    enum class ProjectionTypeEnum(internal val value: _ProjectionType) {
         /**
          * Equirectangular type
          */
@@ -5537,7 +5607,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value projection type
              * @return ProjectionTypeEnum
              */
-            fun get(value: _ProjectionType): ProjectionTypeEnum? {
+            internal fun get(value: _ProjectionType): ProjectionTypeEnum? {
                 return ProjectionTypeEnum.values().firstOrNull { it.value == value }
             }
         }
@@ -5735,6 +5805,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
     /**
      * Get ShotCountSpecifiedIntervalCapture.Builder for interval shooting with the shot count specified.
+     *
      * @param shotCount shot count specified
      * @return ShotCountSpecifiedIntervalCapture.Builder
      */
@@ -5743,12 +5814,59 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Get MultiBracketCapture.Builder for multi bracket shooting.
+     */
+    fun getMultiBracketCaptureBuilder(): MultiBracketCapture.Builder {
+        return MultiBracketCapture.Builder(endpoint, cameraModel)
+    }
+
+    /**
      * Get CompositeIntervalCapture.Builder for interval composite shooting.
      *
+     * @param shootingTimeSec Shooting time for interval composite shooting (sec)
      * @return CompositeIntervalCapture.Builder
      */
     fun getCompositeIntervalCaptureBuilder(shootingTimeSec: Int): CompositeIntervalCapture.Builder {
         return CompositeIntervalCapture.Builder(shootingTimeSec, endpoint)
+    }
+
+    /**
+     * Get BurstCapture.Builder for burst shooting.
+     *
+     * @param burstCaptureNum Number of shots for burst shooting
+     * @param burstBracketStep Bracket value range between each shot for burst shooting
+     * @param burstCompensation Exposure compensation for the base image and entire shooting for burst shooting
+     * @param burstMaxExposureTime Maximum exposure time for burst shooting
+     * @param burstEnableIsoControl Adjustment with ISO sensitivity for burst shooting
+     * @param burstOrder Shooting order for burst shooting
+     * @return BurstCapture.Builder
+     */
+    fun getBurstCaptureBuilder(
+        burstCaptureNum: BurstCaptureNumEnum,
+        burstBracketStep: BurstBracketStepEnum,
+        burstCompensation: BurstCompensationEnum,
+        burstMaxExposureTime: BurstMaxExposureTimeEnum,
+        burstEnableIsoControl: BurstEnableIsoControlEnum,
+        burstOrder: BurstOrderEnum
+    ): BurstCapture.Builder {
+        return BurstCapture.Builder(
+            burstCaptureNum = burstCaptureNum.value,
+            burstBracketStep = burstBracketStep.value,
+            burstCompensation = burstCompensation.value,
+            burstMaxExposureTime = burstMaxExposureTime.value,
+            burstEnableIsoControl = burstEnableIsoControl.value,
+            burstOrder = burstOrder.value,
+            endpoint = endpoint
+        )
+    }
+
+    /**
+     * Get ContinuousCapture.Builder for continuous shooting.
+     *
+     * @return ContinuousCapture.Builder
+     */
+    fun getContinuousCaptureBuilder(): ContinuousCapture.Builder {
+        return ContinuousCapture.Builder(theta = this, endpoint = endpoint)
     }
 
     /**
@@ -5966,7 +6084,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param captureStatus Capture status.
              * @return CaptureStatusEnum
              */
-            fun get(captureStatus: CaptureStatus): CaptureStatusEnum {
+            internal fun get(captureStatus: CaptureStatus): CaptureStatusEnum {
                 return when (captureStatus) {
                     CaptureStatus.SHOOTING -> SHOOTING
                     CaptureStatus.IDLE -> IDLE
@@ -6010,7 +6128,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param chargingState Charging state.
              * @return ChargingStateEnum
              */
-            fun get(chargingState: ChargingState): ChargingStateEnum {
+            internal fun get(chargingState: ChargingState): ChargingStateEnum {
                 return when (chargingState) {
                     ChargingState.CHARGING -> CHARGING
                     ChargingState.CHARGED -> COMPLETED
@@ -6049,7 +6167,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param microphoneOption Microphone option.
              * @return MicrophoneOptionEnum
              */
-            fun get(microphoneOption: MicrophoneOption): MicrophoneOptionEnum {
+            internal fun get(microphoneOption: MicrophoneOption): MicrophoneOptionEnum {
                 return when (microphoneOption) {
                     MicrophoneOption.AUTO -> AUTO
                     MicrophoneOption.INTERNAL -> INTERNAL
@@ -6203,7 +6321,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param cameraError Camera error.
              * @return CameraErrorEnum
              */
-            fun get(cameraError: CameraError): CameraErrorEnum {
+            internal fun get(cameraError: CameraError): CameraErrorEnum {
                 return when (cameraError) {
                     CameraError.NO_MEMORY -> NO_MEMORY
                     CameraError.FILE_NUMBER_OVER -> FILE_NUMBER_OVER
@@ -6698,7 +6816,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      *
      * @property value AuthenticationMode.
      */
-    enum class AuthModeEnum(val value: AuthenticationMode) {
+    enum class AuthModeEnum(internal val value: AuthenticationMode) {
         /**
          * Authentication mode
          * none
@@ -6724,7 +6842,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value AuthenticationMode.
              * @return AuthModeEnum
              */
-            fun get(value: AuthenticationMode): AuthModeEnum? {
+            internal fun get(value: AuthenticationMode): AuthModeEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }

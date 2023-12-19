@@ -68,7 +68,9 @@ class CompositeIntervalCaptureTest {
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
-        val capture = thetaRepository.getCompositeIntervalCaptureBuilder(600).build()
+        val capture = thetaRepository.getCompositeIntervalCaptureBuilder(600)
+            .setCheckStatusCommandInterval(100)
+            .build()
 
         var files: List<String>? = null
         capture.startCapture(object : CompositeIntervalCapture.StartCaptureCallback {
@@ -111,6 +113,7 @@ class CompositeIntervalCaptureTest {
     fun cancelCaptureTest() = runTest {
         // setup
         var isStop = false
+        val deferredStart = CompletableDeferred<Unit>()
         MockApiClient.onRequest = { request ->
             val path = if (request.body.toString().contains("camera.stopCapture")) {
                 isStop = true
@@ -118,6 +121,9 @@ class CompositeIntervalCaptureTest {
             } else if (request.body.toString().contains("camera.setOptions")) {
                 "src/commonTest/resources/setOptions/set_options_done.json"
             } else {
+                if (!deferredStart.isCompleted) {
+                    deferredStart.complete(Unit)
+                }
                 if (isStop)
                     "src/commonTest/resources/CompositeIntervalCapture/start_capture_done_empty.json"
                 else
@@ -132,9 +138,11 @@ class CompositeIntervalCaptureTest {
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
-        val capture = thetaRepository.getCompositeIntervalCaptureBuilder(600).build()
+        val capture = thetaRepository.getCompositeIntervalCaptureBuilder(600)
+            .setCheckStatusCommandInterval(100)
+            .build()
 
-        var files: List<String>? = null
+        var files: List<String>? = listOf()
         val capturing =
             capture.startCapture(object : CompositeIntervalCapture.StartCaptureCallback {
                 override fun onCaptureCompleted(fileUrls: List<String>?) {
@@ -157,7 +165,9 @@ class CompositeIntervalCaptureTest {
             })
 
         runBlocking {
-            delay(1000)
+            withTimeout(1000) {
+                deferredStart.await()
+            }
         }
 
         capturing.cancelCapture()
@@ -170,7 +180,7 @@ class CompositeIntervalCaptureTest {
 
         // check result
         assertTrue(
-            files?.isEmpty() == true || files == null,
+            files?.isEmpty() ?: false,
             "cancel interval composite shooting"
         )
     }
@@ -198,7 +208,9 @@ class CompositeIntervalCaptureTest {
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
-        val capture = thetaRepository.getCompositeIntervalCaptureBuilder(600).build()
+        val capture = thetaRepository.getCompositeIntervalCaptureBuilder(600)
+            .setCheckStatusCommandInterval(100)
+            .build()
 
         var files: List<String>? = listOf()
         capture.startCapture(object : CompositeIntervalCapture.StartCaptureCallback {
@@ -298,7 +310,11 @@ class CompositeIntervalCaptureTest {
             .build()
 
         // check result
-        assertEquals(capture.getCompositeShootingOutputInterval(), interval, "set option _compositeShootingOutputInterval $interval")
+        assertEquals(
+            capture.getCompositeShootingOutputInterval(),
+            interval,
+            "set option _compositeShootingOutputInterval $interval"
+        )
     }
 
     /**
@@ -603,8 +619,6 @@ class CompositeIntervalCaptureTest {
     fun stopCaptureErrorResponseTest() = runTest {
         // setup
         val responseArray = arrayOf(
-            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
-            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
             Resource("src/commonTest/resources/CompositeIntervalCapture/stop_capture_error.json").readText(), // stopCapture error
             "Not json" // json error
         )
@@ -618,34 +632,32 @@ class CompositeIntervalCaptureTest {
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
-        val capture = thetaRepository.getCompositeIntervalCaptureBuilder(600).build()
 
         var capturing =
-            capture.startCapture(object : CompositeIntervalCapture.StartCaptureCallback {
-                override fun onCaptureCompleted(fileUrls: List<String>?) {
-                    assertTrue(false, "capture interval composite shooting")
-                    deferred.complete(Unit)
-                }
+            CompositeIntervalCapturing(
+                endpoint,
+                object : CompositeIntervalCapture.StartCaptureCallback {
+                    override fun onCaptureCompleted(fileUrls: List<String>?) {
+                        assertTrue(false, "capture interval composite shooting")
+                        deferred.complete(Unit)
+                    }
 
-                override fun onProgress(completion: Float) {
-                }
+                    override fun onProgress(completion: Float) {
+                    }
 
-                override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                    assertTrue(
-                        (exception.message?.indexOf("UnitTest", 0, true) ?: -1) >= 0,
-                        "stop capture error response"
-                    )
-                    deferred.complete(Unit)
-                }
+                    override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                        assertTrue(false, "onCaptureFailed")
+                        deferred.complete(Unit)
+                    }
 
-                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                    assertTrue(false, "onStopFailed")
-                }
-            })
-
-        runBlocking {
-            delay(100)
-        }
+                    override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                        assertTrue(
+                            (exception.message?.indexOf("UnitTest", 0, true) ?: -1) >= 0,
+                            "stop capture error response"
+                        )
+                        deferred.complete(Unit)
+                    }
+                })
 
         capturing.cancelCapture()
 
@@ -657,31 +669,30 @@ class CompositeIntervalCaptureTest {
 
         deferred = CompletableDeferred()
         capturing =
-            capture.startCapture(object : CompositeIntervalCapture.StartCaptureCallback {
-                override fun onCaptureCompleted(fileUrls: List<String>?) {
-                    assertTrue(false, "capture interval composite shooting")
-                    deferred.complete(Unit)
-                }
+            CompositeIntervalCapturing(
+                endpoint,
+                object : CompositeIntervalCapture.StartCaptureCallback {
+                    override fun onCaptureCompleted(fileUrls: List<String>?) {
+                        assertTrue(false, "capture interval composite shooting")
+                        deferred.complete(Unit)
+                    }
 
-                override fun onProgress(completion: Float) {
-                }
+                    override fun onProgress(completion: Float) {
+                    }
 
-                override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                    assertTrue(
-                        (exception.message?.length ?: -1) >= 0,
-                        "stop capture json error response"
-                    )
-                    deferred.complete(Unit)
-                }
+                    override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                        assertTrue(false, "onCaptureFailed")
+                        deferred.complete(Unit)
+                    }
 
-                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                    assertTrue(false, "onStopFailed")
-                }
-            })
-
-        runBlocking {
-            delay(100)
-        }
+                    override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                        assertTrue(
+                            (exception.message?.length ?: -1) >= 0,
+                            "stop capture json error response"
+                        )
+                        deferred.complete(Unit)
+                    }
+                })
 
         capturing.cancelCapture()
 

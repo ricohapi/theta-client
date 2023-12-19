@@ -13,7 +13,7 @@ import {
   ShutterSpeedEnum,
   WhiteBalanceEnum,
 } from 'theta-client-react-native';
-import { BracketEnumEdit } from '../bracket-enum-edit';
+import { EnumEdit } from '../enum-edit';
 
 const EditItem = ({
   item,
@@ -24,13 +24,13 @@ const EditItem = ({
 }) => {
   return (
     <View>
-      <BracketEnumEdit
-        propName={'aperture'}
-        onChange={({ aperture }) => {
+      <EnumEdit
+        title={'aperture'}
+        option={item.aperture}
+        onChange={(aperture) => {
           onChange({ ...item, aperture });
         }}
-        bracketSetting={item}
-        enumValues={ApertureEnum}
+        optionEnum={ApertureEnum}
       />
       <InputNumber
         title={'colorTemperature'}
@@ -39,45 +39,45 @@ const EditItem = ({
         }}
         value={item.colorTemperature}
       />
-      <BracketEnumEdit
-        propName={'exposureCompensation'}
-        onChange={({ exposureCompensation }) => {
+      <EnumEdit
+        title={'exposureCompensation'}
+        option={item.exposureCompensation}
+        onChange={(exposureCompensation) => {
           onChange({ ...item, exposureCompensation });
         }}
-        bracketSetting={item}
-        enumValues={ExposureCompensationEnum}
+        optionEnum={ExposureCompensationEnum}
       />
-      <BracketEnumEdit
-        propName={'exposureProgram'}
-        onChange={({ exposureProgram }) => {
+      <EnumEdit
+        title={'exposureProgram'}
+        option={item.exposureProgram}
+        onChange={(exposureProgram) => {
           onChange({ ...item, exposureProgram });
         }}
-        bracketSetting={item}
-        enumValues={ExposureProgramEnum}
+        optionEnum={ExposureProgramEnum}
       />
-      <BracketEnumEdit
-        propName={'iso'}
-        onChange={({ iso }) => {
+      <EnumEdit
+        title={'iso'}
+        option={item.iso}
+        onChange={(iso) => {
           onChange({ ...item, iso });
         }}
-        bracketSetting={item}
-        enumValues={IsoEnum}
+        optionEnum={IsoEnum}
       />
-      <BracketEnumEdit
-        propName={'shutterSpeed'}
-        onChange={({ shutterSpeed }) => {
+      <EnumEdit
+        title={'shutterSpeed'}
+        option={item.shutterSpeed}
+        onChange={(shutterSpeed) => {
           onChange({ ...item, shutterSpeed });
         }}
-        bracketSetting={item}
-        enumValues={ShutterSpeedEnum}
+        optionEnum={ShutterSpeedEnum}
       />
-      <BracketEnumEdit
-        propName={'whiteBalance'}
-        onChange={({ whiteBalance }) => {
+      <EnumEdit
+        title={'whiteBalance'}
+        option={item.whiteBalance}
+        onChange={(whiteBalance) => {
           onChange({ ...item, whiteBalance });
         }}
-        bracketSetting={item}
-        enumValues={WhiteBalanceEnum}
+        optionEnum={WhiteBalanceEnum}
       />
     </View>
   );

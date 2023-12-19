@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
 class TakePictureScreen extends StatefulWidget {
-  const TakePictureScreen({Key? key}) : super(key: key);
+  const TakePictureScreen({super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -68,7 +68,8 @@ class _TakePictureScreen extends State<TakePictureScreen>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
+    return PopScope(
+      canPop: true,
       child: Scaffold(
         appBar: AppBar(title: const Text('Take Picture')),
         body: Stack(
@@ -112,7 +113,9 @@ class _TakePictureScreen extends State<TakePictureScreen>
           ],
         ),
       ),
-      onWillPop: () => backButtonPress(context),
+      onPopInvoked: (didPop) async {
+        backButtonPress(context);
+      },
     );
   }
 

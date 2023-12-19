@@ -128,12 +128,12 @@ class Home extends StatelessWidget {
   final ThetaModel? thetaModel;
 
   const Home({
-    Key? key,
+    super.key,
     required this.platformVersion,
     required this.isInitialized,
     required this.connectTheta,
     required this.thetaModel,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

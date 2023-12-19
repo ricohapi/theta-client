@@ -4,8 +4,7 @@ class MessageBox extends StatelessWidget {
   final String title;
   final Function? onClose;
 
-  const MessageBox({Key? key, required this.title, this.onClose})
-      : super(key: key);
+  const MessageBox({super.key, required this.title, this.onClose});
 
   @override
   Widget build(BuildContext context) {

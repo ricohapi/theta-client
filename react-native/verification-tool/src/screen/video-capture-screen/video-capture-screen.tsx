@@ -5,6 +5,7 @@ import styles from './styles';
 import Button from '../../components/ui/button';
 import {
   CaptureModeEnum,
+  MaxRecordableTimeEnum,
   Options,
   VideoCapture,
   VideoFileFormatEnum,
@@ -12,13 +13,14 @@ import {
   setOptions,
   stopSelfTimer,
 } from 'theta-client-react-native';
-import {
-  MaxRecordableTimeEdit,
-  VideoFileFormatEdit,
-} from '../../components/options';
 import { CaptureCommonOptionsEdit } from '../../components/capture/capture-common-options';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../App';
+import { EnumEdit } from 'verification-tool/src/components/options/enum-edit';
 
-const VideoCaptureScreen: React.FC = ({ navigation }) => {
+const VideoCaptureScreen: React.FC<
+  NativeStackScreenProps<RootStackParamList, 'videoCapture'>
+> = ({ navigation }) => {
   const [captureOptions, setCaptureOptions] = React.useState<Options>();
   const [isTaking, setIsTaking] = React.useState(false);
   const [capture, setCapture] = React.useState<VideoCapture>();
@@ -161,23 +163,27 @@ const VideoCaptureScreen: React.FC = ({ navigation }) => {
       </View>
       <View style={styles.contentContainer}>
         <ScrollView>
-          <MaxRecordableTimeEdit
-            onChange={(option) => {
+          <EnumEdit
+            title={'maxRecordableTime'}
+            option={captureOptions?.maxRecordableTime}
+            onChange={(maxRecordableTime) => {
               setCaptureOptions((prevState) => ({
                 ...prevState,
-                maxRecordableTime: option.maxRecordableTime,
+                maxRecordableTime,
               }));
             }}
-            options={captureOptions}
+            optionEnum={MaxRecordableTimeEnum}
           />
-          <VideoFileFormatEdit
-            onChange={(option) => {
+          <EnumEdit
+            title={'fileFormat'}
+            option={captureOptions?.fileFormat}
+            onChange={(fileFormat) => {
               setCaptureOptions((prevState) => ({
                 ...prevState,
-                fileFormat: option.fileFormat,
+                fileFormat,
               }));
             }}
-            options={captureOptions}
+            optionEnum={VideoFileFormatEnum}
           />
           <CaptureCommonOptionsEdit
             onChange={(option) => {

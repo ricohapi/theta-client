@@ -2,19 +2,14 @@ PODS:
   - Flutter (1.0.0)
   - theta_client_flutter (1.6.0):
     - Flutter
-    - THETAClient (= 1.6.0)
-  - THETAClient (1.6.0)
   - video_player_avfoundation (0.0.1):
     - Flutter
+    - FlutterMacOS
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - theta_client_flutter (from `.symlinks/plugins/theta_client_flutter/ios`)
-  - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/ios`)
-
-SPEC REPOS:
-  trunk:
-    - THETAClient
+  - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/darwin`)
 
 EXTERNAL SOURCES:
   Flutter:
@@ -22,13 +17,12 @@ EXTERNAL SOURCES:
   theta_client_flutter:
     :path: ".symlinks/plugins/theta_client_flutter/ios"
   video_player_avfoundation:
-    :path: ".symlinks/plugins/video_player_avfoundation/ios"
+    :path: ".symlinks/plugins/video_player_avfoundation/darwin"
 
 SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  theta_client_flutter: b5ee80b54aa65b2242977fc6a16434658e09aeec
-  THETAClient: ec3017833a6a4295be859b024e4991270fcf600b
-  video_player_avfoundation: 81e49bb3d9fb63dccf9fa0f6d877dc3ddbeac126
+  theta_client_flutter: c907d880746a822002ee370cce37587ed496bd3e
+  video_player_avfoundation: e9e6f9cae7d7a6d9b43519b0aab382bca60fcfd1
 
 PODFILE CHECKSUM: ef19549a9bc3046e7bb7d2fab4d021637c0c58a3
 

@@ -12,18 +12,21 @@ void main() {
 
   setUp(() {
     platform = MethodChannelThetaClientFlutter();
-    channel.setMockMethodCallHandler(null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
   });
 
   tearDown(() {
-    channel.setMockMethodCallHandler(null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
   });
 
   test('getLivePreview', () async {
     bool isCallStop = false;
     var completer = Completer();
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       switch (methodCall.method) {
         case 'stopLivePreview':
           expect(platform.notifyList.containsKey(10001), false,
@@ -73,7 +76,8 @@ void main() {
   });
 
   test('getLivePreview exception', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(platform.notifyList.containsKey(10001), true,
           reason: 'add notify livePreview');
       throw Exception('test error');

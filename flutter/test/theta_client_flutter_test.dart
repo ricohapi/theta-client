@@ -176,6 +176,73 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
+  Future<void> buildBurstCapture(Map<String, dynamic> options, int interval) {
+    return onCallBuildBurstCapture(options, interval);
+  }
+
+  @override
+  Future<void> getBurstCaptureBuilder(
+      BurstCaptureNumEnum burstCaptureNum,
+      BurstBracketStepEnum burstBracketStep,
+      BurstCompensationEnum burstCompensation,
+      BurstMaxExposureTimeEnum burstMaxExposureTime,
+      BurstEnableIsoControlEnum burstEnableIsoControl,
+      BurstOrderEnum burstOrder) {
+    return onCallGetBurstCaptureBuilder();
+  }
+
+  @override
+  Future<List<String>?> startBurstCapture(void Function(double p1)? onProgress,
+      void Function(Exception exception)? onStopFailed) {
+    return onCallStartBurstCapture(onProgress, onStopFailed);
+  }
+
+  @override
+  Future<void> stopBurstCapture() {
+    return onCallStopBurstCapture();
+  }
+
+  @override
+  Future<void> buildMultiBracketCapture(
+      Map<String, dynamic> options, int interval) {
+    return onCallBuildMultiBracketCapture(options, interval);
+  }
+
+  @override
+  Future<void> getMultiBracketCaptureBuilder() {
+    return onCallGetMultiBracketCaptureBuilder();
+  }
+
+  @override
+  Future<List<String>?> startMultiBracketCapture(
+      void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed) {
+    return onCallStartMultiBracketCapture(onProgress, onStopFailed);
+  }
+
+  @override
+  Future<void> stopMultiBracketCapture() {
+    return onCallStopMultiBracketCapture();
+  }
+
+  @override
+  Future<void> buildContinuousCapture(
+      Map<String, dynamic> options, int interval) {
+    return onCallBuildContinuousCapture(options, interval);
+  }
+
+  @override
+  Future<void> getContinuousCaptureBuilder() {
+    return onCallGetContinuousCaptureBuilder();
+  }
+
+  @override
+  Future<List<String>?> startContinuousCapture(
+      void Function(double p1)? onProgress) {
+    return onCallStartContinuousCapture(onProgress);
+  }
+
+  @override
   Future<Options> getOptions(List<OptionNameEnum> optionNames) {
     return onCallGetOptions(optionNames);
   }
@@ -348,6 +415,7 @@ Future<void> Function() onCallGetPhotoCaptureBuilder = Future.value;
 Future<void> Function(Map<String, dynamic> options) onCallBuildPhotoCapture =
     Future.value;
 Future<String?> Function() onCallTakePicture = Future.value;
+
 Future<void> Function() onCallGetTimeShiftCaptureBuilder = Future.value;
 Future<void> Function(Map<String, dynamic> options, int interval)
     onCallBuildTimeShiftCapture = (options, interval) => Future.value();
@@ -355,18 +423,21 @@ Future<String?> Function(void Function(double)? onProgress,
         void Function(Exception exception)? onStopFailed)
     onCallStartTimeShiftCapture = (onProgress, onStopFailed) => Future.value();
 Future<void> Function() onCallStopTimeShiftCapture = Future.value;
+
 Future<void> Function() onCallGetVideoCaptureBuilder = Future.value;
 Future<void> Function(Map<String, dynamic> options) onCallBuildVideoCapture =
     Future.value;
 Future<String?> Function(void Function(Exception exception)? onStopFailed)
     onCallStartVideoCapture = (onStopFailed) => Future.value();
 Future<void> Function() onCallStopVideoCapture = Future.value;
+
 Future<void> Function() onCallGetLimitlessIntervalCaptureBuilder = Future.value;
 Future<void> Function(Map<String, dynamic> options)
     onCallBuildLimitlessIntervalCapture = Future.value;
 Future<List<String>?> Function(void Function(Exception exception)? onStopFailed)
     onCallStartLimitlessIntervalCapture = (onStopFailed) => Future.value();
 Future<void> Function() onCallStopLimitlessIntervalCapture = Future.value;
+
 Future<void> Function(int shotCount)
     onCallGetShotCountSpecifiedIntervalCaptureBuilder = Future.value;
 Future<void> Function(Map<String, dynamic> options, int interval)
@@ -378,6 +449,7 @@ Future<List<String>?> Function(void Function(double)? onProgress,
     (onProgress, onStopFailed) => Future.value();
 Future<void> Function() onCallStopShotCountSpecifiedIntervalCapture =
     Future.value;
+
 Future<void> Function(int shootingTimeSec)
     onCallGetCompositeIntervalCaptureBuilder = Future.value;
 Future<void> Function(Map<String, dynamic> options, int interval)
@@ -387,6 +459,30 @@ Future<List<String>?> Function(void Function(double)? onProgress,
     onCallStartCompositeIntervalCapture =
     (onProgress, onStopFailed) => Future.value();
 Future<void> Function() onCallStopCompositeIntervalCapture = Future.value;
+
+Future<void> Function() onCallGetBurstCaptureBuilder = Future.value;
+Future<void> Function(Map<String, dynamic> options, int interval)
+    onCallBuildBurstCapture = (options, interval) => Future.value();
+Future<List<String>?> Function(void Function(double)? onProgress,
+        void Function(Exception exception)? onStopFailed)
+    onCallStartBurstCapture = (onProgress, onStopFailed) => Future.value();
+Future<void> Function() onCallStopBurstCapture = Future.value;
+
+Future<void> Function() onCallGetMultiBracketCaptureBuilder = Future.value;
+Future<void> Function(Map<String, dynamic> options, int interval)
+    onCallBuildMultiBracketCapture = (options, interval) => Future.value();
+Future<List<String>?> Function(void Function(double)? onProgress,
+        void Function(Exception exception)? onStopFailed)
+    onCallStartMultiBracketCapture =
+    (onProgress, onStopFailed) => Future.value();
+Future<void> Function() onCallStopMultiBracketCapture = Future.value;
+
+Future<void> Function() onCallGetContinuousCaptureBuilder = Future.value;
+Future<void> Function(Map<String, dynamic> options, int interval)
+    onCallBuildContinuousCapture = (options, interval) => Future.value();
+Future<List<String>?> Function(void Function(double)? onProgress)
+    onCallStartContinuousCapture = (onProgress) => Future.value();
+
 Future<Options> Function(List<OptionNameEnum> optionNames) onCallGetOptions =
     (optionNames) => Future.value(Options());
 Future<void> Function(Options options) onCallSetOptions = Future.value;

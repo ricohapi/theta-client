@@ -6,10 +6,10 @@ class VideoScreen extends StatefulWidget {
   final String fileUrl;
 
   const VideoScreen({
-    Key? key,
+    super.key,
     required this.name,
     required this.fileUrl,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -23,7 +23,7 @@ class _VideoScreen extends State<VideoScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(widget.fileUrl);
+    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.fileUrl));
     _controller.initialize().then((_) {
       setState(() {});
     });

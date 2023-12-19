@@ -13,7 +13,7 @@ const val KEY_NOTIFY_PARAM_IMAGE = "image"
 const val KEY_NOTIFY_PARAM_MESSAGE = "message"
 
 fun toResult(thetaInfo: ThetaInfo): Map<String, Any?> {
-    return mapOf<String, Any?>(
+    return mapOf(
         "manufacturer" to thetaInfo.manufacturer,
         "model" to thetaInfo.model,
         "serialNumber" to thetaInfo.serialNumber,
@@ -25,7 +25,7 @@ fun toResult(thetaInfo: ThetaInfo): Map<String, Any?> {
         "hasGyro" to thetaInfo.hasGyro,
         "uptime" to thetaInfo.uptime,
         "api" to thetaInfo.api,
-        "endpoints" to mapOf<String, Int>(
+        "endpoints" to mapOf(
             "httpPort" to thetaInfo.endpoints.httpPort,
             "httpUpdatesPort" to thetaInfo.endpoints.httpUpdatesPort
         ),
@@ -45,7 +45,7 @@ fun toCameraErrorList(cameraErrorList: List<CameraErrorEnum>?): List<String>? {
 }
 
 fun toResult(thetaState: ThetaState): Map<String, Any?> {
-    return mapOf<String, Any?>(
+    return mapOf(
         "fingerprint" to thetaState.fingerprint,
         "batteryLevel" to thetaState.batteryLevel,
         "storageUri" to thetaState.storageUri,
@@ -155,12 +155,12 @@ fun toBurstOption(map: Map<String, Any>): BurstOption {
 
 fun toResult(burstOption: BurstOption): Map<String, Any?> {
     return mapOf(
-        "burstCaptureNum" to burstOption.burstCaptureNum?.value?.name,
-        "burstBracketStep" to burstOption.burstBracketStep?.value?.name,
-        "burstCompensation" to burstOption.burstCompensation?.value?.name,
-        "burstMaxExposureTime" to burstOption.burstMaxExposureTime?.value?.name,
-        "burstEnableIsoControl" to burstOption.burstEnableIsoControl?.value?.name,
-        "burstOrder" to burstOption.burstOrder?.value?.name
+        "burstCaptureNum" to burstOption.burstCaptureNum?.name,
+        "burstBracketStep" to burstOption.burstBracketStep?.name,
+        "burstCompensation" to burstOption.burstCompensation?.name,
+        "burstMaxExposureTime" to burstOption.burstMaxExposureTime?.name,
+        "burstEnableIsoControl" to burstOption.burstEnableIsoControl?.name,
+        "burstOrder" to burstOption.burstOrder?.name
     )
 }
 
@@ -173,6 +173,17 @@ fun toGpsInfo(map: Map<String, Any>): GpsInfo {
     )
 }
 
+fun toOffDelay(value: Any): OffDelay? {
+    if (value is Int) {
+        return OffDelaySec(value)
+    } else if (value is String) {
+        getOptionValueEnum(OptionNameEnum.OffDelay, value)?.let {
+            return it as OffDelayEnum
+        }
+    }
+    return null
+}
+
 fun toProxy(map: Map<String, Any>): Proxy {
     return Proxy(
         use = map["use"] as? Boolean ?: false,
@@ -181,6 +192,17 @@ fun toProxy(map: Map<String, Any>): Proxy {
         userid = map["userid"] as? String,
         password = map["password"] as? String
     )
+}
+
+fun toSleepDelay(value: Any): SleepDelay? {
+    if (value is Int) {
+        return SleepDelaySec(value)
+    } else if (value is String) {
+        getOptionValueEnum(OptionNameEnum.SleepDelay, value)?.let {
+            return it as SleepDelayEnum
+        }
+    }
+    return null
 }
 
 fun toTimeShift(map: Map<String, Any>): TimeShiftSetting {
@@ -333,6 +355,54 @@ fun setCompositeIntervalCaptureBuilderParams(call: MethodCall, builder: Composit
     }
 }
 
+fun setBurstCaptureBuilderParams(call: MethodCall, builder: BurstCapture.Builder) {
+    call.argument<Int>("_capture_interval")?.let {
+        if (it >= 0) {
+            builder.setCheckStatusCommandInterval(it.toLong())
+        }
+    }
+    call.argument<String>(OptionNameEnum.BurstMode.name)?.let { enumName ->
+        BurstModeEnum.values().find { it.name == enumName }?.let {
+            builder.setBurstMode(it)
+        }
+    }
+}
+
+fun setMultiBracketCaptureBuilderParams(call: MethodCall, builder: MultiBracketCapture.Builder) {
+    call.argument<Int>("_capture_interval")?.let {
+        if (it >= 0) {
+            builder.setCheckStatusCommandInterval(it.toLong())
+        }
+    }
+    call.argument<List<Map<String, Any>>>(OptionNameEnum.AutoBracket.name)?.also {
+        val autoBracket = toAutoBracket(it)
+        autoBracket.list.forEach { setting ->
+            builder.addBracketParameters(
+                aperture = setting.aperture,
+                colorTemperature = setting.colorTemperature,
+                exposureCompensation = setting.exposureCompensation,
+                exposureProgram = setting.exposureProgram,
+                iso = setting.iso,
+                shutterSpeed = setting.shutterSpeed,
+                whiteBalance = setting.whiteBalance,
+            )
+        }
+    }
+}
+
+fun setContinuousCaptureBuilderParams(call: MethodCall, builder: ContinuousCapture.Builder) {
+    call.argument<Int>("_capture_interval")?.let {
+        if (it >= 0) {
+            builder.setCheckStatusCommandInterval(it.toLong())
+        }
+    }
+    call.argument<String>("PhotoFileFormat")?.let { enumName ->
+        PhotoFileFormatEnum.values().find { it.name == enumName }?.let {
+            builder.setFileFormat(it)
+        }
+    }
+}
+
 fun toGetOptionsParam(data: List<String>): List<OptionNameEnum> {
     val optionNames = mutableListOf<OptionNameEnum>()
     data.forEach { name ->
@@ -424,9 +494,19 @@ fun toResult(options: Options): Map<String, Any> {
             options.getValue<GpsInfo>(OptionNameEnum.GpsInfo)?.let { gpsInfo ->
                 result[OptionNameEnum.GpsInfo.name] = toResult(gpsInfo)
             }
+        } else if (name == OptionNameEnum.OffDelay) {
+            options.getValue<OffDelay>(OptionNameEnum.OffDelay)?.let { offDelay ->
+                result[OptionNameEnum.OffDelay.name] =
+                    if (offDelay is OffDelayEnum) offDelay.name else offDelay.sec
+            }
         } else if (name == OptionNameEnum.Proxy) {
             options.getValue<Proxy>(OptionNameEnum.Proxy)?.let { proxy ->
                 result[OptionNameEnum.Proxy.name] = toResult(proxy)
+            }
+        } else if (name == OptionNameEnum.SleepDelay) {
+            options.getValue<SleepDelay>(OptionNameEnum.SleepDelay)?.let { sleepDelay ->
+                result[OptionNameEnum.SleepDelay.name] =
+                    if (sleepDelay is SleepDelayEnum) sleepDelay.name else sleepDelay.sec
             }
         } else if (name == OptionNameEnum.TimeShift) {
             options.getValue<TimeShiftSetting>(OptionNameEnum.TimeShift)?.let { timeShift ->
@@ -494,11 +574,10 @@ fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
         @Suppress("UNCHECKED_CAST")
         options.setValue(name, toAutoBracket(value as List<Map<String, Any>>))
     } else if (name == OptionNameEnum.Bitrate) {
-        @Suppress("UNCHECKED_CAST")
         if (value is Int) {
-            options.setValue(name, BitrateNumber(value as Int))
+            options.setValue(name, BitrateNumber(value))
         } else if (BitrateEnum.values().map { it.name }.contains(value as String)) {
-            options.setValue(name, BitrateEnum.valueOf(value as String))
+            options.setValue(name, BitrateEnum.valueOf(value))
         }
     } else if (name == OptionNameEnum.BurstOption) {
         @Suppress("UNCHECKED_CAST")
@@ -506,9 +585,17 @@ fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
     } else if (name == OptionNameEnum.GpsInfo) {
         @Suppress("UNCHECKED_CAST")
         options.setValue(name, toGpsInfo(value as Map<String, Any>))
+    } else if (name == OptionNameEnum.OffDelay) {
+        toOffDelay(value)?.let {
+            options.setValue(name, it)
+        }
     } else if (name == OptionNameEnum.Proxy) {
         @Suppress("UNCHECKED_CAST")
         options.setValue(name, toProxy(value as Map<String, Any>))
+    } else if (name == OptionNameEnum.SleepDelay) {
+        toSleepDelay(value)?.let {
+            options.setValue(name, it)
+        }
     } else if (name == OptionNameEnum.TimeShift) {
         @Suppress("UNCHECKED_CAST")
         options.setValue(name, toTimeShift(value as Map<String, Any>))
@@ -527,6 +614,7 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
         OptionNameEnum.AiAutoThumbnail -> AiAutoThumbnailEnum.values().find { it.name == valueName }
         OptionNameEnum.Aperture -> ApertureEnum.values().find { it.name == valueName }
         OptionNameEnum.BluetoothPower -> BluetoothPowerEnum.values().find { it.name == valueName }
+        OptionNameEnum.BluetoothRole -> BluetoothRoleEnum.values().find { it.name == valueName }
         OptionNameEnum.BurstMode -> BurstModeEnum.values().find { it.name == valueName }
         OptionNameEnum.CameraControlSource -> CameraControlSourceEnum.values().find { it.name == valueName }
         OptionNameEnum.CameraMode -> CameraModeEnum.values().find { it.name == valueName }
@@ -580,11 +668,17 @@ fun toConfigParam(data: Map<String, Any>): Config {
             OptionNameEnum.Language.name -> config.language =
                 getOptionValueEnum(OptionNameEnum.Language, value as String) as LanguageEnum?
 
-            OptionNameEnum.OffDelay.name -> config.offDelay =
-                getOptionValueEnum(OptionNameEnum.OffDelay, value as String) as OffDelayEnum?
+            OptionNameEnum.OffDelay.name -> {
+                toOffDelay(value)?.let {
+                    config.offDelay = it
+                }
+            }
 
-            OptionNameEnum.SleepDelay.name -> config.sleepDelay =
-                getOptionValueEnum(OptionNameEnum.SleepDelay, value as String) as SleepDelayEnum?
+            OptionNameEnum.SleepDelay.name -> {
+                toSleepDelay(value)?.let {
+                    config.sleepDelay = it
+                }
+            }
 
             OptionNameEnum.ShutterVolume.name -> config.shutterVolume = value as Int
             KEY_CLIENT_MODE -> config.clientMode = toDigestAuthParam(value as Map<*, *>)

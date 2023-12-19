@@ -12,7 +12,7 @@ void main() {
   test('getPhotoCaptureBuilder', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
     MockThetaClientFlutterPlatform fakePlatform =
-    MockThetaClientFlutterPlatform();
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     onCallGetPhotoCaptureBuilder = Future.value;
@@ -24,7 +24,7 @@ void main() {
   test('buildPhotoCapture', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
     MockThetaClientFlutterPlatform fakePlatform =
-    MockThetaClientFlutterPlatform();
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     onCallGetPhotoCaptureBuilder = Future.value;
@@ -105,7 +105,7 @@ void main() {
   test('takePicture', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
     MockThetaClientFlutterPlatform fakePlatform =
-    MockThetaClientFlutterPlatform();
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     const imageUrl = 'http://test.jpg';
@@ -133,7 +133,7 @@ void main() {
   test('takePicture Exception', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
     MockThetaClientFlutterPlatform fakePlatform =
-    MockThetaClientFlutterPlatform();
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     onCallGetPhotoCaptureBuilder = Future.value;

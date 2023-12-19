@@ -11,11 +11,19 @@ void main() {
 
   setUp(() {
     platform = MethodChannelThetaClientFlutter();
-    channel.setMockMethodCallHandler(null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      channel,
+      null,
+    );
   });
 
   tearDown(() {
-    channel.setMockMethodCallHandler(null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      channel,
+      null,
+    );
   });
 
   test('buildCompositeIntervalCapture', () async {
@@ -51,7 +59,8 @@ void main() {
       options[data[i][0]] = data[i][1];
     }
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['_capture_interval'], 1);
       for (int i = 0; i < data.length; i++) {
@@ -66,7 +75,8 @@ void main() {
     const fileUrls = [
       'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.MP4'
     ];
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       return fileUrls;
     });
     expect(await platform.startCompositeIntervalCapture(null, null), fileUrls);
@@ -74,14 +84,16 @@ void main() {
 
   test('startCompositeIntervalCapture no file', () async {
     const fileUrls = null;
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       return fileUrls;
     });
     expect(await platform.startCompositeIntervalCapture(null, null), null);
   });
 
   test('startCompositeIntervalCapture exception', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       throw Exception('test error');
     });
     try {
@@ -96,7 +108,8 @@ void main() {
     const fileUrls = [
       'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.MP4'
     ];
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(platform.notifyList.containsKey(10031), true,
           reason: 'add notify progress');
 
@@ -134,7 +147,8 @@ void main() {
     const fileUrls = [
       'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.MP4'
     ];
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(platform.notifyList.containsKey(10032), true,
           reason: 'add notify stop error');
 

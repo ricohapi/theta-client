@@ -46,6 +46,14 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
     var compositeIntervalCaptureBuilder: CompositeIntervalCapture.Builder? = null
     var compositeIntervalCapture: CompositeIntervalCapture? = null
     var compositeIntervalCapturing: CompositeIntervalCapturing? = null
+    var burstCaptureBuilder: BurstCapture.Builder? = null
+    var burstCapture: BurstCapture? = null
+    var burstCapturing: BurstCapturing? = null
+    var multiBracketCaptureBuilder: MultiBracketCapture.Builder? = null
+    var multiBracketCapture: MultiBracketCapture? = null
+    var multiBracketCapturing: MultiBracketCapturing? = null
+    var continuousCaptureBuilder: ContinuousCapture.Builder? = null
+    var continuousCapture: ContinuousCapture? = null
 
     companion object {
         const val errorCode: String = "Error"
@@ -63,6 +71,11 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         const val notifyIdShotCountSpecifiedIntervalCaptureStopError = 10022
         const val notifyIdCompositeIntervalCaptureProgress = 10031;
         const val notifyIdCompositeIntervalCaptureStopError = 10032;
+        const val notifyIdMultiBracketCaptureProgress = 10041;
+        const val notifyIdMultiBracketCaptureStopError = 10042;
+        const val notifyIdBurstCaptureProgress = 10051;
+        const val notifyIdBurstCaptureStopError = 10052;
+        const val notifyIdContinuousCaptureProgress = 10061;
     }
 
     fun sendNotifyEvent(id: Int, params: Map<String, Any?>) {
@@ -271,6 +284,56 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 stopCompositeIntervalCapture(result)
             }
 
+            "getBurstCaptureBuilder" -> {
+                getBurstCaptureBuilder(call, result)
+            }
+
+            "buildBurstCapture" -> {
+                scope.launch {
+                    buildBurstCapture(call, result)
+                }
+            }
+
+            "startBurstCapture" -> {
+                startBurstCapture(result)
+            }
+
+            "stopBurstCapture" -> {
+                stopBurstCapture(result)
+            }
+
+            "getMultiBracketCaptureBuilder" -> {
+                getMultiBracketCaptureBuilder(result)
+            }
+
+            "buildMultiBracketCapture" -> {
+                scope.launch {
+                    buildMultiBracketCapture(call, result)
+                }
+            }
+
+            "startMultiBracketCapture" -> {
+                startMultiBracketCapture(result)
+            }
+
+            "stopMultiBracketCapture" -> {
+                stopMultiBracketCapture(result)
+            }
+
+            "getContinuousCaptureBuilder" -> {
+                getContinuousCaptureBuilder(result)
+            }
+
+            "buildContinuousCapture" -> {
+                scope.launch {
+                    buildContinuousCapture(call, result)
+                }
+            }
+
+            "startContinuousCapture" -> {
+                startContinuousCapture(result)
+            }
+
             "getOptions" -> {
                 scope.launch {
                     getOptions(call, result)
@@ -445,6 +508,14 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         compositeIntervalCaptureBuilder = null
         compositeIntervalCapture = null
         compositeIntervalCapturing = null
+        burstCaptureBuilder = null
+        burstCapture = null
+        burstCapturing = null
+        multiBracketCaptureBuilder = null
+        multiBracketCapture = null
+        multiBracketCapturing = null
+        continuousCaptureBuilder = null
+        continuousCapture = null
 
         try {
             endpoint = call.argument<String>("endpoint")!!
@@ -915,6 +986,236 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         }
         compositeIntervalCapturing.stopCapture()
         result.success(null)
+    }
+
+    fun getBurstCaptureBuilder(call: MethodCall, result: Result) {
+        val theta = thetaRepository
+        if (theta == null) {
+            result.error(errorCode, "theta " + messageNotInit, null)
+            return
+        }
+        val burstCaptureNumVal = ThetaRepository.BurstCaptureNumEnum.values().find {
+            it.name == call.argument<String>("burstCaptureNum")
+        }
+        val burstBracketStepVal = ThetaRepository.BurstBracketStepEnum.values().find {
+            it.name == call.argument<String>("burstBracketStep")
+        }
+        val burstCompensationVal = ThetaRepository.BurstCompensationEnum.values().find {
+            it.name == call.argument<String>("burstCompensation")
+        }
+        val burstMaxExposureTimeVal = ThetaRepository.BurstMaxExposureTimeEnum.values().find {
+            it.name == call.argument<String>("burstMaxExposureTime")
+        }
+        val burstEnableIsoControlVal = ThetaRepository.BurstEnableIsoControlEnum.values().find {
+            it.name == call.argument<String>("burstEnableIsoControl")
+        }
+        val burstOrderVal = ThetaRepository.BurstOrderEnum.values().find {
+            it.name == call.argument<String>("burstOrder")
+        }
+
+        if (burstCaptureNumVal == null
+            || burstBracketStepVal == null
+            || burstCompensationVal == null
+            || burstMaxExposureTimeVal == null
+            || burstEnableIsoControlVal == null
+            || burstOrderVal == null
+        ) {
+            result.error(errorCode, "burstCaptureBuilder " + messageNoArgument, null)
+            return
+        }
+
+        burstCaptureBuilder = theta.getBurstCaptureBuilder(
+            burstCaptureNumVal,
+            burstBracketStepVal,
+            burstCompensationVal,
+            burstMaxExposureTimeVal,
+            burstEnableIsoControlVal,
+            burstOrderVal
+        )
+        result.success(null)
+    }
+
+    suspend fun buildBurstCapture(call: MethodCall, result: Result) {
+        val theta = thetaRepository
+        val burstCaptureBuilder = burstCaptureBuilder
+        if (theta == null || burstCaptureBuilder == null) {
+            result.error(errorCode, "burstCaptureBuilder " + messageNotInit, null)
+            return
+        }
+        setCaptureBuilderParams(call, burstCaptureBuilder)
+        setBurstCaptureBuilderParams(call, burstCaptureBuilder)
+        try {
+            burstCapture = burstCaptureBuilder.build()
+            result.success(null)
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    fun startBurstCapture(result: Result) {
+        val theta = thetaRepository
+        val burstCapture = burstCapture
+        if (theta == null || burstCapture == null) {
+            result.error(errorCode, "burstCapture " + messageNotInit, null)
+            return
+        }
+        burstCapturing = burstCapture.startCapture(object : BurstCapture.StartCaptureCallback {
+            override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                result.error(exception.javaClass.simpleName, exception.message, null)
+            }
+
+            override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                sendNotifyEvent(
+                    notifyIdBurstCaptureStopError,
+                    toMessageNotifyParam(exception.message ?: exception.toString())
+                )
+            }
+
+            override fun onProgress(completion: Float) {
+                sendNotifyEvent(
+                    notifyIdBurstCaptureProgress,
+                    toCaptureProgressNotifyParam(completion)
+                )
+            }
+
+            override fun onCaptureCompleted(fileUrls: List<String>?) {
+                result.success(fileUrls)
+            }
+        })
+    }
+
+    fun stopBurstCapture(result: Result) {
+        val theta = thetaRepository
+        val burstCapturing = burstCapturing
+        if (theta == null || burstCapturing == null) {
+            result.error(errorCode, "burstCapturing " + messageNotInit, null)
+            return
+        }
+        burstCapturing.stopCapture()
+        result.success(null)
+    }
+
+    fun getMultiBracketCaptureBuilder(result: Result) {
+        val theta = thetaRepository
+        if (theta == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        multiBracketCaptureBuilder = theta.getMultiBracketCaptureBuilder()
+        result.success(null)
+    }
+
+    suspend fun buildMultiBracketCapture(call: MethodCall, result: Result) {
+        val theta = thetaRepository
+        val multiBracketCaptureBuilder = multiBracketCaptureBuilder
+        if (theta == null || multiBracketCaptureBuilder == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        setCaptureBuilderParams(call, multiBracketCaptureBuilder)
+        setMultiBracketCaptureBuilderParams(call, multiBracketCaptureBuilder)
+        try {
+            multiBracketCapture = multiBracketCaptureBuilder.build()
+            result.success(null)
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    fun startMultiBracketCapture(result: Result) {
+        val theta = thetaRepository
+        val multiBracketCapture = multiBracketCapture
+        if (theta == null || multiBracketCapture == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        multiBracketCapturing =
+            multiBracketCapture.startCapture(object : MultiBracketCapture.StartCaptureCallback {
+                override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    result.error(exception.javaClass.simpleName, exception.message, null)
+                }
+
+                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    sendNotifyEvent(
+                        notifyIdMultiBracketCaptureStopError,
+                        toMessageNotifyParam(exception.message ?: exception.toString())
+                    )
+                }
+
+                override fun onProgress(completion: Float) {
+                    sendNotifyEvent(
+                        notifyIdMultiBracketCaptureProgress,
+                        toCaptureProgressNotifyParam(completion)
+                    )
+                }
+
+                override fun onCaptureCompleted(fileUrls: List<String>?) {
+                    result.success(fileUrls)
+                }
+            })
+    }
+
+    fun stopMultiBracketCapture(result: Result) {
+        val theta = thetaRepository
+        val multiBracketCapturing = multiBracketCapturing
+        if (theta == null || multiBracketCapturing == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        multiBracketCapturing.stopCapture()
+        result.success(null)
+    }
+
+    fun getContinuousCaptureBuilder(result: Result) {
+        val theta = thetaRepository
+        if (theta == null) {
+            result.error(errorCode, "theta " + messageNotInit, null)
+            return
+        }
+        continuousCaptureBuilder = theta.getContinuousCaptureBuilder()
+        result.success(null)
+    }
+
+    suspend fun buildContinuousCapture(call: MethodCall, result: Result) {
+        val theta = thetaRepository
+        val continuousCaptureBuilder = continuousCaptureBuilder
+        if (theta == null || continuousCaptureBuilder == null) {
+            result.error(errorCode, "continuousCaptureBuilder " + messageNotInit, null)
+            return
+        }
+        setCaptureBuilderParams(call, continuousCaptureBuilder)
+        setContinuousCaptureBuilderParams(call, continuousCaptureBuilder)
+        try {
+            continuousCapture = continuousCaptureBuilder.build()
+            result.success(null)
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    fun startContinuousCapture(result: Result) {
+        val theta = thetaRepository
+        val continuousCapture = continuousCapture
+        if (theta == null || continuousCapture == null) {
+            result.error(errorCode, "continuousCapture " + messageNotInit, null)
+            return
+        }
+        continuousCapture.startCapture(object : ContinuousCapture.StartCaptureCallback {
+            override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                result.error(exception.javaClass.simpleName, exception.message, null)
+            }
+
+            override fun onProgress(completion: Float) {
+                sendNotifyEvent(
+                    notifyIdContinuousCaptureProgress,
+                    toCaptureProgressNotifyParam(completion)
+                )
+            }
+
+            override fun onCaptureCompleted(fileUrls: List<String>?) {
+                result.success(fileUrls)
+            }
+        })
     }
 
     suspend fun listFiles(call: MethodCall, result: Result) {
