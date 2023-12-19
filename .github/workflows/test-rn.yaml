@@ -20,6 +20,7 @@ jobs:
       run: |
         cd ./react-native
         yarn install
+        yarn prepack
         yarn test --collectCoverage
     - name: Archive code coverage results
       if: always()
