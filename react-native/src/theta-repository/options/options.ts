@@ -27,8 +27,8 @@ import type { VideoStitchingEnum } from './option-video-stitching';
 import type { VisibilityReductionEnum } from './option-visibility-reduction';
 import type { WhiteBalanceAutoStrengthEnum } from './option-white-balance-auto-strength';
 import type { WlanFrequencyEnum } from './option-wlan-frequency';
-import { OffDelayEnum } from './option-off-delay';
-import { SleepDelayEnum } from './option-sleep-delay';
+import type { OffDelayEnum } from './option-off-delay';
+import type { SleepDelayEnum } from './option-sleep-delay';
 
 /** Aperture value. */
 export const ApertureEnum = {
