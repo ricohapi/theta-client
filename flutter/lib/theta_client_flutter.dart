@@ -1209,6 +1209,10 @@ enum MicrophoneOptionEnum {
 /// Camera error
 enum CameraErrorEnum {
   /// Camera error
+  /// Undefined value
+  unknown('UNKNOWN'),
+
+  /// Camera error
   /// Insufficient memory
   noMemory('NO_MEMORY'),
 
