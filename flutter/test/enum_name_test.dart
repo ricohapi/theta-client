@@ -347,6 +347,7 @@ void main() {
 
   test('CameraErrorEnum', () async {
     List<List<dynamic>> data = [
+      [CameraErrorEnum.unknown, 'UNKNOWN'],
       [CameraErrorEnum.noMemory, 'NO_MEMORY'],
       [CameraErrorEnum.fileNumberOver, 'FILE_NUMBER_OVER'],
       [CameraErrorEnum.noDateSetting, 'NO_DATE_SETTING'],

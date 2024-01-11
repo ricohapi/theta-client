@@ -6182,6 +6182,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     enum class CameraErrorEnum {
         /**
+         * Undefined value
+         */
+        UNKNOWN,
+
+        /**
          * Camera error
          * Insufficient memory
          */
@@ -6323,6 +6328,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              */
             internal fun get(cameraError: CameraError): CameraErrorEnum {
                 return when (cameraError) {
+                    CameraError.UNKNOWN -> UNKNOWN
                     CameraError.NO_MEMORY -> NO_MEMORY
                     CameraError.FILE_NUMBER_OVER -> FILE_NUMBER_OVER
                     CameraError.NO_DATE_SETTING -> NO_DATE_SETTING
@@ -6344,7 +6350,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                     CameraError.HIGH_TEMPERATURE_WARNING -> HIGH_TEMPERATURE_WARNING
                     CameraError.HIGH_TEMPERATURE -> HIGH_TEMPERATURE
                     CameraError.BATTERY_HIGH_TEMPERATURE -> BATTERY_HIGH_TEMPERATURE
-                    CameraError.COMPASS_CALIBRATION -> COMPASS_CALIBRATION
+                    CameraError.COMPASS_CALIBRATION, CameraError.ELECTRONIC_COMPASS_CALIBRATION -> COMPASS_CALIBRATION
                 }
             }
         }

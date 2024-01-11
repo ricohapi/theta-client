@@ -184,3 +184,24 @@ internal object NumbersAsLongsSerializer : KSerializer<List<Long>> {
         return result
     }
 }
+
+internal abstract class EnumIgnoreUnknownSerializer<T : Enum<T>>(
+    values: List<T>,
+    private val defaultValue: T,
+) : KSerializer<T> {
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor(values.first()::class.qualifiedName!!, PrimitiveKind.STRING)
+    private val lookup = values.associateBy({ it }, { it.serialName })
+    private val revLookup = values.associateBy { it.serialName }
+
+    private val Enum<T>.serialName: String
+        get() = name
+
+    override fun serialize(encoder: Encoder, value: T) {
+        encoder.encodeString(lookup.getValue(value))
+    }
+
+    override fun deserialize(decoder: Decoder): T {
+        return revLookup[decoder.decodeString()] ?: defaultValue
+    }
+}

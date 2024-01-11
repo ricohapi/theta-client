@@ -104,6 +104,110 @@ class GetThetaStateTest {
     }
 
     /**
+     * Camera error of ELECTRONIC_COMPASS_CALIBRATION for THETA X.
+     */
+    @Test
+    fun electronicCompassCalibrationErrorTest() = runTest {
+        // setup
+        val jsonString =
+            Resource("src/commonTest/resources/state/state_x_electronic_compass_calibration.json").readText()
+        MockApiClient.onRequest = { request ->
+            assertEquals(request.url.encodedPath, "/osc/state", "request path")
+            ByteReadChannel(jsonString)
+        }
+
+        // test
+        val thetaRepository = ThetaRepository(endpoint)
+        val thetaState = thetaRepository.getThetaState()
+
+        // check
+        assertTrue(thetaState.fingerprint.isNotEmpty(), "state fingerprint")
+        assertTrue(thetaState.batteryLevel > 0, "state batteryLevel")
+        assertTrue(thetaState.storageUri!!.startsWith("http://"), "state storageUri")
+        assertTrue(thetaState.storageID!!.isNotEmpty(), "state storageUri")
+        assertEquals(thetaState.captureStatus, ThetaRepository.CaptureStatusEnum.IDLE, "state captureStatus")
+        assertTrue(thetaState.recordedTime >= 0, "state recordedTime")
+        assertTrue(thetaState.recordableTime >= 0, "state recordableTime")
+        assertTrue(thetaState.capturedPictures!! >= 0, "state capturedPictures")
+        assertNull(thetaState.compositeShootingElapsedTime, "compositeShootingElapsedTime")
+        assertTrue(thetaState.latestFileUrl.startsWith("http://"), "state latestFileUrl")
+        assertEquals(thetaState.chargingState, ThetaRepository.ChargingStateEnum.NOT_CHARGING, "state chargingState")
+        assertEquals(thetaState.apiVersion, 2, "state apiVersion")
+        assertTrue(!thetaState.isPluginRunning!!, "state isPluginRunning")
+        assertTrue(thetaState.isPluginWebServer!!, "state isPluginWebServer")
+        assertEquals(thetaState.function, ThetaRepository.ShootingFunctionEnum.NORMAL, "state function")
+        assertTrue(!thetaState.isMySettingChanged!!, "state isMySettingChanged")
+        assertEquals(thetaState.currentMicrophone!!, ThetaRepository.MicrophoneOptionEnum.INTERNAL, "state currentMicrophone")
+        assertTrue(!thetaState.isSdCard, "state isSdCard")
+        assertEquals(
+            thetaState.cameraError!![0],
+            ThetaRepository.CameraErrorEnum.COMPASS_CALIBRATION,
+            "state cameraError"
+        )
+        assertTrue(thetaState.isBatteryInsert!!, "state isBatteryInsert")
+    }
+
+    /**
+     * Camera error of ELECTRONIC_COMPASS_CALIBRATION for THETA X.
+     */
+    @Test
+    fun unknownErrorTest() = runTest {
+        // setup
+        val jsonString =
+            Resource("src/commonTest/resources/state/state_x_unknown_camera_error.json").readText()
+        MockApiClient.onRequest = { request ->
+            assertEquals(request.url.encodedPath, "/osc/state", "request path")
+            ByteReadChannel(jsonString)
+        }
+
+        // test
+        val thetaRepository = ThetaRepository(endpoint)
+        val thetaState = thetaRepository.getThetaState()
+
+        // check
+        assertTrue(thetaState.fingerprint.isNotEmpty(), "state fingerprint")
+        assertTrue(thetaState.batteryLevel > 0, "state batteryLevel")
+        assertTrue(thetaState.storageUri!!.startsWith("http://"), "state storageUri")
+        assertTrue(thetaState.storageID!!.isNotEmpty(), "state storageUri")
+        assertEquals(
+            thetaState.captureStatus,
+            ThetaRepository.CaptureStatusEnum.IDLE,
+            "state captureStatus"
+        )
+        assertTrue(thetaState.recordedTime >= 0, "state recordedTime")
+        assertTrue(thetaState.recordableTime >= 0, "state recordableTime")
+        assertTrue(thetaState.capturedPictures!! >= 0, "state capturedPictures")
+        assertNull(thetaState.compositeShootingElapsedTime, "compositeShootingElapsedTime")
+        assertTrue(thetaState.latestFileUrl.startsWith("http://"), "state latestFileUrl")
+        assertEquals(
+            thetaState.chargingState,
+            ThetaRepository.ChargingStateEnum.NOT_CHARGING,
+            "state chargingState"
+        )
+        assertEquals(thetaState.apiVersion, 2, "state apiVersion")
+        assertTrue(!thetaState.isPluginRunning!!, "state isPluginRunning")
+        assertTrue(thetaState.isPluginWebServer!!, "state isPluginWebServer")
+        assertEquals(
+            thetaState.function,
+            ThetaRepository.ShootingFunctionEnum.NORMAL,
+            "state function"
+        )
+        assertTrue(!thetaState.isMySettingChanged!!, "state isMySettingChanged")
+        assertEquals(
+            thetaState.currentMicrophone!!,
+            ThetaRepository.MicrophoneOptionEnum.INTERNAL,
+            "state currentMicrophone"
+        )
+        assertTrue(!thetaState.isSdCard, "state isSdCard")
+        assertEquals(
+            thetaState.cameraError!![0],
+            ThetaRepository.CameraErrorEnum.UNKNOWN,
+            "state cameraError"
+        )
+        assertTrue(thetaState.isBatteryInsert!!, "state isBatteryInsert")
+    }
+
+    /**
      * Check setting of ThetaState.
      */
     @Test

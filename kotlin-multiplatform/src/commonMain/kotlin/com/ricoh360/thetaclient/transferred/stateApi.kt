@@ -6,6 +6,7 @@ package com.ricoh360.thetaclient.transferred
 import io.ktor.http.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 
 /**
  * /osc/state api request
@@ -330,11 +331,20 @@ internal enum class StorageOption {
     SD,
 }
 
+internal object CameraErrorSerializer :
+    EnumIgnoreUnknownSerializer<CameraError>(CameraError.entries, CameraError.UNKNOWN)
+
 /**
  * Camera error
  */
-@Serializable
+@Serializable(with = CameraErrorSerializer::class)
 internal enum class CameraError {
+    /**
+     * Undefined value
+     */
+    @SerialName("UNKNOWN")
+    UNKNOWN,
+
     /**
      * RICOH THETA X or later
      * 0x00000001: Insufficient memory
@@ -482,6 +492,14 @@ internal enum class CameraError {
      */
     @SerialName("COMPASS_CALIBRATION")
     COMPASS_CALIBRATION,
+
+    /**
+     * 0x00000010: Electronic compass error
+     * for RICOH THETA X
+     * Same as COMPASS_CALIBRATION and will be deleted.
+     */
+    @SerialName("ELECTRONIC_COMPASS_CALIBRATION")
+    ELECTRONIC_COMPASS_CALIBRATION,
 
     // 0x00000800: Plug-in start warning (IoT technical standards
     // compliance)
