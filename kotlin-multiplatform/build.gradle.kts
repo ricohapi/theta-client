@@ -109,6 +109,7 @@ android {
     defaultConfig {
         minSdk = 26
         setProperty("archivesBaseName", "theta-client")
+        consumerProguardFiles("proguard-rules.pro")
     }
 }
 
