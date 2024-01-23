@@ -3571,8 +3571,9 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         /**
          * Image processing filter. Handheld HDR.
          *
-         * RICOH THETA Z1 firmware v1.20.1 or later and RICOH THETA V firmware v3.10.1 or later.
-         * RICOH THETA X is not supported
+         * RICOH THETA X firmware v2.40.0 or later,
+         * RICOH THETA Z1 firmware v1.20.1 or later,
+         * and RICOH THETA V firmware v3.10.1 or later.
          */
         HH_HDR(ImageFilter.HH_HDR);
 
