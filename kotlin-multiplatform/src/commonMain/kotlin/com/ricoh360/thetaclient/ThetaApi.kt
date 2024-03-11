@@ -826,9 +826,9 @@ internal object ThetaApi {
     /**
      * Post request {body} to {endpoint} APIs then return its response
      */
-    private suspend fun postCommandApi(
+    private suspend inline fun <reified T: CommandApiRequest>postCommandApi(
         endpoint: String,
-        body: CommandApiRequest,
+        body: T,
     ): HttpResponse {
         return syncExecutor(requestSemaphore, ApiClient.timeout.requestTimeout) {
             httpClient.post(getApiUrl(endpoint, CommandApi.PATH)) {
@@ -836,7 +836,7 @@ internal object ThetaApi {
                     append("Content-Type", "application/json; charset=utf-8")
                     append("Cache-Control", "no-cache")
                 }
-                setBody(body)
+                setBody<T>(body)
             }
         }
     }

@@ -6,12 +6,12 @@ import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.CaptureMode
 import io.ktor.http.*
+import io.ktor.http.content.TextContent
 import io.ktor.utils.io.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.runTest
 import kotlin.test.*
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class MultiBracketCaptureTest {
 
     private val endpoint = "http://192.168.1.1:80/"
@@ -224,7 +224,6 @@ class MultiBracketCaptureTest {
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
             Resource("src/commonTest/resources/MultiBracketCapture/start_capture_progress.json").readText(),
             Resource("src/commonTest/resources/MultiBracketCapture/state_shooting.json").readText(),
-            Resource("src/commonTest/resources/MultiBracketCapture/state_shooting.json").readText(),
             Resource("src/commonTest/resources/MultiBracketCapture/state_idle.json").readText(),
         )
 
@@ -241,7 +240,7 @@ class MultiBracketCaptureTest {
                 }
 
             }
-            val response = if (index >= 5) responseArray[5] else responseArray[index]
+            val response = if (index >= responseArray.size) responseArray[responseArray.size - 1] else responseArray[index]
             ByteReadChannel(response)
         }
         val deferred = CompletableDeferred<Unit>()
@@ -258,7 +257,9 @@ class MultiBracketCaptureTest {
                 shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_ONE_OVER_250,
                 iso = ThetaRepository.IsoEnum.ISO_200,
                 colorTemperature = 6000,
-            ).build()
+            )
+            .setCheckStatusCommandInterval(100)
+            .build()
 
         var files: List<String>? = null
         multiBracketCapture.startCapture(object : MultiBracketCapture.StartCaptureCallback {
@@ -302,10 +303,11 @@ class MultiBracketCaptureTest {
         var isStop = false
         val deferredStart = CompletableDeferred<Unit>()
         MockApiClient.onRequest = { request ->
-            val path = if (request.body.toString().contains("camera.stopCapture")) {
+            val textBody = request.body as TextContent
+            val path = if (textBody.text.contains("camera.stopCapture")) {
                 isStop = true
                 "src/commonTest/resources/MultiBracketCapture/stop_capture_done.json"
-            } else if (request.body.toString().contains("camera.setOptions")) {
+            } else if (textBody.text.contains("camera.setOptions")) {
                 "src/commonTest/resources/setOptions/set_options_done.json"
             } else {
                 if (!deferredStart.isCompleted) {
@@ -450,26 +452,25 @@ class MultiBracketCaptureTest {
             ).build()
 
         var files: List<String>? = listOf()
-        val capturing =
-            capture.startCapture(object : MultiBracketCapture.StartCaptureCallback {
-                override fun onCaptureCompleted(fileUrls: List<String>?) {
-                    files = fileUrls
-                    deferred.complete(Unit)
-                }
+        capture.startCapture(object : MultiBracketCapture.StartCaptureCallback {
+            override fun onCaptureCompleted(fileUrls: List<String>?) {
+                files = fileUrls
+                deferred.complete(Unit)
+            }
 
-                override fun onProgress(completion: Float) {
-                    assertEquals(completion, 0f, "onProgress")
-                }
+            override fun onProgress(completion: Float) {
+                assertEquals(completion, 0f, "onProgress")
+            }
 
-                override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                    assertTrue(false, "error start interval shooting with the shot count specified")
-                    deferred.complete(Unit)
-                }
+            override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                assertTrue(false, "error start interval shooting with the shot count specified")
+                deferred.complete(Unit)
+            }
 
-                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                    assertTrue(false, "onStopFailed")
-                }
-            })
+            override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                assertTrue(false, "onStopFailed")
+            }
+        })
 
         runBlocking {
             withTimeout(7000) {

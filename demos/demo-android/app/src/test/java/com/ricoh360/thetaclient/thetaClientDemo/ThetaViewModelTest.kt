@@ -46,7 +46,7 @@ internal class ThetaViewModelTest {
     @Test
     fun shootingTest() = runTest {
         class TakenCallback : PhotoCapture.TakePictureCallback {
-            override fun onSuccess(fileUrl: String) {
+            override fun onSuccess(fileUrl: String?) {
                 assertTrue(true, fileUrl)
             }
 

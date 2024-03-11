@@ -7,12 +7,12 @@ import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.*
 import io.ktor.client.network.sockets.*
 import io.ktor.http.*
+import io.ktor.http.content.TextContent
 import io.ktor.utils.io.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.runTest
 import kotlin.test.*
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class BurstCaptureTest {
     private val burstOption = BurstOption(
         BurstCaptureNum.BURST_CAPTURE_NUM_1,
@@ -134,10 +134,11 @@ class BurstCaptureTest {
         var isStop = false
         val deferredStart = CompletableDeferred<Unit>()
         MockApiClient.onRequest = { request ->
-            val path = if (request.body.toString().contains("camera.stopCapture")) {
+            val textBody = request.body as TextContent
+            val path = if (textBody.text.contains("camera.stopCapture")) {
                 isStop = true
                 "src/commonTest/resources/BurstCapture/stop_capture_done.json"
-            } else if (request.body.toString().contains("camera.setOptions")) {
+            } else if (textBody.text.contains("camera.setOptions")) {
                 "src/commonTest/resources/setOptions/set_options_done.json"
             } else {
                 if (!deferredStart.isCompleted) {
