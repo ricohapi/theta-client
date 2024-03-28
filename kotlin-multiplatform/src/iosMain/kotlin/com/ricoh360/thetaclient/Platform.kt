@@ -42,3 +42,8 @@ actual fun frameFrom(packet: Pair<ByteArray, Int>): FrameSource {
 actual fun randomUUID(): String {
     return NSUUID.UUID().UUIDString
 }
+
+actual fun currentTimeMillis(): Long {
+    val interval = NSDate().timeIntervalSince1970
+    return (interval / 1000.0).toLong()
+}

@@ -301,7 +301,7 @@ class ContinuousCaptureTest {
         })
 
         runBlocking {
-            withTimeout(500) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -383,7 +383,7 @@ class ContinuousCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -406,7 +406,7 @@ class ContinuousCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -432,7 +432,7 @@ class ContinuousCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }

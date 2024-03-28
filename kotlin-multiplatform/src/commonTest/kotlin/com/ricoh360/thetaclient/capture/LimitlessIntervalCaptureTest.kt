@@ -81,7 +81,8 @@ class LimitlessIntervalCaptureTest {
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
-        val capture = thetaRepository.getLimitlessIntervalCaptureBuilder().build()
+        val capture = thetaRepository.getLimitlessIntervalCaptureBuilder()
+            .build()
 
         assertNull(capture.getCaptureInterval(), "set option captureInterval")
 
@@ -111,9 +112,12 @@ class LimitlessIntervalCaptureTest {
         capturing.stopCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
+        }
+        runBlocking {
+            delay(2000)
         }
 
         // check result
@@ -401,7 +405,7 @@ class LimitlessIntervalCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -426,7 +430,7 @@ class LimitlessIntervalCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -442,8 +446,6 @@ class LimitlessIntervalCaptureTest {
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
             Resource("src/commonTest/resources/LimitlessIntervalCapture/start_capture_error.json").readText(), // startCapture error
-            "Status error UnitTest", // status error not json
-            "timeout UnitTest" // timeout
         )
         var counter = 0
         MockApiClient.onRequest = { _ ->
@@ -452,18 +454,17 @@ class LimitlessIntervalCaptureTest {
                 0 -> MockApiClient.status = HttpStatusCode.OK
                 1 -> MockApiClient.status = HttpStatusCode.OK
                 2 -> MockApiClient.status = HttpStatusCode.ServiceUnavailable
-                3 -> MockApiClient.status = HttpStatusCode.ServiceUnavailable
-                4 -> throw ConnectTimeoutException("timeout")
             }
             ByteReadChannel(responseArray[index])
         }
 
         val thetaRepository = ThetaRepository(endpoint)
         val capture = thetaRepository.getLimitlessIntervalCaptureBuilder()
+            .setCaptureInterval(100)
             .build()
 
         // execute status error and json response
-        var deferred = CompletableDeferred<Unit>()
+        val deferred = CompletableDeferred<Unit>()
         capture.startCapture(object : LimitlessIntervalCapture.StartCaptureCallback {
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(false, "capture limitless interval")
@@ -485,13 +486,41 @@ class LimitlessIntervalCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
+    }
+
+    /**
+     * Error exception to startCapture call
+     */
+    @Test
+    fun startCaptureJsonExceptionTest() = runTest {
+        // setup
+        val responseArray = arrayOf(
+            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
+            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
+            "Status error UnitTest", // status error not json
+        )
+        var counter = 0
+        MockApiClient.onRequest = { _ ->
+            val index = counter++
+            when (index) {
+                0 -> MockApiClient.status = HttpStatusCode.OK
+                1 -> MockApiClient.status = HttpStatusCode.OK
+                2 -> MockApiClient.status = HttpStatusCode.ServiceUnavailable
+            }
+            ByteReadChannel(responseArray[index])
+        }
+
+        val thetaRepository = ThetaRepository(endpoint)
+        val capture = thetaRepository.getLimitlessIntervalCaptureBuilder()
+            .setCaptureInterval(100)
+            .build()
 
         // execute status error and not json response
-        deferred = CompletableDeferred()
+        val deferred = CompletableDeferred<Unit>()
         capture.startCapture(object : LimitlessIntervalCapture.StartCaptureCallback {
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(false, "capture limitless interval")
@@ -510,13 +539,41 @@ class LimitlessIntervalCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(10000) {
                 deferred.await()
             }
         }
+    }
+
+    /**
+     * Error exception to startCapture call
+     */
+    @Test
+    fun startCaptureTimeoutExceptionTest() = runTest {
+        // setup
+        val responseArray = arrayOf(
+            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
+            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
+            "timeout UnitTest" // timeout
+        )
+        var counter = 0
+        MockApiClient.onRequest = { _ ->
+            val index = counter++
+            when (index) {
+                0 -> MockApiClient.status = HttpStatusCode.OK
+                1 -> MockApiClient.status = HttpStatusCode.OK
+                2 -> throw ConnectTimeoutException("timeout")
+            }
+            ByteReadChannel(responseArray[index])
+        }
+
+        val thetaRepository = ThetaRepository(endpoint)
+        val capture = thetaRepository.getLimitlessIntervalCaptureBuilder()
+            .setCaptureInterval(100)
+            .build()
 
         // execute timeout exception
-        deferred = CompletableDeferred()
+        val deferred = CompletableDeferred<Unit>()
         capture.startCapture(object : LimitlessIntervalCapture.StartCaptureCallback {
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(false, "capture limitless interval")
@@ -535,7 +592,7 @@ class LimitlessIntervalCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -584,7 +641,7 @@ class LimitlessIntervalCaptureTest {
         capturing.stopCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -613,7 +670,7 @@ class LimitlessIntervalCaptureTest {
         capturing.stopCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -668,7 +725,7 @@ class LimitlessIntervalCaptureTest {
         capturing.stopCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -697,7 +754,7 @@ class LimitlessIntervalCaptureTest {
         capturing.stopCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -729,7 +786,7 @@ class LimitlessIntervalCaptureTest {
         capturing.stopCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }

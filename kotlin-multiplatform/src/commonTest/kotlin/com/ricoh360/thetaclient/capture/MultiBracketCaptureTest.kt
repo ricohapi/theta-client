@@ -72,6 +72,7 @@ class MultiBracketCaptureTest {
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
         val multiBracketCapture = thetaRepository.getMultiBracketCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
             .addBracketParameters(
                 colorTemperature = 5000,
                 exposureCompensation = ThetaRepository.ExposureCompensationEnum.M0_3,
@@ -163,6 +164,7 @@ class MultiBracketCaptureTest {
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_V
         val multiBracketCapture = thetaRepository.getMultiBracketCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
             .addBracketSettingList(
                 listOf(
                     ThetaRepository.BracketSetting(
@@ -328,6 +330,7 @@ class MultiBracketCaptureTest {
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
         val capture = thetaRepository.getMultiBracketCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
             .addBracketParameters(
                 colorTemperature = 5000,
                 exposureCompensation = ThetaRepository.ExposureCompensationEnum.M0_3,

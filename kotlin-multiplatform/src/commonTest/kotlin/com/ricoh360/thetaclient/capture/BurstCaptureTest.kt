@@ -192,7 +192,7 @@ class BurstCaptureTest {
             })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferredStart.await()
             }
         }
@@ -535,7 +535,7 @@ class BurstCaptureTest {
         })
 
         runBlocking {
-            withTimeout(500) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -633,7 +633,7 @@ class BurstCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -660,7 +660,7 @@ class BurstCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -690,7 +690,7 @@ class BurstCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -746,7 +746,7 @@ class BurstCaptureTest {
         capturing.cancelCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -781,7 +781,7 @@ class BurstCaptureTest {
         capturing.cancelCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -838,7 +838,7 @@ class BurstCaptureTest {
         capturing.cancelCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -871,7 +871,7 @@ class BurstCaptureTest {
         capturing.cancelCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }

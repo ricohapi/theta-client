@@ -136,6 +136,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         timeout?.let { ApiClient.timeout = it } ?: run { ApiClient.timeout = Timeout() }
         config?.clientMode?.let { ApiClient.digestAuth = it } ?: run { ApiClient.digestAuth = null }
         initConfig = config
+        ThetaApi.initOptions()
     }
 
     /**

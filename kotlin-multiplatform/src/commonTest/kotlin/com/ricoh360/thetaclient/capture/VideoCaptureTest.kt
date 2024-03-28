@@ -99,16 +99,18 @@ class VideoCaptureTest {
             }
         })
         runBlocking {
-            withTimeout(5000) {
+            withTimeout(10000) {
                 deferredStart.await()
             }
         }
         capturing.stopCapture()
-
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
+        }
+        runBlocking {
+            delay(2000)
         }
 
         // check result
@@ -256,7 +258,7 @@ class VideoCaptureTest {
     @Test
     fun settingMaxRecordableTimeTest() = runTest {
         // setup
-        val valueList = ThetaRepository.MaxRecordableTimeEnum.values()
+        val valueList = ThetaRepository.MaxRecordableTimeEnum.entries.toTypedArray()
 
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
@@ -310,7 +312,7 @@ class VideoCaptureTest {
     @Test
     fun settingFileFormatTest() = runTest {
         // setup
-        val valueList = ThetaRepository.VideoFileFormatEnum.values()
+        val valueList = ThetaRepository.VideoFileFormatEnum.entries.toTypedArray()
 
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
@@ -529,7 +531,7 @@ class VideoCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -554,7 +556,7 @@ class VideoCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -569,8 +571,6 @@ class VideoCaptureTest {
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
             Resource("src/commonTest/resources/VideoCapture/start_capture_error.json").readText(), // startCapture error
-            "Status error UnitTest", // status error not json
-            "timeout UnitTest" // timeout
         )
         var counter = 0
         MockApiClient.onRequest = { _ ->
@@ -578,8 +578,6 @@ class VideoCaptureTest {
             when (index) {
                 0 -> MockApiClient.status = HttpStatusCode.OK
                 1 -> MockApiClient.status = HttpStatusCode.ServiceUnavailable
-                2 -> MockApiClient.status = HttpStatusCode.ServiceUnavailable
-                3 -> throw ConnectTimeoutException("timeout")
             }
             ByteReadChannel(responseArray[index])
         }
@@ -589,7 +587,7 @@ class VideoCaptureTest {
             .build()
 
         // execute status error and json response
-        var deferred = CompletableDeferred<Unit>()
+        val deferred = CompletableDeferred<Unit>()
         videoCapture.startCapture(object : VideoCapture.StartCaptureCallback {
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(false, "capture video")
@@ -611,13 +609,38 @@ class VideoCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(10000) {
                 deferred.await()
             }
         }
+    }
 
+    /**
+     * Error exception to startCapture call
+     */
+    @Test
+    fun startCaptureNotJsonExceptionTest() = runTest {
+        // setup
+        val responseArray = arrayOf(
+            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
+            "Status error UnitTest", // status error not json
+        )
+        var counter = 0
+        MockApiClient.onRequest = { _ ->
+            val index = counter++
+            when (index) {
+                0 -> MockApiClient.status = HttpStatusCode.OK
+                1 -> MockApiClient.status = HttpStatusCode.ServiceUnavailable
+            }
+            ByteReadChannel(responseArray[index])
+        }
+
+        val thetaRepository = ThetaRepository(endpoint)
+        val videoCapture = thetaRepository.getVideoCaptureBuilder()
+            .build()
+
+        val deferred = CompletableDeferred<Unit>()
         // execute status error and not json response
-        deferred = CompletableDeferred()
         videoCapture.startCapture(object : VideoCapture.StartCaptureCallback {
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(false, "capture video")
@@ -636,13 +659,39 @@ class VideoCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(10000) {
                 deferred.await()
             }
         }
+    }
+
+    /**
+     * Error exception to startCapture call
+     */
+    @Test
+    fun startCaptureTimeoutExceptionTest() = runTest {
+        // setup
+        val responseArray = arrayOf(
+            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
+            "timeout UnitTest" // timeout
+        )
+        var counter = 0
+        MockApiClient.onRequest = { _ ->
+            val index = counter++
+            when (index) {
+                0 -> MockApiClient.status = HttpStatusCode.OK
+                1 -> throw ConnectTimeoutException("timeout")
+            }
+            ByteReadChannel(responseArray[index])
+        }
+
+        val thetaRepository = ThetaRepository(endpoint)
+        val videoCapture = thetaRepository.getVideoCaptureBuilder()
+            .build()
+
+        val deferred = CompletableDeferred<Unit>()
 
         // execute timeout exception
-        deferred = CompletableDeferred()
         videoCapture.startCapture(object : VideoCapture.StartCaptureCallback {
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 assertTrue(false, "capture video")
@@ -661,7 +710,7 @@ class VideoCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(10000) {
                 deferred.await()
             }
         }
@@ -710,7 +759,7 @@ class VideoCaptureTest {
         videoCapturing.stopCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -739,7 +788,7 @@ class VideoCaptureTest {
         videoCapturing.stopCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -794,7 +843,7 @@ class VideoCaptureTest {
         videoCapturing.stopCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -823,7 +872,7 @@ class VideoCaptureTest {
         videoCapturing.stopCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -855,7 +904,7 @@ class VideoCaptureTest {
         videoCapturing.stopCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }

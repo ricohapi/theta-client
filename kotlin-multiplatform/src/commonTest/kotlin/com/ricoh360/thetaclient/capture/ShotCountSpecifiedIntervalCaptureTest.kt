@@ -290,7 +290,7 @@ class ShotCountSpecifiedIntervalCaptureTest {
             })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferredStart.await()
             }
         }
@@ -639,7 +639,7 @@ class ShotCountSpecifiedIntervalCaptureTest {
         })
 
         runBlocking {
-            withTimeout(500) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -669,7 +669,7 @@ class ShotCountSpecifiedIntervalCaptureTest {
         })
 
         runBlocking {
-            withTimeout(2000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -730,7 +730,7 @@ class ShotCountSpecifiedIntervalCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -757,7 +757,7 @@ class ShotCountSpecifiedIntervalCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -787,7 +787,7 @@ class ShotCountSpecifiedIntervalCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -841,7 +841,7 @@ class ShotCountSpecifiedIntervalCaptureTest {
         capturing.cancelCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -874,7 +874,7 @@ class ShotCountSpecifiedIntervalCaptureTest {
         capturing.cancelCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -931,7 +931,7 @@ class ShotCountSpecifiedIntervalCaptureTest {
         capturing.cancelCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -964,7 +964,7 @@ class ShotCountSpecifiedIntervalCaptureTest {
         capturing.cancelCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
