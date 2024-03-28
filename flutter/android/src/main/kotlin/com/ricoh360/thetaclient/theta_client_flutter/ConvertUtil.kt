@@ -11,6 +11,9 @@ const val KEY_NOTIFY_PARAMS = "params"
 const val KEY_NOTIFY_PARAM_COMPLETION = "completion"
 const val KEY_NOTIFY_PARAM_IMAGE = "image"
 const val KEY_NOTIFY_PARAM_MESSAGE = "message"
+const val KEY_GPS_INFO = "gpsInfo"
+const val KEY_STATE_EXTERNAL_GPS_INFO = "externalGpsInfo"
+const val KEY_STATE_INTERNAL_GPS_INFO = "internalGpsInfo"
 
 fun toResult(thetaInfo: ThetaInfo): Map<String, Any?> {
     return mapOf(
@@ -45,7 +48,7 @@ fun toCameraErrorList(cameraErrorList: List<CameraErrorEnum>?): List<String>? {
 }
 
 fun toResult(thetaState: ThetaState): Map<String, Any?> {
-    return mapOf(
+    val result = mutableMapOf(
         "fingerprint" to thetaState.fingerprint,
         "batteryLevel" to thetaState.batteryLevel,
         "storageUri" to thetaState.storageUri,
@@ -67,6 +70,13 @@ fun toResult(thetaState: ThetaState): Map<String, Any?> {
         "cameraError" to toCameraErrorList(thetaState.cameraError),
         "isBatteryInsert" to thetaState.isBatteryInsert,
     )
+    thetaState.externalGpsInfo?.let {
+        result.put(KEY_STATE_EXTERNAL_GPS_INFO, toResult(it))
+    }
+    thetaState.internalGpsInfo?.let {
+        result.put(KEY_STATE_INTERNAL_GPS_INFO, toResult(it))
+    }
+    return result
 }
 
 fun toResult(fileInfoList: List<FileInfo>): List<Map<String, Any>> {
@@ -420,6 +430,12 @@ fun toResult(gpsInfo: GpsInfo): Map<String, Any> {
         "altitude" to gpsInfo.altitude,
         "dateTimeZone" to gpsInfo.dateTimeZone
     )
+}
+
+fun toResult(stateGpsInfo: StateGpsInfo): Map<String, Any> {
+    return stateGpsInfo.gpsInfo?.let {
+        mapOf(KEY_GPS_INFO to toResult(it))
+    } ?: mapOf()
 }
 
 fun toResult(proxy: Proxy): Map<String, Any?> {

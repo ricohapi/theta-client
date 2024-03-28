@@ -185,6 +185,41 @@ internal data class CameraState(
      * RICOH THETA X or later
      */
     val _batteryInsert: Boolean? = null,
+
+    /**
+     * Location data is obtained through an external device using WebAPI or BLE-API.
+     * Please refer to the object specification for [GpsInfo] as well.
+     *
+     * RICOH THETA X firmware v2.20.1 or later
+     * RICOH THETA Z1 firmware v3.10.2 or later
+     */
+    val _externalGpsInfo: StateGpsInfo? = null,
+
+    /**
+     * Location data is obtained through an internal GPS module.
+     * Please refer to the object specification for [GpsInfo] as well.
+     * RICOH THETA Z1 does not have a built-in GPS module.
+     *
+     * RICOH THETA X firmware v2.20.1 or later
+     * RICOH THETA Z1 firmware v3.10.2 or later
+     */
+    val _internalGpsInfo: StateGpsInfo? = null,
+
+    /**
+     * This represents the current temperature inside the camera as an integer value, ranging from -10°C to 100°C with a precision of 1°C.
+     *
+     * RICOH THETA X firmware v2.20.1 or later
+     * RICOH THETA Z1 firmware v3.10.2 or later
+     */
+    val _boardTemp: Int? = null,
+
+    /**
+     * This represents the current temperature inside the battery as an integer value, ranging from -10°C to 100°C with a precision of 1°C.
+     *
+     * RICOH THETA X firmware v2.20.1 or later
+     * RICOH THETA Z1 firmware v3.10.2 or later
+     */
+    val _batteryTemp: Int? = null,
 )
 
 /**
@@ -523,3 +558,14 @@ internal enum class CameraError {
     // 0x00200000: Battery temperature error
     // BATTERY_HIGH_TEMPERATURE("BATTERY_HIGH_TEMPERATURE"),
 }
+
+/**
+ * GPS information of state
+ */
+@Serializable
+internal data class StateGpsInfo (
+    /**
+     * GPS information
+     */
+    val gpsInfo: GpsInfo? = null
+)

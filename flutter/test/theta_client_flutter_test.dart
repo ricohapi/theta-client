@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:theta_client_flutter/state/state_gps_info.dart';
+import 'package:theta_client_flutter/state/theta_state.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 import 'package:theta_client_flutter/theta_client_flutter_method_channel.dart';
 import 'package:theta_client_flutter/theta_client_flutter_platform_interface.dart';
@@ -610,6 +612,11 @@ void main() {
       CameraErrorEnum.batteryHighTemperature
     ];
     const isBatteryInsert = false;
+    var externalGpsInfo =
+        StateGpsInfo(GpsInfo(1.0, 2.0, 3.0, '2022:01:01 00:01:00+09:00'));
+    var internalGpsInfo = StateGpsInfo(null);
+    const boardTemp = 40;
+    const batteryTemp = 50;
     onGetThetaState = () {
       return Future.value(ThetaState(
           fingerprint,
@@ -631,7 +638,11 @@ void main() {
           currentMicrophone,
           isSdCard,
           cameraError,
-          isBatteryInsert));
+          isBatteryInsert,
+          externalGpsInfo,
+          internalGpsInfo,
+          boardTemp,
+          batteryTemp));
     };
 
     var thetaState = await thetaClientPlugin.getThetaState();
@@ -657,6 +668,10 @@ void main() {
     expect(thetaState.isSdCard, isSdCard);
     expect(thetaState.cameraError, cameraError);
     expect(thetaState.isBatteryInsert, isBatteryInsert);
+    expect(thetaState.externalGpsInfo, externalGpsInfo);
+    expect(thetaState.internalGpsInfo?.gpsInfo, null);
+    expect(thetaState.boardTemp, 40);
+    expect(thetaState.batteryTemp, 50);
   });
 
   test('getOptions', () async {

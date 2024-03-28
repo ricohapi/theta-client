@@ -3706,6 +3706,20 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * GPS information of state
+     */
+    data class StateGpsInfo (
+        /**
+         * GPS information
+         */
+        val gpsInfo: GpsInfo? = null
+    ) {
+        internal constructor(stateGpsInfo: com.ricoh360.thetaclient.transferred.StateGpsInfo) : this(
+            gpsInfo = stateGpsInfo.gpsInfo?.let { GpsInfo(it) }
+        )
+    }
+
+    /**
      * Turns position information assigning ON/OFF.
      *
      * For RICOH THETA X
@@ -5980,6 +5994,10 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @property isSdCard True if record to SD card
      * @property cameraError Error information of the camera
      * @property isBatteryInsert true: Battery inserted; false: Battery not inserted
+     * @property externalGpsInfo Location data is obtained through an external device using WebAPI or BLE-API.
+     * @property internalGpsInfo Location data is obtained through an internal GPS module. RICOH THETA Z1 does not have a built-in GPS module.
+     * @property boardTemp This represents the current temperature inside the camera as an integer value, ranging from -10°C to 100°C with a precision of 1°C.
+     * @property batteryTemp This represents the current temperature inside the battery as an integer value, ranging from -10°C to 100°C with a precision of 1°C.
      */
     data class ThetaState(
         val fingerprint: String,
@@ -6001,7 +6019,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         val currentMicrophone: MicrophoneOptionEnum?,
         val isSdCard: Boolean,
         val cameraError: List<CameraErrorEnum>?,
-        val isBatteryInsert: Boolean?
+        val isBatteryInsert: Boolean?,
+        val externalGpsInfo: StateGpsInfo?,
+        val internalGpsInfo: StateGpsInfo?,
+        val boardTemp: Int?,
+        val batteryTemp: Int?,
     ) {
         internal constructor(response: StateApiResponse) : this(
             response.fingerprint,
@@ -6023,7 +6045,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             response.state._currentMicrophone?.let { MicrophoneOptionEnum.get(response.state._currentMicrophone) },
             response.state._currentStorage == StorageOption.SD,
             response.state._cameraError?.map { it -> CameraErrorEnum.get(it) },
-            response.state._batteryInsert
+            response.state._batteryInsert,
+            response.state._externalGpsInfo?.let { StateGpsInfo(it) },
+            response.state._internalGpsInfo?.let { StateGpsInfo(it) },
+            response.state._boardTemp,
+            response.state._batteryTemp,
         )
     }
 

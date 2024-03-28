@@ -14,6 +14,11 @@ const val KEY_NOTIFY_NAME = "name"
 const val KEY_NOTIFY_PARAMS = "params"
 const val KEY_NOTIFY_PARAM_COMPLETION = "completion"
 const val KEY_NOTIFY_PARAM_MESSAGE = "message"
+const val KEY_GPS_INFO = "gpsInfo"
+const val KEY_STATE_EXTERNAL_GPS_INFO = "externalGpsInfo"
+const val KEY_STATE_INTERNAL_GPS_INFO = "internalGpsInfo"
+const val KEY_STATE_BOARD_TEMP = "boardTemp"
+const val KEY_STATE_BATTERY_TEMP = "batteryTemp"
 
 val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "aiAutoThumbnail" to OptionNameEnum.AiAutoThumbnail,
@@ -486,6 +491,14 @@ fun toResult(gpsInfo: GpsInfo): WritableMap {
   result.putDouble("longitude", gpsInfo.longitude.toDouble())
   result.putDouble("altitude", gpsInfo.altitude.toDouble())
   result.putString("dateTimeZone", gpsInfo.dateTimeZone)
+  return result
+}
+
+fun toResult(stateGpsInfo: StateGpsInfo): WritableMap {
+  val result = Arguments.createMap()
+  stateGpsInfo.gpsInfo?.let {
+    result.putMap(KEY_GPS_INFO, toResult(it))
+  }
   return result
 }
 
