@@ -26,8 +26,8 @@ import io.ktor.utils.io.core.toByteArray
 import io.ktor.utils.io.discard
 import io.ktor.utils.io.writeFully
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.withTimeout
-import kotlin.coroutines.coroutineContext
 
 /**
  * http client interface for preview only
@@ -192,7 +192,7 @@ internal class PreviewClientImpl : PreviewClient {
         selector = SelectorManager(Dispatchers.Default)
         val builder = aSocket(selector!!).tcpNoDelay().tcp()
         val self = this
-        val context = coroutineContext
+        val context = currentCoroutineContext()
         withTimeout(connectionTimeout) {
             val socket = builder.connect(
                 InetSocketAddress(url.host, url.port),

@@ -1,4 +1,4 @@
-﻿# THETA Client Tutorial for React Native
+# THETA Client Tutorial for React Native
 
 ## Advance preparation
 
@@ -114,6 +114,23 @@ photoCapture.takePicture()
   .catch(error => {
     // catch error while take picture
   });
+```
+
+#### Set the bitrate value for still image capture (THETA X)
+
+The bitrate value for still image capture can be set in THETA X(see [api-spec](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options/_bitrate.md)).
+To set this value with THETA Client, follow the steps below.
+
+1. Create a `PhotoCapture` object
+1. Call `setOptions()` to set the `bitrate` value
+1. Call `takePicture()`
+
+The reason this step is necessary is that the `bitrate` value on the camera is reset when the `captureMode` value is set to `image` in `PhotoCaptureBuilder.build()`.
+
+```typescript
+const photoCapture = await getPhotoCaptureBuilder().build();
+await setOptions({ bitrate: 1048576 });
+const url = await photoCapture.takePicture();
 ```
 
 ## Shoot a video

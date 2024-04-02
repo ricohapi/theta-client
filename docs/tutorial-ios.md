@@ -1,4 +1,4 @@
-﻿# THETA CLient Tutorial for iOS
+# THETA CLient Tutorial for iOS
 
 ## Available models
 
@@ -303,6 +303,42 @@ GpsInfo shall be prepared as follows:
 | bulbFluorescent      | Fluorescent light 4 (light bulb color)                 |                                                                                    |
 | colorTemperature     | CT settings (specified by the colorTemperature option) | RICOH THETA S firmware v01.82 or later and RICOH THETA SC firmware v01.10 or later |
 | underwater           | Underwater                                             | RICOH THETA V firmware v3.21.1 or later                                            |
+
+#### Set the bitrate value for still image capture (THETA X)
+
+The bitrate value for still image capture can be set in THETA X(see [api-spec](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options/_bitrate.md)).
+To set this value with THETA Client, follow the steps below.
+
+1. Create a `PhotoCapture` object
+1. Call `setOptions()` to set the `_bitrate` value
+1. Call `takePicture()`
+
+The reason this step is necessary is that the `bitrate` value on the camera is reset when the `captureMode` value is set to `image` in `PhotoCapture.Builder.build()`.
+
+```swift
+let photoCapture: PhotoCapture = try await withCheckedThrowingContinuation { continuation in
+    thetaRepository!.getPhotoCaptureBuilder().build { capture, error in
+        ...
+    }
+}
+try await withCheckedThrowingContinuation { continuation in
+    let options = ThetaRepository.Options()
+    options.bitrate = ThetaRepository.BitrateNumber(value: 1048576)
+    thetaRepository!.setOptions(options: options) { error in
+        ...
+    }
+}
+class Callback: PhotoCaptureTakePictureCallback {
+    ...
+}
+let photoUrl: String? = try await withCheckedThrowingContinuation { continuation in
+    photoCapture.takePicture(
+        callback: Callback { fileUrl, error in
+            ...
+        }
+    )
+}
+```
 
 ## Shoot a video
 

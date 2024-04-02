@@ -1,4 +1,4 @@
-﻿# THETA client tutorial for Android
+# THETA client tutorial for Android
 
 ## Advance preparation
 
@@ -97,6 +97,27 @@ See [Display a preview](#preview) for instructions on how to view preview.
   - OFF
 - ISO upper limit (THETA V firmware v2.50.1 or earlier, ignored even if specified in THETA S or THETA SC)
   - 200, 250, 320, 400, 500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200
+
+#### Set the bitrate value for still image capture (THETA X)
+
+The bitrate value for still image capture can be set in THETA X(see [api-spec](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options/_bitrate.md)).
+To set this value with THETA Client, follow the steps below.
+
+1. Create a `PhotoCapture` object
+1. Call `setOptions()` to set the `bitrate` value
+1. Call `takePicture()`
+
+The reason this step is necessary is that the `bitrate` value on the camera is reset when the `captureMode` value is set to `image` in `PhotoCapture.Builder.build()`.
+
+```kotlin
+val photoCapture = thetaRepository.getPhotoCaptureBuilder().build()
+
+val options = ThetaRepository.Options()
+options.bitrate = ThetaRepository.BitrateNumber(1048576)
+thetaRepository.setOptions(options)
+
+photoCapture.takePicture(TakenCallback())
+```
 
 ## Shoot a video
 

@@ -109,6 +109,28 @@ thetaRepository.getPhotoCaptureBuilder()
 - ISO 上限 (THETA V ファームウェア v2.50.1 以前、THETA S、THETA SC では指定しても無視される)
   - 200, 250, 320, 400, 500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200
 
+#### 静止画撮影でビットレートの数値を設定する場合(THETA X)
+
+THETA X では静止画撮影のビットレートの数値を設定することができます([api-spec](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options/_bitrate.md)参照)。
+THETA Client でこの値を設定する際は、以下の手順が必要です：
+
+1. `PhotoCapture`オブジェクトを生成
+1. `setOptions()`で`bitrate`を設定
+1. `takePicture()`で撮影
+
+この手順が必要な理由は、`PhotoCapture.Builder.build()`内で`captureMode`の値が`image`にセットされる際に、
+カメラ側の`bitrate`の値がリセットされるためです。
+
+```kotlin
+val photoCapture = thetaRepository.getPhotoCaptureBuilder().build()
+
+val options = ThetaRepository.Options()
+options.bitrate = ThetaRepository.BitrateNumber(1048576)
+thetaRepository.setOptions(options)
+
+photoCapture.takePicture(TakenCallback())
+```
+
 ## 動画を撮影する
 
 まず`VideoCapture.Builder`を使って撮影設定を行い、`VideoCapture`オブジェクトを生成します。
