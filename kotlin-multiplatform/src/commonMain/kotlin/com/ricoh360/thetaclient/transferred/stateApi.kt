@@ -563,7 +563,7 @@ internal enum class CameraError {
  * GPS information of state
  */
 @Serializable
-internal data class StateGpsInfo (
+internal data class StateGpsInfo(
     /**
      * GPS information
      */

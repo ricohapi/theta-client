@@ -622,7 +622,7 @@ internal object ThetaApi {
         params: SetOptionsParams,
     ): SetOptionsResponse {
         val request = SetOptionsRequest(parameters = params)
-        val response: SetOptionsResponse =  postCommandApi(endpoint, request).body()
+        val response: SetOptionsResponse = postCommandApi(endpoint, request).body()
         if (response.state == CommandState.DONE) {
             updateConsumingOptions(params.options)
         }
@@ -875,7 +875,7 @@ internal object ThetaApi {
     /**
      * Post request {body} to {endpoint} APIs then return its response
      */
-    private suspend inline fun <reified T: CommandApiRequest>postCommandApi(
+    private suspend inline fun <reified T : CommandApiRequest> postCommandApi(
         endpoint: String,
         body: T,
     ): HttpResponse {

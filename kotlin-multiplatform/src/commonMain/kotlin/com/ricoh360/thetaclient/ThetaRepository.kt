@@ -3708,7 +3708,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * GPS information of state
      */
-    data class StateGpsInfo (
+    data class StateGpsInfo(
         /**
          * GPS information
          */

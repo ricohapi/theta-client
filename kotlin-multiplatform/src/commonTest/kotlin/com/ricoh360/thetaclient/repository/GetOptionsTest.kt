@@ -15,7 +15,6 @@ import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -287,14 +286,16 @@ class GetOptionsTest {
         try {
             thetaRepository.getOptions(listOf(ThetaRepository.OptionNameEnum.Filter))
             assertTrue(false, "response is normal.")
-        } catch (_: ThetaRepository.ThetaWebApiException) { }
+        } catch (_: ThetaRepository.ThetaWebApiException) {
+        }
         assertNull(ThetaApi.currentOptions._filter, "_filter")
         assertEquals(ThetaApi.lastSetTimeConsumingOptionTime, 0, "_filter")
 
         try {
             thetaRepository.getOptions(listOf(ThetaRepository.OptionNameEnum.CaptureMode))
             assertTrue(false, "response is normal.")
-        } catch (_: ThetaRepository.ThetaWebApiException) { }
+        } catch (_: ThetaRepository.ThetaWebApiException) {
+        }
         assertNull(ThetaApi.currentOptions.captureMode, "captureMode")
         assertEquals(ThetaApi.lastSetTimeConsumingOptionTime, 0, "captureMode")
     }

@@ -208,6 +208,7 @@ internal abstract class EnumIgnoreUnknownSerializer<T : Enum<T>>(
                 println("Web API unknown value. ${defaultValue::class.simpleName}: $decodeString")
                 defaultValue
             }
+
             else -> value
         }
     }

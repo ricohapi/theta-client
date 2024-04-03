@@ -151,7 +151,7 @@ func convertResult(thetaState: ThetaRepository.ThetaState) -> [String: Any?] {
         "isBatteryInsert": convertKotlinBooleanToBool(value: thetaState.isBatteryInsert),
         KEY_STATE_BOARD_TEMP: thetaState.boardTemp,
         KEY_STATE_BATTERY_TEMP: thetaState.batteryTemp,
-    ] as [String : Any?]
+    ] as [String: Any?]
 
     if let externalGpsInfo = thetaState.externalGpsInfo {
         result[KEY_STATE_EXTERNAL_GPS_INFO] = convertResult(stateGpsInfo: externalGpsInfo)

@@ -26,7 +26,6 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlin.test.AfterTest
@@ -413,7 +412,8 @@ class SetOptionsTest {
         try {
             thetaRepository.setOptions(ThetaRepository.Options(filter = ThetaRepository.FilterEnum.HDR))
             assertTrue(false, "response is normal.")
-        } catch (_: ThetaRepository.ThetaWebApiException) { }
+        } catch (_: ThetaRepository.ThetaWebApiException) {
+        }
         assertEquals(ThetaApi.lastSetTimeConsumingOptionTime, 0, "no change")
 
         thetaRepository = ThetaRepository(endpoint)
@@ -421,7 +421,8 @@ class SetOptionsTest {
             thetaRepository.setOptions(ThetaRepository.Options(captureMode = ThetaRepository.CaptureModeEnum.IMAGE))
             assertEquals(ThetaApi.lastSetTimeConsumingOptionTime, 0, "same option")
             assertTrue(false, "response is normal.")
-        } catch (_: ThetaRepository.ThetaWebApiException) { }
+        } catch (_: ThetaRepository.ThetaWebApiException) {
+        }
         assertEquals(ThetaApi.lastSetTimeConsumingOptionTime, 0, "no change")
     }
 }

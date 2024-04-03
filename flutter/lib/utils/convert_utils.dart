@@ -1,8 +1,8 @@
 import 'package:theta_client_flutter/digest_auth.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
-import '../state/theta_state.dart';
 import '../state/state_gps_info.dart';
+import '../state/theta_state.dart';
 
 class ConvertUtils {
   static List<BracketSetting>? convertAutoBracketOption(List<dynamic>? data) {
