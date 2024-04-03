@@ -188,7 +188,6 @@ internal class PreviewClientImpl : PreviewClient {
      * connect to [endpoint]
      */
     private suspend fun connect(url: URL): PreviewClientImpl {
-        reset()
         selector = SelectorManager(Dispatchers.Default)
         val builder = aSocket(selector!!).tcpNoDelay().tcp()
         val self = this
@@ -459,6 +458,7 @@ internal class PreviewClientImpl : PreviewClient {
         contentType: String,
         digest: String? = null,
     ): PreviewClient {
+        close()  // To prevent resource leaks
         val url = URL(endpoint)
         connect(url)
         write("$method $path HTTP/1.1\r\n")

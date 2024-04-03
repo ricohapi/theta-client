@@ -19,6 +19,7 @@ internal object ApiClient {
     var timeout = ThetaRepository.Timeout()
         set(value) {
             field = value
+            httpClient?.close()
             httpClient = null
         }
 

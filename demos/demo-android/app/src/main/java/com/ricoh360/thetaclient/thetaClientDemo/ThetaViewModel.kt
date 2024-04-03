@@ -12,6 +12,7 @@ import io.ktor.utils.io.streams.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import timber.log.Timber
 
 /**
@@ -31,7 +32,7 @@ class ThetaViewModel(
     val thetaFilesState: StateFlow<ThetaRepository.ThetaFiles?> = _thetaFilesState
 
     private val _previewFlow = MutableStateFlow<Bitmap?>(null)
-    val previewFlow: StateFlow<Bitmap?> = _previewFlow
+    val previewFlow: StateFlow<Bitmap?> = _previewFlow.asStateFlow()
     private var previewJob: Job? = null
 
     init {
@@ -70,11 +71,24 @@ class ThetaViewModel(
         }
         previewJob = viewModelScope.launch(ioDispatcher) {
             kotlin.runCatching {
+                var beforeBitmap: Bitmap? = null
                 thetaRepository.getLivePreview()
                     .collect { byteReadPacket ->
                         ensureActive()
                         byteReadPacket.inputStream().use {
-                            _previewFlow.emit(BitmapFactory.decodeStream(it))
+                            val options = BitmapFactory.Options()
+                            options.inMutable = true
+                            val bitmap = BitmapFactory.decodeStream(it, null, options)
+                            _previewFlow.emit(bitmap)
+                            // Explicitly release the bitmap since it may not be released by the cpu load.
+                            viewModelScope.launch(Dispatchers.Main) {
+                                beforeBitmap?.let {
+                                    if (!it.isRecycled) {
+                                        it.recycle()
+                                    }
+                                }
+                                beforeBitmap = bitmap
+                            }
                         }
                         byteReadPacket.release()
                     }
