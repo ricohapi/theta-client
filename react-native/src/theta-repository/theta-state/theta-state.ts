@@ -1,5 +1,6 @@
 import type { ShootingFunctionEnum } from '../options/option-function';
 import type { CameraErrorEnum } from './camera-error';
+import type { StateGpsInfo } from './state-gps-info';
 
 /** Battery charging state constants */
 export const ChargingStateEnum = {
@@ -95,4 +96,12 @@ export type ThetaState = {
   cameraError: Array<CameraErrorEnum> | null;
   /** true: Battery inserted; false: Battery not inserted */
   isBatteryInsert: boolean | null;
+  /** Location data is obtained through an external device using WebAPI or BLE-API. */
+  externalGpsInfo: StateGpsInfo | null;
+  /** Location data is obtained through an internal GPS module. RICOH THETA Z1 does not have a built-in GPS module. */
+  internalGpsInfo: StateGpsInfo | null;
+  /** This represents the current temperature inside the camera as an integer value, ranging from -10°C to 100°C with a precision of 1°C. */
+  boardTemp: number | null;
+  /** This represents the current temperature inside the battery as an integer value, ranging from -10°C to 100°C with a precision of 1°C. */
+  batteryTemp: number | null;
 };

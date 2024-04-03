@@ -251,6 +251,18 @@ class ThetaClientReactNativeModule(
         state.isBatteryInsert?.also {
           result.putString("isBatteryInsert", state.isBatteryInsert.toString())
         } ?: result.putNull("isBatteryInsert")
+        state.externalGpsInfo?.also {
+          result.putMap(KEY_STATE_EXTERNAL_GPS_INFO, toResult(it))
+        } ?: result.putNull(KEY_STATE_EXTERNAL_GPS_INFO)
+        state.internalGpsInfo?.also {
+          result.putMap(KEY_STATE_INTERNAL_GPS_INFO, toResult(it))
+        } ?: result.putNull(KEY_STATE_INTERNAL_GPS_INFO)
+        state.boardTemp?.also {
+          result.putInt(KEY_STATE_BOARD_TEMP, it)
+        } ?: result.putNull(KEY_STATE_BOARD_TEMP)
+        state.batteryTemp?.also {
+          result.putInt(KEY_STATE_BATTERY_TEMP, it)
+        } ?: result.putNull(KEY_STATE_BATTERY_TEMP)
         promise.resolve(result)
       } catch (t: Throwable) {
         promise.reject(t)

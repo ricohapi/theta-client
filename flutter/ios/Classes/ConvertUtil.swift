@@ -8,6 +8,11 @@ let KEY_NOTIFY_PARAMS = "params"
 let KEY_NOTIFY_PARAM_COMPLETION = "completion"
 let KEY_NOTIFY_PARAM_IMAGE = "image"
 let KEY_NOTIFY_PARAM_MESSAGE = "message"
+let KEY_GPS_INFO = "gpsInfo"
+let KEY_STATE_EXTERNAL_GPS_INFO = "externalGpsInfo"
+let KEY_STATE_INTERNAL_GPS_INFO = "internalGpsInfo"
+let KEY_STATE_BOARD_TEMP = "boardTemp"
+let KEY_STATE_BATTERY_TEMP = "batteryTemp"
 
 public class ConvertUtil: NSObject {}
 
@@ -123,7 +128,7 @@ func convertResult(cameraErrorList: [ThetaRepository.CameraErrorEnum]?) -> [Stri
 }
 
 func convertResult(thetaState: ThetaRepository.ThetaState) -> [String: Any?] {
-    return [
+    var result = [
         "fingerprint": thetaState.fingerprint,
         "batteryLevel": thetaState.batteryLevel,
         "storageUri": thetaState.storageUri,
@@ -144,7 +149,17 @@ func convertResult(thetaState: ThetaRepository.ThetaState) -> [String: Any?] {
         "isSdCard": convertKotlinBooleanToBool(value: thetaState.isSdCard),
         "cameraError": convertResult(cameraErrorList: thetaState.cameraError),
         "isBatteryInsert": convertKotlinBooleanToBool(value: thetaState.isBatteryInsert),
-    ]
+        KEY_STATE_BOARD_TEMP: thetaState.boardTemp,
+        KEY_STATE_BATTERY_TEMP: thetaState.batteryTemp,
+    ] as [String: Any?]
+
+    if let externalGpsInfo = thetaState.externalGpsInfo {
+        result[KEY_STATE_EXTERNAL_GPS_INFO] = convertResult(stateGpsInfo: externalGpsInfo)
+    }
+    if let internalGpsInfo = thetaState.internalGpsInfo {
+        result[KEY_STATE_INTERNAL_GPS_INFO] = convertResult(stateGpsInfo: internalGpsInfo)
+    }
+    return result
 }
 
 func setCaptureBuilderParams<T>(params: [String: Any], builder: CaptureBuilder<T>) {
@@ -614,6 +629,13 @@ func convertResult(gpsInfo: ThetaRepository.GpsInfo) -> [String: Any] {
         "longitude": gpsInfo.longitude,
         "altitude": gpsInfo.altitude,
         "dateTimeZone": gpsInfo.dateTimeZone,
+    ]
+}
+
+func convertResult(stateGpsInfo: ThetaRepository.StateGpsInfo) -> [String: Any] {
+    guard let gpsInfo = stateGpsInfo.gpsInfo else { return [:] }
+    return [
+        KEY_GPS_INFO: convertResult(gpsInfo: gpsInfo),
     ]
 }
 

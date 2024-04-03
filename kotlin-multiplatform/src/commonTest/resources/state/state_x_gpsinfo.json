@@ -1,0 +1,45 @@
+{
+  "fingerprint": "FIG_2339",
+  "state": {
+    "_apiVersion": 2,
+    "_batteryInsert": true,
+    "batteryLevel": 0.87,
+    "_batteryState": "charging",
+    "_batteryTemp": 30,
+    "_boardTemp": 28,
+    "_cameraError": [
+
+    ],
+    "_captureStatus": "idle",
+    "_capturedPictures": 0,
+    "_currentMicrophone": "Internal",
+    "_currentStorage": "IN",
+    "_externalGpsInfo": {
+      "gpsInfo": {
+        "_altitude": 47.80000305175781,
+        "_dateTimeZone": "2024:02:02 07:55:51+00:00",
+        "_datum": "WGS84",
+        "lat": 35.4855932,
+        "lng": 134.2400305
+      }
+    },
+    "_function": "normal",
+    "_internalGpsInfo": {
+      "gpsInfo": {
+        "_altitude": 0,
+        "_dateTimeZone": "",
+        "_datum": "",
+        "lat": 65535,
+        "lng": 65535
+      }
+    },
+    "_latestFileUrl": "http://192.168.1.1/files/100RICOH/R0010023.JPG",
+    "_mySettingChanged": false,
+    "_pluginRunning": false,
+    "_pluginWebServer": false,
+    "_recordableTime": 3694,
+    "_recordedTime": 0,
+    "_storageID": "412176649172527ab3d5edabb50a7d69",
+    "storageUri": "http://192.168.1.1/files/"
+  }
+}

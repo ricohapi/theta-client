@@ -1,4 +1,4 @@
-﻿# THETA Client Tutorial for Flutter
+# THETA Client Tutorial for Flutter
 
 ## Create a Flutter Project
 
@@ -150,6 +150,38 @@ Next, we call `PhotoCapture.takePicture()` to shoot still pictures.
     }, (exception) {
       // catch error while take picture
     });
+```
+
+#### Set the bitrate value for still image capture (THETA X)
+
+The bitrate value for still image capture can be set in THETA X(see [api-spec](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options/_bitrate.md)).
+To set this value with THETA Client, follow the steps below.
+
+1. Create a `PhotoCapture` object
+1. Call `setOptions()` to set the `bitrate` value
+1. Call `takePicture()`
+
+The reason this step is necessary is that the `bitrate` value on the camera is reset when the `captureMode` value is set to `image` in `PhotoCaptureBuilder.build()`.
+
+```dart
+_thetaClientFlutter.getPhotoCaptureBuilder()
+  .build()
+  .then((photoCapture) {
+    // success build photoCapture
+  })
+  .onError((error, stackTrace) {
+    // handle error
+  });
+
+final options = Options();
+options.bitrate = BitrateNumber(1048576);
+await _thetaClientFlutter.setOptions(options);
+
+photoCapture.takePicture((fileUrl) {
+  // send HTTP GET request for fileUrl and receive JPEG file
+}, (exception) {
+  // catch error while take picture
+});
 ```
 
 ## Shoot a video

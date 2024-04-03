@@ -1,6 +1,9 @@
 import 'package:theta_client_flutter/digest_auth.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
+import '../state/state_gps_info.dart';
+import '../state/theta_state.dart';
+
 class ConvertUtils {
   static List<BracketSetting>? convertAutoBracketOption(List<dynamic>? data) {
     if (data == null) {
@@ -151,6 +154,12 @@ class ConvertUtils {
   }
 
   static ThetaState convertThetaState(Map<dynamic, dynamic> data) {
+    var externalGpsInfo = data['externalGpsInfo'] != null
+        ? convertStateGpsInfo(data['externalGpsInfo'])
+        : null;
+    var internalGpsInfo = data['internalGpsInfo'] != null
+        ? convertStateGpsInfo(data['internalGpsInfo'])
+        : null;
     var thetaState = ThetaState(
       data['fingerprint'],
       data['batteryLevel'],
@@ -172,6 +181,10 @@ class ConvertUtils {
       data['isSdCard'],
       ConvertUtils.toCameraErrorList(data['cameraError']),
       data['isBatteryInsert'],
+      externalGpsInfo,
+      internalGpsInfo,
+      data['boardTemp'],
+      data['batteryTemp'],
     );
     return thetaState;
   }
@@ -220,6 +233,15 @@ class ConvertUtils {
       data['dateTimeZone'],
     );
     return gpsInfo;
+  }
+
+  static StateGpsInfo convertStateGpsInfo(Map<dynamic, dynamic> data) {
+    var gpsInfo = data['gpsInfo'];
+    if (gpsInfo == null) {
+      return StateGpsInfo(null);
+    } else {
+      return StateGpsInfo(convertGpsInfo(gpsInfo));
+    }
   }
 
   static Map<String, dynamic> convertProxyParam(Proxy proxy) {

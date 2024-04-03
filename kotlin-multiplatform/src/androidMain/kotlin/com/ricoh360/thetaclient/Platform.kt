@@ -29,3 +29,7 @@ actual fun frameFrom(packet: Pair<ByteArray, Int>): FrameSource {
 actual fun randomUUID(): String {
     return UUID.randomUUID().toString()
 }
+
+actual fun currentTimeMillis(): Long {
+    return System.currentTimeMillis()
+}

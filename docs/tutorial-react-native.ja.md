@@ -293,6 +293,24 @@ photoCapture.takePicture()
   | COLOR_TEMPERATURE      | CT settings (specified by the colorTemperature option) | RICOH THETA S firmware v01.82 or later and RICOH THETA SC firmware v01.10 or later |
   | UNDERWATER             | Underwater                                             | RICOH THETA V firmware v3.21.1 or later                                            |
 
+#### 静止画撮影でビットレートの数値を設定する場合(THETA X)
+
+THETA X では静止画撮影のビットレートの数値を設定することができます([api-spec](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options/_bitrate.md)参照)。
+THETA Client でこの値を設定する際は、以下の手順が必要です：
+
+1. `PhotoCapture`オブジェクトを生成
+1. `setOptions()`で`bitrate`を設定
+1. `takePicture()`で撮影
+
+この手順が必要な理由は、`PhotoCaptureBuilder.build()`内で`captureMode`の値が`image`にセットされる際に、
+カメラに設定された`bitrate`の値がリセットされるためです。
+
+```typescript
+const photoCapture = await getPhotoCaptureBuilder().build();
+await setOptions({ bitrate: 1048576 });
+const url = await photoCapture.takePicture();
+```
+
 ## 動画を撮影する
 
 まず`getVideoCaptureBuilder()`を使って撮影設定を行い、`VideoCapture`オブジェクトを生成します。

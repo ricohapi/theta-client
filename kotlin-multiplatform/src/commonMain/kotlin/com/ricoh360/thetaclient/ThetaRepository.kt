@@ -136,6 +136,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         timeout?.let { ApiClient.timeout = it } ?: run { ApiClient.timeout = Timeout() }
         config?.clientMode?.let { ApiClient.digestAuth = it } ?: run { ApiClient.digestAuth = null }
         initConfig = config
+        ThetaApi.initOptions()
     }
 
     /**
@@ -3571,8 +3572,9 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         /**
          * Image processing filter. Handheld HDR.
          *
-         * RICOH THETA Z1 firmware v1.20.1 or later and RICOH THETA V firmware v3.10.1 or later.
-         * RICOH THETA X is not supported
+         * RICOH THETA X firmware v2.40.0 or later,
+         * RICOH THETA Z1 firmware v1.20.1 or later,
+         * and RICOH THETA V firmware v3.10.1 or later.
          */
         HH_HDR(ImageFilter.HH_HDR);
 
@@ -3701,6 +3703,20 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _datum = if (isDisabled()) "" else "WGS84"
             )
         }
+    }
+
+    /**
+     * GPS information of state
+     */
+    data class StateGpsInfo(
+        /**
+         * GPS information
+         */
+        val gpsInfo: GpsInfo? = null
+    ) {
+        internal constructor(stateGpsInfo: com.ricoh360.thetaclient.transferred.StateGpsInfo) : this(
+            gpsInfo = stateGpsInfo.gpsInfo?.let { GpsInfo(it) }
+        )
     }
 
     /**
@@ -5978,6 +5994,10 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @property isSdCard True if record to SD card
      * @property cameraError Error information of the camera
      * @property isBatteryInsert true: Battery inserted; false: Battery not inserted
+     * @property externalGpsInfo Location data is obtained through an external device using WebAPI or BLE-API.
+     * @property internalGpsInfo Location data is obtained through an internal GPS module. RICOH THETA Z1 does not have a built-in GPS module.
+     * @property boardTemp This represents the current temperature inside the camera as an integer value, ranging from -10°C to 100°C with a precision of 1°C.
+     * @property batteryTemp This represents the current temperature inside the battery as an integer value, ranging from -10°C to 100°C with a precision of 1°C.
      */
     data class ThetaState(
         val fingerprint: String,
@@ -5999,7 +6019,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         val currentMicrophone: MicrophoneOptionEnum?,
         val isSdCard: Boolean,
         val cameraError: List<CameraErrorEnum>?,
-        val isBatteryInsert: Boolean?
+        val isBatteryInsert: Boolean?,
+        val externalGpsInfo: StateGpsInfo?,
+        val internalGpsInfo: StateGpsInfo?,
+        val boardTemp: Int?,
+        val batteryTemp: Int?,
     ) {
         internal constructor(response: StateApiResponse) : this(
             response.fingerprint,
@@ -6021,7 +6045,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             response.state._currentMicrophone?.let { MicrophoneOptionEnum.get(response.state._currentMicrophone) },
             response.state._currentStorage == StorageOption.SD,
             response.state._cameraError?.map { it -> CameraErrorEnum.get(it) },
-            response.state._batteryInsert
+            response.state._batteryInsert,
+            response.state._externalGpsInfo?.let { StateGpsInfo(it) },
+            response.state._internalGpsInfo?.let { StateGpsInfo(it) },
+            response.state._boardTemp,
+            response.state._batteryTemp,
         )
     }
 

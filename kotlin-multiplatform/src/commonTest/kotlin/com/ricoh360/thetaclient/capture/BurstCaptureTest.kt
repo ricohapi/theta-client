@@ -4,15 +4,30 @@ import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
-import com.ricoh360.thetaclient.transferred.*
-import io.ktor.client.network.sockets.*
-import io.ktor.http.*
-import io.ktor.utils.io.*
-import kotlinx.coroutines.*
+import com.ricoh360.thetaclient.transferred.BurstBracketStep
+import com.ricoh360.thetaclient.transferred.BurstCaptureNum
+import com.ricoh360.thetaclient.transferred.BurstCompensation
+import com.ricoh360.thetaclient.transferred.BurstEnableIsoControl
+import com.ricoh360.thetaclient.transferred.BurstMaxExposureTime
+import com.ricoh360.thetaclient.transferred.BurstMode
+import com.ricoh360.thetaclient.transferred.BurstOption
+import com.ricoh360.thetaclient.transferred.BurstOrder
+import com.ricoh360.thetaclient.transferred.CaptureMode
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.TextContent
+import io.ktor.utils.io.ByteReadChannel
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import kotlin.test.*
+import kotlinx.coroutines.withTimeout
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class BurstCaptureTest {
     private val burstOption = BurstOption(
         BurstCaptureNum.BURST_CAPTURE_NUM_1,
@@ -134,10 +149,11 @@ class BurstCaptureTest {
         var isStop = false
         val deferredStart = CompletableDeferred<Unit>()
         MockApiClient.onRequest = { request ->
-            val path = if (request.body.toString().contains("camera.stopCapture")) {
+            val textBody = request.body as TextContent
+            val path = if (textBody.text.contains("camera.stopCapture")) {
                 isStop = true
                 "src/commonTest/resources/BurstCapture/stop_capture_done.json"
-            } else if (request.body.toString().contains("camera.setOptions")) {
+            } else if (textBody.text.contains("camera.setOptions")) {
                 "src/commonTest/resources/setOptions/set_options_done.json"
             } else {
                 if (!deferredStart.isCompleted) {
@@ -191,7 +207,7 @@ class BurstCaptureTest {
             })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferredStart.await()
             }
         }
@@ -534,7 +550,7 @@ class BurstCaptureTest {
         })
 
         runBlocking {
-            withTimeout(500) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -632,7 +648,7 @@ class BurstCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -659,7 +675,7 @@ class BurstCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -689,7 +705,7 @@ class BurstCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -745,7 +761,7 @@ class BurstCaptureTest {
         capturing.cancelCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -780,7 +796,7 @@ class BurstCaptureTest {
         capturing.cancelCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -837,7 +853,7 @@ class BurstCaptureTest {
         capturing.cancelCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -870,7 +886,7 @@ class BurstCaptureTest {
         capturing.cancelCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
+import 'state/theta_state.dart';
 import 'theta_client_flutter_method_channel.dart';
 
 abstract class ThetaClientFlutterPlatform extends PlatformInterface {

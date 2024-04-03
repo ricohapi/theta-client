@@ -15,6 +15,7 @@ import io.ktor.network.sockets.aSocket
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
 import io.ktor.network.sockets.tcpNoDelay
+import io.ktor.network.tls.tls
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.ByteWriteChannel
 import io.ktor.utils.io.cancel
@@ -25,6 +26,7 @@ import io.ktor.utils.io.core.toByteArray
 import io.ktor.utils.io.discard
 import io.ktor.utils.io.writeFully
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.withTimeout
 
 /**
@@ -74,7 +76,7 @@ internal class PreviewClientImpl : PreviewClient {
     /** parse url string */
     class URL(url: String) {
         /** protocol, only http or https */
-        private var protocol: String = "http"
+        var protocol: String = "http"
 
         /** host string */
         var host: String = "localhost"
@@ -89,6 +91,9 @@ internal class PreviewClientImpl : PreviewClient {
             val match = Regex("(http|https)://([^:/]+)(:[0-9]+)?(/.*$)?").find(url)
             match?.groups?.get(1)?.value?.let {
                 protocol = it
+                if (protocol == "https") {
+                    port = 443
+                }
             }
             match?.groups?.get(2)?.value?.let {
                 host = it
@@ -129,9 +134,6 @@ internal class PreviewClientImpl : PreviewClient {
     /** socket connected to endpoint */
     private var socket: ASocket? = null
 
-    /** parsed endpoint */
-    private var endpoint: URL? = null
-
     /** io selector manager */
     private var selector: SelectorManager? = null
 
@@ -171,7 +173,6 @@ internal class PreviewClientImpl : PreviewClient {
         selector = null
         input = null
         output = null
-        endpoint = null
         pos = 0
         curr = 0
         chunked = false
@@ -186,18 +187,25 @@ internal class PreviewClientImpl : PreviewClient {
     /**
      * connect to [endpoint]
      */
-    private suspend fun connect(endpoint: String): PreviewClientImpl {
-        reset()
-        this.endpoint = URL(endpoint)
+    private suspend fun connect(url: URL): PreviewClientImpl {
         selector = SelectorManager(Dispatchers.Default)
         val builder = aSocket(selector!!).tcpNoDelay().tcp()
         val self = this
+        val context = currentCoroutineContext()
         withTimeout(connectionTimeout) {
             val socket = builder.connect(
-                InetSocketAddress(self.endpoint!!.host, self.endpoint!!.port),
+                InetSocketAddress(url.host, url.port),
             ) {
                 socketTimeout = Companion.socketTimeout
                 receiveBufferSize = buffer.size
+            }.let {
+                when (url.protocol) {
+                    "https" -> it.tls(context) {
+                        serverName = url.host
+                    }
+
+                    else -> it
+                }
             }
             input = socket.openReadChannel()
             output = socket.openWriteChannel(autoFlush = true)
@@ -451,9 +459,11 @@ internal class PreviewClientImpl : PreviewClient {
         contentType: String,
         digest: String? = null,
     ): PreviewClient {
-        connect(endpoint)
+        close()  // To prevent resource leaks
+        val url = URL(endpoint)
+        connect(url)
         write("$method $path HTTP/1.1\r\n")
-        write("Host: ${this.endpoint?.host}\r\n")
+        write("Host: ${url.host}\r\n")
         write("Connection: close\r\n")
         val bodies = body.toByteArray()
         if (bodies.isNotEmpty()) {

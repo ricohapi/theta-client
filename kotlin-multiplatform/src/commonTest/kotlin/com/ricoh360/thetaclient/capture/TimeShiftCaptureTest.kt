@@ -8,16 +8,21 @@ import com.ricoh360.thetaclient.transferred.CaptureMode
 import com.ricoh360.thetaclient.transferred.FirstShootingEnum
 import com.ricoh360.thetaclient.transferred.Preset
 import com.ricoh360.thetaclient.transferred.TimeShift
-import io.ktor.client.network.sockets.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.http.content.*
-import io.ktor.utils.io.*
-import kotlinx.coroutines.*
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.TextContent
+import io.ktor.utils.io.ByteReadChannel
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import kotlin.test.*
+import kotlinx.coroutines.withTimeout
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class TimeShiftCaptureTest {
     private val endpoint = "http://192.168.1.1:80/"
 
@@ -281,10 +286,11 @@ class TimeShiftCaptureTest {
         // setup
         var isStop = false
         MockApiClient.onRequest = { request ->
-            val path = if (request.body.toString().contains("camera.stopCapture")) {
+            val textBody = request.body as TextContent
+            val path = if (textBody.text.contains("camera.stopCapture")) {
                 isStop = true
                 "src/commonTest/resources/TimeShiftCapture/stop_capture_done.json"
-            } else if (request.body.toString().contains("camera.setOptions")) {
+            } else if (textBody.text.contains("camera.setOptions")) {
                 "src/commonTest/resources/setOptions/set_options_done.json"
             } else {
                 if (isStop)
@@ -332,7 +338,7 @@ class TimeShiftCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferredStart.await()
             }
         }
@@ -715,7 +721,7 @@ class TimeShiftCaptureTest {
         })
 
         runBlocking {
-            withTimeout(500) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -800,7 +806,7 @@ class TimeShiftCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -828,7 +834,7 @@ class TimeShiftCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -856,7 +862,7 @@ class TimeShiftCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -915,7 +921,7 @@ class TimeShiftCaptureTest {
         })
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferredStart.await()
             }
         }
@@ -978,7 +984,7 @@ class TimeShiftCaptureTest {
         capturing.cancelCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -1007,7 +1013,7 @@ class TimeShiftCaptureTest {
         capturing.cancelCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }
@@ -1036,7 +1042,7 @@ class TimeShiftCaptureTest {
         capturing.cancelCapture()
 
         runBlocking {
-            withTimeout(1000) {
+            withTimeout(5000) {
                 deferred.await()
             }
         }

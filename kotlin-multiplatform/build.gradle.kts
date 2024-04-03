@@ -17,7 +17,7 @@ dependencies {
     dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.10")
 }
 
-val thetaClientVersion = "1.7.1"
+val thetaClientVersion = "1.8.0"
 group = "com.ricoh360.thetaclient"
 version = thetaClientVersion
 
@@ -54,9 +54,9 @@ kotlin {
     iosSimulatorArm64()
 
     sourceSets {
-        val coroutinesVersion = "1.6.4"
-        val ktorVersion = "2.1.2"
-        val kryptoVersion = "3.4.0"
+        val coroutinesVersion = "1.7.3"
+        val ktorVersion = "2.3.9"
+        val kryptoVersion = "4.0.10"
 
         val commonMain by getting {
             dependencies {
@@ -109,6 +109,7 @@ android {
     defaultConfig {
         minSdk = 26
         setProperty("archivesBaseName", "theta-client")
+        consumerProguardFiles("proguard-rules.pro")
     }
 }
 

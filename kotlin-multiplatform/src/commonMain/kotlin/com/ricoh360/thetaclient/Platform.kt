@@ -21,3 +21,5 @@ expect class FrameSource
 expect fun frameFrom(packet: Pair<ByteArray, Int>): FrameSource
 
 internal expect fun randomUUID(): String
+
+internal expect fun currentTimeMillis(): Long

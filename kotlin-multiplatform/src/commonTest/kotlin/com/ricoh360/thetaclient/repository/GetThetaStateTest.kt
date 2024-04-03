@@ -101,6 +101,149 @@ class GetThetaStateTest {
         assertTrue(!thetaState.isSdCard, "state isSdCard")
         assertEquals(thetaState.cameraError!![0], ThetaRepository.CameraErrorEnum.HIGH_TEMPERATURE_WARNING, "state cameraError")
         assertTrue(thetaState.isBatteryInsert!!, "state isBatteryInsert")
+
+        assertNull(thetaState.boardTemp, "state boardTemp")
+        assertNull(thetaState.batteryTemp, "state batteryTemp")
+    }
+
+    /**
+     * call getThetaState with gps for THETA X.
+     */
+    @Test
+    fun getThetaStateGpsForXTest() = runTest {
+        // setup
+        val jsonString = Resource("src/commonTest/resources/state/state_x_gpsinfo.json").readText()
+        MockApiClient.onRequest = { request ->
+            assertEquals(request.url.encodedPath, "/osc/state", "request path")
+            ByteReadChannel(jsonString)
+        }
+
+        // test
+        val thetaRepository = ThetaRepository(endpoint)
+        val thetaState = thetaRepository.getThetaState()
+
+        // check
+        assertTrue(thetaState.fingerprint.isNotEmpty(), "state fingerprint")
+        assertTrue(thetaState.batteryLevel > 0, "state batteryLevel")
+        assertEquals(thetaState.storageUri?.startsWith("http://"), true, "state storageUri")
+        assertEquals(thetaState.storageID?.isNotEmpty(), true, "state storageUri")
+        assertEquals(thetaState.captureStatus, ThetaRepository.CaptureStatusEnum.IDLE, "state captureStatus")
+        assertTrue(thetaState.recordedTime >= 0, "state recordedTime")
+        assertTrue(thetaState.recordableTime >= 0, "state recordableTime")
+        assertTrue(thetaState.capturedPictures!! >= 0, "state capturedPictures")
+        assertNull(thetaState.compositeShootingElapsedTime, "compositeShootingElapsedTime")
+        assertTrue(thetaState.latestFileUrl.startsWith("http://"), "state latestFileUrl")
+        assertEquals(thetaState.chargingState, ThetaRepository.ChargingStateEnum.CHARGING, "state chargingState")
+        assertEquals(thetaState.apiVersion, 2, "state apiVersion")
+        assertEquals(thetaState.isPluginRunning, false, "state isPluginRunning")
+        assertEquals(thetaState.isPluginWebServer, false, "state isPluginWebServer")
+        assertEquals(thetaState.function, ThetaRepository.ShootingFunctionEnum.NORMAL, "state function")
+        assertEquals(thetaState.isMySettingChanged, false, "state isMySettingChanged")
+        assertEquals(thetaState.currentMicrophone, ThetaRepository.MicrophoneOptionEnum.INTERNAL, "state currentMicrophone")
+        assertTrue(!thetaState.isSdCard, "state isSdCard")
+        assertEquals(thetaState.cameraError?.size, 0, "state cameraError")
+        assertEquals(thetaState.isBatteryInsert, true, "state isBatteryInsert")
+
+        assertNotNull(thetaState.externalGpsInfo?.gpsInfo, "state externalGpsInfo")
+        assertNotNull(thetaState.externalGpsInfo?.gpsInfo?.altitude, "state externalGpsInfo.altitude")
+        assertNotNull(thetaState.externalGpsInfo?.gpsInfo?.dateTimeZone, "state externalGpsInfo.dateTimeZone")
+        assertNotNull(thetaState.externalGpsInfo?.gpsInfo?.latitude, "state externalGpsInfo.latitude")
+        assertNotNull(thetaState.externalGpsInfo?.gpsInfo?.longitude, "state externalGpsInfo.longitude")
+
+        assertNotNull(thetaState.internalGpsInfo?.gpsInfo, "state internalGpsInfo")
+        assertEquals(thetaState.internalGpsInfo?.gpsInfo, ThetaRepository.GpsInfo.disabled, "state internalGpsInfo disabled")
+
+        assertEquals(thetaState.boardTemp, 28, "state boardTemp")
+        assertEquals(thetaState.batteryTemp, 30, "state batteryTemp")
+    }
+
+    /**
+     * call getThetaState with gps on for THETA Z1.
+     */
+    @Test
+    fun getThetaStateGpsOnForZ1Test() = runTest {
+        // setup
+        val jsonString = Resource("src/commonTest/resources/state/state_z1_gps_on.json").readText()
+        MockApiClient.onRequest = { request ->
+            assertEquals(request.url.encodedPath, "/osc/state", "request path")
+            ByteReadChannel(jsonString)
+        }
+
+        // test
+        val thetaRepository = ThetaRepository(endpoint)
+        val thetaState = thetaRepository.getThetaState()
+
+        // check
+        assertTrue(thetaState.fingerprint.isNotEmpty(), "state fingerprint")
+        assertTrue(thetaState.batteryLevel > 0, "state batteryLevel")
+        assertEquals(thetaState.storageUri?.startsWith("http://"), true, "state storageUri")
+        assertNull(thetaState.storageID, "state storageUri")
+        assertEquals(thetaState.captureStatus, ThetaRepository.CaptureStatusEnum.IDLE, "state captureStatus")
+        assertTrue(thetaState.recordedTime >= 0, "state recordedTime")
+        assertTrue(thetaState.recordableTime >= 0, "state recordableTime")
+        assertTrue((thetaState.capturedPictures ?: -1) >= 0, "state capturedPictures")
+        assertTrue((thetaState.compositeShootingElapsedTime ?: -1) >= 0, "compositeShootingElapsedTime")
+        assertTrue(thetaState.latestFileUrl.startsWith("http://"), "state latestFileUrl")
+        assertEquals(thetaState.chargingState, ThetaRepository.ChargingStateEnum.CHARGING, "state chargingState")
+        assertEquals(thetaState.apiVersion, 2, "state apiVersion")
+        assertEquals(thetaState.isPluginRunning, false, "state isPluginRunning")
+        assertEquals(thetaState.isPluginWebServer, true, "state isPluginWebServer")
+        assertEquals(thetaState.function, ThetaRepository.ShootingFunctionEnum.NORMAL, "state function")
+        assertEquals(thetaState.isMySettingChanged, false, "state isMySettingChanged")
+        assertNull(thetaState.currentMicrophone, "state currentMicrophone")
+        assertTrue(!thetaState.isSdCard, "state isSdCard")
+        assertEquals(thetaState.cameraError?.get(0), ThetaRepository.CameraErrorEnum.COMPASS_CALIBRATION, "state cameraError")
+        assertNull(thetaState.isBatteryInsert, "state isBatteryInsert")
+
+        assertNotNull(thetaState.externalGpsInfo?.gpsInfo, "state externalGpsInfo")
+        assertNotNull(thetaState.externalGpsInfo?.gpsInfo?.altitude, "state externalGpsInfo.altitude")
+        assertNotNull(thetaState.externalGpsInfo?.gpsInfo?.dateTimeZone, "state externalGpsInfo.dateTimeZone")
+        assertNotNull(thetaState.externalGpsInfo?.gpsInfo?.latitude, "state externalGpsInfo.latitude")
+        assertNotNull(thetaState.externalGpsInfo?.gpsInfo?.longitude, "state externalGpsInfo.longitude")
+
+        assertNull(thetaState.internalGpsInfo?.gpsInfo, "state internalGpsInfo")
+    }
+
+    /**
+     * call getThetaState with gps off for THETA Z1.
+     */
+    @Test
+    fun getThetaStateGpsOffForZ1Test() = runTest {
+        // setup
+        val jsonString = Resource("src/commonTest/resources/state/state_z1_gps_off.json").readText()
+        MockApiClient.onRequest = { request ->
+            assertEquals(request.url.encodedPath, "/osc/state", "request path")
+            ByteReadChannel(jsonString)
+        }
+
+        // test
+        val thetaRepository = ThetaRepository(endpoint)
+        val thetaState = thetaRepository.getThetaState()
+
+        // check
+        assertTrue(thetaState.fingerprint.isNotEmpty(), "state fingerprint")
+        assertTrue(thetaState.batteryLevel > 0, "state batteryLevel")
+        assertEquals(thetaState.storageUri?.startsWith("http://"), true, "state storageUri")
+        assertNull(thetaState.storageID, "state storageUri")
+        assertEquals(thetaState.captureStatus, ThetaRepository.CaptureStatusEnum.IDLE, "state captureStatus")
+        assertTrue(thetaState.recordedTime >= 0, "state recordedTime")
+        assertTrue(thetaState.recordableTime >= 0, "state recordableTime")
+        assertTrue((thetaState.capturedPictures ?: -1) >= 0, "state capturedPictures")
+        assertTrue((thetaState.compositeShootingElapsedTime ?: -1) >= 0, "compositeShootingElapsedTime")
+        assertEquals(thetaState.latestFileUrl, "", "state latestFileUrl")
+        assertEquals(thetaState.chargingState, ThetaRepository.ChargingStateEnum.CHARGING, "state chargingState")
+        assertEquals(thetaState.apiVersion, 2, "state apiVersion")
+        assertEquals(thetaState.isPluginRunning, false, "state isPluginRunning")
+        assertEquals(thetaState.isPluginWebServer, true, "state isPluginWebServer")
+        assertEquals(thetaState.function, ThetaRepository.ShootingFunctionEnum.NORMAL, "state function")
+        assertEquals(thetaState.isMySettingChanged, false, "state isMySettingChanged")
+        assertNull(thetaState.currentMicrophone, "state currentMicrophone")
+        assertTrue(!thetaState.isSdCard, "state isSdCard")
+        assertEquals(thetaState.cameraError?.get(0), ThetaRepository.CameraErrorEnum.COMPASS_CALIBRATION, "state cameraError")
+        assertNull(thetaState.isBatteryInsert, "state isBatteryInsert")
+
+        assertNull(thetaState.externalGpsInfo?.gpsInfo, "state externalGpsInfo")
+        assertNull(thetaState.internalGpsInfo?.gpsInfo, "state internalGpsInfo")
     }
 
     /**

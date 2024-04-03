@@ -1,6 +1,6 @@
 package com.ricoh360.thetaclient
 
-import com.soywiz.krypto.md5
+import korlibs.crypto.md5
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.withTimeout
 

@@ -2,8 +2,11 @@ package com.ricoh360.thetaclient.repository
 
 import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.MockApiClient
+import com.ricoh360.thetaclient.ThetaApi
 import com.ricoh360.thetaclient.ThetaRepository
+import com.ricoh360.thetaclient.transferred.CaptureMode
 import com.ricoh360.thetaclient.transferred.GetOptionsRequest
+import com.ricoh360.thetaclient.transferred.ImageFilter
 import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.request.HttpRequestData
 import io.ktor.http.HttpStatusCode
@@ -12,7 +15,6 @@ import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -77,7 +79,7 @@ class GetOptionsTest {
         optionNames.forEach {
             assertNotNull(options.getValue(it), "option ${it.value}")
         }
-        ThetaRepository.OptionNameEnum.values().forEach {
+        ThetaRepository.OptionNameEnum.entries.forEach {
             if (!optionNames.contains(it)) {
                 assertNull(options.getValue(it), "option ${it.value}")
             }
@@ -114,7 +116,7 @@ class GetOptionsTest {
         optionNames.forEach {
             assertNotNull(options.getValue(it), "option ${it.value}")
         }
-        ThetaRepository.OptionNameEnum.values().forEach {
+        ThetaRepository.OptionNameEnum.entries.forEach {
             if (!optionNames.contains(it)) {
                 assertNull(options.getValue(it), "option ${it.value}")
             }
@@ -235,5 +237,66 @@ class GetOptionsTest {
         } catch (e: ThetaRepository.NotConnectedException) {
             assertTrue(e.message!!.indexOf("time", 0, true) >= 0, "timeout exception")
         }
+    }
+
+    /**
+     * Get consuming option
+     */
+    @Test
+    fun getConsumingOptionTest() = runTest {
+        val responseArray = arrayOf(
+            Resource("src/commonTest/resources/getOptions/get_options_filter_hdr.json").readText(),
+            Resource("src/commonTest/resources/getOptions/get_options_filter_off.json").readText(),
+            Resource("src/commonTest/resources/getOptions/get_options_capture_mode_image.json").readText(),
+            Resource("src/commonTest/resources/getOptions/get_options_capture_mode_video.json").readText(),
+        )
+        var counter = 0
+        MockApiClient.onRequest = { _ ->
+            val index = counter++
+            ByteReadChannel(responseArray[index])
+        }
+
+        val thetaRepository = ThetaRepository(endpoint)
+        assertNull(ThetaApi.currentOptions._filter, "_filter")
+        thetaRepository.getOptions(listOf(ThetaRepository.OptionNameEnum.Filter))
+        assertEquals(ThetaApi.currentOptions._filter, ImageFilter.HDR, "_filter")
+        thetaRepository.getOptions(listOf(ThetaRepository.OptionNameEnum.Filter))
+        assertEquals(ThetaApi.currentOptions._filter, ImageFilter.OFF, "_filter")
+        assertEquals(ThetaApi.lastSetTimeConsumingOptionTime, 0, "_filter")
+
+        assertNull(ThetaApi.currentOptions.captureMode, "captureMode")
+        thetaRepository.getOptions(listOf(ThetaRepository.OptionNameEnum.CameraMode))
+        assertEquals(ThetaApi.currentOptions.captureMode, CaptureMode.IMAGE, "captureMode")
+        thetaRepository.getOptions(listOf(ThetaRepository.OptionNameEnum.CameraMode))
+        assertEquals(ThetaApi.currentOptions.captureMode, CaptureMode.VIDEO, "captureMode")
+        assertEquals(ThetaApi.lastSetTimeConsumingOptionTime, 0, "captureMode")
+    }
+
+    /**
+     * Get consuming option exception
+     */
+    @Test
+    fun getConsumingOptionExceptionTest() = runTest {
+        MockApiClient.onRequest = { _ ->
+            MockApiClient.status = HttpStatusCode.ServiceUnavailable
+            ByteReadChannel(Resource("src/commonTest/resources/getOptions/get_options_error.json").readText())
+        }
+
+        val thetaRepository = ThetaRepository(endpoint)
+        try {
+            thetaRepository.getOptions(listOf(ThetaRepository.OptionNameEnum.Filter))
+            assertTrue(false, "response is normal.")
+        } catch (_: ThetaRepository.ThetaWebApiException) {
+        }
+        assertNull(ThetaApi.currentOptions._filter, "_filter")
+        assertEquals(ThetaApi.lastSetTimeConsumingOptionTime, 0, "_filter")
+
+        try {
+            thetaRepository.getOptions(listOf(ThetaRepository.OptionNameEnum.CaptureMode))
+            assertTrue(false, "response is normal.")
+        } catch (_: ThetaRepository.ThetaWebApiException) {
+        }
+        assertNull(ThetaApi.currentOptions.captureMode, "captureMode")
+        assertEquals(ThetaApi.lastSetTimeConsumingOptionTime, 0, "captureMode")
     }
 }

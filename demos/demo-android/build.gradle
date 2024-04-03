@@ -1,8 +1,8 @@
 buildscript {
     ext {
-        compose_version = '1.5.3' // depends on Kotlin 1.7.10
+        compose_version = '1.5.3' // depends on Kotlin 1.9.10
         kotlin_version = '1.9.10'
-        coroutines_version = '1.6.4'
+        coroutines_version = '1.7.3'
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"

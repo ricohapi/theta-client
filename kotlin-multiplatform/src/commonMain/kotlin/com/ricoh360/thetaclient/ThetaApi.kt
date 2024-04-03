@@ -25,6 +25,8 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
+internal const val ALLOWED_CAPTURE_INTERVAL = 1000
+
 /**
  * Http client using [Ktor](https://jp.ktor.work/clients/index.html)
  */
@@ -39,7 +41,14 @@ internal object ThetaApi {
     val multipartPostClient: MultipartPostClient // just for updateFirmware protcol
         get() = getMultipartPostClient()
 
-    var requestSemaphore = Semaphore(1)
+    val requestSemaphore = Semaphore(1)
+    var lastSetTimeConsumingOptionTime: Long = 0
+    var currentOptions = Options()
+
+    fun initOptions() {
+        currentOptions = Options()
+        lastSetTimeConsumingOptionTime = 0
+    }
 
     /**
      * Call [/osc/info](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/protocols/info.md)
@@ -269,6 +278,7 @@ internal object ThetaApi {
      */
     @Throws(Throwable::class)
     fun callGetLivePreviewCommand(endpoint: String): Flow<ByteReadPacket> = flow {
+        waitCaptureStartTime()
         var retry = 4 // retry count when preview command failed
         val WAIT = 500L // time between retry (ms)
         while (retry-- > 0) {
@@ -321,6 +331,7 @@ internal object ThetaApi {
         endpoint: String,
         frameHandler: suspend (Pair<ByteArray, Int>) -> Boolean,
     ) {
+        waitCaptureStartTime()
         var retry = 4 // retry count when preview command failed
         val WAIT = 500L // time between retry (ms)
         while (retry-- > 0) {
@@ -457,6 +468,7 @@ internal object ThetaApi {
         endpoint: String,
         params: StartCaptureParams,
     ): StartCaptureResponse {
+        waitCaptureStartTime()
         val request = StartCaptureRequest(parameters = params)
         return postCommandApi(endpoint, request).body()
     }
@@ -495,6 +507,7 @@ internal object ThetaApi {
     suspend fun callTakePictureCommand(
         endpoint: String,
     ): TakePictureResponse {
+        waitCaptureStartTime()
         val request = TakePictureRequest()
         return postCommandApi(endpoint, request).body()
     }
@@ -562,6 +575,34 @@ internal object ThetaApi {
         return postCommandApi(endpoint, request).body()
     }
 
+    fun updateConsumingOptions(options: Options, isUpdateTime: Boolean = true) {
+        var isUpdateOptions = false
+        options._filter?.let {
+            if (currentOptions._filter != it) {
+                currentOptions._filter = it
+                isUpdateOptions = true
+            }
+        }
+        options.captureMode?.let {
+            if (currentOptions.captureMode != it) {
+                currentOptions.captureMode = it
+                isUpdateOptions = true
+            }
+        }
+        if (isUpdateTime && isUpdateOptions) {
+            lastSetTimeConsumingOptionTime = currentTimeMillis()
+        }
+    }
+
+    suspend fun waitCaptureStartTime() {
+        val interval = currentTimeMillis() - lastSetTimeConsumingOptionTime
+        if (interval < ALLOWED_CAPTURE_INTERVAL) {
+            println("waitCaptureStartTime wait: ${ALLOWED_CAPTURE_INTERVAL - interval}")
+            delay(ALLOWED_CAPTURE_INTERVAL - interval)
+        }
+        lastSetTimeConsumingOptionTime = 0
+    }
+
     /**
      * Call [camera.setOptions](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/commands/camera.set_options.md)
      * @param endpoint Endpoint of Theta web API
@@ -581,7 +622,11 @@ internal object ThetaApi {
         params: SetOptionsParams,
     ): SetOptionsResponse {
         val request = SetOptionsRequest(parameters = params)
-        return postCommandApi(endpoint, request).body()
+        val response: SetOptionsResponse = postCommandApi(endpoint, request).body()
+        if (response.state == CommandState.DONE) {
+            updateConsumingOptions(params.options)
+        }
+        return response
     }
 
     /**
@@ -603,7 +648,11 @@ internal object ThetaApi {
         params: GetOptionsParams,
     ): GetOptionsResponse {
         val request = GetOptionsRequest(parameters = params)
-        return postCommandApi(endpoint, request).body()
+        val response: GetOptionsResponse = postCommandApi(endpoint, request).body()
+        response.results?.options?.let {
+            updateConsumingOptions(it, false)
+        }
+        return response
     }
 
     /**
@@ -826,9 +875,9 @@ internal object ThetaApi {
     /**
      * Post request {body} to {endpoint} APIs then return its response
      */
-    private suspend fun postCommandApi(
+    private suspend inline fun <reified T : CommandApiRequest> postCommandApi(
         endpoint: String,
-        body: CommandApiRequest,
+        body: T,
     ): HttpResponse {
         return syncExecutor(requestSemaphore, ApiClient.timeout.requestTimeout) {
             httpClient.post(getApiUrl(endpoint, CommandApi.PATH)) {
@@ -836,7 +885,7 @@ internal object ThetaApi {
                     append("Content-Type", "application/json; charset=utf-8")
                     append("Cache-Control", "no-cache")
                 }
-                setBody(body)
+                setBody<T>(body)
             }
         }
     }

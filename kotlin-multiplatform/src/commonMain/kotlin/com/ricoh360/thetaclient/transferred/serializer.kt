@@ -202,6 +202,14 @@ internal abstract class EnumIgnoreUnknownSerializer<T : Enum<T>>(
     }
 
     override fun deserialize(decoder: Decoder): T {
-        return revLookup[decoder.decodeString()] ?: defaultValue
+        val decodeString = decoder.decodeString()
+        return when (val value = revLookup[decodeString]) {
+            null -> {
+                println("Web API unknown value. ${defaultValue::class.simpleName}: $decodeString")
+                defaultValue
+            }
+
+            else -> value
+        }
     }
 }

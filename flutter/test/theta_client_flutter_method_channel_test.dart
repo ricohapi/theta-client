@@ -134,6 +134,13 @@ void main() {
     ];
     const isBatteryInsert = false;
 
+    Map<String, dynamic> gpsInfoMap = {
+      'latitude': 1.0,
+      'longitude': 2.0,
+      'altitude': 3.0,
+      'dateTimeZone': '2022:01:01 00:01:00+09:00'
+    };
+
     List<String> convertCameraErrorParam(
         List<CameraErrorEnum> cameraErrorList) {
       var stringList = List<String>.empty(growable: true);
@@ -166,6 +173,10 @@ void main() {
         'isSdCard': isSdCard,
         'cameraError': convertCameraErrorParam(cameraError),
         'isBatteryInsert': isBatteryInsert,
+        'externalGpsInfo': {
+          'gpsInfo': gpsInfoMap,
+        },
+        'internalGpsInfo': {},
       };
       return state;
     });
@@ -193,6 +204,10 @@ void main() {
     expect(thetaState.isSdCard, isSdCard);
     expect(thetaState.cameraError, cameraError);
     expect(thetaState.isBatteryInsert, isBatteryInsert);
+    var externalGpsInfo = thetaState.externalGpsInfo?.gpsInfo;
+    expect(externalGpsInfo, isNotNull);
+    expect(externalGpsInfo?.latitude, 1.0);
+    expect(thetaState.internalGpsInfo?.gpsInfo, isNull);
   });
 
   test('getThetaState nullable', () async {
