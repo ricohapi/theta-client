@@ -7,15 +7,11 @@ import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.MediaFileFormat
 import com.ricoh360.thetaclient.transferred.MediaType
 import com.ricoh360.thetaclient.transferred.Options
-import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.http.content.*
 import io.ktor.utils.io.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlin.test.*
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class FileFormatTest {
     private val endpoint = "http://192.168.1.1:80/"
 
@@ -51,6 +47,30 @@ class FileFormatTest {
         val thetaRepository = ThetaRepository(endpoint)
         val options = thetaRepository.getOptions(optionNames)
         assertEquals(options.fileFormat, ThetaRepository.FileFormatEnum.VIDEO_4K_60F, "options value")
+    }
+
+    /**
+     * Get option unknown fileFormat.
+     */
+    @Test
+    fun getOptionUnknownFileFormatTest() = runTest {
+        val optionNames = listOf(
+            ThetaRepository.OptionNameEnum.FileFormat
+        )
+        val stringOptionNames = listOf(
+            "fileFormat"
+        )
+
+        MockApiClient.onRequest = { request ->
+            // check request
+            CheckRequest.checkGetOptions(request, stringOptionNames)
+
+            ByteReadChannel(Resource("src/commonTest/resources/options/option_file_format_unknown.json").readText())
+        }
+
+        val thetaRepository = ThetaRepository(endpoint)
+        val options = thetaRepository.getOptions(optionNames)
+        assertEquals(options.fileFormat, ThetaRepository.FileFormatEnum.UNKNOWN, "options value")
     }
 
     /**
@@ -95,6 +115,10 @@ class FileFormatTest {
             Pair(ThetaRepository.FileFormatEnum.VIDEO_4K, MediaFileFormat(MediaType.MP4, 3840, 1920, "H.264/MPEG-4 AVC", null)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_2K_30F, MediaFileFormat(MediaType.MP4, 1920, 960, "H.264/MPEG-4 AVC", 30)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_2K_60F, MediaFileFormat(MediaType.MP4, 1920, 960, "H.264/MPEG-4 AVC", 60)),
+            Pair(ThetaRepository.FileFormatEnum.VIDEO_2_7K_1F, MediaFileFormat(MediaType.MP4, 2688, 2688, "H.264/MPEG-4 AVC", 1)),
+            Pair(ThetaRepository.FileFormatEnum.VIDEO_2_7K_2F, MediaFileFormat(MediaType.MP4, 2688, 2688, "H.264/MPEG-4 AVC", 2)),
+            Pair(ThetaRepository.FileFormatEnum.VIDEO_3_6K_1F, MediaFileFormat(MediaType.MP4, 3648, 3648, "H.264/MPEG-4 AVC", 1)),
+            Pair(ThetaRepository.FileFormatEnum.VIDEO_3_6K_2F, MediaFileFormat(MediaType.MP4, 3648, 3648, "H.264/MPEG-4 AVC", 2)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_4K_30F, MediaFileFormat(MediaType.MP4, 3840, 1920, "H.264/MPEG-4 AVC", 30)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_4K_60F, MediaFileFormat(MediaType.MP4, 3840, 1920, "H.264/MPEG-4 AVC", 60)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_5_7K_2F, MediaFileFormat(MediaType.MP4, 5760, 2880, "H.264/MPEG-4 AVC", 2)),
@@ -103,7 +127,7 @@ class FileFormatTest {
             Pair(ThetaRepository.FileFormatEnum.VIDEO_7K_2F, MediaFileFormat(MediaType.MP4, 7680, 3840, "H.264/MPEG-4 AVC", 2)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_7K_5F, MediaFileFormat(MediaType.MP4, 7680, 3840, "H.264/MPEG-4 AVC", 5)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_7K_10F, MediaFileFormat(MediaType.MP4, 7680, 3840, "H.264/MPEG-4 AVC", 10)),
-            Pair(null, MediaFileFormat(MediaType.MP4, 0, 0, "H.264/MPEG-4 AVC", 10)),
+            Pair(ThetaRepository.FileFormatEnum.UNKNOWN, MediaFileFormat(MediaType.MP4, 0, 0, "H.264/MPEG-4 AVC", 10)),
             Pair(ThetaRepository.FileFormatEnum.IMAGE_DO_NOT_UPDATE_MY_SETTING_CONDITION, MediaFileFormat(MediaType.JPEG, 0, 0, null, null)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_DO_NOT_UPDATE_MY_SETTING_CONDITION, MediaFileFormat(MediaType.MP4, 0, 0, null, null))
         )
@@ -117,7 +141,7 @@ class FileFormatTest {
         }
 
         values.filter {
-            it.first != null
+            it.first != ThetaRepository.FileFormatEnum.UNKNOWN
         }.forEach {
             val orgOptions = ThetaRepository.Options(
                 fileFormat = it.first

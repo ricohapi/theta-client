@@ -2131,28 +2131,40 @@ internal enum class ImageFilter {
     HH_HDR,
 }
 
+internal object MediaTypeSerializer :
+    SerialNameEnumIgnoreUnknownSerializer<MediaType>(MediaType.entries, MediaType.UNKNOWN)
+
 /**
  * Media type setting
  */
-@Serializable
-internal enum class MediaType {
+@Serializable(with = MediaTypeSerializer::class)
+internal enum class MediaType : SerialNameEnum {
+    /**
+     * Undefined value
+     */
+    UNKNOWN,
+
     /**
      * jpeg image
      */
-    @SerialName("jpeg")
-    JPEG,
+    JPEG {
+        override val serialName: String = "jpeg"
+    },
+
 
     /**
      * mp4 video
      */
-    @SerialName("mp4")
-    MP4,
+    MP4 {
+        override val serialName: String = "mp4"
+    },
 
     /**
      * raw+ image
      */
-    @SerialName("raw+")
-    RAW,
+    RAW {
+        override val serialName: String = "raw+"
+    },
 }
 
 /**

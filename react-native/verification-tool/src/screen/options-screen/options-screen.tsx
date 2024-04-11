@@ -11,6 +11,7 @@ import {
   ExposureCompensationEnum,
   ExposureDelayEnum,
   ExposureProgramEnum,
+  FileFormatEnum,
   FilterEnum,
   IsoAutoHighLimitEnum,
   IsoEnum,
@@ -209,6 +210,22 @@ const optionList: OptionItem[] = [
             onChange({ filter });
           }}
           optionEnum={FilterEnum}
+        />
+      ),
+    },
+  },
+  {
+    name: 'fileFormat',
+    value: {
+      optionName: OptionNameEnum.FileFormat,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'fileFormat'}
+          option={options.fileFormat}
+          onChange={(fileFormat) => {
+            onChange({ fileFormat });
+          }}
+          optionEnum={FileFormatEnum}
         />
       ),
     },

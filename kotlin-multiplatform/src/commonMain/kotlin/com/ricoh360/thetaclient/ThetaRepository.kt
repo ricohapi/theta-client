@@ -11,6 +11,9 @@ import io.ktor.utils.io.core.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import kotlin.reflect.KClass
 
 /**
@@ -3002,6 +3005,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
     enum class FileFormatTypeEnum(internal val mediaType: MediaType) {
         /**
+         * Undefined value
+         */
+        UNKNOWN(MediaType.UNKNOWN),
+
+        /**
          * jpeg image
          */
         JPEG(MediaType.JPEG),
@@ -3027,6 +3035,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         val _codec: String?,
         val _frameRate: Int?
     ) {
+        /**
+         * Undefined value
+         */
+        UNKNOWN(FileFormatTypeEnum.UNKNOWN, 0, 0, null, null),
+
         /**
          * Image File format.
          *
@@ -3162,6 +3175,66 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Video File format.
          *
          * type: mp4
+         * size: 2688 x 2688
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 1
+         *
+         * For RICOH THETA Z1 firmware v3.01.1 or later.
+         * This mode outputs two fisheye video for each lens.
+         * The MP4 file name ending with _0 is the video file on the front lens,
+         * and _1 is back lens. This mode does not record audio track to MP4 file.
+         */
+        VIDEO_2_7K_1F(FileFormatTypeEnum.MP4, 2688, 2688, "H.264/MPEG-4 AVC", 1),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 2688 x 2688
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 2
+         *
+         * For RICOH THETA Z1 firmware v3.01.1 or later.
+         * This mode outputs two fisheye video for each lens.
+         * The MP4 file name ending with _0 is the video file on the front lens,
+         * and _1 is back lens. This mode does not record audio track to MP4 file.
+         */
+        VIDEO_2_7K_2F(FileFormatTypeEnum.MP4, 2688, 2688, "H.264/MPEG-4 AVC", 2),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 3648 x 3648
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 1
+         *
+         * For RICOH THETA Z1 firmware v3.01.1 or later.
+         * This mode outputs two fisheye video for each lens.
+         * The MP4 file name ending with _0 is the video file on the front lens,
+         * and _1 is back lens. This mode does not record audio track to MP4 file.
+         */
+        VIDEO_3_6K_1F(FileFormatTypeEnum.MP4, 3648, 3648, "H.264/MPEG-4 AVC", 1),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 3648 x 3648
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 2
+         *
+         * For RICOH THETA Z1 firmware v3.01.1 or later.
+         * This mode outputs two fisheye video for each lens.
+         * The MP4 file name ending with _0 is the video file on the front lens,
+         * and _1 is back lens. This mode does not record audio track to MP4 file.
+         */
+        VIDEO_3_6K_2F(FileFormatTypeEnum.MP4, 3648, 3648, "H.264/MPEG-4 AVC", 2),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
          * size: 3840 x 1920
          * codec: H.264/MPEG-4 AVC
          * frame rate: 30
@@ -3275,14 +3348,27 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param mediaFileFormat File format for ThetaApi.
              * @return FileFormatEnum
              */
-            internal fun get(mediaFileFormat: MediaFileFormat): FileFormatEnum? {
-                return values().firstOrNull {
+            @OptIn(ExperimentalSerializationApi::class)
+            internal fun get(mediaFileFormat: MediaFileFormat): FileFormatEnum {
+
+                entries.firstOrNull {
                     it.type.mediaType == mediaFileFormat.type &&
                             it.width == mediaFileFormat.width &&
                             it.height == mediaFileFormat.height &&
                             it._codec == mediaFileFormat._codec &&
                             it._frameRate == mediaFileFormat._frameRate
+                }?.let {
+                    return it
                 }
+                val js = Json {
+                    encodeDefaults = true // Encode properties with default value.
+                    explicitNulls = false // Don't encode properties with null value.
+                    ignoreUnknownKeys = true // Ignore unknown keys on decode.
+                }
+                val jsonString = js.encodeToString(mediaFileFormat)
+                js.encodeToString<MediaFileFormat>(mediaFileFormat)
+                println("Web API unknown value. fileFormat: $jsonString")
+                return UNKNOWN
             }
         }
     }
@@ -3355,11 +3441,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             /**
              * Convert FileFormatEnum to PhotoFileFormatEnum.
              *
-             * @param fileformat FileFormatEnum.
+             * @param fileFormat FileFormatEnum.
              * @return PhotoFileFormatEnum
              */
-            fun get(fileformat: FileFormatEnum): PhotoFileFormatEnum? {
-                return values().firstOrNull { it.fileFormat == fileformat }
+            fun get(fileFormat: FileFormatEnum): PhotoFileFormatEnum? {
+                return entries.firstOrNull { it.fileFormat == fileFormat }
             }
         }
     }
@@ -3433,6 +3519,66 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * For RICOH THETA X or later
          */
         VIDEO_2K_60F(FileFormatEnum.VIDEO_2K_60F),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 2688 x 2688
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 1
+         *
+         * For RICOH THETA Z1 firmware v3.01.1 or later.
+         * This mode outputs two fisheye video for each lens.
+         * The MP4 file name ending with _0 is the video file on the front lens,
+         * and _1 is back lens. This mode does not record audio track to MP4 file.
+         */
+        VIDEO_2_7K_1F(FileFormatEnum.VIDEO_2_7K_1F),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 2688 x 2688
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 2
+         *
+         * For RICOH THETA Z1 firmware v3.01.1 or later.
+         * This mode outputs two fisheye video for each lens.
+         * The MP4 file name ending with _0 is the video file on the front lens,
+         * and _1 is back lens. This mode does not record audio track to MP4 file.
+         */
+        VIDEO_2_7K_2F(FileFormatEnum.VIDEO_2_7K_2F),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 3648 x 3648
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 1
+         *
+         * For RICOH THETA Z1 firmware v3.01.1 or later.
+         * This mode outputs two fisheye video for each lens.
+         * The MP4 file name ending with _0 is the video file on the front lens,
+         * and _1 is back lens. This mode does not record audio track to MP4 file.
+         */
+        VIDEO_3_6K_1F(FileFormatEnum.VIDEO_3_6K_1F),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 3648 x 3648
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 2
+         *
+         * For RICOH THETA Z1 firmware v3.01.1 or later.
+         * This mode outputs two fisheye video for each lens.
+         * The MP4 file name ending with _0 is the video file on the front lens,
+         * and _1 is back lens. This mode does not record audio track to MP4 file.
+         */
+        VIDEO_3_6K_2F(FileFormatEnum.VIDEO_3_6K_2F),
 
         /**
          * Video File format.
@@ -3534,11 +3680,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             /**
              * Convert FileFormatEnum to VideoFileFormatEnum.
              *
-             * @param fileformat FileFormatEnum.
+             * @param fileFormat FileFormatEnum.
              * @return VideoFileFormatEnum
              */
-            fun get(fileformat: FileFormatEnum): VideoFileFormatEnum? {
-                return values().firstOrNull { it.fileFormat == fileformat }
+            fun get(fileFormat: FileFormatEnum): VideoFileFormatEnum? {
+                return entries.firstOrNull { it.fileFormat == fileFormat }
             }
         }
     }
@@ -4218,7 +4364,19 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Maximum recordable time (in seconds) of the camera
      */
-    enum class MaxRecordableTimeEnum(val sec: Int) {
+    interface MaxRecordableTime {
+        val sec: Int?
+    }
+
+    /**
+     * Maximum recordable time (in seconds) of the camera
+     */
+    enum class MaxRecordableTimeEnum(override val sec: Int?): MaxRecordableTime {
+        /**
+         * Undefined value
+         */
+        UNKNOWN(null),
+
         /**
          * Maximum recordable time. 180sec for SC2 only.
          */
@@ -4233,6 +4391,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Maximum recordable time. 1500sec for other than SC2.
          */
         RECORDABLE_TIME_1500(1500),
+
+        /**
+         * Maximum recordable time. 3000sec for THETA Z1 Version 3.01.1 or later
+         * only for 3.6K 1/2fps and 2.7K 1/2fps.
+         * If you set 3000 seconds in 3.6K 2fps mode and then set back to 4K 30fps mode,
+         * the max recordable time will be overwritten to 300 seconds automatically.
+         */
+        RECORDABLE_TIME_3000(3000),
 
         /**
          * Maximum recordable time. 7200sec for Theta X version 2.00.0 or later,
@@ -4254,8 +4420,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param sec Maximum recordable time.
              * @return MaxRecordableTimeEnum
              */
-            fun get(sec: Int): MaxRecordableTimeEnum? {
-                return values().firstOrNull { it.sec == sec }
+            fun get(sec: Int): MaxRecordableTimeEnum {
+                entries.firstOrNull { it.sec == sec }?.let {
+                    return it
+                }
+                println("Web API unknown value. maxRecordableTime: $sec")
+                return UNKNOWN
             }
         }
     }
@@ -5673,7 +5843,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @property codec Codec. (RICOH THETA V or later)
      * @property projectionType Projection type of movie file. (RICOH THETA V or later)
      * @property continuousShootingGroupId Group ID of continuous shooting.  (RICOH THETA X or later)
-     * @property frameRate Frame rate.  (RICOH THETA X or later)
+     * @property frameRate Frame rate.  (RICOH THETA Z1 Version 3.01.1 or later, RICOH THETA X or later)
      * @property favorite Favorite.  (RICOH THETA X or later)
      * @property imageDescription Image description.  (RICOH THETA X or later)
      * @property storageID Storage ID. (RICOH THETA X Version 2.00.0 or later)

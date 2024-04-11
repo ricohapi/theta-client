@@ -78,11 +78,16 @@ class MaxRecordableTimeTest {
     @Test
     fun convertOptionMaxRecordableTimeTest() = runTest {
         val values = listOf(
+            Pair(ThetaRepository.MaxRecordableTimeEnum.UNKNOWN, 1),
+            Pair(ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_180, 180),
             Pair(ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_300, 300),
             Pair(ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500, 1500),
+            Pair(ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_3000, 3000),
             Pair(ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_7200, 7200),
             Pair(ThetaRepository.MaxRecordableTimeEnum.DO_NOT_UPDATE_MY_SETTING_CONDITION, -1)
         )
+
+        assertEquals(ThetaRepository.MaxRecordableTimeEnum.entries.size, values.size, "enum size")
 
         values.forEach {
             val orgOptions = Options(
@@ -97,7 +102,19 @@ class MaxRecordableTimeTest {
                 maxRecordableTime = it.first
             )
             val options = orgOptions.toOptions()
-            assertEquals(options._maxRecordableTime, it.second, "maxRecordableTime ${it.second}")
+            when (it.first) {
+                ThetaRepository.MaxRecordableTimeEnum.UNKNOWN -> {
+                    assertNull(options._maxRecordableTime, "maxRecordableTime UNKNOWN")
+                }
+
+                else -> {
+                    assertEquals(
+                        options._maxRecordableTime,
+                        it.second,
+                        "maxRecordableTime ${it.second}"
+                    )
+                }
+            }
         }
     }
 }
