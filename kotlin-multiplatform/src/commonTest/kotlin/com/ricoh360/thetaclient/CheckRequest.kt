@@ -74,6 +74,7 @@ internal class CheckRequest {
             clientVersion: Int? = null,
             colorTemperature: Int? = null,
             dateTimeZone: String? = null,
+            ethernetConfig: EthernetConfig? = null,
             exposureCompensation: Float? = null,
             exposureDelay: Int? = null,
             exposureProgram: Int? = null,
@@ -171,6 +172,9 @@ internal class CheckRequest {
             }
             dateTimeZone?.let {
                 assertEquals(optionsRequest.parameters.options.dateTimeZone, it, "setOptions dateTimeZone")
+            }
+            ethernetConfig?.let {
+                assertEquals(optionsRequest.parameters.options._ethernetConfig, it, "setOptions ethernetConfig")
             }
             exposureCompensation?.let {
                 assertEquals(optionsRequest.parameters.options.exposureCompensation, it, "setOptions exposureCompensation")

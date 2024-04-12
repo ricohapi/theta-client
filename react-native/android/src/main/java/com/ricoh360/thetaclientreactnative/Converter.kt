@@ -39,6 +39,7 @@ val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "compositeShootingTime" to OptionNameEnum.CompositeShootingTime,
   "continuousNumber" to OptionNameEnum.ContinuousNumber,
   "dateTimeZone" to OptionNameEnum.DateTimeZone,
+  "ethernetConfig" to OptionNameEnum.EthernetConfig,
   "exposureCompensation" to OptionNameEnum.ExposureCompensation,
   "exposureDelay" to OptionNameEnum.ExposureDelay,
   "exposureProgram" to OptionNameEnum.ExposureProgram,
@@ -305,6 +306,10 @@ fun toResult(options: Options): WritableMap {
       options.burstOption?.let {
         result.putMap("burstOption", toResult(burstOption = it))
       }
+    } else if (name == OptionNameEnum.EthernetConfig) {
+      options.ethernetConfig?.let {
+        result.putMap("ethernetConfig", toResult(ethernetConfig = it))
+      }
     } else if (name == OptionNameEnum.GpsInfo) {
       options.gpsInfo?.let {
         result.putMap("gpsInfo", toResult(gpsInfo = it))
@@ -485,6 +490,24 @@ fun toResult(fileInfo: FileInfo): ReadableMap {
   return result
 }
 
+fun toResult(ethernetConfig: EthernetConfig): WritableMap {
+  val result = Arguments.createMap()
+  result.putBoolean("usingDhcp", ethernetConfig.usingDhcp)
+  ethernetConfig.ipAddress?.let { ipAddress ->
+    result.putString("ipAddress", ipAddress)
+  }
+  ethernetConfig.subnetMask?.let { subnetMask ->
+    result.putString("subnetMask", subnetMask)
+  }
+  ethernetConfig.defaultGateway?.let { defaultGateway ->
+    result.putString("defaultGateway", defaultGateway)
+  }
+  ethernetConfig.proxy?.let { proxy ->
+    result.putMap("proxy", toResult(proxy = proxy))
+  }
+  return result
+}
+
 fun toResult(gpsInfo: GpsInfo): WritableMap {
   val result = Arguments.createMap()
   result.putDouble("latitude", gpsInfo.latitude.toDouble())
@@ -598,6 +621,10 @@ fun setOptionValue(options: Options, name: OptionNameEnum, optionsMap: ReadableM
     optionsMap.getMap(key)?.let {
       options.setValue(name, toBurstOption(map = it))
     }
+  } else if (name == OptionNameEnum.EthernetConfig) {
+    optionsMap.getMap(key)?.let {
+      options.setValue(name, toEthernetConfig(map = it) as Any)
+    }
   } else if (name == OptionNameEnum.GpsInfo) {
     optionsMap.getMap(key)?.let {
       options.setValue(name, toGpsInfo(map = it))
@@ -708,6 +735,18 @@ fun toAutoBracket(list: ReadableArray): BracketSettingList {
     }
   }
   return autoBracket
+}
+
+fun toEthernetConfig(map: ReadableMap?): EthernetConfig? {
+  return map?.let {
+    EthernetConfig(
+      usingDhcp = if (it.hasKey("usingDhcp")) it.getBoolean("usingDhcp") else true,
+      ipAddress = if (it.hasKey("ipAddress")) it.getString("ipAddress") else null,
+      subnetMask = if (it.hasKey("subnetMask")) it.getString("subnetMask") else null,
+      defaultGateway = if (it.hasKey("defaultGateway")) it.getString("defaultGateway") else null,
+      proxy = if (it.hasKey("proxy")) toProxy(map = it.getMap("proxy")) else null
+    )
+  }
 }
 
 fun toProxy(map: ReadableMap?): Proxy? {

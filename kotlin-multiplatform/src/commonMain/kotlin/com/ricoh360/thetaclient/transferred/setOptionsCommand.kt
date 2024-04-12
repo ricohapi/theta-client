@@ -315,6 +315,11 @@ internal data class Options(
     var dateTimeZone: String? = null,
 
     /**
+     * @see EthernetConfig
+     */
+    var _ethernetConfig: EthernetConfig? = null,
+
+    /**
      * Exposure compensation (EV).
      *
      * It can be set for video shooting mode at RICOH THETA V firmware
@@ -1396,6 +1401,38 @@ internal enum class AiAutoThumbnail {
     @SerialName("OFF")
     OFF,
 }
+
+/**
+ * IP address allocation to be used when wired LAN is enabled.
+ */
+@Serializable
+internal data class EthernetConfig(
+    /**
+     * dynamic or static
+     * dynamic is default value.
+     */
+    val ipAddressAllocation: IpAddressAllocation,
+
+    /**
+     * (optional) IPv4 for IP address
+     */
+    val ipAddress: String? = null,
+
+    /**
+     * (optional) IPv4 for subnet mask
+     */
+    val subnetMask: String? = null,
+
+    /**
+     * (optional) IPv4 for default gateway
+     */
+    val defaultGateway: String? = null,
+
+    /**
+     * (optional) refer to _proxy for detail
+     */
+    val _proxy: Proxy? = null,
+)
 
 /**
  * Microphone channel setting

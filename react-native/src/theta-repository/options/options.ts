@@ -30,6 +30,7 @@ import type { WhiteBalanceAutoStrengthEnum } from './option-white-balance-auto-s
 import type { WlanFrequencyEnum } from './option-wlan-frequency';
 import type { OffDelayEnum } from './option-off-delay';
 import type { SleepDelayEnum } from './option-sleep-delay';
+import type { EthernetConfig } from './option-ethernet-config';
 import type { FileFormatEnum } from './option-file-format';
 
 /** Aperture value. */
@@ -363,6 +364,8 @@ export const OptionNameEnum = {
   ContinuousNumber: 'ContinuousNumber',
   /** dateTimeZone */
   DateTimeZone: 'DateTimeZone',
+  /** ethernetConfig */
+  EthernetConfig: 'EthernetConfig',
   /** exposureCompensation */
   ExposureCompensation: 'ExposureCompensation',
   /** exposureDelay */
@@ -538,6 +541,8 @@ export type Options = {
   continuousNumber?: ContinuousNumberEnum;
   /** Current system time of RICOH THETA. Setting another options will result in an error. */
   dateTimeZone?: string;
+  /** IP address allocation to be used when wired LAN is enabled. */
+  ethernetConfig?: EthernetConfig;
   /** Exposure compensation (EV). */
   exposureCompensation?: ExposureCompensationEnum;
   /** Operating time (sec.) of the self-timer. */

@@ -36,6 +36,7 @@ import {
   TimeShiftEdit,
   TopBottomCorrectionRotationEdit,
   EnumEdit,
+  EthernetConfigEdit,
 } from '../../components/options';
 import { ItemSelectorView, type Item } from '../../components/ui/item-list';
 import { NumberEdit } from '../../components/options/number-edit';
@@ -145,6 +146,15 @@ const optionList: OptionItem[] = [
         />
       ),
       defaultValue: { continuousNumber: ContinuousNumberEnum.OFF },
+    },
+  },
+  {
+    name: 'ethernetConfig',
+    value: {
+      optionName: OptionNameEnum.EthernetConfig,
+      editor: (options, onChange) => (
+        <EthernetConfigEdit onChange={onChange} options={options} />
+      ),
     },
   },
   {
@@ -557,35 +567,37 @@ const OptionsScreen: React.FC<
       style={styles.safeAreaContainer}
       edges={['left', 'right', 'bottom']}
     >
-      <View style={styles.topViewContainer}>
-        <View style={styles.rowContainerLayout}>
-          <ItemSelectorView
-            style={undefined}
-            title="Option"
-            itemList={optionList}
-            onSelected={(item) => onChangeOption(item)}
-            selectedItem={selectedOption}
-            placeHolder="select option"
-          />
-          <Button
-            title="Get"
-            onPress={onPressGet}
-            disabled={selectedOption == null}
-          />
-        </View>
-      </View>
-      {selectedOption?.value.editor && (
-        <View style={styles.editorContainerLayout}>
-          <View style={styles.contentContainer}>
-            {selectedOption?.value.editor(editOptions || {}, setEditOptions)}
+      <ScrollView style={styles.inputArea}>
+        <View style={styles.topViewContainer}>
+          <View style={styles.rowContainerLayout}>
+            <ItemSelectorView
+              style={undefined}
+              title="Option"
+              itemList={optionList}
+              onSelected={(item) => onChangeOption(item)}
+              selectedItem={selectedOption}
+              placeHolder="select option"
+            />
+            <Button
+              title="Get"
+              onPress={onPressGet}
+              disabled={selectedOption == null}
+            />
           </View>
-          <Button
-            title="Set"
-            onPress={onPressSet}
-            disabled={editOptions == null}
-          />
         </View>
-      )}
+        {selectedOption?.value.editor && (
+          <View style={styles.editorContainerLayout}>
+            <View style={styles.contentContainer}>
+              {selectedOption?.value.editor(editOptions || {}, setEditOptions)}
+            </View>
+            <Button
+              title="Set"
+              onPress={onPressSet}
+              disabled={editOptions == null}
+            />
+          </View>
+        )}
+      </ScrollView>
       <View style={styles.bottomViewContainer}>
         <ScrollView style={styles.messageArea}>
           <Text style={styles.messageText}>{message}</Text>

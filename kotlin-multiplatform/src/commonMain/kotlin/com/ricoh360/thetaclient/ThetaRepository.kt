@@ -779,6 +779,15 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _ethernetConfig
+         *
+         * For
+         * - RICOH THETA X firmware v2.40.0 or later
+         */
+        EthernetConfig("_ethernetConfig", ThetaRepository.EthernetConfig::class),
+
+        /**
+         * Option name
          * exposureCompensation
          */
         ExposureCompensation("exposureCompensation", ExposureCompensationEnum::class),
@@ -1172,6 +1181,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var dateTimeZone: String? = null,
 
         /**
+         * @see EthernetConfig
+         */
+        var ethernetConfig: EthernetConfig? = null,
+
+        /**
          * Exposure compensation (EV).
          *
          * It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
@@ -1441,6 +1455,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             compositeShootingTime = null,
             continuousNumber = null,
             dateTimeZone = null,
+            ethernetConfig = null,
             exposureCompensation = null,
             exposureDelay = null,
             exposureProgram = null,
@@ -1502,6 +1517,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             compositeShootingTime = options._compositeShootingTime,
             continuousNumber = options.continuousNumber?.let { ContinuousNumberEnum.get(it) },
             dateTimeZone = options.dateTimeZone,
+            ethernetConfig = options._ethernetConfig?.let { EthernetConfig(it) },
             exposureCompensation = options.exposureCompensation?.let {
                 ExposureCompensationEnum.get(
                     it
@@ -1572,6 +1588,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _compositeShootingTime = compositeShootingTime,
                 continuousNumber = continuousNumber?.value,
                 dateTimeZone = dateTimeZone,
+                _ethernetConfig = ethernetConfig?.toTransferredEthernetConfig(),
                 exposureCompensation = exposureCompensation?.value,
                 exposureDelay = exposureDelay?.sec,
                 exposureProgram = exposureProgram?.value,
@@ -1645,6 +1662,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.CompositeShootingTime -> compositeShootingTime
                 OptionNameEnum.ContinuousNumber -> continuousNumber
                 OptionNameEnum.DateTimeZone -> dateTimeZone
+                OptionNameEnum.EthernetConfig -> ethernetConfig
                 OptionNameEnum.ExposureCompensation -> exposureCompensation
                 OptionNameEnum.ExposureDelay -> exposureDelay
                 OptionNameEnum.ExposureProgram -> exposureProgram
@@ -1719,6 +1737,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.CompositeShootingTime -> compositeShootingTime = value as Int
                 OptionNameEnum.ContinuousNumber -> continuousNumber = value as ContinuousNumberEnum
                 OptionNameEnum.DateTimeZone -> dateTimeZone = value as String
+                OptionNameEnum.EthernetConfig -> ethernetConfig = value as EthernetConfig
                 OptionNameEnum.ExposureCompensation -> exposureCompensation = value as ExposureCompensationEnum
                 OptionNameEnum.ExposureDelay -> exposureDelay = value as ExposureDelayEnum
                 OptionNameEnum.ExposureProgram -> exposureProgram = value as ExposureProgramEnum
@@ -2750,6 +2769,72 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             fun get(value: Int): ContinuousNumberEnum {
                 return values().firstOrNull { it.value == value } ?: UNSUPPORTED
             }
+        }
+    }
+
+    /**
+     * IP address allocation to be used when wired LAN is enabled.
+     *
+     * For
+     * - RICOH THETA X firmware v2.40.0 or later
+     */
+    data class EthernetConfig(
+        /**
+         * Using DHCP or not
+         */
+        val usingDhcp: Boolean,
+        /**
+         * (optional) IPv4 for IP address
+         */
+        val ipAddress: String? = null,
+
+        /**
+         * (optional) IPv4 for subnet mask
+         */
+        val subnetMask: String? = null,
+
+        /**
+         * (optional) IPv4 for default gateway
+         */
+        val defaultGateway: String? = null,
+
+        /**
+         * (optional) refer to _proxy for detail
+         *
+         * If "use" is set to true, "url" and "port" must be set.
+         * "userid" and "password" must be set together.
+         * It is recommended to set proxy as this three patterns:
+         * - (use = false)
+         * - (use = true, url = {url}, port = {port})
+         * - (use = true, url = {url}, port = {port}, userid = {userid}, password = {password})
+         */
+        val proxy: Proxy? = null,
+    ) {
+        internal constructor(config: com.ricoh360.thetaclient.transferred.EthernetConfig) : this(
+            usingDhcp = config.ipAddressAllocation == IpAddressAllocation.DYNAMIC,
+            ipAddress = config.ipAddress,
+            subnetMask = config.subnetMask,
+            defaultGateway = config.defaultGateway,
+            proxy = config._proxy?.let { Proxy(info = it) },
+        )
+
+        /**
+         * Convert EthernetConfig to transferred.EthernetConfig
+         *
+         * @return transferred.EthernetConfig
+         */
+        internal fun toTransferredEthernetConfig(): com.ricoh360.thetaclient.transferred.EthernetConfig {
+            return EthernetConfig(
+                ipAddressAllocation = if (usingDhcp) {
+                    IpAddressAllocation.DYNAMIC
+                } else {
+                    IpAddressAllocation.STATIC
+                },
+                ipAddress = ipAddress,
+                subnetMask = subnetMask,
+                defaultGateway = defaultGateway,
+                _proxy = proxy?.toTransferredProxy()
+            )
         }
     }
 
@@ -4371,7 +4456,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Maximum recordable time (in seconds) of the camera
      */
-    enum class MaxRecordableTimeEnum(override val sec: Int?): MaxRecordableTime {
+    enum class MaxRecordableTimeEnum(override val sec: Int?) : MaxRecordableTime {
         /**
          * Undefined value
          */

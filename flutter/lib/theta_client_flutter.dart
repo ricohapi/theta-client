@@ -1494,6 +1494,9 @@ enum OptionNameEnum {
   /// Option name dateTimeZone
   dateTimeZone('DateTimeZone', String),
 
+  /// Option name _ethernetConfig
+  ethernetConfig('EthernetConfig', EthernetConfig),
+
   /// Option name exposureCompensation
   exposureCompensation('ExposureCompensation', ExposureCompensationEnum),
 
@@ -3561,6 +3564,9 @@ class Options {
   /// e.g. 2014:05:18 01:04:29+08:00
   String? dateTimeZone;
 
+  /// see [EthernetConfig]
+  EthernetConfig? ethernetConfig;
+
   /// Exposure compensation (EV).
   ///
   /// It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
@@ -3767,6 +3773,8 @@ class Options {
         return continuousNumber as T;
       case OptionNameEnum.dateTimeZone:
         return dateTimeZone as T;
+      case OptionNameEnum.ethernetConfig:
+        return ethernetConfig as T;
       case OptionNameEnum.exposureCompensation:
         return exposureCompensation as T;
       case OptionNameEnum.exposureDelay:
@@ -3910,6 +3918,9 @@ class Options {
         break;
       case OptionNameEnum.dateTimeZone:
         dateTimeZone = value;
+        break;
+      case OptionNameEnum.ethernetConfig:
+        ethernetConfig = value;
         break;
       case OptionNameEnum.exposureCompensation:
         exposureCompensation = value;

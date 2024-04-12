@@ -551,6 +551,24 @@ func convertResult(burstOption: ThetaRepository.BurstOption) -> [String: Any?] {
     ]
 }
 
+func toEthernetConfig(params: [String: Any]) -> ThetaRepository.EthernetConfig {
+    let proxy: ThetaRepository.Proxy? = {
+        if let proxyMap = params["proxy"] as? [String: Any] {
+            toProxy(params: proxyMap)
+        } else {
+            nil
+        }
+    }()
+    
+    return ThetaRepository.EthernetConfig(
+        usingDhcp: params["usingDhcp"] as? Bool ?? true,
+        ipAddress: params["ipAddress"] as? String,
+        subnetMask: params["subnetMask"] as? String,
+        defaultGateway: params["defaultGateway"] as? String,
+        proxy: proxy
+    )
+}
+
 func toGpsInfo(params: [String: Any]) -> ThetaRepository.GpsInfo {
     return ThetaRepository.GpsInfo(
         latitude: Float(params["latitude"] as? Double ?? 0),
@@ -623,6 +641,25 @@ func convertGetOptionsParam(params: [String]) -> [ThetaRepository.OptionNameEnum
     return array
 }
 
+func convertResult(ethernetConfig: ThetaRepository.EthernetConfig) -> [String: Any] {
+    var result: [String: Any] = [
+        "usingDhcp": ethernetConfig.usingDhcp 
+    ]
+    if let ipAddress = ethernetConfig.ipAddress {
+        result["ipAddress"] = ipAddress
+    }
+    if let subnetMask = ethernetConfig.subnetMask {
+        result["subnetMask"] = subnetMask
+    }
+    if let defaultGateway = ethernetConfig.defaultGateway {
+        result["defaultGateway"] = defaultGateway
+    }
+    if let proxy = ethernetConfig.proxy {
+        result["proxy"] = convertResult(proxy: proxy)
+    }
+    return result
+}
+
 func convertResult(gpsInfo: ThetaRepository.GpsInfo) -> [String: Any] {
     return [
         "latitude": gpsInfo.latitude,
@@ -684,6 +721,8 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                 result[name.name] = convertResult(autoBracket: autoBracket)
             } else if value is ThetaRepository.BurstOption, let burstOption = value as? ThetaRepository.BurstOption {
                 result[name.name] = convertResult(burstOption: burstOption)
+            } else if value is ThetaRepository.EthernetConfig, let ethernetConfig = value as? ThetaRepository.EthernetConfig {
+                result[name.name] = convertResult(ethernetConfig: ethernetConfig)
             } else if value is ThetaRepository.GpsInfo {
                 let gpsInfo = value as! ThetaRepository.GpsInfo
                 result[name.name] = convertResult(gpsInfo: gpsInfo)
@@ -782,6 +821,10 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         options.continuousNumber = getEnumValue(values: ThetaRepository.ContinuousNumberEnum.values(), name: value as! String)!
     case ThetaRepository.OptionNameEnum.datetimezone.name:
         options.dateTimeZone = value as? String
+    case ThetaRepository.OptionNameEnum.ethernetconfig.name:
+        if let params = value as? [String: Any] {
+            options.ethernetConfig = toEthernetConfig(params: params)
+        }
     case ThetaRepository.OptionNameEnum.exposurecompensation.name:
         options.exposureCompensation = getEnumValue(values: ThetaRepository.ExposureCompensationEnum.values(), name: value as! String)!
     case ThetaRepository.OptionNameEnum.exposuredelay.name:

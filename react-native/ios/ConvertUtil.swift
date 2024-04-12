@@ -63,6 +63,10 @@ let KEY_STATE_EXTERNAL_GPS_INFO = "externalGpsInfo"
 let KEY_STATE_INTERNAL_GPS_INFO = "internalGpsInfo"
 let KEY_STATE_BOARD_TEMP = "boardTemp"
 let KEY_STATE_BATTERY_TEMP = "batteryTemp"
+let KEY_PROXY = "proxy"
+let KEY_IP_ADDRESS = "ipAddress"
+let KEY_SUBNET_MASK = "subnetMask"
+let KEY_DEFAULT_GATEWAY = "defaultGateway"
 
 public class ConvertUtil: NSObject {}
 
@@ -89,6 +93,7 @@ let optionItemNameToEnum = [
     "compositeShootingTime": ThetaRepository.OptionNameEnum.compositeshootingtime,
     "continuousNumber": ThetaRepository.OptionNameEnum.continuousnumber,
     "dateTimeZone": ThetaRepository.OptionNameEnum.datetimezone,
+    "ethernetConfig": ThetaRepository.OptionNameEnum.ethernetconfig,
     "exposureCompensation": ThetaRepository.OptionNameEnum.exposurecompensation,
     "exposureDelay": ThetaRepository.OptionNameEnum.exposuredelay,
     "exposureProgram": ThetaRepository.OptionNameEnum.exposureprogram,
@@ -225,6 +230,10 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         options.exposureCompensation = getEnumValue(
             values: ThetaRepository.ExposureCompensationEnum.values(), name: value as! String
         )!
+    case ThetaRepository.OptionNameEnum.ethernetconfig.name:
+        if let params = value as? [String: Any] {
+            options.ethernetConfig = toEthernetConfig(params: params)
+        }
     case ThetaRepository.OptionNameEnum.exposuredelay.name:
         options.exposureDelay = getEnumValue(
             values: ThetaRepository.ExposureDelayEnum.values(), name: value as! String
@@ -383,6 +392,10 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                           let burstOption = value as? ThetaRepository.BurstOption
                 {
                     result[key] = convertResult(burstOption: burstOption)
+                } else if value is ThetaRepository.EthernetConfig,
+                          let ethernetConfig = value as? ThetaRepository.EthernetConfig
+                {
+                    result[key] = convertResult(ethernetConfig: ethernetConfig)
                 } else if value is ThetaRepository.GpsInfo {
                     let gpsInfo = value as! ThetaRepository.GpsInfo
                     result[key] = convertResult(gpsInfo: gpsInfo)
@@ -917,6 +930,23 @@ func convertResult(autoBracket: ThetaRepository.BracketSettingList) -> [[String:
     return resultList
 }
 
+func convertResult(ethernetConfig: ThetaRepository.EthernetConfig) -> [String: Any] {
+    var result: [String: Any] = ["usingDhcp": ethernetConfig.usingDhcp]
+    if let ipAddress = ethernetConfig.ipAddress {
+        result[KEY_IP_ADDRESS] = ipAddress
+    }
+    if let subnetMask = ethernetConfig.subnetMask {
+        result[KEY_SUBNET_MASK] = subnetMask
+    }
+    if let defaultGateway = ethernetConfig.defaultGateway {
+        result[KEY_DEFAULT_GATEWAY] = defaultGateway
+    }
+    if let proxy = ethernetConfig.proxy {
+        result[KEY_PROXY] = convertResult(proxy: proxy)
+    }
+    return result
+}
+
 func convertResult(gpsInfo: ThetaRepository.GpsInfo) -> [String: Any] {
     return [
         "latitude": gpsInfo.latitude,
@@ -1020,16 +1050,16 @@ func convertResult(accessPointList: [ThetaRepository.AccessPoint]) -> [[String: 
         result["connectionPriority"] = accessPoint.connectionPriority
         result["usingDhcp"] = accessPoint.usingDhcp
         if let ipAddress = accessPoint.ipAddress {
-            result["ipAddress"] = ipAddress
+            result[KEY_IP_ADDRESS] = ipAddress
         }
         if let subnetMask = accessPoint.subnetMask {
-            result["subnetMask"] = subnetMask
+            result[KEY_SUBNET_MASK] = subnetMask
         }
         if let defaultGateway = accessPoint.defaultGateway {
-            result["defaultGateway"] = defaultGateway
+            result[KEY_DEFAULT_GATEWAY] = defaultGateway
         }
         if let proxy = accessPoint.proxy {
-            result["proxy"] = convertResult(proxy: proxy)
+            result[KEY_PROXY] = convertResult(proxy: proxy)
         }
         resultList.append(result)
     }
@@ -1219,6 +1249,21 @@ func toAutoBracket(params: [[String: Any]]) -> ThetaRepository.BracketSettingLis
     }
 
     return autoBracket
+}
+
+func toEthernetConfig(params: [String: Any]) -> ThetaRepository.EthernetConfig {
+    var proxy: ThetaRepository.Proxy? = nil
+    if let data = params[KEY_PROXY] as? [String: Any] {
+        proxy = toProxy(params: data)
+    }
+    
+    return ThetaRepository.EthernetConfig(
+        usingDhcp: params["usingDhcp"] as? Bool ?? true,
+        ipAddress: params[KEY_IP_ADDRESS] as? String,
+        subnetMask: params[KEY_SUBNET_MASK] as? String,
+        defaultGateway: params[KEY_DEFAULT_GATEWAY] as? String,
+        proxy: proxy
+    )
 }
 
 func toGpsInfo(params: [String: Any]) -> ThetaRepository.GpsInfo? {

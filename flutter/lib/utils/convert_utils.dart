@@ -225,6 +225,30 @@ class ConvertUtils {
     return optionNameList;
   }
 
+  static Map<String, dynamic> convertEthernetConfigParam(
+      EthernetConfig ethernetConfig) {
+    Map<String, dynamic> result = {};
+
+    result['usingDhcp'] = ethernetConfig.usingDhcp;
+
+    if (ethernetConfig.ipAddress != null) {
+      result['ipAddress'] = ethernetConfig.ipAddress;
+    }
+    if (ethernetConfig.subnetMask != null) {
+      result['subnetMask'] = ethernetConfig.subnetMask;
+    }
+    if (ethernetConfig.defaultGateway != null) {
+      result['defaultGateway'] = ethernetConfig.defaultGateway;
+    }
+
+    Proxy? proxy = ethernetConfig.proxy;
+    if (proxy != null) {
+      result['proxy'] = convertProxyParam(proxy);
+    }
+
+    return result;
+  }
+
   static GpsInfo convertGpsInfo(Map<dynamic, dynamic> data) {
     var gpsInfo = GpsInfo(
       data['latitude'],
@@ -306,6 +330,28 @@ class ConvertUtils {
       'roll': rotation.roll,
       'yaw': rotation.yaw,
     };
+  }
+
+  static EthernetConfig? convertEthernetConfig(Map<dynamic, dynamic>? data) {
+    if (data == null) {
+      return null;
+    }
+
+    var ethernetConfig = EthernetConfig(data['usingDhcp']);
+
+    if (data['ipAddress'] != null) {
+      ethernetConfig.ipAddress = data['ipAddress'];
+    }
+    if (data['subnetMask'] != null) {
+      ethernetConfig.subnetMask = data['subnetMask'];
+    }
+    if (data['defaultGateway'] != null) {
+      ethernetConfig.defaultGateway = data['defaultGateway'];
+    }
+    if (data['proxy'] != null) {
+      ethernetConfig.proxy = convertProxy(data['proxy']);
+    }
+    return ethernetConfig;
   }
 
   static TimeShift convertTimeShift(Map<dynamic, dynamic> data) {
@@ -411,6 +457,9 @@ class ConvertUtils {
           break;
         case OptionNameEnum.dateTimeZone:
           result.dateTimeZone = entry.value;
+          break;
+        case OptionNameEnum.ethernetConfig:
+          result.ethernetConfig = convertEthernetConfig(entry.value);
           break;
         case OptionNameEnum.exposureCompensation:
           result.exposureCompensation =
@@ -582,6 +631,8 @@ class ConvertUtils {
       return value.rawValue;
     } else if (value is ContinuousNumberEnum) {
       return value.rawValue;
+    } else if (value is EthernetConfig) {
+      return convertEthernetConfigParam(value);
     } else if (value is ExposureCompensationEnum) {
       return value.rawValue;
     } else if (value is ExposureDelayEnum) {

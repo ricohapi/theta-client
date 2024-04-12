@@ -174,6 +174,16 @@ fun toResult(burstOption: BurstOption): Map<String, Any?> {
     )
 }
 
+fun toEthernetConfig(map: Map<String, Any>): EthernetConfig {
+    return EthernetConfig(
+        usingDhcp = map["usingDhcp"] as? Boolean ?: true,
+        ipAddress = map["ipAddress"] as? String,
+        subnetMask = map["subnetMask"] as? String,
+        defaultGateway = map["defaultGateway"] as? String,
+        proxy = (map["proxy"] as? Map<String, Any>)?.let { toProxy(map = it) }
+    )
+}
+
 fun toGpsInfo(map: Map<String, Any>): GpsInfo {
     return GpsInfo(
         latitude = (map["latitude"] as Double).toFloat(),
@@ -423,6 +433,26 @@ fun toGetOptionsParam(data: List<String>): List<OptionNameEnum> {
     return optionNames
 }
 
+fun toResult(ethernetConfig: EthernetConfig): Map<String, Any?> {
+    val result = mutableMapOf<String, Any>()
+
+    result["usingDhcp"] = ethernetConfig.usingDhcp
+
+    ethernetConfig.ipAddress?.let { value ->
+        result["ipAddress"] = value
+    }
+    ethernetConfig.subnetMask?.let { value ->
+        result["subnetMask"] = value
+    }
+    ethernetConfig.defaultGateway?.let { value ->
+        result["defaultGateway"] = value
+    }
+    ethernetConfig.proxy?.let {
+        result["proxy"] = toResult(proxy = it)
+    }
+    return result
+}
+
 fun toResult(gpsInfo: GpsInfo): Map<String, Any> {
     return mapOf(
         "latitude" to gpsInfo.latitude,
@@ -505,6 +535,10 @@ fun toResult(options: Options): Map<String, Any> {
         } else if (name == OptionNameEnum.BurstOption) {
             options.getValue<BurstOption>(OptionNameEnum.BurstOption)?.let { burstOption ->
                 result[OptionNameEnum.BurstOption.name] = toResult(burstOption)
+            }
+        } else if (name == OptionNameEnum.EthernetConfig) {
+            options.getValue<EthernetConfig>(OptionNameEnum.EthernetConfig)?.let { ethernetConfig ->
+                result[OptionNameEnum.EthernetConfig.name] = toResult(ethernetConfig = ethernetConfig)
             }
         } else if (name == OptionNameEnum.GpsInfo) {
             options.getValue<GpsInfo>(OptionNameEnum.GpsInfo)?.let { gpsInfo ->
@@ -598,6 +632,9 @@ fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
     } else if (name == OptionNameEnum.BurstOption) {
         @Suppress("UNCHECKED_CAST")
         options.setValue(name, toBurstOption(value as Map<String, Any>))
+    } else if (name == OptionNameEnum.EthernetConfig) {
+        @Suppress("UNCHECKED_CAST")
+        options.setValue(name, toEthernetConfig(value as Map<String, Any>))
     } else if (name == OptionNameEnum.GpsInfo) {
         @Suppress("UNCHECKED_CAST")
         options.setValue(name, toGpsInfo(value as Map<String, Any>))

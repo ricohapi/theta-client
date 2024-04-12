@@ -32,3 +32,4 @@ export * from './option-video-stitching';
 export * from './option-visibility-reduction';
 export * from './option-white-balance-auto-strength';
 export * from './option-wlan-frequency';
+export * from './option-ethernet-config';
