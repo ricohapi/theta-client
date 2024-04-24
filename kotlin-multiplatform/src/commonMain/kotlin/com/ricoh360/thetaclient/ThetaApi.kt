@@ -4,6 +4,7 @@
 package com.ricoh360.thetaclient
 
 import com.ricoh360.thetaclient.transferred.*
+import com.ricoh360.thetaclient.websocket.WebSocketClient
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
@@ -22,7 +23,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.io.files.*
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 internal const val ALLOWED_CAPTURE_INTERVAL = 1000
@@ -902,5 +902,9 @@ internal object ThetaApi {
         } else {
             return endpoint + apiPath
         }
+    }
+
+    fun getEventWebSocket(endpoint: String): WebSocketClient {
+        return newEventWebSocketClient(endpoint)
     }
 }

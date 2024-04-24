@@ -5,6 +5,8 @@ import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.ThetaRepository.*
 import com.ricoh360.thetaclient.capture.*
+import com.ricoh360.thetaclient.websocket.CameraEvent
+import com.ricoh360.thetaclient.websocket.EventWebSocket
 import kotlinx.coroutines.*
 import java.util.*
 import kotlin.coroutines.*
@@ -46,6 +48,7 @@ class ThetaClientReactNativeModule(
   var multiBracketCapturing: MultiBracketCapturing? = null
   var continuousCaptureBuilder: ContinuousCapture.Builder? = null
   var continuousCapture: ContinuousCapture? = null
+  var eventWebSocket: EventWebSocket? = null
   var theta: ThetaRepository? = null
   var listenerCount: Int = 0
 
@@ -78,7 +81,7 @@ class ThetaClientReactNativeModule(
   }
 
   /**
-   * retreive constant
+   * retrieve constant
    */
   override fun getConstants(): MutableMap<String, Any> =
     hashMapOf("DEFAULT_EVENT_NAME" to EVENT_NAME)
@@ -119,6 +122,8 @@ class ThetaClientReactNativeModule(
         multiBracketCapturing = null
         continuousCaptureBuilder = null
         continuousCapture = null
+        eventWebSocket?.stop()
+        eventWebSocket = null
 
         theta = ThetaRepository.newInstance(
           endpoint,
@@ -214,55 +219,7 @@ class ThetaClientReactNativeModule(
     launch {
       try {
         val state = theta.getThetaState()
-        val result = Arguments.createMap()
-        result.putString("fingerprint", state.fingerprint)
-        result.putDouble("batteryLevel", state.batteryLevel.toDouble())
-        result.putString("storageUri", state.storageUri)
-        result.putString("storageID", state.storageID)
-        result.putString("captureStatus", state.captureStatus.toString())
-        result.putInt("recordedTime", state.recordedTime)
-        result.putInt("recordableTime", state.recordableTime)
-        state.capturedPictures?.also {
-          result.putInt("capturedPictures", state.capturedPictures!!)
-        } ?: result.putNull("capturedPictures")
-        state.compositeShootingElapsedTime?.also {
-          result.putString("compositeShootingElapsedTime", state.compositeShootingElapsedTime.toString())
-        } ?: result.putNull("compositeShootingElapsedTime")
-        result.putString("latestFileUrl", state.latestFileUrl)
-        result.putString("chargingState", state.chargingState.toString())
-        result.putInt("apiVersion", state.apiVersion)
-        state.isPluginRunning?.also {
-          result.putBoolean("isPluginRunning", state.isPluginRunning!!)
-        } ?: result.putNull("isPluginRunning")
-        state.isPluginWebServer?.also {
-          result.putBoolean("isPluginWebServer", state.isPluginWebServer!!)
-        } ?: result.putNull("isPluginWebServer")
-        state.function?.also {
-          result.putString("function", state.function.toString())
-        } ?: result.putNull("function")
-        state.isMySettingChanged?.also {
-          result.putBoolean("isMySettingChanged", state.isMySettingChanged!!)
-        } ?: result.putNull("isMySettingChanged")
-        result.putString("currentMicrophone", state.currentMicrophone?.toString())
-        result.putBoolean("isSdCard", state.isSdCard)
-        state.cameraError?.also {
-          result.putArray("cameraError", Arguments.makeNativeArray(state.cameraError!!.map { it.toString() }))
-        } ?: result.putNull("cameraError")
-        state.isBatteryInsert?.also {
-          result.putString("isBatteryInsert", state.isBatteryInsert.toString())
-        } ?: result.putNull("isBatteryInsert")
-        state.externalGpsInfo?.also {
-          result.putMap(KEY_STATE_EXTERNAL_GPS_INFO, toResult(it))
-        } ?: result.putNull(KEY_STATE_EXTERNAL_GPS_INFO)
-        state.internalGpsInfo?.also {
-          result.putMap(KEY_STATE_INTERNAL_GPS_INFO, toResult(it))
-        } ?: result.putNull(KEY_STATE_INTERNAL_GPS_INFO)
-        state.boardTemp?.also {
-          result.putInt(KEY_STATE_BOARD_TEMP, it)
-        } ?: result.putNull(KEY_STATE_BOARD_TEMP)
-        state.batteryTemp?.also {
-          result.putInt(KEY_STATE_BATTERY_TEMP, it)
-        } ?: result.putNull(KEY_STATE_BATTERY_TEMP)
+        val result = toResult(state)
         promise.resolve(result)
       } catch (t: Throwable) {
         promise.reject(t)
@@ -2035,6 +1992,73 @@ class ThetaClientReactNativeModule(
     }
   }
 
+  @ReactMethod
+  fun getEventWebSocket(promise: Promise) {
+    val theta = this.theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    launch {
+      eventWebSocket?.stop()
+      eventWebSocket = theta.getEventWebSocket()
+      promise.resolve(true)
+    }
+  }
+
+  @ReactMethod
+  fun eventWebSocketStart(promise: Promise) {
+    val theta = this.theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    val eventWebSocket = this.eventWebSocket
+    if (eventWebSocket == null) {
+      promise.reject(Exception("no eventWebSocket"))
+      return
+    }
+    launch {
+      eventWebSocket.stop()
+      try {
+        eventWebSocket.start(object : EventWebSocket.Callback {
+          override fun onClose() {
+            sendNotifyEvent(
+              toNotify(NOTIFY_EVENT_WEBSOCKET_CLOSE, null)
+            )
+          }
+
+          override fun onReceive(event: CameraEvent) {
+            sendNotifyEvent(
+              toNotify(NOTIFY_EVENT_WEBSOCKET_EVENT, toEventWebSocketEventNotifyParam(event))
+            )
+          }
+        })
+        promise.resolve(true)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+    }
+  }
+
+  @ReactMethod
+  fun eventWebSocketStop(promise: Promise) {
+    val theta = this.theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    val eventWebSocket = this.eventWebSocket
+    if (eventWebSocket == null) {
+      promise.reject(Exception("no eventWebSocket"))
+      return
+    }
+    launch {
+      eventWebSocket.stop()
+      promise.resolve(true)
+    }
+  }
+
   companion object {
     const val NAME = "ThetaClientReactNative"
     const val EVENT_NAME = "ThetaFrameEvent"
@@ -2052,5 +2076,7 @@ class ThetaClientReactNativeModule(
     const val NOTIFY_MULTI_BRACKET_PROGRESS = "MULTI-BRACKET-PROGRESS"
     const val NOTIFY_MULTI_BRACKET_STOP_ERROR = "MULTI-BRACKET-STOP-ERROR"
     const val NOTIFY_CONTINUOUS_PROGRESS = "CONTINUOUS-PROGRESS"
+    const val NOTIFY_EVENT_WEBSOCKET_EVENT = "EVENT-WEBSOCKET-EVENT"
+    const val NOTIFY_EVENT_WEBSOCKET_CLOSE = "EVENT-WEBSOCKET-CLOSE"
   }
 }

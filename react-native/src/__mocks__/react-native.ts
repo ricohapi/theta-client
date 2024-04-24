@@ -38,6 +38,9 @@ export const NativeModules = {
     buildContinuousCapture: jest.fn(),
     startContinuousCapture: jest.fn(),
     getOptions: jest.fn(),
+    getEventWebSocket: jest.fn(),
+    eventWebSocketStart: jest.fn(),
+    eventWebSocketStop: jest.fn(),
   },
 };
 

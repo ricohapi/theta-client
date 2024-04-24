@@ -1,5 +1,6 @@
 package com.ricoh360.thetaclient
 
+import com.ricoh360.thetaclient.websocket.WebSocketClient
 import io.ktor.client.HttpClient
 
 /**
@@ -48,4 +49,13 @@ fun getMultipartPostClient(): MultipartPostClient {
     } else {
         ApiClient.multipartPostClient
     }
+}
+
+internal fun newEventWebSocketClient(endpoint: String): WebSocketClient {
+    val httpClient = if (MockApiClient.useMock) {
+        MockApiClient.newWebSocketHttpClient()
+    } else {
+        ApiClient.newWebSocketHttpClient()
+    }
+    return WebSocketClient(httpClient, endpoint, "/events")
 }

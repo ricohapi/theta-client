@@ -48,28 +48,69 @@ fun toCameraErrorList(cameraErrorList: List<CameraErrorEnum>?): List<String>? {
 }
 
 fun toResult(thetaState: ThetaState): Map<String, Any?> {
-    val result = mutableMapOf(
-        "fingerprint" to thetaState.fingerprint,
-        "batteryLevel" to thetaState.batteryLevel,
-        "storageUri" to thetaState.storageUri,
-        "storageID" to thetaState.storageID,
-        "captureStatus" to thetaState.captureStatus.name,
-        "recordedTime" to thetaState.recordedTime,
-        "recordableTime" to thetaState.recordableTime,
-        "capturedPictures" to thetaState.capturedPictures,
-        "compositeShootingElapsedTime" to thetaState.compositeShootingElapsedTime,
-        "latestFileUrl" to thetaState.latestFileUrl,
-        "chargingState" to thetaState.chargingState.name,
-        "apiVersion" to thetaState.apiVersion,
-        "isPluginRunning" to thetaState.isPluginRunning,
-        "isPluginWebServer" to thetaState.isPluginWebServer,
-        "function" to thetaState.function?.name,
-        "isMySettingChanged" to thetaState.isMySettingChanged,
-        "currentMicrophone" to thetaState.currentMicrophone?.name,
-        "isSdCard" to thetaState.isSdCard,
-        "cameraError" to toCameraErrorList(thetaState.cameraError),
-        "isBatteryInsert" to thetaState.isBatteryInsert,
-    )
+    val result = mutableMapOf<String, Any>()
+    thetaState.fingerprint?.let {
+        result.put("fingerprint", it)
+    }
+    thetaState.batteryLevel?.let {
+        result.put("batteryLevel", it)
+    }
+    thetaState.storageUri?.let {
+        result.put("storageUri", it)
+    }
+    thetaState.storageID?.let {
+        result.put("storageID", it)
+    }
+    thetaState.captureStatus?.let {
+        result.put("captureStatus", it.name)
+    }
+    thetaState.recordedTime?.let {
+        result.put("recordedTime", it)
+    }
+    thetaState.recordableTime?.let {
+        result.put("recordableTime", it)
+    }
+    thetaState.capturedPictures?.let {
+        result.put("capturedPictures", it)
+    }
+    thetaState.compositeShootingElapsedTime?.let {
+        result.put("compositeShootingElapsedTime", it)
+    }
+    thetaState.latestFileUrl?.let {
+        result.put("latestFileUrl", it)
+    }
+    thetaState.chargingState?.let {
+        result.put("chargingState", it.name)
+    }
+    thetaState.apiVersion?.let {
+        result.put("apiVersion", it)
+    }
+    thetaState.isPluginRunning?.let {
+        result.put("isPluginRunning", it)
+    }
+    thetaState.isPluginWebServer?.let {
+        result.put("isPluginWebServer", it)
+    }
+    thetaState.function?.let {
+        result.put("function", it.name)
+    }
+    thetaState.isMySettingChanged?.let {
+        result.put("isMySettingChanged", it)
+    }
+    thetaState.currentMicrophone?.let {
+        result.put("currentMicrophone", it.name)
+    }
+    thetaState.isSdCard?.let {
+        result.put("isSdCard", it)
+    }
+    thetaState.cameraError?.let {
+        toCameraErrorList(it)?.let { list ->
+            result.put("cameraError", list)
+        }
+    }
+    thetaState.isBatteryInsert?.let {
+        result.put("isBatteryInsert", it)
+    }
     thetaState.externalGpsInfo?.let {
         result.put(KEY_STATE_EXTERNAL_GPS_INFO, toResult(it))
     }
@@ -175,12 +216,18 @@ fun toResult(burstOption: BurstOption): Map<String, Any?> {
 }
 
 fun toEthernetConfig(map: Map<String, Any>): EthernetConfig {
+    val proxy = map["proxy"]?.let {
+        @Suppress("UNCHECKED_CAST")
+        (it as? Map<String, Any>)?.let{ map ->
+            toProxy(map)
+        }
+    }
     return EthernetConfig(
         usingDhcp = map["usingDhcp"] as? Boolean ?: true,
         ipAddress = map["ipAddress"] as? String,
         subnetMask = map["subnetMask"] as? String,
         defaultGateway = map["defaultGateway"] as? String,
-        proxy = (map["proxy"] as? Map<String, Any>)?.let { toProxy(map = it) }
+        proxy = proxy
     )
 }
 

@@ -2,6 +2,7 @@ package com.ricoh360.thetaclient
 
 import com.ricoh360.thetaclient.capture.*
 import com.ricoh360.thetaclient.transferred.*
+import com.ricoh360.thetaclient.websocket.EventWebSocket
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
 import io.ktor.client.statement.*
@@ -6255,24 +6256,24 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @property batteryTemp This represents the current temperature inside the battery as an integer value, ranging from -10°C to 100°C with a precision of 1°C.
      */
     data class ThetaState(
-        val fingerprint: String,
-        val batteryLevel: Float,
+        val fingerprint: String?,
+        val batteryLevel: Float?,
         val storageUri: String?,
         val storageID: String?,
-        val captureStatus: CaptureStatusEnum,
-        val recordedTime: Int,
-        val recordableTime: Int,
+        val captureStatus: CaptureStatusEnum?,
+        val recordedTime: Int?,
+        val recordableTime: Int?,
         val capturedPictures: Int?,
         val compositeShootingElapsedTime: Int?,
-        val latestFileUrl: String,
-        val chargingState: ChargingStateEnum,
-        val apiVersion: Int,
+        val latestFileUrl: String?,
+        val chargingState: ChargingStateEnum?,
+        val apiVersion: Int?,
         val isPluginRunning: Boolean?,
         val isPluginWebServer: Boolean?,
         val function: ShootingFunctionEnum?,
         val isMySettingChanged: Boolean?,
         val currentMicrophone: MicrophoneOptionEnum?,
-        val isSdCard: Boolean,
+        val isSdCard: Boolean?,
         val cameraError: List<CameraErrorEnum>?,
         val isBatteryInsert: Boolean?,
         val externalGpsInfo: StateGpsInfo?,
@@ -6280,32 +6281,39 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         val boardTemp: Int?,
         val batteryTemp: Int?,
     ) {
+        internal constructor(fingerprint: String?, state: CameraState) : this(
+            fingerprint,
+            state.batteryLevel?.toFloat(),
+            state.storageUri,
+            state._storageID,
+            state._captureStatus?.let { CaptureStatusEnum.get(it) },
+            state._recordedTime,
+            state._recordedTime,
+            state._capturedPictures,
+            state._compositeShootingElapsedTime,
+            state._latestFileUrl ?: "",
+            state._batteryState?.let { ChargingStateEnum.get(it) },
+            state._apiVersion,
+            state._pluginRunning,
+            state._pluginWebServer,
+            state._function?.let { ShootingFunctionEnum.get(it) },
+            state._mySettingChanged,
+            state._currentMicrophone?.let { MicrophoneOptionEnum.get(it) },
+            state._currentStorage == StorageOption.SD,
+            state._cameraError?.map { CameraErrorEnum.get(it) },
+            state._batteryInsert,
+            state._externalGpsInfo?.let { StateGpsInfo(it) },
+            state._internalGpsInfo?.let { StateGpsInfo(it) },
+            state._boardTemp,
+            state._batteryTemp,
+        )
+
         internal constructor(response: StateApiResponse) : this(
             response.fingerprint,
-            response.state.batteryLevel.toFloat(),
-            response.state.storageUri,
-            response.state._storageID,
-            CaptureStatusEnum.get(response.state._captureStatus),
-            response.state._recordedTime,
-            response.state._recordedTime,
-            response.state._capturedPictures,
-            response.state._compositeShootingElapsedTime,
-            response.state._latestFileUrl ?: "",
-            ChargingStateEnum.get(response.state._batteryState),
-            response.state._apiVersion,
-            response.state._pluginRunning,
-            response.state._pluginWebServer,
-            response.state._function?.let { ShootingFunctionEnum.get(response.state._function) },
-            response.state._mySettingChanged,
-            response.state._currentMicrophone?.let { MicrophoneOptionEnum.get(response.state._currentMicrophone) },
-            response.state._currentStorage == StorageOption.SD,
-            response.state._cameraError?.map { it -> CameraErrorEnum.get(it) },
-            response.state._batteryInsert,
-            response.state._externalGpsInfo?.let { StateGpsInfo(it) },
-            response.state._internalGpsInfo?.let { StateGpsInfo(it) },
-            response.state._boardTemp,
-            response.state._batteryTemp,
+            response.state
         )
+
+        internal constructor(state: CameraState) : this(null, state)
     }
 
     /**
@@ -7538,6 +7546,9 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         }
     }
 
+    fun getEventWebSocket(): EventWebSocket {
+        return EventWebSocket(endpoint)
+    }
 }
 
 

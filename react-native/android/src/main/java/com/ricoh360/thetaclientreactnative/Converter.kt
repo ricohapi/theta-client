@@ -9,10 +9,12 @@ import com.facebook.react.bridge.WritableArray
 import com.ricoh360.thetaclient.DigestAuth
 import com.ricoh360.thetaclient.ThetaRepository.*
 import com.ricoh360.thetaclient.capture.*
+import com.ricoh360.thetaclient.websocket.CameraEvent
 
 const val KEY_NOTIFY_NAME = "name"
 const val KEY_NOTIFY_PARAMS = "params"
 const val KEY_NOTIFY_PARAM_COMPLETION = "completion"
+const val KEY_NOTIFY_PARAM_EVENT = "event"
 const val KEY_NOTIFY_PARAM_MESSAGE = "message"
 const val KEY_GPS_INFO = "gpsInfo"
 const val KEY_STATE_EXTERNAL_GPS_INFO = "externalGpsInfo"
@@ -97,6 +99,12 @@ fun toNotify(
 fun toCaptureProgressNotifyParam(value: Float): WritableMap {
   val result = Arguments.createMap()
   result.putDouble(KEY_NOTIFY_PARAM_COMPLETION, value.toDouble())
+  return result
+}
+
+fun toEventWebSocketEventNotifyParam(value: CameraEvent): WritableMap {
+  val result = Arguments.createMap()
+  result.putMap(KEY_NOTIFY_PARAM_EVENT, toResult(value))
   return result
 }
 
@@ -356,16 +364,23 @@ fun <T : Enum<T>> addOptionsEnumToMap(options: Options, name: OptionNameEnum, ob
 }
 
 fun <T> addOptionsValueToMap(options: Options, name: OptionNameEnum, objects: WritableMap) {
-  val key = optionNameEnumToItemName[name]
-  if (key == null) return
+  val key = optionNameEnumToItemName[name] ?: return
   options.getValue<T>(name)?.let { value ->
-    if (value is Int) {
-      objects.putInt(key, value)
-    } else {
-      (value as? String)?.toDouble()?.let {
-        objects.putDouble(key, it)
-      } ?: run {
-        objects.putString(key, (value as String))
+    when (value) {
+      is String -> {
+        objects.putString(key, value)
+      }
+
+      is Int -> {
+        objects.putInt(key, value)
+      }
+
+      is Number -> {
+        objects.putDouble(key, value.toDouble())
+      }
+
+      else -> {
+        objects.putString(key, value.toString())
       }
     }
   }
@@ -553,6 +568,94 @@ fun toResult(timeShift: TimeShiftSetting): WritableMap {
   }
   timeShift.secondInterval?.let { value ->
     result.putString("secondInterval", value.toString())
+  }
+  return result
+}
+
+fun toResult(state: ThetaState): WritableMap {
+  val result = Arguments.createMap()
+  state.fingerprint?.let {
+    result.putString("fingerprint", it)
+  }
+  state.batteryLevel?.let {
+    result.putDouble("batteryLevel", it.toDouble())
+  }
+  state.storageUri?.let {
+    result.putString("storageUri", it)
+  }
+  state.storageID?.let {
+    result.putString("storageID", it)
+  }
+  state.captureStatus?.let {
+    result.putString("captureStatus", it.toString())
+  }
+  state.recordedTime?.let {
+    result.putInt("recordedTime", it)
+  }
+  state.recordableTime?.let {
+    result.putInt("recordableTime", it)
+  }
+  state.capturedPictures?.let {
+    result.putInt("capturedPictures", it)
+  }
+  state.compositeShootingElapsedTime?.let {
+    result.putString("compositeShootingElapsedTime", it.toString())
+  }
+  state.latestFileUrl?.let {
+    result.putString("latestFileUrl", it)
+  }
+  state.chargingState?.let {
+    result.putString("chargingState", it.toString())
+  }
+  state.apiVersion?.let {
+    result.putInt("apiVersion", it)
+  }
+  state.isPluginRunning?.let {
+    result.putBoolean("isPluginRunning", it)
+  }
+  state.isPluginWebServer?.let {
+    result.putBoolean("isPluginWebServer", it)
+  }
+  state.function?.let {
+    result.putString("function", it.toString())
+  }
+  state.isMySettingChanged?.let {
+    result.putBoolean("isMySettingChanged", it)
+  }
+  state.currentMicrophone?.let {
+    result.putString("currentMicrophone", it.toString())
+  }
+  state.isSdCard?.let {
+    result.putBoolean("isSdCard", it)
+  }
+  state.cameraError?.let { list ->
+    result.putArray("cameraError", Arguments.makeNativeArray(list.map { it.toString() }))
+  }
+  state.isBatteryInsert?.let {
+    result.putString("isBatteryInsert", it.toString())
+  }
+  state.externalGpsInfo?.let {
+    result.putMap(KEY_STATE_EXTERNAL_GPS_INFO, toResult(it))
+  }
+  state.internalGpsInfo?.let {
+    result.putMap(KEY_STATE_INTERNAL_GPS_INFO, toResult(it))
+  }
+  state.boardTemp?.let {
+    result.putInt(KEY_STATE_BOARD_TEMP, it)
+  }
+  state.batteryTemp?.let {
+    result.putInt(KEY_STATE_BATTERY_TEMP, it)
+  }
+  return result
+}
+
+fun toResult(cameraEvent: CameraEvent): WritableMap {
+  val result = Arguments.createMap()
+  cameraEvent.options?.let {
+    result.putMap("options", toResult(it))
+  }
+  cameraEvent.state?.let {
+    result.putMap("state", toResult(it))
   }
   return result
 }

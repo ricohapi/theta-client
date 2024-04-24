@@ -32,6 +32,7 @@ import {
 import type { ThetaConfig } from './theta-config';
 import type { ThetaTimeout } from './theta-timeout';
 import { NotifyController } from './notify-controller';
+import { EventWebSocket } from './event-websocket';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 /**
@@ -635,4 +636,16 @@ export function getPluginOrders(): Promise<string[]> {
  */
 export function setPluginOrders(plugins: string[]): Promise<boolean> {
   return ThetaClientReactNative.setPluginOrders(plugins);
+}
+
+export function getEventWebSocket(): Promise<EventWebSocket> {
+  return new Promise<EventWebSocket>(async (resolve, reject) => {
+    ThetaClientReactNative.getEventWebSocket()
+      .then(() => {
+        resolve(new EventWebSocket(NotifyController.instance));
+      })
+      .catch((error: any) => {
+        reject(error);
+      });
+  });
 }
