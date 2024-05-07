@@ -48,28 +48,69 @@ fun toCameraErrorList(cameraErrorList: List<CameraErrorEnum>?): List<String>? {
 }
 
 fun toResult(thetaState: ThetaState): Map<String, Any?> {
-    val result = mutableMapOf(
-        "fingerprint" to thetaState.fingerprint,
-        "batteryLevel" to thetaState.batteryLevel,
-        "storageUri" to thetaState.storageUri,
-        "storageID" to thetaState.storageID,
-        "captureStatus" to thetaState.captureStatus.name,
-        "recordedTime" to thetaState.recordedTime,
-        "recordableTime" to thetaState.recordableTime,
-        "capturedPictures" to thetaState.capturedPictures,
-        "compositeShootingElapsedTime" to thetaState.compositeShootingElapsedTime,
-        "latestFileUrl" to thetaState.latestFileUrl,
-        "chargingState" to thetaState.chargingState.name,
-        "apiVersion" to thetaState.apiVersion,
-        "isPluginRunning" to thetaState.isPluginRunning,
-        "isPluginWebServer" to thetaState.isPluginWebServer,
-        "function" to thetaState.function?.name,
-        "isMySettingChanged" to thetaState.isMySettingChanged,
-        "currentMicrophone" to thetaState.currentMicrophone?.name,
-        "isSdCard" to thetaState.isSdCard,
-        "cameraError" to toCameraErrorList(thetaState.cameraError),
-        "isBatteryInsert" to thetaState.isBatteryInsert,
-    )
+    val result = mutableMapOf<String, Any>()
+    thetaState.fingerprint?.let {
+        result.put("fingerprint", it)
+    }
+    thetaState.batteryLevel?.let {
+        result.put("batteryLevel", it)
+    }
+    thetaState.storageUri?.let {
+        result.put("storageUri", it)
+    }
+    thetaState.storageID?.let {
+        result.put("storageID", it)
+    }
+    thetaState.captureStatus?.let {
+        result.put("captureStatus", it.name)
+    }
+    thetaState.recordedTime?.let {
+        result.put("recordedTime", it)
+    }
+    thetaState.recordableTime?.let {
+        result.put("recordableTime", it)
+    }
+    thetaState.capturedPictures?.let {
+        result.put("capturedPictures", it)
+    }
+    thetaState.compositeShootingElapsedTime?.let {
+        result.put("compositeShootingElapsedTime", it)
+    }
+    thetaState.latestFileUrl?.let {
+        result.put("latestFileUrl", it)
+    }
+    thetaState.chargingState?.let {
+        result.put("chargingState", it.name)
+    }
+    thetaState.apiVersion?.let {
+        result.put("apiVersion", it)
+    }
+    thetaState.isPluginRunning?.let {
+        result.put("isPluginRunning", it)
+    }
+    thetaState.isPluginWebServer?.let {
+        result.put("isPluginWebServer", it)
+    }
+    thetaState.function?.let {
+        result.put("function", it.name)
+    }
+    thetaState.isMySettingChanged?.let {
+        result.put("isMySettingChanged", it)
+    }
+    thetaState.currentMicrophone?.let {
+        result.put("currentMicrophone", it.name)
+    }
+    thetaState.isSdCard?.let {
+        result.put("isSdCard", it)
+    }
+    thetaState.cameraError?.let {
+        toCameraErrorList(it)?.let { list ->
+            result.put("cameraError", list)
+        }
+    }
+    thetaState.isBatteryInsert?.let {
+        result.put("isBatteryInsert", it)
+    }
     thetaState.externalGpsInfo?.let {
         result.put(KEY_STATE_EXTERNAL_GPS_INFO, toResult(it))
     }
@@ -171,6 +212,22 @@ fun toResult(burstOption: BurstOption): Map<String, Any?> {
         "burstMaxExposureTime" to burstOption.burstMaxExposureTime?.name,
         "burstEnableIsoControl" to burstOption.burstEnableIsoControl?.name,
         "burstOrder" to burstOption.burstOrder?.name
+    )
+}
+
+fun toEthernetConfig(map: Map<String, Any>): EthernetConfig {
+    val proxy = map["proxy"]?.let {
+        @Suppress("UNCHECKED_CAST")
+        (it as? Map<String, Any>)?.let{ map ->
+            toProxy(map)
+        }
+    }
+    return EthernetConfig(
+        usingDhcp = map["usingDhcp"] as? Boolean ?: true,
+        ipAddress = map["ipAddress"] as? String,
+        subnetMask = map["subnetMask"] as? String,
+        defaultGateway = map["defaultGateway"] as? String,
+        proxy = proxy
     )
 }
 
@@ -423,6 +480,26 @@ fun toGetOptionsParam(data: List<String>): List<OptionNameEnum> {
     return optionNames
 }
 
+fun toResult(ethernetConfig: EthernetConfig): Map<String, Any?> {
+    val result = mutableMapOf<String, Any>()
+
+    result["usingDhcp"] = ethernetConfig.usingDhcp
+
+    ethernetConfig.ipAddress?.let { value ->
+        result["ipAddress"] = value
+    }
+    ethernetConfig.subnetMask?.let { value ->
+        result["subnetMask"] = value
+    }
+    ethernetConfig.defaultGateway?.let { value ->
+        result["defaultGateway"] = value
+    }
+    ethernetConfig.proxy?.let {
+        result["proxy"] = toResult(proxy = it)
+    }
+    return result
+}
+
 fun toResult(gpsInfo: GpsInfo): Map<String, Any> {
     return mapOf(
         "latitude" to gpsInfo.latitude,
@@ -505,6 +582,10 @@ fun toResult(options: Options): Map<String, Any> {
         } else if (name == OptionNameEnum.BurstOption) {
             options.getValue<BurstOption>(OptionNameEnum.BurstOption)?.let { burstOption ->
                 result[OptionNameEnum.BurstOption.name] = toResult(burstOption)
+            }
+        } else if (name == OptionNameEnum.EthernetConfig) {
+            options.getValue<EthernetConfig>(OptionNameEnum.EthernetConfig)?.let { ethernetConfig ->
+                result[OptionNameEnum.EthernetConfig.name] = toResult(ethernetConfig = ethernetConfig)
             }
         } else if (name == OptionNameEnum.GpsInfo) {
             options.getValue<GpsInfo>(OptionNameEnum.GpsInfo)?.let { gpsInfo ->
@@ -598,6 +679,9 @@ fun setOptionValue(options: Options, name: OptionNameEnum, value: Any) {
     } else if (name == OptionNameEnum.BurstOption) {
         @Suppress("UNCHECKED_CAST")
         options.setValue(name, toBurstOption(value as Map<String, Any>))
+    } else if (name == OptionNameEnum.EthernetConfig) {
+        @Suppress("UNCHECKED_CAST")
+        options.setValue(name, toEthernetConfig(value as Map<String, Any>))
     } else if (name == OptionNameEnum.GpsInfo) {
         @Suppress("UNCHECKED_CAST")
         options.setValue(name, toGpsInfo(value as Map<String, Any>))

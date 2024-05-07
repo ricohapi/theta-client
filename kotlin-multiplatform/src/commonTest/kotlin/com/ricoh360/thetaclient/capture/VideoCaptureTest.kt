@@ -295,11 +295,22 @@ class VideoCaptureTest {
                 .build()
 
             // check result
-            assertEquals(
-                videoCapture.getMaxRecordableTime(),
-                it,
-                "set option maxRecordableTime $valueIndex"
-            )
+            when (it) {
+                ThetaRepository.MaxRecordableTimeEnum.UNKNOWN -> {
+                    assertNull(
+                        videoCapture.getMaxRecordableTime(),
+                        "set option maxRecordableTime $valueIndex"
+                    )
+                }
+
+                else -> {
+                    assertEquals(
+                        videoCapture.getMaxRecordableTime(),
+                        it,
+                        "set option maxRecordableTime $valueIndex"
+                    )
+                }
+            }
 
             valueIndex++
             counter = 0

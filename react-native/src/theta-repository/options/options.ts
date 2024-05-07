@@ -13,6 +13,7 @@ import type { FilterEnum } from './option-filter';
 import type { ShootingFunctionEnum } from './option-function';
 import type { GainEnum } from './option-gain';
 import type { ImageStitchingEnum } from './option-image-stitching';
+import type { MaxRecordableTimeEnum } from './option-max-recordable-time';
 import type { NetworkTypeEnum } from './option-network-type';
 import type { PowerSavingEnum } from './option-power-saving';
 import type { PresetEnum } from './option-preset';
@@ -29,6 +30,8 @@ import type { WhiteBalanceAutoStrengthEnum } from './option-white-balance-auto-s
 import type { WlanFrequencyEnum } from './option-wlan-frequency';
 import type { OffDelayEnum } from './option-off-delay';
 import type { SleepDelayEnum } from './option-sleep-delay';
+import type { EthernetConfig } from './option-ethernet-config';
+import type { FileFormatEnum } from './option-file-format';
 
 /** Aperture value. */
 export const ApertureEnum = {
@@ -142,76 +145,6 @@ export const ExposureProgramEnum = {
 /** type definition of ExposureProgramEnum */
 export type ExposureProgramEnum =
   (typeof ExposureProgramEnum)[keyof typeof ExposureProgramEnum];
-
-/** file format type in theta */
-export const FileFormatTypeEnum = {
-  /** jpeg image */
-  JPEG: 'JPEG',
-  /** mp4 video */
-  MP4: 'MP4',
-  /** raw+ image */
-  RAW: 'RAW',
-} as const;
-
-/** type definition of FileFormatTypeEnum */
-export type FileFormatTypeEnum =
-  (typeof FileFormatTypeEnum)[keyof typeof FileFormatTypeEnum];
-
-/** Photo image format */
-export const PhotoFileFormatEnum = {
-  /** jpeg 2048 x 1024 */
-  IMAGE_2K: 'IMAGE_2K',
-  /** jpeg 5376 x 2688 */
-  IMAGE_5K: 'IMAGE_5K',
-  /** jpeg 6720 x 3360 */
-  IMAGE_6_7K: 'IMAGE_6_7K',
-  /** row+ 6720 x 3360 */
-  RAW_P_6_7K: 'RAW_P_6_7K',
-  /** jpeg 5504 x 2752 */
-  IMAGE_5_5K: 'IMAGE_5_5K',
-  /** jpeg 11008 x 5504 */
-  IMAGE_11K: 'IMAGE_11K',
-} as const;
-
-/** Video image format */
-export const VideoFileFormatEnum = {
-  /** mp4 1280 x 570 */
-  VIDEO_HD: 'VIDEO_HD',
-  /** mp4 1920 x 1080 */
-  VIDEO_FULL_HD: 'VIDEO_FULL_HD',
-  /** mp4 1920 x 960 */
-  VIDEO_2K: 'VIDEO_2K',
-  /** mp4 3840 x 1920 */
-  VIDEO_4K: 'VIDEO_4K',
-  /** mp4 1920 x 960 30fps */
-  VIDEO_2K_30F: 'VIDEO_2K_30F',
-  /** mp4 1920 x 960 60fps */
-  VIDEO_2K_60F: 'VIDEO_2K_60F',
-  /** mp4 3840 x 1920 30fps */
-  VIDEO_4K_30F: 'VIDEO_4K_30F',
-  /** mp4 3840 x 1920 60fps */
-  VIDEO_4K_60F: 'VIDEO_4K_60F',
-  /** mp4 5760 x 2880 2fps */
-  VIDEO_5_7K_2F: 'VIDEO_5_7K_2F',
-  /** mp4 5760 x 2880 5fps */
-  VIDEO_5_7K_5F: 'VIDEO_5_7K_5F',
-  /** mp4 5760 x 2880 30fps */
-  VIDEO_5_7K_30F: 'VIDEO_5_7K_30F',
-  /** mp4 7680 x 3840 2fps */
-  VIDEO_7K_2F: 'VIDEO_7K_2F',
-  /** mp4 7680 x 3840 5fps */
-  VIDEO_7K_5F: 'VIDEO_7K_5F',
-  /** mp4 7680 x 3840 10fps */
-  VIDEO_7K_10F: 'VIDEO_7K_10F',
-} as const;
-
-/** type definition of PhotoFileFormatEnum */
-export type PhotoFileFormatEnum =
-  (typeof PhotoFileFormatEnum)[keyof typeof PhotoFileFormatEnum];
-
-/** type definition of VideoFileFormatEnum */
-export type VideoFileFormatEnum =
-  (typeof VideoFileFormatEnum)[keyof typeof VideoFileFormatEnum];
 
 /** GPS information */
 export type GpsInfo = {
@@ -361,24 +294,6 @@ export const LanguageEnum = {
 /** type definition of LanguageEnum */
 export type LanguageEnum = (typeof LanguageEnum)[keyof typeof LanguageEnum];
 
-/** Maximum recordable time (in seconds) of the camera */
-export const MaxRecordableTimeEnum = {
-  /** 180 seconds for SC2 only. */
-  RECORDABLE_TIME_180: 'RECORDABLE_TIME_180',
-  /** 300 seconds for other than SC2. */
-  RECORDABLE_TIME_300: 'RECORDABLE_TIME_300',
-  /** 1500 seconds for other than SC2. */
-  RECORDABLE_TIME_1500: 'RECORDABLE_TIME_1500',
-  /** 7200 seconds for Theta X only */
-  RECORDABLE_TIME_7200: 'RECORDABLE_TIME_7200',
-  /** Just used by getMySetting/setMySetting command */
-  DO_NOT_UPDATE_MY_SETTING_CONDITION: 'DO_NOT_UPDATE_MY_SETTING_CONDITION',
-} as const;
-
-/** type definition of MaxRecordableTimeEnum */
-export type MaxRecordableTimeEnum =
-  (typeof MaxRecordableTimeEnum)[keyof typeof MaxRecordableTimeEnum];
-
 /** White balance. */
 export const WhiteBalanceEnum = {
   /** Automatic */
@@ -449,6 +364,8 @@ export const OptionNameEnum = {
   ContinuousNumber: 'ContinuousNumber',
   /** dateTimeZone */
   DateTimeZone: 'DateTimeZone',
+  /** ethernetConfig */
+  EthernetConfig: 'EthernetConfig',
   /** exposureCompensation */
   ExposureCompensation: 'ExposureCompensation',
   /** exposureDelay */
@@ -624,6 +541,8 @@ export type Options = {
   continuousNumber?: ContinuousNumberEnum;
   /** Current system time of RICOH THETA. Setting another options will result in an error. */
   dateTimeZone?: string;
+  /** IP address allocation to be used when wired LAN is enabled. */
+  ethernetConfig?: EthernetConfig;
   /** Exposure compensation (EV). */
   exposureCompensation?: ExposureCompensationEnum;
   /** Operating time (sec.) of the self-timer. */
@@ -633,7 +552,7 @@ export type Options = {
   /** Face detection */
   faceDetect?: FaceDetectEnum;
   /** Image format used in shooting. */
-  fileFormat?: PhotoFileFormatEnum | VideoFileFormatEnum;
+  fileFormat?: FileFormatEnum;
   /** Image processing filter. */
   filter?: FilterEnum;
   /** Shooting function. */

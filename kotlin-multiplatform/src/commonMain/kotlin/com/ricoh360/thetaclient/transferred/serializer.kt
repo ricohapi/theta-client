@@ -213,3 +213,32 @@ internal abstract class EnumIgnoreUnknownSerializer<T : Enum<T>>(
         }
     }
 }
+
+internal abstract class SerialNameEnumIgnoreUnknownSerializer<T>(
+    values: List<T>,
+    private val defaultValue: T,
+) : KSerializer<T>
+        where T : Enum<T>, T : SerialNameEnum
+{
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor(values.first()::class.qualifiedName ?: "" , PrimitiveKind.STRING)
+    private val lookup = values.associateBy({ it }, { it.serialName })
+    private val revLookup = values.associateBy {
+        it.serialName
+    }
+
+    override fun serialize(encoder: Encoder, value: T) {
+        encoder.encodeString(lookup.getValue(value))
+    }
+
+    override fun deserialize(decoder: Decoder): T {
+        val decodeString = decoder.decodeString()
+        return when (val value = revLookup[decodeString]) {
+            null -> {
+                println("Web API unknown value. ${defaultValue::class.simpleName}: $decodeString")
+                defaultValue
+            }
+            else -> value
+        }
+    }
+}

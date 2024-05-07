@@ -17,7 +17,7 @@ dependencies {
     dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.10")
 }
 
-val thetaClientVersion = "1.8.0"
+val thetaClientVersion = "1.9.0"
 group = "com.ricoh360.thetaclient"
 version = thetaClientVersion
 
@@ -67,6 +67,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
                 implementation("io.ktor:ktor-client-cio:$ktorVersion")
                 implementation("io.ktor:ktor-client-logging:$ktorVersion")
+                implementation("io.ktor:ktor-client-websockets:$ktorVersion")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("com.soywiz.korlibs.krypto:krypto:$kryptoVersion")
             }

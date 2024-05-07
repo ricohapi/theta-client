@@ -1,10 +1,17 @@
 package com.ricoh360.thetaclient
 
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.logging.*
-import io.ktor.serialization.kotlinx.json.*
+import com.ricoh360.thetaclient.websocket.WebSocketClient
+import com.ricoh360.thetaclient.websocket.WebSocketHttpClient
+import com.ricoh360.thetaclient.websocket.WebSocketHttpClientImpl
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.engine.cio.endpoint
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.logging.SIMPLE
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 
@@ -58,6 +65,10 @@ internal object ApiClient {
 
     internal val previewClient = PreviewClientImpl()
     internal val multipartPostClient = MultipartPostClientImpl()
+
+    internal fun newWebSocketHttpClient(): WebSocketHttpClient {
+        return WebSocketHttpClientImpl()
+    }
 }
 
 /**
@@ -96,4 +107,8 @@ internal fun getHPreviewClient(): PreviewClient {
  */
 fun getMultipartPostClient(): MultipartPostClient {
     return ApiClient.multipartPostClient
+}
+
+internal fun newEventWebSocketClient(endpoint: String): WebSocketClient {
+    return WebSocketClient(ApiClient.newWebSocketHttpClient(), endpoint, "/events")
 }

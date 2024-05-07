@@ -128,31 +128,73 @@ func convertResult(cameraErrorList: [ThetaRepository.CameraErrorEnum]?) -> [Stri
 }
 
 func convertResult(thetaState: ThetaRepository.ThetaState) -> [String: Any?] {
-    var result = [
-        "fingerprint": thetaState.fingerprint,
-        "batteryLevel": thetaState.batteryLevel,
-        "storageUri": thetaState.storageUri,
-        "storageID": thetaState.storageID,
-        "captureStatus": thetaState.captureStatus.name,
-        "recordedTime": thetaState.recordedTime,
-        "recordableTime": thetaState.recordableTime,
-        "capturedPictures": thetaState.capturedPictures,
-        "compositeShootingElapsedTime": thetaState.compositeShootingElapsedTime,
-        "latestFileUrl": thetaState.latestFileUrl,
-        "chargingState": thetaState.chargingState.name,
-        "apiVersion": thetaState.apiVersion,
-        "isPluginRunning": convertKotlinBooleanToBool(value: thetaState.isPluginRunning),
-        "isPluginWebServer": convertKotlinBooleanToBool(value: thetaState.isPluginWebServer),
-        "function": thetaState.function?.name,
-        "isMySettingChanged": convertKotlinBooleanToBool(value: thetaState.isMySettingChanged),
-        "currentMicrophone": thetaState.currentMicrophone?.name,
-        "isSdCard": convertKotlinBooleanToBool(value: thetaState.isSdCard),
-        "cameraError": convertResult(cameraErrorList: thetaState.cameraError),
-        "isBatteryInsert": convertKotlinBooleanToBool(value: thetaState.isBatteryInsert),
-        KEY_STATE_BOARD_TEMP: thetaState.boardTemp,
-        KEY_STATE_BATTERY_TEMP: thetaState.batteryTemp,
-    ] as [String: Any?]
-
+    var result: [String: Any] = [:]
+    if let value = thetaState.fingerprint {
+        result["fingerprint"] = value
+    }
+    if let value = thetaState.batteryLevel {
+        result["batteryLevel"] = value
+    }
+    if let value = thetaState.storageUri {
+        result["storageUri"] = value
+    }
+    if let value = thetaState.storageID {
+        result["storageID"] = value
+    }
+    if let value = thetaState.captureStatus {
+        result["captureStatus"] = value.name
+    }
+    if let value = thetaState.recordedTime {
+        result["recordedTime"] = value
+    }
+    if let value = thetaState.recordableTime {
+        result["recordableTime"] = value
+    }
+    if let value = thetaState.capturedPictures {
+        result["capturedPictures"] = value
+    }
+    if let value = thetaState.compositeShootingElapsedTime {
+        result["compositeShootingElapsedTime"] = value
+    }
+    if let value = thetaState.latestFileUrl {
+        result["latestFileUrl"] = value
+    }
+    if let value = thetaState.chargingState {
+        result["chargingState"] = value.name
+    }
+    if let value = thetaState.apiVersion {
+        result["apiVersion"] = value
+    }
+    if let value = thetaState.isPluginRunning {
+        result["isPluginRunning"] = convertKotlinBooleanToBool(value: value)
+    }
+    if let value = thetaState.isPluginWebServer {
+        result["isPluginWebServer"] = convertKotlinBooleanToBool(value: value)
+    }
+    if let value = thetaState.function {
+        result["function"] = value.name
+    }
+    if let value = thetaState.isMySettingChanged {
+        result["isMySettingChanged"] = convertKotlinBooleanToBool(value: value)
+    }
+    if let value = thetaState.currentMicrophone {
+        result["currentMicrophone"] = value.name
+    }
+    if let value = thetaState.isSdCard {
+        result["isSdCard"] = convertKotlinBooleanToBool(value: value)
+    }
+    if let value = thetaState.cameraError {
+        result["cameraError"] = convertResult(cameraErrorList: value)
+    }
+    if let value = thetaState.isBatteryInsert {
+        result["isBatteryInsert"] = convertKotlinBooleanToBool(value: value)
+    }
+    if let value = thetaState.boardTemp {
+        result[KEY_STATE_BOARD_TEMP] = value
+    }
+    if let value = thetaState.batteryTemp {
+        result[KEY_STATE_BATTERY_TEMP] = value
+    }
     if let externalGpsInfo = thetaState.externalGpsInfo {
         result[KEY_STATE_EXTERNAL_GPS_INFO] = convertResult(stateGpsInfo: externalGpsInfo)
     }
@@ -551,6 +593,24 @@ func convertResult(burstOption: ThetaRepository.BurstOption) -> [String: Any?] {
     ]
 }
 
+func toEthernetConfig(params: [String: Any]) -> ThetaRepository.EthernetConfig {
+    let proxy: ThetaRepository.Proxy? = {
+        if let proxyMap = params["proxy"] as? [String: Any] {
+            toProxy(params: proxyMap)
+        } else {
+            nil
+        }
+    }()
+    
+    return ThetaRepository.EthernetConfig(
+        usingDhcp: params["usingDhcp"] as? Bool ?? true,
+        ipAddress: params["ipAddress"] as? String,
+        subnetMask: params["subnetMask"] as? String,
+        defaultGateway: params["defaultGateway"] as? String,
+        proxy: proxy
+    )
+}
+
 func toGpsInfo(params: [String: Any]) -> ThetaRepository.GpsInfo {
     return ThetaRepository.GpsInfo(
         latitude: Float(params["latitude"] as? Double ?? 0),
@@ -623,6 +683,25 @@ func convertGetOptionsParam(params: [String]) -> [ThetaRepository.OptionNameEnum
     return array
 }
 
+func convertResult(ethernetConfig: ThetaRepository.EthernetConfig) -> [String: Any] {
+    var result: [String: Any] = [
+        "usingDhcp": ethernetConfig.usingDhcp 
+    ]
+    if let ipAddress = ethernetConfig.ipAddress {
+        result["ipAddress"] = ipAddress
+    }
+    if let subnetMask = ethernetConfig.subnetMask {
+        result["subnetMask"] = subnetMask
+    }
+    if let defaultGateway = ethernetConfig.defaultGateway {
+        result["defaultGateway"] = defaultGateway
+    }
+    if let proxy = ethernetConfig.proxy {
+        result["proxy"] = convertResult(proxy: proxy)
+    }
+    return result
+}
+
 func convertResult(gpsInfo: ThetaRepository.GpsInfo) -> [String: Any] {
     return [
         "latitude": gpsInfo.latitude,
@@ -684,6 +763,8 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                 result[name.name] = convertResult(autoBracket: autoBracket)
             } else if value is ThetaRepository.BurstOption, let burstOption = value as? ThetaRepository.BurstOption {
                 result[name.name] = convertResult(burstOption: burstOption)
+            } else if value is ThetaRepository.EthernetConfig, let ethernetConfig = value as? ThetaRepository.EthernetConfig {
+                result[name.name] = convertResult(ethernetConfig: ethernetConfig)
             } else if value is ThetaRepository.GpsInfo {
                 let gpsInfo = value as! ThetaRepository.GpsInfo
                 result[name.name] = convertResult(gpsInfo: gpsInfo)
@@ -782,6 +863,10 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         options.continuousNumber = getEnumValue(values: ThetaRepository.ContinuousNumberEnum.values(), name: value as! String)!
     case ThetaRepository.OptionNameEnum.datetimezone.name:
         options.dateTimeZone = value as? String
+    case ThetaRepository.OptionNameEnum.ethernetconfig.name:
+        if let params = value as? [String: Any] {
+            options.ethernetConfig = toEthernetConfig(params: params)
+        }
     case ThetaRepository.OptionNameEnum.exposurecompensation.name:
         options.exposureCompensation = getEnumValue(values: ThetaRepository.ExposureCompensationEnum.values(), name: value as! String)!
     case ThetaRepository.OptionNameEnum.exposuredelay.name:

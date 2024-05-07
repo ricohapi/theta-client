@@ -65,6 +65,11 @@ const styles = StyleSheet.create({
   autoBracketEditorLayout: {
     height: 300,
   },
+  inputArea: {
+    width: '90%',
+    height: '10%',
+    minHeight: 200,
+  },
 });
 
 export default styles;

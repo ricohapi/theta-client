@@ -737,7 +737,7 @@ class FileInfo {
   /// Group ID of continuous shooting.  (RICOH THETA X or later)
   final String? continuousShootingGroupId;
 
-  /// Frame rate.  (RICOH THETA X or later)
+  /// Frame rate.  (RICOH THETA Z1 Version 3.01.1 or later, RICOH THETA X or later)
   final int? frameRate;
 
   /// Favorite.  (RICOH THETA X or later)
@@ -1494,6 +1494,9 @@ enum OptionNameEnum {
   /// Option name dateTimeZone
   dateTimeZone('DateTimeZone', String),
 
+  /// Option name _ethernetConfig
+  ethernetConfig('EthernetConfig', EthernetConfig),
+
   /// Option name exposureCompensation
   exposureCompensation('ExposureCompensation', ExposureCompensationEnum),
 
@@ -2201,186 +2204,6 @@ enum FaceDetectEnum {
   }
 }
 
-/// File format used in shooting.
-enum FileFormatEnum {
-  /// Image File format.
-  /// type: jpeg
-  /// size: 2048 x 1024
-  ///
-  /// For RICOH THETA S or SC
-  image_2K('IMAGE_2K'),
-
-  /// Image File format.
-  /// type: jpeg
-  /// size: 5376 x 2688
-  ///
-  /// For RICOH THETA V or S or SC
-  image_5K('IMAGE_5K'),
-
-  /// Image File format.
-  /// type: jpeg
-  /// size: 6720 x 3360
-  ///
-  /// For RICOH THETA Z1
-  image_6_7K('IMAGE_6_7K'),
-
-  /// Image File format.
-  /// type: raw+
-  /// size: 6720 x 3360
-  ///
-  /// For RICOH THETA Z1
-  rawP_6_7K('RAW_P_6_7K'),
-
-  /// Image File format.
-  /// type: jpeg
-  /// size: 5504 x 2752
-  ///
-  /// For RICOH THETA X or later
-  image_5_5K('IMAGE_5_5K'),
-
-  /// Image File format.
-  /// type: jpeg
-  /// size: 11008 x 5504
-  ///
-  /// For RICOH THETA X or later
-  image_11K('IMAGE_11K'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 1280 x 570
-  ///
-  /// For RICOH THETA S or SC
-  videoHD('VIDEO_HD'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 1920 x 1080
-  ///
-  /// For RICOH THETA S or SC
-  videoFullHD('VIDEO_FULL_HD'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 1920 x 960
-  /// codec: H.264/MPEG-4 AVC
-  ///
-  /// For RICOH THETA Z1 or V
-  video_2K('VIDEO_2K'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 3840 x 1920
-  /// codec: H.264/MPEG-4 AVC
-  ///
-  /// For RICOH THETA Z1 or V
-  video_4K('VIDEO_4K'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 1920 x 960
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 30
-  ///
-  /// For RICOH THETA X or later
-  video_2K_30F('VIDEO_2K_30F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 1920 x 960
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 60
-  ///
-  /// For RICOH THETA X or later
-  video_2K_60F('VIDEO_2K_60F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 3840 x 1920
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 30
-  ///
-  /// For RICOH THETA X or later
-  video_4K_30F('VIDEO_4K_30F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 3840 x 1920
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 60
-  ///
-  /// For RICOH THETA X or later
-  video_4K_60F('VIDEO_4K_60F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 5760 x 2880
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 2
-  ///
-  /// For RICOH THETA X or later
-  video_5_7K_2F('VIDEO_5_7K_2F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 5760 x 2880
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 5
-  ///
-  /// For RICOH THETA X or later
-  video_5_7K_5F('VIDEO_5_7K_5F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 5760 x 2880
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 30
-  ///
-  /// For RICOH THETA X or later
-  video_5_7K_30F('VIDEO_5_7K_30F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 7680 x 3840
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 2
-  ///
-  /// For RICOH THETA X or later
-  video_7K_2F('VIDEO_7K_2F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 7680 x 3840
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 5
-  ///
-  /// For RICOH THETA X or later
-  video_7K_5F('VIDEO_7K_5F'),
-
-  /// Video File format.
-  /// type: mp4
-  /// size: 7680 x 3840
-  /// codec: H.264/MPEG-4 AVC
-  /// frame rate: 10
-  ///
-  /// For RICOH THETA X or later
-  video_7K_10F('VIDEO_7K_10F');
-
-  final String rawValue;
-
-  const FileFormatEnum(this.rawValue);
-
-  @override
-  String toString() {
-    return rawValue;
-  }
-
-  static FileFormatEnum? getValue(String rawValue) {
-    return FileFormatEnum.values.cast<FileFormatEnum?>().firstWhere(
-        (element) => element?.rawValue == rawValue,
-        orElse: () => null);
-  }
-}
-
 /// Image processing filter.
 enum FilterEnum {
   /// Image processing filter. No filter.
@@ -2774,43 +2597,6 @@ enum LanguageEnum {
     return LanguageEnum.values.cast<LanguageEnum?>().firstWhere(
         (element) => element?.rawValue == rawValue,
         orElse: () => null);
-  }
-}
-
-/// Maximum recordable time (in seconds) of the camera.
-enum MaxRecordableTimeEnum {
-  /// Maximum recordable time. 180sec for SC2 only.
-  time_180('RECORDABLE_TIME_180'),
-
-  /// Maximum recordable time. 300sec for other than SC2.
-  time_300('RECORDABLE_TIME_300'),
-
-  /// Maximum recordable time. 1500sec for other than SC2.
-  time_1500('RECORDABLE_TIME_1500'),
-
-  /// Maximum recordable time. 7200sec for Theta X version 2.00.0 or later,
-  /// only for 5.7K 2/5/10fps and 8K 2/5/10fps.
-  /// If you set 7200 seconds in 8K 10fps mode and then set back to 4K 30fps mode,
-  /// the max recordable time will be overwritten to 1500 seconds automatically.
-  time_7200('RECORDABLE_TIME_7200'),
-
-  /// Just used by getMySetting/setMySetting command
-  doNotUpdateMySettingCondition('DO_NOT_UPDATE_MY_SETTING_CONDITION');
-
-  final String rawValue;
-
-  const MaxRecordableTimeEnum(this.rawValue);
-
-  @override
-  String toString() {
-    return rawValue;
-  }
-
-  static MaxRecordableTimeEnum? getValue(String rawValue) {
-    return MaxRecordableTimeEnum.values
-        .cast<MaxRecordableTimeEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue,
-            orElse: () => null);
   }
 }
 
@@ -3778,6 +3564,9 @@ class Options {
   /// e.g. 2014:05:18 01:04:29+08:00
   String? dateTimeZone;
 
+  /// see [EthernetConfig]
+  EthernetConfig? ethernetConfig;
+
   /// Exposure compensation (EV).
   ///
   /// It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
@@ -3984,6 +3773,8 @@ class Options {
         return continuousNumber as T;
       case OptionNameEnum.dateTimeZone:
         return dateTimeZone as T;
+      case OptionNameEnum.ethernetConfig:
+        return ethernetConfig as T;
       case OptionNameEnum.exposureCompensation:
         return exposureCompensation as T;
       case OptionNameEnum.exposureDelay:
@@ -4127,6 +3918,9 @@ class Options {
         break;
       case OptionNameEnum.dateTimeZone:
         dateTimeZone = value;
+        break;
+      case OptionNameEnum.ethernetConfig:
+        ethernetConfig = value;
         break;
       case OptionNameEnum.exposureCompensation:
         exposureCompensation = value;

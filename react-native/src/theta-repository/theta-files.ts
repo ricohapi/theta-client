@@ -38,7 +38,7 @@ export type FileInfo = {
   projectionType?: ProjectionTypeEnum;
   /** Group ID of continuous shooting.  (RICOH THETA X or later) */
   continuousShootingGroupId?: string;
-  /** Frame rate.  (RICOH THETA X or later) */
+  /** Frame rate.  (RICOH THETA Z1 Version 3.01.1 or later, RICOH THETA X or later) */
   frameRate?: number;
   /** Favorite.  (RICOH THETA X or later) */
   favorite?: boolean;

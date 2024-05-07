@@ -29,6 +29,7 @@ let MESSAGE_NO_MULTI_BRACKET_CAPTURE_BUILDER = "no multiBracketCaptureBuilder."
 let MESSAGE_NO_MULTI_BRACKET_CAPTURING = "no multiBracketCapturing."
 let MESSAGE_NO_CONTINUOUS_CAPTURE = "No continuousCapture."
 let MESSAGE_NO_CONTINUOUS_CAPTURE_BUILDER = "no continuousCaptureBuilder."
+let MESSAGE_NO_EVENT_WEBSOCKET = "no eventWebSocket."
 
 @objc(ThetaClientReactNative)
 class ThetaClientReactNative: RCTEventEmitter {
@@ -59,7 +60,8 @@ class ThetaClientReactNative: RCTEventEmitter {
     var multiBracketCapturing: MultiBracketCapturing?
     var continuousCaptureBuilder: ContinuousCapture.Builder?
     var continuousCapture: ContinuousCapture?
-
+    var eventWebSocket: EventWebSocket?
+    
     static let EVENT_FRAME = "ThetaFrameEvent"
     static let EVENT_NOTIFY = "ThetaNotify"
 
@@ -76,7 +78,9 @@ class ThetaClientReactNative: RCTEventEmitter {
     static let NOTIFY_MULTI_BRACKET_PROGRESS = "MULTI-BRACKET-PROGRESS"
     static let NOTIFY_MULTI_BRACKET_STOP_ERROR = "MULTI-BRACKET-STOP-ERROR"
     static let NOTIFY_CONTINUOUS_PROGRESS = "CONTINUOUS-PROGRESS"
-
+    static let NOTIFY_EVENT_WEBSOCKET_EVENT = "EVENT-WEBSOCKET-EVENT"
+    static let NOTIFY_EVENT_WEBSOCKET_CLOSE = "EVENT-WEBSOCKET-CLOSE"
+    
     @objc
     override func supportedEvents() -> [String]! {
         return [ThetaClientReactNative.EVENT_FRAME, ThetaClientReactNative.EVENT_NOTIFY]
@@ -129,7 +133,9 @@ class ThetaClientReactNative: RCTEventEmitter {
         continuousCaptureBuilder = nil
         continuousCapture = nil
         previewing = false
-
+        eventWebSocket?.stop(completionHandler: { _ in })
+        eventWebSocket = nil
+        
         Task {
             let configParams: ThetaRepository.Config? = {
                 if let config = config as? [String: Any] {
@@ -1653,10 +1659,10 @@ class ThetaClientReactNative: RCTEventEmitter {
             }
         }
     }
-
+    
     @objc(
         convertVideoFormats:withToLowResolution:withApplyTopBottomCorrection:withResolver:
-        withRejecter:
+            withRejecter:
     )
     func convertVideoFormats(
         fileUrl: String,
@@ -1747,13 +1753,13 @@ class ThetaClientReactNative: RCTEventEmitter {
 
     @objc(
         setAccessPointDynamically:
-        withSsidStealth:
-        withAuthMode:
-        withPassword:
-        withConnectionPriority:
-        withProxy:
-        withResolver:
-        withRejecter:
+            withSsidStealth:
+            withAuthMode:
+            withPassword:
+            withConnectionPriority:
+            withProxy:
+            withResolver:
+            withRejecter:
     )
     func setAccessPointDynamically(
         ssid: String,
@@ -1802,16 +1808,16 @@ class ThetaClientReactNative: RCTEventEmitter {
 
     @objc(
         setAccessPointStatically:
-        withSsidStealth:
-        withAuthMode:
-        withPassword:
-        withConnectionPriority:
-        withIpAddress:
-        withSubnetMask:
-        withDefaultGateway:
-        withProxy:
-        withResolver:
-        withRejecter:
+            withSsidStealth:
+            withAuthMode:
+            withPassword:
+            withConnectionPriority:
+            withIpAddress:
+            withSubnetMask:
+            withDefaultGateway:
+            withProxy:
+            withResolver:
+            withRejecter:
     )
     func setAccessPointStatically(
         ssid: String,
@@ -1959,7 +1965,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
         guard let options = options as? [String: Any],
               let captureMode = getEnumValue(
-                  values: ThetaRepository.CaptureModeEnum.values(), name: captureMode
+                values: ThetaRepository.CaptureModeEnum.values(), name: captureMode
               )
         else {
             reject(ERROR_CODE_ERROR, MESSAGE_NO_ARGUMENT, nil)
@@ -2176,5 +2182,89 @@ class ThetaClientReactNative: RCTEventEmitter {
                 reject(ERROR_CODE_ERROR, MESSAGE_NO_RESULT, nil)
             }
         }
+    }
+    
+    @objc(getEventWebSocket:withRejecter:)
+    func getEventWebSocket(
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        eventWebSocket?.stop(completionHandler: { _ in
+        })
+        eventWebSocket = thetaRepository.getEventWebSocket()
+        resolve(true)
+    }
+    
+    @objc(eventWebSocketStart:withRejecter:)
+    func eventWebSocketStart(
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        guard let eventWebSocket else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NO_EVENT_WEBSOCKET, nil)
+            return
+        }
+        eventWebSocket.stop(completionHandler: { _ in
+        })
+        
+        class Callback: EventWebSocketCallback {
+            let thetaClientReactNative: ThetaClientReactNative
+            
+            init(_ thetaClientReactNative: ThetaClientReactNative) {
+                self.thetaClientReactNative = thetaClientReactNative
+            }
+            func onClose() {
+                thetaClientReactNative.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_EVENT_WEBSOCKET_CLOSE,
+                        params: nil
+                    )
+                )
+            }
+            
+            func onReceive(event: CameraEvent) {
+                thetaClientReactNative.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_EVENT_WEBSOCKET_EVENT,
+                        params: toEventWebSocketEventNotifyParam(value: event)
+                    )
+                )
+            }
+        }
+        eventWebSocket.start(callback: Callback(self)) { error in
+            if let error {
+                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+            } else {
+                resolve(true)
+            }
+        }
+    }
+    
+    @objc(eventWebSocketStop:withRejecter:)
+    func eventWebSocketStop(
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        guard let eventWebSocket else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NO_EVENT_WEBSOCKET, nil)
+            return
+        }
+        eventWebSocket.stop(completionHandler: { _ in
+        })
+        resolve(true)
     }
 }

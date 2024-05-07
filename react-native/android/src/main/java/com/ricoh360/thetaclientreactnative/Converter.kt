@@ -9,10 +9,12 @@ import com.facebook.react.bridge.WritableArray
 import com.ricoh360.thetaclient.DigestAuth
 import com.ricoh360.thetaclient.ThetaRepository.*
 import com.ricoh360.thetaclient.capture.*
+import com.ricoh360.thetaclient.websocket.CameraEvent
 
 const val KEY_NOTIFY_NAME = "name"
 const val KEY_NOTIFY_PARAMS = "params"
 const val KEY_NOTIFY_PARAM_COMPLETION = "completion"
+const val KEY_NOTIFY_PARAM_EVENT = "event"
 const val KEY_NOTIFY_PARAM_MESSAGE = "message"
 const val KEY_GPS_INFO = "gpsInfo"
 const val KEY_STATE_EXTERNAL_GPS_INFO = "externalGpsInfo"
@@ -39,6 +41,7 @@ val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "compositeShootingTime" to OptionNameEnum.CompositeShootingTime,
   "continuousNumber" to OptionNameEnum.ContinuousNumber,
   "dateTimeZone" to OptionNameEnum.DateTimeZone,
+  "ethernetConfig" to OptionNameEnum.EthernetConfig,
   "exposureCompensation" to OptionNameEnum.ExposureCompensation,
   "exposureDelay" to OptionNameEnum.ExposureDelay,
   "exposureProgram" to OptionNameEnum.ExposureProgram,
@@ -96,6 +99,12 @@ fun toNotify(
 fun toCaptureProgressNotifyParam(value: Float): WritableMap {
   val result = Arguments.createMap()
   result.putDouble(KEY_NOTIFY_PARAM_COMPLETION, value.toDouble())
+  return result
+}
+
+fun toEventWebSocketEventNotifyParam(value: CameraEvent): WritableMap {
+  val result = Arguments.createMap()
+  result.putMap(KEY_NOTIFY_PARAM_EVENT, toResult(value))
   return result
 }
 
@@ -305,6 +314,10 @@ fun toResult(options: Options): WritableMap {
       options.burstOption?.let {
         result.putMap("burstOption", toResult(burstOption = it))
       }
+    } else if (name == OptionNameEnum.EthernetConfig) {
+      options.ethernetConfig?.let {
+        result.putMap("ethernetConfig", toResult(ethernetConfig = it))
+      }
     } else if (name == OptionNameEnum.GpsInfo) {
       options.gpsInfo?.let {
         result.putMap("gpsInfo", toResult(gpsInfo = it))
@@ -351,16 +364,23 @@ fun <T : Enum<T>> addOptionsEnumToMap(options: Options, name: OptionNameEnum, ob
 }
 
 fun <T> addOptionsValueToMap(options: Options, name: OptionNameEnum, objects: WritableMap) {
-  val key = optionNameEnumToItemName[name]
-  if (key == null) return
+  val key = optionNameEnumToItemName[name] ?: return
   options.getValue<T>(name)?.let { value ->
-    if (value is Int) {
-      objects.putInt(key, value)
-    } else {
-      (value as? String)?.toDouble()?.let {
-        objects.putDouble(key, it)
-      } ?: run {
-        objects.putString(key, (value as String))
+    when (value) {
+      is String -> {
+        objects.putString(key, value)
+      }
+
+      is Int -> {
+        objects.putInt(key, value)
+      }
+
+      is Number -> {
+        objects.putDouble(key, value.toDouble())
+      }
+
+      else -> {
+        objects.putString(key, value.toString())
       }
     }
   }
@@ -485,6 +505,24 @@ fun toResult(fileInfo: FileInfo): ReadableMap {
   return result
 }
 
+fun toResult(ethernetConfig: EthernetConfig): WritableMap {
+  val result = Arguments.createMap()
+  result.putBoolean("usingDhcp", ethernetConfig.usingDhcp)
+  ethernetConfig.ipAddress?.let { ipAddress ->
+    result.putString("ipAddress", ipAddress)
+  }
+  ethernetConfig.subnetMask?.let { subnetMask ->
+    result.putString("subnetMask", subnetMask)
+  }
+  ethernetConfig.defaultGateway?.let { defaultGateway ->
+    result.putString("defaultGateway", defaultGateway)
+  }
+  ethernetConfig.proxy?.let { proxy ->
+    result.putMap("proxy", toResult(proxy = proxy))
+  }
+  return result
+}
+
 fun toResult(gpsInfo: GpsInfo): WritableMap {
   val result = Arguments.createMap()
   result.putDouble("latitude", gpsInfo.latitude.toDouble())
@@ -530,6 +568,94 @@ fun toResult(timeShift: TimeShiftSetting): WritableMap {
   }
   timeShift.secondInterval?.let { value ->
     result.putString("secondInterval", value.toString())
+  }
+  return result
+}
+
+fun toResult(state: ThetaState): WritableMap {
+  val result = Arguments.createMap()
+  state.fingerprint?.let {
+    result.putString("fingerprint", it)
+  }
+  state.batteryLevel?.let {
+    result.putDouble("batteryLevel", it.toDouble())
+  }
+  state.storageUri?.let {
+    result.putString("storageUri", it)
+  }
+  state.storageID?.let {
+    result.putString("storageID", it)
+  }
+  state.captureStatus?.let {
+    result.putString("captureStatus", it.toString())
+  }
+  state.recordedTime?.let {
+    result.putInt("recordedTime", it)
+  }
+  state.recordableTime?.let {
+    result.putInt("recordableTime", it)
+  }
+  state.capturedPictures?.let {
+    result.putInt("capturedPictures", it)
+  }
+  state.compositeShootingElapsedTime?.let {
+    result.putString("compositeShootingElapsedTime", it.toString())
+  }
+  state.latestFileUrl?.let {
+    result.putString("latestFileUrl", it)
+  }
+  state.chargingState?.let {
+    result.putString("chargingState", it.toString())
+  }
+  state.apiVersion?.let {
+    result.putInt("apiVersion", it)
+  }
+  state.isPluginRunning?.let {
+    result.putBoolean("isPluginRunning", it)
+  }
+  state.isPluginWebServer?.let {
+    result.putBoolean("isPluginWebServer", it)
+  }
+  state.function?.let {
+    result.putString("function", it.toString())
+  }
+  state.isMySettingChanged?.let {
+    result.putBoolean("isMySettingChanged", it)
+  }
+  state.currentMicrophone?.let {
+    result.putString("currentMicrophone", it.toString())
+  }
+  state.isSdCard?.let {
+    result.putBoolean("isSdCard", it)
+  }
+  state.cameraError?.let { list ->
+    result.putArray("cameraError", Arguments.makeNativeArray(list.map { it.toString() }))
+  }
+  state.isBatteryInsert?.let {
+    result.putString("isBatteryInsert", it.toString())
+  }
+  state.externalGpsInfo?.let {
+    result.putMap(KEY_STATE_EXTERNAL_GPS_INFO, toResult(it))
+  }
+  state.internalGpsInfo?.let {
+    result.putMap(KEY_STATE_INTERNAL_GPS_INFO, toResult(it))
+  }
+  state.boardTemp?.let {
+    result.putInt(KEY_STATE_BOARD_TEMP, it)
+  }
+  state.batteryTemp?.let {
+    result.putInt(KEY_STATE_BATTERY_TEMP, it)
+  }
+  return result
+}
+
+fun toResult(cameraEvent: CameraEvent): WritableMap {
+  val result = Arguments.createMap()
+  cameraEvent.options?.let {
+    result.putMap("options", toResult(it))
+  }
+  cameraEvent.state?.let {
+    result.putMap("state", toResult(it))
   }
   return result
 }
@@ -597,6 +723,10 @@ fun setOptionValue(options: Options, name: OptionNameEnum, optionsMap: ReadableM
   } else if (name == OptionNameEnum.BurstOption) {
     optionsMap.getMap(key)?.let {
       options.setValue(name, toBurstOption(map = it))
+    }
+  } else if (name == OptionNameEnum.EthernetConfig) {
+    optionsMap.getMap(key)?.let {
+      options.setValue(name, toEthernetConfig(map = it) as Any)
     }
   } else if (name == OptionNameEnum.GpsInfo) {
     optionsMap.getMap(key)?.let {
@@ -708,6 +838,18 @@ fun toAutoBracket(list: ReadableArray): BracketSettingList {
     }
   }
   return autoBracket
+}
+
+fun toEthernetConfig(map: ReadableMap?): EthernetConfig? {
+  return map?.let {
+    EthernetConfig(
+      usingDhcp = if (it.hasKey("usingDhcp")) it.getBoolean("usingDhcp") else true,
+      ipAddress = if (it.hasKey("ipAddress")) it.getString("ipAddress") else null,
+      subnetMask = if (it.hasKey("subnetMask")) it.getString("subnetMask") else null,
+      defaultGateway = if (it.hasKey("defaultGateway")) it.getString("defaultGateway") else null,
+      proxy = if (it.hasKey("proxy")) toProxy(map = it.getMap("proxy")) else null
+    )
+  }
 }
 
 fun toProxy(map: ReadableMap?): Proxy? {

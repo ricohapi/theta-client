@@ -315,6 +315,11 @@ internal data class Options(
     var dateTimeZone: String? = null,
 
     /**
+     * @see EthernetConfig
+     */
+    var _ethernetConfig: EthernetConfig? = null,
+
+    /**
      * Exposure compensation (EV).
      *
      * It can be set for video shooting mode at RICOH THETA V firmware
@@ -1398,6 +1403,38 @@ internal enum class AiAutoThumbnail {
 }
 
 /**
+ * IP address allocation to be used when wired LAN is enabled.
+ */
+@Serializable
+internal data class EthernetConfig(
+    /**
+     * dynamic or static
+     * dynamic is default value.
+     */
+    val ipAddressAllocation: IpAddressAllocation,
+
+    /**
+     * (optional) IPv4 for IP address
+     */
+    val ipAddress: String? = null,
+
+    /**
+     * (optional) IPv4 for subnet mask
+     */
+    val subnetMask: String? = null,
+
+    /**
+     * (optional) IPv4 for default gateway
+     */
+    val defaultGateway: String? = null,
+
+    /**
+     * (optional) refer to _proxy for detail
+     */
+    val _proxy: Proxy? = null,
+)
+
+/**
  * Microphone channel setting
  */
 @Serializable
@@ -2131,28 +2168,40 @@ internal enum class ImageFilter {
     HH_HDR,
 }
 
+internal object MediaTypeSerializer :
+    SerialNameEnumIgnoreUnknownSerializer<MediaType>(MediaType.entries, MediaType.UNKNOWN)
+
 /**
  * Media type setting
  */
-@Serializable
-internal enum class MediaType {
+@Serializable(with = MediaTypeSerializer::class)
+internal enum class MediaType : SerialNameEnum {
+    /**
+     * Undefined value
+     */
+    UNKNOWN,
+
     /**
      * jpeg image
      */
-    @SerialName("jpeg")
-    JPEG,
+    JPEG {
+        override val serialName: String = "jpeg"
+    },
+
 
     /**
      * mp4 video
      */
-    @SerialName("mp4")
-    MP4,
+    MP4 {
+        override val serialName: String = "mp4"
+    },
 
     /**
      * raw+ image
      */
-    @SerialName("raw+")
-    RAW,
+    RAW {
+        override val serialName: String = "raw+"
+    },
 }
 
 /**

@@ -57,51 +57,51 @@ export type MicrophoneOptionEnum =
 /** Mutable values representing Theta status. */
 export type ThetaState = {
   /** Fingerprint (unique identifier) of the current camera state */
-  fingerprint: string;
+  fingerprint?: string;
   /** Battery level between 0.0 and 1.0 */
-  batteryLevel: number;
+  batteryLevel?: number;
   /** Storage URI */
-  storageUri: string | null;
+  storageUri?: string;
   /** Storage ID */
-  storageID: string | null;
+  storageID?: string;
   /** Continuously shoots state */
-  captureStatus: CaptureStatusEnum;
+  captureStatus?: CaptureStatusEnum;
   /** Recorded time of movie (seconds) */
-  recordedTime: number;
+  recordedTime?: number;
   /** Recordable time of movie (seconds) */
-  recordableTime: number;
+  recordableTime?: number;
   /** Number of still images captured during continuous shooting, Unit: images */
-  capturedPictures: number | null;
+  capturedPictures?: number;
   /** Elapsed time for interval composite shooting (sec) */
-  compositeShootingElapsedTime: number | null;
+  compositeShootingElapsedTime?: number;
   /** URL of the last saved file */
-  latestFileUrl: string;
+  latestFileUrl?: string;
   /** Charging state */
-  chargingState: ChargingStateEnum;
+  chargingState?: ChargingStateEnum;
   /** API version currently set (1: v2.0, 2: v2.1) */
-  apiVersion: number;
+  apiVersion?: number;
   /**  Plugin running state (true: running, false: stop) */
-  isPluginRunning: boolean | null;
+  isPluginRunning?: boolean;
   /** Plugin web server state (true: enabled, false: disabled) */
-  isPluginWebServer: boolean | null;
+  isPluginWebServer?: boolean;
   /** Shooting function status*/
-  function: ShootingFunctionEnum | null;
+  function?: ShootingFunctionEnum;
   /** My setting changed state */
-  isMySettingChanged: boolean | null;
+  isMySettingChanged?: boolean;
   /** Identifies the microphone used while recording video */
-  currentMicrophone: MicrophoneOptionEnum | null;
+  currentMicrophone?: MicrophoneOptionEnum;
   /** true if record to SD card */
-  isSdCard: boolean;
+  isSdCard?: boolean;
   /** Error information of the camera */
-  cameraError: Array<CameraErrorEnum> | null;
+  cameraError?: Array<CameraErrorEnum>;
   /** true: Battery inserted; false: Battery not inserted */
-  isBatteryInsert: boolean | null;
+  isBatteryInsert?: boolean;
   /** Location data is obtained through an external device using WebAPI or BLE-API. */
-  externalGpsInfo: StateGpsInfo | null;
+  externalGpsInfo?: StateGpsInfo;
   /** Location data is obtained through an internal GPS module. RICOH THETA Z1 does not have a built-in GPS module. */
-  internalGpsInfo: StateGpsInfo | null;
+  internalGpsInfo?: StateGpsInfo;
   /** This represents the current temperature inside the camera as an integer value, ranging from -10°C to 100°C with a precision of 1°C. */
-  boardTemp: number | null;
+  boardTemp?: number;
   /** This represents the current temperature inside the battery as an integer value, ranging from -10°C to 100°C with a precision of 1°C. */
-  batteryTemp: number | null;
+  batteryTemp?: number;
 };

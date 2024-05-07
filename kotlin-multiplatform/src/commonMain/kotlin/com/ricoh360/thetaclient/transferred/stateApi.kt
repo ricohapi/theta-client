@@ -41,7 +41,7 @@ internal data class CameraState(
      * Battery level (0.0 to 1.0), When using an external power
      * source, 1 (100%)
      */
-    val batteryLevel: Double,
+    val batteryLevel: Double? = null,
 
     /**
      * Storage URI
@@ -62,19 +62,19 @@ internal data class CameraState(
      *
      * @see CaptureStatus
      */
-    val _captureStatus: CaptureStatus,
+    val _captureStatus: CaptureStatus? = null,
 
     /**
      * Shooting time of movie (sec)
      */
     @Serializable(with = NumberAsIntSerializer::class)
-    val _recordedTime: Int,
+    val _recordedTime: Int? = null,
 
     /**
      * Remaining time of movie (sec)
      */
     @Serializable(with = NumberAsIntSerializer::class)
-    val _recordableTime: Int,
+    val _recordableTime: Int? = null,
 
     /**
      * Number of still images captured during continuous shooting, Unit: images
@@ -109,13 +109,13 @@ internal data class CameraState(
      *
      * @see ChargingState
      */
-    val _batteryState: ChargingState,
+    val _batteryState: ChargingState? = null,
 
     /**
      * API version currently set (1: v2.0, 2: v2.1)
      */
     @Serializable(with = NumberAsIntSerializer::class)
-    val _apiVersion: Int,
+    val _apiVersion: Int? = null,
 
     /**
      * Plugin running state (true: running, false: stop)

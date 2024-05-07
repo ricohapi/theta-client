@@ -4,10 +4,10 @@ import 'state_gps_info.dart';
 /// Mutable values representing Theta status.
 class ThetaState {
   /// Fingerprint (unique identifier) of the current camera state
-  String fingerprint;
+  String? fingerprint;
 
   /// Battery level between 0.0 and 1.0
-  double batteryLevel;
+  double? batteryLevel;
 
   /// Storage URI
   String? storageUri;
@@ -16,13 +16,13 @@ class ThetaState {
   String? storageID;
 
   /// Continuously shoots state
-  CaptureStatusEnum captureStatus;
+  CaptureStatusEnum? captureStatus;
 
   /// Recorded time of movie (seconds)
-  int recordedTime;
+  int? recordedTime;
 
   /// Recordable time of movie (seconds)
-  int recordableTime;
+  int? recordableTime;
 
   /// Number of still images captured during continuous shooting, Unit: images
   int? capturedPictures;
@@ -31,13 +31,13 @@ class ThetaState {
   int? compositeShootingElapsedTime;
 
   /// URL of the last saved file
-  String latestFileUrl;
+  String? latestFileUrl;
 
   /// Charging state
-  ChargingStateEnum chargingState;
+  ChargingStateEnum? chargingState;
 
   /// API version currently set (1: v2.0, 2: v2.1)
-  int apiVersion;
+  int? apiVersion;
 
   /// Plugin running state (true: running, false: stop)
   bool? isPluginRunning;
@@ -55,7 +55,7 @@ class ThetaState {
   MicrophoneOptionEnum? currentMicrophone;
 
   /// True if record to SD card
-  bool isSdCard;
+  bool? isSdCard;
 
   /// Error information of the camera
   List<CameraErrorEnum>? cameraError;

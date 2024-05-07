@@ -34,6 +34,9 @@ jobs:
         with:
           arguments: dokkaHtml -Pversion=${{ github.event.release.name }} -Pworkspace=${{ github.workspace }}
           build-root-directory: ${{ github.workspace }}/main
+      - name: Add CNAME file
+        run: |
+          echo "docs-theta-sdk.ricoh360.com" > ${{ github.workspace }}/gh-pages/docs/CNAME
       - name: Push to GitHub pages
         run: |
           cd ${{ github.workspace }}/gh-pages

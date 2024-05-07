@@ -17,6 +17,7 @@ import com.ricoh360.thetaclient.transferred.BurstOrder
 import com.ricoh360.thetaclient.transferred.CameraControlSource
 import com.ricoh360.thetaclient.transferred.CameraMode
 import com.ricoh360.thetaclient.transferred.CaptureMode
+import com.ricoh360.thetaclient.transferred.EthernetConfig
 import com.ricoh360.thetaclient.transferred.FaceDetect
 import com.ricoh360.thetaclient.transferred.FirstShootingEnum
 import com.ricoh360.thetaclient.transferred.Gain
@@ -24,6 +25,7 @@ import com.ricoh360.thetaclient.transferred.GpsInfo
 import com.ricoh360.thetaclient.transferred.GpsTagRecording
 import com.ricoh360.thetaclient.transferred.ImageFilter
 import com.ricoh360.thetaclient.transferred.ImageStitching
+import com.ricoh360.thetaclient.transferred.IpAddressAllocation
 import com.ricoh360.thetaclient.transferred.Language
 import com.ricoh360.thetaclient.transferred.MediaFileFormat
 import com.ricoh360.thetaclient.transferred.MediaType
@@ -101,6 +103,13 @@ class OptionsTest {
         val compositeShootingTime = 600
         val continuousNumber = ThetaRepository.ContinuousNumberEnum.MAX_1
         val dateTimeZone = "2014:05:18 01:04:29+08:00"
+        val ethernetConfig = ThetaRepository.EthernetConfig(
+            usingDhcp = true,
+            ipAddress = "192.168.1.2",
+            subnetMask = "255.255.0.0",
+            defaultGateway = "192.168.1.12",
+            proxy = ThetaRepository.Proxy(use = true, url = "192.168.1.3", port = 80, userid = "abc", password = "123")
+        )
         val exposureCompensation = ThetaRepository.ExposureCompensationEnum.M0_3
         val exposureDelay = ThetaRepository.ExposureDelayEnum.DELAY_10
         val exposureProgram = ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM
@@ -165,6 +174,7 @@ class OptionsTest {
             compositeShootingTime = compositeShootingTime,
             continuousNumber = continuousNumber,
             dateTimeZone = dateTimeZone,
+            ethernetConfig = ethernetConfig,
             exposureCompensation = exposureCompensation,
             exposureDelay = exposureDelay,
             exposureProgram = exposureProgram,
@@ -229,6 +239,7 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CompositeShootingTime), compositeShootingTime, "compositeShootingTime")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ContinuousNumber), continuousNumber, "continuousNumber")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.DateTimeZone), dateTimeZone, "dateTimeZone")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.EthernetConfig), ethernetConfig, "ethernetConfig")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ExposureCompensation), exposureCompensation, "exposureCompensation")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ExposureDelay), exposureDelay, "exposureDelay")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ExposureProgram), exposureProgram, "exposureProgram")
@@ -320,6 +331,16 @@ class OptionsTest {
             Pair(ThetaRepository.OptionNameEnum.CompositeShootingOutputInterval, 60),
             Pair(ThetaRepository.OptionNameEnum.CompositeShootingTime, 600),
             Pair(ThetaRepository.OptionNameEnum.DateTimeZone, "2014:05:18 01:04:29+08:00"),
+            Pair(
+                ThetaRepository.OptionNameEnum.EthernetConfig,
+                ThetaRepository.EthernetConfig(
+                    usingDhcp = true,
+                    ipAddress = "192.168.1.2",
+                    subnetMask = "255.255.0.0",
+                    defaultGateway = "192.168.1.12",
+                    proxy = ThetaRepository.Proxy(use = true, url = "192.168.1.3", port = 80, userid = "abc", password = "123")
+                )
+            ),
             Pair(ThetaRepository.OptionNameEnum.ExposureCompensation, ThetaRepository.ExposureCompensationEnum.M0_3),
             Pair(ThetaRepository.OptionNameEnum.ExposureDelay, ThetaRepository.ExposureDelayEnum.DELAY_10),
             Pair(ThetaRepository.OptionNameEnum.ExposureProgram, ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM),
@@ -441,6 +462,22 @@ class OptionsTest {
         val compositeShootingOutputInterval = Pair(60, 60)
         val compositeShootingTime = Pair(600, 600)
         val dateTimeZone = Pair("2014:05:18 01:04:29+08:00", "2014:05:18 01:04:29+08:00")
+        val ethernetConfig = Pair(
+            EthernetConfig(
+                ipAddressAllocation = IpAddressAllocation.DYNAMIC,
+                ipAddress = "192.168.1.2",
+                subnetMask = "255.255.0.0",
+                defaultGateway = "192.168.1.12",
+                _proxy = Proxy(use = true, url = "192.168.1.3", port = 80, userid = "abc", password = "123")
+            ),
+            ThetaRepository.EthernetConfig(
+                usingDhcp = true,
+                ipAddress = "192.168.1.2",
+                subnetMask = "255.255.0.0",
+                defaultGateway = "192.168.1.12",
+                proxy = ThetaRepository.Proxy(use = true, url = "192.168.1.3", port = 80, userid = "abc", password = "123")
+            )
+        )
         val exposureCompensation = Pair(-0.3f, ThetaRepository.ExposureCompensationEnum.M0_3)
         val exposureDelay = Pair(10, ThetaRepository.ExposureDelayEnum.DELAY_10)
         val exposureProgram = Pair(2, ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM)
@@ -505,6 +542,7 @@ class OptionsTest {
             _compositeShootingOutputInterval = compositeShootingOutputInterval.first,
             _compositeShootingTime = compositeShootingTime.first,
             dateTimeZone = dateTimeZone.first,
+            _ethernetConfig = ethernetConfig.first,
             exposureCompensation = exposureCompensation.first,
             exposureDelay = exposureDelay.first,
             exposureProgram = exposureProgram.first,
@@ -564,6 +602,7 @@ class OptionsTest {
         assertEquals(options.compositeShootingOutputInterval, compositeShootingOutputInterval.second, "compositeShootingOutputInterval")
         assertEquals(options.compositeShootingTime, compositeShootingTime.second, "compositeShootingTime")
         assertEquals(options.dateTimeZone, dateTimeZone.second, "dateTimeZone")
+        assertEquals(options.ethernetConfig, ethernetConfig.second, "ethernetConfig")
         assertEquals(options.exposureCompensation, exposureCompensation.second, "exposureCompensation")
         assertEquals(options.exposureDelay, exposureDelay.second, "exposureDelay")
         assertEquals(options.exposureProgram, exposureProgram.second, "exposureProgram")
@@ -669,6 +708,22 @@ class OptionsTest {
         val compositeShootingOutputInterval = Pair(60, 60)
         val compositeShootingTime = Pair(600, 600)
         val dateTimeZone = Pair("2014:05:18 01:04:29+08:00", "2014:05:18 01:04:29+08:00")
+        val ethernetConfig = Pair(
+            EthernetConfig(
+                ipAddressAllocation = IpAddressAllocation.DYNAMIC,
+                ipAddress = "192.168.1.2",
+                subnetMask = "255.255.0.0",
+                defaultGateway = "192.168.1.12",
+                _proxy = Proxy(use = true, url = "192.168.1.3", port = 80, userid = "abc", password = "123")
+            ),
+            ThetaRepository.EthernetConfig(
+                usingDhcp = true,
+                ipAddress = "192.168.1.2",
+                subnetMask = "255.255.0.0",
+                defaultGateway = "192.168.1.12",
+                proxy = ThetaRepository.Proxy(use = true, url = "192.168.1.3", port = 80, userid = "abc", password = "123")
+            )
+        )
         val exposureCompensation = Pair(-0.3f, ThetaRepository.ExposureCompensationEnum.M0_3)
         val exposureDelay = Pair(10, ThetaRepository.ExposureDelayEnum.DELAY_10)
         val exposureProgram = Pair(2, ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM)
@@ -736,6 +791,7 @@ class OptionsTest {
             compositeShootingOutputInterval = compositeShootingOutputInterval.second,
             compositeShootingTime = compositeShootingTime.second,
             dateTimeZone = dateTimeZone.second,
+            ethernetConfig = ethernetConfig.second,
             exposureCompensation = exposureCompensation.second,
             exposureDelay = exposureDelay.second,
             exposureProgram = exposureProgram.second,
@@ -795,6 +851,7 @@ class OptionsTest {
         assertEquals(options._compositeShootingOutputInterval, compositeShootingOutputInterval.first, "compositeShootingOutputInterval")
         assertEquals(options._compositeShootingTime, compositeShootingTime.first, "compositeShootingTime")
         assertEquals(options.dateTimeZone, dateTimeZone.first, "dateTimeZone")
+        assertEquals(options._ethernetConfig, ethernetConfig.first, "ethernetConfig")
         assertEquals(options.exposureCompensation, exposureCompensation.first, "exposureCompensation")
         assertEquals(options.exposureDelay, exposureDelay.first, "exposureDelay")
         assertEquals(options.exposureProgram, exposureProgram.first, "exposureProgram")

@@ -400,6 +400,19 @@ void main() {
         'whiteBalance': 'AUTO'
       }
     ];
+    Map<String, dynamic> ethernetConfigMap = {
+      'usingDhcp': true,
+      'ipAddress': '',
+      'subnetMask': '',
+      'defaultGateway': '',
+      'proxy': {
+        'use': false,
+        'url': '',
+        'port': 0,
+        'userid': '',
+        'password': ''
+      }
+    };
     Map<String, dynamic> gpsInfoMap = {
       'latitude': 1.0,
       'longitude': 2.0,
@@ -498,6 +511,12 @@ void main() {
         'DateTimeZone',
         '2022:01:01 00:01:00+09:00',
         '2022:01:01 00:01:00+09:00'
+      ],
+      [
+        OptionNameEnum.ethernetConfig,
+        'EthernetConfig',
+        EthernetConfig(true, '', '', '', Proxy(false, '', 0, '', '')),
+        ethernetConfigMap
       ],
       [
         OptionNameEnum.exposureCompensation,
@@ -704,6 +723,19 @@ void main() {
         'whiteBalance': 'AUTO'
       }
     ];
+    Map<String, dynamic> ethernetConfigMap = {
+      'usingDhcp': false,
+      'ipAddress': '192.168.1.111',
+      'subnetMask': '255.255.255.0',
+      'defaultGateway': '192.168.1.1',
+      'proxy': {
+        'use': true,
+        'url': '192.168.1.222',
+        'port': 80,
+        'userid': 'abc',
+        'password': '123'
+      }
+    };
     Map<String, dynamic> gpsInfoMap = {
       'latitude': 1.0,
       'longitude': 2.0,
@@ -790,6 +822,13 @@ void main() {
         'DateTimeZone',
         '2022:01:01 00:01:00+09:00',
         '2022:01:01 00:01:00+09:00'
+      ],
+      [
+        OptionNameEnum.ethernetConfig,
+        'EthernetConfig',
+        EthernetConfig(false, '192.168.1.111', '255.255.255.0', '192.168.1.1',
+            Proxy(true, '192.168.1.222', 80, 'abc', '123')),
+        ethernetConfigMap
       ],
       [
         OptionNameEnum.exposureCompensation,
