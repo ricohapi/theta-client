@@ -95,6 +95,8 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             getThetaModel(result: result)
         case "getThetaInfo":
             getThetaInfo(result: result)
+        case "getThetaLicense":
+            getThetaLicense(result: result)
         case "getThetaState":
             getThetaState(result: result)
         case "getLivePreview":
@@ -330,6 +332,27 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
     }
 
+    func getThetaLicense(result: @escaping FlutterResult) {
+        if thetaRepository == nil {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        thetaRepository!.getThetaLicense(completionHandler: { response, error in
+            if let thetaError = error {
+                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                result(flutterError)
+            } else {
+                if let response {
+                    result(response)
+                } else {
+                    let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoResult, details: nil)
+                    result(flutterError)
+                }
+            }
+        })
+    }
+
     func getThetaState(result: @escaping FlutterResult) {
         if thetaRepository == nil {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
@@ -337,8 +360,8 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             return
         }
         thetaRepository!.getThetaState { response, error in
-            if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+            if let error {
+                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: error.localizedDescription, details: nil)
                 result(flutterError)
             } else {
                 let resultState = convertResult(thetaState: response!)

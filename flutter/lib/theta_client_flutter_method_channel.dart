@@ -138,6 +138,18 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   }
 
   @override
+  Future<String> getThetaLicense() async {
+    var completer = Completer<String>();
+    try {
+      var result = await methodChannel.invokeMethod<String>('getThetaLicense');
+      completer.complete(result);
+    } catch (e) {
+      completer.completeError(e);
+    }
+    return completer.future;
+  }
+
+  @override
   Future<ThetaState> getThetaState() async {
     var completer = Completer<ThetaState>();
     try {

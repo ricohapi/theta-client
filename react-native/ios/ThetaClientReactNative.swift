@@ -210,6 +210,27 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
+    @objc(getThetaLicense:withRejecter:)
+    func getThetaLicense(
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+
+        thetaRepository.getThetaLicense() { response, error in
+            if let error {
+                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+            } else if let response {
+                resolve(response)
+            } else {
+                reject(ERROR_CODE_ERROR, MESSAGE_NO_RESULT, nil)
+            }
+        }
+    }
+
     @objc(getThetaState:withRejecter:)
     func getThetaState(
         resolve: @escaping RCTPromiseResolveBlock,

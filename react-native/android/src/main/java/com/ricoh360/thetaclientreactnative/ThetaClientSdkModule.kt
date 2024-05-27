@@ -206,6 +206,27 @@ class ThetaClientReactNativeModule(
   }
 
   /**
+   * getPluginLicense - acquires open source license information related to the camera.
+   * @param promise promise to set result
+   */
+  @ReactMethod
+  fun getThetaLicense(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    launch {
+      try {
+        val result = theta.getThetaLicense()
+        promise.resolve(result)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+    }
+  }
+
+  /**
    * getThetaState  -  retrieve ThetaState from THETA via repository
    * @param promise promise to set result
    */

@@ -402,6 +402,30 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Acquires open source license information related to the camera.
+     *
+     * @return HTML string of the license
+     * @exception ThetaWebApiException If an error occurs in THETA.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun getThetaLicense(): String {
+        try {
+            val response = ThetaApi.callLicenseApi(endpoint)
+            if (response.status != HttpStatusCode.OK) {
+                throw ThetaWebApiException(response.toString())
+            }
+            return response.bodyAsText()
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
+    }
+
+    /**
      * Get current state of Theta.
      *
      * @return Mutable values representing Theta status.
