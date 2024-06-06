@@ -6,7 +6,6 @@ package com.ricoh360.thetaclient.transferred
 import io.ktor.http.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonNames
 
 /**
  * /osc/state api request
@@ -222,58 +221,81 @@ internal data class CameraState(
     val _batteryTemp: Int? = null,
 )
 
+internal object CaptureStatusSerializer :
+    SerialNameEnumIgnoreUnknownSerializer<CaptureStatus>(CaptureStatus.entries, CaptureStatus.UNKNOWN)
+
 /**
  * Capture status
  */
-@Serializable
-internal enum class CaptureStatus {
+@Serializable(with = CaptureStatusSerializer::class)
+internal enum class CaptureStatus : SerialNameEnum {
+    /**
+     * Undefined value
+     */
+    UNKNOWN,
+
     /**
      * shooting: Performing continuously shoots,
      */
-    @SerialName("shooting")
-    SHOOTING,
+    SHOOTING {
+        override val serialName: String = "shooting"
+    },
 
     /**
      * idle: In standby,
      */
-    @SerialName("idle")
-    IDLE,
+    IDLE {
+        override val serialName: String = "idle"
+    },
 
     /**
      * self-timer countdown: Self-timer is operating,
      */
-    @SerialName("self-timer countdown")
-    SELF_TIMER_COUNTDOWN,
+    SELF_TIMER_COUNTDOWN {
+        override val serialName: String = "self-timer countdown"
+    },
 
     /**
      * bracket shooting: Performing multi bracket shooting,
      */
-    @SerialName("bracket shooting")
-    BRACKET_SHOOTING,
+    BRACKET_SHOOTING {
+        override val serialName: String = "bracket shooting"
+    },
 
     /**
      * converting: Converting post file…,
      */
-    @SerialName("converting")
-    CONVERTING,
+    CONVERTING {
+        override val serialName: String = "converting"
+    },
 
     /**
      * timeShift shooting: Performing timeShift shooting,
      */
-    @SerialName("timeShift shooting")
-    TIME_SHIFT_SHOOTING,
+    TIME_SHIFT_SHOOTING {
+        override val serialName: String = "timeShift shooting"
+    },
 
     /**
      * continuous shooting: Performing continuous shooting,
      */
-    @SerialName("continuous shooting")
-    CONTINUOUS_SHOOTING,
+    CONTINUOUS_SHOOTING {
+        override val serialName: String = "continuous shooting"
+    },
 
     /**
      * retrospective image recording: Waiting for retrospective video…
      */
-    @SerialName("retrospective image recording")
-    RETROSPECTIVE_IMAGE_RECORDING,
+    RETROSPECTIVE_IMAGE_RECORDING {
+        override val serialName: String = "retrospective image recording"
+    },
+
+    /**
+     * burst shooting
+     */
+    BURST_SHOOTING {
+        override val serialName: String = "burst shooting"
+    },
 }
 
 /**

@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import styles from './Styles';
-import {initialize} from 'theta-client-react-native';
+import {initialize} from './modules/theta-client';
 
 const MainMenu = ({navigation}) => {
   const goTake = () => {

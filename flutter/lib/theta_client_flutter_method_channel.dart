@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 import 'package:theta_client_flutter/utils/convert_utils.dart';
 
-import 'state/theta_state.dart';
 import 'theta_client_flutter_platform_interface.dart';
 
 const notifyIdLivePreview = 10001;

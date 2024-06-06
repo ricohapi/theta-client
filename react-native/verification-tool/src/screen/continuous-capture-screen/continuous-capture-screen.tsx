@@ -10,7 +10,7 @@ import {
   PhotoFileFormatEnum,
   getContinuousCaptureBuilder,
   stopSelfTimer,
-} from 'theta-client-react-native';
+} from '../../modules/theta-client';
 import { CaptureCommonOptionsEdit } from '../../components/capture/capture-common-options';
 import { InputNumber } from '../../components/ui/input-number';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';

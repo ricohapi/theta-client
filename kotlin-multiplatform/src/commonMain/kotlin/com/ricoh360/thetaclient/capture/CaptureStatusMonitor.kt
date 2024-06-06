@@ -47,7 +47,9 @@ internal class CaptureStatusMonitor(
                         updateStatus(status)
                     }
                 }
-                delay(checkStateInterval)
+                if (isStartMonitor) {
+                    delay(checkStateInterval)
+                }
             }
         }
     }

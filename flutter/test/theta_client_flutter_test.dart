@@ -2,8 +2,6 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:theta_client_flutter/state/state_gps_info.dart';
-import 'package:theta_client_flutter/state/theta_state.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 import 'package:theta_client_flutter/theta_client_flutter_method_channel.dart';
 import 'package:theta_client_flutter/theta_client_flutter_platform_interface.dart';

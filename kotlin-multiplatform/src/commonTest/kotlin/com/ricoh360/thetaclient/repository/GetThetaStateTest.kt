@@ -521,6 +521,11 @@ class GetThetaStateTest {
 
         // check CaptureStatusEnum
         assertEquals(
+            ThetaRepository.CaptureStatusEnum.get(CaptureStatus.UNKNOWN),
+            ThetaRepository.CaptureStatusEnum.UNKNOWN,
+            "CaptureStatusEnum"
+        )
+        assertEquals(
             ThetaRepository.CaptureStatusEnum.get(CaptureStatus.SHOOTING),
             ThetaRepository.CaptureStatusEnum.SHOOTING,
             "CaptureStatusEnum"
@@ -558,6 +563,11 @@ class GetThetaStateTest {
         assertEquals(
             ThetaRepository.CaptureStatusEnum.get(CaptureStatus.RETROSPECTIVE_IMAGE_RECORDING),
             ThetaRepository.CaptureStatusEnum.RETROSPECTIVE_IMAGE_RECORDING,
+            "CaptureStatusEnum"
+        )
+        assertEquals(
+            ThetaRepository.CaptureStatusEnum.get(CaptureStatus.BURST_SHOOTING),
+            ThetaRepository.CaptureStatusEnum.BURST_SHOOTING,
             "CaptureStatusEnum"
         )
 

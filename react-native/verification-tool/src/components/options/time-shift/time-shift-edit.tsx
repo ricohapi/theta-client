@@ -1,5 +1,8 @@
 import * as React from 'react';
-import { TimeShift, TimeShiftIntervalEnum } from 'theta-client-react-native';
+import {
+  TimeShift,
+  TimeShiftIntervalEnum,
+} from '../../../modules/theta-client';
 import { EnumEdit, type OptionEditProps } from '..';
 import { View } from 'react-native';
 import { TitledSwitch } from '../../ui/titled-switch';

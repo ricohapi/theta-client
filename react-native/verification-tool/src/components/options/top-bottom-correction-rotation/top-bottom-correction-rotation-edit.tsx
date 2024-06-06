@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type { OptionEditProps } from '..';
 import { View } from 'react-native';
-import type { TopBottomCorrectionRotation } from 'theta-client-react-native';
+import type { TopBottomCorrectionRotation } from '../../../modules/theta-client';
 import { InputNumber } from '../../ui/input-number';
 
 export const TopBottomCorrectionRotationEdit: React.FC<OptionEditProps> = ({

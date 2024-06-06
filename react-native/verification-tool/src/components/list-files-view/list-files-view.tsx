@@ -16,7 +16,7 @@ import {
   StorageEnum,
   ThetaFiles,
   listFiles,
-} from 'theta-client-react-native';
+} from '../../modules/theta-client';
 
 interface Props extends Pick<ViewProps, 'testID'> {
   style?: StyleProp<ViewStyle>;

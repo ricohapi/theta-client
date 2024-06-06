@@ -10,7 +10,7 @@ import {
   getTimeShiftCaptureBuilder,
   setOptions,
   stopSelfTimer,
-} from 'theta-client-react-native';
+} from '../../modules/theta-client';
 import { CaptureCommonOptionsEdit } from '../../components/capture/capture-common-options';
 import { TimeShiftEdit } from '../../components/options/time-shift';
 import { InputNumber } from '../../components/ui/input-number';

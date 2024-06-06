@@ -8,7 +8,7 @@ import {
   Options,
   getLimitlessIntervalCaptureBuilder,
   stopSelfTimer,
-} from 'theta-client-react-native';
+} from '../../modules/theta-client';
 import { CaptureCommonOptionsEdit } from '../../components/capture/capture-common-options';
 import { NumberEdit } from 'verification-tool/src/components/options/number-edit';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';

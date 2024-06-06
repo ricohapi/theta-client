@@ -8,7 +8,7 @@ import {
   FileInfo,
   convertVideoFormats,
   cancelVideoConvert,
-} from 'theta-client-react-native';
+} from '../../modules/theta-client';
 import Button from '../../components/ui/button';
 import { TitledSwitch } from '../../components/ui/titled-switch';
 import { ListFilesView } from '../../components/list-files-view';

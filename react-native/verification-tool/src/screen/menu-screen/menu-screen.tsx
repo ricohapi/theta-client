@@ -1,7 +1,7 @@
 import React from 'react';
 import { StatusBar, View, Alert, ScrollView, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getThetaModel, initialize } from 'theta-client-react-native';
+import { getThetaModel, initialize } from '../../modules/theta-client';
 import styles from './styles';
 import Button from '../../components/ui/button';
 import { ItemListPopupView } from '../../components/ui/item-list/item-list-popup-view';

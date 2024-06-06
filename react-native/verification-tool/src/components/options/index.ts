@@ -1,4 +1,4 @@
-import type { Options } from 'theta-client-react-native';
+import type { Options } from '../../modules/theta-client';
 
 export interface OptionEditProps {
   onChange: (options: Options) => void;

@@ -13,7 +13,7 @@ import {
   IsoAutoHighLimitEnum,
   IsoEnum,
   WhiteBalanceEnum,
-} from 'theta-client-react-native';
+} from '../../../modules/theta-client';
 
 export const CaptureCommonOptionsEdit: React.FC<OptionEditProps> = ({
   onChange,
