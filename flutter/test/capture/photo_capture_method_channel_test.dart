@@ -64,7 +64,7 @@ void main() {
 
       return Future.value();
     });
-    await platform.buildPhotoCapture(options);
+    await platform.buildPhotoCapture(options, 1);
   });
 
   test('takePicture', () async {
@@ -74,6 +74,38 @@ void main() {
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       return fileUrl;
     });
-    expect(await platform.takePicture(), fileUrl);
+    expect(await platform.takePicture(null), fileUrl);
+  });
+
+  test('call onCapturing', () async {
+    const fileUrl =
+        'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG';
+
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+      expect(platform.notifyList.containsKey(10071), true,
+          reason: 'add notify capturing status');
+
+      await Future.delayed(const Duration(milliseconds: 5));
+      // native event
+      platform.onNotify({
+        'id': 10071,
+        'params': {
+          'status': 'SELF_TIMER_COUNTDOWN',
+        },
+      });
+      await Future.delayed(const Duration(milliseconds: 5));
+
+      return fileUrl;
+    });
+
+    CapturingStatusEnum? lastStatus;
+    expect(
+        await platform.takePicture((status) {
+          expect(status, CapturingStatusEnum.selfTimerCountdown);
+          lastStatus = status;
+        }),
+        fileUrl);
+    expect(lastStatus, CapturingStatusEnum.selfTimerCountdown);
   });
 }

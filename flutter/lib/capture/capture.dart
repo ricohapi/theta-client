@@ -52,9 +52,40 @@ class Capture {
   Capture(this._options);
 }
 
+/// Capturing status
+enum CapturingStatusEnum {
+  /// Capture in progress
+  capturing('CAPTURING'),
+
+  /// Self-timer in progress
+  selfTimerCountdown('SELF_TIMER_COUNTDOWN'),
+  ;
+
+  final String rawValue;
+
+  const CapturingStatusEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static CapturingStatusEnum? getValue(String rawValue) {
+    return CapturingStatusEnum.values.cast<CapturingStatusEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
 /// Capture of Photo
 class PhotoCapture extends Capture {
-  PhotoCapture(super.options);
+  final int _interval;
+
+  PhotoCapture(super.options, this._interval);
+
+  int getCheckStatusCommandInterval() {
+    return _interval;
+  }
 
   /// Get image processing filter.
   FilterEnum? getFilter() {
@@ -73,9 +104,10 @@ class PhotoCapture extends Capture {
 
   /// Take a picture.
   void takePicture(void Function(String? fileUrl) onSuccess,
-      void Function(Exception exception) onError) {
+      void Function(Exception exception) onError,
+      {void Function(CapturingStatusEnum status)? onCapturing}) {
     ThetaClientFlutterPlatform.instance
-        .takePicture()
+        .takePicture(onCapturing)
         .then((value) => onSuccess(value!))
         .onError((error, stackTrace) => onError(error as Exception));
   }

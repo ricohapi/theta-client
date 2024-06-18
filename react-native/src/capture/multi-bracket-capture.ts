@@ -4,7 +4,7 @@ import {
   BaseNotify,
   NotifyController,
 } from '../theta-repository/notify-controller';
-import type { BracketSetting } from 'src/theta-repository/options';
+import type { BracketSetting } from '../theta-repository/options';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 const NOTIFY_PROGRESS = 'MULTI-BRACKET-PROGRESS';

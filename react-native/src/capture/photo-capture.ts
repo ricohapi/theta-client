@@ -1,4 +1,4 @@
-import { CaptureBuilder } from './capture';
+import { CaptureBuilder, CapturingStatusEnum } from './capture';
 import type {
   FilterEnum,
   PhotoFileFormatEnum,
@@ -6,21 +6,52 @@ import type {
 } from '../theta-repository/options';
 
 import { NativeModules } from 'react-native';
+import {
+  BaseNotify,
+  NotifyController,
+} from '../theta-repository/notify-controller';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
+
+const NOTIFY_CAPTURING = 'NOTIFY-CAPTURING';
+
+interface CapturingNotify extends BaseNotify {
+  params?: {
+    status: CapturingStatusEnum;
+  };
+}
 
 /**
  * PhotoCapture class
  */
 export class PhotoCapture {
+  notify: NotifyController;
+  constructor(notify: NotifyController) {
+    this.notify = notify;
+  }
+
   /**
+   * Take a picture
+   *
+   * @param onProgress Called when change capture status
    * @return promise of token file url
    */
-  async takePicture(): Promise<string | undefined> {
+  async takePicture(
+    onCapturing?: (status: CapturingStatusEnum) => void
+  ): Promise<string | undefined> {
+    if (onCapturing) {
+      this.notify.addNotify(NOTIFY_CAPTURING, (event: CapturingNotify) => {
+        if (event.params?.status) {
+          onCapturing(event.params.status);
+        }
+      });
+    }
     try {
       const fileUrl = await ThetaClientReactNative.takePicture();
       return fileUrl ?? undefined;
     } catch (error) {
       throw error;
+    } finally {
+      this.notify.removeNotify(NOTIFY_CAPTURING);
     }
   }
 }
@@ -29,9 +60,22 @@ export class PhotoCapture {
  * PhotoCaptureBaseBuilder class
  */
 export class PhotoCaptureBuilder extends CaptureBuilder<PhotoCaptureBuilder> {
+  interval?: number;
+
   /** construct PhotoCaptureBuilder instance */
   constructor() {
     super();
+    this.interval = undefined;
+  }
+
+  /**
+   * set interval of checking take picture status command
+   * @param timeMillis interval
+   * @returns PhotoCaptureBuilder
+   */
+  setCheckStatusCommandInterval(timeMillis: number): PhotoCaptureBuilder {
+    this.interval = timeMillis;
+    return this;
   }
 
   /**
@@ -71,11 +115,16 @@ export class PhotoCaptureBuilder extends CaptureBuilder<PhotoCaptureBuilder> {
    * @return promise of PhotoCapture instance
    */
   build(): Promise<PhotoCapture> {
+    let params = {
+      ...this.options,
+      // Cannot pass negative values in IOS, use objects
+      _capture_interval: this.interval ?? -1,
+    };
     return new Promise<PhotoCapture>(async (resolve, reject) => {
       try {
         await ThetaClientReactNative.getPhotoCaptureBuilder();
-        await ThetaClientReactNative.buildPhotoCapture(this.options);
-        resolve(new PhotoCapture());
+        await ThetaClientReactNative.buildPhotoCapture(params);
+        resolve(new PhotoCapture(NotifyController.instance));
       } catch (error) {
         reject(error);
       }

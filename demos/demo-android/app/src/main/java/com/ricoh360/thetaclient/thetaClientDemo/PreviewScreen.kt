@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import com.ricoh360.thetaclient.ThetaRepository
+import com.ricoh360.thetaclient.capture.CapturingStatusEnum
 import com.ricoh360.thetaclient.capture.PhotoCapture
 import com.ricoh360.thetaclient.thetaClientDemo.ui.theme.ThetaSimpleAndroidAppTheme
 import kotlinx.coroutines.CoroutineScope
@@ -49,6 +50,10 @@ fun PreviewScreen(toPhoto: (photoUrl: String) -> Unit, viewModel: ThetaViewModel
                     }
                 }
             }
+        }
+
+        override fun onCapturing(status: CapturingStatusEnum) {
+            Timber.i("takePicture onCapturing: ${status.name}")
         }
 
         override fun onError(exception: ThetaRepository.ThetaRepositoryException) {

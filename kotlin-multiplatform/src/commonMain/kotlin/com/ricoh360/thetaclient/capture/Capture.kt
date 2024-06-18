@@ -6,6 +6,23 @@ import com.ricoh360.thetaclient.transferred.UnknownResponse
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 
+/**
+ * Capturing status
+ *
+ * Identify the self-timer during capture
+ */
+enum class CapturingStatusEnum {
+    /**
+     * Capture in progress
+     */
+    CAPTURING,
+
+    /**
+     * Self-timer in progress
+     */
+    SELF_TIMER_COUNTDOWN,
+}
+
 /*
  * Capture
  *

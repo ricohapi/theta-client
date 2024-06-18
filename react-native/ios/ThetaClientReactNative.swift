@@ -80,7 +80,8 @@ class ThetaClientReactNative: RCTEventEmitter {
     static let NOTIFY_CONTINUOUS_PROGRESS = "CONTINUOUS-PROGRESS"
     static let NOTIFY_EVENT_WEBSOCKET_EVENT = "EVENT-WEBSOCKET-EVENT"
     static let NOTIFY_EVENT_WEBSOCKET_CLOSE = "EVENT-WEBSOCKET-CLOSE"
-    
+    static let NOTIFY_CAPTURING = "NOTIFY-CAPTURING"
+
     @objc
     override func supportedEvents() -> [String]! {
         return [ThetaClientReactNative.EVENT_FRAME, ThetaClientReactNative.EVENT_NOTIFY]
@@ -556,15 +557,28 @@ class ThetaClientReactNative: RCTEventEmitter {
 
         class Callback: PhotoCaptureTakePictureCallback {
             let callback: (_ url: String?, _ error: Error?) -> Void
-            init(_ callback: @escaping (_ url: String?, _ error: Error?) -> Void) {
+            weak var client: ThetaClientReactNative?
+            init(
+                _ callback: @escaping (_ url: String?, _ error: Error?) -> Void,
+                client: ThetaClientReactNative
+            ) {
                 self.callback = callback
+                self.client = client
             }
 
             func onSuccess(fileUrl: String?) {
                 callback(fileUrl, nil)
             }
 
-            func onProgress(completion _: Float) {}
+            func onCapturing(status: CapturingStatusEnum) {
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_CAPTURING,
+                        params: toCapturingNotifyParam(value: status)
+                    )
+                )
+            }
 
             func onError(exception: ThetaRepository.ThetaRepositoryException) {
                 callback(nil, exception.asError())
@@ -572,14 +586,15 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
 
         photoCapture.takePicture(
-            callback: Callback { url, error in
+            callback: Callback({ url, error in
                 if let error {
                     reject(ERROR_CODE_ERROR, error.localizedDescription, error)
                 } else {
                     self.photoCapture = nil
                     resolve(url)
                 }
-            })
+            }, client: self)
+        )
     }
 
     @objc(getTimeShiftCaptureBuilder:withRejecter:)

@@ -4,6 +4,7 @@ import com.ricoh360.thetaclient.ThetaApi
 import com.ricoh360.thetaclient.transferred.CaptureStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -12,11 +13,13 @@ internal class CaptureStatusMonitor(
     var onChangeStatus: ((newStatus: CaptureStatus, oldStatus: CaptureStatus?) -> Unit),
     var onError: ((error: Throwable) -> Unit),
     val checkStateInterval: Long = CHECK_STATE_INTERVAL,
+    val checkShootingIdleCount: Int = CHECK_SHOOTING_IDLE_COUNT,
 ) {
     private var isStartMonitor = false
     private val scope = CoroutineScope(Dispatchers.Default)
     var currentStatus: CaptureStatus? = null
     var lastException: Throwable? = null
+    var job: Job? = null
 
     companion object {
         private const val CHECK_STATE_INTERVAL = 1000L
@@ -25,9 +28,12 @@ internal class CaptureStatusMonitor(
     }
 
     fun start() {
+        if (isStartMonitor) {
+            return
+        }
         isStartMonitor = true
-        scope.launch {
-            var idleCount = CHECK_SHOOTING_IDLE_COUNT
+        job = scope.launch {
+            var idleCount = checkShootingIdleCount
             while (isStartMonitor) {
                 when (val status = getCaptureStatus()) {
                     CaptureStatus.IDLE -> {
@@ -43,7 +49,7 @@ internal class CaptureStatusMonitor(
                     }
 
                     else -> {
-                        idleCount = CHECK_SHOOTING_IDLE_COUNT
+                        idleCount = checkShootingIdleCount
                         updateStatus(status)
                     }
                 }
@@ -56,10 +62,14 @@ internal class CaptureStatusMonitor(
 
     fun stop() {
         isStartMonitor = false
+        job?.let {
+            it.cancel()
+            job = null
+        }
     }
 
     private fun updateStatus(status: CaptureStatus) {
-        if (currentStatus == status) {
+        if (!isStartMonitor || currentStatus == status) {
             return
         }
         val oldStatus = currentStatus

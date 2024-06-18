@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 import 'package:theta_client_flutter/theta_client_flutter_platform_interface.dart';
@@ -5,7 +7,9 @@ import 'package:theta_client_flutter/theta_client_flutter_platform_interface.dar
 import '../theta_client_flutter_test.dart';
 
 void main() {
-  setUp(() {});
+  setUp(() {
+    onCallBuildPhotoCapture = (options, interval) => Future.value();
+  });
 
   tearDown(() {});
 
@@ -52,7 +56,7 @@ void main() {
     const preset = [PresetEnum.face, 'Preset'];
     const whiteBalance = [WhiteBalanceEnum.auto, 'WhiteBalance'];
 
-    onCallBuildPhotoCapture = (options) {
+    onCallBuildPhotoCapture = (options, interval) {
       expect(options[aperture[1]], aperture[0]);
       expect(options[colorTemperature[1]], colorTemperature[0]);
       expect(options[exposureCompensation[1]], exposureCompensation[0]);
@@ -84,6 +88,7 @@ void main() {
     builder.setIsoAutoHighLimit(isoAutoHighLimit[0] as IsoAutoHighLimitEnum);
     builder.setPreset(preset[0] as PresetEnum);
     builder.setWhiteBalance(whiteBalance[0] as WhiteBalanceEnum);
+    builder.setCheckStatusCommandInterval(100);
 
     var capture = await builder.build();
     expect(capture, isNotNull);
@@ -100,6 +105,7 @@ void main() {
     expect(capture.getIsoAutoHighLimit(), isoAutoHighLimit[0]);
     expect(capture.getPreset(), preset[0]);
     expect(capture.getWhiteBalance(), whiteBalance[0]);
+    expect(capture.getCheckStatusCommandInterval(), 100);
   });
 
   test('takePicture', () async {
@@ -111,8 +117,8 @@ void main() {
     const imageUrl = 'http://test.jpg';
 
     onCallGetPhotoCaptureBuilder = Future.value;
-    onCallBuildPhotoCapture = Future.value;
-    onCallTakePicture = () {
+    onCallBuildPhotoCapture = (options, interval) => Future.value();
+    onCallTakePicture = (onCapturing) {
       return Future.value(imageUrl);
     };
 
@@ -137,8 +143,8 @@ void main() {
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     onCallGetPhotoCaptureBuilder = Future.value;
-    onCallBuildPhotoCapture = Future.value;
-    onCallTakePicture = () {
+    onCallBuildPhotoCapture = (options, interval) => Future.value();
+    onCallTakePicture = (onCapturing) {
       return Future.error(Exception('Error. takePicture'));
     };
 
@@ -156,5 +162,44 @@ void main() {
     await Future.delayed(const Duration(milliseconds: 10), () {});
     expect(fileUrl, isNull);
     expect(error, isNotNull);
+  });
+
+  test('call onCapturing', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    var completer = Completer<void>();
+    void Function(CapturingStatusEnum status)? paramOnCapturing;
+
+    const imageUrl = 'http://test.jpg';
+
+    onCallGetPhotoCaptureBuilder = Future.value;
+    onCallBuildPhotoCapture = (options, interval) => Future.value();
+    onCallTakePicture = (onCapturing) {
+      paramOnCapturing = onCapturing;
+      return Future.value(imageUrl);
+    };
+
+    var builder = thetaClientPlugin.getPhotoCaptureBuilder();
+    var isOnCapturing = false;
+    var capture = await builder.build();
+    String? fileUrl;
+    capture.takePicture((value) {
+      expect(value, imageUrl);
+      fileUrl = value;
+      completer.complete(null);
+    }, (exception) {
+      expect(false, isTrue, reason: 'Error. takePicture');
+    }, onCapturing: (status) {
+      isOnCapturing = true;
+      expect(status, CapturingStatusEnum.capturing);
+    });
+    paramOnCapturing?.call(CapturingStatusEnum.capturing);
+
+    await Future.delayed(const Duration(milliseconds: 10), () {});
+    expect(fileUrl, imageUrl);
+    expect(isOnCapturing, isTrue);
   });
 }

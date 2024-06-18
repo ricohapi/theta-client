@@ -60,13 +60,14 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
-  Future<void> buildPhotoCapture(Map<String, dynamic> options) {
-    return onCallBuildPhotoCapture(options);
+  Future<void> buildPhotoCapture(Map<String, dynamic> options, int interval) {
+    return onCallBuildPhotoCapture(options, interval);
   }
 
   @override
-  Future<String?> takePicture() {
-    return onCallTakePicture();
+  Future<String?> takePicture(
+      void Function(CapturingStatusEnum status)? onCapturing) {
+    return onCallTakePicture(onCapturing);
   }
 
   @override
@@ -417,10 +418,12 @@ Future<String> Function() onGetThetaLicense = Future.value;
 Future<ThetaState> Function() onGetThetaState = Future.value;
 Future<void> Function() onCallGetLivePreview = Future.value;
 Future<ThetaFiles> Function() onCallListFiles = Future.value;
+
 Future<void> Function() onCallGetPhotoCaptureBuilder = Future.value;
-Future<void> Function(Map<String, dynamic> options) onCallBuildPhotoCapture =
-    Future.value;
-Future<String?> Function() onCallTakePicture = Future.value;
+Future<void> Function(Map<String, dynamic> options, int interval) onCallBuildPhotoCapture =
+    (options, interval) => Future.value();
+Future<String?> Function(void Function(CapturingStatusEnum)? onCapturing)
+    onCallTakePicture = (onCapturing) => Future.value();
 
 Future<void> Function() onCallGetTimeShiftCaptureBuilder = Future.value;
 Future<void> Function(Map<String, dynamic> options, int interval)

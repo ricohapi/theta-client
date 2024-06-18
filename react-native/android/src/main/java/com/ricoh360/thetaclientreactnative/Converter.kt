@@ -16,6 +16,7 @@ const val KEY_NOTIFY_PARAMS = "params"
 const val KEY_NOTIFY_PARAM_COMPLETION = "completion"
 const val KEY_NOTIFY_PARAM_EVENT = "event"
 const val KEY_NOTIFY_PARAM_MESSAGE = "message"
+const val KEY_NOTIFY_PARAM_STATUS = "status"
 const val KEY_GPS_INFO = "gpsInfo"
 const val KEY_STATE_EXTERNAL_GPS_INFO = "externalGpsInfo"
 const val KEY_STATE_INTERNAL_GPS_INFO = "internalGpsInfo"
@@ -114,6 +115,12 @@ fun toMessageNotifyParam(value: String): WritableMap {
   return result
 }
 
+fun toCapturingNotifyParam(status: CapturingStatusEnum): WritableMap {
+  val result = Arguments.createMap()
+  result.putString(KEY_NOTIFY_PARAM_STATUS, status.name)
+  return result
+}
+
 fun toGpsInfo(map: ReadableMap): GpsInfo {
   return GpsInfo(
     latitude = map.getDouble("latitude").toFloat(),
@@ -157,6 +164,13 @@ fun <T> setCaptureBuilderParams(optionMap: ReadableMap, builder: Capture.Builder
 }
 
 fun setPhotoCaptureBuilderParams(optionMap: ReadableMap, builder: PhotoCapture.Builder) {
+  val interval = if (optionMap.hasKey("_capture_interval")) optionMap.getInt("_capture_interval") else null
+  interval?.let {
+    if (it >= 0) {
+      builder.setCheckStatusCommandInterval(it.toLong())
+    }
+  }
+
   optionMap.getString("filter")?.let {
     builder.setFilter(FilterEnum.valueOf(it))
   }

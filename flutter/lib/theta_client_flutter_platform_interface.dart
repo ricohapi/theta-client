@@ -92,11 +92,12 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
         'getPhotoCaptureBuilder() has not been implemented.');
   }
 
-  Future<void> buildPhotoCapture(Map<String, dynamic> options) {
+  Future<void> buildPhotoCapture(Map<String, dynamic> options, int interval) {
     throw UnimplementedError('buildPhotoCapture() has not been implemented.');
   }
 
-  Future<String?> takePicture() {
+  Future<String?> takePicture(
+      void Function(CapturingStatusEnum status)? onCapturing) {
     throw UnimplementedError('takePicture() has not been implemented.');
   }
 

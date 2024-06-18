@@ -212,6 +212,8 @@ class _TakePictureScreen extends State<TakePictureScreen>
         shooting = false;
       });
       debugPrint(exception.toString());
+    }, onCapturing: (status) {
+      debugPrint("onCapturing: $status");
     });
   }
 }

@@ -17,6 +17,7 @@ let NOTIFY_MULTI_BRACKET_INTERVAL_STOP_ERROR = 10042
 let NOTIFY_BURST_PROGRESS = 10051
 let NOTIFY_BURST_STOP_ERROR = 10052
 let NOTIFY_CONTINUOUS_PROGRESS = 10061
+let NOTIFY_CAPTURING_STATUS = 10071
 
 public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     public func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -547,29 +548,33 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
 
         class Callback: PhotoCaptureTakePictureCallback {
             let callback: (_ url: String?, _ error: Error?) -> Void
-            init(_ callback: @escaping (_ url: String?, _ error: Error?) -> Void) {
+            weak var plugin: SwiftThetaClientFlutterPlugin?
+            init(_ callback: @escaping (_ url: String?, _ error: Error?) -> Void, plugin: SwiftThetaClientFlutterPlugin) {
                 self.callback = callback
+                self.plugin = plugin
             }
 
             func onSuccess(fileUrl: String?) {
                 callback(fileUrl, nil)
             }
 
-            func onProgress(completion _: Float) {}
+            func onCapturing(status: CapturingStatusEnum) {
+                plugin?.sendNotifyEvent(id: NOTIFY_CAPTURING_STATUS, params: toCapturingNotifyParam(value: status))
+            }
 
             func onError(exception: ThetaRepository.ThetaRepositoryException) {
                 callback(nil, exception.asError())
             }
         }
         photoCapture!.takePicture(
-            callback: Callback { fileUrl, error in
+            callback: Callback({ fileUrl, error in
                 if let thetaError = error {
                     let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
                     result(flutterError)
                 } else {
                     result(fileUrl)
                 }
-            }
+            }, plugin: self)
         )
     }
 

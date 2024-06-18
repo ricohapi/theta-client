@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Alert, ScrollView } from 'react-native';
+import { View, Alert, ScrollView, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './styles';
 import Button from '../../components/ui/button';
@@ -17,10 +17,13 @@ import { CaptureCommonOptionsEdit } from '../../components/capture/capture-commo
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../App';
 import { EnumEdit } from '../../components/options';
+import { InputNumber } from '../../components/ui/input-number';
 
 const PhotoCaptureScreen: React.FC<
   NativeStackScreenProps<RootStackParamList, 'photoCapture'>
 > = ({ navigation }) => {
+  const [interval, setInterval] = React.useState<number>();
+  const [message, setMessage] = React.useState('');
   const [captureOptions, setCaptureOptions] = React.useState<Options>();
   const [isTaking, setIsTaking] = React.useState(false);
 
@@ -28,6 +31,9 @@ const PhotoCaptureScreen: React.FC<
     setIsTaking(true);
 
     const builder = getPhotoCaptureBuilder();
+    if (interval != null) {
+      builder.setCheckStatusCommandInterval(interval);
+    }
     captureOptions?.filter && builder.setFilter(captureOptions.filter);
     captureOptions?.fileFormat &&
       builder.setFileFormat(captureOptions.fileFormat as PhotoFileFormatEnum);
@@ -56,8 +62,11 @@ const PhotoCaptureScreen: React.FC<
     console.log('takePicture builder: :' + JSON.stringify(builder));
 
     try {
+      setMessage('');
       const photoCapture = await builder.build();
-      const url = await photoCapture.takePicture();
+      const url = await photoCapture.takePicture((status) => {
+        setMessage(`onCapturing: ${status}`);
+      });
 
       setIsTaking(false);
 
@@ -96,6 +105,7 @@ const PhotoCaptureScreen: React.FC<
       edges={['left', 'right', 'bottom']}
     >
       <View style={styles.topViewContainer}>
+        <Text style={styles.itemText}>{message}</Text>
         <View style={styles.bottomViewContainerLayout}>
           <Button
             style={styles.button}
@@ -113,6 +123,14 @@ const PhotoCaptureScreen: React.FC<
       </View>
       <View style={styles.contentContainer}>
         <ScrollView>
+          <InputNumber
+            title="CheckStatusCommandInterval"
+            placeHolder="Input value"
+            value={interval}
+            onChange={(value) => {
+              setInterval(value);
+            }}
+          />
           <EnumEdit
             title={'filter'}
             option={captureOptions?.filter}

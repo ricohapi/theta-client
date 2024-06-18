@@ -537,6 +537,13 @@ class ThetaClientReactNativeModule(
         photoCapture = null
       }
 
+      override fun onCapturing(status: CapturingStatusEnum) {
+        super.onCapturing(status)
+        sendNotifyEvent(
+          toNotify(NOTIFY_CAPTURING, toCapturingNotifyParam(status = status))
+        )
+      }
+
       override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
         promise.reject(exception)
         photoCapture = null
@@ -2099,5 +2106,6 @@ class ThetaClientReactNativeModule(
     const val NOTIFY_CONTINUOUS_PROGRESS = "CONTINUOUS-PROGRESS"
     const val NOTIFY_EVENT_WEBSOCKET_EVENT = "EVENT-WEBSOCKET-EVENT"
     const val NOTIFY_EVENT_WEBSOCKET_CLOSE = "EVENT-WEBSOCKET-CLOSE"
+    const val NOTIFY_CAPTURING = "NOTIFY-CAPTURING"
   }
 }

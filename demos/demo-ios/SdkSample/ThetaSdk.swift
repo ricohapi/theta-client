@@ -151,7 +151,9 @@ class Theta {
                 callback(fileUrl, nil)
             }
 
-            func onProgress(completion _: Float) {}
+            func onCapturing(status: CapturingStatusEnum) {
+                print("takePicture onCapturing: " + status.name)
+            }
 
             func onError(exception: ThetaException) {
                 callback(nil, exception.asError())

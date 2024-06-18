@@ -8,6 +8,7 @@ let KEY_NOTIFY_PARAMS = "params"
 let KEY_NOTIFY_PARAM_COMPLETION = "completion"
 let KEY_NOTIFY_PARAM_IMAGE = "image"
 let KEY_NOTIFY_PARAM_MESSAGE = "message"
+let KEY_NOTIFY_PARAM_STATUS = "status"
 let KEY_GPS_INFO = "gpsInfo"
 let KEY_STATE_EXTERNAL_GPS_INFO = "externalGpsInfo"
 let KEY_STATE_INTERNAL_GPS_INFO = "internalGpsInfo"
@@ -254,6 +255,11 @@ func setCaptureBuilderParams<T>(params: [String: Any], builder: CaptureBuilder<T
 }
 
 func setPhotoCaptureBuilderParams(params: [String: Any], builder: PhotoCapture.Builder) {
+    if let interval = params["_capture_interval"] as? Int,
+       interval >= 0
+    {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
     if let value = params[ThetaRepository.OptionNameEnum.filter.name] as? String {
         if let enumValue = getEnumValue(values: ThetaRepository.FilterEnum.values(), name: value) {
             builder.setFilter(filter: enumValue)
@@ -1102,5 +1108,11 @@ func toPreviewNotifyParam(imageData: FlutterStandardTypedData) -> [String: Any] 
 func toMessageNotifyParam(message: String) -> [String: Any] {
     return [
         KEY_NOTIFY_PARAM_MESSAGE: message,
+    ]
+}
+
+func toCapturingNotifyParam(value: CapturingStatusEnum) -> [String: Any] {
+    return [
+        KEY_NOTIFY_PARAM_STATUS: value.name,
     ]
 }

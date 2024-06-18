@@ -84,6 +84,13 @@ class CaptureBuilder<T> {
 
 /// Builder of [PhotoCapture]
 class PhotoCaptureBuilder extends CaptureBuilder<PhotoCaptureBuilder> {
+  int _interval = -1;
+
+  PhotoCaptureBuilder setCheckStatusCommandInterval(int timeMillis) {
+    _interval = timeMillis;
+    return this;
+  }
+
   /// Set photo file format.
   PhotoCaptureBuilder setFileFormat(PhotoFileFormatEnum fileFormat) {
     _options[TagNameEnum.photoFileFormat.rawValue] = fileFormat;
@@ -106,8 +113,8 @@ class PhotoCaptureBuilder extends CaptureBuilder<PhotoCaptureBuilder> {
   Future<PhotoCapture> build() async {
     var completer = Completer<PhotoCapture>();
     try {
-      await ThetaClientFlutterPlatform.instance.buildPhotoCapture(_options);
-      completer.complete(PhotoCapture(_options));
+      await ThetaClientFlutterPlatform.instance.buildPhotoCapture(_options, _interval);
+      completer.complete(PhotoCapture(_options, _interval));
     } catch (e) {
       completer.completeError(e);
     }

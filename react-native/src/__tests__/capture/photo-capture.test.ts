@@ -1,22 +1,30 @@
 import { NativeModules } from 'react-native';
-import { getPhotoCaptureBuilder } from '../../theta-repository';
+import { getPhotoCaptureBuilder, initialize } from '../../theta-repository';
 import {
   FilterEnum,
   PhotoFileFormatEnum,
   PresetEnum,
 } from '../../theta-repository/options';
+import { NativeEventEmitter_addListener } from '../../__mocks__/react-native';
+import {
+  BaseNotify,
+  NotifyController,
+} from '../../theta-repository/notify-controller';
+import { CapturingStatusEnum } from '../../capture';
 
 describe('photo capture', () => {
   const thetaClient = NativeModules.ThetaClientReactNative;
 
   beforeEach(() => {
     jest.clearAllMocks();
+    NotifyController.instance.release();
   });
 
   afterEach(() => {
     thetaClient.initialize = jest.fn();
     thetaClient.buildPhotoCapture = jest.fn();
     thetaClient.takePicture = jest.fn();
+    NotifyController.instance.release();
   });
 
   test('getPhotoCaptureBuilder', async () => {
@@ -63,6 +71,64 @@ describe('photo capture', () => {
     const capture = await builder.build();
     const fileUrl = await capture.takePicture();
     expect(fileUrl).toBe(testUrl);
+  });
+
+  test('takePictureWithCapturing', async () => {
+    let notifyCallback: (notify: BaseNotify) => void = () => {
+      expect(true).toBeFalsy();
+    };
+    jest.mocked(NativeEventEmitter_addListener).mockImplementation(
+      jest.fn((_, callback) => {
+        notifyCallback = callback;
+        return {
+          remove: jest.fn(),
+        };
+      })
+    );
+
+    await initialize();
+    const builder = getPhotoCaptureBuilder();
+    const testUrl = 'http://192.168.1.1/files/100RICOH/R100.JPG';
+
+    const sendStatus = (status: CapturingStatusEnum) => {
+      notifyCallback({
+        name: 'NOTIFY-CAPTURING',
+        params: {
+          status: status,
+        },
+      });
+    };
+
+    jest
+      .mocked(thetaClient.buildPhotoCapture)
+      .mockImplementation(jest.fn(async () => {}));
+    jest.mocked(thetaClient.takePicture).mockImplementation(
+      jest.fn(async () => {
+        sendStatus(CapturingStatusEnum.SELF_TIMER_COUNTDOWN);
+        return testUrl;
+      })
+    );
+
+    const capture = await builder.build();
+    let isOnCapturing = false;
+    const fileUrl = await capture.takePicture((status) => {
+      expect(status).toBe(CapturingStatusEnum.SELF_TIMER_COUNTDOWN);
+      isOnCapturing = true;
+    });
+    expect(fileUrl).toBe(testUrl);
+    expect(isOnCapturing).toBeTruthy();
+    let done: (value: unknown) => void;
+    const promise = new Promise((resolve) => {
+      done = resolve;
+    });
+
+    setTimeout(() => {
+      expect(NotifyController.instance.notifyList.size).toBe(0);
+      expect(isOnCapturing).toBeTruthy();
+      done(0);
+    }, 1);
+
+    return promise;
   });
 
   test('exception', (done) => {

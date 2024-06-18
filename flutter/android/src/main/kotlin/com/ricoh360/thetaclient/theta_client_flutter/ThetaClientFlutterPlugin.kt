@@ -76,6 +76,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         const val notifyIdBurstCaptureProgress = 10051;
         const val notifyIdBurstCaptureStopError = 10052;
         const val notifyIdContinuousCaptureProgress = 10061;
+        const val notifyIdCapturingStatus = 10071
     }
 
     fun sendNotifyEvent(id: Int, params: Map<String, Any?>) {
@@ -664,6 +665,13 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         photoCapture!!.takePicture(object : PhotoCapture.TakePictureCallback {
             override fun onSuccess(fileUrl: String?) {
                 result.success(fileUrl)
+            }
+
+            override fun onCapturing(status: CapturingStatusEnum) {
+                sendNotifyEvent(
+                    notifyIdCapturingStatus,
+                    toCapturingNotifyParam(status)
+                )
             }
 
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
