@@ -75,8 +75,9 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         const val notifyIdMultiBracketCaptureStopError = 10042;
         const val notifyIdBurstCaptureProgress = 10051;
         const val notifyIdBurstCaptureStopError = 10052;
+        const val notifyIdBurstCaptureCapturing = 10053
         const val notifyIdContinuousCaptureProgress = 10061;
-        const val notifyIdCapturingStatus = 10071
+        const val notifyIdPhotoCapturing = 10071
     }
 
     fun sendNotifyEvent(id: Int, params: Map<String, Any?>) {
@@ -669,7 +670,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
 
             override fun onCapturing(status: CapturingStatusEnum) {
                 sendNotifyEvent(
-                    notifyIdCapturingStatus,
+                    notifyIdPhotoCapturing,
                     toCapturingNotifyParam(status)
                 )
             }
@@ -1102,6 +1103,13 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 sendNotifyEvent(
                     notifyIdBurstCaptureProgress,
                     toCaptureProgressNotifyParam(completion)
+                )
+            }
+
+            override fun onCapturing(status: CapturingStatusEnum) {
+                sendNotifyEvent(
+                    notifyIdBurstCaptureCapturing,
+                    toCapturingNotifyParam(status)
                 )
             }
 

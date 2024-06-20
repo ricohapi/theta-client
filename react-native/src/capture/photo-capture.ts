@@ -12,7 +12,7 @@ import {
 } from '../theta-repository/notify-controller';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
-const NOTIFY_CAPTURING = 'NOTIFY-CAPTURING';
+const NOTIFY_CAPTURING = 'PHOTO-CAPTURING';
 
 interface CapturingNotify extends BaseNotify {
   params?: {
@@ -32,7 +32,7 @@ export class PhotoCapture {
   /**
    * Take a picture
    *
-   * @param onProgress Called when change capture status
+   * @param onCapturing Called when change capture status
    * @return promise of token file url
    */
   async takePicture(

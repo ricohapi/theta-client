@@ -65,6 +65,7 @@ class ThetaClientReactNative: RCTEventEmitter {
     static let EVENT_FRAME = "ThetaFrameEvent"
     static let EVENT_NOTIFY = "ThetaNotify"
 
+    static let NOTIFY_PHOTO_CAPTURING = "PHOTO-CAPTURING"
     static let NOTIFY_TIMESHIFT_PROGRESS = "TIME-SHIFT-PROGRESS"
     static let NOTIFY_TIMESHIFT_STOP_ERROR = "TIME-SHIFT-STOP-ERROR"
     static let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_PROGRESS = "SHOT-COUNT-SPECIFIED-INTERVAL-PROGRESS"
@@ -75,12 +76,12 @@ class ThetaClientReactNative: RCTEventEmitter {
     static let NOTIFY_COMPOSITE_INTERVAL_STOP_ERROR = "COMPOSITE-INTERVAL-STOP-ERROR"
     static let NOTIFY_BURST_PROGRESS = "BURST-PROGRESS"
     static let NOTIFY_BURST_STOP_ERROR = "BURST-STOP-ERROR"
+    static let NOTIFY_BURST_CAPTURING = "BURST-CAPTURING"
     static let NOTIFY_MULTI_BRACKET_PROGRESS = "MULTI-BRACKET-PROGRESS"
     static let NOTIFY_MULTI_BRACKET_STOP_ERROR = "MULTI-BRACKET-STOP-ERROR"
     static let NOTIFY_CONTINUOUS_PROGRESS = "CONTINUOUS-PROGRESS"
     static let NOTIFY_EVENT_WEBSOCKET_EVENT = "EVENT-WEBSOCKET-EVENT"
     static let NOTIFY_EVENT_WEBSOCKET_CLOSE = "EVENT-WEBSOCKET-CLOSE"
-    static let NOTIFY_CAPTURING = "NOTIFY-CAPTURING"
 
     @objc
     override func supportedEvents() -> [String]! {
@@ -574,7 +575,7 @@ class ThetaClientReactNative: RCTEventEmitter {
                 client?.sendEvent(
                     withName: ThetaClientReactNative.EVENT_NOTIFY,
                     body: toNotify(
-                        name: ThetaClientReactNative.NOTIFY_CAPTURING,
+                        name: ThetaClientReactNative.NOTIFY_PHOTO_CAPTURING,
                         params: toCapturingNotifyParam(value: status)
                     )
                 )
@@ -1330,6 +1331,16 @@ class ThetaClientReactNative: RCTEventEmitter {
                     body: toNotify(
                         name: ThetaClientReactNative.NOTIFY_BURST_PROGRESS,
                         params: toCaptureProgressNotifyParam(value: completion)
+                    )
+                )
+            }
+
+            func onCapturing(status: CapturingStatusEnum) {
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_BURST_CAPTURING,
+                        params: toCapturingNotifyParam(value: status)
                     )
                 )
             }

@@ -1,4 +1,4 @@
-import { CaptureBuilder } from './capture';
+import { CaptureBuilder, CapturingStatusEnum } from './capture';
 import { NativeModules } from 'react-native';
 import {
   BaseNotify,
@@ -17,6 +17,7 @@ const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 const NOTIFY_PROGRESS = 'BURST-PROGRESS';
 const NOTIFY_STOP_ERROR = 'BURST-STOP-ERROR';
+const NOTIFY_CAPTURING = 'BURST-CAPTURING';
 
 interface CaptureProgressNotify extends BaseNotify {
   params?: {
@@ -27,6 +28,12 @@ interface CaptureProgressNotify extends BaseNotify {
 interface CaptureStopErrorNotify extends BaseNotify {
   params?: {
     message: string;
+  };
+}
+
+interface CapturingNotify extends BaseNotify {
+  params?: {
+    status: CapturingStatusEnum;
   };
 }
 
@@ -41,11 +48,14 @@ export class BurstCapture {
   /**
    * start burst shooting
    * @param onProgress the block for burst shooting onProgress
+   * @param onStopFailed Called when stopCapture error occurs
+   * @param onCapturing Called when change capture status
    * @return promise of captured file url
    */
   async startCapture(
     onProgress?: (completion?: number) => void,
-    onStopFailed?: (error: any) => void
+    onStopFailed?: (error: any) => void,
+    onCapturing?: (status: CapturingStatusEnum) => void
   ): Promise<string[] | undefined> {
     if (onProgress) {
       this.notify.addNotify(NOTIFY_PROGRESS, (event: CaptureProgressNotify) => {
@@ -60,6 +70,13 @@ export class BurstCapture {
         }
       );
     }
+    if (onCapturing) {
+      this.notify.addNotify(NOTIFY_CAPTURING, (event: CapturingNotify) => {
+        if (event.params?.status) {
+          onCapturing(event.params.status);
+        }
+      });
+    }
 
     return new Promise<string[] | undefined>(async (resolve, reject) => {
       await ThetaClientReactNative.startBurstCapture()
@@ -72,6 +89,7 @@ export class BurstCapture {
         .finally(() => {
           this.notify.removeNotify(NOTIFY_PROGRESS);
           this.notify.removeNotify(NOTIFY_STOP_ERROR);
+          this.notify.removeNotify(NOTIFY_CAPTURING);
         });
     });
   }

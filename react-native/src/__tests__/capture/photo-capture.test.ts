@@ -92,7 +92,7 @@ describe('photo capture', () => {
 
     const sendStatus = (status: CapturingStatusEnum) => {
       notifyCallback({
-        name: 'NOTIFY-CAPTURING',
+        name: 'PHOTO-CAPTURING',
         params: {
           status: status,
         },

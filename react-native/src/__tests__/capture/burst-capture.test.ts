@@ -14,6 +14,7 @@ import {
   BurstOrderEnum,
   BurstModeEnum,
 } from '../../theta-repository/options';
+import { CapturingStatusEnum } from '../../capture';
 
 describe('burst shooting', () => {
   const thetaClient = NativeModules.ThetaClientReactNative;
@@ -147,6 +148,65 @@ describe('burst shooting', () => {
     const fileUrls = await capture.startCapture();
     expect(fileUrls).toBe(testUrls);
     expect(NotifyController.instance.notifyList.size).toBe(0);
+  });
+
+  test('startCaptureWithCapturing', async () => {
+    let notifyCallback: (notify: BaseNotify) => void = () => {
+      expect(true).toBeFalsy();
+    };
+    jest.mocked(NativeEventEmitter_addListener).mockImplementation(
+      jest.fn((_, callback) => {
+        notifyCallback = callback;
+        return {
+          remove: jest.fn(),
+        };
+      })
+    );
+
+    await initialize();
+
+    const builder = getBurstCaptureBuilder(
+      burstCaptureNum,
+      burstBracketStep,
+      burstCompensation,
+      burstMaxExposureTime,
+      burstEnableIsoControl,
+      burstOrder
+    );
+
+    const sendStatus = (status: CapturingStatusEnum) => {
+      notifyCallback({
+        name: 'BURST-CAPTURING',
+        params: {
+          status: status,
+        },
+      });
+    };
+
+    jest
+      .mocked(thetaClient.buildBurstCapture)
+      .mockImplementation(jest.fn(async () => {}));
+    const testUrls = ['http://192.168.1.1/files/100RICOH/R100.JPG'];
+    jest.mocked(thetaClient.startBurstCapture).mockImplementation(
+      jest.fn(async () => {
+        sendStatus(CapturingStatusEnum.SELF_TIMER_COUNTDOWN);
+        return testUrls;
+      })
+    );
+
+    const capture = await builder.build();
+    let isOnCapturing = false;
+    const fileUrls = await capture.startCapture(
+      undefined,
+      undefined,
+      (status) => {
+        expect(status).toBe(CapturingStatusEnum.SELF_TIMER_COUNTDOWN);
+        isOnCapturing = true;
+      }
+    );
+    expect(fileUrls).toBe(testUrls);
+    expect(NotifyController.instance.notifyList.size).toBe(0);
+    expect(isOnCapturing).toBeTruthy();
   });
 
   test('cancelCapture', (done) => {

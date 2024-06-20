@@ -122,7 +122,7 @@ void main() {
 
     const imageUrls = ['http://test.jpeg'];
 
-    onCallStartBurstCapture = (onProgress, onStopFailed) {
+    onCallStartBurstCapture = (onProgress, onStopFailed, onCapturing) {
       return Future.value(imageUrls);
     };
 
@@ -157,7 +157,7 @@ void main() {
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     var completer = Completer<List<String>>();
-    onCallStartBurstCapture = (onProgress, onStopFailed) {
+    onCallStartBurstCapture = (onProgress, onStopFailed, onCapturing) {
       return completer.future;
     };
     onCallStopBurstCapture = () {
@@ -195,7 +195,7 @@ void main() {
     const imageUrls = ['http://test.jpeg'];
 
     var completer = Completer<List<String>>();
-    onCallStartBurstCapture = (onProgress, onStopFailed) {
+    onCallStartBurstCapture = (onProgress, onStopFailed, onCapturing) {
       return completer.future;
     };
     onCallStopBurstCapture = () {
@@ -237,7 +237,7 @@ void main() {
 
     void Function(Exception exception)? paramStopFailed;
 
-    onCallStartBurstCapture = (onProgress, onStopFailed) {
+    onCallStartBurstCapture = (onProgress, onStopFailed, onCapturing) {
       paramStopFailed = onStopFailed;
       return Completer<List<String>>().future;
     };
@@ -282,7 +282,7 @@ void main() {
 
     void Function(double completion)? paramOnProgress;
 
-    onCallStartBurstCapture = (onProgress, onStopFailed) {
+    onCallStartBurstCapture = (onProgress, onStopFailed, onCapturing) {
       paramOnProgress = onProgress;
       return Completer<List<String>>().future;
     };
@@ -306,5 +306,46 @@ void main() {
     paramOnProgress?.call(0.1);
     await completer.future.timeout(const Duration(milliseconds: 10));
     expect(isOnProgress, true);
+  });
+
+  test('call onCapturing', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    var completer = Completer<void>();
+
+    void Function(CapturingStatusEnum status)? paramOnCapturing;
+
+    onCallStartBurstCapture = (onProgress, onStopFailed, onCapturing) {
+      paramOnCapturing = onCapturing;
+      return Completer<List<String>>().future;
+    };
+
+    final builder = thetaClientPlugin.getBurstCaptureBuilder(
+        burstCaptureNum,
+        burstBracketStep,
+        burstCompensation,
+        burstMaxExposureTime,
+        burstEnableIsoControl,
+        burstOrder);
+    var capture = await builder.build();
+    var isOnCapturing = false;
+    capture.startCapture(
+        (fileUrl) {
+          expect(false, isTrue, reason: 'startCapture');
+        },
+        (completion) {},
+        (exception) {},
+        onCapturing: (status) {
+          isOnCapturing = true;
+          expect(status, CapturingStatusEnum.capturing);
+          completer.complete(null);
+        });
+
+    paramOnCapturing?.call(CapturingStatusEnum.capturing);
+    await completer.future.timeout(const Duration(milliseconds: 10));
+    expect(isOnCapturing, true);
   });
 }

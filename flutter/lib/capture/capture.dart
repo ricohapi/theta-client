@@ -269,13 +269,13 @@ class BurstCapture extends Capture {
   BurstModeEnum? getBurstMode() => _options[OptionNameEnum.burstMode.rawValue];
 
   /// Starts burst shooting
-  BurstCapturing startCapture(
-      void Function(List<String>? fileUrls) onSuccess,
+  BurstCapturing startCapture(void Function(List<String>? fileUrls) onSuccess,
       void Function(double completion) onProgress,
       void Function(Exception exception) onCaptureFailed,
-      {void Function(Exception exception)? onStopFailed}) {
+      {void Function(Exception exception)? onStopFailed,
+        void Function(CapturingStatusEnum status)? onCapturing}) {
     ThetaClientFlutterPlatform.instance
-        .startBurstCapture(onProgress, onStopFailed)
+        .startBurstCapture(onProgress, onStopFailed, onCapturing)
         .then((value) => onSuccess(value))
         .onError((error, stackTrace) => onCaptureFailed(error as Exception));
     return BurstCapturing();

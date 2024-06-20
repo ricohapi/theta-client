@@ -16,8 +16,9 @@ let NOTIFY_MULTI_BRACKET_INTERVAL_PROGRESS = 10041
 let NOTIFY_MULTI_BRACKET_INTERVAL_STOP_ERROR = 10042
 let NOTIFY_BURST_PROGRESS = 10051
 let NOTIFY_BURST_STOP_ERROR = 10052
+let NOTIFY_BURST_CAPTURING = 10053
 let NOTIFY_CONTINUOUS_PROGRESS = 10061
-let NOTIFY_CAPTURING_STATUS = 10071
+let NOTIFY_PHOTO_CAPTURING = 10071
 
 public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     public func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -559,7 +560,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             }
 
             func onCapturing(status: CapturingStatusEnum) {
-                plugin?.sendNotifyEvent(id: NOTIFY_CAPTURING_STATUS, params: toCapturingNotifyParam(value: status))
+                plugin?.sendNotifyEvent(id: NOTIFY_PHOTO_CAPTURING, params: toCapturingNotifyParam(value: status))
             }
 
             func onError(exception: ThetaRepository.ThetaRepositoryException) {
@@ -1085,6 +1086,10 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
 
             func onProgress(completion: Float) {
                 plugin?.sendNotifyEvent(id: NOTIFY_BURST_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
+            }
+
+            func onCapturing(status: CapturingStatusEnum) {
+                plugin?.sendNotifyEvent(id: NOTIFY_BURST_CAPTURING, params: toCapturingNotifyParam(value: status))
             }
 
             func onCaptureCompleted(fileUrls: [String]?) {

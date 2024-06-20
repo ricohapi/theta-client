@@ -198,9 +198,11 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
-  Future<List<String>?> startBurstCapture(void Function(double p1)? onProgress,
-      void Function(Exception exception)? onStopFailed) {
-    return onCallStartBurstCapture(onProgress, onStopFailed);
+  Future<List<String>?> startBurstCapture(
+      void Function(double p1)? onProgress,
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) {
+    return onCallStartBurstCapture(onProgress, onStopFailed, onCapturing);
   }
 
   @override
@@ -472,9 +474,12 @@ Future<void> Function() onCallStopCompositeIntervalCapture = Future.value;
 Future<void> Function() onCallGetBurstCaptureBuilder = Future.value;
 Future<void> Function(Map<String, dynamic> options, int interval)
     onCallBuildBurstCapture = (options, interval) => Future.value();
-Future<List<String>?> Function(void Function(double)? onProgress,
-        void Function(Exception exception)? onStopFailed)
-    onCallStartBurstCapture = (onProgress, onStopFailed) => Future.value();
+Future<List<String>?> Function(
+        void Function(double)? onProgress,
+        void Function(Exception exception)? onStopFailed,
+        void Function(CapturingStatusEnum status)? onCapturing)
+    onCallStartBurstCapture =
+    (onProgress, onStopFailed, onCapturing) => Future.value();
 Future<void> Function() onCallStopBurstCapture = Future.value;
 
 Future<void> Function() onCallGetMultiBracketCaptureBuilder = Future.value;

@@ -223,8 +223,10 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('buildBurstCapture() has not been implemented.');
   }
 
-  Future<List<String>?> startBurstCapture(void Function(double)? onProgress,
-      void Function(Exception exception)? onStopFailed) {
+  Future<List<String>?> startBurstCapture(
+      void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) {
     throw UnimplementedError('startBurstCapture() has not been implemented.');
   }
 

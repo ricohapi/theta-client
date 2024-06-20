@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   topViewContainer: {
-    height: 110,
+    height: 140,
     alignItems: 'center',
   },
   contentContainer: {
@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   itemText: {
+    height: 50,
     color: 'black',
     fontSize: 16,
     paddingHorizontal: 10,

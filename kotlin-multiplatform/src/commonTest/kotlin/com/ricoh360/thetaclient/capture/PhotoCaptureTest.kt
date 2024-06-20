@@ -1418,7 +1418,7 @@ class PhotoCaptureTest {
     }
 
     /**
-     * call takePicture.
+     * Capturing status.
      */
     @Test
     fun capturingStatusTest() = runTest {

@@ -540,7 +540,7 @@ class ThetaClientReactNativeModule(
       override fun onCapturing(status: CapturingStatusEnum) {
         super.onCapturing(status)
         sendNotifyEvent(
-          toNotify(NOTIFY_CAPTURING, toCapturingNotifyParam(status = status))
+          toNotify(NOTIFY_PHOTO_CAPTURING, toCapturingNotifyParam(status = status))
         )
       }
 
@@ -1180,6 +1180,12 @@ class ThetaClientReactNativeModule(
             NOTIFY_BURST_PROGRESS,
             toCaptureProgressNotifyParam(value = completion)
           )
+        )
+      }
+
+      override fun onCapturing(status: CapturingStatusEnum) {
+        sendNotifyEvent(
+          toNotify(NOTIFY_BURST_CAPTURING, toCapturingNotifyParam(status = status))
         )
       }
 
@@ -2091,6 +2097,7 @@ class ThetaClientReactNativeModule(
     const val NAME = "ThetaClientReactNative"
     const val EVENT_NAME = "ThetaFrameEvent"
     const val EVENT_NOTIFY = "ThetaNotify"
+    const val NOTIFY_PHOTO_CAPTURING = "PHOTO-CAPTURING"
     const val NOTIFY_TIMESHIFT_PROGRESS = "TIME-SHIFT-PROGRESS"
     const val NOTIFY_TIMESHIFT_STOP_ERROR = "TIME-SHIFT-STOP-ERROR"
     const val NOTIFY_VIDEO_CAPTURE_STOP_ERROR = "VIDEO-CAPTURE-STOP-ERROR"
@@ -2101,11 +2108,11 @@ class ThetaClientReactNativeModule(
     const val NOTIFY_COMPOSITE_INTERVAL_STOP_ERROR = "COMPOSITE-INTERVAL-STOP-ERROR"
     const val NOTIFY_BURST_PROGRESS = "BURST-PROGRESS"
     const val NOTIFY_BURST_STOP_ERROR = "BURST-STOP-ERROR"
+    const val NOTIFY_BURST_CAPTURING = "BURST-CAPTURING"
     const val NOTIFY_MULTI_BRACKET_PROGRESS = "MULTI-BRACKET-PROGRESS"
     const val NOTIFY_MULTI_BRACKET_STOP_ERROR = "MULTI-BRACKET-STOP-ERROR"
     const val NOTIFY_CONTINUOUS_PROGRESS = "CONTINUOUS-PROGRESS"
     const val NOTIFY_EVENT_WEBSOCKET_EVENT = "EVENT-WEBSOCKET-EVENT"
     const val NOTIFY_EVENT_WEBSOCKET_CLOSE = "EVENT-WEBSOCKET-CLOSE"
-    const val NOTIFY_CAPTURING = "NOTIFY-CAPTURING"
   }
 }

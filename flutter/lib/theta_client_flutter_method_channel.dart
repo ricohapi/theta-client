@@ -20,8 +20,9 @@ const notifyIdMultiBracketCaptureProgress = 10041;
 const notifyIdMultiBracketCaptureStopError = 10042;
 const notifyIdBurstCaptureProgress = 10051;
 const notifyIdBurstCaptureStopError = 10052;
+const notifyIdBurstCaptureCapturing = 10053;
 const notifyIdContinuousCaptureProgress = 10061;
-const notifyIdCapturingStatus = 10071;
+const notifyIdPhotoCapturing = 10071;
 
 /// An implementation of [ThetaClientFlutterPlatform] that uses method channels.
 class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
@@ -249,7 +250,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
     try {
       enableNotifyEventReceiver();
       if (onCapturing != null) {
-        addNotify(notifyIdCapturingStatus, (params) {
+        addNotify(notifyIdPhotoCapturing, (params) {
           final strStatus = params?['status'] as String?;
           if (strStatus != null) {
             final status = CapturingStatusEnum.getValue(strStatus);
@@ -259,12 +260,11 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           }
         });
       }
-      final fileUrl =
-      await methodChannel.invokeMethod<String>('takePicture');
-      removeNotify(notifyIdCapturingStatus);
+      final fileUrl = await methodChannel.invokeMethod<String>('takePicture');
+      removeNotify(notifyIdPhotoCapturing);
       completer.complete(fileUrl);
     } catch (e) {
-      removeNotify(notifyIdCapturingStatus);
+      removeNotify(notifyIdPhotoCapturing);
       completer.completeError(e);
     }
     return completer.future;
@@ -561,8 +561,10 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   }
 
   @override
-  Future<List<String>?> startBurstCapture(void Function(double)? onProgress,
-      void Function(Exception exception)? onStopFailed) async {
+  Future<List<String>?> startBurstCapture(
+      void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) async {
     var completer = Completer<List<String>?>();
     try {
       enableNotifyEventReceiver();
@@ -582,10 +584,22 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           }
         });
       }
+      if (onCapturing != null) {
+        addNotify(notifyIdBurstCaptureCapturing, (params) {
+          final strStatus = params?['status'] as String?;
+          if (strStatus != null) {
+            final status = CapturingStatusEnum.getValue(strStatus);
+            if (status != null) {
+              onCapturing(status);
+            }
+          }
+        });
+      }
       final fileUrls =
           await methodChannel.invokeMethod<List<dynamic>?>('startBurstCapture');
       removeNotify(notifyIdBurstCaptureProgress);
       removeNotify(notifyIdBurstCaptureStopError);
+      removeNotify(notifyIdBurstCaptureCapturing);
       if (fileUrls == null) {
         completer.complete(null);
       } else {
@@ -594,6 +608,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
     } catch (e) {
       removeNotify(notifyIdBurstCaptureProgress);
       removeNotify(notifyIdBurstCaptureStopError);
+      removeNotify(notifyIdBurstCaptureCapturing);
       completer.completeError(e);
     }
     return completer.future;
