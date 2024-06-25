@@ -198,7 +198,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
 
   Future<List<String>?> startCompositeIntervalCapture(
       void Function(double)? onProgress,
-      void Function(Exception exception)? onStopFailed) {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) {
     throw UnimplementedError(
         'startCompositeIntervalCapture() has not been implemented.');
   }

@@ -3,6 +3,7 @@ package com.ricoh360.thetaclient.capture
 import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
+import com.ricoh360.thetaclient.ThetaApi
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.CaptureMode
 import io.ktor.client.network.sockets.ConnectTimeoutException
@@ -17,6 +18,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -47,26 +49,40 @@ class CompositeIntervalCaptureTest {
             Resource("src/commonTest/resources/CompositeIntervalCapture/start_capture_progress.json").readText(),
             Resource("src/commonTest/resources/CompositeIntervalCapture/start_capture_done.json").readText(),
         )
+        val stateShootingResponse =
+            Resource("src/commonTest/resources/CompositeIntervalCapture/state_shooting.json").readText()
         var counter = 0
         MockApiClient.onRequest = { request ->
-            val index = counter++
-
+            val index = counter
+            if (request.url.encodedPath != "/osc/state") {
+                counter++
+            }
             // check request
-            when (index) {
+            val response = when (index) {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
+                    responseArray[index]
                 }
 
                 1 -> {
                     CheckRequest.checkSetOptions(request = request, compositeShootingTime = 600)
+                    responseArray[index]
                 }
 
                 2 -> {
                     CheckRequest.checkCommandName(request, "camera.startCapture")
+                    responseArray[index]
+                }
+
+                else -> {
+                    when (request.url.encodedPath) {
+                        "/osc/state" -> stateShootingResponse
+                        else -> responseArray[index]
+                    }
                 }
             }
 
-            ByteReadChannel(responseArray[index])
+            ByteReadChannel(response)
         }
         val deferred = CompletableDeferred<Unit>()
 
@@ -76,6 +92,7 @@ class CompositeIntervalCaptureTest {
         val capture = thetaRepository.getCompositeIntervalCaptureBuilder(600)
             .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var files: List<String>? = null
         capture.startCapture(object : CompositeIntervalCapture.StartCaptureCallback {
@@ -119,23 +136,47 @@ class CompositeIntervalCaptureTest {
         // setup
         var isStop = false
         val deferredStart = CompletableDeferred<Unit>()
-        MockApiClient.onRequest = { request ->
-            val textBody = request.body as TextContent
-            val path = if (textBody.text.contains("camera.stopCapture")) {
-                isStop = true
-                "src/commonTest/resources/CompositeIntervalCapture/stop_capture_done.json"
-            } else if (textBody.text.contains("camera.setOptions")) {
-                "src/commonTest/resources/setOptions/set_options_done.json"
-            } else {
-                if (!deferredStart.isCompleted) {
-                    deferredStart.complete(Unit)
-                }
-                if (isStop)
-                    "src/commonTest/resources/CompositeIntervalCapture/start_capture_done_empty.json"
-                else
-                    "src/commonTest/resources/CompositeIntervalCapture/start_capture_progress.json"
-            }
+        val jsonOptionDone = "src/commonTest/resources/setOptions/set_options_done.json"
+        val jsonProgress =
+            "src/commonTest/resources/CompositeIntervalCapture/start_capture_progress.json"
+        val jsonStopCapture =
+            "src/commonTest/resources/CompositeIntervalCapture/stop_capture_done.json"
+        val jsonCaptureEmpty =
+            "src/commonTest/resources/CompositeIntervalCapture/start_capture_done_empty.json"
+        val jsonStateShooting =
+            "src/commonTest/resources/CompositeIntervalCapture/state_shooting.json"
 
+        MockApiClient.onRequest = { request ->
+            val path = when (request.url.encodedPath) {
+                "/osc/state" -> {
+                    jsonStateShooting
+                }
+
+                "/osc/commands/status" -> {
+                    if (!deferredStart.isCompleted) {
+                        deferredStart.complete(Unit)
+                    }
+                    if (isStop) jsonCaptureEmpty else jsonProgress
+                }
+
+                else -> {
+                    assertEquals(request.url.encodedPath, "/osc/commands/execute")
+                    val textBody = request.body as TextContent
+                    when {
+                        textBody.text.contains("camera.setOptions") -> jsonOptionDone
+                        textBody.text.contains("camera.startCapture") -> jsonProgress
+                        textBody.text.contains("camera.stopCapture") -> {
+                            isStop = true
+                            jsonStopCapture
+                        }
+
+                        else -> {
+                            assertTrue(false)
+                            ""
+                        }
+                    }
+                }
+            }
             ByteReadChannel(Resource(path).readText())
         }
 
@@ -147,6 +188,7 @@ class CompositeIntervalCaptureTest {
         val capture = thetaRepository.getCompositeIntervalCaptureBuilder(600)
             .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var files: List<String>? = listOf()
         val capturing =
@@ -204,10 +246,19 @@ class CompositeIntervalCaptureTest {
             Resource("src/commonTest/resources/CompositeIntervalCapture/start_capture_progress.json").readText(),
             Resource("src/commonTest/resources/CompositeIntervalCapture/start_capture_cancel.json").readText(),
         )
+        val stateShootingResponse =
+            Resource("src/commonTest/resources/CompositeIntervalCapture/state_shooting.json").readText()
         var counter = 0
-        MockApiClient.onRequest = { _ ->
-            val index = counter++
-            ByteReadChannel(responseArray[index])
+        MockApiClient.onRequest = { request ->
+            val response = when (request.url.encodedPath) {
+                "/osc/state" -> stateShootingResponse
+                else -> {
+                    val index = counter++
+                    responseArray[index]
+                }
+            }
+
+            ByteReadChannel(response)
         }
         val deferred = CompletableDeferred<Unit>()
 
@@ -217,6 +268,7 @@ class CompositeIntervalCaptureTest {
         val capture = thetaRepository.getCompositeIntervalCaptureBuilder(600)
             .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var files: List<String>? = listOf()
         capture.startCapture(object : CompositeIntervalCapture.StartCaptureCallback {
@@ -437,7 +489,10 @@ class CompositeIntervalCaptureTest {
 
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
-        val capture = thetaRepository.getCompositeIntervalCaptureBuilder(600).build()
+        val capture = thetaRepository.getCompositeIntervalCaptureBuilder(600)
+            .setCheckStatusCommandInterval(100)
+            .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         // execute error response
         var deferred = CompletableDeferred<Unit>()
@@ -528,7 +583,9 @@ class CompositeIntervalCaptureTest {
 
         val thetaRepository = ThetaRepository(endpoint)
         val capture = thetaRepository.getCompositeIntervalCaptureBuilder(600)
+            .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         // execute status error and json response
         var deferred = CompletableDeferred<Unit>()
@@ -830,5 +887,112 @@ class CompositeIntervalCaptureTest {
                 deferred.await()
             }
         }
+    }
+
+    /**
+     * Capturing status.
+     */
+    @Test
+    fun capturingStatusTest() = runTest {
+        // setup
+        var isStop = false
+        val jsonOptionDone = "src/commonTest/resources/setOptions/set_options_done.json"
+        val jsonProgress =
+            "src/commonTest/resources/CompositeIntervalCapture/start_capture_progress.json"
+        val jsonCaptureDone =
+            "src/commonTest/resources/CompositeIntervalCapture/start_capture_done.json"
+        val jsonStateShooting =
+            "src/commonTest/resources/CompositeIntervalCapture/state_shooting.json"
+        val jsonStateSelfTimer =
+            "src/commonTest/resources/CompositeIntervalCapture/state_self_timer.json"
+
+        var stateCounter = 0
+        MockApiClient.onRequest = { request ->
+            val path = when (request.url.encodedPath) {
+                "/osc/state" -> {
+                    when (stateCounter++) {
+                        0 -> jsonStateSelfTimer
+                        else -> {
+                            isStop = true
+                            jsonStateShooting
+                        }
+                    }
+                }
+
+                "/osc/commands/status" -> {
+                    if (isStop) jsonCaptureDone else jsonProgress
+                }
+
+                else -> {
+                    assertEquals(request.url.encodedPath, "/osc/commands/execute")
+                    val textBody = request.body as TextContent
+                    when {
+                        textBody.text.contains("camera.setOptions") -> jsonOptionDone
+                        textBody.text.contains("camera.startCapture") -> jsonProgress
+
+                        else -> {
+                            assertTrue(false)
+                            ""
+                        }
+                    }
+                }
+            }
+            ByteReadChannel(Resource(path).readText())
+        }
+
+        val deferred = CompletableDeferred<Unit>()
+
+        // execute
+        val thetaRepository = ThetaRepository(endpoint)
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
+        val capture = thetaRepository.getCompositeIntervalCaptureBuilder(600)
+            .setCheckStatusCommandInterval(100)
+            .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
+
+        var files: List<String>? = listOf()
+        capture.startCapture(object : CompositeIntervalCapture.StartCaptureCallback {
+            override fun onCaptureCompleted(fileUrls: List<String>?) {
+                files = fileUrls
+                deferred.complete(Unit)
+            }
+
+            override fun onProgress(completion: Float) {
+                assertEquals(completion, 0f, "onProgress")
+            }
+
+            override fun onCapturing(status: CapturingStatusEnum) {
+                when {
+                    stateCounter < 2 -> assertEquals(
+                        status,
+                        CapturingStatusEnum.SELF_TIMER_COUNTDOWN
+                    )
+
+                    else -> assertEquals(status, CapturingStatusEnum.CAPTURING)
+                }
+            }
+
+            override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                assertTrue(false, "error start interval composite shooting")
+                deferred.complete(Unit)
+            }
+
+            override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                assertTrue(false, "onStopFailed")
+            }
+        })
+
+        runBlocking {
+            withTimeout(7000) {
+                deferred.await()
+            }
+        }
+
+        // check result
+        assertTrue(stateCounter >= 2, "capTureStatus count")
+        assertFalse(
+            files?.isEmpty() ?: true,
+            "done interval composite shooting"
+        )
     }
 }

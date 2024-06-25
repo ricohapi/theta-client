@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './styles';
 import Button from '../../components/ui/button';
 import {
+  CapturingStatusEnum,
   CompositeIntervalCapture,
   Options,
   getCompositeIntervalCaptureBuilder,
@@ -20,7 +21,10 @@ const CompositeIntervalCaptureScreen: React.FC<
 > = ({ navigation }) => {
   const [interval, setInterval] = React.useState<number>();
   const [shootingTimeSec, setShootingTimeSec] = React.useState<number>(600);
-  const [message, setMessage] = React.useState('progress = 0');
+  const [message, setMessage] = React.useState('');
+  const [capturingStatus, setCapturingStatus] =
+    React.useState<CapturingStatusEnum>();
+  const [progress, setProgress] = React.useState<number>();
   const [captureOptions, setCaptureOptions] = React.useState<Options>();
   const [isTaking, setIsTaking] = React.useState(false);
   const [capture, setCapture] = React.useState<CompositeIntervalCapture>();
@@ -88,15 +92,20 @@ const CompositeIntervalCaptureScreen: React.FC<
       initCapture();
       return;
     }
+    setProgress(undefined);
+    setCapturingStatus(undefined);
     try {
       console.log('CompositeIntervalCapture startCapture');
       const urls = await capture.startCapture(
         (completion) => {
           if (isTaking) return;
-          setMessage(`progress = ${completion}`);
+          setProgress(completion);
         },
         (error) => {
           Alert.alert('Cancel error', JSON.stringify(error), [{ text: 'OK' }]);
+        },
+        (status) => {
+          setCapturingStatus(status);
         }
       );
       initCapture();
@@ -150,6 +159,10 @@ const CompositeIntervalCaptureScreen: React.FC<
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [capture]);
+
+  React.useEffect(() => {
+    setMessage(`progress = ${progress}\ncapturing = ${capturingStatus}`);
+  }, [capturingStatus, progress]);
 
   return (
     <SafeAreaView
