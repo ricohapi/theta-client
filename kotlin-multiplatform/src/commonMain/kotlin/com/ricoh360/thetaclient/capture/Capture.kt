@@ -31,6 +31,28 @@ enum class CapturingStatusEnum {
 abstract class Capture internal constructor(internal val options: Options) {
 
     /**
+     * Get photo file format.
+     *
+     * @return Photo file format
+     */
+    internal fun getPhotoFileFormat() = options.fileFormat?.let { fileFormat ->
+        ThetaRepository.FileFormatEnum.get(fileFormat).let {
+            ThetaRepository.PhotoFileFormatEnum.get(it)
+        }
+    }
+
+    /**
+     * Get video file format.
+     *
+     * @return Video file format
+     */
+    internal fun getVideoFileFormat() = options.fileFormat?.let { fileFormat ->
+        ThetaRepository.FileFormatEnum.get(fileFormat).let {
+            ThetaRepository.VideoFileFormatEnum.get(it)
+        }
+    }
+
+    /**
      * Get aperture value.
      *
      * @return aperture value
@@ -128,6 +150,30 @@ abstract class Capture internal constructor(internal val options: Options) {
      */
     abstract class Builder<T> {
         internal val options = Options()
+
+        /**
+         * Set photo file format.
+         *
+         * @param fileFormat Photo file format
+         * @return Builder
+         */
+        internal fun setPhotoFileFormat(fileFormat: ThetaRepository.PhotoFileFormatEnum): T {
+            options.fileFormat = fileFormat.fileFormat.toMediaFileFormat()
+            @Suppress("UNCHECKED_CAST")
+            return this as T
+        }
+
+        /**
+         * Set video file format.
+         *
+         * @param fileFormat Video file format
+         * @return Builder
+         */
+        internal fun setVideoFileFormat(fileFormat: ThetaRepository.VideoFileFormatEnum): T {
+            options.fileFormat = fileFormat.fileFormat.toMediaFileFormat()
+            @Suppress("UNCHECKED_CAST")
+            return this as T
+        }
 
         /**
          * Set aperture value.
@@ -272,4 +318,41 @@ internal suspend fun isCanceledShootingResponse(httpResponse: HttpResponse): Boo
     } catch (_: Exception) {
     }
     return false
+}
+
+/*
+ * Common PhotoCapture class
+ *
+ * @property options option of take a picture
+ */
+abstract class PhotoCaptureBase internal constructor(
+    options: Options,
+) : Capture(options) {
+    /**
+     * Get photo file format.
+     *
+     * @return Photo file format
+     */
+    fun getFileFormat() = getPhotoFileFormat()
+
+    /*
+     * Builder of PhotoCaptureBase
+     *
+     * @property endpoint URL of Theta web API endpoint
+     * @property cameraModel Camera model info.
+     */
+    abstract class Builder<T> internal constructor(
+    ) : Capture.Builder<T>() {
+        /**
+         * Set photo file format.
+         *
+         * @param fileFormat Photo file format
+         * @return Builder
+         */
+        fun setFileFormat(fileFormat: ThetaRepository.PhotoFileFormatEnum): T {
+            setPhotoFileFormat(fileFormat)
+            @Suppress("UNCHECKED_CAST")
+            return this as T
+        }
+    }
 }

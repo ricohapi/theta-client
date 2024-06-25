@@ -1,9 +1,5 @@
-import { CaptureBuilder, CapturingStatusEnum } from './capture';
-import type {
-  FilterEnum,
-  PhotoFileFormatEnum,
-  PresetEnum,
-} from '../theta-repository/options';
+import { CapturingStatusEnum, PhotoCaptureBuilderBase } from './capture';
+import type { FilterEnum, PresetEnum } from '../theta-repository/options';
 
 import { NativeModules } from 'react-native';
 import {
@@ -59,7 +55,7 @@ export class PhotoCapture {
 /**
  * PhotoCaptureBaseBuilder class
  */
-export class PhotoCaptureBuilder extends CaptureBuilder<PhotoCaptureBuilder> {
+export class PhotoCaptureBuilder extends PhotoCaptureBuilderBase<PhotoCaptureBuilder> {
   interval?: number;
 
   /** construct PhotoCaptureBuilder instance */
@@ -75,16 +71,6 @@ export class PhotoCaptureBuilder extends CaptureBuilder<PhotoCaptureBuilder> {
    */
   setCheckStatusCommandInterval(timeMillis: number): PhotoCaptureBuilder {
     this.interval = timeMillis;
-    return this;
-  }
-
-  /**
-   * Set photo file format.
-   * @param {PhotoFileFormatEnum} fileFormat Photo file format to set
-   * @return PhotoCaptureBuilder
-   */
-  setFileFormat(fileFormat: PhotoFileFormatEnum): PhotoCaptureBuilder {
-    this.options.fileFormat = fileFormat;
     return this;
   }
 

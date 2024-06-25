@@ -18,7 +18,7 @@ class PhotoCapture private constructor(
     private val endpoint: String,
     options: Options,
     private val checkStatusCommandInterval: Long
-    ) : Capture(options) {
+    ) : PhotoCaptureBase(options) {
 
     private val scope = CoroutineScope(Dispatchers.Default)
 
@@ -32,17 +32,6 @@ class PhotoCapture private constructor(
      * @return Image processing filter
      */
     fun getFilter() = options._filter?.let { ThetaRepository.FilterEnum.get(it) }
-
-    /**
-     * Get photo file format.
-     *
-     * @return Photo file format
-     */
-    fun getFileFormat() = options.fileFormat?.let { fileFormat ->
-        ThetaRepository.FileFormatEnum.get(fileFormat).let {
-            ThetaRepository.PhotoFileFormatEnum.get(it)
-        }
-    }
 
     /**
      * Get preset mode of Theta SC2 and Theta SC2 for business.
@@ -159,7 +148,7 @@ class PhotoCapture private constructor(
     class Builder internal constructor(
         private val endpoint: String,
         private val cameraModel: ThetaRepository.ThetaModel? = null
-    ) : Capture.Builder<Builder>() {
+    ) : PhotoCaptureBase.Builder<Builder>() {
         private var interval: Long? = null
 
         internal fun isPreset(): Boolean {
@@ -225,17 +214,6 @@ class PhotoCapture private constructor(
          */
         fun setFilter(filter: ThetaRepository.FilterEnum): Builder {
             options._filter = filter.filter
-            return this
-        }
-
-        /**
-         * Set photo file format.
-         *
-         * @param fileFormat Photo file format
-         * @return Builder
-         */
-        fun setFileFormat(fileFormat: ThetaRepository.PhotoFileFormatEnum): Builder {
-            options.fileFormat = fileFormat.fileFormat.toMediaFileFormat()
             return this
         }
 

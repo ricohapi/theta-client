@@ -3250,12 +3250,32 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Video File format.
          *
          * type: mp4
+         * size: 1920 x 960
+         *
+         * For RICOH THETA SC2 or SC2 for business
+         */
+        VIDEO_2K_NO_CODEC(FileFormatTypeEnum.MP4, 1920, 960, null, null),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
          * size: 3840 x 1920
          * codec: H.264/MPEG-4 AVC
          *
          * For RICOH THETA Z1 or V
          */
         VIDEO_4K(FileFormatTypeEnum.MP4, 3840, 1920, "H.264/MPEG-4 AVC", null),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 3840 x 1920
+         *
+         * For RICOH THETA SC2 or SC2 for business
+         */
+        VIDEO_4K_NO_CODEC(FileFormatTypeEnum.MP4, 3840, 1920, null, null),
 
         /**
          * Video File format.
@@ -3599,12 +3619,32 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Video File format.
          *
          * type: mp4
+         * size: 1920 x 960
+         *
+         * For RICOH THETA SC2 or SC2 for business
+         */
+        VIDEO_2K_NO_CODEC(FileFormatEnum.VIDEO_2K_NO_CODEC),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
          * size: 3840 x 1920
          * codec: H.264/MPEG-4 AVC
          *
          * For RICOH THETA Z1 or V
          */
         VIDEO_4K(FileFormatEnum.VIDEO_4K),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 3840 x 1920
+         *
+         * For RICOH THETA SC2 or SC2 for business
+         */
+        VIDEO_4K_NO_CODEC(FileFormatEnum.VIDEO_4K_NO_CODEC),
 
         /**
          * Video File format.

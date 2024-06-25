@@ -8,6 +8,7 @@ import type {
   IsoAutoHighLimitEnum,
   IsoEnum,
   Options,
+  PhotoFileFormatEnum,
   WhiteBalanceEnum,
 } from '../theta-repository/options';
 
@@ -134,3 +135,17 @@ export const CapturingStatusEnum = {
 /** type definition of CapturingStatusEnum */
 export type CapturingStatusEnum =
   (typeof CapturingStatusEnum)[keyof typeof CapturingStatusEnum];
+
+export class PhotoCaptureBuilderBase<
+  T extends PhotoCaptureBuilderBase<T>
+> extends CaptureBuilder<T> {
+  /**
+   * Set photo file format.
+   * @param {PhotoFileFormatEnum} fileFormat Photo file format to set
+   * @return PhotoCaptureBuilder
+   */
+  setFileFormat(fileFormat: PhotoFileFormatEnum): T {
+    this.options.fileFormat = fileFormat;
+    return this as unknown as T;
+  }
+}

@@ -77,8 +77,18 @@ enum CapturingStatusEnum {
   }
 }
 
+/// Common PhotoCapture class
+class PhotoCaptureBase extends Capture {
+  PhotoCaptureBase(super.options);
+
+  /// Get photo file format.
+  PhotoFileFormatEnum? getFileFormat() {
+    return _options[TagNameEnum.photoFileFormat.rawValue];
+  }
+}
+
 /// Capture of Photo
-class PhotoCapture extends Capture {
+class PhotoCapture extends PhotoCaptureBase {
   final int _interval;
 
   PhotoCapture(super.options, this._interval);
@@ -90,11 +100,6 @@ class PhotoCapture extends Capture {
   /// Get image processing filter.
   FilterEnum? getFilter() {
     return _options[OptionNameEnum.filter.rawValue];
-  }
-
-  /// Get photo file format.
-  PhotoFileFormatEnum? getFileFormat() {
-    return _options[TagNameEnum.photoFileFormat.rawValue];
   }
 
   /// Get preset mode of Theta SC2 and Theta SC2 for business.
@@ -269,11 +274,12 @@ class BurstCapture extends Capture {
   BurstModeEnum? getBurstMode() => _options[OptionNameEnum.burstMode.rawValue];
 
   /// Starts burst shooting
-  BurstCapturing startCapture(void Function(List<String>? fileUrls) onSuccess,
+  BurstCapturing startCapture(
+      void Function(List<String>? fileUrls) onSuccess,
       void Function(double completion) onProgress,
       void Function(Exception exception) onCaptureFailed,
       {void Function(Exception exception)? onStopFailed,
-        void Function(CapturingStatusEnum status)? onCapturing}) {
+      void Function(CapturingStatusEnum status)? onCapturing}) {
     ThetaClientFlutterPlatform.instance
         .startBurstCapture(onProgress, onStopFailed, onCapturing)
         .then((value) => onSuccess(value))

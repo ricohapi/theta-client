@@ -82,18 +82,21 @@ class CaptureBuilder<T> {
   }
 }
 
+/// Common PhotoCaptureBuilder class
+class PhotoCaptureBuilderBase<T> extends CaptureBuilder<T> {
+  /// Set photo file format.
+  T setFileFormat(PhotoFileFormatEnum fileFormat) {
+    _options[TagNameEnum.photoFileFormat.rawValue] = fileFormat;
+    return this as T;
+  }
+}
+
 /// Builder of [PhotoCapture]
-class PhotoCaptureBuilder extends CaptureBuilder<PhotoCaptureBuilder> {
+class PhotoCaptureBuilder extends PhotoCaptureBuilderBase<PhotoCaptureBuilder> {
   int _interval = -1;
 
   PhotoCaptureBuilder setCheckStatusCommandInterval(int timeMillis) {
     _interval = timeMillis;
-    return this;
-  }
-
-  /// Set photo file format.
-  PhotoCaptureBuilder setFileFormat(PhotoFileFormatEnum fileFormat) {
-    _options[TagNameEnum.photoFileFormat.rawValue] = fileFormat;
     return this;
   }
 
@@ -113,7 +116,8 @@ class PhotoCaptureBuilder extends CaptureBuilder<PhotoCaptureBuilder> {
   Future<PhotoCapture> build() async {
     var completer = Completer<PhotoCapture>();
     try {
-      await ThetaClientFlutterPlatform.instance.buildPhotoCapture(_options, _interval);
+      await ThetaClientFlutterPlatform.instance
+          .buildPhotoCapture(_options, _interval);
       completer.complete(PhotoCapture(_options, _interval));
     } catch (e) {
       completer.completeError(e);
@@ -465,11 +469,25 @@ enum VideoFileFormatEnum {
 
   /// Video File format.
   /// type: mp4
+  /// size: 1920 x 960
+  ///
+  /// For RICOH THETA SC2 or SC2 for business
+  video_2KnoCodec(FileFormatEnum.video_2KnoCodec),
+
+  /// Video File format.
+  /// type: mp4
   /// size: 3840 x 1920
   /// codec: H.264/MPEG-4 AVC
   ///
   /// For RICOH THETA Z1 or V
   video_4K(FileFormatEnum.video_4K),
+
+  /// Video File format.
+  /// type: mp4
+  /// size: 3840 x 1920
+  ///
+  /// For RICOH THETA SC2 or SC2 for business
+  video_4KnoCodec(FileFormatEnum.video_4KnoCodec),
 
   /// Video File format.
   /// type: mp4

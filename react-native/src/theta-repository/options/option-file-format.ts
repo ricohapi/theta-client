@@ -38,8 +38,12 @@ export const VideoFileFormatEnum = {
   VIDEO_FULL_HD: 'VIDEO_FULL_HD',
   /** mp4 1920 x 960 */
   VIDEO_2K: 'VIDEO_2K',
+  /** mp4 1920 x 960 no codec */
+  VIDEO_2K_NO_CODEC: 'VIDEO_2K_NO_CODEC',
   /** mp4 3840 x 1920 */
   VIDEO_4K: 'VIDEO_4K',
+  /** mp4 3840 x 1920 no codec */
+  VIDEO_4K_NO_CODEC: 'VIDEO_4K_NO_CODEC',
   /** mp4 1920 x 960 30fps */
   VIDEO_2K_30F: 'VIDEO_2K_30F',
   /** mp4 1920 x 960 60fps */
