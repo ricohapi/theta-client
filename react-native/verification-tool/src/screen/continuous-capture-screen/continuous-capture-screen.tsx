@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './styles';
 import Button from '../../components/ui/button';
 import {
+  CapturingStatusEnum,
   ContinuousCapture,
   ContinuousNumberEnum,
   Options,
@@ -21,7 +22,10 @@ const ContinuousCaptureScreen: React.FC<
   NativeStackScreenProps<RootStackParamList, 'continuousCapture'>
 > = ({ navigation }) => {
   const [interval, setInterval] = React.useState<number>();
-  const [message, setMessage] = React.useState('progress = 0');
+  const [message, setMessage] = React.useState('');
+  const [capturingStatus, setCapturingStatus] =
+    React.useState<CapturingStatusEnum>();
+  const [progress, setProgress] = React.useState<number>();
   const [captureOptions, setCaptureOptions] = React.useState<Options>();
   const [isTaking, setIsTaking] = React.useState(false);
   const [capture, setCapture] = React.useState<ContinuousCapture>();
@@ -89,16 +93,23 @@ const ContinuousCaptureScreen: React.FC<
       initCapture();
       return;
     }
+    setProgress(undefined);
+    setCapturingStatus(undefined);
     try {
       console.log('ContinuousCapture startCapture');
 
       const number = await capture.getContinuousNumber();
       setContinuousNumber(number);
 
-      const urls = await capture.startCapture((completion) => {
-        if (isTaking) return;
-        setMessage(`progress = ${completion}`);
-      });
+      const urls = await capture.startCapture(
+        (completion) => {
+          if (isTaking) return;
+          setProgress(completion);
+        },
+        (status) => {
+          setCapturingStatus(status);
+        }
+      );
       initCapture();
       if (urls) {
         Alert.alert(`file ${urls.length} urls : `, urls.join('\n'), [
@@ -142,6 +153,10 @@ const ContinuousCaptureScreen: React.FC<
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [capture]);
+
+  React.useEffect(() => {
+    setMessage(`progress = ${progress}\ncapturing = ${capturingStatus}`);
+  }, [capturingStatus, progress]);
 
   return (
     <SafeAreaView

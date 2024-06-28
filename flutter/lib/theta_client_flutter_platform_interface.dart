@@ -270,7 +270,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
   }
 
   Future<List<String>?> startContinuousCapture(
-      void Function(double)? onProgress) {
+      void Function(double)? onProgress,
+      void Function(CapturingStatusEnum status)? onCapturing) {
     throw UnimplementedError(
         'startContinuousCapture() has not been implemented.');
   }

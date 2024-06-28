@@ -4,6 +4,7 @@ import com.ricoh360.thetaclient.CHECK_COMMAND_STATUS_INTERVAL
 import com.ricoh360.thetaclient.ThetaApi
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.CaptureMode
+import com.ricoh360.thetaclient.transferred.CaptureStatus
 import com.ricoh360.thetaclient.transferred.CommandApiResponse
 import com.ricoh360.thetaclient.transferred.CommandState
 import com.ricoh360.thetaclient.transferred.Options
@@ -49,7 +50,7 @@ class ContinuousCapture private constructor(
      * @return Photo file format
      */
     fun getFileFormat() = options.fileFormat?.let { format ->
-        ThetaRepository.FileFormatEnum.get(format)?.let {
+        ThetaRepository.FileFormatEnum.get(format).let {
             ThetaRepository.PhotoFileFormatEnum.get(it)
         }
     }
@@ -76,6 +77,13 @@ class ContinuousCapture private constructor(
         fun onProgress(completion: Float)
 
         /**
+         * Called when change capture status.
+         *
+         * @param status Capturing status
+         */
+        fun onCapturing(status: CapturingStatusEnum) {}
+
+        /**
          * Called when error occurs.
          *
          * @param exception Exception of error occurs
@@ -91,9 +99,27 @@ class ContinuousCapture private constructor(
     }
 
     private suspend fun monitorCommandStatus(id: String, callback: StartCaptureCallback) {
+        val monitor = CaptureStatusMonitor(
+            endpoint,
+            onChangeStatus = { newStatus, _ ->
+                when (newStatus) {
+                    CaptureStatus.SELF_TIMER_COUNTDOWN -> callback.onCapturing(
+                        CapturingStatusEnum.SELF_TIMER_COUNTDOWN
+                    )
+
+                    else -> callback.onCapturing(CapturingStatusEnum.CAPTURING)
+                }
+            },
+            onError = { error ->
+                println("CaptureStatusMonitor error: ${error.message}")
+            },
+            checkStatusCommandInterval,
+            1
+        )
         try {
             var response: CommandApiResponse? = null
             var state = CommandState.IN_PROGRESS
+            monitor.start()
             while (state == CommandState.IN_PROGRESS) {
                 delay(timeMillis = checkStatusCommandInterval)
                 response = ThetaApi.callStatusApi(
@@ -103,6 +129,7 @@ class ContinuousCapture private constructor(
                 callback.onProgress(completion = response.progress?.completion ?: 0f)
                 state = response.state
             }
+            monitor.stop()
 
             if (response?.state == CommandState.DONE) {
                 val captureResponse = response as StartCaptureResponse
@@ -120,8 +147,10 @@ class ContinuousCapture private constructor(
                 callback.onCaptureCompleted(fileUrls = null) // canceled
             }
         } catch (e: JsonConvertException) {
+            monitor.stop()
             callback.onCaptureFailed(exception = ThetaRepository.ThetaWebApiException(message = e.message ?: e.toString()))
         } catch (e: ResponseException) {
+            monitor.stop()
             try {
                 val error: UnknownResponse = e.response.body()
                 if (error.error?.isCanceledShootingCode() == true) {
@@ -134,6 +163,7 @@ class ContinuousCapture private constructor(
                     )
                 }
             } catch (exception: Exception) {
+                monitor.stop()
                 callback.onCaptureFailed(
                     exception = ThetaRepository.ThetaWebApiException(
                         message = exception.message ?: exception.toString()
@@ -141,6 +171,7 @@ class ContinuousCapture private constructor(
                 )
             }
         } catch (e: Exception) {
+            monitor.stop()
             callback.onCaptureFailed(exception = ThetaRepository.NotConnectedException(message = e.message ?: e.toString()))
         }
     }
@@ -163,7 +194,6 @@ class ContinuousCapture private constructor(
                     return@launch
                 }
 
-                delay(timeMillis = checkStatusCommandInterval)
                 startCaptureResponse.id?.let {
                     monitorCommandStatus(it, callback)
                 }

@@ -248,8 +248,9 @@ class MockThetaClientFlutterPlatform
 
   @override
   Future<List<String>?> startContinuousCapture(
-      void Function(double p1)? onProgress) {
-    return onCallStartContinuousCapture(onProgress);
+      void Function(double p1)? onProgress,
+      void Function(CapturingStatusEnum status)? onCapturing) {
+    return onCallStartContinuousCapture(onProgress, onCapturing);
   }
 
   @override
@@ -496,9 +497,10 @@ Future<void> Function() onCallStopMultiBracketCapture = Future.value;
 
 Future<void> Function() onCallGetContinuousCaptureBuilder = Future.value;
 Future<void> Function(Map<String, dynamic> options, int interval)
-    onCallBuildContinuousCapture = (options, interval) => Future.value();
-Future<List<String>?> Function(void Function(double)? onProgress)
-    onCallStartContinuousCapture = (onProgress) => Future.value();
+onCallBuildContinuousCapture = (options, interval) => Future.value();
+Future<List<String>?> Function(void Function(double)? onProgress,
+    void Function(CapturingStatusEnum status)? onCapturing)
+onCallStartContinuousCapture = (onProgress, onCapturing) => Future.value();
 
 Future<Options> Function(List<OptionNameEnum> optionNames) onCallGetOptions =
     (optionNames) => Future.value(Options());

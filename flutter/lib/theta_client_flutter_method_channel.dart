@@ -23,6 +23,7 @@ const notifyIdBurstCaptureProgress = 10051;
 const notifyIdBurstCaptureStopError = 10052;
 const notifyIdBurstCaptureCapturing = 10053;
 const notifyIdContinuousCaptureProgress = 10061;
+const notifyIdContinuousCaptureCapturing = 10062;
 const notifyIdPhotoCapturing = 10071;
 
 /// An implementation of [ThetaClientFlutterPlatform] that uses method channels.
@@ -707,7 +708,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<List<String>?> startContinuousCapture(
-      void Function(double)? onProgress) async {
+      void Function(double)? onProgress,
+      void Function(CapturingStatusEnum status)? onCapturing) async {
     var completer = Completer<List<String>?>();
     try {
       enableNotifyEventReceiver();
@@ -719,9 +721,21 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           }
         });
       }
+      if (onCapturing != null) {
+        addNotify(notifyIdContinuousCaptureCapturing, (params) {
+          final strStatus = params?['status'] as String?;
+          if (strStatus != null) {
+            final status = CapturingStatusEnum.getValue(strStatus);
+            if (status != null) {
+              onCapturing(status);
+            }
+          }
+        });
+      }
       final fileUrls = await methodChannel
           .invokeMethod<List<dynamic>?>('startContinuousCapture');
       removeNotify(notifyIdContinuousCaptureProgress);
+      removeNotify(notifyIdContinuousCaptureCapturing);
       if (fileUrls == null) {
         completer.complete(null);
       } else {
@@ -729,6 +743,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       }
     } catch (e) {
       removeNotify(notifyIdContinuousCaptureProgress);
+      removeNotify(notifyIdContinuousCaptureCapturing);
       completer.completeError(e);
     }
     return completer.future;

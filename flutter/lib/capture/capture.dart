@@ -337,12 +337,12 @@ class ContinuousCapture extends Capture {
   }
 
   /// Starts continuous shooting
-  void startCapture(
-      void Function(List<String>? fileUrls) onSuccess,
+  void startCapture(void Function(List<String>? fileUrls) onSuccess,
       void Function(double completion) onProgress,
-      void Function(Exception exception) onCaptureFailed) {
+      void Function(Exception exception) onCaptureFailed,
+      {void Function(CapturingStatusEnum status)? onCapturing}) {
     ThetaClientFlutterPlatform.instance
-        .startContinuousCapture(onProgress)
+        .startContinuousCapture(onProgress, onCapturing)
         .then((value) => onSuccess(value))
         .onError((error, stackTrace) => onCaptureFailed(error as Exception));
   }

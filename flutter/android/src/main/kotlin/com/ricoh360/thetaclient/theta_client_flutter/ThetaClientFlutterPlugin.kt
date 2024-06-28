@@ -78,6 +78,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         const val notifyIdBurstCaptureStopError = 10052;
         const val notifyIdBurstCaptureCapturing = 10053
         const val notifyIdContinuousCaptureProgress = 10061;
+        const val notifyIdContinuousCaptureCapturing = 10062;
         const val notifyIdPhotoCapturing = 10071
     }
 
@@ -1252,6 +1253,13 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 sendNotifyEvent(
                     notifyIdContinuousCaptureProgress,
                     toCaptureProgressNotifyParam(completion)
+                )
+            }
+
+            override fun onCapturing(status: CapturingStatusEnum) {
+                sendNotifyEvent(
+                    notifyIdContinuousCaptureCapturing,
+                    toCapturingNotifyParam(status)
                 )
             }
 

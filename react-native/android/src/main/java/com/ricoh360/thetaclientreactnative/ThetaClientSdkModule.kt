@@ -1421,6 +1421,12 @@ class ThetaClientReactNativeModule(
         )
       }
 
+      override fun onCapturing(status: CapturingStatusEnum) {
+        sendNotifyEvent(
+          toNotify(NOTIFY_CONTINUOUS_CAPTURING, toCapturingNotifyParam(status = status))
+        )
+      }
+
       override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
         promise.reject(exception)
         continuousCapture = null
@@ -2119,6 +2125,7 @@ class ThetaClientReactNativeModule(
     const val NOTIFY_MULTI_BRACKET_PROGRESS = "MULTI-BRACKET-PROGRESS"
     const val NOTIFY_MULTI_BRACKET_STOP_ERROR = "MULTI-BRACKET-STOP-ERROR"
     const val NOTIFY_CONTINUOUS_PROGRESS = "CONTINUOUS-PROGRESS"
+    const val NOTIFY_CONTINUOUS_CAPTURING = "CONTINUOUS-CAPTURING"
     const val NOTIFY_EVENT_WEBSOCKET_EVENT = "EVENT-WEBSOCKET-EVENT"
     const val NOTIFY_EVENT_WEBSOCKET_CLOSE = "EVENT-WEBSOCKET-CLOSE"
   }
