@@ -3305,6 +3305,62 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Video File format.
          *
          * type: mp4
+         * size: 2752 x 2752
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 2
+         *
+         * RICOH THETA X firmware v2.50.2 or later.
+         * This mode outputs two fisheye video for each lens.
+         * The MP4 file name ending with _0 is the video file on the front lens, and _1 is back lens.
+         */
+        VIDEO_2_7K_2752_2F(FileFormatTypeEnum.MP4, 2752, 2752, "H.264/MPEG-4 AVC", 2),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 2752 x 2752
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 5
+         *
+         * RICOH THETA X firmware v2.50.2 or later.
+         * This mode outputs two fisheye video for each lens.
+         * The MP4 file name ending with _0 is the video file on the front lens, and _1 is back lens.
+         */
+        VIDEO_2_7K_2752_5F(FileFormatTypeEnum.MP4, 2752, 2752, "H.264/MPEG-4 AVC", 5),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 2752 x 2752
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 10
+         *
+         * RICOH THETA X firmware v2.50.2 or later.
+         * This mode outputs two fisheye video for each lens.
+         * The MP4 file name ending with _0 is the video file on the front lens, and _1 is back lens.
+         */
+        VIDEO_2_7K_2752_10F(FileFormatTypeEnum.MP4, 2752, 2752, "H.264/MPEG-4 AVC", 10),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 2752 x 2752
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 30
+         *
+         * RICOH THETA X firmware v2.50.2 or later.
+         * This mode outputs two fisheye video for each lens.
+         * The MP4 file name ending with _0 is the video file on the front lens, and _1 is back lens.
+         */
+        VIDEO_2_7K_2752_30F(FileFormatTypeEnum.MP4, 2752, 2752, "H.264/MPEG-4 AVC", 30),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
          * size: 2688 x 2688
          * codec: H.264/MPEG-4 AVC
          * frame rate: 1
@@ -3367,6 +3423,30 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * type: mp4
          * size: 3840 x 1920
          * codec: H.264/MPEG-4 AVC
+         * frame rate: 10
+         *
+         * For RICOH THETA X or later
+         */
+        VIDEO_4K_10F(FileFormatTypeEnum.MP4, 3840, 1920, "H.264/MPEG-4 AVC", 10),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 3840 x 1920
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 15
+         *
+         * For RICOH THETA X or later
+         */
+        VIDEO_4K_15F(FileFormatTypeEnum.MP4, 3840, 1920, "H.264/MPEG-4 AVC", 15),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 3840 x 1920
+         * codec: H.264/MPEG-4 AVC
          * frame rate: 30
          *
          * For RICOH THETA X or later
@@ -3408,6 +3488,30 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * For RICOH THETA X or later
          */
         VIDEO_5_7K_5F(FileFormatTypeEnum.MP4, 5760, 2880, "H.264/MPEG-4 AVC", 5),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 5760 x 2880
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 10
+         *
+         * For RICOH THETA X or later
+         */
+        VIDEO_5_7K_10F(FileFormatTypeEnum.MP4, 5760, 2880, "H.264/MPEG-4 AVC", 10),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 5760 x 2880
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 15
+         *
+         * For RICOH THETA X or later
+         */
+        VIDEO_5_7K_15F(FileFormatTypeEnum.MP4, 5760, 2880, "H.264/MPEG-4 AVC", 15),
 
         /**
          * Video File format.
@@ -3674,6 +3778,62 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Video File format.
          *
          * type: mp4
+         * size: 2752 x 2752
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 2
+         *
+         * RICOH THETA X firmware v2.50.2 or later.
+         * This mode outputs two fisheye video for each lens.
+         * The MP4 file name ending with _0 is the video file on the front lens, and _1 is back lens.
+         */
+        VIDEO_2_7K_2752_2F(FileFormatEnum.VIDEO_2_7K_2752_2F),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 2752 x 2752
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 5
+         *
+         * RICOH THETA X firmware v2.50.2 or later.
+         * This mode outputs two fisheye video for each lens.
+         * The MP4 file name ending with _0 is the video file on the front lens, and _1 is back lens.
+         */
+        VIDEO_2_7K_2752_5F(FileFormatEnum.VIDEO_2_7K_2752_5F),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 2752 x 2752
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 10
+         *
+         * RICOH THETA X firmware v2.50.2 or later.
+         * This mode outputs two fisheye video for each lens.
+         * The MP4 file name ending with _0 is the video file on the front lens, and _1 is back lens.
+         */
+        VIDEO_2_7K_2752_10F(FileFormatEnum.VIDEO_2_7K_2752_10F),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 2752 x 2752
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 30
+         *
+         * RICOH THETA X firmware v2.50.2 or later.
+         * This mode outputs two fisheye video for each lens.
+         * The MP4 file name ending with _0 is the video file on the front lens, and _1 is back lens.
+         */
+        VIDEO_2_7K_2752_30F(FileFormatEnum.VIDEO_2_7K_2752_30F),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
          * size: 2688 x 2688
          * codec: H.264/MPEG-4 AVC
          * frame rate: 1
@@ -3736,6 +3896,30 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * type: mp4
          * size: 3840 x 1920
          * codec: H.264/MPEG-4 AVC
+         * frame rate: 10
+         *
+         * For RICOH THETA X or later
+         */
+        VIDEO_4K_10F(FileFormatEnum.VIDEO_4K_10F),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 3840 x 1920
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 15
+         *
+         * For RICOH THETA X or later
+         */
+        VIDEO_4K_15F(FileFormatEnum.VIDEO_4K_15F),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 3840 x 1920
+         * codec: H.264/MPEG-4 AVC
          * frame rate: 30
          *
          * For RICOH THETA X or later
@@ -3777,6 +3961,30 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * For RICOH THETA X or later
          */
         VIDEO_5_7K_5F(FileFormatEnum.VIDEO_5_7K_5F),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 5760 x 2880
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 10
+         *
+         * For RICOH THETA X or later
+         */
+        VIDEO_5_7K_10F(FileFormatEnum.VIDEO_5_7K_10F),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 5760 x 2880
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 15
+         *
+         * For RICOH THETA X or later
+         */
+        VIDEO_5_7K_15F(FileFormatEnum.VIDEO_5_7K_15F),
 
         /**
          * Video File format.

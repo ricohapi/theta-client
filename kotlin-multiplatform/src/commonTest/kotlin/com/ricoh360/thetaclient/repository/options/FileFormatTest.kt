@@ -7,10 +7,13 @@ import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.MediaFileFormat
 import com.ricoh360.thetaclient.transferred.MediaType
 import com.ricoh360.thetaclient.transferred.Options
-import io.ktor.http.*
-import io.ktor.utils.io.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.test.runTest
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class FileFormatTest {
     private val endpoint = "http://192.168.1.1:80/"
@@ -117,14 +120,22 @@ class FileFormatTest {
             Pair(ThetaRepository.FileFormatEnum.VIDEO_4K_NO_CODEC, MediaFileFormat(MediaType.MP4, 3840, 1920, null, null)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_2K_30F, MediaFileFormat(MediaType.MP4, 1920, 960, "H.264/MPEG-4 AVC", 30)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_2K_60F, MediaFileFormat(MediaType.MP4, 1920, 960, "H.264/MPEG-4 AVC", 60)),
+            Pair(ThetaRepository.FileFormatEnum.VIDEO_2_7K_2752_2F, MediaFileFormat(MediaType.MP4, 2752, 2752, "H.264/MPEG-4 AVC", 2)),
+            Pair(ThetaRepository.FileFormatEnum.VIDEO_2_7K_2752_5F, MediaFileFormat(MediaType.MP4, 2752, 2752, "H.264/MPEG-4 AVC", 5)),
+            Pair(ThetaRepository.FileFormatEnum.VIDEO_2_7K_2752_10F, MediaFileFormat(MediaType.MP4, 2752, 2752, "H.264/MPEG-4 AVC", 10)),
+            Pair(ThetaRepository.FileFormatEnum.VIDEO_2_7K_2752_30F, MediaFileFormat(MediaType.MP4, 2752, 2752, "H.264/MPEG-4 AVC", 30)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_2_7K_1F, MediaFileFormat(MediaType.MP4, 2688, 2688, "H.264/MPEG-4 AVC", 1)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_2_7K_2F, MediaFileFormat(MediaType.MP4, 2688, 2688, "H.264/MPEG-4 AVC", 2)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_3_6K_1F, MediaFileFormat(MediaType.MP4, 3648, 3648, "H.264/MPEG-4 AVC", 1)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_3_6K_2F, MediaFileFormat(MediaType.MP4, 3648, 3648, "H.264/MPEG-4 AVC", 2)),
+            Pair(ThetaRepository.FileFormatEnum.VIDEO_4K_10F, MediaFileFormat(MediaType.MP4, 3840, 1920, "H.264/MPEG-4 AVC", 10)),
+            Pair(ThetaRepository.FileFormatEnum.VIDEO_4K_15F, MediaFileFormat(MediaType.MP4, 3840, 1920, "H.264/MPEG-4 AVC", 15)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_4K_30F, MediaFileFormat(MediaType.MP4, 3840, 1920, "H.264/MPEG-4 AVC", 30)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_4K_60F, MediaFileFormat(MediaType.MP4, 3840, 1920, "H.264/MPEG-4 AVC", 60)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_5_7K_2F, MediaFileFormat(MediaType.MP4, 5760, 2880, "H.264/MPEG-4 AVC", 2)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_5_7K_5F, MediaFileFormat(MediaType.MP4, 5760, 2880, "H.264/MPEG-4 AVC", 5)),
+            Pair(ThetaRepository.FileFormatEnum.VIDEO_5_7K_10F, MediaFileFormat(MediaType.MP4, 5760, 2880, "H.264/MPEG-4 AVC", 10)),
+            Pair(ThetaRepository.FileFormatEnum.VIDEO_5_7K_15F, MediaFileFormat(MediaType.MP4, 5760, 2880, "H.264/MPEG-4 AVC", 15)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_5_7K_30F, MediaFileFormat(MediaType.MP4, 5760, 2880, "H.264/MPEG-4 AVC", 30)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_7K_2F, MediaFileFormat(MediaType.MP4, 7680, 3840, "H.264/MPEG-4 AVC", 2)),
             Pair(ThetaRepository.FileFormatEnum.VIDEO_7K_5F, MediaFileFormat(MediaType.MP4, 7680, 3840, "H.264/MPEG-4 AVC", 5)),
