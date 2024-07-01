@@ -14,7 +14,10 @@ import kotlinx.coroutines.*
  * @property endpoint URL of Theta web API endpoint
  * @property options option of take a picture
  */
-class PhotoCapture private constructor(private val endpoint: String, options: Options) : Capture(options) {
+class PhotoCapture private constructor(
+    private val endpoint: String,
+    options: Options,
+    ) : PhotoCaptureBase(options) {
 
     private val scope = CoroutineScope(Dispatchers.Default)
 
@@ -24,17 +27,6 @@ class PhotoCapture private constructor(private val endpoint: String, options: Op
      * @return Image processing filter
      */
     fun getFilter() = options._filter?.let { ThetaRepository.FilterEnum.get(it) }
-
-    /**
-     * Get photo file format.
-     *
-     * @return Photo file format
-     */
-    fun getFileFormat() = options.fileFormat?.let { it ->
-        ThetaRepository.FileFormatEnum.get(it)?.let {
-            ThetaRepository.PhotoFileFormatEnum.get(it)
-        }
-    }
 
     /**
      * Get preset mode of Theta SC2 and Theta SC2 for business.
@@ -127,8 +119,10 @@ class PhotoCapture private constructor(private val endpoint: String, options: Op
      * @property endpoint URL of Theta web API endpoint
      * @property cameraModel Camera model info.
      */
-    class Builder internal constructor(private val endpoint: String, private val cameraModel: ThetaRepository.ThetaModel? = null) : Capture.Builder<Builder>() {
-
+    class Builder internal constructor(
+        private val endpoint: String,
+        private val cameraModel: ThetaRepository.ThetaModel? = null
+    ) : PhotoCaptureBase.Builder<Builder>() {
         internal fun isPreset(): Boolean {
             return options._preset != null && (cameraModel == ThetaRepository.ThetaModel.THETA_SC2 || cameraModel == ThetaRepository.ThetaModel.THETA_SC2_B)
         }
@@ -183,17 +177,6 @@ class PhotoCapture private constructor(private val endpoint: String, options: Op
          */
         fun setFilter(filter: ThetaRepository.FilterEnum): Builder {
             options._filter = filter.filter
-            return this
-        }
-
-        /**
-         * Set photo file format.
-         *
-         * @param fileFormat Photo file format
-         * @return Builder
-         */
-        fun setFileFormat(fileFormat: ThetaRepository.PhotoFileFormatEnum): Builder {
-            options.fileFormat = fileFormat.fileFormat.toMediaFileFormat()
             return this
         }
 

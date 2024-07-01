@@ -1,9 +1,5 @@
-import { CaptureBuilder } from './capture';
-import type {
-  FilterEnum,
-  PhotoFileFormatEnum,
-  PresetEnum,
-} from '../theta-repository/options';
+import { PhotoCaptureBuilderBase } from './capture';
+import type { FilterEnum, PresetEnum } from '../theta-repository/options';
 
 import { NativeModules } from 'react-native';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
@@ -28,20 +24,10 @@ export class PhotoCapture {
 /**
  * PhotoCaptureBaseBuilder class
  */
-export class PhotoCaptureBuilder extends CaptureBuilder<PhotoCaptureBuilder> {
+export class PhotoCaptureBuilder extends PhotoCaptureBuilderBase<PhotoCaptureBuilder> {
   /** construct PhotoCaptureBuilder instance */
   constructor() {
     super();
-  }
-
-  /**
-   * Set photo file format.
-   * @param {PhotoFileFormatEnum} fileFormat Photo file format to set
-   * @return PhotoCaptureBuilder
-   */
-  setFileFormat(fileFormat: PhotoFileFormatEnum): PhotoCaptureBuilder {
-    this.options.fileFormat = fileFormat;
-    return this;
   }
 
   /**

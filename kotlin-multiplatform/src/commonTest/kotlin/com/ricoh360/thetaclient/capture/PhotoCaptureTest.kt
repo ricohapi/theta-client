@@ -5,10 +5,10 @@ import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.CaptureMode
+import com.ricoh360.thetaclient.transferred.MediaFileFormat
+import com.ricoh360.thetaclient.transferred.MediaType
 import io.ktor.client.network.sockets.*
-import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.http.content.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -332,7 +332,14 @@ class PhotoCaptureTest {
     @Test
     fun settingFileFormatTest() = runTest {
         // setup
-        val fileFormatList = ThetaRepository.PhotoFileFormatEnum.values()
+        val valueList = listOf(
+            Pair(ThetaRepository.PhotoFileFormatEnum.IMAGE_2K, MediaFileFormat(MediaType.JPEG, 2048, 1024, null, null)),
+            Pair(ThetaRepository.PhotoFileFormatEnum.IMAGE_5K, MediaFileFormat(MediaType.JPEG, 5376, 2688, null, null)),
+            Pair(ThetaRepository.PhotoFileFormatEnum.IMAGE_6_7K, MediaFileFormat(MediaType.JPEG, 6720, 3360, null, null)),
+            Pair(ThetaRepository.PhotoFileFormatEnum.RAW_P_6_7K, MediaFileFormat(MediaType.RAW, 6720, 3360, null, null)),
+            Pair(ThetaRepository.PhotoFileFormatEnum.IMAGE_5_5K, MediaFileFormat(MediaType.JPEG, 5504, 2752, null, null)),
+            Pair(ThetaRepository.PhotoFileFormatEnum.IMAGE_11K, MediaFileFormat(MediaType.JPEG, 11008, 5504, null, null)),
+        )
 
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
@@ -353,7 +360,7 @@ class PhotoCaptureTest {
                 1 -> {
                     CheckRequest.checkSetOptions(
                         request = request,
-                        fileFormat = fileFormatList[fileFormatIndex].fileFormat.toMediaFileFormat()
+                        fileFormat = valueList[fileFormatIndex].second
                     )
                 }
             }
@@ -364,15 +371,17 @@ class PhotoCaptureTest {
         // execute
         val thetaRepository = ThetaRepository(endpoint)
 
-        fileFormatList.forEach {
-            val photoCapture = thetaRepository.getPhotoCaptureBuilder()
-                .setFileFormat(it)
-                .build()
+        assertEquals(valueList.size, ThetaRepository.PhotoFileFormatEnum.entries.size)
+        valueList.forEach {
+            val builder = thetaRepository.getPhotoCaptureBuilder()
+            builder.setFileFormat(it.first)
+            assertEquals(builder.options.fileFormat, it.second, "fileFormat ${it.second}")
+            val photoCapture = builder.build()
 
             // check result
             assertEquals(
                 photoCapture.getFileFormat(),
-                it,
+                it.first,
                 "set option fileFormat $fileFormatIndex"
             )
 
