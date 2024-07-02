@@ -134,6 +134,12 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 }
             }
 
+            "getThetaLicense" -> {
+                scope.launch {
+                    getThetaLicense(result)
+                }
+            }
+
             "getThetaState" -> {
                 scope.launch {
                     getThetaState(result)
@@ -569,6 +575,19 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 thetaInfoMap.put("thetaModel", it.name)
             }
             result.success(thetaInfoMap)
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun getThetaLicense(result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        try {
+            val response = thetaRepository!!.getThetaLicense()
+            result.success(response)
         } catch (e: Exception) {
             result.error(e.javaClass.simpleName, e.message, null)
         }

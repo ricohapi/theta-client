@@ -40,11 +40,7 @@ class VideoCapture private constructor(private val endpoint: String, options: Op
      *
      * @return Video file format
      */
-    fun getFileFormat() = options.fileFormat?.let { it ->
-        ThetaRepository.FileFormatEnum.get(it)?.let {
-            ThetaRepository.VideoFileFormatEnum.get(it)
-        }
-    }
+    fun getFileFormat() = getVideoFileFormat()
 
     // TODO: Add get video option property
 
@@ -233,10 +229,8 @@ class VideoCapture private constructor(private val endpoint: String, options: Op
          * @param fileFormat Video file format
          * @return Builder
          */
-        fun setFileFormat(fileFormat: ThetaRepository.VideoFileFormatEnum): Builder {
-            options.fileFormat = fileFormat.fileFormat.toMediaFileFormat()
-            return this
-        }
+        fun setFileFormat(fileFormat: ThetaRepository.VideoFileFormatEnum): Builder =
+            setVideoFileFormat(fileFormat)
 
         // TODO: Add set video option property
     }

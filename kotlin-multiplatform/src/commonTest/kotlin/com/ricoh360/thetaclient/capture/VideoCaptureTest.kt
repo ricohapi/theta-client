@@ -5,14 +5,23 @@ import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.CaptureMode
-import io.ktor.client.network.sockets.*
-import io.ktor.http.*
-import io.ktor.utils.io.*
-import kotlinx.coroutines.*
+import com.ricoh360.thetaclient.transferred.MediaFileFormat
+import com.ricoh360.thetaclient.transferred.MediaType
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.http.HttpStatusCode
+import io.ktor.utils.io.ByteReadChannel
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import kotlin.test.*
+import kotlinx.coroutines.withTimeout
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class VideoCaptureTest {
     private val endpoint = "http://192.168.1.1:80/"
 
@@ -323,7 +332,36 @@ class VideoCaptureTest {
     @Test
     fun settingFileFormatTest() = runTest {
         // setup
-        val valueList = ThetaRepository.VideoFileFormatEnum.entries.toTypedArray()
+        val valueList = listOf(
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_HD, MediaFileFormat(MediaType.MP4, 1280, 720, null, null)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_FULL_HD, MediaFileFormat(MediaType.MP4, 1920, 1080, null, null)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_2K, MediaFileFormat(MediaType.MP4, 1920, 960, "H.264/MPEG-4 AVC", null)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_2K_NO_CODEC, MediaFileFormat(MediaType.MP4, 1920, 960, null, null)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_4K, MediaFileFormat(MediaType.MP4, 3840, 1920, "H.264/MPEG-4 AVC", null)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_4K_NO_CODEC, MediaFileFormat(MediaType.MP4, 3840, 1920, null, null)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_2K_30F, MediaFileFormat(MediaType.MP4, 1920, 960, "H.264/MPEG-4 AVC", 30)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_2K_60F, MediaFileFormat(MediaType.MP4, 1920, 960, "H.264/MPEG-4 AVC", 60)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_2_7K_2752_2F, MediaFileFormat(MediaType.MP4, 2752, 2752, "H.264/MPEG-4 AVC", 2)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_2_7K_2752_5F, MediaFileFormat(MediaType.MP4, 2752, 2752, "H.264/MPEG-4 AVC", 5)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_2_7K_2752_10F, MediaFileFormat(MediaType.MP4, 2752, 2752, "H.264/MPEG-4 AVC", 10)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_2_7K_2752_30F, MediaFileFormat(MediaType.MP4, 2752, 2752, "H.264/MPEG-4 AVC", 30)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_2_7K_1F, MediaFileFormat(MediaType.MP4, 2688, 2688, "H.264/MPEG-4 AVC", 1)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_2_7K_2F, MediaFileFormat(MediaType.MP4, 2688, 2688, "H.264/MPEG-4 AVC", 2)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_3_6K_1F, MediaFileFormat(MediaType.MP4, 3648, 3648, "H.264/MPEG-4 AVC", 1)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_3_6K_2F, MediaFileFormat(MediaType.MP4, 3648, 3648, "H.264/MPEG-4 AVC", 2)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_4K_10F, MediaFileFormat(MediaType.MP4, 3840, 1920, "H.264/MPEG-4 AVC", 10)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_4K_15F, MediaFileFormat(MediaType.MP4, 3840, 1920, "H.264/MPEG-4 AVC", 15)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_4K_30F, MediaFileFormat(MediaType.MP4, 3840, 1920, "H.264/MPEG-4 AVC", 30)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_4K_60F, MediaFileFormat(MediaType.MP4, 3840, 1920, "H.264/MPEG-4 AVC", 60)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_5_7K_2F, MediaFileFormat(MediaType.MP4, 5760, 2880, "H.264/MPEG-4 AVC", 2)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_5_7K_5F, MediaFileFormat(MediaType.MP4, 5760, 2880, "H.264/MPEG-4 AVC", 5)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_5_7K_10F, MediaFileFormat(MediaType.MP4, 5760, 2880, "H.264/MPEG-4 AVC", 10)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_5_7K_15F, MediaFileFormat(MediaType.MP4, 5760, 2880, "H.264/MPEG-4 AVC", 15)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_5_7K_30F, MediaFileFormat(MediaType.MP4, 5760, 2880, "H.264/MPEG-4 AVC", 30)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_7K_2F, MediaFileFormat(MediaType.MP4, 7680, 3840, "H.264/MPEG-4 AVC", 2)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_7K_5F, MediaFileFormat(MediaType.MP4, 7680, 3840, "H.264/MPEG-4 AVC", 5)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_7K_10F, MediaFileFormat(MediaType.MP4, 7680, 3840, "H.264/MPEG-4 AVC", 10)),
+        )
 
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
@@ -344,7 +382,7 @@ class VideoCaptureTest {
                 1 -> {
                     CheckRequest.checkSetOptions(
                         request = request,
-                        fileFormat = valueList[valueIndex].fileFormat.toMediaFileFormat()
+                        fileFormat = valueList[valueIndex].second
                     )
                 }
             }
@@ -355,15 +393,17 @@ class VideoCaptureTest {
         // execute
         val thetaRepository = ThetaRepository(endpoint)
 
+        assertEquals(valueList.size, ThetaRepository.VideoFileFormatEnum.entries.size)
         valueList.forEach {
-            val videoCapture = thetaRepository.getVideoCaptureBuilder()
-                .setFileFormat(it)
-                .build()
+            val builder = thetaRepository.getVideoCaptureBuilder()
+            builder.setFileFormat(it.first)
+            assertEquals(builder.options.fileFormat, it.second, "fileFormat ${it.second}")
+            val videoCapture = builder.build()
 
             // check result
             assertEquals(
                 videoCapture.getFileFormat(),
-                it,
+                it.first,
                 "set option fileFormat $valueIndex"
             )
 

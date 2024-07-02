@@ -8,6 +8,7 @@ import type {
   IsoAutoHighLimitEnum,
   IsoEnum,
   Options,
+  PhotoFileFormatEnum,
   WhiteBalanceEnum,
 } from '../theta-repository/options';
 
@@ -119,6 +120,20 @@ export abstract class CaptureBuilder<T extends CaptureBuilder<T>> {
    */
   setWhiteBalance(whiteBalance: WhiteBalanceEnum): T {
     this.options.whiteBalance = whiteBalance;
+    return this as unknown as T;
+  }
+}
+
+export class PhotoCaptureBuilderBase<
+  T extends PhotoCaptureBuilderBase<T>
+> extends CaptureBuilder<T> {
+  /**
+   * Set photo file format.
+   * @param {PhotoFileFormatEnum} fileFormat Photo file format to set
+   * @return PhotoCaptureBuilder
+   */
+  setFileFormat(fileFormat: PhotoFileFormatEnum): T {
+    this.options.fileFormat = fileFormat;
     return this as unknown as T;
   }
 }

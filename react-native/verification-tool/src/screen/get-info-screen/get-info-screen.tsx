@@ -5,6 +5,7 @@ import styles from './styles';
 import {
   getPluginOrders,
   getThetaInfo,
+  getThetaLicense,
   getThetaState,
   listAccessPoints,
   listPlugins,
@@ -32,7 +33,35 @@ const commandList: CommandItem[] = [
           const result = await getThetaInfo();
           return `OK getThetaInfo()\n${getJsonString(result)}`;
         } catch (error) {
-          return JSON.stringify(error);
+          return error instanceof Error
+            ? error.toString()
+            : 'An error occurred.';
+        }
+      },
+    },
+  },
+  {
+    name: 'getThetaLicense',
+    value: {
+      commandFunction: async () => {
+        try {
+          const result = await getThetaLicense();
+          const maxChars = 200;
+          return (
+            `OK getThetaLicense()\nlength:${result.length}\n\n${result.slice(
+              0,
+              maxChars
+            )}\n\n` +
+            (result.length > maxChars
+              ? `(The remaining ${
+                  result.length - maxChars
+                } characters were omitted.)`
+              : '')
+          );
+        } catch (error) {
+          return error instanceof Error
+            ? error.toString()
+            : 'An error occurred.';
         }
       },
     },
@@ -45,7 +74,9 @@ const commandList: CommandItem[] = [
           const result = await getThetaState();
           return `OK getThetaState()\n${getJsonString(result)}`;
         } catch (error) {
-          return JSON.stringify(error);
+          return error instanceof Error
+            ? error.toString()
+            : 'An error occurred.';
         }
       },
     },
@@ -58,7 +89,9 @@ const commandList: CommandItem[] = [
           const result = await listAccessPoints();
           return `OK listAccessPoints()\n${getJsonString(result)}`;
         } catch (error) {
-          return JSON.stringify(error);
+          return error instanceof Error
+            ? error.toString()
+            : 'An error occurred.';
         }
       },
     },
@@ -71,7 +104,9 @@ const commandList: CommandItem[] = [
           const result = await listPlugins();
           return `OK listPlugins()\n${getJsonString(result)}`;
         } catch (error) {
-          return JSON.stringify(error);
+          return error instanceof Error
+            ? error.toString()
+            : 'An error occurred.';
         }
       },
     },
@@ -84,7 +119,9 @@ const commandList: CommandItem[] = [
           const result = await getPluginOrders();
           return `OK getPluginOrders()\n${getJsonString(result)}`;
         } catch (error) {
-          return JSON.stringify(error);
+          return error instanceof Error
+            ? error.toString()
+            : 'An error occurred.';
         }
       },
     },

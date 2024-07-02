@@ -21,6 +21,9 @@ RCT_EXTERN_METHOD(getThetaModel:(RCTPromiseResolveBlock)resolve
 RCT_EXTERN_METHOD(getThetaInfo:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(getThetaLicense:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(getThetaState:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 

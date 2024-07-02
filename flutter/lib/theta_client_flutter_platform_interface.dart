@@ -52,6 +52,10 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('getThetaInfo() has not been implemented.');
   }
 
+  Future<String> getThetaLicense() {
+    throw UnimplementedError('getThetaLicense() has not been implemented.');
+  }
+
   Future<ThetaState> getThetaState() {
     throw UnimplementedError('getThetaInfo() has not been implemented.');
   }

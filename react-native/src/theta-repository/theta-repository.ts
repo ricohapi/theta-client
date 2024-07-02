@@ -312,6 +312,16 @@ export function getThetaInfo(): Promise<ThetaInfo> {
 }
 
 /**
+ * Acquires open source license information related to the camera.
+ *
+ * @function getThetaLicense
+ * @return Promise of string result, HTML string of the license.
+ */
+export function getThetaLicense(): Promise<string> {
+  return ThetaClientReactNative.getThetaLicense();
+}
+
+/**
  * Get current state of Theta.
  *
  * @function getThetaState

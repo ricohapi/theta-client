@@ -71,6 +71,25 @@ internal object ThetaApi {
     }
 
     /**
+     * Call [/legal-information/open-source-licenses](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/protocols/open_source_licenses.md)
+     * @param endpoint Endpoint of Theta web API
+     * @return response of /legal-information/open-source-licenses API
+     * @exception java.net.ConnectException can not connect to target endpoint
+     * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
+     * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
+     * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
+     * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
+     */
+    @Throws(Throwable::class)
+    suspend fun callLicenseApi(
+        endpoint: String,
+    ): HttpResponse {
+        return syncExecutor(requestSemaphore, ApiClient.timeout.requestTimeout) {
+            httpClient.get(getApiUrl(endpoint, LicenseApi.PATH))
+        }
+    }
+
+    /**
      * Call [/osc/state](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/protocols/state.md)
      * @param endpoint Endpoint of Theta web API
      * @return response of /osc/state API

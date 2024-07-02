@@ -30,6 +30,11 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
+  Future<String> getThetaLicense() {
+    return onGetThetaLicense();
+  }
+
+  @override
   Future<ThetaState> getThetaState() {
     return onGetThetaState();
   }
@@ -410,6 +415,7 @@ Future<void> Function() onCallInitialize = Future.value;
 Future<bool> Function() onCallIsInitialized = Future.value;
 Future<ThetaModel?> Function() onGetThetaModel = Future.value;
 Future<ThetaInfo> Function() onGetThetaInfo = Future.value;
+Future<String> Function() onGetThetaLicense = Future.value;
 Future<ThetaState> Function() onGetThetaState = Future.value;
 Future<void> Function() onCallGetLivePreview = Future.value;
 Future<ThetaFiles> Function() onCallListFiles = Future.value;
@@ -581,6 +587,26 @@ void main() {
     var thetaInfo = await thetaClientPlugin.getThetaInfo();
     expect(thetaInfo.model, model);
     expect(thetaInfo.thetaModel, thetaModel);
+  });
+
+  test('getThetaLicense', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    var license = """
+    <html>
+      <head></head>
+      <body></body>
+    </html>
+    """;
+    onGetThetaLicense = () {
+      return Future.value(license);
+    };
+
+    var result = await thetaClientPlugin.getThetaLicense();
+    expect(result, license);
   });
 
   test('getThetaState', () async {

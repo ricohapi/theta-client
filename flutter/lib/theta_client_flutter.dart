@@ -64,6 +64,14 @@ class ThetaClientFlutter {
     return ThetaClientFlutterPlatform.instance.getThetaInfo();
   }
 
+  /// Acquires open source license information related to the camera.
+  ///
+  /// - @return HTML string of the license
+  /// - @throws If an error occurs in THETA.
+  Future<String> getThetaLicense() {
+    return ThetaClientFlutterPlatform.instance.getThetaLicense();
+  }
+
   /// Get current state of Theta.
   ///
   /// - @return Mutable values representing Theta status.

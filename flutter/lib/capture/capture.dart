@@ -52,18 +52,23 @@ class Capture {
   Capture(this._options);
 }
 
+/// Common PhotoCapture class
+class PhotoCaptureBase extends Capture {
+  PhotoCaptureBase(super.options);
+
+  /// Get photo file format.
+  PhotoFileFormatEnum? getFileFormat() {
+    return _options[TagNameEnum.photoFileFormat.rawValue];
+  }
+}
+
 /// Capture of Photo
-class PhotoCapture extends Capture {
+class PhotoCapture extends PhotoCaptureBase {
   PhotoCapture(super.options);
 
   /// Get image processing filter.
   FilterEnum? getFilter() {
     return _options[OptionNameEnum.filter.rawValue];
-  }
-
-  /// Get photo file format.
-  PhotoFileFormatEnum? getFileFormat() {
-    return _options[TagNameEnum.photoFileFormat.rawValue];
   }
 
   /// Get preset mode of Theta SC2 and Theta SC2 for business.
