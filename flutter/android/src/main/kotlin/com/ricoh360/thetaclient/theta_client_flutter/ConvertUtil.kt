@@ -401,6 +401,11 @@ fun setVideoCaptureBuilderParams(call: MethodCall, builder: VideoCapture.Builder
 }
 
 fun setLimitlessIntervalCaptureBuilderParams(call: MethodCall, builder: LimitlessIntervalCapture.Builder) {
+    call.argument<Int>("_capture_interval")?.let {
+        if (it >= 0) {
+            builder.setCheckStatusCommandInterval(it.toLong())
+        }
+    }
     call.argument<Int>(OptionNameEnum.CaptureInterval.name)?.also {
         builder.setCaptureInterval(it)
     }

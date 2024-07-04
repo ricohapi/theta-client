@@ -1,4 +1,4 @@
-import { CaptureBuilder } from './capture';
+import { CaptureBuilder, CapturingStatusEnum } from './capture';
 import { NativeModules } from 'react-native';
 import {
   BaseNotify,
@@ -7,10 +7,17 @@ import {
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 const NOTIFY_NAME = 'LIMITLESS-INTERVAL-CAPTURE-STOP-ERROR';
+const NOTIFY_CAPTURING = 'LIMITLESS-INTERVAL-CAPTURE-CAPTURING';
 
 interface CaptureStopErrorNotify extends BaseNotify {
   params?: {
     message: string;
+  };
+}
+
+interface CapturingNotify extends BaseNotify {
+  params?: {
+    status: CapturingStatusEnum;
   };
 }
 
@@ -26,14 +33,23 @@ export class LimitlessIntervalCapture {
   /**
    * start limitless interval capture
    * @param onStopFailed the block for error of stopCapture
+   * @param onCapturing Called when change capture status
    * @return promise of captured file url
    */
   startCapture(
-    onStopFailed?: (error: any) => void
+    onStopFailed?: (error: any) => void,
+    onCapturing?: (status: CapturingStatusEnum) => void
   ): Promise<string[] | undefined> {
     if (onStopFailed) {
       this.notify.addNotify(NOTIFY_NAME, (event: CaptureStopErrorNotify) => {
         onStopFailed(event.params);
+      });
+    }
+    if (onCapturing) {
+      this.notify.addNotify(NOTIFY_CAPTURING, (event: CapturingNotify) => {
+        if (event.params?.status) {
+          onCapturing(event.params.status);
+        }
       });
     }
     return new Promise<string[] | undefined>(async (resolve, reject) => {
@@ -46,6 +62,7 @@ export class LimitlessIntervalCapture {
         })
         .finally(() => {
           this.notify.removeNotify(NOTIFY_NAME);
+          this.notify.removeNotify(NOTIFY_CAPTURING);
         });
     });
   }
@@ -62,9 +79,24 @@ export class LimitlessIntervalCapture {
  * LimitlessIntervalCaptureBuilder class
  */
 export class LimitlessIntervalCaptureBuilder extends CaptureBuilder<LimitlessIntervalCaptureBuilder> {
+  interval?: number;
+
   /** construct LimitlessIntervalCaptureBuilder instance */
   constructor() {
     super();
+    this.interval = undefined;
+  }
+
+  /**
+   * set interval of checking continuous shooting status command
+   * @param timeMillis interval
+   * @returns LimitlessIntervalCaptureBuilder
+   */
+  setCheckStatusCommandInterval(
+    timeMillis: number
+  ): LimitlessIntervalCaptureBuilder {
+    this.interval = timeMillis;
+    return this;
   }
 
   /**
@@ -84,12 +116,15 @@ export class LimitlessIntervalCaptureBuilder extends CaptureBuilder<LimitlessInt
    * @return promise of LimitlessIntervalCapture instance
    */
   build(): Promise<LimitlessIntervalCapture> {
+    let params = {
+      ...this.options,
+      // Cannot pass negative values in IOS, use objects
+      _capture_interval: this.interval ?? -1,
+    };
     return new Promise<LimitlessIntervalCapture>(async (resolve, reject) => {
       try {
         await ThetaClientReactNative.getLimitlessIntervalCaptureBuilder();
-        await ThetaClientReactNative.buildLimitlessIntervalCapture(
-          this.options
-        );
+        await ThetaClientReactNative.buildLimitlessIntervalCapture(params);
         resolve(new LimitlessIntervalCapture(NotifyController.instance));
       } catch (error) {
         reject(error);

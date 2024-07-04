@@ -146,13 +146,15 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
         'getLimitlessIntervalCaptureBuilder() has not been implemented.');
   }
 
-  Future<void> buildLimitlessIntervalCapture(Map<String, dynamic> options) {
+  Future<void> buildLimitlessIntervalCapture(Map<String, dynamic> options,
+      int interval) {
     throw UnimplementedError(
         'buildLimitlessIntervalCapture() has not been implemented.');
   }
 
   Future<List<String>?> startLimitlessIntervalCapture(
-      void Function(Exception exception)? onStopFailed) {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) {
     throw UnimplementedError(
         'startLimitlessIntervalCapture() has not been implemented.');
   }

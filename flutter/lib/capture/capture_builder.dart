@@ -208,6 +208,14 @@ class VideoCaptureBuilder extends CaptureBuilder<VideoCaptureBuilder> {
 /// Builder of LimitlessIntervalCapture
 class LimitlessIntervalCaptureBuilder
     extends CaptureBuilder<LimitlessIntervalCaptureBuilder> {
+  int _interval = -1;
+
+  LimitlessIntervalCaptureBuilder setCheckStatusCommandInterval(
+      int timeMillis) {
+    _interval = timeMillis;
+    return this;
+  }
+
   /// Set shooting interval (sec.) for interval shooting.
   LimitlessIntervalCaptureBuilder setCaptureInterval(int interval) {
     _options[OptionNameEnum.captureInterval.rawValue] = interval;
@@ -219,8 +227,8 @@ class LimitlessIntervalCaptureBuilder
     var completer = Completer<LimitlessIntervalCapture>();
     try {
       await ThetaClientFlutterPlatform.instance
-          .buildLimitlessIntervalCapture(_options);
-      completer.complete(LimitlessIntervalCapture(_options));
+          .buildLimitlessIntervalCapture(_options, _interval);
+      completer.complete(LimitlessIntervalCapture(_options, _interval));
     } catch (e) {
       completer.completeError(e);
     }

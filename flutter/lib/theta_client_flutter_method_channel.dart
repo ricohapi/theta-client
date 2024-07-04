@@ -12,6 +12,7 @@ const notifyIdTimeShiftProgress = 10011;
 const notifyIdTimeShiftStopError = 10012;
 const notifyIdVideoCaptureStopError = 10003;
 const notifyIdLimitlessIntervalCaptureStopError = 10004;
+const notifyIdLimitlessIntervalCaptureCapturing = 10005;
 const notifyIdShotCountSpecifiedIntervalCaptureProgress = 10021;
 const notifyIdShotCountSpecifiedIntervalCaptureStopError = 10022;
 const notifyIdCompositeIntervalCaptureProgress = 10031;
@@ -373,15 +374,18 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   }
 
   @override
-  Future<void> buildLimitlessIntervalCapture(
-      Map<String, dynamic> options) async {
-    return methodChannel.invokeMethod<void>('buildLimitlessIntervalCapture',
-        ConvertUtils.convertCaptureParams(options));
+  Future<void> buildLimitlessIntervalCapture(Map<String, dynamic> options,
+      int interval) async {
+    final params = ConvertUtils.convertCaptureParams(options);
+    params['_capture_interval'] = interval;
+    return methodChannel.invokeMethod<void>(
+        'buildLimitlessIntervalCapture', params);
   }
 
   @override
   Future<List<String>?> startLimitlessIntervalCapture(
-      void Function(Exception exception)? onStopFailed) async {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) async {
     var completer = Completer<List<String>?>();
     try {
       enableNotifyEventReceiver();
@@ -393,9 +397,21 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           }
         });
       }
+      if (onCapturing != null) {
+        addNotify(notifyIdLimitlessIntervalCaptureCapturing, (params) {
+          final strStatus = params?['status'] as String?;
+          if (strStatus != null) {
+            final status = CapturingStatusEnum.getValue(strStatus);
+            if (status != null) {
+              onCapturing(status);
+            }
+          }
+        });
+      }
       final fileUrls = await methodChannel
           .invokeMethod<List<dynamic>?>('startLimitlessIntervalCapture');
       removeNotify(notifyIdLimitlessIntervalCaptureStopError);
+      removeNotify(notifyIdLimitlessIntervalCaptureCapturing);
       if (fileUrls == null) {
         completer.complete(null);
       } else {
@@ -403,6 +419,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       }
     } catch (e) {
       removeNotify(notifyIdLimitlessIntervalCaptureStopError);
+      removeNotify(notifyIdLimitlessIntervalCaptureCapturing);
       completer.completeError(e);
     }
     return completer.future;

@@ -593,6 +593,11 @@ func setVideoCaptureBuilderParams(params: [String: Any], builder: VideoCapture.B
 }
 
 func setLimitlessIntervalCaptureBuilderParams(params: [String: Any], builder: LimitlessIntervalCapture.Builder) {
+    if let interval = params[KEY_TIMESHIFT_CAPTURE_INTERVAL] as? Int,
+       interval >= 0
+    {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
     if let value = params[KEY_CAPTURE_INTERVAL] as? Int32 {
         builder.setCaptureInterval(interval: value)
     }

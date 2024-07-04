@@ -311,6 +311,11 @@ func setVideoCaptureBuilderParams(params: [String: Any], builder: VideoCapture.B
 }
 
 func setLimitlessIntervalCaptureBuilderParams(params: [String: Any], builder: LimitlessIntervalCapture.Builder) {
+    if let interval = params["_capture_interval"] as? Int,
+       interval >= 0
+    {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
     if let value = params[ThetaRepository.OptionNameEnum.captureinterval.name] as? Int32 {
         builder.setCaptureInterval(interval: value)
     }

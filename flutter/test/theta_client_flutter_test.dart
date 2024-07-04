@@ -114,8 +114,9 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
-  Future<void> buildLimitlessIntervalCapture(Map<String, dynamic> options) {
-    return onCallBuildLimitlessIntervalCapture(options);
+  Future<void> buildLimitlessIntervalCapture(Map<String, dynamic> options,
+      int interval) {
+    return onCallBuildLimitlessIntervalCapture(options, interval);
   }
 
   @override
@@ -125,8 +126,9 @@ class MockThetaClientFlutterPlatform
 
   @override
   Future<List<String>?> startLimitlessIntervalCapture(
-      void Function(Exception exception)? onStopFailed) {
-    return onCallStartLimitlessIntervalCapture(onStopFailed);
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) {
+    return onCallStartLimitlessIntervalCapture(onStopFailed, onCapturing);
   }
 
   @override
@@ -446,10 +448,12 @@ Future<String?> Function(void Function(Exception exception)? onStopFailed)
 Future<void> Function() onCallStopVideoCapture = Future.value;
 
 Future<void> Function() onCallGetLimitlessIntervalCaptureBuilder = Future.value;
-Future<void> Function(Map<String, dynamic> options)
-    onCallBuildLimitlessIntervalCapture = Future.value;
-Future<List<String>?> Function(void Function(Exception exception)? onStopFailed)
-    onCallStartLimitlessIntervalCapture = (onStopFailed) => Future.value();
+Future<void> Function(Map<String, dynamic> options, int interval)
+onCallBuildLimitlessIntervalCapture = (options, interval) => Future.value();
+Future<List<String>?> Function(void Function(Exception exception)? onStopFailed,
+    void Function(CapturingStatusEnum status)? onCapturing)
+onCallStartLimitlessIntervalCapture = (onStopFailed, onCapturing) =>
+    Future.value();
 Future<void> Function() onCallStopLimitlessIntervalCapture = Future.value;
 
 Future<void> Function(int shotCount)

@@ -72,6 +72,7 @@ class ThetaClientReactNative: RCTEventEmitter {
     static let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_STOP_ERROR = "SHOT-COUNT-SPECIFIED-INTERVAL-STOP-ERROR"
     static let NOTIFY_VIDEO_CAPTURE_STOP_ERROR = "VIDEO-CAPTURE-STOP-ERROR"
     static let NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR = "LIMITLESS-INTERVAL-CAPTURE-STOP-ERROR"
+    static let NOTIFY_LIMITLESS_INTERVAL_CAPTURE_CAPTURING = "LIMITLESS-INTERVAL-CAPTURE-CAPTURING"
     static let NOTIFY_COMPOSITE_INTERVAL_PROGRESS = "COMPOSITE-INTERVAL-PROGRESS"
     static let NOTIFY_COMPOSITE_INTERVAL_STOP_ERROR = "COMPOSITE-INTERVAL-STOP-ERROR"
     static let NOTIFY_COMPOSITE_INTERVAL_CAPTURING = "COMPOSITE-INTERVAL-CAPTURING"
@@ -933,6 +934,16 @@ class ThetaClientReactNative: RCTEventEmitter {
                     body: toNotify(
                         name: ThetaClientReactNative.NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR,
                         params: toMessageNotifyParam(value: error.localizedDescription)
+                    )
+                )
+            }
+            
+            func onCapturing(status: CapturingStatusEnum) {
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_LIMITLESS_INTERVAL_CAPTURE_CAPTURING,
+                        params: toCapturingNotifyParam(value: status)
                     )
                 )
             }

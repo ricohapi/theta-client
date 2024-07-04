@@ -22,6 +22,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  itemText: {
+    color: 'black',
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 2,
+  },
 });
 
 export default styles;

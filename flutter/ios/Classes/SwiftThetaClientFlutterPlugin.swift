@@ -8,6 +8,7 @@ let NOTIFY_TIME_SHIFT_PROGRESS = 10011
 let NOTIFY_TIME_SHIFT_STOP_ERROR = 10011
 let NOTIFY_VIDEO_CAPTURE_STOP_ERROR = 10003
 let NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR = 10004
+let NOTIFY_LIMITLESS_INTERVAL_CAPTURE_CAPTURING = 10005
 let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_PROGRESS = 10021
 let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_STOP_ERROR = 10022
 let NOTIFY_COMPOSITE_INTERVAL_PROGRESS = 10031
@@ -804,6 +805,10 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             func onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 let error = exception.asError()
                 plugin?.sendNotifyEvent(id: NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR, params: toMessageNotifyParam(message: error.localizedDescription))
+            }
+
+            func onCapturing(status: CapturingStatusEnum) {
+                plugin?.sendNotifyEvent(id: NOTIFY_LIMITLESS_INTERVAL_CAPTURE_CAPTURING, params: toCapturingNotifyParam(value: status))
             }
         }
         limitlessIntervalCapturing = limitlessIntervalCapture.startCapture(

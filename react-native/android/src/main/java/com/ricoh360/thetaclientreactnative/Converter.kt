@@ -213,6 +213,12 @@ fun setVideoCaptureBuilderParams(optionMap: ReadableMap, builder: VideoCapture.B
 }
 
 fun setLimitlessIntervalCaptureBuilderParams(optionMap: ReadableMap, builder: LimitlessIntervalCapture.Builder) {
+  val interval = if (optionMap.hasKey("_capture_interval")) optionMap.getInt("_capture_interval") else null
+  interval?.let {
+    if (it >= 0) {
+      builder.setCheckStatusCommandInterval(it.toLong())
+    }
+  }
   if (optionMap.hasKey("captureInterval")) {
     builder.setCaptureInterval(optionMap.getInt("captureInterval"))
   }

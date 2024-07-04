@@ -61,13 +61,14 @@ void main() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
+      expect(arguments['_capture_interval'], 1);
       for (int i = 0; i < data.length; i++) {
         expect(arguments[data[i][0]], data[i][2], reason: data[i][0]);
       }
 
       return Future.value();
     });
-    await platform.buildLimitlessIntervalCapture(options);
+    await platform.buildLimitlessIntervalCapture(options, 1);
   });
 
   test('startLimitlessIntervalCapture', () async {
@@ -78,6 +79,68 @@ void main() {
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       return fileUrls;
     });
-    expect(await platform.startLimitlessIntervalCapture(null), fileUrls);
+    expect(await platform.startLimitlessIntervalCapture(null, null), fileUrls);
+  });
+
+  test('call onStopFailed', () async {
+    const fileUrls = [
+      'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.MP4'
+    ];
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+      expect(platform.notifyList.containsKey(10004), true,
+          reason: 'add notify stop error');
+
+      // native event
+      platform.onNotify({
+        'id': 10004,
+        'params': {
+          'message': "stop error",
+        },
+      });
+
+      return fileUrls;
+    });
+
+    var isOnStopFailed = false;
+    expect(
+        await platform.startLimitlessIntervalCapture((exception) {
+          isOnStopFailed = true;
+        }, null),
+        fileUrls);
+    expect(platform.notifyList.containsKey(10004), false,
+        reason: 'remove notify stop error');
+    expect(isOnStopFailed, true);
+  });
+
+  test('call onCapturing', () async {
+    const fileUrls = [
+      'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.MP4'
+    ];
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+      expect(platform.notifyList.containsKey(10005), true,
+          reason: 'add notify capturing status');
+
+      // native event
+      platform.onNotify({
+        'id': 10005,
+        'params': {
+          'status': 'SELF_TIMER_COUNTDOWN',
+        },
+      });
+
+      return fileUrls;
+    });
+
+    CapturingStatusEnum? lastStatus;
+    expect(
+        await platform.startLimitlessIntervalCapture(null, (status) {
+          lastStatus = status;
+        }),
+        fileUrls);
+    expect(platform.notifyList.containsKey(10005), false,
+        reason: 'remove notify capturing status');
+    expect(lastStatus, CapturingStatusEnum.selfTimerCountdown);
   });
 }
