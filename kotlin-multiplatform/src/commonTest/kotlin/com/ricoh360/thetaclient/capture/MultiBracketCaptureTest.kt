@@ -3,6 +3,7 @@ package com.ricoh360.thetaclient.capture
 import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
+import com.ricoh360.thetaclient.ThetaApi
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.CaptureMode
 import io.ktor.http.HttpStatusCode
@@ -55,23 +56,43 @@ class MultiBracketCaptureTest {
             "/osc/commands/status",
             "/osc/commands/status",
         )
+
+        val stateSelfTimer =
+            Resource("src/commonTest/resources/MultiBracketCapture/state_self_timer.json").readText()
+        val stateShooting =
+            Resource("src/commonTest/resources/MultiBracketCapture/state_shooting.json").readText()
+
         var counter = 0
+        var onSelfTimer = false
         MockApiClient.onRequest = { request ->
-            val index = counter++
+            val index = counter
+            val response = if (request.url.encodedPath != "/osc/state") {
+                counter++
 
-            // check request
-            assertEquals(request.url.encodedPath, requestPathArray[index], "start capture request")
-            when (index) {
-                0 -> {
-                    CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
-                }
+                // check request
+                assertEquals(
+                    request.url.encodedPath,
+                    requestPathArray[index],
+                    "start capture request"
+                )
+                when (index) {
+                    0 -> {
+                        CheckRequest.checkSetOptions(
+                            request = request,
+                            captureMode = CaptureMode.IMAGE
+                        )
+                    }
 
-                2 -> {
-                    CheckRequest.checkCommandName(request, "camera.startCapture")
+                    2 -> {
+                        CheckRequest.checkCommandName(request, "camera.startCapture")
+                    }
                 }
+                responseArray[index]
+            } else {
+                if (onSelfTimer) stateShooting else stateSelfTimer
             }
 
-            ByteReadChannel(responseArray[index])
+            ByteReadChannel(response)
         }
         val deferred = CompletableDeferred<Unit>()
 
@@ -92,7 +113,10 @@ class MultiBracketCaptureTest {
                 iso = ThetaRepository.IsoEnum.ISO_800,
                 whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
             ).build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
+
         var files: List<String>? = null
+        var onCapturingCounter = 0
         multiBracketCapture.startCapture(object : MultiBracketCapture.StartCaptureCallback {
             override fun onCaptureCompleted(fileUrls: List<String>?) {
                 assertTrue(true, "onCaptureCompleted")
@@ -102,6 +126,16 @@ class MultiBracketCaptureTest {
 
             override fun onProgress(completion: Float) {
                 assertTrue(completion >= 0f, "onProgress")
+            }
+
+            override fun onCapturing(status: CapturingStatusEnum) {
+                onCapturingCounter++
+                if (onSelfTimer) {
+                    assertEquals(status, CapturingStatusEnum.CAPTURING)
+                } else {
+                    onSelfTimer = true
+                    assertEquals(status, CapturingStatusEnum.SELF_TIMER_COUNTDOWN)
+                }
             }
 
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
@@ -123,6 +157,8 @@ class MultiBracketCaptureTest {
 
         // check result
         assertTrue(files?.get(1)?.startsWith("http://") ?: false, "start multi bracket capture")
+        assertTrue(onSelfTimer, "onCapturing self timer")
+        assertTrue(onCapturingCounter >= 2, "onCapturing count")
     }
 
     /**
@@ -147,23 +183,38 @@ class MultiBracketCaptureTest {
             "/osc/commands/status",
             "/osc/commands/status",
         )
+        val stateShooting =
+            Resource("src/commonTest/resources/MultiBracketCapture/state_shooting.json").readText()
         var counter = 0
         MockApiClient.onRequest = { request ->
-            val index = counter++
+            val index = counter
+            val response = if (request.url.encodedPath != "/osc/state") {
+                counter++
 
-            // check request
-            assertEquals(request.url.encodedPath, requestPathArray[index], "start capture request")
-            when (index) {
-                0 -> {
-                    CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
-                }
+                // check request
+                assertEquals(
+                    request.url.encodedPath,
+                    requestPathArray[index],
+                    "start capture request"
+                )
+                when (index) {
+                    0 -> {
+                        CheckRequest.checkSetOptions(
+                            request = request,
+                            captureMode = CaptureMode.IMAGE
+                        )
+                    }
 
-                2 -> {
-                    CheckRequest.checkCommandName(request, "camera.startCapture")
+                    2 -> {
+                        CheckRequest.checkCommandName(request, "camera.startCapture")
+                    }
                 }
+                responseArray[index]
+            } else {
+                stateShooting
             }
 
-            ByteReadChannel(responseArray[index])
+            ByteReadChannel(response)
         }
         val deferred = CompletableDeferred<Unit>()
 
@@ -189,6 +240,8 @@ class MultiBracketCaptureTest {
                     )
                 )
             ).build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
+
         var files: List<String>? = null
         multiBracketCapture.startCapture(object : MultiBracketCapture.StartCaptureCallback {
             override fun onCaptureCompleted(fileUrls: List<String>?) {
@@ -199,6 +252,10 @@ class MultiBracketCaptureTest {
 
             override fun onProgress(completion: Float) {
                 assertTrue(completion >= 0f, "onProgress")
+            }
+
+            override fun onCapturing(status: CapturingStatusEnum) {
+                assertEquals(status, CapturingStatusEnum.CAPTURING)
             }
 
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
@@ -232,6 +289,7 @@ class MultiBracketCaptureTest {
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
             Resource("src/commonTest/resources/MultiBracketCapture/start_capture_progress.json").readText(),
+            Resource("src/commonTest/resources/MultiBracketCapture/state_self_timer.json").readText(),
             Resource("src/commonTest/resources/MultiBracketCapture/state_shooting.json").readText(),
             Resource("src/commonTest/resources/MultiBracketCapture/state_idle.json").readText(),
         )
@@ -249,7 +307,8 @@ class MultiBracketCaptureTest {
                 }
 
             }
-            val response = if (index >= responseArray.size) responseArray[responseArray.size - 1] else responseArray[index]
+            val response =
+                if (index >= responseArray.size) responseArray[responseArray.size - 1] else responseArray[index]
             ByteReadChannel(response)
         }
         val deferred = CompletableDeferred<Unit>()
@@ -269,8 +328,10 @@ class MultiBracketCaptureTest {
             )
             .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var files: List<String>? = null
+        var capturingCount = 0
         multiBracketCapture.startCapture(object : MultiBracketCapture.StartCaptureCallback {
             override fun onCaptureCompleted(fileUrls: List<String>?) {
                 assertTrue(true, "onCaptureCompleted")
@@ -280,6 +341,15 @@ class MultiBracketCaptureTest {
 
             override fun onProgress(completion: Float) {
                 assertTrue(completion >= 0f, "onProgress")
+            }
+
+            override fun onCapturing(status: CapturingStatusEnum) {
+                when (counter) {
+                    4 -> assertEquals(status, CapturingStatusEnum.SELF_TIMER_COUNTDOWN)
+                    5 -> assertEquals(status, CapturingStatusEnum.CAPTURING)
+                    6 -> assertEquals(status, CapturingStatusEnum.CAPTURING)
+                }
+                capturingCount++
             }
 
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
@@ -301,6 +371,7 @@ class MultiBracketCaptureTest {
 
         // check result
         assertTrue(files?.size == 0, "result multi bracket capture")
+        assertTrue(capturingCount >= 2, "onCapturing count")
     }
 
     /**
@@ -312,20 +383,24 @@ class MultiBracketCaptureTest {
         var isStop = false
         val deferredStart = CompletableDeferred<Unit>()
         MockApiClient.onRequest = { request ->
-            val textBody = request.body as TextContent
-            val path = if (textBody.text.contains("camera.stopCapture")) {
-                isStop = true
-                "src/commonTest/resources/MultiBracketCapture/stop_capture_done.json"
-            } else if (textBody.text.contains("camera.setOptions")) {
-                "src/commonTest/resources/setOptions/set_options_done.json"
+            val path = if (request.url.encodedPath == "/osc/state") {
+                "src/commonTest/resources/MultiBracketCapture/state_shooting.json"
             } else {
-                if (!deferredStart.isCompleted) {
-                    deferredStart.complete(Unit)
+                val textBody = request.body as TextContent
+                if (textBody.text.contains("camera.stopCapture")) {
+                    isStop = true
+                    "src/commonTest/resources/MultiBracketCapture/stop_capture_done.json"
+                } else if (textBody.text.contains("camera.setOptions")) {
+                    "src/commonTest/resources/setOptions/set_options_done.json"
+                } else {
+                    if (!deferredStart.isCompleted) {
+                        deferredStart.complete(Unit)
+                    }
+                    if (isStop)
+                        "src/commonTest/resources/MultiBracketCapture/start_capture_done_stopped.json"
+                    else
+                        "src/commonTest/resources/MultiBracketCapture/start_capture_progress.json"
                 }
-                if (isStop)
-                    "src/commonTest/resources/MultiBracketCapture/start_capture_done_stopped.json"
-                else
-                    "src/commonTest/resources/MultiBracketCapture/start_capture_progress.json"
             }
 
             ByteReadChannel(Resource(path).readText())
@@ -387,6 +462,7 @@ class MultiBracketCaptureTest {
                 iso = ThetaRepository.IsoEnum.ISO_100,
                 whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
             ).build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var files: List<String>? = null
         val capturing =
@@ -440,10 +516,18 @@ class MultiBracketCaptureTest {
             Resource("src/commonTest/resources/MultiBracketCapture/start_capture_progress.json").readText(),
             Resource("src/commonTest/resources/MultiBracketCapture/start_capture_cancel.json").readText(),
         )
+        val stateShooting =
+            Resource("src/commonTest/resources/MultiBracketCapture/state_shooting.json").readText()
         var counter = 0
-        MockApiClient.onRequest = { _ ->
-            val index = counter++
-            ByteReadChannel(responseArray[index])
+        MockApiClient.onRequest = { request ->
+            val response = when (request.url.encodedPath) {
+                "/osc/state" -> stateShooting
+                else -> {
+                    val index = counter++
+                    responseArray[index]
+                }
+            }
+            ByteReadChannel(response)
         }
         val deferred = CompletableDeferred<Unit>()
 
@@ -459,7 +543,9 @@ class MultiBracketCaptureTest {
                 shutterSpeed = ThetaRepository.ShutterSpeedEnum.SHUTTER_SPEED_1,
                 iso = ThetaRepository.IsoEnum.ISO_100,
                 whiteBalance = ThetaRepository.WhiteBalanceEnum.DAYLIGHT,
-            ).build()
+            ).setCheckStatusCommandInterval(100)
+            .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var files: List<String>? = listOf()
         capture.startCapture(object : MultiBracketCapture.StartCaptureCallback {

@@ -228,8 +228,10 @@ class MockThetaClientFlutterPlatform
   @override
   Future<List<String>?> startMultiBracketCapture(
       void Function(double)? onProgress,
-      void Function(Exception exception)? onStopFailed) {
-    return onCallStartMultiBracketCapture(onProgress, onStopFailed);
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) {
+    return onCallStartMultiBracketCapture(
+        onProgress, onStopFailed, onCapturing);
   }
 
   @override
@@ -493,10 +495,12 @@ Future<void> Function() onCallStopBurstCapture = Future.value;
 Future<void> Function() onCallGetMultiBracketCaptureBuilder = Future.value;
 Future<void> Function(Map<String, dynamic> options, int interval)
     onCallBuildMultiBracketCapture = (options, interval) => Future.value();
-Future<List<String>?> Function(void Function(double)? onProgress,
-        void Function(Exception exception)? onStopFailed)
+Future<List<String>?> Function(
+        void Function(double)? onProgress,
+        void Function(Exception exception)? onStopFailed,
+        void Function(CapturingStatusEnum status)? onCapturing)
     onCallStartMultiBracketCapture =
-    (onProgress, onStopFailed) => Future.value();
+    (onProgress, onStopFailed, onCapturing) => Future.value();
 Future<void> Function() onCallStopMultiBracketCapture = Future.value;
 
 Future<void> Function() onCallGetContinuousCaptureBuilder = Future.value;

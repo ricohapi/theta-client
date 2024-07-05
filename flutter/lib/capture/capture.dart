@@ -311,9 +311,10 @@ class MultiBracketCapture extends Capture {
       void Function(List<String>? fileUrls) onSuccess,
       void Function(double completion) onProgress,
       void Function(Exception exception) onCaptureFailed,
-      {void Function(Exception exception)? onStopFailed}) {
+      {void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing}) {
     ThetaClientFlutterPlatform.instance
-        .startMultiBracketCapture(onProgress, onStopFailed)
+        .startMultiBracketCapture(onProgress, onStopFailed, onCapturing)
         .then((value) => onSuccess(value))
         .onError((error, stackTrace) => onCaptureFailed(error as Exception));
     return MultiBracketCapturing();

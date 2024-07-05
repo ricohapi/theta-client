@@ -17,6 +17,7 @@ import {
   ShutterSpeedEnum,
   WhiteBalanceEnum,
 } from '../../theta-repository/options';
+import { CapturingStatusEnum } from '../../capture';
 
 describe('multi bracket shooting', () => {
   const thetaClient = NativeModules.ThetaClientReactNative;
@@ -276,6 +277,68 @@ describe('multi bracket shooting', () => {
     setTimeout(() => {
       expect(NotifyController.instance.notifyList.size).toBe(0);
       expect(isOnStopError).toBeTruthy();
+      done(0);
+    }, 1);
+
+    return promise;
+  });
+
+  test('capturing events', async () => {
+    let notifyCallback: (notify: BaseNotify) => void = () => {
+      expect(true).toBeFalsy();
+    };
+    jest.mocked(NativeEventEmitter_addListener).mockImplementation(
+      jest.fn((_, callback) => {
+        notifyCallback = callback;
+        return {
+          remove: jest.fn(),
+        };
+      })
+    );
+
+    await initialize();
+    const builder = getMultiBracketCaptureBuilder();
+    jest
+      .mocked(thetaClient.buildMultiBracketCapture)
+      .mockImplementation(jest.fn(async () => {}));
+    const testUrl = 'http://192.168.1.1/files/100RICOH/R100.JPG';
+
+    const sendStatus = (status: CapturingStatusEnum) => {
+      notifyCallback({
+        name: 'MULTI-BRACKET-CAPTURING',
+        params: {
+          status: status,
+        },
+      });
+    };
+
+    jest.mocked(thetaClient.startMultiBracketCapture).mockImplementation(
+      jest.fn(async () => {
+        sendStatus(CapturingStatusEnum.SELF_TIMER_COUNTDOWN);
+        return testUrl;
+      })
+    );
+
+    const capture = await builder.build();
+    let isOnCapturing = false;
+    const fileUrl = await capture.startCapture(
+      undefined,
+      undefined,
+      (status) => {
+        expect(status).toBe(CapturingStatusEnum.SELF_TIMER_COUNTDOWN);
+        isOnCapturing = true;
+      }
+    );
+    expect(fileUrl).toBe(testUrl);
+
+    let done: (value: unknown) => void;
+    const promise = new Promise((resolve) => {
+      done = resolve;
+    });
+
+    setTimeout(() => {
+      expect(NotifyController.instance.notifyList.size).toBe(0);
+      expect(isOnCapturing).toBeTruthy();
       done(0);
     }, 1);
 

@@ -20,6 +20,7 @@ const notifyIdCompositeIntervalCaptureStopError = 10032;
 const notifyIdCompositeIntervalCaptureCapturing = 10033;
 const notifyIdMultiBracketCaptureProgress = 10041;
 const notifyIdMultiBracketCaptureStopError = 10042;
+const notifyIdMultiBracketCaptureCapturing = 10043;
 const notifyIdBurstCaptureProgress = 10051;
 const notifyIdBurstCaptureStopError = 10052;
 const notifyIdBurstCaptureCapturing = 10053;
@@ -668,7 +669,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   @override
   Future<List<String>?> startMultiBracketCapture(
       void Function(double)? onProgress,
-      void Function(Exception exception)? onStopFailed) async {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) async {
     var completer = Completer<List<String>?>();
     try {
       enableNotifyEventReceiver();
@@ -688,10 +690,22 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           }
         });
       }
+      if (onCapturing != null) {
+        addNotify(notifyIdMultiBracketCaptureCapturing, (params) {
+          final strStatus = params?['status'] as String?;
+          if (strStatus != null) {
+            final status = CapturingStatusEnum.getValue(strStatus);
+            if (status != null) {
+              onCapturing(status);
+            }
+          }
+        });
+      }
       final fileUrls = await methodChannel
           .invokeMethod<List<dynamic>?>('startMultiBracketCapture');
       removeNotify(notifyIdMultiBracketCaptureProgress);
       removeNotify(notifyIdMultiBracketCaptureStopError);
+      removeNotify(notifyIdMultiBracketCaptureCapturing);
       if (fileUrls == null) {
         completer.complete(null);
       } else {
@@ -700,6 +714,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
     } catch (e) {
       removeNotify(notifyIdMultiBracketCaptureProgress);
       removeNotify(notifyIdMultiBracketCaptureStopError);
+      removeNotify(notifyIdMultiBracketCaptureCapturing);
       completer.completeError(e);
     }
     return completer.future;

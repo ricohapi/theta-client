@@ -250,7 +250,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
 
   Future<List<String>?> startMultiBracketCapture(
       void Function(double)? onProgress,
-      void Function(Exception exception)? onStopFailed) {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) {
     throw UnimplementedError(
         'startMultiBracketCapture() has not been implemented.');
   }

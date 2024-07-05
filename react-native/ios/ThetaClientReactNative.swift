@@ -81,6 +81,7 @@ class ThetaClientReactNative: RCTEventEmitter {
     static let NOTIFY_BURST_CAPTURING = "BURST-CAPTURING"
     static let NOTIFY_MULTI_BRACKET_PROGRESS = "MULTI-BRACKET-PROGRESS"
     static let NOTIFY_MULTI_BRACKET_STOP_ERROR = "MULTI-BRACKET-STOP-ERROR"
+    static let NOTIFY_MULTI_BRACKET_CAPTURING = "MULTI-BRACKET-CAPTURING"
     static let NOTIFY_CONTINUOUS_PROGRESS = "CONTINUOUS-PROGRESS"
     static let NOTIFY_CONTINUOUS_CAPTURING = "CONTINUOUS-CAPTURING"
     static let NOTIFY_EVENT_WEBSOCKET_EVENT = "EVENT-WEBSOCKET-EVENT"
@@ -1498,7 +1499,17 @@ class ThetaClientReactNative: RCTEventEmitter {
                     )
                 )
             }
-
+            
+            func onCapturing(status: CapturingStatusEnum) {
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_MULTI_BRACKET_CAPTURING,
+                        params: toCapturingNotifyParam(value: status)
+                    )
+                )
+            }
+            
             func onCaptureCompleted(fileUrls: [String]?) {
                 callback(fileUrls, nil)
             }
