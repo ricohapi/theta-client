@@ -70,6 +70,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         const val notifyIdLimitlessIntervalCaptureCapturing = 10005
         const val notifyIdShotCountSpecifiedIntervalCaptureProgress = 10021
         const val notifyIdShotCountSpecifiedIntervalCaptureStopError = 10022
+        const val notifyIdShotCountSpecifiedIntervalCaptureCapturing = 10023
         const val notifyIdCompositeIntervalCaptureProgress = 10031;
         const val notifyIdCompositeIntervalCaptureStopError = 10032;
         const val notifyIdCompositeIntervalCaptureCapturing = 10033;
@@ -934,6 +935,13 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     sendNotifyEvent(
                         notifyIdShotCountSpecifiedIntervalCaptureProgress,
                         toCaptureProgressNotifyParam(completion)
+                    )
+                }
+
+                override fun onCapturing(status: CapturingStatusEnum) {
+                    sendNotifyEvent(
+                        notifyIdShotCountSpecifiedIntervalCaptureCapturing,
+                        toCapturingNotifyParam(status)
                     )
                 }
 

@@ -150,9 +150,10 @@ class MockThetaClientFlutterPlatform
   @override
   Future<List<String>?> startShotCountSpecifiedIntervalCapture(
       void Function(double)? onProgress,
-      void Function(Exception exception)? onStopFailed) {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) {
     return onCallStartShotCountSpecifiedIntervalCapture(
-        onProgress, onStopFailed);
+        onProgress, onStopFailed, onCapturing);
   }
 
   @override
@@ -459,14 +460,15 @@ onCallStartLimitlessIntervalCapture = (onStopFailed, onCapturing) =>
 Future<void> Function() onCallStopLimitlessIntervalCapture = Future.value;
 
 Future<void> Function(int shotCount)
-    onCallGetShotCountSpecifiedIntervalCaptureBuilder = Future.value;
+onCallGetShotCountSpecifiedIntervalCaptureBuilder = Future.value;
 Future<void> Function(Map<String, dynamic> options, int interval)
-    onCallBuildShotCountSpecifiedIntervalCapture =
+onCallBuildShotCountSpecifiedIntervalCapture =
     (options, interval) => Future.value();
 Future<List<String>?> Function(void Function(double)? onProgress,
-        void Function(Exception exception)? onStopFailed)
-    onCallStartShotCountSpecifiedIntervalCapture =
-    (onProgress, onStopFailed) => Future.value();
+    void Function(Exception exception)? onStopFailed,
+    void Function(CapturingStatusEnum status)? onCapturing)
+onCallStartShotCountSpecifiedIntervalCapture =
+    (onProgress, onStopFailed, onCapturing) => Future.value();
 Future<void> Function() onCallStopShotCountSpecifiedIntervalCapture =
     Future.value;
 

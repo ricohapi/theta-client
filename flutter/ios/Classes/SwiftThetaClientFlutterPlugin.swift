@@ -11,6 +11,7 @@ let NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR = 10004
 let NOTIFY_LIMITLESS_INTERVAL_CAPTURE_CAPTURING = 10005
 let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_PROGRESS = 10021
 let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_STOP_ERROR = 10022
+let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_CAPTURING = 10023
 let NOTIFY_COMPOSITE_INTERVAL_PROGRESS = 10031
 let NOTIFY_COMPOSITE_INTERVAL_STOP_ERROR = 10032
 let NOTIFY_COMPOSITE_INTERVAL_CAPTURING = 10033
@@ -894,7 +895,11 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             func onProgress(completion: Float) {
                 plugin?.sendNotifyEvent(id: NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
             }
-
+            
+            func onCapturing(status: CapturingStatusEnum) {
+                plugin?.sendNotifyEvent(id: NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_CAPTURING, params: toCapturingNotifyParam(value: status))
+            }
+            
             func onCaptureCompleted(fileUrls: [String]?) {
                 callback(fileUrls, nil)
             }

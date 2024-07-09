@@ -15,6 +15,7 @@ const notifyIdLimitlessIntervalCaptureStopError = 10004;
 const notifyIdLimitlessIntervalCaptureCapturing = 10005;
 const notifyIdShotCountSpecifiedIntervalCaptureProgress = 10021;
 const notifyIdShotCountSpecifiedIntervalCaptureStopError = 10022;
+const notifyIdShotCountSpecifiedIntervalCaptureCapturing = 10023;
 const notifyIdCompositeIntervalCaptureProgress = 10031;
 const notifyIdCompositeIntervalCaptureStopError = 10032;
 const notifyIdCompositeIntervalCaptureCapturing = 10033;
@@ -450,7 +451,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   @override
   Future<List<String>?> startShotCountSpecifiedIntervalCapture(
       void Function(double)? onProgress,
-      void Function(Exception exception)? onStopFailed) async {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) async {
     var completer = Completer<List<String>?>();
     try {
       enableNotifyEventReceiver();
@@ -470,10 +472,22 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           }
         });
       }
+      if (onCapturing != null) {
+        addNotify(notifyIdShotCountSpecifiedIntervalCaptureCapturing, (params) {
+          final strStatus = params?['status'] as String?;
+          if (strStatus != null) {
+            final status = CapturingStatusEnum.getValue(strStatus);
+            if (status != null) {
+              onCapturing(status);
+            }
+          }
+        });
+      }
       final fileUrls = await methodChannel.invokeMethod<List<dynamic>?>(
           'startShotCountSpecifiedIntervalCapture');
       removeNotify(notifyIdShotCountSpecifiedIntervalCaptureProgress);
       removeNotify(notifyIdShotCountSpecifiedIntervalCaptureStopError);
+      removeNotify(notifyIdShotCountSpecifiedIntervalCaptureCapturing);
       if (fileUrls == null) {
         completer.complete(null);
       } else {
@@ -482,6 +496,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
     } catch (e) {
       removeNotify(notifyIdShotCountSpecifiedIntervalCaptureProgress);
       removeNotify(notifyIdShotCountSpecifiedIntervalCaptureStopError);
+      removeNotify(notifyIdShotCountSpecifiedIntervalCaptureCapturing);
       completer.completeError(e);
     }
     return completer.future;

@@ -177,7 +177,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
 
   Future<List<String>?> startShotCountSpecifiedIntervalCapture(
       void Function(double)? onProgress,
-      void Function(Exception exception)? onStopFailed) {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) {
     throw UnimplementedError(
         'startShotCountSpecifiedIntervalCapture() has not been implemented.');
   }

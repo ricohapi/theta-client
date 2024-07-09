@@ -944,6 +944,15 @@ class ThetaClientReactNativeModule(
         )
       }
 
+      override fun onCapturing(status: CapturingStatusEnum) {
+        sendNotifyEvent(
+          toNotify(
+            NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURING,
+            toCapturingNotifyParam(status = status)
+          )
+        )
+      }
+
       override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
         sendNotifyEvent(
           toNotify(
@@ -2133,6 +2142,7 @@ class ThetaClientReactNativeModule(
     const val NOTIFY_LIMITLESS_INTERVAL_CAPTURE_CAPTURING = "LIMITLESS-INTERVAL-CAPTURE-CAPTURING"
     const val NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_PROGRESS = "SHOT-COUNT-SPECIFIED-INTERVAL-PROGRESS"
     const val NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_STOP_ERROR = "SHOT-COUNT-SPECIFIED-INTERVAL-STOP-ERROR"
+    const val NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURING = "SHOT-COUNT-SPECIFIED-INTERVAL-CAPTURING"
     const val NOTIFY_COMPOSITE_INTERVAL_PROGRESS = "COMPOSITE-INTERVAL-PROGRESS"
     const val NOTIFY_COMPOSITE_INTERVAL_STOP_ERROR = "COMPOSITE-INTERVAL-STOP-ERROR"
     const val NOTIFY_COMPOSITE_INTERVAL_CAPTURING = "COMPOSITE-INTERVAL-CAPTURING"

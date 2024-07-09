@@ -8,6 +8,7 @@ import {
   NotifyController,
 } from '../../theta-repository/notify-controller';
 import { NativeEventEmitter_addListener } from '../../__mocks__/react-native';
+import { CapturingStatusEnum } from '../../capture/capture';
 
 describe('interval shooting with the shot count specified', () => {
   const thetaClient = NativeModules.ThetaClientReactNative;
@@ -297,6 +298,70 @@ describe('interval shooting with the shot count specified', () => {
     setTimeout(() => {
       expect(NotifyController.instance.notifyList.size).toBe(0);
       expect(isOnStopError).toBeTruthy();
+      done(0);
+    }, 1);
+
+    return promise;
+  });
+
+  test('capturing events', async () => {
+    let notifyCallback: (notify: BaseNotify) => void = () => {
+      expect(true).toBeFalsy();
+    };
+    jest.mocked(NativeEventEmitter_addListener).mockImplementation(
+      jest.fn((_, callback) => {
+        notifyCallback = callback;
+        return {
+          remove: jest.fn(),
+        };
+      })
+    );
+
+    await initialize();
+    const builder = getShotCountSpecifiedIntervalCaptureBuilder(2);
+    jest
+      .mocked(thetaClient.buildShotCountSpecifiedIntervalCapture)
+      .mockImplementation(jest.fn(async () => {}));
+    const testUrls = ['http://192.168.1.1/files/100RICOH/R100.JPG'];
+
+    const sendStatus = (status: CapturingStatusEnum) => {
+      notifyCallback({
+        name: 'SHOT-COUNT-SPECIFIED-INTERVAL-CAPTURING',
+        params: {
+          status: status,
+        },
+      });
+    };
+
+    jest
+      .mocked(thetaClient.startShotCountSpecifiedIntervalCapture)
+      .mockImplementation(
+        jest.fn(async () => {
+          sendStatus(CapturingStatusEnum.SELF_TIMER_COUNTDOWN);
+          return testUrls;
+        })
+      );
+
+    const capture = await builder.build();
+    let isOnCapturing = false;
+    const fileUrls = await capture.startCapture(
+      undefined,
+      undefined,
+      (status) => {
+        expect(status).toBe(CapturingStatusEnum.SELF_TIMER_COUNTDOWN);
+        isOnCapturing = true;
+      }
+    );
+    expect(fileUrls).toBe(testUrls);
+
+    let done: (value: unknown) => void;
+    const promise = new Promise((resolve) => {
+      done = resolve;
+    });
+
+    setTimeout(() => {
+      expect(NotifyController.instance.notifyList.size).toBe(0);
+      expect(isOnCapturing).toBeTruthy();
       done(0);
     }, 1);
 
