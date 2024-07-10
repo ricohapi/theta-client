@@ -10,6 +10,7 @@ import 'theta_client_flutter_platform_interface.dart';
 const notifyIdLivePreview = 10001;
 const notifyIdTimeShiftProgress = 10011;
 const notifyIdTimeShiftStopError = 10012;
+const notifyIdTimeShiftCapturing = 10013;
 const notifyIdVideoCaptureStopError = 10003;
 const notifyIdLimitlessIntervalCaptureStopError = 10004;
 const notifyIdLimitlessIntervalCaptureCapturing = 10005;
@@ -290,7 +291,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<String?> startTimeShiftCapture(void Function(double)? onProgress,
-      void Function(Exception exception)? onStopFailed) async {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) async {
     var completer = Completer<String?>();
     try {
       enableNotifyEventReceiver();
@@ -310,14 +312,27 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           }
         });
       }
+      if (onCapturing != null) {
+        addNotify(notifyIdTimeShiftCapturing, (params) {
+          final strStatus = params?['status'] as String?;
+          if (strStatus != null) {
+            final status = CapturingStatusEnum.getValue(strStatus);
+            if (status != null) {
+              onCapturing(status);
+            }
+          }
+        });
+      }
       final fileUrl =
           await methodChannel.invokeMethod<String>('startTimeShiftCapture');
       removeNotify(notifyIdTimeShiftProgress);
       removeNotify(notifyIdTimeShiftStopError);
+      removeNotify(notifyIdTimeShiftCapturing);
       completer.complete(fileUrl);
     } catch (e) {
       removeNotify(notifyIdTimeShiftProgress);
       removeNotify(notifyIdTimeShiftStopError);
+      removeNotify(notifyIdTimeShiftCapturing);
       completer.completeError(e);
     }
     return completer.future;

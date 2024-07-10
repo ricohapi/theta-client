@@ -137,9 +137,10 @@ class TimeShiftCapture extends Capture {
       void Function(String? fileUrl) onCaptureCompleted,
       void Function(double completion) onProgress,
       void Function(Exception exception) onCaptureFailed,
-      {void Function(Exception exception)? onStopFailed}) {
+      {void Function(Exception exception)? onStopFailed,
+        void Function(CapturingStatusEnum status)? onCapturing}) {
     ThetaClientFlutterPlatform.instance
-        .startTimeShiftCapture(onProgress, onStopFailed)
+        .startTimeShiftCapture(onProgress, onStopFailed, onCapturing)
         .then((value) => onCaptureCompleted(value))
         .onError((error, stackTrace) => onCaptureFailed(error as Exception));
     return TimeShiftCapturing();

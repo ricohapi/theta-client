@@ -3,12 +3,14 @@ package com.ricoh360.thetaclient.capture
 import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
+import com.ricoh360.thetaclient.ThetaApi
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.CaptureMode
 import com.ricoh360.thetaclient.transferred.FirstShootingEnum
 import com.ricoh360.thetaclient.transferred.Preset
 import com.ricoh360.thetaclient.transferred.TimeShift
 import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.client.request.HttpRequestData
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.TextContent
 import io.ktor.utils.io.ByteReadChannel
@@ -26,14 +28,27 @@ import kotlin.test.assertTrue
 class TimeShiftCaptureTest {
     private val endpoint = "http://192.168.1.1:80/"
 
+    private var onCommandRequest: ((HttpRequestData) -> ByteReadChannel)? = null
+
     @BeforeTest
     fun setup() {
         MockApiClient.status = HttpStatusCode.OK
+        MockApiClient.onRequest = { request ->
+            if (request.url.encodedPath == "/osc/state") {
+                MockApiClient.status = HttpStatusCode.OK
+                ByteReadChannel(Resource("src/commonTest/resources/TimeShiftCapture/state_shooting.json").readText())
+            } else {
+                onCommandRequest?.let { it(request) }
+                    ?: throw Exception("Not implement onCommandRequest")
+            }
+        }
     }
 
     @AfterTest
     fun teardown() {
         MockApiClient.status = HttpStatusCode.OK
+        MockApiClient.onRequest = null
+        onCommandRequest = null
     }
 
     /**
@@ -57,23 +72,41 @@ class TimeShiftCaptureTest {
             "/osc/commands/status",
             "/osc/commands/execute",
         )
+        val stateSelfTimer =
+            Resource("src/commonTest/resources/TimeShiftCapture/state_self_timer.json").readText()
+        val stateShooting =
+            Resource("src/commonTest/resources/TimeShiftCapture/state_shooting.json").readText()
         var counter = 0
+        var onSelfTimer = false
         MockApiClient.onRequest = { request ->
-            val index = counter++
+            val index = counter
+            val response = if (request.url.encodedPath != "/osc/state") {
+                counter++
 
-            // check request
-            assertEquals(request.url.encodedPath, requestPathArray[index], "start capture request")
-            when (index) {
-                0 -> {
-                    CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
-                }
+                // check request
+                assertEquals(
+                    request.url.encodedPath,
+                    requestPathArray[index],
+                    "start capture request"
+                )
+                when (index) {
+                    0 -> {
+                        CheckRequest.checkSetOptions(
+                            request = request,
+                            captureMode = CaptureMode.IMAGE
+                        )
+                    }
 
-                1 -> {
-                    CheckRequest.checkCommandName(request, "camera.startCapture")
+                    1 -> {
+                        CheckRequest.checkCommandName(request, "camera.startCapture")
+                    }
                 }
+                responseArray[index]
+            } else {
+                if (onSelfTimer) stateShooting else stateSelfTimer
             }
 
-            ByteReadChannel(responseArray[index])
+            ByteReadChannel(response)
         }
         val deferred = CompletableDeferred<Unit>()
 
@@ -83,8 +116,10 @@ class TimeShiftCaptureTest {
         val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder()
             .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var file: String? = null
+        var onCapturingCounter = 0
         timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
             override fun onCaptureCompleted(fileUrl: String?) {
                 file = fileUrl
@@ -93,6 +128,17 @@ class TimeShiftCaptureTest {
 
             override fun onProgress(completion: Float) {
                 assertTrue(completion >= 0f, "onProgress")
+            }
+
+            override fun onCapturing(status: CapturingStatusEnum) {
+                onCapturingCounter++
+                if (onSelfTimer) {
+                    assertEquals(status, CapturingStatusEnum.CAPTURING)
+                } else {
+                    onSelfTimer = true
+                    assertEquals(onCapturingCounter, 1)
+                    assertEquals(status, CapturingStatusEnum.SELF_TIMER_COUNTDOWN)
+                }
             }
 
             override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
@@ -114,6 +160,8 @@ class TimeShiftCaptureTest {
 
         // check result
         assertTrue(file?.startsWith("http://") ?: false, "start time-shift")
+        assertTrue(onSelfTimer, "onCapturing self timer")
+        assertTrue(onCapturingCounter >= 2, "onCapturing count")
     }
 
     /**
@@ -139,14 +187,18 @@ class TimeShiftCaptureTest {
             "/osc/commands/execute",
         )
         var counter = 0
-        MockApiClient.onRequest = { request ->
+        onCommandRequest = { request ->
             val index = counter++
 
             // check request
             assertEquals(request.url.encodedPath, requestPathArray[index], "start capture request")
             when (index) {
                 0 -> {
-                    CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.PRESET, preset = Preset.ROOM)
+                    CheckRequest.checkSetOptions(
+                        request = request,
+                        captureMode = CaptureMode.PRESET,
+                        preset = Preset.ROOM
+                    )
                 }
 
                 1 -> {
@@ -164,6 +216,7 @@ class TimeShiftCaptureTest {
         val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder()
             .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var file: String? = null
         timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
@@ -220,14 +273,18 @@ class TimeShiftCaptureTest {
             "/osc/commands/execute",
         )
         var counter = 0
-        MockApiClient.onRequest = { request ->
+        onCommandRequest = { request ->
             val index = counter++
 
             // check request
             assertEquals(request.url.encodedPath, requestPathArray[index], "start capture request")
             when (index) {
                 0 -> {
-                    CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.PRESET, preset = Preset.ROOM)
+                    CheckRequest.checkSetOptions(
+                        request = request,
+                        captureMode = CaptureMode.PRESET,
+                        preset = Preset.ROOM
+                    )
                 }
 
                 1 -> {
@@ -245,6 +302,7 @@ class TimeShiftCaptureTest {
         val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder()
             .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var file: String? = null
         timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
@@ -285,7 +343,7 @@ class TimeShiftCaptureTest {
     fun cancelCaptureTest() = runTest {
         // setup
         var isStop = false
-        MockApiClient.onRequest = { request ->
+        onCommandRequest = { request ->
             val textBody = request.body as TextContent
             val path = if (textBody.text.contains("camera.stopCapture")) {
                 isStop = true
@@ -311,31 +369,33 @@ class TimeShiftCaptureTest {
         val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder()
             .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var file: String? = ""
-        val capturing = timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
-            override fun onCaptureCompleted(fileUrl: String?) {
-                file = fileUrl
-                deferred.complete(Unit)
-            }
-
-            override fun onProgress(completion: Float) {
-                assertEquals(completion, 0f, "onProgress")
-                if (!deferredStart.isCompleted) {
-                    deferredStart.complete(Unit)
+        val capturing =
+            timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
+                override fun onCaptureCompleted(fileUrl: String?) {
+                    file = fileUrl
+                    deferred.complete(Unit)
                 }
-            }
 
-            override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue(false, "error start time-shift")
-                deferred.complete(Unit)
-            }
+                override fun onProgress(completion: Float) {
+                    assertEquals(completion, 0f, "onProgress")
+                    if (!deferredStart.isCompleted) {
+                        deferredStart.complete(Unit)
+                    }
+                }
 
-            override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue(false, "error start time-shift")
-                deferred.complete(Unit)
-            }
-        })
+                override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    assertTrue(false, "error start time-shift")
+                    deferred.complete(Unit)
+                }
+
+                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    assertTrue(false, "error start time-shift")
+                    deferred.complete(Unit)
+                }
+            })
 
         runBlocking {
             withTimeout(5000) {
@@ -368,7 +428,7 @@ class TimeShiftCaptureTest {
             Resource("src/commonTest/resources/TimeShiftCapture/start_capture_cancel.json").readText(),
         )
         var counter = 0
-        MockApiClient.onRequest = { _ ->
+        onCommandRequest = { _ ->
             val index = counter++
             ByteReadChannel(responseArray[index])
         }
@@ -380,6 +440,7 @@ class TimeShiftCaptureTest {
         val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder()
             .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var file: String? = ""
         timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
@@ -425,7 +486,7 @@ class TimeShiftCaptureTest {
             Resource("src/commonTest/resources/TimeShiftCapture/start_capture_cancel.json").readText(),
         )
         var counter = 0
-        MockApiClient.onRequest = { _ ->
+        onCommandRequest = { _ ->
             val index = counter++
             MockApiClient.status = if (index == 2) HttpStatusCode.Forbidden else HttpStatusCode.OK
             ByteReadChannel(responseArray[index])
@@ -438,6 +499,7 @@ class TimeShiftCaptureTest {
         val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder()
             .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var file: String? = ""
         timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
@@ -490,7 +552,11 @@ class TimeShiftCaptureTest {
             .build()
 
         // check result
-        assertEquals(capture.getCheckStatusCommandInterval(), timeMillis, "set CheckStatusCommandInterval $timeMillis")
+        assertEquals(
+            capture.getCheckStatusCommandInterval(),
+            timeMillis,
+            "set CheckStatusCommandInterval $timeMillis"
+        )
     }
 
     /**
@@ -505,7 +571,10 @@ class TimeShiftCaptureTest {
             // check request
             when (index) {
                 1 -> {
-                    CheckRequest.checkSetOptions(request, timeShift = TimeShift(firstShooting = FirstShootingEnum.REAR))
+                    CheckRequest.checkSetOptions(
+                        request,
+                        timeShift = TimeShift(firstShooting = FirstShootingEnum.REAR)
+                    )
                 }
             }
             index += 1
@@ -521,7 +590,11 @@ class TimeShiftCaptureTest {
             .build()
 
         // check result
-        assertEquals(capture.getTimeShiftSetting()?.isFrontFirst ?: true, isFrontFirst, "set setIsFrontFirst $isFrontFirst")
+        assertEquals(
+            capture.getTimeShiftSetting()?.isFrontFirst ?: true,
+            isFrontFirst,
+            "set setIsFrontFirst $isFrontFirst"
+        )
     }
 
     /**
@@ -529,7 +602,8 @@ class TimeShiftCaptureTest {
      */
     @Test
     fun settingFirstIntervalTest() = runTest {
-        val interval: ThetaRepository.TimeShiftIntervalEnum = ThetaRepository.TimeShiftIntervalEnum.INTERVAL_3
+        val interval: ThetaRepository.TimeShiftIntervalEnum =
+            ThetaRepository.TimeShiftIntervalEnum.INTERVAL_3
 
         var index = 0
         MockApiClient.onRequest = { request ->
@@ -552,7 +626,11 @@ class TimeShiftCaptureTest {
             .build()
 
         // check result
-        assertEquals(capture.getTimeShiftSetting()?.firstInterval, interval, "set setFirstInterval $interval")
+        assertEquals(
+            capture.getTimeShiftSetting()?.firstInterval,
+            interval,
+            "set setFirstInterval $interval"
+        )
     }
 
     /**
@@ -560,7 +638,8 @@ class TimeShiftCaptureTest {
      */
     @Test
     fun settingSecondIntervalTest() = runTest {
-        val interval: ThetaRepository.TimeShiftIntervalEnum = ThetaRepository.TimeShiftIntervalEnum.INTERVAL_5
+        val interval: ThetaRepository.TimeShiftIntervalEnum =
+            ThetaRepository.TimeShiftIntervalEnum.INTERVAL_5
 
         var index = 0
         MockApiClient.onRequest = { request ->
@@ -583,7 +662,11 @@ class TimeShiftCaptureTest {
             .build()
 
         // check result
-        assertEquals(capture.getTimeShiftSetting()?.secondInterval, interval, "set setSecondInterval $interval")
+        assertEquals(
+            capture.getTimeShiftSetting()?.secondInterval,
+            interval,
+            "set setSecondInterval $interval"
+        )
     }
 
     /**
@@ -661,7 +744,10 @@ class TimeShiftCaptureTest {
         try {
             thetaRepository.getTimeShiftCaptureBuilder().build()
         } catch (e: ThetaRepository.ThetaWebApiException) {
-            assertTrue((e.message?.indexOf("UnitTest", 0, true) ?: -1) >= 0, "status error and json response")
+            assertTrue(
+                (e.message?.indexOf("UnitTest", 0, true) ?: -1) >= 0,
+                "status error and json response"
+            )
             exceptionStatusJson = true
         }
         assertTrue(exceptionStatusJson, "status error and json response")
@@ -696,7 +782,9 @@ class TimeShiftCaptureTest {
 
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
-        val capture = thetaRepository.getTimeShiftCaptureBuilder().build()
+        val capture = thetaRepository.getTimeShiftCaptureBuilder()
+            .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         // execute error response
         var deferred = CompletableDeferred<Unit>()
@@ -710,7 +798,10 @@ class TimeShiftCaptureTest {
             }
 
             override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue((exception.message?.indexOf("UnitTest", 0, true) ?: -1) >= 0, "capture time-shift error response")
+                assertTrue(
+                    (exception.message?.indexOf("UnitTest", 0, true) ?: -1) >= 0,
+                    "capture time-shift error response"
+                )
                 deferred.complete(Unit)
             }
 
@@ -738,7 +829,10 @@ class TimeShiftCaptureTest {
             }
 
             override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue((exception.message?.length ?: -1) >= 0, "capture time-shift json error response")
+                assertTrue(
+                    (exception.message?.length ?: -1) >= 0,
+                    "capture time-shift json error response"
+                )
                 deferred.complete(Unit)
             }
 
@@ -782,6 +876,7 @@ class TimeShiftCaptureTest {
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
         val capture = thetaRepository.getTimeShiftCaptureBuilder().build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         // execute status error and json response
         var deferred = CompletableDeferred<Unit>()
@@ -795,7 +890,10 @@ class TimeShiftCaptureTest {
             }
 
             override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue((exception.message?.indexOf("UnitTest", 0, true) ?: -1) >= 0, "status error and json response")
+                assertTrue(
+                    (exception.message?.indexOf("UnitTest", 0, true) ?: -1) >= 0,
+                    "status error and json response"
+                )
                 deferred.complete(Unit)
             }
 
@@ -851,7 +949,10 @@ class TimeShiftCaptureTest {
             }
 
             override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue((exception.message?.indexOf("time", 0, true) ?: -1) >= 0, "timeout exception")
+                assertTrue(
+                    (exception.message?.indexOf("time", 0, true) ?: -1) >= 0,
+                    "timeout exception"
+                )
                 deferred.complete(Unit)
             }
 
@@ -882,7 +983,7 @@ class TimeShiftCaptureTest {
             "Not json" // json error
         )
         var counter = 0
-        MockApiClient.onRequest = { _ ->
+        onCommandRequest = { _ ->
             val index = counter++
             ByteReadChannel(responseArray[index])
         }
@@ -895,30 +996,38 @@ class TimeShiftCaptureTest {
         val timeShiftCapture = thetaRepository.getTimeShiftCaptureBuilder()
             .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var isCaptureFailed = false
         var isStopFailed = false
-        val capturing = timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
-            override fun onCaptureCompleted(fileUrl: String?) {
-                assertTrue(false, "capture time-shift")
-                deferred.complete(Unit)
-            }
+        val capturing =
+            timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
+                override fun onCaptureCompleted(fileUrl: String?) {
+                    assertTrue(false, "capture time-shift")
+                    deferred.complete(Unit)
+                }
 
-            override fun onProgress(completion: Float) {
-                deferredStart.complete(Unit)
-            }
+                override fun onProgress(completion: Float) {
+                    deferredStart.complete(Unit)
+                }
 
-            override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                isCaptureFailed = true
-                assertTrue((exception.message?.indexOf("Unknown", 0, true) ?: -1) >= 0, "stop capture error response")
-                deferred.complete(Unit)
-            }
+                override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    isCaptureFailed = true
+                    assertTrue(
+                        (exception.message?.indexOf("Unknown", 0, true) ?: -1) >= 0,
+                        "stop capture error response"
+                    )
+                    deferred.complete(Unit)
+                }
 
-            override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                isStopFailed = true
-                assertTrue((exception.message?.indexOf("UnitTest", 0, true) ?: -1) >= 0, "stop capture error response")
-            }
-        })
+                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    isStopFailed = true
+                    assertTrue(
+                        (exception.message?.indexOf("UnitTest", 0, true) ?: -1) >= 0,
+                        "stop capture error response"
+                    )
+                }
+            })
 
         runBlocking {
             withTimeout(5000) {
@@ -961,25 +1070,29 @@ class TimeShiftCaptureTest {
 
         var deferred = CompletableDeferred<Unit>()
 
-        var capturing = TimeShiftCapturing(endpoint, object : TimeShiftCapture.StartCaptureCallback {
-            override fun onCaptureCompleted(fileUrl: String?) {
-                assertTrue(false, "capture time-shift")
-                deferred.complete(Unit)
-            }
+        var capturing =
+            TimeShiftCapturing(endpoint, object : TimeShiftCapture.StartCaptureCallback {
+                override fun onCaptureCompleted(fileUrl: String?) {
+                    assertTrue(false, "capture time-shift")
+                    deferred.complete(Unit)
+                }
 
-            override fun onProgress(completion: Float) {
-            }
+                override fun onProgress(completion: Float) {
+                }
 
-            override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue(false, "capture time-shift")
-                deferred.complete(Unit)
-            }
+                override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    assertTrue(false, "capture time-shift")
+                    deferred.complete(Unit)
+                }
 
-            override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue((exception.message?.indexOf("UnitTest", 0, true) ?: -1) >= 0, "status error and json response")
-                deferred.complete(Unit)
-            }
-        })
+                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    assertTrue(
+                        (exception.message?.indexOf("UnitTest", 0, true) ?: -1) >= 0,
+                        "status error and json response"
+                    )
+                    deferred.complete(Unit)
+                }
+            })
 
         capturing.cancelCapture()
 
@@ -1034,7 +1147,10 @@ class TimeShiftCaptureTest {
             }
 
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue((exception.message?.indexOf("time", 0, true) ?: -1) >= 0, "timeout exception")
+                assertTrue(
+                    (exception.message?.indexOf("time", 0, true) ?: -1) >= 0,
+                    "timeout exception"
+                )
                 deferred.complete(Unit)
             }
         })

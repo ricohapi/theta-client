@@ -5,7 +5,8 @@ import UIKit
 let EVENT_NOTIFY = "theta_client_flutter/theta_notify"
 let NOTIFY_LIVE_PREVIEW = 10001
 let NOTIFY_TIME_SHIFT_PROGRESS = 10011
-let NOTIFY_TIME_SHIFT_STOP_ERROR = 10011
+let NOTIFY_TIME_SHIFT_STOP_ERROR = 10012
+let NOTIFY_TIME_SHIFT_CAPTURING = 10013
 let NOTIFY_VIDEO_CAPTURE_STOP_ERROR = 10003
 let NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR = 10004
 let NOTIFY_LIMITLESS_INTERVAL_CAPTURE_CAPTURING = 10005
@@ -640,7 +641,11 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             func onProgress(completion: Float) {
                 plugin?.sendNotifyEvent(id: NOTIFY_TIME_SHIFT_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
             }
-
+            
+            func onCapturing(status: CapturingStatusEnum) {
+                plugin?.sendNotifyEvent(id: NOTIFY_TIME_SHIFT_CAPTURING, params: toCapturingNotifyParam(value: status))
+            }
+            
             func onCaptureCompleted(fileUrl: String?) {
                 callback(fileUrl, nil)
             }

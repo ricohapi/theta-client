@@ -113,7 +113,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
   }
 
   Future<String?> startTimeShiftCapture(void Function(double)? onProgress,
-      void Function(Exception exception)? onStopFailed) {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) {
     throw UnimplementedError(
         'startTimeShiftCapture() has not been implemented.');
   }

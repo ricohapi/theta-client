@@ -65,6 +65,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         const val notifyIdLivePreview = 10001
         const val notifyIdTimeShiftProgress = 10011
         const val notifyIdTimeShiftStopError = 10012
+        const val notifyIdTimeShiftCapturing = 10013
         const val notifyIdVideoCaptureStopError = 10003
         const val notifyIdLimitlessIntervalCaptureStopError = 10004
         const val notifyIdLimitlessIntervalCaptureCapturing = 10005
@@ -737,6 +738,13 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     sendNotifyEvent(
                         notifyIdTimeShiftProgress,
                         toCaptureProgressNotifyParam(completion)
+                    )
+                }
+
+                override fun onCapturing(status: CapturingStatusEnum) {
+                    sendNotifyEvent(
+                        notifyIdTimeShiftCapturing,
+                        toCapturingNotifyParam(status)
                     )
                 }
 
