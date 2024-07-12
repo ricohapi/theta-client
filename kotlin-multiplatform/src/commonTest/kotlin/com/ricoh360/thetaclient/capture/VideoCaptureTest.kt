@@ -3,6 +3,7 @@ package com.ricoh360.thetaclient.capture
 import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
+import com.ricoh360.thetaclient.ThetaApi
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.CaptureMode
 import com.ricoh360.thetaclient.transferred.MediaFileFormat
@@ -38,34 +39,47 @@ class VideoCaptureTest {
             Resource("src/commonTest/resources/VideoCapture/start_capture_done.json").readText(),
             Resource("src/commonTest/resources/VideoCapture/stop_capture_done.json").readText()
         )
+
+        val stateSelfTimer =
+            Resource("src/commonTest/resources/VideoCapture/state_self_timer.json").readText()
+        val stateShooting =
+            Resource("src/commonTest/resources/VideoCapture/state_shooting.json").readText()
+
         val deferredStart = CompletableDeferred<Unit>()
         var counter = 0
+        var stateCounter = 0
         MockApiClient.onRequest = { request ->
             val index = counter++
 
-            var response = ""
             // check request
-            when (index) {
+            val response = when (index) {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.VIDEO)
-                    response = responseArray[0]
+                    responseArray[0]
                 }
 
                 1 -> {
                     CheckRequest.checkCommandName(request, "camera.startCapture")
-                    response = responseArray[1]
+                    responseArray[1]
                 }
 
                 else -> {
                     if (CheckRequest.getCommandName(request) == "camera.stopCapture") {
                         CheckRequest.checkCommandName(request, "camera.stopCapture")
-                        response = responseArray[2]
+                        responseArray[2]
                     } else if (request.url.encodedPath == "/osc/state") {
-                        if (!deferredStart.isCompleted) {
-                            deferredStart.complete(Unit)
+                        when (stateCounter++) {
+                            0 -> stateSelfTimer
+
+                            else -> {
+                                if (!deferredStart.isCompleted) {
+                                    deferredStart.complete(Unit)
+                                }
+                                stateShooting
+                            }
                         }
-                        response =
-                            Resource("src/commonTest/resources/VideoCapture/state_shooting.json").readText()
+                    } else {
+                        ""  // Error
                     }
                 }
             }
@@ -77,7 +91,9 @@ class VideoCaptureTest {
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         val videoCapture = thetaRepository.getVideoCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         assertNull(videoCapture.getMaxRecordableTime(), "set option maxRecordableTime")
         assertNull(videoCapture.getFileFormat(), "set option fileFormat")
@@ -98,6 +114,13 @@ class VideoCaptureTest {
                 file = fileUrl
                 deferred.complete(Unit)
             }
+
+            override fun onCapturing(status: CapturingStatusEnum) {
+                when (stateCounter) {
+                    1 -> assertEquals(status, CapturingStatusEnum.SELF_TIMER_COUNTDOWN)
+                    else -> assertEquals(status, CapturingStatusEnum.CAPTURING)
+                }
+            }
         })
         runBlocking {
             withTimeout(10000) {
@@ -116,6 +139,7 @@ class VideoCaptureTest {
 
         // check result
         assertTrue(file?.startsWith("http://") ?: false, "start capture video")
+        assertTrue(stateCounter >= 2, "count onCapturing")
     }
 
     /**
@@ -164,7 +188,9 @@ class VideoCaptureTest {
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         val videoCapture = thetaRepository.getVideoCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         assertNull(videoCapture.getMaxRecordableTime(), "set option maxRecordableTime")
         assertNull(videoCapture.getFileFormat(), "set option fileFormat")
@@ -543,7 +569,9 @@ class VideoCaptureTest {
 
         val thetaRepository = ThetaRepository(endpoint)
         val videoCapture = thetaRepository.getVideoCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         // execute error response
         var deferred = CompletableDeferred<Unit>()
@@ -621,7 +649,9 @@ class VideoCaptureTest {
 
         val thetaRepository = ThetaRepository(endpoint)
         val videoCapture = thetaRepository.getVideoCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         // execute status error and json response
         val deferred = CompletableDeferred<Unit>()
@@ -674,7 +704,9 @@ class VideoCaptureTest {
 
         val thetaRepository = ThetaRepository(endpoint)
         val videoCapture = thetaRepository.getVideoCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         val deferred = CompletableDeferred<Unit>()
         // execute status error and not json response
@@ -724,7 +756,9 @@ class VideoCaptureTest {
 
         val thetaRepository = ThetaRepository(endpoint)
         val videoCapture = thetaRepository.getVideoCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         val deferred = CompletableDeferred<Unit>()
 

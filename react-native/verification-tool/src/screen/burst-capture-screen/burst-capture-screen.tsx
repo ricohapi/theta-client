@@ -21,7 +21,7 @@ import { CaptureCommonOptionsEdit } from '../../components/capture/capture-commo
 import { InputNumber } from '../../components/ui/input-number';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../App';
-import { BurstOptionsEdit } from 'verification-tool/src/components/options/burst-option';
+import { BurstOptionsEdit } from '../../components/options/burst-option';
 import { EnumEdit } from '../../components/options';
 
 const BurstCaptureScreen: React.FC<

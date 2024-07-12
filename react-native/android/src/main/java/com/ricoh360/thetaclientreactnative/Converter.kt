@@ -204,6 +204,13 @@ fun setTimeShiftCaptureBuilderParams(optionMap: ReadableMap, builder: TimeShiftC
 }
 
 fun setVideoCaptureBuilderParams(optionMap: ReadableMap, builder: VideoCapture.Builder) {
+  val interval =
+    if (optionMap.hasKey("_capture_interval")) optionMap.getInt("_capture_interval") else null
+  interval?.let {
+    if (it >= 0) {
+      builder.setCheckStatusCommandInterval(it.toLong())
+    }
+  }
   optionMap.getString("maxRecordableTime")?.let {
     builder.setMaxRecordableTime(MaxRecordableTimeEnum.valueOf(it))
   }

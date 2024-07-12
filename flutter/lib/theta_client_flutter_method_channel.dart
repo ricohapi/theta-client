@@ -11,7 +11,6 @@ const notifyIdLivePreview = 10001;
 const notifyIdTimeShiftProgress = 10011;
 const notifyIdTimeShiftStopError = 10012;
 const notifyIdTimeShiftCapturing = 10013;
-const notifyIdVideoCaptureStopError = 10003;
 const notifyIdLimitlessIntervalCaptureStopError = 10004;
 const notifyIdLimitlessIntervalCaptureCapturing = 10005;
 const notifyIdShotCountSpecifiedIntervalCaptureProgress = 10021;
@@ -29,6 +28,8 @@ const notifyIdBurstCaptureCapturing = 10053;
 const notifyIdContinuousCaptureProgress = 10061;
 const notifyIdContinuousCaptureCapturing = 10062;
 const notifyIdPhotoCapturing = 10071;
+const notifyIdVideoCaptureStopError = 10081;
+const notifyIdVideoCaptureCapturing = 10082;
 
 /// An implementation of [ThetaClientFlutterPlatform] that uses method channels.
 class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
@@ -349,14 +350,17 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   }
 
   @override
-  Future<void> buildVideoCapture(Map<String, dynamic> options) async {
-    return methodChannel.invokeMethod<void>(
-        'buildVideoCapture', ConvertUtils.convertCaptureParams(options));
+  Future<void> buildVideoCapture(
+      Map<String, dynamic> options, int interval) async {
+    final params = ConvertUtils.convertCaptureParams(options);
+    params['_capture_interval'] = interval;
+    return methodChannel.invokeMethod<void>('buildVideoCapture', params);
   }
 
   @override
   Future<String?> startVideoCapture(
-      void Function(Exception exception)? onStopFailed) async {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) async {
     var completer = Completer<String?>();
     try {
       enableNotifyEventReceiver();
@@ -368,12 +372,25 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           }
         });
       }
+      if (onCapturing != null) {
+        addNotify(notifyIdVideoCaptureCapturing, (params) {
+          final strStatus = params?['status'] as String?;
+          if (strStatus != null) {
+            final status = CapturingStatusEnum.getValue(strStatus);
+            if (status != null) {
+              onCapturing(status);
+            }
+          }
+        });
+      }
       final fileUrl =
           await methodChannel.invokeMethod<String>('startVideoCapture');
       removeNotify(notifyIdVideoCaptureStopError);
+      removeNotify(notifyIdVideoCaptureCapturing);
       completer.complete(fileUrl);
     } catch (e) {
       removeNotify(notifyIdVideoCaptureStopError);
+      removeNotify(notifyIdVideoCaptureCapturing);
       completer.completeError(e);
     }
     return completer.future;

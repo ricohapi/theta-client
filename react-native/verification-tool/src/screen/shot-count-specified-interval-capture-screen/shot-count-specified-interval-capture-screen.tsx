@@ -12,7 +12,7 @@ import {
 } from '../../modules/theta-client';
 import { CaptureCommonOptionsEdit } from '../../components/capture/capture-common-options';
 import { InputNumber } from '../../components/ui/input-number';
-import { NumberEdit } from 'verification-tool/src/components/options/number-edit';
+import { NumberEdit } from '../../components/options/number-edit';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../App';
 

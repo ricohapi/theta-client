@@ -67,7 +67,7 @@ void main() {
 
       return Future.value();
     });
-    await platform.buildVideoCapture(options);
+    await platform.buildVideoCapture(options, 1);
   });
 
   test('startVideoCapture', () async {
@@ -77,6 +77,66 @@ void main() {
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       return fileUrl;
     });
-    expect(await platform.startVideoCapture(null), fileUrl);
+    expect(await platform.startVideoCapture(null, null), fileUrl);
+  });
+
+  test('call onStopFailed', () async {
+    const fileUrl =
+        'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.MP4';
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+      expect(platform.notifyList.containsKey(10081), true,
+          reason: 'add notify stop error');
+
+      // native event
+      platform.onNotify({
+        'id': 10081,
+        'params': {
+          'message': "stop error",
+        },
+      });
+
+      return fileUrl;
+    });
+
+    var isOnStopFailed = false;
+    expect(
+        await platform.startVideoCapture((exception) {
+          isOnStopFailed = true;
+        }, null),
+        fileUrl);
+    expect(platform.notifyList.containsKey(10081), false,
+        reason: 'remove notify stop error');
+    expect(isOnStopFailed, true);
+  });
+
+  test('call onCapturing', () async {
+    const fileUrl =
+        'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.MP4';
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+      expect(platform.notifyList.containsKey(10082), true,
+          reason: 'add notify capturing status');
+
+      // native event
+      platform.onNotify({
+        'id': 10082,
+        'params': {
+          'status': 'SELF_TIMER_COUNTDOWN',
+        },
+      });
+
+      return fileUrl;
+    });
+
+    CapturingStatusEnum? lastStatus;
+    expect(
+        await platform.startVideoCapture(null, (status) {
+          lastStatus = status;
+        }),
+        fileUrl);
+    expect(platform.notifyList.containsKey(10082), false,
+        reason: 'remove notify capturing status');
+    expect(lastStatus, CapturingStatusEnum.selfTimerCountdown);
   });
 }

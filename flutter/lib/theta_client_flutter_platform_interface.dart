@@ -129,12 +129,13 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
         'getVideoCaptureBuilder() has not been implemented.');
   }
 
-  Future<void> buildVideoCapture(Map<String, dynamic> options) {
+  Future<void> buildVideoCapture(Map<String, dynamic> options, int interval) {
     throw UnimplementedError('buildVideoCapture() has not been implemented.');
   }
 
   Future<String?> startVideoCapture(
-      void Function(Exception exception)? onStopFailed) {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) {
     throw UnimplementedError('startVideoCapture() has not been implemented.');
   }
 

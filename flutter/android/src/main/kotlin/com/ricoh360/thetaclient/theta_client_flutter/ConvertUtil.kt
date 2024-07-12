@@ -388,6 +388,11 @@ fun setTimeShiftCaptureBuilderParams(call: MethodCall, builder: TimeShiftCapture
 }
 
 fun setVideoCaptureBuilderParams(call: MethodCall, builder: VideoCapture.Builder) {
+    call.argument<Int>("_capture_interval")?.let {
+        if (it >= 0) {
+            builder.setCheckStatusCommandInterval(it.toLong())
+        }
+    }
     call.argument<String>(OptionNameEnum.MaxRecordableTime.name)?.let { enumName ->
         MaxRecordableTimeEnum.values().find { it.name == enumName }?.let {
             builder.setMaxRecordableTime(it)

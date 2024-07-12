@@ -298,6 +298,11 @@ func setTimeShiftCaptureBuilderParams(params: [String: Any], builder: TimeShiftC
 }
 
 func setVideoCaptureBuilderParams(params: [String: Any], builder: VideoCapture.Builder) {
+    if let interval = params["_capture_interval"] as? Int,
+       interval >= 0
+    {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
     if let value = params[ThetaRepository.OptionNameEnum.maxrecordabletime.name] as? String {
         if let enumValue = getEnumValue(values: ThetaRepository.MaxRecordableTimeEnum.values(), name: value) {
             builder.setMaxRecordableTime(time: enumValue)

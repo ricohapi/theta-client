@@ -7,7 +7,6 @@ let NOTIFY_LIVE_PREVIEW = 10001
 let NOTIFY_TIME_SHIFT_PROGRESS = 10011
 let NOTIFY_TIME_SHIFT_STOP_ERROR = 10012
 let NOTIFY_TIME_SHIFT_CAPTURING = 10013
-let NOTIFY_VIDEO_CAPTURE_STOP_ERROR = 10003
 let NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR = 10004
 let NOTIFY_LIMITLESS_INTERVAL_CAPTURE_CAPTURING = 10005
 let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_PROGRESS = 10021
@@ -25,6 +24,8 @@ let NOTIFY_BURST_CAPTURING = 10053
 let NOTIFY_CONTINUOUS_PROGRESS = 10061
 let NOTIFY_CONTINUOUS_CAPTURING = 10062
 let NOTIFY_PHOTO_CAPTURING = 10071
+let NOTIFY_VIDEO_CAPTURE_STOP_ERROR = 10081
+let NOTIFY_VIDEO_CAPTURE_CAPTURING = 10082
 
 public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     public func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -83,7 +84,9 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
 
     func sendNotifyEvent(id: Int, params: [String: Any]?) {
         if let eventSink = eventSink {
-            eventSink(toNotify(id: id, params: params))
+            DispatchQueue.main.async {
+                eventSink(toNotify(id: id, params: params))
+            }
         }
     }
 
@@ -730,6 +733,10 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             func onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 let error = exception.asError()
                 plugin?.sendNotifyEvent(id: NOTIFY_VIDEO_CAPTURE_STOP_ERROR, params: toMessageNotifyParam(message: error.localizedDescription))
+            }
+            
+            func onCapturing(status: CapturingStatusEnum) {
+                plugin?.sendNotifyEvent(id: NOTIFY_VIDEO_CAPTURE_CAPTURING, params: toCapturingNotifyParam(value: status))
             }
         }
         videoCapturing = videoCapture!.startCapture(

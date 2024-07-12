@@ -742,6 +742,13 @@ class ThetaClientReactNativeModule(
           )
         )
       }
+
+      override fun onCapturing(status: CapturingStatusEnum) {
+        super.onCapturing(status)
+        sendNotifyEvent(
+          toNotify(NOTIFY_VIDEO_CAPTURE_CAPTURING, toCapturingNotifyParam(status = status))
+        )
+      }
     }
     videoCapturing = videoCapture?.startCapture(StartCaptureCallback())
   }
@@ -2146,6 +2153,7 @@ class ThetaClientReactNativeModule(
     const val NOTIFY_TIMESHIFT_STOP_ERROR = "TIME-SHIFT-STOP-ERROR"
     const val NOTIFY_TIMESHIFT_CAPTURING = "TIME-SHIFT-CAPTURING"
     const val NOTIFY_VIDEO_CAPTURE_STOP_ERROR = "VIDEO-CAPTURE-STOP-ERROR"
+    const val NOTIFY_VIDEO_CAPTURE_CAPTURING = "VIDEO-CAPTURE-CAPTURING"
     const val NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR = "LIMITLESS-INTERVAL-CAPTURE-STOP-ERROR"
     const val NOTIFY_LIMITLESS_INTERVAL_CAPTURE_CAPTURING = "LIMITLESS-INTERVAL-CAPTURE-CAPTURING"
     const val NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_PROGRESS = "SHOT-COUNT-SPECIFIED-INTERVAL-PROGRESS"

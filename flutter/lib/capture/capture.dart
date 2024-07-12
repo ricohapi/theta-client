@@ -149,7 +149,13 @@ class TimeShiftCapture extends Capture {
 
 /// Capture of Video
 class VideoCapture extends Capture {
-  VideoCapture(super.options);
+  final int _interval;
+
+  VideoCapture(super.options, this._interval);
+
+  int getCheckStatusCommandInterval() {
+    return _interval;
+  }
 
   /// Get maximum recordable time (in seconds) of the camera.
   MaxRecordableTimeEnum? getMaxRecordableTime() {
@@ -164,9 +170,10 @@ class VideoCapture extends Capture {
   /// Starts video capture.
   VideoCapturing startCapture(void Function(String? fileUrl) onCaptureCompleted,
       void Function(Exception exception) onCaptureFailed,
-      {void Function(Exception exception)? onStopFailed}) {
+      {void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing}) {
     ThetaClientFlutterPlatform.instance
-        .startVideoCapture(onStopFailed)
+        .startVideoCapture(onStopFailed, onCapturing)
         .then((value) => onCaptureCompleted(value))
         .onError((error, stackTrace) => onCaptureFailed(error as Exception));
     return VideoCapturing();

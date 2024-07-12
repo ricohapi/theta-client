@@ -180,6 +180,13 @@ class TimeShiftCaptureBuilder extends CaptureBuilder<TimeShiftCaptureBuilder> {
 
 /// Builder of VideoCapture
 class VideoCaptureBuilder extends CaptureBuilder<VideoCaptureBuilder> {
+  int _interval = -1;
+
+  VideoCaptureBuilder setCheckStatusCommandInterval(int timeMillis) {
+    _interval = timeMillis;
+    return this;
+  }
+
   /// Set video file format.
   VideoCaptureBuilder setFileFormat(VideoFileFormatEnum fileFormat) {
     _options[TagNameEnum.videoFileFormat.rawValue] = fileFormat;
@@ -196,8 +203,9 @@ class VideoCaptureBuilder extends CaptureBuilder<VideoCaptureBuilder> {
   Future<VideoCapture> build() async {
     var completer = Completer<VideoCapture>();
     try {
-      await ThetaClientFlutterPlatform.instance.buildVideoCapture(_options);
-      completer.complete(VideoCapture(_options));
+      await ThetaClientFlutterPlatform.instance
+          .buildVideoCapture(_options, _interval);
+      completer.complete(VideoCapture(_options, _interval));
     } catch (e) {
       completer.completeError(e);
     }

@@ -99,14 +99,15 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
-  Future<void> buildVideoCapture(Map<String, dynamic> options) {
-    return onCallBuildVideoCapture(options);
+  Future<void> buildVideoCapture(Map<String, dynamic> options, int interval) {
+    return onCallBuildVideoCapture(options, interval);
   }
 
   @override
   Future<String?> startVideoCapture(
-      void Function(Exception exception)? onStopFailed) {
-    return onCallStartVideoCapture(onStopFailed);
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) {
+    return onCallStartVideoCapture(onStopFailed, onCapturing);
   }
 
   @override
@@ -447,10 +448,11 @@ onCallStartTimeShiftCapture = (onProgress, onStopFailed, onCapturing) =>
 Future<void> Function() onCallStopTimeShiftCapture = Future.value;
 
 Future<void> Function() onCallGetVideoCaptureBuilder = Future.value;
-Future<void> Function(Map<String, dynamic> options) onCallBuildVideoCapture =
-    Future.value;
-Future<String?> Function(void Function(Exception exception)? onStopFailed)
-    onCallStartVideoCapture = (onStopFailed) => Future.value();
+Future<void> Function(Map<String, dynamic> options, int interval)
+    onCallBuildVideoCapture = (options, interval) => Future.value();
+Future<String?> Function(void Function(Exception exception)? onStopFailed,
+        void Function(CapturingStatusEnum status)? onCapturing)
+    onCallStartVideoCapture = (onStopFailed, onCapturing) => Future.value();
 Future<void> Function() onCallStopVideoCapture = Future.value;
 
 Future<void> Function() onCallGetLimitlessIntervalCaptureBuilder = Future.value;

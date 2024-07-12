@@ -1,5 +1,6 @@
 package com.ricoh360.thetaclient.capture
 
+import com.ricoh360.thetaclient.CHECK_COMMAND_STATUS_INTERVAL
 import com.ricoh360.thetaclient.ThetaApi
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.*
@@ -21,10 +22,18 @@ private const val ERROR_GET_CAPTURE_STATUS = "Capture status cannot be retrieved
  * @property endpoint URL of Theta web API endpoint
  * @property options option of video capture
  */
-class VideoCapture private constructor(private val endpoint: String, options: Options) :
+class VideoCapture private constructor(
+    private val endpoint: String,
+    options: Options,
+    private val checkStatusCommandInterval: Long
+) :
     Capture(options) {
 
     private val scope = CoroutineScope(Dispatchers.Default)
+
+    fun getCheckStatusCommandInterval(): Long {
+        return checkStatusCommandInterval
+    }
 
     /**
      * Get maximum recordable time (in seconds) of the camera.
@@ -69,6 +78,13 @@ class VideoCapture private constructor(private val endpoint: String, options: Op
          * @param fileUrl URL of the video capture
          */
         fun onCaptureCompleted(fileUrl: String?)
+
+        /**
+         * Called when change capture status.
+         *
+         * @param status Capturing status
+         */
+        fun onCapturing(status: CapturingStatusEnum) {}
     }
 
     internal suspend fun getCaptureStatus(): CaptureStatus? {
@@ -92,28 +108,55 @@ class VideoCapture private constructor(private val endpoint: String, options: Op
      * @param callback Success or failure of the call
      */
     fun startCapture(callback: StartCaptureCallback): VideoCapturing {
-        var isEndCapture = false
+        var captureStatusMonitor: CaptureStatusMonitor? = null
 
         fun callOnCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-            if (isEndCapture) {
+            if (captureStatusMonitor == null) {
                 return
             }
-            isEndCapture = true
+            captureStatusMonitor?.stop()
+            captureStatusMonitor = null
             callback.onCaptureFailed(exception)
         }
 
         fun callOnCaptureCompleted(fileUrl: String?) {
             println("call callOnCaptureCompleted: $fileUrl")
-            if (isEndCapture) {
+            if (captureStatusMonitor == null) {
                 return
             }
-            isEndCapture = true
+            captureStatusMonitor?.stop()
+            captureStatusMonitor = null
             callback.onCaptureCompleted(fileUrl)
         }
 
+        captureStatusMonitor = CaptureStatusMonitor(
+            endpoint,
+            onChangeStatus = { newStatus, _ ->
+                when (newStatus) {
+                    CaptureStatus.SELF_TIMER_COUNTDOWN -> callback.onCapturing(
+                        CapturingStatusEnum.SELF_TIMER_COUNTDOWN
+                    )
+
+                    CaptureStatus.IDLE -> callOnCaptureCompleted(null)
+
+                    else -> callback.onCapturing(CapturingStatusEnum.CAPTURING)
+                }
+            },
+            onError = { error ->
+                println("CaptureStatusMonitor error: ${error.message}")
+                callOnCaptureFailed(
+                    ThetaRepository.ThetaWebApiException(
+                        ERROR_GET_CAPTURE_STATUS
+                    )
+                )
+            },
+            checkStatusCommandInterval,
+            CHECK_SHOOTING_IDLE_COUNT
+        )
+
         val captureCallback = object : StartCaptureCallback {
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                if (!isEndCapture) {
+                if (captureStatusMonitor != null) {
                     callback.onStopFailed(exception)
                 }
             }
@@ -143,33 +186,7 @@ class VideoCapture private constructor(private val endpoint: String, options: Op
                 )
             }
 
-            var idleCount = CHECK_SHOOTING_IDLE_COUNT
-            while (!isEndCapture) {
-                delay(CHECK_STATE_INTERVAL)
-                when (getCaptureStatus()) {
-                    null -> {
-                        callOnCaptureFailed(
-                            ThetaRepository.ThetaWebApiException(
-                                ERROR_GET_CAPTURE_STATUS
-                            )
-                        )
-                        break
-                    }
-
-                    CaptureStatus.IDLE -> {
-                        idleCount -= 1
-                        // In the case of SC2, it becomes idle in the middle, so wait multiple times
-                        if (idleCount <= 0) {
-                            break
-                        }
-                    }
-
-                    else -> {
-                        idleCount = CHECK_SHOOTING_IDLE_COUNT
-                    }
-                }
-            }
-            callOnCaptureCompleted(null)
+            captureStatusMonitor?.start()
         }
         return VideoCapturing(endpoint, captureCallback)
     }
@@ -180,6 +197,7 @@ class VideoCapture private constructor(private val endpoint: String, options: Op
      * @property endpoint URL of Theta web API endpoint
      */
     class Builder internal constructor(private val endpoint: String) : Capture.Builder<Builder>() {
+        private var interval: Long? = null
 
         /**
          * Builds an instance of a VideoCapture that has all the combined parameters of the Options that have been added to the Builder.
@@ -209,7 +227,11 @@ class VideoCapture private constructor(private val endpoint: String, options: Op
             } catch (e: Exception) {
                 throw ThetaRepository.NotConnectedException(e.message ?: e.toString())
             }
-            return VideoCapture(endpoint, options)
+            return VideoCapture(
+                endpoint = endpoint,
+                options = options,
+                checkStatusCommandInterval = interval ?: CHECK_COMMAND_STATUS_INTERVAL
+            )
         }
 
         /**
@@ -231,6 +253,11 @@ class VideoCapture private constructor(private val endpoint: String, options: Op
          */
         fun setFileFormat(fileFormat: ThetaRepository.VideoFileFormatEnum): Builder =
             setVideoFileFormat(fileFormat)
+
+        fun setCheckStatusCommandInterval(timeMillis: Long): Builder {
+            this.interval = timeMillis
+            return this
+        }
 
         // TODO: Add set video option property
     }
