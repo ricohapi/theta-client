@@ -14,7 +14,7 @@ import {
   getPhotoCaptureBuilder,
   THETA_EVENT_NAME,
   isInitialized,
-} from 'theta-client-react-native';
+} from './modules/theta-client';
 import {useIsFocused} from '@react-navigation/native';
 import WebView from 'react-native-webview';
 

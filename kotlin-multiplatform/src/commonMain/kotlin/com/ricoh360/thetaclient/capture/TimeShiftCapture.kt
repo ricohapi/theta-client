@@ -48,6 +48,13 @@ class TimeShiftCapture private constructor(
         fun onProgress(completion: Float)
 
         /**
+         * Called when change capture status.
+         *
+         * @param status Capturing status
+         */
+        fun onCapturing(status: CapturingStatusEnum) {}
+
+        /**
          * Called when stopCapture error occurs.
          *
          * @param exception Exception of error occurs
@@ -77,12 +84,30 @@ class TimeShiftCapture private constructor(
      */
     fun startCapture(callback: StartCaptureCallback): TimeShiftCapturing {
         scope.launch {
+            val monitor = CaptureStatusMonitor(
+                endpoint,
+                { newStatus, _ ->
+                    when (newStatus) {
+                        CaptureStatus.SELF_TIMER_COUNTDOWN -> callback.onCapturing(
+                            CapturingStatusEnum.SELF_TIMER_COUNTDOWN
+                        )
+
+                        else -> callback.onCapturing(CapturingStatusEnum.CAPTURING)
+                    }
+                },
+                { error ->
+                    println("CaptureStatusMonitor error: ${error.message}")
+                },
+                checkStatusCommandInterval,
+                1
+            )
             lateinit var startCaptureResponse: StartCaptureResponse
             try {
                 startCaptureResponse = ThetaApi.callStartCaptureCommand(
                     endpoint = endpoint,
                     params = StartCaptureParams(_mode = ShootingMode.TIME_SHIFT_SHOOTING)
                 )
+                monitor.start()
 
                 /*
                  * Note that Theta SC2 for business returns a response different from Theta X like this:
@@ -102,6 +127,7 @@ class TimeShiftCapture private constructor(
                         )
                         callback.onProgress(completion = response.progress?.completion ?: 0f)
                     }
+                    monitor.stop()
 
                     if (response.state == CommandState.DONE) {
                         val fileUrl: String? = when (response.name) {
@@ -131,12 +157,14 @@ class TimeShiftCapture private constructor(
                     }
                 }
             } catch (e: JsonConvertException) {
+                monitor.stop()
                 callback.onCaptureFailed(
                     exception = ThetaRepository.ThetaWebApiException(
                         message = e.message ?: e.toString()
                     )
                 )
             } catch (e: ResponseException) {
+                monitor.stop()
                 if (isCanceledShootingResponse(e.response)) {
                     callback.onCaptureCompleted(fileUrl = null) // canceled
                 } else {
@@ -147,6 +175,7 @@ class TimeShiftCapture private constructor(
                     )
                 }
             } catch (e: Exception) {
+                monitor.stop()
                 callback.onCaptureFailed(
                     exception = ThetaRepository.NotConnectedException(
                         message = e.message ?: e.toString()

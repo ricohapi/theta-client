@@ -5,23 +5,31 @@ import 'package:flutter/services.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 import 'package:theta_client_flutter/utils/convert_utils.dart';
 
-import 'state/theta_state.dart';
 import 'theta_client_flutter_platform_interface.dart';
 
 const notifyIdLivePreview = 10001;
 const notifyIdTimeShiftProgress = 10011;
 const notifyIdTimeShiftStopError = 10012;
-const notifyIdVideoCaptureStopError = 10003;
+const notifyIdTimeShiftCapturing = 10013;
 const notifyIdLimitlessIntervalCaptureStopError = 10004;
+const notifyIdLimitlessIntervalCaptureCapturing = 10005;
 const notifyIdShotCountSpecifiedIntervalCaptureProgress = 10021;
 const notifyIdShotCountSpecifiedIntervalCaptureStopError = 10022;
+const notifyIdShotCountSpecifiedIntervalCaptureCapturing = 10023;
 const notifyIdCompositeIntervalCaptureProgress = 10031;
 const notifyIdCompositeIntervalCaptureStopError = 10032;
+const notifyIdCompositeIntervalCaptureCapturing = 10033;
 const notifyIdMultiBracketCaptureProgress = 10041;
 const notifyIdMultiBracketCaptureStopError = 10042;
+const notifyIdMultiBracketCaptureCapturing = 10043;
 const notifyIdBurstCaptureProgress = 10051;
 const notifyIdBurstCaptureStopError = 10052;
+const notifyIdBurstCaptureCapturing = 10053;
 const notifyIdContinuousCaptureProgress = 10061;
+const notifyIdContinuousCaptureCapturing = 10062;
+const notifyIdPhotoCapturing = 10071;
+const notifyIdVideoCaptureStopError = 10081;
+const notifyIdVideoCaptureCapturing = 10082;
 
 /// An implementation of [ThetaClientFlutterPlatform] that uses method channels.
 class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
@@ -235,14 +243,38 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   }
 
   @override
-  Future<void> buildPhotoCapture(Map<String, dynamic> options) async {
+  Future<void> buildPhotoCapture(Map<String, dynamic> options, int interval) async {
+    final params = ConvertUtils.convertCaptureParams(options);
+    params['_capture_interval'] = interval;
     return methodChannel.invokeMethod<void>(
-        'buildPhotoCapture', ConvertUtils.convertCaptureParams(options));
+        'buildPhotoCapture', params);
   }
 
   @override
-  Future<String?> takePicture() async {
-    return methodChannel.invokeMethod<String>('takePicture');
+  Future<String?> takePicture(
+      void Function(CapturingStatusEnum status)? onCapturing) async {
+    var completer = Completer<String?>();
+    try {
+      enableNotifyEventReceiver();
+      if (onCapturing != null) {
+        addNotify(notifyIdPhotoCapturing, (params) {
+          final strStatus = params?['status'] as String?;
+          if (strStatus != null) {
+            final status = CapturingStatusEnum.getValue(strStatus);
+            if (status != null) {
+              onCapturing(status);
+            }
+          }
+        });
+      }
+      final fileUrl = await methodChannel.invokeMethod<String>('takePicture');
+      removeNotify(notifyIdPhotoCapturing);
+      completer.complete(fileUrl);
+    } catch (e) {
+      removeNotify(notifyIdPhotoCapturing);
+      completer.completeError(e);
+    }
+    return completer.future;
   }
 
   @override
@@ -260,7 +292,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<String?> startTimeShiftCapture(void Function(double)? onProgress,
-      void Function(Exception exception)? onStopFailed) async {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) async {
     var completer = Completer<String?>();
     try {
       enableNotifyEventReceiver();
@@ -280,14 +313,27 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           }
         });
       }
+      if (onCapturing != null) {
+        addNotify(notifyIdTimeShiftCapturing, (params) {
+          final strStatus = params?['status'] as String?;
+          if (strStatus != null) {
+            final status = CapturingStatusEnum.getValue(strStatus);
+            if (status != null) {
+              onCapturing(status);
+            }
+          }
+        });
+      }
       final fileUrl =
           await methodChannel.invokeMethod<String>('startTimeShiftCapture');
       removeNotify(notifyIdTimeShiftProgress);
       removeNotify(notifyIdTimeShiftStopError);
+      removeNotify(notifyIdTimeShiftCapturing);
       completer.complete(fileUrl);
     } catch (e) {
       removeNotify(notifyIdTimeShiftProgress);
       removeNotify(notifyIdTimeShiftStopError);
+      removeNotify(notifyIdTimeShiftCapturing);
       completer.completeError(e);
     }
     return completer.future;
@@ -304,14 +350,17 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   }
 
   @override
-  Future<void> buildVideoCapture(Map<String, dynamic> options) async {
-    return methodChannel.invokeMethod<void>(
-        'buildVideoCapture', ConvertUtils.convertCaptureParams(options));
+  Future<void> buildVideoCapture(
+      Map<String, dynamic> options, int interval) async {
+    final params = ConvertUtils.convertCaptureParams(options);
+    params['_capture_interval'] = interval;
+    return methodChannel.invokeMethod<void>('buildVideoCapture', params);
   }
 
   @override
   Future<String?> startVideoCapture(
-      void Function(Exception exception)? onStopFailed) async {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) async {
     var completer = Completer<String?>();
     try {
       enableNotifyEventReceiver();
@@ -323,12 +372,25 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           }
         });
       }
+      if (onCapturing != null) {
+        addNotify(notifyIdVideoCaptureCapturing, (params) {
+          final strStatus = params?['status'] as String?;
+          if (strStatus != null) {
+            final status = CapturingStatusEnum.getValue(strStatus);
+            if (status != null) {
+              onCapturing(status);
+            }
+          }
+        });
+      }
       final fileUrl =
           await methodChannel.invokeMethod<String>('startVideoCapture');
       removeNotify(notifyIdVideoCaptureStopError);
+      removeNotify(notifyIdVideoCaptureCapturing);
       completer.complete(fileUrl);
     } catch (e) {
       removeNotify(notifyIdVideoCaptureStopError);
+      removeNotify(notifyIdVideoCaptureCapturing);
       completer.completeError(e);
     }
     return completer.future;
@@ -346,15 +408,18 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   }
 
   @override
-  Future<void> buildLimitlessIntervalCapture(
-      Map<String, dynamic> options) async {
-    return methodChannel.invokeMethod<void>('buildLimitlessIntervalCapture',
-        ConvertUtils.convertCaptureParams(options));
+  Future<void> buildLimitlessIntervalCapture(Map<String, dynamic> options,
+      int interval) async {
+    final params = ConvertUtils.convertCaptureParams(options);
+    params['_capture_interval'] = interval;
+    return methodChannel.invokeMethod<void>(
+        'buildLimitlessIntervalCapture', params);
   }
 
   @override
   Future<List<String>?> startLimitlessIntervalCapture(
-      void Function(Exception exception)? onStopFailed) async {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) async {
     var completer = Completer<List<String>?>();
     try {
       enableNotifyEventReceiver();
@@ -366,9 +431,21 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           }
         });
       }
+      if (onCapturing != null) {
+        addNotify(notifyIdLimitlessIntervalCaptureCapturing, (params) {
+          final strStatus = params?['status'] as String?;
+          if (strStatus != null) {
+            final status = CapturingStatusEnum.getValue(strStatus);
+            if (status != null) {
+              onCapturing(status);
+            }
+          }
+        });
+      }
       final fileUrls = await methodChannel
           .invokeMethod<List<dynamic>?>('startLimitlessIntervalCapture');
       removeNotify(notifyIdLimitlessIntervalCaptureStopError);
+      removeNotify(notifyIdLimitlessIntervalCaptureCapturing);
       if (fileUrls == null) {
         completer.complete(null);
       } else {
@@ -376,6 +453,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       }
     } catch (e) {
       removeNotify(notifyIdLimitlessIntervalCaptureStopError);
+      removeNotify(notifyIdLimitlessIntervalCaptureCapturing);
       completer.completeError(e);
     }
     return completer.future;
@@ -405,7 +483,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   @override
   Future<List<String>?> startShotCountSpecifiedIntervalCapture(
       void Function(double)? onProgress,
-      void Function(Exception exception)? onStopFailed) async {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) async {
     var completer = Completer<List<String>?>();
     try {
       enableNotifyEventReceiver();
@@ -425,10 +504,22 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           }
         });
       }
+      if (onCapturing != null) {
+        addNotify(notifyIdShotCountSpecifiedIntervalCaptureCapturing, (params) {
+          final strStatus = params?['status'] as String?;
+          if (strStatus != null) {
+            final status = CapturingStatusEnum.getValue(strStatus);
+            if (status != null) {
+              onCapturing(status);
+            }
+          }
+        });
+      }
       final fileUrls = await methodChannel.invokeMethod<List<dynamic>?>(
           'startShotCountSpecifiedIntervalCapture');
       removeNotify(notifyIdShotCountSpecifiedIntervalCaptureProgress);
       removeNotify(notifyIdShotCountSpecifiedIntervalCaptureStopError);
+      removeNotify(notifyIdShotCountSpecifiedIntervalCaptureCapturing);
       if (fileUrls == null) {
         completer.complete(null);
       } else {
@@ -437,6 +528,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
     } catch (e) {
       removeNotify(notifyIdShotCountSpecifiedIntervalCaptureProgress);
       removeNotify(notifyIdShotCountSpecifiedIntervalCaptureStopError);
+      removeNotify(notifyIdShotCountSpecifiedIntervalCaptureCapturing);
       completer.completeError(e);
     }
     return completer.future;
@@ -466,7 +558,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   @override
   Future<List<String>?> startCompositeIntervalCapture(
       void Function(double)? onProgress,
-      void Function(Exception exception)? onStopFailed) async {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) async {
     var completer = Completer<List<String>?>();
     try {
       enableNotifyEventReceiver();
@@ -486,10 +579,22 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           }
         });
       }
+      if (onCapturing != null) {
+        addNotify(notifyIdCompositeIntervalCaptureCapturing, (params) {
+          final strStatus = params?['status'] as String?;
+          if (strStatus != null) {
+            final status = CapturingStatusEnum.getValue(strStatus);
+            if (status != null) {
+              onCapturing(status);
+            }
+          }
+        });
+      }
       final fileUrls = await methodChannel
           .invokeMethod<List<dynamic>?>('startCompositeIntervalCapture');
       removeNotify(notifyIdCompositeIntervalCaptureProgress);
       removeNotify(notifyIdCompositeIntervalCaptureStopError);
+      removeNotify(notifyIdCompositeIntervalCaptureCapturing);
       if (fileUrls == null) {
         completer.complete(null);
       } else {
@@ -498,6 +603,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
     } catch (e) {
       removeNotify(notifyIdCompositeIntervalCaptureProgress);
       removeNotify(notifyIdCompositeIntervalCaptureStopError);
+      removeNotify(notifyIdCompositeIntervalCaptureCapturing);
       completer.completeError(e);
     }
     return completer.future;
@@ -536,8 +642,10 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   }
 
   @override
-  Future<List<String>?> startBurstCapture(void Function(double)? onProgress,
-      void Function(Exception exception)? onStopFailed) async {
+  Future<List<String>?> startBurstCapture(
+      void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) async {
     var completer = Completer<List<String>?>();
     try {
       enableNotifyEventReceiver();
@@ -557,10 +665,22 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           }
         });
       }
+      if (onCapturing != null) {
+        addNotify(notifyIdBurstCaptureCapturing, (params) {
+          final strStatus = params?['status'] as String?;
+          if (strStatus != null) {
+            final status = CapturingStatusEnum.getValue(strStatus);
+            if (status != null) {
+              onCapturing(status);
+            }
+          }
+        });
+      }
       final fileUrls =
           await methodChannel.invokeMethod<List<dynamic>?>('startBurstCapture');
       removeNotify(notifyIdBurstCaptureProgress);
       removeNotify(notifyIdBurstCaptureStopError);
+      removeNotify(notifyIdBurstCaptureCapturing);
       if (fileUrls == null) {
         completer.complete(null);
       } else {
@@ -569,6 +689,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
     } catch (e) {
       removeNotify(notifyIdBurstCaptureProgress);
       removeNotify(notifyIdBurstCaptureStopError);
+      removeNotify(notifyIdBurstCaptureCapturing);
       completer.completeError(e);
     }
     return completer.future;
@@ -595,7 +716,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   @override
   Future<List<String>?> startMultiBracketCapture(
       void Function(double)? onProgress,
-      void Function(Exception exception)? onStopFailed) async {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) async {
     var completer = Completer<List<String>?>();
     try {
       enableNotifyEventReceiver();
@@ -615,10 +737,22 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           }
         });
       }
+      if (onCapturing != null) {
+        addNotify(notifyIdMultiBracketCaptureCapturing, (params) {
+          final strStatus = params?['status'] as String?;
+          if (strStatus != null) {
+            final status = CapturingStatusEnum.getValue(strStatus);
+            if (status != null) {
+              onCapturing(status);
+            }
+          }
+        });
+      }
       final fileUrls = await methodChannel
           .invokeMethod<List<dynamic>?>('startMultiBracketCapture');
       removeNotify(notifyIdMultiBracketCaptureProgress);
       removeNotify(notifyIdMultiBracketCaptureStopError);
+      removeNotify(notifyIdMultiBracketCaptureCapturing);
       if (fileUrls == null) {
         completer.complete(null);
       } else {
@@ -627,6 +761,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
     } catch (e) {
       removeNotify(notifyIdMultiBracketCaptureProgress);
       removeNotify(notifyIdMultiBracketCaptureStopError);
+      removeNotify(notifyIdMultiBracketCaptureCapturing);
       completer.completeError(e);
     }
     return completer.future;
@@ -652,7 +787,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<List<String>?> startContinuousCapture(
-      void Function(double)? onProgress) async {
+      void Function(double)? onProgress,
+      void Function(CapturingStatusEnum status)? onCapturing) async {
     var completer = Completer<List<String>?>();
     try {
       enableNotifyEventReceiver();
@@ -664,9 +800,21 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           }
         });
       }
+      if (onCapturing != null) {
+        addNotify(notifyIdContinuousCaptureCapturing, (params) {
+          final strStatus = params?['status'] as String?;
+          if (strStatus != null) {
+            final status = CapturingStatusEnum.getValue(strStatus);
+            if (status != null) {
+              onCapturing(status);
+            }
+          }
+        });
+      }
       final fileUrls = await methodChannel
           .invokeMethod<List<dynamic>?>('startContinuousCapture');
       removeNotify(notifyIdContinuousCaptureProgress);
+      removeNotify(notifyIdContinuousCaptureCapturing);
       if (fileUrls == null) {
         completer.complete(null);
       } else {
@@ -674,6 +822,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       }
     } catch (e) {
       removeNotify(notifyIdContinuousCaptureProgress);
+      removeNotify(notifyIdContinuousCaptureCapturing);
       completer.completeError(e);
     }
     return completer.future;

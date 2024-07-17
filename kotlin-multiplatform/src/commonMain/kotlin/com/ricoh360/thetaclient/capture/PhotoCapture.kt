@@ -17,9 +17,14 @@ import kotlinx.coroutines.*
 class PhotoCapture private constructor(
     private val endpoint: String,
     options: Options,
+    private val checkStatusCommandInterval: Long
     ) : PhotoCaptureBase(options) {
 
     private val scope = CoroutineScope(Dispatchers.Default)
+
+    fun getCheckStatusCommandInterval(): Long {
+        return checkStatusCommandInterval
+    }
 
     /**
      * Get image processing filter.
@@ -51,11 +56,11 @@ class PhotoCapture private constructor(
         fun onSuccess(fileUrl: String?)
 
         /**
-         * Called when state "inProgress".
+         * Called when change capture status.
          *
-         * @param completion Progress rate of command executed
+         * @param status Capturing status
          */
-        fun onProgress(completion: Float) {}
+        fun onCapturing(status: CapturingStatusEnum) {}
 
         /**
          * Called when error occurs.
@@ -73,21 +78,41 @@ class PhotoCapture private constructor(
     fun takePicture(callback: TakePictureCallback) {
         scope.launch {
             lateinit var takePictureResponse: TakePictureResponse
+            val monitor = CaptureStatusMonitor(
+                endpoint,
+                { newStatus, _ ->
+                    when (newStatus) {
+                        CaptureStatus.SELF_TIMER_COUNTDOWN -> callback.onCapturing(
+                            CapturingStatusEnum.SELF_TIMER_COUNTDOWN
+                        )
+
+                        else -> callback.onCapturing(CapturingStatusEnum.CAPTURING)
+                    }
+                },
+                { error ->
+                    println("CaptureStatusMonitor error: ${error.message}")
+                },
+                checkStatusCommandInterval,
+                1
+            )
             try {
                 takePictureResponse = ThetaApi.callTakePictureCommand(endpoint = endpoint)
+                monitor.start()
                 val id = takePictureResponse.id
                 while (takePictureResponse.state == CommandState.IN_PROGRESS) {
-                    delay(timeMillis = CHECK_COMMAND_STATUS_INTERVAL)
+                    delay(timeMillis = checkStatusCommandInterval)
                     takePictureResponse = ThetaApi.callStatusApi(
                         endpoint = endpoint,
                         params = StatusApiParams(id = id)
                     ) as TakePictureResponse
-                    callback.onProgress(completion = takePictureResponse.progress?.completion ?: 0f)
                 }
+                monitor.stop()
             } catch (e: JsonConvertException) {
+                monitor.stop()
                 callback.onError(exception = ThetaRepository.ThetaWebApiException(message = e.message ?: e.toString()))
                 return@launch
             } catch (e: ResponseException) {
+                monitor.stop()
                 if (isCanceledShootingResponse(e.response)) {
                     callback.onSuccess(fileUrl = null) // canceled
                 } else {
@@ -95,6 +120,7 @@ class PhotoCapture private constructor(
                 }
                 return@launch
             } catch (e: Exception) {
+                monitor.stop()
                 callback.onError(exception = ThetaRepository.NotConnectedException(message = e.message ?: e.toString()))
                 return@launch
             }
@@ -123,6 +149,8 @@ class PhotoCapture private constructor(
         private val endpoint: String,
         private val cameraModel: ThetaRepository.ThetaModel? = null
     ) : PhotoCaptureBase.Builder<Builder>() {
+        private var interval: Long? = null
+
         internal fun isPreset(): Boolean {
             return options._preset != null && (cameraModel == ThetaRepository.ThetaModel.THETA_SC2 || cameraModel == ThetaRepository.ThetaModel.THETA_SC2_B)
         }
@@ -166,7 +194,16 @@ class PhotoCapture private constructor(
             } catch (e: Exception) {
                 throw ThetaRepository.NotConnectedException(e.message ?: e.toString())
             }
-            return PhotoCapture(endpoint, options)
+            return PhotoCapture(
+                endpoint = endpoint,
+                options = options,
+                checkStatusCommandInterval = interval ?: CHECK_COMMAND_STATUS_INTERVAL,
+            )
+        }
+
+        fun setCheckStatusCommandInterval(timeMillis: Long): Builder {
+            this.interval = timeMillis
+            return this
         }
 
         /**

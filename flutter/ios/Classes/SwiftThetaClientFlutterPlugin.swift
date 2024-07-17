@@ -5,18 +5,27 @@ import UIKit
 let EVENT_NOTIFY = "theta_client_flutter/theta_notify"
 let NOTIFY_LIVE_PREVIEW = 10001
 let NOTIFY_TIME_SHIFT_PROGRESS = 10011
-let NOTIFY_TIME_SHIFT_STOP_ERROR = 10011
-let NOTIFY_VIDEO_CAPTURE_STOP_ERROR = 10003
+let NOTIFY_TIME_SHIFT_STOP_ERROR = 10012
+let NOTIFY_TIME_SHIFT_CAPTURING = 10013
 let NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR = 10004
+let NOTIFY_LIMITLESS_INTERVAL_CAPTURE_CAPTURING = 10005
 let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_PROGRESS = 10021
 let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_STOP_ERROR = 10022
+let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_CAPTURING = 10023
 let NOTIFY_COMPOSITE_INTERVAL_PROGRESS = 10031
 let NOTIFY_COMPOSITE_INTERVAL_STOP_ERROR = 10032
+let NOTIFY_COMPOSITE_INTERVAL_CAPTURING = 10033
 let NOTIFY_MULTI_BRACKET_INTERVAL_PROGRESS = 10041
 let NOTIFY_MULTI_BRACKET_INTERVAL_STOP_ERROR = 10042
+let NOTIFY_MULTI_BRACKET_INTERVAL_CAPTURING = 10043
 let NOTIFY_BURST_PROGRESS = 10051
 let NOTIFY_BURST_STOP_ERROR = 10052
+let NOTIFY_BURST_CAPTURING = 10053
 let NOTIFY_CONTINUOUS_PROGRESS = 10061
+let NOTIFY_CONTINUOUS_CAPTURING = 10062
+let NOTIFY_PHOTO_CAPTURING = 10071
+let NOTIFY_VIDEO_CAPTURE_STOP_ERROR = 10081
+let NOTIFY_VIDEO_CAPTURE_CAPTURING = 10082
 
 public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     public func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -75,7 +84,9 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
 
     func sendNotifyEvent(id: Int, params: [String: Any]?) {
         if let eventSink = eventSink {
-            eventSink(toNotify(id: id, params: params))
+            DispatchQueue.main.async {
+                eventSink(toNotify(id: id, params: params))
+            }
         }
     }
 
@@ -547,29 +558,33 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
 
         class Callback: PhotoCaptureTakePictureCallback {
             let callback: (_ url: String?, _ error: Error?) -> Void
-            init(_ callback: @escaping (_ url: String?, _ error: Error?) -> Void) {
+            weak var plugin: SwiftThetaClientFlutterPlugin?
+            init(_ callback: @escaping (_ url: String?, _ error: Error?) -> Void, plugin: SwiftThetaClientFlutterPlugin) {
                 self.callback = callback
+                self.plugin = plugin
             }
 
             func onSuccess(fileUrl: String?) {
                 callback(fileUrl, nil)
             }
 
-            func onProgress(completion _: Float) {}
+            func onCapturing(status: CapturingStatusEnum) {
+                plugin?.sendNotifyEvent(id: NOTIFY_PHOTO_CAPTURING, params: toCapturingNotifyParam(value: status))
+            }
 
             func onError(exception: ThetaRepository.ThetaRepositoryException) {
                 callback(nil, exception.asError())
             }
         }
         photoCapture!.takePicture(
-            callback: Callback { fileUrl, error in
+            callback: Callback({ fileUrl, error in
                 if let thetaError = error {
                     let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
                     result(flutterError)
                 } else {
                     result(fileUrl)
                 }
-            }
+            }, plugin: self)
         )
     }
 
@@ -629,7 +644,11 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             func onProgress(completion: Float) {
                 plugin?.sendNotifyEvent(id: NOTIFY_TIME_SHIFT_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
             }
-
+            
+            func onCapturing(status: CapturingStatusEnum) {
+                plugin?.sendNotifyEvent(id: NOTIFY_TIME_SHIFT_CAPTURING, params: toCapturingNotifyParam(value: status))
+            }
+            
             func onCaptureCompleted(fileUrl: String?) {
                 callback(fileUrl, nil)
             }
@@ -715,6 +734,10 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 let error = exception.asError()
                 plugin?.sendNotifyEvent(id: NOTIFY_VIDEO_CAPTURE_STOP_ERROR, params: toMessageNotifyParam(message: error.localizedDescription))
             }
+            
+            func onCapturing(status: CapturingStatusEnum) {
+                plugin?.sendNotifyEvent(id: NOTIFY_VIDEO_CAPTURE_CAPTURING, params: toCapturingNotifyParam(value: status))
+            }
         }
         videoCapturing = videoCapture!.startCapture(
             callback: Callback({ fileUrl, error in
@@ -796,6 +819,10 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             func onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
                 let error = exception.asError()
                 plugin?.sendNotifyEvent(id: NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR, params: toMessageNotifyParam(message: error.localizedDescription))
+            }
+
+            func onCapturing(status: CapturingStatusEnum) {
+                plugin?.sendNotifyEvent(id: NOTIFY_LIMITLESS_INTERVAL_CAPTURE_CAPTURING, params: toCapturingNotifyParam(value: status))
             }
         }
         limitlessIntervalCapturing = limitlessIntervalCapture.startCapture(
@@ -880,7 +907,11 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             func onProgress(completion: Float) {
                 plugin?.sendNotifyEvent(id: NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
             }
-
+            
+            func onCapturing(status: CapturingStatusEnum) {
+                plugin?.sendNotifyEvent(id: NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_CAPTURING, params: toCapturingNotifyParam(value: status))
+            }
+            
             func onCaptureCompleted(fileUrls: [String]?) {
                 callback(fileUrls, nil)
             }
@@ -968,7 +999,11 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             func onProgress(completion: Float) {
                 plugin?.sendNotifyEvent(id: NOTIFY_COMPOSITE_INTERVAL_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
             }
-
+            
+            func onCapturing(status: CapturingStatusEnum) {
+                plugin?.sendNotifyEvent(id: NOTIFY_COMPOSITE_INTERVAL_CAPTURING, params: toCapturingNotifyParam(value: status))
+            }
+            
             func onCaptureCompleted(fileUrls: [String]?) {
                 callback(fileUrls, nil)
             }
@@ -1082,6 +1117,10 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 plugin?.sendNotifyEvent(id: NOTIFY_BURST_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
             }
 
+            func onCapturing(status: CapturingStatusEnum) {
+                plugin?.sendNotifyEvent(id: NOTIFY_BURST_CAPTURING, params: toCapturingNotifyParam(value: status))
+            }
+
             func onCaptureCompleted(fileUrls: [String]?) {
                 callback(fileUrls, nil)
             }
@@ -1170,6 +1209,10 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 plugin?.sendNotifyEvent(id: NOTIFY_MULTI_BRACKET_INTERVAL_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
             }
 
+            func onCapturing(status: CapturingStatusEnum) {
+                plugin?.sendNotifyEvent(id: NOTIFY_MULTI_BRACKET_INTERVAL_CAPTURING, params: toCapturingNotifyParam(value: status))
+            }
+
             func onCaptureCompleted(fileUrls: [String]?) {
                 callback(fileUrls, nil)
             }
@@ -1251,7 +1294,11 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             func onProgress(completion: Float) {
                 plugin?.sendNotifyEvent(id: NOTIFY_CONTINUOUS_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
             }
-
+            
+            func onCapturing(status: CapturingStatusEnum) {
+                plugin?.sendNotifyEvent(id: NOTIFY_CONTINUOUS_CAPTURING, params: toCapturingNotifyParam(value: status))
+            }
+            
             func onCaptureCompleted(fileUrls: [String]?) {
                 callback(fileUrls, nil)
             }

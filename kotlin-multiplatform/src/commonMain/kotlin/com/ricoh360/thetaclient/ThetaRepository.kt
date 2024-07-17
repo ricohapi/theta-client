@@ -6593,6 +6593,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     enum class CaptureStatusEnum {
         /**
+         * Undefined value
+         */
+        UNKNOWN,
+
+        /**
          * Capture status
          * Performing continuously shoot
          */
@@ -6638,7 +6643,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Capture status
          * Waiting for retrospective video...
          */
-        RETROSPECTIVE_IMAGE_RECORDING;
+        RETROSPECTIVE_IMAGE_RECORDING,
+
+        /**
+         * Capture status
+         * Performing burst shooting
+         */
+        BURST_SHOOTING,
+        ;
 
         companion object {
             /**
@@ -6649,6 +6661,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              */
             internal fun get(captureStatus: CaptureStatus): CaptureStatusEnum {
                 return when (captureStatus) {
+                    CaptureStatus.UNKNOWN -> UNKNOWN
                     CaptureStatus.SHOOTING -> SHOOTING
                     CaptureStatus.IDLE -> IDLE
                     CaptureStatus.SELF_TIMER_COUNTDOWN -> SELF_TIMER_COUNTDOWN
@@ -6657,6 +6670,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                     CaptureStatus.TIME_SHIFT_SHOOTING -> TIME_SHIFT_SHOOTING
                     CaptureStatus.CONTINUOUS_SHOOTING -> CONTINUOUS_SHOOTING
                     CaptureStatus.RETROSPECTIVE_IMAGE_RECORDING -> RETROSPECTIVE_IMAGE_RECORDING
+                    CaptureStatus.BURST_SHOOTING -> BURST_SHOOTING
                 }
             }
         }

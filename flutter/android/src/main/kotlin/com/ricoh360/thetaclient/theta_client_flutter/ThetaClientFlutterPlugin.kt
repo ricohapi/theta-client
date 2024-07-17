@@ -65,17 +65,26 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         const val notifyIdLivePreview = 10001
         const val notifyIdTimeShiftProgress = 10011
         const val notifyIdTimeShiftStopError = 10012
-        const val notifyIdVideoCaptureStopError = 10003
+        const val notifyIdTimeShiftCapturing = 10013
         const val notifyIdLimitlessIntervalCaptureStopError = 10004
+        const val notifyIdLimitlessIntervalCaptureCapturing = 10005
         const val notifyIdShotCountSpecifiedIntervalCaptureProgress = 10021
         const val notifyIdShotCountSpecifiedIntervalCaptureStopError = 10022
+        const val notifyIdShotCountSpecifiedIntervalCaptureCapturing = 10023
         const val notifyIdCompositeIntervalCaptureProgress = 10031;
         const val notifyIdCompositeIntervalCaptureStopError = 10032;
+        const val notifyIdCompositeIntervalCaptureCapturing = 10033;
         const val notifyIdMultiBracketCaptureProgress = 10041;
         const val notifyIdMultiBracketCaptureStopError = 10042;
+        const val notifyIdMultiBracketCaptureCapturing = 10043;
         const val notifyIdBurstCaptureProgress = 10051;
         const val notifyIdBurstCaptureStopError = 10052;
+        const val notifyIdBurstCaptureCapturing = 10053
         const val notifyIdContinuousCaptureProgress = 10061;
+        const val notifyIdContinuousCaptureCapturing = 10062;
+        const val notifyIdPhotoCapturing = 10071
+        const val notifyIdVideoCaptureStopError = 10081
+        const val notifyIdVideoCaptureCapturing = 10082
     }
 
     fun sendNotifyEvent(id: Int, params: Map<String, Any?>) {
@@ -666,6 +675,13 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 result.success(fileUrl)
             }
 
+            override fun onCapturing(status: CapturingStatusEnum) {
+                sendNotifyEvent(
+                    notifyIdPhotoCapturing,
+                    toCapturingNotifyParam(status)
+                )
+            }
+
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
                 result.error(exception.javaClass.simpleName, exception.message, null)
             }
@@ -723,6 +739,13 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     sendNotifyEvent(
                         notifyIdTimeShiftProgress,
                         toCaptureProgressNotifyParam(completion)
+                    )
+                }
+
+                override fun onCapturing(status: CapturingStatusEnum) {
+                    sendNotifyEvent(
+                        notifyIdTimeShiftCapturing,
+                        toCapturingNotifyParam(status)
                     )
                 }
 
@@ -789,6 +812,13 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     toMessageNotifyParam(exception.message ?: exception.toString())
                 )
             }
+
+            override fun onCapturing(status: CapturingStatusEnum) {
+                sendNotifyEvent(
+                    notifyIdVideoCaptureCapturing,
+                    toCapturingNotifyParam(status)
+                )
+            }
         })
     }
 
@@ -847,6 +877,13 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 sendNotifyEvent(
                     notifyIdLimitlessIntervalCaptureStopError,
                     toMessageNotifyParam(exception.message ?: exception.toString())
+                )
+            }
+
+            override fun onCapturing(status: CapturingStatusEnum) {
+                sendNotifyEvent(
+                    notifyIdLimitlessIntervalCaptureCapturing,
+                    toCapturingNotifyParam(status)
                 )
             }
         })
@@ -914,6 +951,13 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     sendNotifyEvent(
                         notifyIdShotCountSpecifiedIntervalCaptureProgress,
                         toCaptureProgressNotifyParam(completion)
+                    )
+                }
+
+                override fun onCapturing(status: CapturingStatusEnum) {
+                    sendNotifyEvent(
+                        notifyIdShotCountSpecifiedIntervalCaptureCapturing,
+                        toCapturingNotifyParam(status)
                     )
                 }
 
@@ -987,6 +1031,13 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     sendNotifyEvent(
                         notifyIdCompositeIntervalCaptureProgress,
                         toCaptureProgressNotifyParam(completion)
+                    )
+                }
+
+                override fun onCapturing(status: CapturingStatusEnum) {
+                    sendNotifyEvent(
+                        notifyIdCompositeIntervalCaptureCapturing,
+                        toCapturingNotifyParam(status)
                     )
                 }
 
@@ -1097,6 +1148,13 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 )
             }
 
+            override fun onCapturing(status: CapturingStatusEnum) {
+                sendNotifyEvent(
+                    notifyIdBurstCaptureCapturing,
+                    toCapturingNotifyParam(status)
+                )
+            }
+
             override fun onCaptureCompleted(fileUrls: List<String>?) {
                 result.success(fileUrls)
             }
@@ -1168,6 +1226,13 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     )
                 }
 
+                override fun onCapturing(status: CapturingStatusEnum) {
+                    sendNotifyEvent(
+                        notifyIdMultiBracketCaptureCapturing,
+                        toCapturingNotifyParam(status)
+                    )
+                }
+
                 override fun onCaptureCompleted(fileUrls: List<String>?) {
                     result.success(fileUrls)
                 }
@@ -1228,6 +1293,13 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 sendNotifyEvent(
                     notifyIdContinuousCaptureProgress,
                     toCaptureProgressNotifyParam(completion)
+                )
+            }
+
+            override fun onCapturing(status: CapturingStatusEnum) {
+                sendNotifyEvent(
+                    notifyIdContinuousCaptureCapturing,
+                    toCapturingNotifyParam(status)
                 )
             }
 

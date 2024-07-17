@@ -9,7 +9,7 @@ import {
   getThetaState,
   listAccessPoints,
   listPlugins,
-} from 'theta-client-react-native';
+} from '../../modules/theta-client';
 import Button from '../../components/ui/button';
 import { ItemListView, type Item } from '../../components/ui/item-list';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';

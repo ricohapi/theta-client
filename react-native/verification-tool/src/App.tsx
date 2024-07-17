@@ -23,7 +23,7 @@ import CompositeIntervalCaptureScreen from './screen/composite-interval-capture-
 import BurstCaptureScreen from './screen/burst-capture-screen/burst-capture-screen';
 import ContinuousCaptureScreen from './screen/continuous-capture-screen/continuous-capture-screen';
 import MultiBracketCaptureScreen from './screen/multi-bracket-capture-screen/multi-bracket-capture-screen';
-import type { FileInfo } from 'theta-client-react-native';
+import type { FileInfo } from './modules/theta-client';
 
 export type RootStackParamList = {
   menu: undefined;

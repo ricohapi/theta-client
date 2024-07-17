@@ -6,6 +6,23 @@ import com.ricoh360.thetaclient.transferred.UnknownResponse
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 
+/**
+ * Capturing status
+ *
+ * Identify the self-timer during capture
+ */
+enum class CapturingStatusEnum {
+    /**
+     * Capture in progress
+     */
+    CAPTURING,
+
+    /**
+     * Self-timer in progress
+     */
+    SELF_TIMER_COUNTDOWN,
+}
+
 /*
  * Capture
  *
@@ -29,8 +46,8 @@ abstract class Capture internal constructor(internal val options: Options) {
      *
      * @return Video file format
      */
-    internal fun getVideoFileFormat() = options.fileFormat?.let { it ->
-        ThetaRepository.FileFormatEnum.get(it).let {
+    internal fun getVideoFileFormat() = options.fileFormat?.let { fileFormat ->
+        ThetaRepository.FileFormatEnum.get(fileFormat).let {
             ThetaRepository.VideoFileFormatEnum.get(it)
         }
     }

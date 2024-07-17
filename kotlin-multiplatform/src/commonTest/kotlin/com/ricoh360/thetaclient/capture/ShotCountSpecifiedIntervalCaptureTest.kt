@@ -3,6 +3,7 @@ package com.ricoh360.thetaclient.capture
 import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
+import com.ricoh360.thetaclient.ThetaApi
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.CaptureMode
 import io.ktor.client.network.sockets.ConnectTimeoutException
@@ -47,26 +48,39 @@ class ShotCountSpecifiedIntervalCaptureTest {
             Resource("src/commonTest/resources/ShotCountSpecifiedIntervalCapture/start_capture_progress.json").readText(),
             Resource("src/commonTest/resources/ShotCountSpecifiedIntervalCapture/start_capture_done.json").readText(),
         )
+        val stateSelfTimer =
+            Resource("src/commonTest/resources/MultiBracketCapture/state_self_timer.json").readText()
+        val stateShooting =
+            Resource("src/commonTest/resources/MultiBracketCapture/state_shooting.json").readText()
         var counter = 0
+        var onSelfTimer = false
         MockApiClient.onRequest = { request ->
-            val index = counter++
+            val index = counter
+            val response = if (request.url.encodedPath != "/osc/state") {
+                counter++
+                // check request
+                when (index) {
+                    0 -> {
+                        CheckRequest.checkSetOptions(
+                            request = request,
+                            captureMode = CaptureMode.IMAGE
+                        )
+                    }
 
-            // check request
-            when (index) {
-                0 -> {
-                    CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
-                }
+                    1 -> {
+                        CheckRequest.checkSetOptions(request = request, captureNumber = 2)
+                    }
 
-                1 -> {
-                    CheckRequest.checkSetOptions(request = request, captureNumber = 2)
+                    2 -> {
+                        CheckRequest.checkCommandName(request, "camera.startCapture")
+                    }
                 }
-
-                2 -> {
-                    CheckRequest.checkCommandName(request, "camera.startCapture")
-                }
+                responseArray[index]
+            } else {
+                if (onSelfTimer) stateShooting else stateSelfTimer
             }
 
-            ByteReadChannel(responseArray[index])
+            ByteReadChannel(response)
         }
         val deferred = CompletableDeferred<Unit>()
 
@@ -76,8 +90,10 @@ class ShotCountSpecifiedIntervalCaptureTest {
         val capture = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(2)
             .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var files: List<String>? = null
+        var onCapturingCounter = 0
         capture.startCapture(object : ShotCountSpecifiedIntervalCapture.StartCaptureCallback {
             override fun onCaptureCompleted(fileUrls: List<String>?) {
                 files = fileUrls
@@ -86,6 +102,17 @@ class ShotCountSpecifiedIntervalCaptureTest {
 
             override fun onProgress(completion: Float) {
                 assertTrue(completion >= 0f, "onProgress")
+            }
+
+            override fun onCapturing(status: CapturingStatusEnum) {
+                onCapturingCounter++
+                if (onSelfTimer) {
+                    assertEquals(status, CapturingStatusEnum.CAPTURING)
+                } else {
+                    onSelfTimer = true
+                    assertEquals(onCapturingCounter, 1)
+                    assertEquals(status, CapturingStatusEnum.SELF_TIMER_COUNTDOWN)
+                }
             }
 
             override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
@@ -109,6 +136,8 @@ class ShotCountSpecifiedIntervalCaptureTest {
             files?.firstOrNull()?.startsWith("http://") ?: false,
             "start capture interval shooting with the shot count specified"
         )
+        assertTrue(onSelfTimer, "onCapturing self timer")
+        assertTrue(onCapturingCounter >= 2, "onCapturing count")
     }
 
     /**
@@ -121,7 +150,7 @@ class ShotCountSpecifiedIntervalCaptureTest {
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
             Resource("src/commonTest/resources/ShotCountSpecifiedIntervalCapture/start_capture_progress.json").readText(),
-            Resource("src/commonTest/resources/ShotCountSpecifiedIntervalCapture/state_shooting.json").readText(),
+            Resource("src/commonTest/resources/ShotCountSpecifiedIntervalCapture/state_self_timer.json").readText(),
             Resource("src/commonTest/resources/ShotCountSpecifiedIntervalCapture/state_shooting.json").readText(),
             Resource("src/commonTest/resources/ShotCountSpecifiedIntervalCapture/state_idle.json").readText(),
         )
@@ -139,6 +168,7 @@ class ShotCountSpecifiedIntervalCaptureTest {
         val capture = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(2)
             .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var files: List<String>? = null
         capture.startCapture(object : ShotCountSpecifiedIntervalCapture.StartCaptureCallback {
@@ -149,6 +179,12 @@ class ShotCountSpecifiedIntervalCaptureTest {
 
             override fun onProgress(completion: Float) {
                 assertTrue(false, "onProgress")
+            }
+            override fun onCapturing(status: CapturingStatusEnum) {
+                when (counter) {
+                    4 -> assertEquals(status, CapturingStatusEnum.SELF_TIMER_COUNTDOWN)
+                    else -> assertEquals(status, CapturingStatusEnum.CAPTURING)
+                }
             }
 
             override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
@@ -202,6 +238,7 @@ class ShotCountSpecifiedIntervalCaptureTest {
         val capture = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(2)
             .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var files: List<String>? = null
         capture.startCapture(object : ShotCountSpecifiedIntervalCapture.StartCaptureCallback {
@@ -245,17 +282,21 @@ class ShotCountSpecifiedIntervalCaptureTest {
         // setup
         var isStop = false
         MockApiClient.onRequest = { request ->
-            val textBody = request.body as TextContent
-            val path = if (textBody.text.contains("camera.stopCapture")) {
-                isStop = true
-                "src/commonTest/resources/ShotCountSpecifiedIntervalCapture/stop_capture_done.json"
-            } else if (textBody.text.contains("camera.setOptions")) {
-                "src/commonTest/resources/setOptions/set_options_done.json"
+            val path = if (request.url.encodedPath == "/osc/state") {
+                "src/commonTest/resources/MultiBracketCapture/state_shooting.json"
             } else {
-                if (isStop)
-                    "src/commonTest/resources/ShotCountSpecifiedIntervalCapture/start_capture_done_empty.json"
-                else
-                    "src/commonTest/resources/ShotCountSpecifiedIntervalCapture/start_capture_progress.json"
+                val textBody = request.body as TextContent
+                if (textBody.text.contains("camera.stopCapture")) {
+                    isStop = true
+                    "src/commonTest/resources/ShotCountSpecifiedIntervalCapture/stop_capture_done.json"
+                } else if (textBody.text.contains("camera.setOptions")) {
+                    "src/commonTest/resources/setOptions/set_options_done.json"
+                } else {
+                    if (isStop)
+                        "src/commonTest/resources/ShotCountSpecifiedIntervalCapture/start_capture_done_empty.json"
+                    else
+                        "src/commonTest/resources/ShotCountSpecifiedIntervalCapture/start_capture_progress.json"
+                }
             }
 
             ByteReadChannel(Resource(path).readText())
@@ -269,6 +310,7 @@ class ShotCountSpecifiedIntervalCaptureTest {
         val capture = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(10)
             .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var files: List<String>? = null
         val deferredStart = CompletableDeferred<Unit>()
@@ -331,10 +373,16 @@ class ShotCountSpecifiedIntervalCaptureTest {
             Resource("src/commonTest/resources/ShotCountSpecifiedIntervalCapture/start_capture_progress.json").readText(),
             Resource("src/commonTest/resources/ShotCountSpecifiedIntervalCapture/start_capture_cancel.json").readText(),
         )
+        val stateShooting =
+            Resource("src/commonTest/resources/MultiBracketCapture/state_shooting.json").readText()
         var counter = 0
-        MockApiClient.onRequest = { _ ->
-            val index = counter++
-            ByteReadChannel(responseArray[index])
+        MockApiClient.onRequest = { request ->
+            val response = if (request.url.encodedPath != "/osc/state") {
+                responseArray[counter++]
+            } else {
+                stateShooting
+            }
+            ByteReadChannel(response)
         }
         val deferred = CompletableDeferred<Unit>()
 
@@ -344,6 +392,7 @@ class ShotCountSpecifiedIntervalCaptureTest {
         val capture = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(2)
             .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var files: List<String>? = listOf()
         capture.startCapture(object : ShotCountSpecifiedIntervalCapture.StartCaptureCallback {
@@ -403,6 +452,7 @@ class ShotCountSpecifiedIntervalCaptureTest {
         val capture = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(2)
             .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var files: List<String>? = listOf()
         capture.startCapture(object : ShotCountSpecifiedIntervalCapture.StartCaptureCallback {
@@ -619,7 +669,9 @@ class ShotCountSpecifiedIntervalCaptureTest {
 
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
-        val capture = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(2).build()
+        val capture = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(2)
+            .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         // execute error response
         var deferred = CompletableDeferred<Unit>()
@@ -711,6 +763,7 @@ class ShotCountSpecifiedIntervalCaptureTest {
         val thetaRepository = ThetaRepository(endpoint)
         val capture = thetaRepository.getShotCountSpecifiedIntervalCaptureBuilder(2)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         // execute status error and json response
         var deferred = CompletableDeferred<Unit>()

@@ -3,6 +3,7 @@ package com.ricoh360.thetaclient.capture
 import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
+import com.ricoh360.thetaclient.ThetaApi
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.BurstBracketStep
 import com.ricoh360.thetaclient.transferred.BurstCaptureNum
@@ -39,8 +40,10 @@ class BurstCaptureTest {
     )
     private val thetaBurstCaptureNum = ThetaRepository.BurstCaptureNumEnum.BURST_CAPTURE_NUM_1
     private val thetaBurstBracketStep = ThetaRepository.BurstBracketStepEnum.BRACKET_STEP_0_0
-    private val thetaBurstCompensation = ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_0_0
-    private val thetaBurstMaxExposureTime = ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_1
+    private val thetaBurstCompensation =
+        ThetaRepository.BurstCompensationEnum.BURST_COMPENSATION_0_0
+    private val thetaBurstMaxExposureTime =
+        ThetaRepository.BurstMaxExposureTimeEnum.MAX_EXPOSURE_TIME_1
     private val thetaBurstEnableIsoControl = ThetaRepository.BurstEnableIsoControlEnum.OFF
     private val thetaBurstOrder = ThetaRepository.BurstOrderEnum.BURST_BRACKET_ORDER_0
     private val endpoint = "http://192.168.1.1:80/"
@@ -69,26 +72,40 @@ class BurstCaptureTest {
             Resource("src/commonTest/resources/BurstCapture/start_capture_progress.json").readText(),
             Resource("src/commonTest/resources/BurstCapture/start_capture_done.json").readText(),
         )
+        val stateShootingResponse =
+            Resource("src/commonTest/resources/BurstCapture/state_burst_shooting.json").readText()
         var counter = 0
         MockApiClient.onRequest = { request ->
-            val index = counter++
-
+            val index = counter
+            if (request.url.encodedPath != "/osc/state") {
+                counter++
+            }
             // check request
-            when (index) {
+            val response = when (index) {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
+                    responseArray[index]
                 }
 
                 1 -> {
                     CheckRequest.checkSetOptions(request = request, burstOption = burstOption)
+                    responseArray[index]
                 }
 
                 2 -> {
                     CheckRequest.checkCommandName(request, "camera.startCapture")
+                    responseArray[index]
+                }
+
+                else -> {
+                    when (request.url.encodedPath) {
+                        "/osc/state" -> stateShootingResponse
+                        else -> responseArray[index]
+                    }
                 }
             }
 
-            ByteReadChannel(responseArray[index])
+            ByteReadChannel(response)
         }
         val deferred = CompletableDeferred<Unit>()
 
@@ -105,6 +122,7 @@ class BurstCaptureTest {
         )
             .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var files: List<String>? = null
         capture.startCapture(object : BurstCapture.StartCaptureCallback {
@@ -148,23 +166,40 @@ class BurstCaptureTest {
         // setup
         var isStop = false
         val deferredStart = CompletableDeferred<Unit>()
-        MockApiClient.onRequest = { request ->
-            val textBody = request.body as TextContent
-            val path = if (textBody.text.contains("camera.stopCapture")) {
-                isStop = true
-                "src/commonTest/resources/BurstCapture/stop_capture_done.json"
-            } else if (textBody.text.contains("camera.setOptions")) {
-                "src/commonTest/resources/setOptions/set_options_done.json"
-            } else {
-                if (!deferredStart.isCompleted) {
-                    deferredStart.complete(Unit)
-                }
-                if (isStop)
-                    "src/commonTest/resources/BurstCapture/start_capture_done_empty.json"
-                else
-                    "src/commonTest/resources/BurstCapture/start_capture_progress.json"
-            }
+        val jsonOptionDone = "src/commonTest/resources/setOptions/set_options_done.json"
+        val jsonProgress = "src/commonTest/resources/BurstCapture/start_capture_progress.json"
+        val jsonStopCapture = "src/commonTest/resources/BurstCapture/stop_capture_done.json"
+        val jsonCaptureEmpty = "src/commonTest/resources/BurstCapture/start_capture_done_empty.json"
+        val jsonStateShooting = "src/commonTest/resources/BurstCapture/state_burst_shooting.json"
 
+        MockApiClient.onRequest = { request ->
+            val path = when (request.url.encodedPath) {
+                "/osc/state" -> jsonStateShooting
+                "/osc/commands/status" -> {
+                    if (!deferredStart.isCompleted) {
+                        deferredStart.complete(Unit)
+                    }
+                    if (isStop) jsonCaptureEmpty else jsonProgress
+                }
+
+                else -> {
+                    assertEquals(request.url.encodedPath, "/osc/commands/execute")
+                    val textBody = request.body as TextContent
+                    when {
+                        textBody.text.contains("camera.setOptions") -> jsonOptionDone
+                        textBody.text.contains("camera.startCapture") -> jsonProgress
+                        textBody.text.contains("camera.stopCapture") -> {
+                            isStop = true
+                            jsonStopCapture
+                        }
+
+                        else -> {
+                            assertTrue(false)
+                            ""
+                        }
+                    }
+                }
+            }
             ByteReadChannel(Resource(path).readText())
         }
 
@@ -183,7 +218,7 @@ class BurstCaptureTest {
         )
             .setCheckStatusCommandInterval(100)
             .build()
-
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
         var files: List<String>? = listOf()
         val capturing =
             capture.startCapture(object : BurstCapture.StartCaptureCallback {
@@ -240,10 +275,18 @@ class BurstCaptureTest {
             Resource("src/commonTest/resources/BurstCapture/start_capture_progress.json").readText(),
             Resource("src/commonTest/resources/BurstCapture/start_capture_cancel.json").readText(),
         )
+        val stateShootingResponse =
+            Resource("src/commonTest/resources/BurstCapture/state_burst_shooting.json").readText()
         var counter = 0
-        MockApiClient.onRequest = { _ ->
-            val index = counter++
-            ByteReadChannel(responseArray[index])
+        MockApiClient.onRequest = { request ->
+            val response = when (request.url.encodedPath) {
+                "/osc/state" -> stateShootingResponse
+                else -> {
+                    val index = counter++
+                    responseArray[index]
+                }
+            }
+            ByteReadChannel(response)
         }
         val deferred = CompletableDeferred<Unit>()
 
@@ -260,6 +303,7 @@ class BurstCaptureTest {
         )
             .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var files: List<String>? = null
         capture.startCapture(object : BurstCapture.StartCaptureCallback {
@@ -371,7 +415,11 @@ class BurstCaptureTest {
             .build()
 
         // check result
-        assertEquals(capture.getBurstMode(), ThetaRepository.BurstModeEnum.OFF, "set option _burstMode OFF")
+        assertEquals(
+            capture.getBurstMode(),
+            ThetaRepository.BurstModeEnum.OFF,
+            "set option _burstMode OFF"
+        )
     }
 
     /**
@@ -524,6 +572,7 @@ class BurstCaptureTest {
             thetaBurstEnableIsoControl,
             thetaBurstOrder
         ).build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         // execute error response
         var deferred = CompletableDeferred<Unit>()
@@ -622,6 +671,7 @@ class BurstCaptureTest {
             thetaBurstOrder
         )
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         // execute status error and json response
         var deferred = CompletableDeferred<Unit>()
@@ -923,5 +973,112 @@ class BurstCaptureTest {
                 deferred.await()
             }
         }
+    }
+
+    /**
+     * Capturing status.
+     */
+    @Test
+    fun capturingStatusTest() = runTest {
+        // setup
+        val optionResponse =
+            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText()
+        val progressResponse =
+            Resource("src/commonTest/resources/BurstCapture/start_capture_progress.json").readText()
+        val stateShootingResponse =
+            Resource("src/commonTest/resources/BurstCapture/state_burst_shooting.json").readText()
+        val stateSelfTimerResponse =
+            Resource("src/commonTest/resources/BurstCapture/state_self_timer.json").readText()
+        val cancelResponse =
+            Resource("src/commonTest/resources/BurstCapture/start_capture_cancel.json").readText()
+        var counter = 0
+        var stateCounter = 0
+        MockApiClient.onRequest = { request ->
+            val index = counter++
+            val response = when (index) {
+                0, 1 -> {
+                    optionResponse
+                }
+
+                3 -> progressResponse
+                else -> {
+                    when (request.url.encodedPath) {
+                        "/osc/state" -> {
+                            stateCounter++
+                            when {
+                                stateCounter < 2 -> stateSelfTimerResponse
+                                else -> stateShootingResponse
+                            }
+                        }
+
+                        else -> {
+                            when {
+                                stateCounter < 3 -> progressResponse
+                                else -> cancelResponse
+                            }
+                        }
+                    }
+                }
+            }
+            ByteReadChannel(response)
+        }
+        val deferred = CompletableDeferred<Unit>()
+
+        // execute
+        val thetaRepository = ThetaRepository(endpoint)
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
+        val capture = thetaRepository.getBurstCaptureBuilder(
+            thetaBurstCaptureNum,
+            thetaBurstBracketStep,
+            thetaBurstCompensation,
+            thetaBurstMaxExposureTime,
+            thetaBurstEnableIsoControl,
+            thetaBurstOrder
+        )
+            .setCheckStatusCommandInterval(100)
+            .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
+
+        var files: List<String>? = null
+        capture.startCapture(object : BurstCapture.StartCaptureCallback {
+            override fun onCaptureCompleted(fileUrls: List<String>?) {
+                files = fileUrls
+                deferred.complete(Unit)
+            }
+
+            override fun onProgress(completion: Float) {
+                assertTrue(completion >= 0f, "onProgress")
+            }
+
+            override fun onCapturing(status: CapturingStatusEnum) {
+                when {
+                    stateCounter < 2 -> assertEquals(
+                        status,
+                        CapturingStatusEnum.SELF_TIMER_COUNTDOWN
+                    )
+
+                    else -> assertEquals(status, CapturingStatusEnum.CAPTURING)
+                }
+            }
+
+            override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                assertTrue(false, "error start burst shooting")
+                deferred.complete(Unit)
+            }
+
+            override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                assertTrue(false, "onStopFailed")
+            }
+        })
+
+        runBlocking {
+            withTimeout(30_000) {
+                deferred.await()
+            }
+        }
+
+        // check result
+        assertTrue(stateCounter > 2, "capTureStatus count")
+        assertNull(files, "shooting is canceled")
     }
 }

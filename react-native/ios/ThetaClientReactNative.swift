@@ -65,22 +65,31 @@ class ThetaClientReactNative: RCTEventEmitter {
     static let EVENT_FRAME = "ThetaFrameEvent"
     static let EVENT_NOTIFY = "ThetaNotify"
 
+    static let NOTIFY_PHOTO_CAPTURING = "PHOTO-CAPTURING"
     static let NOTIFY_TIMESHIFT_PROGRESS = "TIME-SHIFT-PROGRESS"
     static let NOTIFY_TIMESHIFT_STOP_ERROR = "TIME-SHIFT-STOP-ERROR"
+    static let NOTIFY_TIMESHIFT_CAPTURING = "TIME-SHIFT-CAPTURING"
     static let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_PROGRESS = "SHOT-COUNT-SPECIFIED-INTERVAL-PROGRESS"
     static let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_STOP_ERROR = "SHOT-COUNT-SPECIFIED-INTERVAL-STOP-ERROR"
+    static let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURING = "SHOT-COUNT-SPECIFIED-INTERVAL-CAPTURING"
     static let NOTIFY_VIDEO_CAPTURE_STOP_ERROR = "VIDEO-CAPTURE-STOP-ERROR"
+    static let NOTIFY_VIDEO_CAPTURE_CAPTURING = "VIDEO-CAPTURE-CAPTURING"
     static let NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR = "LIMITLESS-INTERVAL-CAPTURE-STOP-ERROR"
+    static let NOTIFY_LIMITLESS_INTERVAL_CAPTURE_CAPTURING = "LIMITLESS-INTERVAL-CAPTURE-CAPTURING"
     static let NOTIFY_COMPOSITE_INTERVAL_PROGRESS = "COMPOSITE-INTERVAL-PROGRESS"
     static let NOTIFY_COMPOSITE_INTERVAL_STOP_ERROR = "COMPOSITE-INTERVAL-STOP-ERROR"
+    static let NOTIFY_COMPOSITE_INTERVAL_CAPTURING = "COMPOSITE-INTERVAL-CAPTURING"
     static let NOTIFY_BURST_PROGRESS = "BURST-PROGRESS"
     static let NOTIFY_BURST_STOP_ERROR = "BURST-STOP-ERROR"
+    static let NOTIFY_BURST_CAPTURING = "BURST-CAPTURING"
     static let NOTIFY_MULTI_BRACKET_PROGRESS = "MULTI-BRACKET-PROGRESS"
     static let NOTIFY_MULTI_BRACKET_STOP_ERROR = "MULTI-BRACKET-STOP-ERROR"
+    static let NOTIFY_MULTI_BRACKET_CAPTURING = "MULTI-BRACKET-CAPTURING"
     static let NOTIFY_CONTINUOUS_PROGRESS = "CONTINUOUS-PROGRESS"
+    static let NOTIFY_CONTINUOUS_CAPTURING = "CONTINUOUS-CAPTURING"
     static let NOTIFY_EVENT_WEBSOCKET_EVENT = "EVENT-WEBSOCKET-EVENT"
     static let NOTIFY_EVENT_WEBSOCKET_CLOSE = "EVENT-WEBSOCKET-CLOSE"
-    
+
     @objc
     override func supportedEvents() -> [String]! {
         return [ThetaClientReactNative.EVENT_FRAME, ThetaClientReactNative.EVENT_NOTIFY]
@@ -556,15 +565,28 @@ class ThetaClientReactNative: RCTEventEmitter {
 
         class Callback: PhotoCaptureTakePictureCallback {
             let callback: (_ url: String?, _ error: Error?) -> Void
-            init(_ callback: @escaping (_ url: String?, _ error: Error?) -> Void) {
+            weak var client: ThetaClientReactNative?
+            init(
+                _ callback: @escaping (_ url: String?, _ error: Error?) -> Void,
+                client: ThetaClientReactNative
+            ) {
                 self.callback = callback
+                self.client = client
             }
 
             func onSuccess(fileUrl: String?) {
                 callback(fileUrl, nil)
             }
 
-            func onProgress(completion _: Float) {}
+            func onCapturing(status: CapturingStatusEnum) {
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_PHOTO_CAPTURING,
+                        params: toCapturingNotifyParam(value: status)
+                    )
+                )
+            }
 
             func onError(exception: ThetaRepository.ThetaRepositoryException) {
                 callback(nil, exception.asError())
@@ -572,14 +594,15 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
 
         photoCapture.takePicture(
-            callback: Callback { url, error in
+            callback: Callback({ url, error in
                 if let error {
                     reject(ERROR_CODE_ERROR, error.localizedDescription, error)
                 } else {
                     self.photoCapture = nil
                     resolve(url)
                 }
-            })
+            }, client: self)
+        )
     }
 
     @objc(getTimeShiftCaptureBuilder:withRejecter:)
@@ -676,7 +699,17 @@ class ThetaClientReactNative: RCTEventEmitter {
                     )
                 )
             }
-
+            
+            func onCapturing(status: CapturingStatusEnum) {
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_TIMESHIFT_CAPTURING,
+                        params: toCapturingNotifyParam(value: status)
+                    )
+                )
+            }
+            
             func onCaptureCompleted(fileUrl: String?) {
                 callback(fileUrl, nil)
             }
@@ -795,6 +828,16 @@ class ThetaClientReactNative: RCTEventEmitter {
                     body: toNotify(
                         name: ThetaClientReactNative.NOTIFY_VIDEO_CAPTURE_STOP_ERROR,
                         params: toMessageNotifyParam(value: error.localizedDescription)
+                    )
+                )
+            }
+            
+            func onCapturing(status: CapturingStatusEnum) {
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_VIDEO_CAPTURE_CAPTURING,
+                        params: toCapturingNotifyParam(value: status)
                     )
                 )
             }
@@ -918,6 +961,16 @@ class ThetaClientReactNative: RCTEventEmitter {
                     )
                 )
             }
+            
+            func onCapturing(status: CapturingStatusEnum) {
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_LIMITLESS_INTERVAL_CAPTURE_CAPTURING,
+                        params: toCapturingNotifyParam(value: status)
+                    )
+                )
+            }
         }
 
         limitlessIntervalCapturing = limitlessIntervalCapture.startCapture(
@@ -1034,7 +1087,17 @@ class ThetaClientReactNative: RCTEventEmitter {
                     )
                 )
             }
-
+            
+            func onCapturing(status: CapturingStatusEnum) {
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURING,
+                        params: toCapturingNotifyParam(value: status)
+                    )
+                )
+            }
+            
             func onCaptureCompleted(fileUrls: [String]?) {
                 callback(fileUrls, nil)
             }
@@ -1161,6 +1224,16 @@ class ThetaClientReactNative: RCTEventEmitter {
                     body: toNotify(
                         name: ThetaClientReactNative.NOTIFY_COMPOSITE_INTERVAL_PROGRESS,
                         params: toCaptureProgressNotifyParam(value: completion)
+                    )
+                )
+            }
+
+            func onCapturing(status: CapturingStatusEnum) {
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_COMPOSITE_INTERVAL_CAPTURING,
+                        params: toCapturingNotifyParam(value: status)
                     )
                 )
             }
@@ -1319,6 +1392,16 @@ class ThetaClientReactNative: RCTEventEmitter {
                 )
             }
 
+            func onCapturing(status: CapturingStatusEnum) {
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_BURST_CAPTURING,
+                        params: toCapturingNotifyParam(value: status)
+                    )
+                )
+            }
+
             func onCaptureCompleted(fileUrls: [String]?) {
                 callback(fileUrls, nil)
             }
@@ -1449,7 +1532,17 @@ class ThetaClientReactNative: RCTEventEmitter {
                     )
                 )
             }
-
+            
+            func onCapturing(status: CapturingStatusEnum) {
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_MULTI_BRACKET_CAPTURING,
+                        params: toCapturingNotifyParam(value: status)
+                    )
+                )
+            }
+            
             func onCaptureCompleted(fileUrls: [String]?) {
                 callback(fileUrls, nil)
             }
@@ -1580,7 +1673,17 @@ class ThetaClientReactNative: RCTEventEmitter {
                     )
                 )
             }
-
+            
+            func onCapturing(status: CapturingStatusEnum) {
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_CONTINUOUS_CAPTURING,
+                        params: toCapturingNotifyParam(value: status)
+                    )
+                )
+            }
+            
             func onCaptureCompleted(fileUrls: [String]?) {
                 callback(fileUrls, nil)
             }

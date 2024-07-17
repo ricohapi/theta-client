@@ -69,6 +69,13 @@ class MultiBracketCapture private constructor(
         fun onProgress(completion: Float)
 
         /**
+         * Called when change capture status.
+         *
+         * @param status Capturing status
+         */
+        fun onCapturing(status: CapturingStatusEnum) {}
+
+        /**
          * Called when stopCapture error occurs.
          *
          * @param exception Exception of error occurs
@@ -98,9 +105,27 @@ class MultiBracketCapture private constructor(
      * @param callback calls according to the progress.
      */
     private suspend fun monitorCommandStatus(id: String, callback: StartCaptureCallback) {
+        val monitor = CaptureStatusMonitor(
+            endpoint,
+            onChangeStatus = { newStatus, _ ->
+                when (newStatus) {
+                    CaptureStatus.SELF_TIMER_COUNTDOWN -> callback.onCapturing(
+                        CapturingStatusEnum.SELF_TIMER_COUNTDOWN
+                    )
+
+                    else -> callback.onCapturing(CapturingStatusEnum.CAPTURING)
+                }
+            },
+            onError = { error ->
+                println("CaptureStatusMonitor error: ${error.message}")
+            },
+            checkStatusCommandInterval,
+            1
+        )
         try {
             var response: CommandApiResponse? = null
             var state = CommandState.IN_PROGRESS
+            monitor.start()
             while (state == CommandState.IN_PROGRESS) {
                 delay(timeMillis = checkStatusCommandInterval)
                 response = ThetaApi.callStatusApi(
@@ -110,6 +135,7 @@ class MultiBracketCapture private constructor(
                 callback.onProgress(completion = response.progress?.completion ?: 0f)
                 state = response.state
             }
+            monitor.stop()
 
             if (state == CommandState.DONE) {
                 val captureResponse = response as StartCaptureResponse
@@ -133,12 +159,14 @@ class MultiBracketCapture private constructor(
                 callback.onCaptureCompleted(fileUrls = null) // canceled
             }
         } catch (e: JsonConvertException) {
+            monitor.stop()
             callback.onCaptureFailed(
                 exception = ThetaRepository.ThetaWebApiException(
                     message = e.message ?: e.toString()
                 )
             )
         } catch (e: ResponseException) {
+            monitor.stop()
             try {
                 val error: UnknownResponse = e.response.body()
                 if (error.error?.isCanceledShootingCode() == true) {
@@ -158,6 +186,7 @@ class MultiBracketCapture private constructor(
                 )
             }
         } catch (e: Exception) {
+            monitor.stop()
             callback.onCaptureFailed(
                 exception = ThetaRepository.NotConnectedException(
                     message = e.message ?: e.toString()
@@ -187,11 +216,16 @@ class MultiBracketCapture private constructor(
                         }
                     }
 
+                    CaptureStatus.SELF_TIMER_COUNTDOWN -> callback.onCapturing(
+                        CapturingStatusEnum.SELF_TIMER_COUNTDOWN
+                    )
+
                     CaptureStatus.BRACKET_SHOOTING -> {
                         isCaptured = true
+                        callback.onCapturing(CapturingStatusEnum.CAPTURING)
                     }
 
-                    else -> {}
+                    else -> callback.onCapturing(CapturingStatusEnum.CAPTURING)
                 }
             },
             { e ->
@@ -202,7 +236,7 @@ class MultiBracketCapture private constructor(
                     )
                 )
             },
-            SC2_STATE_CHECK_INTERVAL,
+            checkStatusCommandInterval,
         )
         captureStatusMonitor = monitor
         monitor.start()
@@ -234,7 +268,6 @@ class MultiBracketCapture private constructor(
                     return@launch
                 }
 
-                delay(timeMillis = checkStatusCommandInterval)
                 when (cameraModel) {
                     ThetaRepository.ThetaModel.THETA_SC2, ThetaRepository.ThetaModel.THETA_SC2_B -> {
                         monitorCaptureStatus(callback)
@@ -323,7 +356,10 @@ class MultiBracketCapture private constructor(
                 endpoint = endpoint,
                 cameraModel = cameraModel,
                 options = options,
-                checkStatusCommandInterval = interval ?: CHECK_COMMAND_STATUS_INTERVAL
+                checkStatusCommandInterval = interval ?: when (cameraModel) {
+                    ThetaRepository.ThetaModel.THETA_SC2, ThetaRepository.ThetaModel.THETA_SC2_B -> SC2_STATE_CHECK_INTERVAL
+                    else -> CHECK_COMMAND_STATUS_INTERVAL
+                }
             )
         }
 

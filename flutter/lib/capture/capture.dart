@@ -52,6 +52,31 @@ class Capture {
   Capture(this._options);
 }
 
+/// Capturing status
+enum CapturingStatusEnum {
+  /// Capture in progress
+  capturing('CAPTURING'),
+
+  /// Self-timer in progress
+  selfTimerCountdown('SELF_TIMER_COUNTDOWN'),
+  ;
+
+  final String rawValue;
+
+  const CapturingStatusEnum(this.rawValue);
+
+  @override
+  String toString() {
+    return rawValue;
+  }
+
+  static CapturingStatusEnum? getValue(String rawValue) {
+    return CapturingStatusEnum.values.cast<CapturingStatusEnum?>().firstWhere(
+        (element) => element?.rawValue == rawValue,
+        orElse: () => null);
+  }
+}
+
 /// Common PhotoCapture class
 class PhotoCaptureBase extends Capture {
   PhotoCaptureBase(super.options);
@@ -64,7 +89,13 @@ class PhotoCaptureBase extends Capture {
 
 /// Capture of Photo
 class PhotoCapture extends PhotoCaptureBase {
-  PhotoCapture(super.options);
+  final int _interval;
+
+  PhotoCapture(super.options, this._interval);
+
+  int getCheckStatusCommandInterval() {
+    return _interval;
+  }
 
   /// Get image processing filter.
   FilterEnum? getFilter() {
@@ -78,9 +109,10 @@ class PhotoCapture extends PhotoCaptureBase {
 
   /// Take a picture.
   void takePicture(void Function(String? fileUrl) onSuccess,
-      void Function(Exception exception) onError) {
+      void Function(Exception exception) onError,
+      {void Function(CapturingStatusEnum status)? onCapturing}) {
     ThetaClientFlutterPlatform.instance
-        .takePicture()
+        .takePicture(onCapturing)
         .then((value) => onSuccess(value!))
         .onError((error, stackTrace) => onError(error as Exception));
   }
@@ -105,9 +137,10 @@ class TimeShiftCapture extends Capture {
       void Function(String? fileUrl) onCaptureCompleted,
       void Function(double completion) onProgress,
       void Function(Exception exception) onCaptureFailed,
-      {void Function(Exception exception)? onStopFailed}) {
+      {void Function(Exception exception)? onStopFailed,
+        void Function(CapturingStatusEnum status)? onCapturing}) {
     ThetaClientFlutterPlatform.instance
-        .startTimeShiftCapture(onProgress, onStopFailed)
+        .startTimeShiftCapture(onProgress, onStopFailed, onCapturing)
         .then((value) => onCaptureCompleted(value))
         .onError((error, stackTrace) => onCaptureFailed(error as Exception));
     return TimeShiftCapturing();
@@ -116,7 +149,13 @@ class TimeShiftCapture extends Capture {
 
 /// Capture of Video
 class VideoCapture extends Capture {
-  VideoCapture(super.options);
+  final int _interval;
+
+  VideoCapture(super.options, this._interval);
+
+  int getCheckStatusCommandInterval() {
+    return _interval;
+  }
 
   /// Get maximum recordable time (in seconds) of the camera.
   MaxRecordableTimeEnum? getMaxRecordableTime() {
@@ -131,9 +170,10 @@ class VideoCapture extends Capture {
   /// Starts video capture.
   VideoCapturing startCapture(void Function(String? fileUrl) onCaptureCompleted,
       void Function(Exception exception) onCaptureFailed,
-      {void Function(Exception exception)? onStopFailed}) {
+      {void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing}) {
     ThetaClientFlutterPlatform.instance
-        .startVideoCapture(onStopFailed)
+        .startVideoCapture(onStopFailed, onCapturing)
         .then((value) => onCaptureCompleted(value))
         .onError((error, stackTrace) => onCaptureFailed(error as Exception));
     return VideoCapturing();
@@ -142,7 +182,13 @@ class VideoCapture extends Capture {
 
 /// Capture of limitless interval
 class LimitlessIntervalCapture extends Capture {
-  LimitlessIntervalCapture(super.options);
+  final int _interval;
+
+  LimitlessIntervalCapture(super.options, this._interval);
+
+  int getCheckStatusCommandInterval() {
+    return _interval;
+  }
 
   /// Get shooting interval (sec.) for interval shooting.
   int? getCaptureInterval() =>
@@ -152,9 +198,10 @@ class LimitlessIntervalCapture extends Capture {
   LimitlessIntervalCapturing startCapture(
       void Function(List<String>? fileUrls) onCaptureCompleted,
       void Function(Exception exception) onCaptureFailed,
-      {void Function(Exception exception)? onStopFailed}) {
+      {void Function(Exception exception)? onStopFailed,
+        void Function(CapturingStatusEnum status)? onCapturing}) {
     ThetaClientFlutterPlatform.instance
-        .startLimitlessIntervalCapture(onStopFailed)
+        .startLimitlessIntervalCapture(onStopFailed, onCapturing)
         .then((value) => onCaptureCompleted(value))
         .onError((error, stackTrace) => onCaptureFailed(error as Exception));
     return LimitlessIntervalCapturing();
@@ -183,9 +230,11 @@ class ShotCountSpecifiedIntervalCapture extends Capture {
       void Function(List<String>? fileUrls) onSuccess,
       void Function(double completion) onProgress,
       void Function(Exception exception) onCaptureFailed,
-      {void Function(Exception exception)? onStopFailed}) {
+      {void Function(Exception exception)? onStopFailed,
+        void Function(CapturingStatusEnum status)? onCapturing}) {
     ThetaClientFlutterPlatform.instance
-        .startShotCountSpecifiedIntervalCapture(onProgress, onStopFailed)
+        .startShotCountSpecifiedIntervalCapture(
+        onProgress, onStopFailed, onCapturing)
         .then((value) => onSuccess(value))
         .onError((error, stackTrace) => onCaptureFailed(error as Exception));
     return ShotCountSpecifiedIntervalCapturing();
@@ -215,9 +264,10 @@ class CompositeIntervalCapture extends Capture {
       void Function(List<String>? fileUrls) onSuccess,
       void Function(double completion) onProgress,
       void Function(Exception exception) onCaptureFailed,
-      {void Function(Exception exception)? onStopFailed}) {
+      {void Function(Exception exception)? onStopFailed,
+        void Function(CapturingStatusEnum status)? onCapturing}) {
     ThetaClientFlutterPlatform.instance
-        .startCompositeIntervalCapture(onProgress, onStopFailed)
+        .startCompositeIntervalCapture(onProgress, onStopFailed, onCapturing)
         .then((value) => onSuccess(value))
         .onError((error, stackTrace) => onCaptureFailed(error as Exception));
     return CompositeIntervalCapturing();
@@ -246,9 +296,10 @@ class BurstCapture extends Capture {
       void Function(List<String>? fileUrls) onSuccess,
       void Function(double completion) onProgress,
       void Function(Exception exception) onCaptureFailed,
-      {void Function(Exception exception)? onStopFailed}) {
+      {void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing}) {
     ThetaClientFlutterPlatform.instance
-        .startBurstCapture(onProgress, onStopFailed)
+        .startBurstCapture(onProgress, onStopFailed, onCapturing)
         .then((value) => onSuccess(value))
         .onError((error, stackTrace) => onCaptureFailed(error as Exception));
     return BurstCapturing();
@@ -270,9 +321,10 @@ class MultiBracketCapture extends Capture {
       void Function(List<String>? fileUrls) onSuccess,
       void Function(double completion) onProgress,
       void Function(Exception exception) onCaptureFailed,
-      {void Function(Exception exception)? onStopFailed}) {
+      {void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing}) {
     ThetaClientFlutterPlatform.instance
-        .startMultiBracketCapture(onProgress, onStopFailed)
+        .startMultiBracketCapture(onProgress, onStopFailed, onCapturing)
         .then((value) => onSuccess(value))
         .onError((error, stackTrace) => onCaptureFailed(error as Exception));
     return MultiBracketCapturing();
@@ -303,12 +355,12 @@ class ContinuousCapture extends Capture {
   }
 
   /// Starts continuous shooting
-  void startCapture(
-      void Function(List<String>? fileUrls) onSuccess,
+  void startCapture(void Function(List<String>? fileUrls) onSuccess,
       void Function(double completion) onProgress,
-      void Function(Exception exception) onCaptureFailed) {
+      void Function(Exception exception) onCaptureFailed,
+      {void Function(CapturingStatusEnum status)? onCapturing}) {
     ThetaClientFlutterPlatform.instance
-        .startContinuousCapture(onProgress)
+        .startContinuousCapture(onProgress, onCapturing)
         .then((value) => onSuccess(value))
         .onError((error, stackTrace) => onCaptureFailed(error as Exception));
   }

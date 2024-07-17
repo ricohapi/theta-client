@@ -3,6 +3,7 @@ package com.ricoh360.thetaclient.capture
 import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
+import com.ricoh360.thetaclient.ThetaApi
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.CaptureMode
 import io.ktor.client.network.sockets.*
@@ -12,7 +13,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.test.runTest
 import kotlin.test.*
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class LimitlessIntervalCaptureTest {
     private val endpoint = "http://192.168.1.1:80/"
 
@@ -38,39 +38,51 @@ class LimitlessIntervalCaptureTest {
             Resource("src/commonTest/resources/LimitlessIntervalCapture/start_capture_done.json").readText(),
             Resource("src/commonTest/resources/LimitlessIntervalCapture/stop_capture_done.json").readText()
         )
+        val stateSelfTimer =
+            Resource("src/commonTest/resources/LimitlessIntervalCapture/state_self_timer.json").readText()
+        val stateShooting =
+            Resource("src/commonTest/resources/LimitlessIntervalCapture/state_shooting.json").readText()
+
         val deferredStart = CompletableDeferred<Unit>()
         var counter = 0
+        var stateCounter = 0
         MockApiClient.onRequest = { request ->
             val index = counter++
 
-            var response = ""
             // check request
-            when (index) {
+            val response = when (index) {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
-                    response = responseArray[0]
+                    responseArray[0]
                 }
 
                 1 -> {
                     CheckRequest.checkSetOptions(request = request, captureNumber = 0)
-                    response = responseArray[1]
+                    responseArray[1]
                 }
 
                 2 -> {
                     CheckRequest.checkCommandName(request, "camera.startCapture")
-                    response = responseArray[2]
+                    responseArray[2]
                 }
 
                 else -> {
-                    if (!deferredStart.isCompleted) {
-                        deferredStart.complete(Unit)
-                    }
                     if (CheckRequest.getCommandName(request) == "camera.stopCapture") {
                         CheckRequest.checkCommandName(request, "camera.stopCapture")
-                        response = responseArray[3]
+                        responseArray[3]
                     } else if (request.url.encodedPath == "/osc/state") {
-                        response =
-                            Resource("src/commonTest/resources/LimitlessIntervalCapture/state_shooting.json").readText()
+                        when (stateCounter++) {
+                            0 -> stateSelfTimer
+
+                            else -> {
+                                if (!deferredStart.isCompleted) {
+                                    deferredStart.complete(Unit)
+                                }
+                                stateShooting
+                            }
+                        }
+                    } else {
+                        ""  // Error
                     }
                 }
             }
@@ -82,32 +94,43 @@ class LimitlessIntervalCaptureTest {
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         val capture = thetaRepository.getLimitlessIntervalCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         assertNull(capture.getCaptureInterval(), "set option captureInterval")
 
         var files: List<String>? = null
-        val capturing = capture.startCapture(object : LimitlessIntervalCapture.StartCaptureCallback {
-            override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue(false, "error stop capture")
-                deferred.complete(Unit)
-            }
+        val capturing =
+            capture.startCapture(object : LimitlessIntervalCapture.StartCaptureCallback {
+                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    assertTrue(false, "error stop capture")
+                    deferred.complete(Unit)
+                }
 
-            override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue(false, "error capture limitless interval")
-                deferred.complete(Unit)
-            }
+                override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    assertTrue(false, "error capture limitless interval")
+                    deferred.complete(Unit)
+                }
 
-            override fun onCaptureCompleted(fileUrls: List<String>?) {
-                files = fileUrls
-                deferred.complete(Unit)
-            }
-        })
+                override fun onCaptureCompleted(fileUrls: List<String>?) {
+                    files = fileUrls
+                    deferred.complete(Unit)
+                }
+
+                override fun onCapturing(status: CapturingStatusEnum) {
+                    when (stateCounter) {
+                        1 -> assertEquals(status, CapturingStatusEnum.SELF_TIMER_COUNTDOWN)
+                        else -> assertEquals(status, CapturingStatusEnum.CAPTURING)
+                    }
+                }
+            })
 
         runBlocking {
             withTimeout(5000) {
                 deferredStart.await()
             }
+            delay(100)
         }
         capturing.stopCapture()
 
@@ -116,12 +139,13 @@ class LimitlessIntervalCaptureTest {
                 deferred.await()
             }
         }
-        runBlocking {
-            delay(2000)
-        }
 
         // check result
-        assertTrue(files?.firstOrNull()?.startsWith("http://") ?: false, "start capture limitless interval")
+        assertTrue(
+            files?.firstOrNull()?.startsWith("http://") ?: false,
+            "start capture limitless interval"
+        )
+        assertTrue(stateCounter >= 2, "count onCapturing")
     }
 
     /**
@@ -175,7 +199,10 @@ class LimitlessIntervalCaptureTest {
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
-        val capture = thetaRepository.getLimitlessIntervalCaptureBuilder().build()
+        val capture = thetaRepository.getLimitlessIntervalCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
+            .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         assertNull(capture.getCaptureInterval(), "set option captureInterval")
 
@@ -380,7 +407,10 @@ class LimitlessIntervalCaptureTest {
         }
 
         val thetaRepository = ThetaRepository(endpoint)
-        val capture = thetaRepository.getLimitlessIntervalCaptureBuilder().build()
+        val capture = thetaRepository.getLimitlessIntervalCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
+            .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         // execute error response
         var deferred = CompletableDeferred<Unit>()
@@ -419,7 +449,10 @@ class LimitlessIntervalCaptureTest {
             }
 
             override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                assertTrue(exception.message!!.length >= 0, "capture limitless interval json error response")
+                assertTrue(
+                    exception.message!!.length >= 0,
+                    "capture limitless interval json error response"
+                )
                 deferred.complete(Unit)
             }
 
@@ -461,7 +494,9 @@ class LimitlessIntervalCaptureTest {
         val thetaRepository = ThetaRepository(endpoint)
         val capture = thetaRepository.getLimitlessIntervalCaptureBuilder()
             .setCaptureInterval(100)
+            .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         // execute status error and json response
         val deferred = CompletableDeferred<Unit>()
@@ -517,7 +552,9 @@ class LimitlessIntervalCaptureTest {
         val thetaRepository = ThetaRepository(endpoint)
         val capture = thetaRepository.getLimitlessIntervalCaptureBuilder()
             .setCaptureInterval(100)
+            .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         // execute status error and not json response
         val deferred = CompletableDeferred<Unit>()
@@ -570,7 +607,9 @@ class LimitlessIntervalCaptureTest {
         val thetaRepository = ThetaRepository(endpoint)
         val capture = thetaRepository.getLimitlessIntervalCaptureBuilder()
             .setCaptureInterval(100)
+            .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         // execute timeout exception
         val deferred = CompletableDeferred<Unit>()

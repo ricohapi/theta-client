@@ -1,4 +1,4 @@
-import { CaptureBuilder } from './capture';
+import { CaptureBuilder, CapturingStatusEnum } from './capture';
 import type {
   MaxRecordableTimeEnum,
   VideoFileFormatEnum,
@@ -12,10 +12,17 @@ import {
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 const NOTIFY_NAME = 'VIDEO-CAPTURE-STOP-ERROR';
+const NOTIFY_CAPTURING = 'VIDEO-CAPTURE-CAPTURING';
 
 interface CaptureStopErrorNotify extends BaseNotify {
   params?: {
     message: string;
+  };
+}
+
+interface CapturingNotify extends BaseNotify {
+  params?: {
+    status: CapturingStatusEnum;
   };
 }
 
@@ -31,14 +38,23 @@ export class VideoCapture {
   /**
    * start video capture
    * @param onStopFailed the block for error of stopCapture
+   * @param onCapturing Called when change capture status
    * @return promise of captured file url
    */
   startCapture(
-    onStopFailed?: (error: any) => void
+    onStopFailed?: (error: any) => void,
+    onCapturing?: (status: CapturingStatusEnum) => void
   ): Promise<string | undefined> {
     if (onStopFailed) {
       this.notify.addNotify(NOTIFY_NAME, (event: CaptureStopErrorNotify) => {
         onStopFailed(event.params);
+      });
+    }
+    if (onCapturing) {
+      this.notify.addNotify(NOTIFY_CAPTURING, (event: CapturingNotify) => {
+        if (event.params?.status) {
+          onCapturing(event.params.status);
+        }
       });
     }
     return new Promise<string | undefined>(async (resolve, reject) => {
@@ -51,6 +67,7 @@ export class VideoCapture {
         })
         .finally(() => {
           this.notify.removeNotify(NOTIFY_NAME);
+          this.notify.removeNotify(NOTIFY_CAPTURING);
         });
     });
   }
@@ -67,9 +84,22 @@ export class VideoCapture {
  * VideoCaptureBuilder class
  */
 export class VideoCaptureBuilder extends CaptureBuilder<VideoCaptureBuilder> {
+  interval?: number;
+
   /** construct VideoCaptureBuilder instance */
   constructor() {
     super();
+    this.interval = undefined;
+  }
+
+  /**
+   * set interval of checking continuous shooting status command
+   * @param timeMillis interval
+   * @returns VideoCaptureBuilder
+   */
+  setCheckStatusCommandInterval(timeMillis: number): VideoCaptureBuilder {
+    this.interval = timeMillis;
+    return this;
   }
 
   /**
@@ -99,10 +129,15 @@ export class VideoCaptureBuilder extends CaptureBuilder<VideoCaptureBuilder> {
    * @return promise of VideoCapture instance
    */
   build(): Promise<VideoCapture> {
+    let params = {
+      ...this.options,
+      // Cannot pass negative values in IOS, use objects
+      _capture_interval: this.interval ?? -1,
+    };
     return new Promise<VideoCapture>(async (resolve, reject) => {
       try {
         await ThetaClientReactNative.getVideoCaptureBuilder();
-        await ThetaClientReactNative.buildVideoCapture(this.options);
+        await ThetaClientReactNative.buildVideoCapture(params);
         resolve(new VideoCapture(NotifyController.instance));
       } catch (error) {
         reject(error);

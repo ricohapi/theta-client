@@ -1,0 +1,22 @@
+{
+  "fingerprint": "FIG_0008",
+  "state": {
+    "_apiVersion": 2,
+    "batteryLevel": 0.81,
+    "_batteryState": "disconnect",
+    "_cameraError": [
+      "COMPASS_CALIBRATION"
+    ],
+    "_captureStatus": "shooting",
+    "_capturedPictures": 0,
+    "_compositeShootingElapsedTime": 0,
+    "_function": "selfTimer",
+    "_latestFileUrl": "http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013331.JPG",
+    "_mySettingChanged": false,
+    "_pluginRunning": false,
+    "_pluginWebServer": true,
+    "_recordableTime": 0,
+    "_recordedTime": 0,
+    "storageUri": "http://192.168.1.1/files/150100524436344d4201375fda9dc400/"
+  }
+}

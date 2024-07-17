@@ -9,7 +9,7 @@ import {
   BurstEnableIsoControlEnum,
   BurstMaxExposureTimeEnum,
   BurstOrderEnum,
-} from 'theta-client-react-native';
+} from '../../../modules/theta-client';
 
 export const BurstOptionsEdit: React.FC<OptionEditProps> = ({
   onChange,

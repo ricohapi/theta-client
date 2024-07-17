@@ -79,7 +79,8 @@ void main() {
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       return fileUrls;
     });
-    expect(await platform.startCompositeIntervalCapture(null, null), fileUrls);
+    expect(await platform.startCompositeIntervalCapture(null, null, null),
+        fileUrls);
   });
 
   test('startCompositeIntervalCapture no file', () async {
@@ -88,7 +89,8 @@ void main() {
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       return fileUrls;
     });
-    expect(await platform.startCompositeIntervalCapture(null, null), null);
+    expect(
+        await platform.startCompositeIntervalCapture(null, null, null), null);
   });
 
   test('startCompositeIntervalCapture exception', () async {
@@ -97,7 +99,7 @@ void main() {
       throw Exception('test error');
     });
     try {
-      await platform.startCompositeIntervalCapture(null, null);
+      await platform.startCompositeIntervalCapture(null, null, null);
       expect(true, false, reason: 'not exception');
     } catch (error) {
       expect(error.toString().contains('test error'), true);
@@ -135,7 +137,7 @@ void main() {
     int progressCount = 0;
     var resultCapture = platform.startCompositeIntervalCapture((completion) {
       progressCount++;
-    }, null);
+    }, null, null);
     var result = await resultCapture.timeout(const Duration(seconds: 5));
     expect(result, fileUrls);
     expect(progressCount, 2);
@@ -165,13 +167,45 @@ void main() {
 
     var isOnStopFailed = false;
     var resultCapture =
-        platform.startCompositeIntervalCapture(null, (exception) {
+    platform.startCompositeIntervalCapture(null, (exception) {
       isOnStopFailed = true;
-    });
+    }, null);
     var result = await resultCapture.timeout(const Duration(seconds: 5));
     expect(result, fileUrls);
     expect(platform.notifyList.containsKey(10032), false,
         reason: 'remove notify stop error');
     expect(isOnStopFailed, true);
+  });
+
+  test('call onCapturing', () async {
+    const fileUrls = [
+      'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.MP4'
+    ];
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+      expect(platform.notifyList.containsKey(10033), true,
+          reason: 'add notify capturing status');
+
+      await Future.delayed(const Duration(milliseconds: 1));
+      // native event
+      platform.onNotify({
+        'id': 10033,
+        'params': {
+          'status': 'SELF_TIMER_COUNTDOWN',
+        },
+      });
+      return fileUrls;
+    });
+
+    CapturingStatusEnum? lastStatus;
+    var resultCapture =
+    platform.startCompositeIntervalCapture(null, (exception) {}, (status) {
+      lastStatus = status;
+    });
+    var result = await resultCapture.timeout(const Duration(seconds: 5));
+    expect(result, fileUrls);
+    expect(platform.notifyList.containsKey(10032), false,
+        reason: 'remove notify capturing status');
+    expect(lastStatus, CapturingStatusEnum.selfTimerCountdown);
   });
 }

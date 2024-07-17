@@ -124,6 +124,18 @@ export abstract class CaptureBuilder<T extends CaptureBuilder<T>> {
   }
 }
 
+/** Capturing status */
+export const CapturingStatusEnum = {
+  /** Capture in progress */
+  CAPTURING: 'CAPTURING',
+  /** Self-timer in progress */
+  SELF_TIMER_COUNTDOWN: 'SELF_TIMER_COUNTDOWN',
+} as const;
+
+/** type definition of CapturingStatusEnum */
+export type CapturingStatusEnum =
+  (typeof CapturingStatusEnum)[keyof typeof CapturingStatusEnum];
+
 export class PhotoCaptureBuilderBase<
   T extends PhotoCaptureBuilderBase<T>
 > extends CaptureBuilder<T> {

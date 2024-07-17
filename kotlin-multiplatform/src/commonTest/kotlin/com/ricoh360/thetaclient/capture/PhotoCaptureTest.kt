@@ -3,6 +3,7 @@ package com.ricoh360.thetaclient.capture
 import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
+import com.ricoh360.thetaclient.ThetaApi
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.CaptureMode
 import com.ricoh360.thetaclient.transferred.MediaFileFormat
@@ -11,13 +12,11 @@ import io.ktor.client.network.sockets.*
 import io.ktor.http.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
 import kotlin.test.*
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class PhotoCaptureTest {
     private val endpoint = "http://192.168.1.1:80/"
 
@@ -42,6 +41,8 @@ class PhotoCaptureTest {
             Resource("src/commonTest/resources/PhotoCapture/takepicture_progress.json").readText(),
             Resource("src/commonTest/resources/PhotoCapture/takepicture_done.json").readText()
         )
+        val stateIdleResponse =
+            Resource("src/commonTest/resources/PhotoCapture/state_idle.json").readText()
         val requestPathArray = arrayOf(
             "/osc/commands/execute",
             "/osc/commands/execute",
@@ -49,28 +50,53 @@ class PhotoCaptureTest {
         )
         var counter = 0
         MockApiClient.onRequest = { request ->
-            val index = counter++
-
             // check request
-            assertEquals(request.url.encodedPath, requestPathArray[index], "take picture request")
-            when (index) {
+            val response = when (val index = counter++) {
                 0 -> {
+                    assertEquals(
+                        request.url.encodedPath,
+                        requestPathArray[index],
+                        "take picture request"
+                    )
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
+                    responseArray[index]
                 }
 
                 1 -> {
+                    assertEquals(
+                        request.url.encodedPath,
+                        requestPathArray[index],
+                        "take picture request"
+                    )
                     CheckRequest.checkCommandName(request, "camera.takePicture")
+                    responseArray[index]
+                }
+
+                else -> {
+                    when (request.url.encodedPath) {
+                        "/osc/commands/status" -> {
+                            assertEquals(
+                                request.url.encodedPath,
+                                requestPathArray[2],
+                                "take picture request"
+                            )
+                            responseArray[2]
+                        }
+                        else -> stateIdleResponse
+                    }
                 }
             }
 
-            ByteReadChannel(responseArray[index])
+            ByteReadChannel(response)
         }
         val deferred = CompletableDeferred<Unit>()
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         val photoCapture = thetaRepository.getPhotoCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         assertNull(photoCapture.getFilter(), "set option filter")
         assertNull(photoCapture.getFileFormat(), "set option fileFormat")
@@ -80,6 +106,10 @@ class PhotoCaptureTest {
             override fun onSuccess(fileUrl: String?) {
                 file = fileUrl
                 deferred.complete(Unit)
+            }
+
+            override fun onCapturing(status: CapturingStatusEnum) {
+                assertEquals(status, CapturingStatusEnum.CAPTURING)
             }
 
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
@@ -108,17 +138,32 @@ class PhotoCaptureTest {
             Resource("src/commonTest/resources/PhotoCapture/takepicture_progress.json").readText(),
             Resource("src/commonTest/resources/PhotoCapture/takepicture_cancel.json").readText()
         )
+        val stateIdleResponse =
+            Resource("src/commonTest/resources/PhotoCapture/state_idle.json").readText()
         var counter = 0
-        MockApiClient.onRequest = { _ ->
-            val index = counter++
-            ByteReadChannel(responseArray[index])
+        MockApiClient.onRequest = { request ->
+            val response = when (val index = counter++) {
+                0, 1 -> {
+                    responseArray[index]
+                }
+
+                else -> {
+                    when (request.url.encodedPath) {
+                        "/osc/commands/status" -> responseArray[2]
+                        else -> stateIdleResponse
+                    }
+                }
+            }
+            ByteReadChannel(response)
         }
         val deferred = CompletableDeferred<Unit>()
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         val photoCapture = thetaRepository.getPhotoCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var file: String? = ""
         photoCapture.takePicture(object : PhotoCapture.TakePictureCallback {
@@ -153,19 +198,35 @@ class PhotoCaptureTest {
             Resource("src/commonTest/resources/PhotoCapture/takepicture_progress.json").readText(),
             Resource("src/commonTest/resources/PhotoCapture/takepicture_cancel.json").readText()
         )
+        val stateIdleResponse =
+            Resource("src/commonTest/resources/PhotoCapture/state_idle.json").readText()
         var counter = 0
-        MockApiClient.onRequest = { _ ->
+        MockApiClient.onRequest = { request ->
             val index = counter++
+            val response = when (index) {
+                0, 1 -> {
+                    responseArray[index]
+                }
+
+                else -> {
+                    when (request.url.encodedPath) {
+                        "/osc/commands/status" -> responseArray[2]
+                        else -> stateIdleResponse
+                    }
+                }
+            }
 
             MockApiClient.status = if (index == 2) HttpStatusCode.Forbidden else HttpStatusCode.OK
-            ByteReadChannel(responseArray[index])
+            ByteReadChannel(response)
         }
         val deferred = CompletableDeferred<Unit>()
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         val photoCapture = thetaRepository.getPhotoCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var file: String? = ""
         photoCapture.takePicture(object : PhotoCapture.TakePictureCallback {
@@ -210,40 +271,74 @@ class PhotoCaptureTest {
             "/osc/commands/execute",
             "/osc/commands/status"
         )
+        val stateIdleResponse =
+            Resource("src/commonTest/resources/PhotoCapture/state_idle.json").readText()
         var counter = 0
         MockApiClient.onRequest = { request ->
-            val index = counter++
-
             // check request
-            assertEquals(request.url.encodedPath, requestPathArray[index], "take picture request")
-            when (index) {
+            val response = when (val index = counter++) {
                 0 -> {
+                    assertEquals(
+                        request.url.encodedPath,
+                        requestPathArray[index],
+                        "take picture request"
+                    )
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
+                    responseArray[index]
                 }
 
                 1 -> {
+                    assertEquals(
+                        request.url.encodedPath,
+                        requestPathArray[index],
+                        "take picture request"
+                    )
                     CheckRequest.checkSetOptions(
                         request = request,
                         filter = filter.filter,
                         fileFormat = fileFormat.fileFormat.toMediaFileFormat()
                     )
+                    responseArray[index]
                 }
 
                 2 -> {
+                    assertEquals(
+                        request.url.encodedPath,
+                        requestPathArray[index],
+                        "take picture request"
+                    )
                     CheckRequest.checkCommandName(request, "camera.takePicture")
+                    responseArray[index]
+                }
+
+                else -> {
+                    when (request.url.encodedPath) {
+                        "/osc/commands/status" -> {
+                            assertEquals(
+                                request.url.encodedPath,
+                                requestPathArray[3],
+                                "take picture request"
+                            )
+                            responseArray[3]
+                        }
+
+                        else -> stateIdleResponse
+                    }
                 }
             }
 
-            ByteReadChannel(responseArray[index])
+            ByteReadChannel(response)
         }
         val deferred = CompletableDeferred<Unit>()
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         val photoCapture = thetaRepository.getPhotoCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
             .setFilter(filter)
             .setFileFormat(fileFormat)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         assertEquals(photoCapture.getFilter(), filter, "set option filter")
         assertEquals(photoCapture.getFileFormat(), fileFormat, "set option filter")
@@ -277,7 +372,7 @@ class PhotoCaptureTest {
     @Test
     fun settingFilterTest() = runTest {
         // setup
-        val filterList = ThetaRepository.FilterEnum.values()
+        val filterList = ThetaRepository.FilterEnum.entries
 
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
@@ -396,7 +491,7 @@ class PhotoCaptureTest {
     @Test
     fun settingApertureTest() = runTest {
         // setup
-        val valueList = ThetaRepository.ApertureEnum.values()
+        val valueList = ThetaRepository.ApertureEnum.entries
 
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
@@ -506,7 +601,7 @@ class PhotoCaptureTest {
     @Test
     fun settingExposureCompensationTest() = runTest {
         // setup
-        val valueList = ThetaRepository.ExposureCompensationEnum.values()
+        val valueList = ThetaRepository.ExposureCompensationEnum.entries
 
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
@@ -542,6 +637,7 @@ class PhotoCaptureTest {
             val photoCapture = thetaRepository.getPhotoCaptureBuilder()
                 .setExposureCompensation(it)
                 .build()
+            ThetaApi.lastSetTimeConsumingOptionTime = 0
 
             // check result
             assertEquals(
@@ -561,7 +657,7 @@ class PhotoCaptureTest {
     @Test
     fun settingExposureDelayTest() = runTest {
         // setup
-        val valueList = ThetaRepository.ExposureDelayEnum.values()
+        val valueList = ThetaRepository.ExposureDelayEnum.entries
 
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
@@ -616,7 +712,7 @@ class PhotoCaptureTest {
     @Test
     fun settingExposureProgramTest() = runTest {
         // setup
-        val valueList = ThetaRepository.ExposureProgramEnum.values()
+        val valueList = ThetaRepository.ExposureProgramEnum.entries
 
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
@@ -730,7 +826,7 @@ class PhotoCaptureTest {
     @Test
     fun settingGpsTagRecordingTest() = runTest {
         // setup
-        val valueList = ThetaRepository.GpsTagRecordingEnum.values()
+        val valueList = ThetaRepository.GpsTagRecordingEnum.entries
 
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
@@ -785,7 +881,7 @@ class PhotoCaptureTest {
     @Test
     fun settingIsoTest() = runTest {
         // setup
-        val valueList = ThetaRepository.IsoEnum.values()
+        val valueList = ThetaRepository.IsoEnum.entries
 
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
@@ -840,7 +936,7 @@ class PhotoCaptureTest {
     @Test
     fun settingIsoAutoHighLimitTest() = runTest {
         // setup
-        val valueList = ThetaRepository.IsoAutoHighLimitEnum.values()
+        val valueList = ThetaRepository.IsoAutoHighLimitEnum.entries
 
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
@@ -895,7 +991,7 @@ class PhotoCaptureTest {
     @Test
     fun settingWhiteBalanceTest() = runTest {
         // setup
-        val valueList = ThetaRepository.WhiteBalanceEnum.values()
+        val valueList = ThetaRepository.WhiteBalanceEnum.entries
 
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
@@ -950,7 +1046,7 @@ class PhotoCaptureTest {
     @Test
     fun settingPresetTest() = runTest {
         // setup
-        val valueList = ThetaRepository.PresetEnum.values()
+        val valueList = ThetaRepository.PresetEnum.entries
 
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
@@ -1151,17 +1247,29 @@ class PhotoCaptureTest {
             Resource("src/commonTest/resources/PhotoCapture/takepicture_error.json").readText(), // takePicture status error
             "Not json" // json error
         )
+        val stateIdleResponse =
+            Resource("src/commonTest/resources/PhotoCapture/state_idle.json").readText()
         var counter = 0
 
-        MockApiClient.onRequest = { _ ->
-            val index = counter++
-            ByteReadChannel(responseArray[index])
+        MockApiClient.onRequest = { request ->
+            val response = when (request.url.encodedPath) {
+                "/osc/state" -> stateIdleResponse
+
+                else -> {
+                    val index = counter++
+                    responseArray[index]
+                }
+            }
+
+            ByteReadChannel(response)
         }
 
         // execute
         val thetaRepository = ThetaRepository(endpoint)
         val photoCapture = thetaRepository.getPhotoCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         // execute takePicture error response
         var deferred = CompletableDeferred<Unit>()
@@ -1255,7 +1363,9 @@ class PhotoCaptureTest {
 
         val thetaRepository = ThetaRepository(endpoint)
         val photoCapture = thetaRepository.getPhotoCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         // execute status error and json response
         var deferred = CompletableDeferred<Unit>()
@@ -1316,5 +1426,100 @@ class PhotoCaptureTest {
                 deferred.await()
             }
         }
+    }
+
+    /**
+     * Capturing status.
+     */
+    @Test
+    fun capturingStatusTest() = runTest {
+        // setup
+        val optionResponse =
+            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText()
+        val progressResponse =
+            Resource("src/commonTest/resources/PhotoCapture/takepicture_progress.json").readText()
+        val doneResponse =
+            Resource("src/commonTest/resources/PhotoCapture/takepicture_done.json").readText()
+        val stateIdleResponse =
+            Resource("src/commonTest/resources/PhotoCapture/state_idle.json").readText()
+        val stateSelfTimerResponse =
+            Resource("src/commonTest/resources/PhotoCapture/state_self_timer.json").readText()
+        var counter = 0
+        var statusCount = 0
+        MockApiClient.onRequest = { request ->
+            val response = when (counter++) {
+                0 -> {
+                    optionResponse
+                }
+
+                1 -> {
+                    progressResponse
+                }
+
+                else -> {
+                    when (request.url.encodedPath) {
+                        "/osc/state" -> {
+                            statusCount += 1
+                            when (statusCount) {
+                                1 -> stateSelfTimerResponse
+                                else -> stateIdleResponse
+                            }
+                        }
+
+                        else -> {
+                            if (statusCount > 1) {
+                                doneResponse
+                            } else {
+                                progressResponse
+                            }
+                        }
+                    }
+                }
+            }
+
+            ByteReadChannel(response)
+        }
+        val deferred = CompletableDeferred<Unit>()
+
+        // execute
+        val thetaRepository = ThetaRepository(endpoint)
+        val photoCapture = thetaRepository.getPhotoCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
+            .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
+
+        assertNull(photoCapture.getFilter(), "set option filter")
+        assertNull(photoCapture.getFileFormat(), "set option fileFormat")
+
+        var file: String? = null
+        var onCapturingCount = 0
+        photoCapture.takePicture(object : PhotoCapture.TakePictureCallback {
+            override fun onSuccess(fileUrl: String?) {
+                file = fileUrl
+                deferred.complete(Unit)
+            }
+
+            override fun onCapturing(status: CapturingStatusEnum) {
+                when (onCapturingCount) {
+                    0 -> assertEquals(status, CapturingStatusEnum.SELF_TIMER_COUNTDOWN)
+                    else -> assertEquals(status, CapturingStatusEnum.CAPTURING)
+                }
+                onCapturingCount += 1
+            }
+
+            override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
+                assertTrue(false, "error take picture")
+                deferred.complete(Unit)
+            }
+        })
+        runBlocking {
+            withTimeout(10000) {
+                deferred.await()
+            }
+        }
+
+        // check result
+        assertTrue(file?.startsWith("http://") ?: false, "take picture")
+        assertEquals(onCapturingCount, 2)
     }
 }

@@ -537,6 +537,13 @@ class ThetaClientReactNativeModule(
         photoCapture = null
       }
 
+      override fun onCapturing(status: CapturingStatusEnum) {
+        super.onCapturing(status)
+        sendNotifyEvent(
+          toNotify(NOTIFY_PHOTO_CAPTURING, toCapturingNotifyParam(status = status))
+        )
+      }
+
       override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
         promise.reject(exception)
         photoCapture = null
@@ -615,6 +622,13 @@ class ThetaClientReactNativeModule(
       override fun onProgress(completion: Float) {
         sendNotifyEvent(
           toNotify(NOTIFY_TIMESHIFT_PROGRESS, toCaptureProgressNotifyParam(value = completion))
+        )
+      }
+
+      override fun onCapturing(status: CapturingStatusEnum) {
+        super.onCapturing(status)
+        sendNotifyEvent(
+          toNotify(NOTIFY_TIMESHIFT_CAPTURING, toCapturingNotifyParam(status = status))
         )
       }
 
@@ -728,6 +742,13 @@ class ThetaClientReactNativeModule(
           )
         )
       }
+
+      override fun onCapturing(status: CapturingStatusEnum) {
+        super.onCapturing(status)
+        sendNotifyEvent(
+          toNotify(NOTIFY_VIDEO_CAPTURE_CAPTURING, toCapturingNotifyParam(status = status))
+        )
+      }
     }
     videoCapturing = videoCapture?.startCapture(StartCaptureCallback())
   }
@@ -830,6 +851,16 @@ class ThetaClientReactNativeModule(
           )
         )
       }
+
+      override fun onCapturing(status: CapturingStatusEnum) {
+        super.onCapturing(status)
+        sendNotifyEvent(
+          toNotify(
+            NOTIFY_LIMITLESS_INTERVAL_CAPTURE_CAPTURING,
+            toCapturingNotifyParam(status = status)
+          )
+        )
+      }
     }
     limitlessIntervalCapturing = limitlessIntervalCapture?.startCapture(StartCaptureCallback())
   }
@@ -923,6 +954,15 @@ class ThetaClientReactNativeModule(
           toNotify(
             NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_PROGRESS,
             toCaptureProgressNotifyParam(value = completion)
+          )
+        )
+      }
+
+      override fun onCapturing(status: CapturingStatusEnum) {
+        sendNotifyEvent(
+          toNotify(
+            NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURING,
+            toCapturingNotifyParam(status = status)
           )
         )
       }
@@ -1038,6 +1078,12 @@ class ThetaClientReactNativeModule(
             NOTIFY_COMPOSITE_INTERVAL_PROGRESS,
             toCaptureProgressNotifyParam(value = completion)
           )
+        )
+      }
+
+      override fun onCapturing(status: CapturingStatusEnum) {
+        sendNotifyEvent(
+          toNotify(NOTIFY_COMPOSITE_INTERVAL_CAPTURING, toCapturingNotifyParam(status = status))
         )
       }
 
@@ -1176,6 +1222,12 @@ class ThetaClientReactNativeModule(
         )
       }
 
+      override fun onCapturing(status: CapturingStatusEnum) {
+        sendNotifyEvent(
+          toNotify(NOTIFY_BURST_CAPTURING, toCapturingNotifyParam(status = status))
+        )
+      }
+
       override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
         sendNotifyEvent(
           toNotify(
@@ -1285,6 +1337,12 @@ class ThetaClientReactNativeModule(
             NOTIFY_MULTI_BRACKET_PROGRESS,
             toCaptureProgressNotifyParam(value = completion)
           )
+        )
+      }
+
+      override fun onCapturing(status: CapturingStatusEnum) {
+        sendNotifyEvent(
+          toNotify(NOTIFY_MULTI_BRACKET_CAPTURING, toCapturingNotifyParam(status = status))
         )
       }
 
@@ -1399,6 +1457,12 @@ class ThetaClientReactNativeModule(
             NOTIFY_CONTINUOUS_PROGRESS,
             toCaptureProgressNotifyParam(value = completion)
           )
+        )
+      }
+
+      override fun onCapturing(status: CapturingStatusEnum) {
+        sendNotifyEvent(
+          toNotify(NOTIFY_CONTINUOUS_CAPTURING, toCapturingNotifyParam(status = status))
         )
       }
 
@@ -2084,19 +2148,28 @@ class ThetaClientReactNativeModule(
     const val NAME = "ThetaClientReactNative"
     const val EVENT_NAME = "ThetaFrameEvent"
     const val EVENT_NOTIFY = "ThetaNotify"
+    const val NOTIFY_PHOTO_CAPTURING = "PHOTO-CAPTURING"
     const val NOTIFY_TIMESHIFT_PROGRESS = "TIME-SHIFT-PROGRESS"
     const val NOTIFY_TIMESHIFT_STOP_ERROR = "TIME-SHIFT-STOP-ERROR"
+    const val NOTIFY_TIMESHIFT_CAPTURING = "TIME-SHIFT-CAPTURING"
     const val NOTIFY_VIDEO_CAPTURE_STOP_ERROR = "VIDEO-CAPTURE-STOP-ERROR"
+    const val NOTIFY_VIDEO_CAPTURE_CAPTURING = "VIDEO-CAPTURE-CAPTURING"
     const val NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR = "LIMITLESS-INTERVAL-CAPTURE-STOP-ERROR"
+    const val NOTIFY_LIMITLESS_INTERVAL_CAPTURE_CAPTURING = "LIMITLESS-INTERVAL-CAPTURE-CAPTURING"
     const val NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_PROGRESS = "SHOT-COUNT-SPECIFIED-INTERVAL-PROGRESS"
     const val NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_STOP_ERROR = "SHOT-COUNT-SPECIFIED-INTERVAL-STOP-ERROR"
+    const val NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURING = "SHOT-COUNT-SPECIFIED-INTERVAL-CAPTURING"
     const val NOTIFY_COMPOSITE_INTERVAL_PROGRESS = "COMPOSITE-INTERVAL-PROGRESS"
     const val NOTIFY_COMPOSITE_INTERVAL_STOP_ERROR = "COMPOSITE-INTERVAL-STOP-ERROR"
+    const val NOTIFY_COMPOSITE_INTERVAL_CAPTURING = "COMPOSITE-INTERVAL-CAPTURING"
     const val NOTIFY_BURST_PROGRESS = "BURST-PROGRESS"
     const val NOTIFY_BURST_STOP_ERROR = "BURST-STOP-ERROR"
+    const val NOTIFY_BURST_CAPTURING = "BURST-CAPTURING"
     const val NOTIFY_MULTI_BRACKET_PROGRESS = "MULTI-BRACKET-PROGRESS"
     const val NOTIFY_MULTI_BRACKET_STOP_ERROR = "MULTI-BRACKET-STOP-ERROR"
+    const val NOTIFY_MULTI_BRACKET_CAPTURING = "MULTI-BRACKET-CAPTURING"
     const val NOTIFY_CONTINUOUS_PROGRESS = "CONTINUOUS-PROGRESS"
+    const val NOTIFY_CONTINUOUS_CAPTURING = "CONTINUOUS-CAPTURING"
     const val NOTIFY_EVENT_WEBSOCKET_EVENT = "EVENT-WEBSOCKET-EVENT"
     const val NOTIFY_EVENT_WEBSOCKET_CLOSE = "EVENT-WEBSOCKET-CLOSE"
   }

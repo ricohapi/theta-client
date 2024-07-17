@@ -8,6 +8,7 @@ let KEY_NOTIFY_PARAM_COMPLETION = "completion"
 let KEY_NOTIFY_PARAM_EVENT = "event"
 let KEY_NOTIFY_PARAM_IMAGE = "image"
 let KEY_NOTIFY_PARAM_MESSAGE = "message"
+let KEY_NOTIFY_PARAM_STATUS = "status"
 let KEY_DATETIME = "dateTime"
 let KEY_LANGUAGE = "language"
 let KEY_OFF_DELAY = "offDelay"
@@ -457,6 +458,12 @@ func toMessageNotifyParam(value: String) -> [String: Any] {
     ]
 }
 
+func toCapturingNotifyParam(value: CapturingStatusEnum) -> [String: Any] {
+    return [
+        KEY_NOTIFY_PARAM_STATUS: value.name,
+    ]
+}
+
 // MARK: - Capture builder
 
 func setCaptureBuilderParams<T>(params: [String: Any], builder: CaptureBuilder<T>) {
@@ -524,6 +531,11 @@ func setCaptureBuilderParams<T>(params: [String: Any], builder: CaptureBuilder<T
 }
 
 func setPhotoCaptureBuilderParams(params: [String: Any], builder: PhotoCapture.Builder) {
+    if let interval = params[KEY_TIMESHIFT_CAPTURE_INTERVAL] as? Int,
+       interval >= 0
+    {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
     if let value = params[KEY_FILTER] as? String {
         if let enumValue = getEnumValue(values: ThetaRepository.FilterEnum.values(), name: value) {
             builder.setFilter(filter: enumValue)
@@ -564,6 +576,11 @@ func setTimeShiftCaptureBuilderParams(params: [String: Any], builder: TimeShiftC
 }
 
 func setVideoCaptureBuilderParams(params: [String: Any], builder: VideoCapture.Builder) {
+    if let interval = params[KEY_TIMESHIFT_CAPTURE_INTERVAL] as? Int,
+       interval >= 0
+    {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
     if let value = params[KEY_MAX_RECORDABLE_TIME] as? String {
         if let enumValue = getEnumValue(
             values: ThetaRepository.MaxRecordableTimeEnum.values(), name: value
@@ -581,6 +598,11 @@ func setVideoCaptureBuilderParams(params: [String: Any], builder: VideoCapture.B
 }
 
 func setLimitlessIntervalCaptureBuilderParams(params: [String: Any], builder: LimitlessIntervalCapture.Builder) {
+    if let interval = params[KEY_TIMESHIFT_CAPTURE_INTERVAL] as? Int,
+       interval >= 0
+    {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
     if let value = params[KEY_CAPTURE_INTERVAL] as? Int32 {
         builder.setCaptureInterval(interval: value)
     }

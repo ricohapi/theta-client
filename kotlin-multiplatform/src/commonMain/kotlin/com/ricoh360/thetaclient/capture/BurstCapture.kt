@@ -11,6 +11,7 @@ import com.ricoh360.thetaclient.transferred.BurstMaxExposureTime
 import com.ricoh360.thetaclient.transferred.BurstOption
 import com.ricoh360.thetaclient.transferred.BurstOrder
 import com.ricoh360.thetaclient.transferred.CaptureMode
+import com.ricoh360.thetaclient.transferred.CaptureStatus
 import com.ricoh360.thetaclient.transferred.CommandApiResponse
 import com.ricoh360.thetaclient.transferred.CommandState
 import com.ricoh360.thetaclient.transferred.Options
@@ -69,6 +70,13 @@ class BurstCapture private constructor(
         fun onProgress(completion: Float)
 
         /**
+         * Called when change capture status.
+         *
+         * @param status Capturing status
+         */
+        fun onCapturing(status: CapturingStatusEnum) {}
+
+        /**
          * Called when stopCapture error occurs.
          *
          * @param exception Exception of error occurs
@@ -91,9 +99,27 @@ class BurstCapture private constructor(
     }
 
     private suspend fun monitorCommandStatus(id: String, callback: StartCaptureCallback) {
+        val monitor = CaptureStatusMonitor(
+            endpoint,
+            onChangeStatus = { newStatus, _ ->
+                when (newStatus) {
+                    CaptureStatus.SELF_TIMER_COUNTDOWN -> callback.onCapturing(
+                        CapturingStatusEnum.SELF_TIMER_COUNTDOWN
+                    )
+
+                    else -> callback.onCapturing(CapturingStatusEnum.CAPTURING)
+                }
+            },
+            onError = { error ->
+                println("CaptureStatusMonitor error: ${error.message}")
+            },
+            checkStatusCommandInterval,
+            1
+        )
         try {
             var response: CommandApiResponse? = null
             var state = CommandState.IN_PROGRESS
+            monitor.start()
             while (state == CommandState.IN_PROGRESS) {
                 delay(timeMillis = checkStatusCommandInterval)
                 response = ThetaApi.callStatusApi(
@@ -103,6 +129,7 @@ class BurstCapture private constructor(
                 callback.onProgress(completion = response.progress?.completion ?: 0f)
                 state = response.state
             }
+            monitor.stop()
 
             if (response?.state == CommandState.DONE) {
                 val captureResponse = response as StartCaptureResponse
@@ -120,11 +147,26 @@ class BurstCapture private constructor(
                 callback.onCaptureCompleted(fileUrls = null) // canceled
             }
         } catch (e: JsonConvertException) {
-            callback.onCaptureFailed(exception = ThetaRepository.ThetaWebApiException(message = e.message ?: e.toString()))
+            monitor.stop()
+            callback.onCaptureFailed(
+                exception = ThetaRepository.ThetaWebApiException(
+                    message = e.message ?: e.toString()
+                )
+            )
         } catch (e: ResponseException) {
-            callback.onCaptureFailed(exception = ThetaRepository.ThetaWebApiException.create(exception = e))
+            monitor.stop()
+            callback.onCaptureFailed(
+                exception = ThetaRepository.ThetaWebApiException.create(
+                    exception = e
+                )
+            )
         } catch (e: Exception) {
-            callback.onCaptureFailed(exception = ThetaRepository.NotConnectedException(message = e.message ?: e.toString()))
+            monitor.stop()
+            callback.onCaptureFailed(
+                exception = ThetaRepository.NotConnectedException(
+                    message = e.message ?: e.toString()
+                )
+            )
         }
     }
 
@@ -149,7 +191,6 @@ class BurstCapture private constructor(
                     return@launch
                 }
 
-                delay(timeMillis = checkStatusCommandInterval)
                 startCaptureResponse.id?.let {
                     monitorCommandStatus(it, callback)
                 }

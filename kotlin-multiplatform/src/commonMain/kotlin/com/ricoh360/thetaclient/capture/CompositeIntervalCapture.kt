@@ -51,6 +51,13 @@ class CompositeIntervalCapture private constructor(
         fun onProgress(completion: Float)
 
         /**
+         * Called when change capture status.
+         *
+         * @param status Capturing status
+         */
+        fun onCapturing(status: CapturingStatusEnum) {}
+
+        /**
          * Called when stopCapture error occurs.
          *
          * @param exception Exception of error occurs
@@ -73,9 +80,27 @@ class CompositeIntervalCapture private constructor(
     }
 
     private suspend fun monitorCommandStatus(id: String, callback: StartCaptureCallback) {
+        val monitor = CaptureStatusMonitor(
+            endpoint,
+            onChangeStatus = { newStatus, _ ->
+                when (newStatus) {
+                    CaptureStatus.SELF_TIMER_COUNTDOWN -> callback.onCapturing(
+                        CapturingStatusEnum.SELF_TIMER_COUNTDOWN
+                    )
+
+                    else -> callback.onCapturing(CapturingStatusEnum.CAPTURING)
+                }
+            },
+            onError = { error ->
+                println("CaptureStatusMonitor error: ${error.message}")
+            },
+            checkStatusCommandInterval,
+            1
+        )
         try {
             var response: CommandApiResponse? = null
             var state = CommandState.IN_PROGRESS
+            monitor.start()
             while (state == CommandState.IN_PROGRESS) {
                 delay(timeMillis = checkStatusCommandInterval)
                 response = ThetaApi.callStatusApi(
@@ -85,6 +110,7 @@ class CompositeIntervalCapture private constructor(
                 callback.onProgress(completion = response.progress?.completion ?: 0f)
                 state = response.state
             }
+            monitor.stop()
 
             if (response?.state == CommandState.DONE) {
                 val captureResponse = response as StartCaptureResponse
@@ -102,10 +128,13 @@ class CompositeIntervalCapture private constructor(
                 callback.onCaptureCompleted(fileUrls = null) // canceled
             }
         } catch (e: JsonConvertException) {
+            monitor.stop()
             callback.onCaptureFailed(exception = ThetaRepository.ThetaWebApiException(message = e.message ?: e.toString()))
         } catch (e: ResponseException) {
+            monitor.stop()
             callback.onCaptureFailed(exception = ThetaRepository.ThetaWebApiException.create(exception = e))
         } catch (e: Exception) {
+            monitor.stop()
             callback.onCaptureFailed(exception = ThetaRepository.NotConnectedException(message = e.message ?: e.toString()))
         }
     }
@@ -131,7 +160,6 @@ class CompositeIntervalCapture private constructor(
                     return@launch
                 }
 
-                delay(timeMillis = checkStatusCommandInterval)
                 startCaptureResponse.id?.let {
                     monitorCommandStatus(it, callback)
                 }

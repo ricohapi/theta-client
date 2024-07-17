@@ -5,12 +5,13 @@ import styles from './styles';
 import Button from '../../components/ui/button';
 import {
   CaptureModeEnum,
+  CapturingStatusEnum,
   Options,
   TimeShiftCapture,
   getTimeShiftCaptureBuilder,
   setOptions,
   stopSelfTimer,
-} from 'theta-client-react-native';
+} from '../../modules/theta-client';
 import { CaptureCommonOptionsEdit } from '../../components/capture/capture-common-options';
 import { TimeShiftEdit } from '../../components/options/time-shift';
 import { InputNumber } from '../../components/ui/input-number';
@@ -21,7 +22,10 @@ const TimeShiftCaptureScreen: React.FC<
   NativeStackScreenProps<RootStackParamList, 'timeShiftCapture'>
 > = ({ navigation }) => {
   const [interval, setInterval] = React.useState<number>();
-  const [message, setMessage] = React.useState('progress = 0');
+  const [message, setMessage] = React.useState('');
+  const [capturingStatus, setCapturingStatus] =
+    React.useState<CapturingStatusEnum>();
+  const [progress, setProgress] = React.useState<number>();
   const [captureOptions, setCaptureOptions] = React.useState<Options>();
   const [isTaking, setIsTaking] = React.useState(false);
   const [capture, setCapture] = React.useState<TimeShiftCapture>();
@@ -88,15 +92,20 @@ const TimeShiftCaptureScreen: React.FC<
       initCapture();
       return;
     }
+    setProgress(undefined);
+    setCapturingStatus(undefined);
     try {
       console.log('startTimeShiftCapture startCapture');
       const url = await capture.startCapture(
         (completion) => {
           if (isTaking) return;
-          setMessage(`progress = ${completion}`);
+          setProgress(completion);
         },
         (error) => {
           Alert.alert('Cancel error', JSON.stringify(error), [{ text: 'OK' }]);
+        },
+        (status) => {
+          setCapturingStatus(status);
         }
       );
       initCapture();
@@ -150,6 +159,10 @@ const TimeShiftCaptureScreen: React.FC<
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [capture]);
+
+  React.useEffect(() => {
+    setMessage(`progress = ${progress}\ncapturing = ${capturingStatus}`);
+  }, [capturingStatus, progress]);
 
   return (
     <SafeAreaView

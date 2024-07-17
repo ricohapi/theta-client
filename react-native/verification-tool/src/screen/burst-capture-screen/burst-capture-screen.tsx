@@ -12,22 +12,26 @@ import {
   BurstMaxExposureTimeEnum,
   BurstModeEnum,
   BurstOrderEnum,
+  CapturingStatusEnum,
   Options,
   getBurstCaptureBuilder,
   stopSelfTimer,
-} from 'theta-client-react-native';
+} from '../../modules/theta-client';
 import { CaptureCommonOptionsEdit } from '../../components/capture/capture-common-options';
 import { InputNumber } from '../../components/ui/input-number';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../App';
-import { BurstOptionsEdit } from 'verification-tool/src/components/options/burst-option';
+import { BurstOptionsEdit } from '../../components/options/burst-option';
 import { EnumEdit } from '../../components/options';
 
 const BurstCaptureScreen: React.FC<
   NativeStackScreenProps<RootStackParamList, 'burstCapture'>
 > = ({ navigation }) => {
   const [interval, setInterval] = React.useState<number>();
-  const [message, setMessage] = React.useState('progress = 0');
+  const [message, setMessage] = React.useState('');
+  const [capturingStatus, setCapturingStatus] =
+    React.useState<CapturingStatusEnum>();
+  const [progress, setProgress] = React.useState<number>();
   const [captureOptions, setCaptureOptions] = React.useState<Options>();
   const [isTaking, setIsTaking] = React.useState(false);
   const [capture, setCapture] = React.useState<BurstCapture>();
@@ -107,12 +111,14 @@ const BurstCaptureScreen: React.FC<
       initCapture();
       return;
     }
+    setProgress(undefined);
+    setCapturingStatus(undefined);
     try {
       console.log('BurstCapture startCapture');
       const urls = await capture.startCapture(
         (completion) => {
           if (isTaking) return;
-          setMessage(`progress = ${completion}`);
+          setProgress(completion);
         },
         (error) => {
           if (error instanceof Error) {
@@ -120,6 +126,9 @@ const BurstCaptureScreen: React.FC<
               { text: 'OK' },
             ]);
           }
+        },
+        (status) => {
+          setCapturingStatus(status);
         }
       );
       initCapture();
@@ -191,6 +200,10 @@ const BurstCaptureScreen: React.FC<
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [capture]);
+
+  React.useEffect(() => {
+    setMessage(`progress = ${progress}\ncapturing = ${capturingStatus}`);
+  }, [capturingStatus, progress]);
 
   return (
     <SafeAreaView

@@ -10,7 +10,7 @@ import {
   deleteAllImageFiles,
   deleteAllVideoFiles,
   deleteFiles,
-} from 'theta-client-react-native';
+} from '../../modules/theta-client';
 import Button from '../../components/ui/button';
 import { ListFilesView } from '../../components/list-files-view';
 import { Item, ItemSelectorView } from '../../components/ui/item-list';

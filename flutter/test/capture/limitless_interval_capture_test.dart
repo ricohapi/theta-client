@@ -7,7 +7,10 @@ import 'package:theta_client_flutter/theta_client_flutter_platform_interface.dar
 import '../theta_client_flutter_test.dart';
 
 void main() {
-  setUp(() {});
+  setUp(() {
+    onCallGetLimitlessIntervalCaptureBuilder = Future.value;
+    onCallBuildLimitlessIntervalCapture = (options, interval) => Future.value();
+  });
 
   tearDown(() {});
 
@@ -51,7 +54,7 @@ void main() {
     const isoAutoHighLimit = [IsoAutoHighLimitEnum.iso125, 'IsoAutoHighLimit'];
     const whiteBalance = [WhiteBalanceEnum.auto, 'WhiteBalance'];
 
-    onCallBuildLimitlessIntervalCapture = (options) {
+    onCallBuildLimitlessIntervalCapture = (options, interval) {
       expect(options[aperture[1]], aperture[0]);
       expect(options[colorTemperature[1]], colorTemperature[0]);
       expect(options[exposureCompensation[1]], exposureCompensation[0]);
@@ -100,9 +103,7 @@ void main() {
 
     const imageUrls = ['http://test.jpeg'];
 
-    onCallGetLimitlessIntervalCaptureBuilder = Future.value;
-    onCallBuildLimitlessIntervalCapture = Future.value;
-    onCallStartLimitlessIntervalCapture = (onStopFailed) {
+    onCallStartLimitlessIntervalCapture = (onStopFailed, onCapturing) {
       return Future.value(imageUrls);
     };
 
@@ -128,10 +129,8 @@ void main() {
         MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
-    onCallGetLimitlessIntervalCaptureBuilder = Future.value;
-    onCallBuildLimitlessIntervalCapture = Future.value;
     var completer = Completer<List<String>>();
-    onCallStartLimitlessIntervalCapture = (onStopFailed) {
+    onCallStartLimitlessIntervalCapture = (onStopFailed, onCapturing) {
       return completer.future;
     };
     onCallStopLimitlessIntervalCapture = () {
@@ -160,10 +159,8 @@ void main() {
 
     const imageUrls = ['http://test.jpeg'];
 
-    onCallGetLimitlessIntervalCaptureBuilder = Future.value;
-    onCallBuildLimitlessIntervalCapture = Future.value;
     var completer = Completer<List<String>>();
-    onCallStartLimitlessIntervalCapture = (onStopFailed) {
+    onCallStartLimitlessIntervalCapture = (onStopFailed, onCapturing) {
       return completer.future;
     };
     onCallStopLimitlessIntervalCapture = () {
@@ -192,10 +189,8 @@ void main() {
         MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
-    onCallGetLimitlessIntervalCaptureBuilder = Future.value;
-    onCallBuildLimitlessIntervalCapture = Future.value;
     var completer = Completer<List<String>?>();
-    onCallStartLimitlessIntervalCapture = (onStopFailed) {
+    onCallStartLimitlessIntervalCapture = (onStopFailed, onCapturing) {
       return completer.future;
     };
     onCallStopLimitlessIntervalCapture = () {
@@ -215,5 +210,71 @@ void main() {
     capturing.stopCapture();
     await Future.delayed(const Duration(milliseconds: 10), () {});
     expect(fileUrls, null);
+  });
+
+  test('call onStopFailed', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform =
+    MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    const imageUrls = ['http://test.jpeg'];
+
+    onCallStartLimitlessIntervalCapture = (onStopFailed, onCapturing) {
+      onStopFailed?.call(Exception("on stop error."));
+      return Future.value(imageUrls);
+    };
+
+    var builder = thetaClientPlugin.getLimitlessIntervalCaptureBuilder();
+    var capture = await builder.build();
+    List<String>? fileUrls;
+
+    var isOnStopFailed = false;
+    capture.startCapture((value) {
+      expect(value, imageUrls);
+      fileUrls = value;
+    }, (exception) {
+      expect(false, isTrue, reason: 'Error. startCapture');
+    }, onStopFailed: (exception) {
+      expect(exception, isNotNull, reason: 'Error. stopCapture');
+      isOnStopFailed = true;
+    });
+
+    await Future.delayed(const Duration(milliseconds: 100), () {});
+    expect(fileUrls, imageUrls);
+    expect(isOnStopFailed, true);
+  });
+
+  test('call onCapturing', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform =
+    MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    const imageUrls = ['http://test.jpeg'];
+
+    onCallStartLimitlessIntervalCapture = (onStopFailed, onCapturing) {
+      onCapturing?.call(CapturingStatusEnum.capturing);
+      return Future.value(imageUrls);
+    };
+
+    var builder = thetaClientPlugin.getLimitlessIntervalCaptureBuilder();
+    var capture = await builder.build();
+    List<String>? fileUrls;
+
+    var isOnCapturing = false;
+    capture.startCapture((value) {
+      expect(value, imageUrls);
+      fileUrls = value;
+    }, (exception) {
+      expect(false, isTrue, reason: 'Error. startCapture');
+    }, onCapturing: (status) {
+      isOnCapturing = true;
+      expect(status, CapturingStatusEnum.capturing);
+    });
+
+    await Future.delayed(const Duration(milliseconds: 100), () {});
+    expect(fileUrls, imageUrls);
+    expect(isOnCapturing, true);
   });
 }

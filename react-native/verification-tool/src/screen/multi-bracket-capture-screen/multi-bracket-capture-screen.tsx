@@ -5,6 +5,7 @@ import styles from './styles';
 import Button from '../../components/ui/button';
 import {
   CaptureModeEnum,
+  CapturingStatusEnum,
   ExposureDelayEnum,
   MultiBracketCapture,
   OptionNameEnum,
@@ -13,7 +14,7 @@ import {
   getOptions,
   setOptions,
   stopSelfTimer,
-} from 'theta-client-react-native';
+} from '../../modules/theta-client';
 import { AutoBracketEdit } from '../../components/options/auto-bracket';
 import { InputNumber } from '../../components/ui/input-number';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -24,7 +25,10 @@ const MultiBracketCaptureScreen: React.FC<
   NativeStackScreenProps<RootStackParamList, 'multiBracketCapture'>
 > = ({ navigation }) => {
   const [interval, setInterval] = React.useState<number>();
-  const [message, setMessage] = React.useState('progress = 0');
+  const [message, setMessage] = React.useState('');
+  const [capturingStatus, setCapturingStatus] =
+    React.useState<CapturingStatusEnum>();
+  const [progress, setProgress] = React.useState<number>();
   const [captureOptions, setCaptureOptions] = React.useState<Options>();
   const [isTaking, setIsTaking] = React.useState(false);
   const [capture, setCapture] = React.useState<MultiBracketCapture>();
@@ -74,12 +78,14 @@ const MultiBracketCaptureScreen: React.FC<
       initCapture();
       return;
     }
+    setProgress(undefined);
+    setCapturingStatus(undefined);
     try {
       console.log('MultiBracketCapture startCapture');
       const urls = await capture.startCapture(
         (completion) => {
           if (isTaking) return;
-          setMessage(`progress = ${completion}`);
+          setProgress(completion);
         },
         (error) => {
           if (error instanceof Error) {
@@ -87,6 +93,9 @@ const MultiBracketCaptureScreen: React.FC<
               { text: 'OK' },
             ]);
           }
+        },
+        (status) => {
+          setCapturingStatus(status);
         }
       );
       initCapture();
@@ -168,6 +177,10 @@ const MultiBracketCaptureScreen: React.FC<
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [capture]);
+
+  React.useEffect(() => {
+    setMessage(`progress = ${progress}\ncapturing = ${capturingStatus}`);
+  }, [capturingStatus, progress]);
 
   return (
     <SafeAreaView

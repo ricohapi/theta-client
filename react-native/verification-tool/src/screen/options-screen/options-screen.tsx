@@ -29,7 +29,7 @@ import {
   offDelayToSeconds,
   setOptions,
   sleepDelayToSeconds,
-} from 'theta-client-react-native';
+} from '../../modules/theta-client';
 import {
   AutoBracketEdit,
   GpsInfoEdit,

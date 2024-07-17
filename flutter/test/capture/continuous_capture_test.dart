@@ -102,7 +102,7 @@ void main() {
 
     const imageUrls = ['http://test.jpeg'];
 
-    onCallStartContinuousCapture = (onProgress) {
+    onCallStartContinuousCapture = (onProgress, onCapturing) {
       return Future.value(imageUrls);
     };
 
@@ -131,7 +131,7 @@ void main() {
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     var completer = Completer<List<String>>();
-    onCallStartContinuousCapture = (onProgress) {
+    onCallStartContinuousCapture = (onProgress, onCapturing) {
       return completer.future;
     };
 
@@ -158,7 +158,7 @@ void main() {
 
     void Function(double completion)? paramOnProgress;
 
-    onCallStartContinuousCapture = (onProgress) {
+    onCallStartContinuousCapture = (onProgress, onCapturing) {
       paramOnProgress = onProgress;
       return Completer<List<String>>().future;
     };
@@ -228,5 +228,37 @@ void main() {
     } catch (error) {
       expect(error.toString().contains('test error'), true);
     }
+  });
+
+  test('call onCapturing', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform =
+    MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    var completer = Completer<void>();
+
+    void Function(CapturingStatusEnum status)? paramOnCapturing;
+
+    onCallStartContinuousCapture = (onProgress, onCapturing) {
+      paramOnCapturing = onCapturing;
+      return Completer<List<String>>().future;
+    };
+
+    final builder = thetaClientPlugin.getContinuousCaptureBuilder();
+    var capture = await builder.build();
+    var isOnCapturing = false;
+    capture.startCapture((fileUrl) {
+      expect(false, isTrue, reason: 'startCapture');
+    }, (completion) {}, (exception) {},
+        onCapturing: (status) {
+          isOnCapturing = true;
+          expect(status, CapturingStatusEnum.capturing);
+          completer.complete(null);
+        });
+
+    paramOnCapturing?.call(CapturingStatusEnum.capturing);
+    await completer.future.timeout(const Duration(milliseconds: 10));
+    expect(isOnCapturing, true);
   });
 }

@@ -70,6 +70,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     paddingRight: 10,
   },
+  itemText: {
+    color: 'black',
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 2,
+  },
 });
 
 export default styles;

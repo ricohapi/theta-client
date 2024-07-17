@@ -52,7 +52,7 @@ void main() {
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       return fileUrl;
     });
-    expect(await platform.startTimeShiftCapture(null, null), fileUrl);
+    expect(await platform.startTimeShiftCapture(null, null, null), fileUrl);
   });
 
   test('startTimeShiftCapture no file', () async {
@@ -61,7 +61,7 @@ void main() {
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       return fileUrl;
     });
-    expect(await platform.startTimeShiftCapture(null, null), null);
+    expect(await platform.startTimeShiftCapture(null, null, null), null);
   });
 
   test('startTimeShiftCapture exception', () async {
@@ -70,7 +70,7 @@ void main() {
       throw Exception('test error');
     });
     try {
-      await platform.startTimeShiftCapture(null, null);
+      await platform.startTimeShiftCapture(null, null, null);
       expect(true, false, reason: 'not exception');
     } catch (error) {
       expect(error.toString().contains('test error'), true);
@@ -108,11 +108,43 @@ void main() {
     int progressCount = 0;
     var resultCapture = platform.startTimeShiftCapture((completion) {
       progressCount++;
-    }, null);
+    }, null, null);
     var result = await resultCapture.timeout(const Duration(seconds: 5));
     expect(result, fileUrl);
     expect(progressCount, 2);
     expect(platform.notifyList.containsKey(10011), false,
         reason: 'remove notify progress');
+  });
+
+  test('call onCapturing', () async {
+    const fileUrl =
+        'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.MP4';
+
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+      expect(platform.notifyList.containsKey(10013), true,
+          reason: 'add notify capturing');
+
+      // native event
+      platform.onNotify({
+        'id': 10013,
+        'params': {
+          'status': 'SELF_TIMER_COUNTDOWN',
+        },
+      });
+      await Future.delayed(const Duration(milliseconds: 10));
+
+      return fileUrl;
+    });
+
+    CapturingStatusEnum? lastStatus;
+    var resultCapture = platform.startTimeShiftCapture(null, null, (status) {
+      lastStatus = status;
+    });
+    var result = await resultCapture.timeout(const Duration(seconds: 5));
+    expect(result, fileUrl);
+    expect(lastStatus, CapturingStatusEnum.selfTimerCountdown);
+    expect(platform.notifyList.containsKey(10013), false,
+        reason: 'remove notify capturing');
   });
 }

@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
-import 'state/theta_state.dart';
 import 'theta_client_flutter_method_channel.dart';
 
 abstract class ThetaClientFlutterPlatform extends PlatformInterface {
@@ -93,11 +92,12 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
         'getPhotoCaptureBuilder() has not been implemented.');
   }
 
-  Future<void> buildPhotoCapture(Map<String, dynamic> options) {
+  Future<void> buildPhotoCapture(Map<String, dynamic> options, int interval) {
     throw UnimplementedError('buildPhotoCapture() has not been implemented.');
   }
 
-  Future<String?> takePicture() {
+  Future<String?> takePicture(
+      void Function(CapturingStatusEnum status)? onCapturing) {
     throw UnimplementedError('takePicture() has not been implemented.');
   }
 
@@ -113,7 +113,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
   }
 
   Future<String?> startTimeShiftCapture(void Function(double)? onProgress,
-      void Function(Exception exception)? onStopFailed) {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) {
     throw UnimplementedError(
         'startTimeShiftCapture() has not been implemented.');
   }
@@ -128,12 +129,13 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
         'getVideoCaptureBuilder() has not been implemented.');
   }
 
-  Future<void> buildVideoCapture(Map<String, dynamic> options) {
+  Future<void> buildVideoCapture(Map<String, dynamic> options, int interval) {
     throw UnimplementedError('buildVideoCapture() has not been implemented.');
   }
 
   Future<String?> startVideoCapture(
-      void Function(Exception exception)? onStopFailed) {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) {
     throw UnimplementedError('startVideoCapture() has not been implemented.');
   }
 
@@ -146,13 +148,15 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
         'getLimitlessIntervalCaptureBuilder() has not been implemented.');
   }
 
-  Future<void> buildLimitlessIntervalCapture(Map<String, dynamic> options) {
+  Future<void> buildLimitlessIntervalCapture(Map<String, dynamic> options,
+      int interval) {
     throw UnimplementedError(
         'buildLimitlessIntervalCapture() has not been implemented.');
   }
 
   Future<List<String>?> startLimitlessIntervalCapture(
-      void Function(Exception exception)? onStopFailed) {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) {
     throw UnimplementedError(
         'startLimitlessIntervalCapture() has not been implemented.');
   }
@@ -175,7 +179,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
 
   Future<List<String>?> startShotCountSpecifiedIntervalCapture(
       void Function(double)? onProgress,
-      void Function(Exception exception)? onStopFailed) {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) {
     throw UnimplementedError(
         'startShotCountSpecifiedIntervalCapture() has not been implemented.');
   }
@@ -198,7 +203,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
 
   Future<List<String>?> startCompositeIntervalCapture(
       void Function(double)? onProgress,
-      void Function(Exception exception)? onStopFailed) {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) {
     throw UnimplementedError(
         'startCompositeIntervalCapture() has not been implemented.');
   }
@@ -223,8 +229,10 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('buildBurstCapture() has not been implemented.');
   }
 
-  Future<List<String>?> startBurstCapture(void Function(double)? onProgress,
-      void Function(Exception exception)? onStopFailed) {
+  Future<List<String>?> startBurstCapture(
+      void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) {
     throw UnimplementedError('startBurstCapture() has not been implemented.');
   }
 
@@ -245,7 +253,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
 
   Future<List<String>?> startMultiBracketCapture(
       void Function(double)? onProgress,
-      void Function(Exception exception)? onStopFailed) {
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) {
     throw UnimplementedError(
         'startMultiBracketCapture() has not been implemented.');
   }
@@ -267,7 +276,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
   }
 
   Future<List<String>?> startContinuousCapture(
-      void Function(double)? onProgress) {
+      void Function(double)? onProgress,
+      void Function(CapturingStatusEnum status)? onCapturing) {
     throw UnimplementedError(
         'startContinuousCapture() has not been implemented.');
   }

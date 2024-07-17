@@ -67,7 +67,7 @@ void main() {
 
     const imageUrl = 'http://test.JPG';
 
-    onCallStartTimeShiftCapture = (onProgress, onStopFailed) {
+    onCallStartTimeShiftCapture = (onProgress, onStopFailed, onCapturing) {
       return Future.value(imageUrl);
     };
 
@@ -95,7 +95,7 @@ void main() {
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     var completer = Completer<String>();
-    onCallStartTimeShiftCapture = (onProgress, onStopFailed) {
+    onCallStartTimeShiftCapture = (onProgress, onStopFailed, onCapturing) {
       return completer.future;
     };
     onCallStopTimeShiftCapture = () {
@@ -127,7 +127,7 @@ void main() {
     const imageUrl = 'http://test.mp4';
 
     var completer = Completer<String>();
-    onCallStartTimeShiftCapture = (onProgress, onStopFailed) {
+    onCallStartTimeShiftCapture = (onProgress, onStopFailed, onCapturing) {
       return completer.future;
     };
     onCallStopTimeShiftCapture = () {
@@ -163,7 +163,7 @@ void main() {
 
     void Function(Exception exception)? paramStopFailed;
 
-    onCallStartTimeShiftCapture = (onProgress, onStopFailed) {
+    onCallStartTimeShiftCapture = (onProgress, onStopFailed, onCapturing) {
       paramStopFailed = onStopFailed;
       return Completer<String>().future;
     };
@@ -190,5 +190,44 @@ void main() {
     capturing.stopCapture();
     await completer.future.timeout(const Duration(milliseconds: 10));
     expect(isOnStopFailed, true);
+  });
+
+  test('call onCapturing', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform =
+    MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    var completer = Completer<void>();
+
+    void Function(CapturingStatusEnum status)? paramOnCapturing;
+
+    onCallStartTimeShiftCapture = (onProgress, onStopFailed, onCapturing) {
+      paramOnCapturing = onCapturing;
+      return Completer<String>().future;
+    };
+    onCallStopTimeShiftCapture = () {
+      paramOnCapturing?.call(CapturingStatusEnum.capturing);
+      return Future.value();
+    };
+
+    var builder = thetaClientPlugin.getTimeShiftCaptureBuilder();
+    var capture = await builder.build();
+    var isOnCapturing = false;
+    var capturing = capture.startCapture(
+            (fileUrl) {
+          expect(false, isTrue, reason: 'startCapture');
+        },
+            (completion) {},
+            (exception) {},
+        onCapturing: (status) {
+          expect(status, CapturingStatusEnum.capturing);
+          isOnCapturing = true;
+          completer.complete(null);
+        });
+
+    capturing.stopCapture();
+    await completer.future.timeout(const Duration(milliseconds: 10));
+    expect(isOnCapturing, true);
   });
 }

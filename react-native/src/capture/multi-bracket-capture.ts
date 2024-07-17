@@ -1,14 +1,15 @@
-import { CaptureBuilder } from './capture';
+import { CaptureBuilder, CapturingStatusEnum } from './capture';
 import { NativeModules } from 'react-native';
 import {
   BaseNotify,
   NotifyController,
 } from '../theta-repository/notify-controller';
-import type { BracketSetting } from 'src/theta-repository/options';
+import type { BracketSetting } from '../theta-repository/options';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 const NOTIFY_PROGRESS = 'MULTI-BRACKET-PROGRESS';
 const NOTIFY_STOP_ERROR = 'MULTI-BRACKET-STOP-ERROR';
+const NOTIFY_CAPTURING = 'MULTI-BRACKET-CAPTURING';
 
 interface CaptureProgressNotify extends BaseNotify {
   params?: {
@@ -19,6 +20,12 @@ interface CaptureProgressNotify extends BaseNotify {
 interface CaptureStopErrorNotify extends BaseNotify {
   params?: {
     message: string;
+  };
+}
+
+interface CapturingNotify extends BaseNotify {
+  params?: {
+    status: CapturingStatusEnum;
   };
 }
 
@@ -34,11 +41,14 @@ export class MultiBracketCapture {
   /**
    * start multi bracket shooting
    * @param onProgress the block for multi bracket shooting onProgress
+   * @param onStopFailed the block for error of cancelCapture
+   * @param onCapturing Called when change capture status
    * @return promise of captured file urls
    */
   async startCapture(
     onProgress?: (completion?: number) => void,
-    onStopFailed?: (error: any) => void
+    onStopFailed?: (error: any) => void,
+    onCapturing?: (status: CapturingStatusEnum) => void
   ): Promise<string[] | undefined> {
     if (onProgress) {
       this.notify.addNotify(NOTIFY_PROGRESS, (event: CaptureProgressNotify) => {
@@ -53,6 +63,13 @@ export class MultiBracketCapture {
         }
       );
     }
+    if (onCapturing) {
+      this.notify.addNotify(NOTIFY_CAPTURING, (event: CapturingNotify) => {
+        if (event.params?.status) {
+          onCapturing(event.params.status);
+        }
+      });
+    }
 
     return new Promise<string[] | undefined>(async (resolve, reject) => {
       await ThetaClientReactNative.startMultiBracketCapture()
@@ -65,6 +82,7 @@ export class MultiBracketCapture {
         .finally(() => {
           this.notify.removeNotify(NOTIFY_PROGRESS);
           this.notify.removeNotify(NOTIFY_STOP_ERROR);
+          this.notify.removeNotify(NOTIFY_CAPTURING);
         });
     });
   }

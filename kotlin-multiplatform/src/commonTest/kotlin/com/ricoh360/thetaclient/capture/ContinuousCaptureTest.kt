@@ -3,6 +3,7 @@ package com.ricoh360.thetaclient.capture
 import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
+import com.ricoh360.thetaclient.ThetaApi
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.*
 import io.ktor.client.network.sockets.*
@@ -12,7 +13,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.test.runTest
 import kotlin.test.*
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class ContinuousCaptureTest {
     private val endpoint = "http://192.168.1.1:80/"
 
@@ -40,22 +40,35 @@ class ContinuousCaptureTest {
             Resource("src/commonTest/resources/ContinuousCapture/start_capture_progress.json").readText(),
             Resource("src/commonTest/resources/ContinuousCapture/start_capture_done.json").readText(),
         )
+        val stateShootingResponse =
+            Resource("src/commonTest/resources/ContinuousCapture/state_shooting.json").readText()
         var counter = 0
         MockApiClient.onRequest = { request ->
-            val index = counter++
-
+            val index = counter
+            if (request.url.encodedPath != "/osc/state") {
+                counter++
+            }
             // check request
-            when (index) {
+            val response = when (index) {
                 0 -> {
                     CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
+                    responseArray[index]
                 }
 
                 2 -> {
                     CheckRequest.checkCommandName(request, "camera.startCapture")
+                    responseArray[index]
+                }
+
+                else -> {
+                    when (request.url.encodedPath) {
+                        "/osc/state" -> stateShootingResponse
+                        else -> responseArray[index]
+                    }
                 }
             }
 
-            ByteReadChannel(responseArray[index])
+            ByteReadChannel(response)
         }
         val deferred = CompletableDeferred<Unit>()
 
@@ -65,6 +78,7 @@ class ContinuousCaptureTest {
         val capture = thetaRepository.getContinuousCaptureBuilder()
             .setCheckStatusCommandInterval(100)
             .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var files: List<String>? = null
         capture.startCapture(object : ContinuousCapture.StartCaptureCallback {
@@ -161,7 +175,11 @@ class ContinuousCaptureTest {
             .build()
 
         // check result
-        assertEquals(capture.getFileFormat(), ThetaRepository.PhotoFileFormatEnum.IMAGE_5_5K, "set option fileformat IMAGE_5_5K")
+        assertEquals(
+            capture.getFileFormat(),
+            ThetaRepository.PhotoFileFormatEnum.IMAGE_5_5K,
+            "set option file format IMAGE_5_5K"
+        )
     }
 
     /**
@@ -460,7 +478,10 @@ class ContinuousCaptureTest {
                 }
 
                 2 -> {
-                    CheckRequest.checkGetOptions(request = request, optionNames = listOf("continuousNumber"))
+                    CheckRequest.checkGetOptions(
+                        request = request,
+                        optionNames = listOf("continuousNumber")
+                    )
                 }
             }
 
@@ -476,5 +497,111 @@ class ContinuousCaptureTest {
 
         val continuousNumber = capture.getContinuousNumber()
         assertEquals(continuousNumber, ThetaRepository.ContinuousNumberEnum.MAX_20)
+    }
+
+    /**
+     * Capturing status.
+     */
+    @Test
+    fun capturingStatusTest() = runTest {
+        // setup
+        val responseArray = arrayOf(
+            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
+            Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),
+            Resource("src/commonTest/resources/ContinuousCapture/start_capture_progress.json").readText(),
+            Resource("src/commonTest/resources/ContinuousCapture/start_capture_progress.json").readText(),
+            Resource("src/commonTest/resources/ContinuousCapture/start_capture_progress.json").readText(),
+            Resource("src/commonTest/resources/ContinuousCapture/start_capture_done.json").readText(),
+        )
+        val stateSelfTimerResponse =
+            Resource("src/commonTest/resources/ContinuousCapture/state_self_timer.json").readText()
+        val stateShootingResponse =
+            Resource("src/commonTest/resources/ContinuousCapture/state_shooting.json").readText()
+
+        var stateCounter = 0
+        var counter = 0
+        MockApiClient.onRequest = { request ->
+            val index = counter
+            if (request.url.encodedPath != "/osc/state") {
+                counter++
+            }
+            // check request
+            val response = when (index) {
+                0 -> {
+                    CheckRequest.checkSetOptions(request = request, captureMode = CaptureMode.IMAGE)
+                    responseArray[index]
+                }
+
+                2 -> {
+                    CheckRequest.checkCommandName(request, "camera.startCapture")
+                    responseArray[index]
+                }
+
+                else -> {
+                    when (request.url.encodedPath) {
+                        "/osc/state" -> {
+                            when (stateCounter++) {
+                                0 -> stateSelfTimerResponse
+                                else -> stateShootingResponse
+                            }
+                        }
+
+                        else -> responseArray[index]
+                    }
+                }
+            }
+
+            ByteReadChannel(response)
+        }
+        val deferred = CompletableDeferred<Unit>()
+
+        // execute
+        val thetaRepository = ThetaRepository(endpoint)
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_X
+        val capture = thetaRepository.getContinuousCaptureBuilder()
+            .setCheckStatusCommandInterval(100)
+            .build()
+        ThetaApi.lastSetTimeConsumingOptionTime = 0
+
+        var files: List<String>? = null
+        capture.startCapture(object : ContinuousCapture.StartCaptureCallback {
+            override fun onCaptureCompleted(fileUrls: List<String>?) {
+                files = fileUrls
+                deferred.complete(Unit)
+            }
+
+            override fun onProgress(completion: Float) {
+                assertTrue(completion >= 0f, "onProgress")
+            }
+
+            override fun onCapturing(status: CapturingStatusEnum) {
+                when {
+                    stateCounter < 2 -> assertEquals(
+                        status,
+                        CapturingStatusEnum.SELF_TIMER_COUNTDOWN
+                    )
+
+                    else -> assertEquals(status, CapturingStatusEnum.CAPTURING)
+                }
+            }
+
+            override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                assertTrue(false, "error start continuous shooting")
+                deferred.complete(Unit)
+            }
+        })
+
+        runBlocking {
+            withTimeout(30_000) {
+                deferred.await()
+            }
+        }
+
+        // check result
+        assertTrue(stateCounter >= 2, "capTureStatus count")
+        assertTrue(
+            files?.firstOrNull()?.startsWith("http://") ?: false,
+            "start capture continuous shooting"
+        )
     }
 }

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './styles';
-import { reset, restoreSettings, finishWlan } from 'theta-client-react-native';
+import { reset, restoreSettings, finishWlan } from '../../modules/theta-client';
 import Button from '../../components/ui/button';
 import { ItemListView, type Item } from '../../components/ui/item-list';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';

@@ -4,14 +4,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './styles';
 import Button from '../../components/ui/button';
 import {
+  CapturingStatusEnum,
   Options,
   ShotCountSpecifiedIntervalCapture,
   getShotCountSpecifiedIntervalCaptureBuilder,
   stopSelfTimer,
-} from 'theta-client-react-native';
+} from '../../modules/theta-client';
 import { CaptureCommonOptionsEdit } from '../../components/capture/capture-common-options';
 import { InputNumber } from '../../components/ui/input-number';
-import { NumberEdit } from 'verification-tool/src/components/options/number-edit';
+import { NumberEdit } from '../../components/options/number-edit';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../App';
 
@@ -23,7 +24,10 @@ const ShotCountSpecifiedIntervalCaptureScreen: React.FC<
 > = ({ navigation }) => {
   const [interval, setInterval] = React.useState<number>();
   const [shotCount, setShotCount] = React.useState<number>(2);
-  const [message, setMessage] = React.useState('progress = 0');
+  const [message, setMessage] = React.useState('');
+  const [capturingStatus, setCapturingStatus] =
+    React.useState<CapturingStatusEnum>();
+  const [progress, setProgress] = React.useState<number>();
   const [captureOptions, setCaptureOptions] = React.useState<Options>();
   const [isTaking, setIsTaking] = React.useState(false);
   const [capture, setCapture] =
@@ -93,15 +97,20 @@ const ShotCountSpecifiedIntervalCaptureScreen: React.FC<
       initCapture();
       return;
     }
+    setProgress(undefined);
+    setCapturingStatus(undefined);
     try {
       console.log('ShotCountSpecifiedIntervalCapture startCapture');
       const urls = await capture.startCapture(
         (completion) => {
           if (isTaking) return;
-          setMessage(`progress = ${completion}`);
+          setProgress(completion);
         },
         (error) => {
           Alert.alert('Cancel error', JSON.stringify(error), [{ text: 'OK' }]);
+        },
+        (status) => {
+          setCapturingStatus(status);
         }
       );
       initCapture();
@@ -155,6 +164,10 @@ const ShotCountSpecifiedIntervalCaptureScreen: React.FC<
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [capture]);
+
+  React.useEffect(() => {
+    setMessage(`progress = ${progress}\ncapturing = ${capturingStatus}`);
+  }, [capturingStatus, progress]);
 
   return (
     <SafeAreaView

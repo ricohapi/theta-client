@@ -1,4 +1,4 @@
-import { CaptureBuilder } from './capture';
+import { CaptureBuilder, CapturingStatusEnum } from './capture';
 import { NativeModules } from 'react-native';
 import {
   BaseNotify,
@@ -13,10 +13,17 @@ import { getOptions } from '../theta-repository';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 const NOTIFY_PROGRESS = 'CONTINUOUS-PROGRESS';
+const NOTIFY_CAPTURING = 'CONTINUOUS-CAPTURING';
 
 interface CaptureProgressNotify extends BaseNotify {
   params?: {
     completion: number;
+  };
+}
+
+interface CapturingNotify extends BaseNotify {
+  params?: {
+    status: CapturingStatusEnum;
   };
 }
 
@@ -31,14 +38,23 @@ export class ContinuousCapture {
   /**
    * start continuous shooting
    * @param onProgress the block for continuous shooting onProgress
+   * @param onCapturing Called when change capture status
    * @return promise of captured file url
    */
   async startCapture(
-    onProgress?: (completion?: number) => void
+    onProgress?: (completion?: number) => void,
+    onCapturing?: (status: CapturingStatusEnum) => void
   ): Promise<string[] | undefined> {
     if (onProgress) {
       this.notify.addNotify(NOTIFY_PROGRESS, (event: CaptureProgressNotify) => {
         onProgress(event.params?.completion);
+      });
+    }
+    if (onCapturing) {
+      this.notify.addNotify(NOTIFY_CAPTURING, (event: CapturingNotify) => {
+        if (event.params?.status) {
+          onCapturing(event.params.status);
+        }
       });
     }
 
@@ -52,6 +68,7 @@ export class ContinuousCapture {
         })
         .finally(() => {
           this.notify.removeNotify(NOTIFY_PROGRESS);
+          this.notify.removeNotify(NOTIFY_CAPTURING);
         });
     });
   }

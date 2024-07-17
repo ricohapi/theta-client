@@ -7,7 +7,10 @@ import 'package:theta_client_flutter/theta_client_flutter_platform_interface.dar
 import '../theta_client_flutter_test.dart';
 
 void main() {
-  setUp(() {});
+  setUp(() {
+    onCallGetVideoCaptureBuilder = Future.value;
+    onCallBuildVideoCapture = (options, interval) => Future.value();
+  });
 
   tearDown(() {});
 
@@ -28,8 +31,6 @@ void main() {
     MockThetaClientFlutterPlatform fakePlatform =
         MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
-
-    onCallGetVideoCaptureBuilder = Future.value;
 
     const aperture = [ApertureEnum.aperture_2_0, 'Aperture'];
     const colorTemperature = [2, 'ColorTemperature'];
@@ -56,7 +57,7 @@ void main() {
       'MaxRecordableTime'
     ];
 
-    onCallBuildVideoCapture = (options) {
+    onCallBuildVideoCapture = (options, interval) {
       expect(options[aperture[1]], aperture[0]);
       expect(options[colorTemperature[1]], colorTemperature[0]);
       expect(options[exposureCompensation[1]], exposureCompensation[0]);
@@ -111,14 +112,14 @@ void main() {
 
     const imageUrl = 'http://test.mp4';
 
-    onCallGetVideoCaptureBuilder = Future.value;
-    onCallBuildVideoCapture = Future.value;
-    onCallStartVideoCapture = (onStopFailed) {
+    onCallStartVideoCapture = (onStopFailed, onCapturing) {
       return Future.value(imageUrl);
     };
 
     var builder = thetaClientPlugin.getVideoCaptureBuilder();
+    builder.setCheckStatusCommandInterval(1);
     var capture = await builder.build();
+    expect(capture.getCheckStatusCommandInterval(), 1);
     String? fileUrl;
 
     capture.startCapture((value) {
@@ -139,10 +140,8 @@ void main() {
         MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
-    onCallGetVideoCaptureBuilder = Future.value;
-    onCallBuildVideoCapture = Future.value;
     var completer = Completer<String>();
-    onCallStartVideoCapture = (onStopFailed) {
+    onCallStartVideoCapture = (onStopFailed, onCapturing) {
       return completer.future;
     };
     onCallStopVideoCapture = () {
@@ -152,6 +151,7 @@ void main() {
 
     var builder = thetaClientPlugin.getVideoCaptureBuilder();
     var capture = await builder.build();
+    expect(capture.getCheckStatusCommandInterval(), -1);
     var capturing = capture.startCapture((value) {
       expect(false, isTrue, reason: 'startCapture');
     }, (exception) {
@@ -170,10 +170,8 @@ void main() {
 
     const imageUrl = 'http://test.mp4';
 
-    onCallGetVideoCaptureBuilder = Future.value;
-    onCallBuildVideoCapture = Future.value;
     var completer = Completer<String>();
-    onCallStartVideoCapture = (onStopFailed) {
+    onCallStartVideoCapture = (onStopFailed, onCapturing) {
       return completer.future;
     };
     onCallStopVideoCapture = () {
@@ -194,5 +192,71 @@ void main() {
     await Future.delayed(const Duration(milliseconds: 10), () {});
     expect(fileUrl, imageUrl);
     expect(capture.getAperture(), isNull);
+  });
+
+  test('call onStopFailed', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    const imageUrl = 'http://test.mp4';
+
+    onCallStartVideoCapture = (onStopFailed, onCapturing) {
+      onStopFailed?.call(Exception("on stop error."));
+      return Future.value(imageUrl);
+    };
+
+    var builder = thetaClientPlugin.getVideoCaptureBuilder();
+    var capture = await builder.build();
+    String? fileUrl;
+
+    var isOnStopFailed = false;
+    capture.startCapture((value) {
+      expect(value, imageUrl);
+      fileUrl = value;
+    }, (exception) {
+      expect(false, isTrue, reason: 'Error. startCapture');
+    }, onStopFailed: (exception) {
+      expect(exception, isNotNull, reason: 'Error. stopCapture');
+      isOnStopFailed = true;
+    });
+
+    await Future.delayed(const Duration(milliseconds: 100), () {});
+    expect(fileUrl, imageUrl);
+    expect(isOnStopFailed, true);
+  });
+
+  test('call onCapturing', () async {
+    ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
+    MockThetaClientFlutterPlatform fakePlatform =
+        MockThetaClientFlutterPlatform();
+    ThetaClientFlutterPlatform.instance = fakePlatform;
+
+    const imageUrl = 'http://test.mp4';
+
+    onCallStartVideoCapture = (onStopFailed, onCapturing) {
+      onCapturing?.call(CapturingStatusEnum.capturing);
+      return Future.value(imageUrl);
+    };
+
+    var builder = thetaClientPlugin.getVideoCaptureBuilder();
+    var capture = await builder.build();
+    String? fileUrl;
+
+    var isOnCapturing = false;
+    capture.startCapture((value) {
+      expect(value, imageUrl);
+      fileUrl = value;
+    }, (exception) {
+      expect(false, isTrue, reason: 'Error. startCapture');
+    }, onCapturing: (status) {
+      isOnCapturing = true;
+      expect(status, CapturingStatusEnum.capturing);
+    });
+
+    await Future.delayed(const Duration(milliseconds: 100), () {});
+    expect(fileUrl, imageUrl);
+    expect(isOnCapturing, true);
   });
 }

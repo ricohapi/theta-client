@@ -93,6 +93,12 @@ class PhotoCaptureBuilderBase<T> extends CaptureBuilder<T> {
 
 /// Builder of [PhotoCapture]
 class PhotoCaptureBuilder extends PhotoCaptureBuilderBase<PhotoCaptureBuilder> {
+  int _interval = -1;
+
+  PhotoCaptureBuilder setCheckStatusCommandInterval(int timeMillis) {
+    _interval = timeMillis;
+    return this;
+  }
 
   /// Set image processing filter.
   PhotoCaptureBuilder setFilter(FilterEnum filter) {
@@ -111,8 +117,8 @@ class PhotoCaptureBuilder extends PhotoCaptureBuilderBase<PhotoCaptureBuilder> {
     var completer = Completer<PhotoCapture>();
     try {
       await ThetaClientFlutterPlatform.instance
-          .buildPhotoCapture(_options);
-      completer.complete(PhotoCapture(_options));
+          .buildPhotoCapture(_options, _interval);
+      completer.complete(PhotoCapture(_options, _interval));
     } catch (e) {
       completer.completeError(e);
     }
@@ -174,6 +180,13 @@ class TimeShiftCaptureBuilder extends CaptureBuilder<TimeShiftCaptureBuilder> {
 
 /// Builder of VideoCapture
 class VideoCaptureBuilder extends CaptureBuilder<VideoCaptureBuilder> {
+  int _interval = -1;
+
+  VideoCaptureBuilder setCheckStatusCommandInterval(int timeMillis) {
+    _interval = timeMillis;
+    return this;
+  }
+
   /// Set video file format.
   VideoCaptureBuilder setFileFormat(VideoFileFormatEnum fileFormat) {
     _options[TagNameEnum.videoFileFormat.rawValue] = fileFormat;
@@ -190,8 +203,9 @@ class VideoCaptureBuilder extends CaptureBuilder<VideoCaptureBuilder> {
   Future<VideoCapture> build() async {
     var completer = Completer<VideoCapture>();
     try {
-      await ThetaClientFlutterPlatform.instance.buildVideoCapture(_options);
-      completer.complete(VideoCapture(_options));
+      await ThetaClientFlutterPlatform.instance
+          .buildVideoCapture(_options, _interval);
+      completer.complete(VideoCapture(_options, _interval));
     } catch (e) {
       completer.completeError(e);
     }
@@ -202,6 +216,14 @@ class VideoCaptureBuilder extends CaptureBuilder<VideoCaptureBuilder> {
 /// Builder of LimitlessIntervalCapture
 class LimitlessIntervalCaptureBuilder
     extends CaptureBuilder<LimitlessIntervalCaptureBuilder> {
+  int _interval = -1;
+
+  LimitlessIntervalCaptureBuilder setCheckStatusCommandInterval(
+      int timeMillis) {
+    _interval = timeMillis;
+    return this;
+  }
+
   /// Set shooting interval (sec.) for interval shooting.
   LimitlessIntervalCaptureBuilder setCaptureInterval(int interval) {
     _options[OptionNameEnum.captureInterval.rawValue] = interval;
@@ -213,8 +235,8 @@ class LimitlessIntervalCaptureBuilder
     var completer = Completer<LimitlessIntervalCapture>();
     try {
       await ThetaClientFlutterPlatform.instance
-          .buildLimitlessIntervalCapture(_options);
-      completer.complete(LimitlessIntervalCapture(_options));
+          .buildLimitlessIntervalCapture(_options, _interval);
+      completer.complete(LimitlessIntervalCapture(_options, _interval));
     } catch (e) {
       completer.completeError(e);
     }

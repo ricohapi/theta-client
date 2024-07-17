@@ -1,5 +1,6 @@
 import type { ShootingFunctionEnum } from '../options/option-function';
 import type { CameraErrorEnum } from './camera-error';
+import type { CaptureStatusEnum } from './capture-status';
 import type { StateGpsInfo } from './state-gps-info';
 
 /** Battery charging state constants */
@@ -15,30 +16,6 @@ export const ChargingStateEnum = {
 /** type definition of ChargingStateEnum */
 export type ChargingStateEnum =
   (typeof ChargingStateEnum)[keyof typeof ChargingStateEnum];
-
-/** Capture Status constants */
-export const CaptureStatusEnum = {
-  /** Performing continuously shoot */
-  SHOOTING: 'SHOOTING',
-  /** In standby */
-  IDLE: 'IDLE',
-  /** Self-timer is operating */
-  SELF_TIMER_COUNTDOWN: 'SELF_TIMER_COUNTDOWN',
-  /** Performing multi bracket shooting */
-  BRACKET_SHOOTING: 'BRACKET_SHOOTING',
-  /** Converting post file... */
-  CONVERTING: 'CONVERTING',
-  /** Performing timeShift shooting */
-  TIME_SHIFT_SHOOTING: 'TIME_SHIFT_SHOOTING',
-  /** Performing continuous shooting */
-  CONTINUOUS_SHOOTING: 'CONTINUOUS_SHOOTING',
-  /** Waiting for retrospective video... */
-  RETROSPECTIVE_IMAGE_RECORDING: 'RETROSPECTIVE_IMAGE_RECORDING',
-} as const;
-
-/** type definition of CaptureStatusEnum */
-export type CaptureStatusEnum =
-  (typeof CaptureStatusEnum)[keyof typeof CaptureStatusEnum];
 
 /** Microphone option constants */
 export const MicrophoneOptionEnum = {

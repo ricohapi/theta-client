@@ -1,4 +1,4 @@
-import { CaptureBuilder } from './capture';
+import { CaptureBuilder, CapturingStatusEnum } from './capture';
 import { NativeModules } from 'react-native';
 import {
   BaseNotify,
@@ -8,6 +8,7 @@ const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 const NOTIFY_PROGRESS = 'COMPOSITE-INTERVAL-PROGRESS';
 const NOTIFY_STOP_ERROR = 'COMPOSITE-INTERVAL-STOP-ERROR';
+const NOTIFY_CAPTURING = 'COMPOSITE-INTERVAL-CAPTURING';
 
 interface CaptureProgressNotify extends BaseNotify {
   params?: {
@@ -18,6 +19,12 @@ interface CaptureProgressNotify extends BaseNotify {
 interface CaptureStopErrorNotify extends BaseNotify {
   params?: {
     message: string;
+  };
+}
+
+interface CapturingNotify extends BaseNotify {
+  params?: {
+    status: CapturingStatusEnum;
   };
 }
 
@@ -32,11 +39,14 @@ export class CompositeIntervalCapture {
   /**
    * start interval composite shooting
    * @param onProgress the block for interval composite shooting onProgress
+   * @param onStopFailed Called when stopCapture error occurs
+   * @param onCapturing Called when change capture status
    * @return promise of captured file url
    */
   async startCapture(
     onProgress?: (completion?: number) => void,
-    onStopFailed?: (error: any) => void
+    onStopFailed?: (error: any) => void,
+    onCapturing?: (status: CapturingStatusEnum) => void
   ): Promise<string[] | undefined> {
     if (onProgress) {
       this.notify.addNotify(NOTIFY_PROGRESS, (event: CaptureProgressNotify) => {
@@ -51,6 +61,13 @@ export class CompositeIntervalCapture {
         }
       );
     }
+    if (onCapturing) {
+      this.notify.addNotify(NOTIFY_CAPTURING, (event: CapturingNotify) => {
+        if (event.params?.status) {
+          onCapturing(event.params.status);
+        }
+      });
+    }
 
     return new Promise<string[] | undefined>(async (resolve, reject) => {
       await ThetaClientReactNative.startCompositeIntervalCapture()
@@ -63,6 +80,7 @@ export class CompositeIntervalCapture {
         .finally(() => {
           this.notify.removeNotify(NOTIFY_PROGRESS);
           this.notify.removeNotify(NOTIFY_STOP_ERROR);
+          this.notify.removeNotify(NOTIFY_CAPTURING);
         });
     });
   }

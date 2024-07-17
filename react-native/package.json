@@ -1,6 +1,6 @@
 {
   "name": "theta-client-react-native",
-  "version": "1.9.1",
+  "version": "1.10.0",
   "description": "This library provides a way to control RICOH THETA using.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -83,7 +83,7 @@
   "engines": {
     "node": ">= 16.0.0"
   },
-  "packageManager": "yarn@1.22.15",
+  "packageManager": "yarn@1.22.22",
   "jest": {
     "preset": "react-native",
     "modulePathIgnorePatterns": [

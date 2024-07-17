@@ -8,6 +8,7 @@ import {
   NotifyController,
 } from '../../theta-repository/notify-controller';
 import { NativeEventEmitter_addListener } from '../../__mocks__/react-native';
+import { CapturingStatusEnum } from '../../capture';
 
 describe('interval composite shooting', () => {
   const thetaClient = NativeModules.ThetaClientReactNative;
@@ -106,6 +107,56 @@ describe('interval composite shooting', () => {
     const fileUrls = await capture.startCapture();
     expect(fileUrls).toBe(testUrls);
     expect(NotifyController.instance.notifyList.size).toBe(0);
+  });
+
+  test('startCaptureWithCapturing', async () => {
+    let notifyCallback: (notify: BaseNotify) => void = () => {
+      expect(true).toBeFalsy();
+    };
+    jest.mocked(NativeEventEmitter_addListener).mockImplementation(
+      jest.fn((_, callback) => {
+        notifyCallback = callback;
+        return {
+          remove: jest.fn(),
+        };
+      })
+    );
+    await initialize();
+    const builder = getCompositeIntervalCaptureBuilder(600);
+
+    const sendStatus = (status: CapturingStatusEnum) => {
+      notifyCallback({
+        name: 'COMPOSITE-INTERVAL-CAPTURING',
+        params: {
+          status: status,
+        },
+      });
+    };
+
+    jest
+      .mocked(thetaClient.buildCompositeIntervalCapture)
+      .mockImplementation(jest.fn(async () => {}));
+    const testUrls = ['http://192.168.1.1/files/100RICOH/R100.JPG'];
+    jest.mocked(thetaClient.startCompositeIntervalCapture).mockImplementation(
+      jest.fn(async () => {
+        sendStatus(CapturingStatusEnum.SELF_TIMER_COUNTDOWN);
+        return testUrls;
+      })
+    );
+
+    const capture = await builder.build();
+    let isOnCapturing = false;
+    const fileUrls = await capture.startCapture(
+      undefined,
+      undefined,
+      (status) => {
+        expect(status).toBe(CapturingStatusEnum.SELF_TIMER_COUNTDOWN);
+        isOnCapturing = true;
+      }
+    );
+    expect(fileUrls).toBe(testUrls);
+    expect(NotifyController.instance.notifyList.size).toBe(0);
+    expect(isOnCapturing).toBeTruthy();
   });
 
   test('cancelCapture', (done) => {

@@ -1,4 +1,4 @@
-import { CaptureBuilder } from './capture';
+import { CaptureBuilder, CapturingStatusEnum } from './capture';
 import { NativeModules } from 'react-native';
 import type { TimeShiftIntervalEnum } from '../theta-repository/options';
 import {
@@ -9,6 +9,7 @@ const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 const NOTIFY_NAME = 'TIME-SHIFT-PROGRESS';
 const NOTIFY_STOP_ERROR = 'TIME-SHIFT-STOP-ERROR';
+const NOTIFY_CAPTURING = 'TIME-SHIFT-CAPTURING';
 
 interface CaptureProgressNotify extends BaseNotify {
   params?: {
@@ -19,6 +20,12 @@ interface CaptureProgressNotify extends BaseNotify {
 interface CaptureStopErrorNotify extends BaseNotify {
   params?: {
     message: string;
+  };
+}
+
+interface CapturingNotify extends BaseNotify {
+  params?: {
+    status: CapturingStatusEnum;
   };
 }
 
@@ -34,11 +41,13 @@ export class TimeShiftCapture {
    * start time-shift
    * @param onProgress the block for time-shift onProgress
    * @param onStopFailed the block for error of cancelCapture
+   * @param onCapturing Called when change capture status
    * @return promise of captured file url
    */
   async startCapture(
     onProgress?: (completion?: number) => void,
-    onStopFailed?: (error: any) => void
+    onStopFailed?: (error: any) => void,
+    onCapturing?: (status: CapturingStatusEnum) => void
   ): Promise<string | undefined> {
     if (onProgress) {
       this.notify.addNotify(NOTIFY_NAME, (event: CaptureProgressNotify) => {
@@ -53,6 +62,13 @@ export class TimeShiftCapture {
         }
       );
     }
+    if (onCapturing) {
+      this.notify.addNotify(NOTIFY_CAPTURING, (event: CapturingNotify) => {
+        if (event.params?.status) {
+          onCapturing(event.params.status);
+        }
+      });
+    }
 
     return new Promise<string | undefined>(async (resolve, reject) => {
       await ThetaClientReactNative.startTimeShiftCapture()
@@ -65,6 +81,7 @@ export class TimeShiftCapture {
         .finally(() => {
           this.notify.removeNotify(NOTIFY_NAME);
           this.notify.removeNotify(NOTIFY_STOP_ERROR);
+          this.notify.removeNotify(NOTIFY_CAPTURING);
         });
     });
   }

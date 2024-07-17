@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { StatusBar, Text, View, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './styles';
-import { FileTypeEnum, FileInfo, getMetadata } from 'theta-client-react-native';
+import {
+  FileTypeEnum,
+  FileInfo,
+  getMetadata,
+} from '../../modules/theta-client';
 import Button from '../../components/ui/button';
 import { ListFilesView } from '../../components/list-files-view';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';

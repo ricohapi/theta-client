@@ -13,7 +13,7 @@ import {
   isInitialized,
   stopLivePreview,
   THETA_EVENT_NAME,
-} from 'theta-client-react-native';
+} from '../../modules/theta-client';
 import { useIsFocused } from '@react-navigation/native';
 import Button from '../../components/ui/button';
 import WebView from 'react-native-webview';

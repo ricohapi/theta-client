@@ -11,6 +11,7 @@ const val KEY_NOTIFY_PARAMS = "params"
 const val KEY_NOTIFY_PARAM_COMPLETION = "completion"
 const val KEY_NOTIFY_PARAM_IMAGE = "image"
 const val KEY_NOTIFY_PARAM_MESSAGE = "message"
+const val KEY_NOTIFY_PARAM_STATUS = "status"
 const val KEY_GPS_INFO = "gpsInfo"
 const val KEY_STATE_EXTERNAL_GPS_INFO = "externalGpsInfo"
 const val KEY_STATE_INTERNAL_GPS_INFO = "internalGpsInfo"
@@ -344,6 +345,11 @@ fun <T> setCaptureBuilderParams(call: MethodCall, builder: Capture.Builder<T>) {
 }
 
 fun setPhotoCaptureBuilderParams(call: MethodCall, builder: PhotoCapture.Builder) {
+    call.argument<Int>("_capture_interval")?.let {
+        if (it >= 0) {
+            builder.setCheckStatusCommandInterval(it.toLong())
+        }
+    }
     call.argument<String>(OptionNameEnum.Filter.name)?.let { enumName ->
         FilterEnum.values().find { it.name == enumName }?.let {
             builder.setFilter(it)
@@ -382,6 +388,11 @@ fun setTimeShiftCaptureBuilderParams(call: MethodCall, builder: TimeShiftCapture
 }
 
 fun setVideoCaptureBuilderParams(call: MethodCall, builder: VideoCapture.Builder) {
+    call.argument<Int>("_capture_interval")?.let {
+        if (it >= 0) {
+            builder.setCheckStatusCommandInterval(it.toLong())
+        }
+    }
     call.argument<String>(OptionNameEnum.MaxRecordableTime.name)?.let { enumName ->
         MaxRecordableTimeEnum.values().find { it.name == enumName }?.let {
             builder.setMaxRecordableTime(it)
@@ -395,6 +406,11 @@ fun setVideoCaptureBuilderParams(call: MethodCall, builder: VideoCapture.Builder
 }
 
 fun setLimitlessIntervalCaptureBuilderParams(call: MethodCall, builder: LimitlessIntervalCapture.Builder) {
+    call.argument<Int>("_capture_interval")?.let {
+        if (it >= 0) {
+            builder.setCheckStatusCommandInterval(it.toLong())
+        }
+    }
     call.argument<Int>(OptionNameEnum.CaptureInterval.name)?.also {
         builder.setCaptureInterval(it)
     }
@@ -904,5 +920,11 @@ fun toPreviewNotifyParam(imageData: ByteArray): Map<String, Any> {
 fun toMessageNotifyParam(message: String): Map<String, Any> {
     return mapOf<String, Any>(
         KEY_NOTIFY_PARAM_MESSAGE to message
+    )
+}
+
+fun toCapturingNotifyParam(status: CapturingStatusEnum): Map<String, Any> {
+    return mapOf<String, Any>(
+        KEY_NOTIFY_PARAM_STATUS to status.name
     )
 }
