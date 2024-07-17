@@ -524,6 +524,54 @@ enum VideoFileFormatEnum {
   video_2K_60F(FileFormatEnum.video_2K_60F),
 
   /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 2752 x 2752
+  /// codec: H.264/MPEG-4 AVC
+  /// frame rate: 2
+  ///
+  /// RICOH THETA X firmware v2.50.2 or later.
+  /// This mode outputs two fisheye video for each lens.
+  /// The MP4 file name ending with _0 is the video file on the front lens, and _1 is back lens.
+  video_2_7K_2752_2F(FileFormatEnum.video_2_7K_2752_2F),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 2752 x 2752
+  /// codec: H.264/MPEG-4 AVC
+  /// frame rate: 5
+  ///
+  /// RICOH THETA X firmware v2.50.2 or later.
+  /// This mode outputs two fisheye video for each lens.
+  /// The MP4 file name ending with _0 is the video file on the front lens, and _1 is back lens.
+  video_2_7K_2752_5F(FileFormatEnum.video_2_7K_2752_5F),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 2752 x 2752
+  /// codec: H.264/MPEG-4 AVC
+  /// frame rate: 10
+  ///
+  /// RICOH THETA X firmware v2.50.2 or later.
+  /// This mode outputs two fisheye video for each lens.
+  /// The MP4 file name ending with _0 is the video file on the front lens, and _1 is back lens.
+  video_2_7K_2752_10F(FileFormatEnum.video_2_7K_2752_10F),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 2752 x 2752
+  /// codec: H.264/MPEG-4 AVC
+  /// frame rate: 30
+  ///
+  /// RICOH THETA X firmware v2.50.2 or later.
+  /// This mode outputs two fisheye video for each lens.
+  /// The MP4 file name ending with _0 is the video file on the front lens, and _1 is back lens.
+  video_2_7K_2752_30F(FileFormatEnum.video_2_7K_2752_30F),
+
+  /// Video File format.
   /// type: mp4
   /// size: 2688 x 2688
   /// codec: H.264/MPEG-4 AVC
@@ -575,6 +623,24 @@ enum VideoFileFormatEnum {
   /// type: mp4
   /// size: 3840 x 1920
   /// codec: H.264/MPEG-4 AVC
+  /// frame rate: 10
+  ///
+  /// For RICOH THETA X or later
+  video_4K_10F(FileFormatEnum.video_4K_10F),
+
+  /// Video File format.
+  /// type: mp4
+  /// size: 3840 x 1920
+  /// codec: H.264/MPEG-4 AVC
+  /// frame rate: 15
+  ///
+  /// For RICOH THETA X or later
+  video_4K_15F(FileFormatEnum.video_4K_15F),
+
+  /// Video File format.
+  /// type: mp4
+  /// size: 3840 x 1920
+  /// codec: H.264/MPEG-4 AVC
   /// frame rate: 30
   ///
   /// For RICOH THETA X or later
@@ -606,6 +672,24 @@ enum VideoFileFormatEnum {
   ///
   /// For RICOH THETA X or later
   video_5_7K_5F(FileFormatEnum.video_5_7K_5F),
+
+  /// Video File format.
+  /// type: mp4
+  /// size: 5760 x 2880
+  /// codec: H.264/MPEG-4 AVC
+  /// frame rate: 10
+  ///
+  /// For RICOH THETA X or later
+  video_5_7K_10F(FileFormatEnum.video_5_7K_10F),
+
+  /// Video File format.
+  /// type: mp4
+  /// size: 5760 x 2880
+  /// codec: H.264/MPEG-4 AVC
+  /// frame rate: 15
+  ///
+  /// For RICOH THETA X or later
+  video_5_7K_15F(FileFormatEnum.video_5_7K_15F),
 
   /// Video File format.
   /// type: mp4
