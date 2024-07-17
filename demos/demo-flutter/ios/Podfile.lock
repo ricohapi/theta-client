@@ -1,9 +1,9 @@
 PODS:
   - Flutter (1.0.0)
-  - theta_client_flutter (1.9.1):
+  - theta_client_flutter (1.10.0):
     - Flutter
-    - THETAClient (= 1.9.1)
-  - THETAClient (1.9.1)
+    - THETAClient (= 1.10.0)
+  - THETAClient (1.10.0)
   - video_player_avfoundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -26,11 +26,11 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/video_player_avfoundation/darwin"
 
 SPEC CHECKSUMS:
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  theta_client_flutter: 8c01cf0422f64d5170d696745f0fb6ac5c793996
-  THETAClient: 6e6e3489a01825853f53c73724e3c625966b2e33
-  video_player_avfoundation: 02011213dab73ae3687df27ce441fbbcc82b5579
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  theta_client_flutter: 9043534a1f2da3aa7b9faeb40b994e28aab3abc8
+  THETAClient: 75fab538e30f0a2a2331ca427c95b2261f401de8
+  video_player_avfoundation: 7c6c11d8470e1675df7397027218274b6d2360b3
 
-PODFILE CHECKSUM: ef19549a9bc3046e7bb7d2fab4d021637c0c58a3
+PODFILE CHECKSUM: c4c93c5f6502fe2754f48404d3594bf779584011
 
 COCOAPODS: 1.15.2
