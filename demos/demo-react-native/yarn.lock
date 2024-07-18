@@ -6042,10 +6042,10 @@ text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==
 
-theta-client-react-native@1.9.1:
-  version "1.9.1"
-  resolved "https://registry.yarnpkg.com/theta-client-react-native/-/theta-client-react-native-1.9.1.tgz#62c861771979904fb18d6d762509fb3d731b50d8"
-  integrity sha512-s6EibrahiNY1zAn+JLJIL3dvhO/W9qx8u/VMhAyAnhYRanPeNKUo+7tPoIxBlvxn+fnT4a7XNbkRNvFl0g3M/Q==
+theta-client-react-native@1.10.0:
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/theta-client-react-native/-/theta-client-react-native-1.10.0.tgz#955ea722f7c95820ba691e2e2ced779420fe304b"
+  integrity sha512-B4agdGx6OSY4zZoYJjo7PScyyY1cc0ldrZK07n98iUEhA8/MeFgneZN3U8STAO2CyPdeb2MgaKg2fD8D496BOg==
 
 throat@^5.0.0:
   version "5.0.0"
