@@ -1,11 +1,11 @@
 name: theta_client_flutter
 description: THETA Client Flutter plugin project.
-version: 1.10.0
+version: 1.10.1
 homepage:
 
 environment:
-  sdk: '>=3.2.3 <4.0.0'
-  flutter: '>=3.3.0'
+  sdk: ">=3.2.3 <4.0.0"
+  flutter: ">=3.3.0"
 
 dependencies:
   flutter:

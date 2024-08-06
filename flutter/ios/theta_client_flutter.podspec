@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'theta_client_flutter'
-  s.version          = '1.10.0'
+  s.version          = '1.10.1'
   s.summary          = 'theta-client plugin project.'
   s.description      = <<-DESC
   theta-client Flutter plugin project.
@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   s.dependency 'Flutter'
   s.platform = :ios, '15.0'
 
-  s.dependency 'THETAClient', '1.10.0'
+  s.dependency 'THETAClient', '1.10.1'
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
