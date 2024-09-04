@@ -7,7 +7,6 @@ import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
 import io.ktor.http.*
 import io.ktor.utils.io.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
@@ -15,7 +14,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import kotlin.test.*
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class ThetaRepositoryTest {
     private val endpoint = "http://192.168.1.1:80/"
 
@@ -793,15 +791,20 @@ class ThetaRepositoryTest {
 
     @Test
     fun callSingleRequestTimeoutTest() = runBlocking {
-        var counter = 0
-        val jsonString = Resource("src/commonTest/resources/info/info_z1.json").readText()
-        MockApiClient.onRequest = { _ ->
-            counter += 1
-            runBlocking {
-                delay(500)
+        val jsonInfo = Resource("src/commonTest/resources/info/info_z1.json").readText()
+        val jsonState = Resource("src/commonTest/resources/state/state_z1.json").readText()
+        MockApiClient.onRequest = { request ->
+            when (request.url.encodedPath) {
+                "/osc/info" -> ByteReadChannel(jsonInfo)
+                "/osc/state" -> {
+                    runBlocking {
+                        delay(500)
+                    }
+                    ByteReadChannel(jsonState)
+                }
+
+                else -> throw Exception("Error")
             }
-            counter -= 1
-            ByteReadChannel(jsonString)
         }
 
         val timeout = ThetaRepository.Timeout(
@@ -812,10 +815,15 @@ class ThetaRepositoryTest {
         val apiJobsList = listOf(
             launch {
                 thetaRepository.getThetaInfo()
+                try {
+                    thetaRepository.getThetaInfo()
+                } catch (e: ThetaRepository.NotConnectedException) {
+                    assertTrue(false)
+                }
             },
             launch {
                 try {
-                    thetaRepository.getThetaInfo()
+                    thetaRepository.getThetaState()
                     assertTrue(false)
                 } catch (e: ThetaRepository.NotConnectedException) {
                     assertTrue((e.message?.indexOf("time", 0, true) ?: -1) >= 0, "timeout error")

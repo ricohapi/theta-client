@@ -1,7 +1,10 @@
 package com.ricoh360.thetaclient
 
 import korlibs.crypto.md5
-import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 
 internal const val HEX_CHARACTERS = "0123456789abcdef"
@@ -24,22 +27,22 @@ internal fun md5(data: String): String {
 }
 
 internal suspend fun <T> syncExecutor(
-    semaphore: Semaphore,
+    scope: CoroutineScope,
     timeout: Long,
     run: suspend () -> T,
 ): T {
-    try {
-        withTimeout(timeout) {
-            semaphore.acquire()
+    val deferred = CompletableDeferred<T>()
+    scope.launch {
+        runBlocking {
+            try {
+                withTimeout(timeout) {
+                    val result = run()
+                    deferred.complete(result)
+                }
+            } catch (e: Throwable) {
+                deferred.completeExceptionally(e)
+            }
         }
-    } catch (e: Throwable) {
-        println("timeout acquire")
-        throw e
     }
-    try {
-        val result = run()
-        return result
-    } finally {
-        semaphore.release()
-    }
+    return deferred.await()
 }
