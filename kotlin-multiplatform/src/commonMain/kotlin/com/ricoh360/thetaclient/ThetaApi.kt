@@ -16,11 +16,13 @@ import io.ktor.client.statement.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.core.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.sync.Semaphore
 import kotlinx.io.files.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -30,7 +32,7 @@ internal const val ALLOWED_CAPTURE_INTERVAL = 1000
 /**
  * Http client using [Ktor](https://jp.ktor.work/clients/index.html)
  */
-@OptIn(ExperimentalSerializationApi::class) // explicitNulls
+@OptIn(ExperimentalSerializationApi::class, ExperimentalCoroutinesApi::class) // explicitNulls
 internal object ThetaApi {
     val httpClient: HttpClient // for commands other than getLivePreview command
         get() = getHttpClient()
@@ -41,7 +43,7 @@ internal object ThetaApi {
     val multipartPostClient: MultipartPostClient // just for updateFirmware protcol
         get() = getMultipartPostClient()
 
-    val requestSemaphore = Semaphore(1)
+    val requestScope = CoroutineScope(Dispatchers.Default.limitedParallelism(1))
     var lastSetTimeConsumingOptionTime: Long = 0
     var currentOptions = Options()
 
@@ -65,7 +67,7 @@ internal object ThetaApi {
     suspend fun callInfoApi(
         endpoint: String,
     ): InfoApiResponse {
-        return syncExecutor(requestSemaphore, ApiClient.timeout.requestTimeout) {
+        return syncExecutor(requestScope, ApiClient.timeout.requestTimeout) {
             httpClient.get(getApiUrl(endpoint, InfoApi.PATH)).body()
         }
     }
@@ -84,7 +86,7 @@ internal object ThetaApi {
     suspend fun callLicenseApi(
         endpoint: String,
     ): HttpResponse {
-        return syncExecutor(requestSemaphore, ApiClient.timeout.requestTimeout) {
+        return syncExecutor(requestScope, ApiClient.timeout.requestTimeout) {
             httpClient.get(getApiUrl(endpoint, LicenseApi.PATH))
         }
     }
@@ -103,7 +105,7 @@ internal object ThetaApi {
     suspend fun callStateApi(
         endpoint: String,
     ): StateApiResponse {
-        return syncExecutor(requestSemaphore, ApiClient.timeout.requestTimeout) {
+        return syncExecutor(requestScope, ApiClient.timeout.requestTimeout) {
             httpClient.post(getApiUrl(endpoint, StateApi.PATH)).body()
         }
     }
@@ -126,7 +128,7 @@ internal object ThetaApi {
         endpoint: String,
         params: StatusApiParams,
     ): CommandApiResponse {
-        return syncExecutor(requestSemaphore, ApiClient.timeout.requestTimeout) {
+        return syncExecutor(requestScope, ApiClient.timeout.requestTimeout) {
             val request = StatusApiRequest(name = params.name, id = params.id)
             val response = httpClient.post(getApiUrl(endpoint, StatusApi.PATH)) {
                 headers {
@@ -898,7 +900,7 @@ internal object ThetaApi {
         endpoint: String,
         body: T,
     ): HttpResponse {
-        return syncExecutor(requestSemaphore, ApiClient.timeout.requestTimeout) {
+        return syncExecutor(requestScope, ApiClient.timeout.requestTimeout) {
             httpClient.post(getApiUrl(endpoint, CommandApi.PATH)) {
                 headers {
                     append("Content-Type", "application/json; charset=utf-8")
