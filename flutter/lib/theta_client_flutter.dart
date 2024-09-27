@@ -1239,6 +1239,9 @@ enum OptionNameEnum {
   /// Option name _cameraMode
   cameraMode('CameraMode', CameraModeEnum),
 
+  /// Option name _cameraPower
+  cameraPower('CameraPower', CameraPowerEnum),
+
   /// Option name captureInterval
   captureInterval('CaptureInterval', int),
 
@@ -3253,6 +3256,9 @@ class Options {
   /// For RICOH THETA X
   CameraModeEnum? cameraMode;
 
+  /// see [CameraPowerEnum]
+  CameraPowerEnum? cameraPower;
+
   /// Shooting interval (sec.) for interval shooting.
   ///
   /// ### Support value
@@ -3526,6 +3532,8 @@ class Options {
         return cameraControlSource as T;
       case OptionNameEnum.cameraMode:
         return cameraMode as T;
+      case OptionNameEnum.cameraPower:
+        return cameraPower as T;
       case OptionNameEnum.captureInterval:
         return captureInterval as T;
       case OptionNameEnum.captureMode:
@@ -3663,6 +3671,9 @@ class Options {
         break;
       case OptionNameEnum.cameraMode:
         cameraMode = value;
+        break;
+      case OptionNameEnum.cameraPower:
+        cameraPower = value;
         break;
       case OptionNameEnum.captureInterval:
         captureInterval = value;

@@ -431,6 +431,9 @@ class ConvertUtils {
         case OptionNameEnum.cameraMode:
           result.cameraMode = CameraModeEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.cameraPower:
+          result.cameraPower = CameraPowerEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.captureInterval:
           result.captureInterval = entry.value;
           break;
@@ -623,6 +626,8 @@ class ConvertUtils {
     } else if (value is CameraControlSourceEnum) {
       return value.rawValue;
     } else if (value is CameraModeEnum) {
+      return value.rawValue;
+    } else if (value is CameraPowerEnum) {
       return value.rawValue;
     } else if (value is CaptureModeEnum) {
       return value.rawValue;

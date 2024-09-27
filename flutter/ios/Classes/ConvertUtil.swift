@@ -863,6 +863,8 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         options.cameraControlSource = getEnumValue(values: ThetaRepository.CameraControlSourceEnum.values(), name: value as! String)!
     case ThetaRepository.OptionNameEnum.cameramode.name:
         options.cameraMode = getEnumValue(values: ThetaRepository.CameraModeEnum.values(), name: value as! String)!
+    case ThetaRepository.OptionNameEnum.camerapower.name:
+        options.cameraPower = getEnumValue(values: ThetaRepository.CameraPowerEnum.values(), name: value as! String)!
     case ThetaRepository.OptionNameEnum.captureinterval.name:
         options.captureInterval = KotlinInt(integerLiteral: value as! Int)
     case ThetaRepository.OptionNameEnum.capturemode.name:

@@ -24,7 +24,7 @@ jobs:
         yarn test --collectCoverage
     - name: Archive code coverage results
       if: always()
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v4
       with:
         name: test-react-native-report
         path: react-native/coverage

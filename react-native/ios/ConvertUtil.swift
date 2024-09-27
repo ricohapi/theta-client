@@ -88,6 +88,7 @@ let optionItemNameToEnum = [
     "burstOption": ThetaRepository.OptionNameEnum.burstoption,
     "cameraControlSource": ThetaRepository.OptionNameEnum.cameracontrolsource,
     "cameraMode": ThetaRepository.OptionNameEnum.cameramode,
+    "cameraPower": ThetaRepository.OptionNameEnum.camerapower,
     "captureInterval": ThetaRepository.OptionNameEnum.captureinterval,
     "captureMode": ThetaRepository.OptionNameEnum.capturemode,
     "captureNumber": ThetaRepository.OptionNameEnum.capturenumber,
@@ -209,6 +210,10 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.cameramode.name:
         options.cameraMode = getEnumValue(
             values: ThetaRepository.CameraModeEnum.values(), name: value as! String
+        )!
+    case ThetaRepository.OptionNameEnum.camerapower.name:
+        options.cameraPower = getEnumValue(
+            values: ThetaRepository.CameraPowerEnum.values(), name: value as! String
         )!
     case ThetaRepository.OptionNameEnum.captureinterval.name:
         options.captureInterval = KotlinInt(integerLiteral: value as! Int)

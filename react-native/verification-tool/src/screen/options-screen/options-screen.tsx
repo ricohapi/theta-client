@@ -6,6 +6,7 @@ import Button from '../../components/ui/button';
 import {
   ApertureEnum,
   BluetoothRoleEnum,
+  CameraPowerEnum,
   CaptureModeEnum,
   ContinuousNumberEnum,
   ExposureCompensationEnum,
@@ -99,6 +100,23 @@ const optionList: OptionItem[] = [
           optionEnum={BluetoothRoleEnum}
         />
       ),
+    },
+  },
+  {
+    name: 'cameraPower',
+    value: {
+      optionName: OptionNameEnum.CameraPower,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'cameraPower'}
+          option={options?.cameraPower}
+          onChange={(cameraPower) => {
+            onChange({ cameraPower });
+          }}
+          optionEnum={CameraPowerEnum}
+        />
+      ),
+      defaultValue: { cameraPower: CameraPowerEnum.ON },
     },
   },
   {
