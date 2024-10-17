@@ -9,6 +9,7 @@ let KEY_NOTIFY_PARAM_EVENT = "event"
 let KEY_NOTIFY_PARAM_IMAGE = "image"
 let KEY_NOTIFY_PARAM_MESSAGE = "message"
 let KEY_NOTIFY_PARAM_STATUS = "status"
+let KEY_NOTIFY_PARAM_FILE_URL = "fileUrl"
 let KEY_DATETIME = "dateTime"
 let KEY_LANGUAGE = "language"
 let KEY_OFF_DELAY = "offDelay"
@@ -466,6 +467,12 @@ func toMessageNotifyParam(value: String) -> [String: Any] {
 func toCapturingNotifyParam(value: CapturingStatusEnum) -> [String: Any] {
     return [
         KEY_NOTIFY_PARAM_STATUS: value.name,
+    ]
+}
+
+func toStartedNotifyParam(value: String) -> [String: Any] {
+    return [
+        KEY_NOTIFY_PARAM_FILE_URL: value,
     ]
 }
 

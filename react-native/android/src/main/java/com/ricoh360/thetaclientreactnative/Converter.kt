@@ -17,6 +17,7 @@ const val KEY_NOTIFY_PARAM_COMPLETION = "completion"
 const val KEY_NOTIFY_PARAM_EVENT = "event"
 const val KEY_NOTIFY_PARAM_MESSAGE = "message"
 const val KEY_NOTIFY_PARAM_STATUS = "status"
+const val KEY_NOTIFY_PARAM_FILE_URL = "fileUrl"
 const val KEY_GPS_INFO = "gpsInfo"
 const val KEY_STATE_EXTERNAL_GPS_INFO = "externalGpsInfo"
 const val KEY_STATE_INTERNAL_GPS_INFO = "internalGpsInfo"
@@ -119,6 +120,12 @@ fun toMessageNotifyParam(value: String): WritableMap {
 fun toCapturingNotifyParam(status: CapturingStatusEnum): WritableMap {
   val result = Arguments.createMap()
   result.putString(KEY_NOTIFY_PARAM_STATUS, status.name)
+  return result
+}
+
+fun toStartedNotifyParam(value: String): WritableMap {
+  val result = Arguments.createMap()
+  result.putString(KEY_NOTIFY_PARAM_FILE_URL, value)
   return result
 }
 

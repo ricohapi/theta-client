@@ -25,6 +25,7 @@ const VideoCaptureScreen: React.FC<
 > = ({ navigation }) => {
   const [interval, setInterval] = React.useState<number>();
   const [message, setMessage] = React.useState('');
+  const [message2, setMessage2] = React.useState('');
   const [capturingStatus, setCapturingStatus] =
     React.useState<CapturingStatusEnum>();
   const [captureOptions, setCaptureOptions] = React.useState<Options>();
@@ -99,6 +100,9 @@ const VideoCaptureScreen: React.FC<
         },
         (status) => {
           setCapturingStatus(status);
+        },
+        (fileUrl) => {
+          setMessage2('file = ' + fileUrl);
         }
       );
       initCapture();
@@ -180,6 +184,7 @@ const VideoCaptureScreen: React.FC<
           onPress={onStopSelfTimer}
           disabled={!isTaking}
         />
+        <Text style={styles.itemText}>{message2}</Text>
       </View>
       <View style={styles.contentContainer}>
         <ScrollView>

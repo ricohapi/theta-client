@@ -85,6 +85,14 @@ class VideoCapture private constructor(
          * @param status Capturing status
          */
         fun onCapturing(status: CapturingStatusEnum) {}
+
+        /**
+         * Called when the capture has already started.
+         *
+         * @param fileUrl URL of the video capture.
+         *                Always null or empty when using self-timer.
+         */
+        fun onCaptureStarted(fileUrl: String?) {}
     }
 
     internal suspend fun getCaptureStatus(): CaptureStatus? {
@@ -171,7 +179,9 @@ class VideoCapture private constructor(
         }
         scope.launch {
             try {
-                ThetaApi.callStartCaptureCommand(endpoint, StartCaptureParams()).error?.let {
+                val response = ThetaApi.callStartCaptureCommand(endpoint, StartCaptureParams())
+                callback.onCaptureStarted(fileUrl = response._fileUrls?.firstOrNull())
+                response.error?.let {
                     callOnCaptureFailed(ThetaRepository.ThetaWebApiException(it.message))
                 }
             } catch (e: JsonConvertException) {

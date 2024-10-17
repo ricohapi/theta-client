@@ -85,6 +85,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         const val notifyIdPhotoCapturing = 10071
         const val notifyIdVideoCaptureStopError = 10081
         const val notifyIdVideoCaptureCapturing = 10082
+        const val notifyIdVideoCaptureStarted = 10083
     }
 
     fun sendNotifyEvent(id: Int, params: Map<String, Any?>) {
@@ -817,6 +818,13 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 sendNotifyEvent(
                     notifyIdVideoCaptureCapturing,
                     toCapturingNotifyParam(status)
+                )
+            }
+
+            override fun onCaptureStarted(fileUrl: String?) {
+                sendNotifyEvent(
+                    notifyIdVideoCaptureStarted,
+                    toStartedNotifyParam(fileUrl ?: "")
                 )
             }
         })

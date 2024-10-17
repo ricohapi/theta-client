@@ -266,4 +266,66 @@ describe('video capture', () => {
 
     return promise;
   });
+
+  test('onCaptureStarted', async () => {
+    let notifyCallback: (notify: BaseNotify) => void = () => {
+      expect(true).toBeFalsy();
+    };
+    jest.mocked(NativeEventEmitter_addListener).mockImplementation(
+      jest.fn((_, callback) => {
+        notifyCallback = callback;
+        return {
+          remove: jest.fn(),
+        };
+      })
+    );
+
+    await initialize();
+    const builder = getVideoCaptureBuilder();
+    jest
+      .mocked(thetaClient.buildVideoCapture)
+      .mockImplementation(jest.fn(async () => {}));
+    const testUrl = 'http://192.168.1.1/files/100RICOH/R100.MP4';
+
+    const sendFileUrl = (fileUrl: String) => {
+      notifyCallback({
+        name: 'VIDEO-CAPTURE-STARTED',
+        params: {
+          fileUrl: fileUrl,
+        },
+      });
+    };
+
+    jest.mocked(thetaClient.startVideoCapture).mockImplementation(
+      jest.fn(async () => {
+        sendFileUrl('xxx.mp4');
+        return testUrl;
+      })
+    );
+
+    const capture = await builder.build();
+    let isStarted = false;
+    const result = await capture.startCapture(
+      undefined,
+      undefined,
+      (fileUrl) => {
+        expect(fileUrl).toBe('xxx.mp4');
+        isStarted = true;
+      }
+    );
+    expect(result).toBe(testUrl);
+
+    let done: (value: unknown) => void;
+    const promise = new Promise((resolve) => {
+      done = resolve;
+    });
+
+    setTimeout(() => {
+      expect(NotifyController.instance.notifyList.size).toBe(0);
+      expect(isStarted).toBeTruthy();
+      done(0);
+    }, 1);
+
+    return promise;
+  });
 });

@@ -12,6 +12,7 @@ const val KEY_NOTIFY_PARAM_COMPLETION = "completion"
 const val KEY_NOTIFY_PARAM_IMAGE = "image"
 const val KEY_NOTIFY_PARAM_MESSAGE = "message"
 const val KEY_NOTIFY_PARAM_STATUS = "status"
+const val KEY_NOTIFY_PARAM_FILE_URL = "fileUrl"
 const val KEY_GPS_INFO = "gpsInfo"
 const val KEY_STATE_EXTERNAL_GPS_INFO = "externalGpsInfo"
 const val KEY_STATE_INTERNAL_GPS_INFO = "internalGpsInfo"
@@ -927,5 +928,11 @@ fun toMessageNotifyParam(message: String): Map<String, Any> {
 fun toCapturingNotifyParam(status: CapturingStatusEnum): Map<String, Any> {
     return mapOf<String, Any>(
         KEY_NOTIFY_PARAM_STATUS to status.name
+    )
+}
+
+fun toStartedNotifyParam(value: String): Map<String, Any> {
+    return mapOf<String, Any>(
+        KEY_NOTIFY_PARAM_FILE_URL to value
     )
 }

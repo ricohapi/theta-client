@@ -135,7 +135,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
 
   Future<String?> startVideoCapture(
       void Function(Exception exception)? onStopFailed,
-      void Function(CapturingStatusEnum status)? onCapturing) {
+      void Function(CapturingStatusEnum status)? onCapturing,
+      void Function(String? fileUrl)? onCaptureStarted) {
     throw UnimplementedError('startVideoCapture() has not been implemented.');
   }
 

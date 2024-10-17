@@ -26,6 +26,7 @@ let NOTIFY_CONTINUOUS_CAPTURING = 10062
 let NOTIFY_PHOTO_CAPTURING = 10071
 let NOTIFY_VIDEO_CAPTURE_STOP_ERROR = 10081
 let NOTIFY_VIDEO_CAPTURE_CAPTURING = 10082
+let NOTIFY_VIDEO_CAPTURE_STARTED = 10083
 
 public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     public func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -737,6 +738,10 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             
             func onCapturing(status: CapturingStatusEnum) {
                 plugin?.sendNotifyEvent(id: NOTIFY_VIDEO_CAPTURE_CAPTURING, params: toCapturingNotifyParam(value: status))
+            }
+            
+            func onCaptureStarted(fileUrl: String?) {
+                plugin?.sendNotifyEvent(id: NOTIFY_VIDEO_CAPTURE_STARTED, params: toStartedNotifyParam(value: fileUrl ?? ""))
             }
         }
         videoCapturing = videoCapture!.startCapture(

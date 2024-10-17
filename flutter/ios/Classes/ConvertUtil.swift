@@ -9,6 +9,7 @@ let KEY_NOTIFY_PARAM_COMPLETION = "completion"
 let KEY_NOTIFY_PARAM_IMAGE = "image"
 let KEY_NOTIFY_PARAM_MESSAGE = "message"
 let KEY_NOTIFY_PARAM_STATUS = "status"
+let KEY_NOTIFY_PARAM_FILE_URL = "fileUrl"
 let KEY_GPS_INFO = "gpsInfo"
 let KEY_STATE_EXTERNAL_GPS_INFO = "externalGpsInfo"
 let KEY_STATE_INTERNAL_GPS_INFO = "internalGpsInfo"
@@ -1126,5 +1127,11 @@ func toMessageNotifyParam(message: String) -> [String: Any] {
 func toCapturingNotifyParam(value: CapturingStatusEnum) -> [String: Any] {
     return [
         KEY_NOTIFY_PARAM_STATUS: value.name,
+    ]
+}
+
+func toStartedNotifyParam(value: String) -> [String: Any] {
+    return [
+        KEY_NOTIFY_PARAM_FILE_URL: value,
     ]
 }

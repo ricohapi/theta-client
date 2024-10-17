@@ -113,6 +113,13 @@ internal data class StartCaptureResponse(
      * "inProgress"
      */
     override val progress: CommandProgress? = null,
+
+    /**
+     * List of file URLs.
+     *
+     * For RICOH THETA X v2.61.0 or later
+     */
+    val _fileUrls: List<String>? = null,
 ) : CommandApiResponse
 
 /**
