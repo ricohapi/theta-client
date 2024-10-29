@@ -182,14 +182,18 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
         final image = params?['image'] as Uint8List?;
         if (image != null && !frameHandler(image)) {
           removeNotify(notifyIdLivePreview);
-          methodChannel.invokeMethod<String>('stopLivePreview');
+          methodChannel.invokeMethod<bool>('stopLivePreview');
         }
       });
       await methodChannel.invokeMethod<void>('getLivePreview');
       completer.complete(null);
     } catch (e) {
-      removeNotify(notifyIdLivePreview);
-      completer.completeError(e);
+      if (e is PlatformException && e.message == "Live preview is running.") {
+        completer.completeError(e);
+      } else {
+        removeNotify(notifyIdLivePreview);
+        completer.completeError(e);
+      }
     }
     return completer.future;
   }

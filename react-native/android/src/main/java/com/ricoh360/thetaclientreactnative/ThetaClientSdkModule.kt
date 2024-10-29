@@ -23,6 +23,7 @@ class ThetaClientReactNativeModule(
   }
 
   var previewing: Boolean = false
+  var stopLivePreviewPromise: Promise? = null
   var photoCaptureBuilder: PhotoCapture.Builder? = null
   var photoCapture: PhotoCapture? = null
   var timeShiftCaptureBuilder: TimeShiftCapture.Builder? = null
@@ -53,6 +54,7 @@ class ThetaClientReactNativeModule(
   var listenerCount: Int = 0
 
   val messageNotInit: String = "Not initialized."
+  val messageLivePreviewRunning: String = "Live preview is running."
 
   /**
    * add event listener for [eventName]
@@ -97,6 +99,7 @@ class ThetaClientReactNativeModule(
       try {
         theta = null
         previewing = false
+        stopLivePreviewPromise = null
         photoCaptureBuilder = null
         photoCapture = null
         timeShiftCaptureBuilder = null
@@ -427,6 +430,11 @@ class ThetaClientReactNativeModule(
    */
   @ReactMethod
   fun getLivePreview(promise: Promise) {
+    if (previewing) {
+      promise.reject(Exception(messageLivePreviewRunning))
+      return
+    }
+
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -435,7 +443,7 @@ class ThetaClientReactNativeModule(
     fun ByteArray.toBase64(): String = String(Base64.getEncoder().encode(this))
     suspend fun callFrameHandler(packet: Pair<ByteArray, Int>): Boolean {
       if (listenerCount == 0) {
-        return previewing
+        return stopLivePreviewPromise == null
       }
       val param = Arguments.createMap()
       param.putString(
@@ -446,12 +454,19 @@ class ThetaClientReactNativeModule(
       reactApplicationContext
         .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
         .emit(EVENT_NAME, param)
-      return previewing
+      return stopLivePreviewPromise == null
     }
+
     previewing = true
+    execAndResetStopLivePreviewResolve(false)
+
     launch {
       try {
         theta.getLivePreview(::callFrameHandler)
+
+        execAndResetStopLivePreviewResolve(true)
+        previewing = false
+
         promise.resolve(true)
       } catch (t: Throwable) {
         promise.reject(t)
@@ -461,13 +476,26 @@ class ThetaClientReactNativeModule(
 
   /**
    * stopLivePreview  -  stop live previewing
+   * @param promise promise to set result
    */
   @ReactMethod
-  fun stopLivePreview() {
+  fun stopLivePreview(promise: Promise) {
     if (theta == null) {
-      throw Exception(messageNotInit)
+      promise.reject(Exception(messageNotInit))
+      return
     }
-    previewing = false
+
+    if (!previewing || stopLivePreviewPromise != null) {
+      promise.resolve(false)
+      return
+    }
+
+    stopLivePreviewPromise = promise
+  }
+
+  private fun execAndResetStopLivePreviewResolve(flag: Boolean) {
+    stopLivePreviewPromise?.resolve(flag)
+    stopLivePreviewPromise = null
   }
 
   /**

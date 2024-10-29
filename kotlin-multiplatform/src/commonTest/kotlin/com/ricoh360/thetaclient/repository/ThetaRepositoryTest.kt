@@ -284,9 +284,9 @@ class ThetaRepositoryTest {
 
         // execute
         val timeout = ThetaRepository.Timeout(
-            connectTimeout = 1L,
-            requestTimeout = 2L,
-            socketTimeout = 3L
+            connectTimeout = 10L,
+            requestTimeout = 20L,
+            socketTimeout = 30L
         )
         ThetaRepository.newInstance(endpoint, timeout = timeout)
         assertNotNull(ThetaRepository.restoreConfig, "restoreConfig")

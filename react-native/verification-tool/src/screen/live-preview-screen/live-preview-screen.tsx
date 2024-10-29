@@ -63,7 +63,9 @@ const LivePreviewScreen: React.FC<
   const onStop = () => {
     isInitialized().then((isInit) => {
       if (isInit) {
-        stopLivePreview();
+        stopLivePreview().then((isStopped) => {
+          console.log(`isStop = ${isStopped}`);
+        });
       } else {
         Alert.alert('stopLivePreview', 'error: Not initialized.', [
           { text: 'OK' },
