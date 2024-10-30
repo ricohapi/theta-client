@@ -75,7 +75,7 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation 'io.coil-kt:coil-compose:2.2.2'
     implementation "io.ktor:ktor-client-cio:2.3.9"
-    implementation "com.ricoh360.thetaclient:theta-client:1.10.2"
+    implementation "com.ricoh360.thetaclient:theta-client:1.11.0"
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"

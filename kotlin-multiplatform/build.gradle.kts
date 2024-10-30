@@ -17,7 +17,7 @@ dependencies {
     dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.10")
 }
 
-val thetaClientVersion = "1.10.2"
+val thetaClientVersion = "1.11.0"
 group = "com.ricoh360.thetaclient"
 version = thetaClientVersion
 
