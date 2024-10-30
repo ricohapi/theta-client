@@ -260,8 +260,14 @@ internal class PreviewClientImpl : PreviewClient {
      */
     private suspend fun fillBuffer(): Int {
         pos = 0
-        curr = input!!.readAvailable(buffer, 0, buffer.size)
-        return curr
+        try {
+            return withTimeout(socketTimeout) {
+                curr = input!!.readAvailable(buffer, 0, buffer.size)
+                curr
+            }
+        } catch (t: Throwable) {
+            throw PreviewClientException(t.message ?: "readAvailable error", t)
+        }
     }
 
     /**

@@ -35,17 +35,17 @@ const LivePreviewScreen: React.FC<
 
   const startLivePreview = async () => {
     setPreviewing(true);
-    getLivePreview()
-      .then((x) => {
-        setPreviewing(false);
-        console.log(`live preview done with ${x}`);
-      })
-      .catch((error) => {
-        setPreviewing(false);
-        Alert.alert('getLivePreview', 'error: \n' + JSON.stringify(error), [
-          { text: 'OK' },
-        ]);
-      });
+    try {
+      const ret = await getLivePreview();
+      setPreviewing(false);
+      console.log(`live preview done with ${ret}`);
+    } catch (error) {
+      Alert.alert('getLivePreview', 'error: \n' + JSON.stringify(error), [
+        { text: 'OK' },
+      ]);
+    } finally {
+      setPreviewing(false);
+    }
   };
 
   const setFrameData = (data: string) => {
@@ -118,7 +118,9 @@ const LivePreviewScreen: React.FC<
         />
       </View>
       <View style={styles.bottomViewContainer}>
-        <Text>{previewing ? 'Previewing...' : 'Stopped'}</Text>
+        <Text style={styles.itemText}>
+          {previewing ? 'Previewing...' : 'Stopped'}
+        </Text>
         <View style={styles.bottomViewContainerLayout}>
           <Button style={styles.button} title="Start" onPress={onStart} />
           <Button style={styles.button} title="Stop" onPress={onStop} />

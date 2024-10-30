@@ -465,11 +465,12 @@ class ThetaClientReactNativeModule(
         theta.getLivePreview(::callFrameHandler)
 
         execAndResetStopLivePreviewResolve(true)
-        previewing = false
 
         promise.resolve(true)
       } catch (t: Throwable) {
         promise.reject(t)
+      } finally {
+        previewing = false
       }
     }
   }

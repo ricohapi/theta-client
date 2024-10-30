@@ -499,11 +499,11 @@ class ThetaClientReactNative: RCTEventEmitter {
         execAndResetStopLivePreviewResolve(false)
         
         thetaRepository.getLivePreview(frameHandler: frameHandler) { error in
+            self.previewing = false
             if let error {
                 reject(ERROR_CODE_ERROR, error.localizedDescription, error)
             } else {
                 self.execAndResetStopLivePreviewResolve(true)
-                self.previewing = false
                 
                 resolve(true)
             }
