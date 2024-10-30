@@ -171,9 +171,10 @@ class VideoCapture extends Capture {
   VideoCapturing startCapture(void Function(String? fileUrl) onCaptureCompleted,
       void Function(Exception exception) onCaptureFailed,
       {void Function(Exception exception)? onStopFailed,
-      void Function(CapturingStatusEnum status)? onCapturing}) {
+      void Function(CapturingStatusEnum status)? onCapturing,
+      void Function(String? fileUrl)? onCaptureStarted}) {
     ThetaClientFlutterPlatform.instance
-        .startVideoCapture(onStopFailed, onCapturing)
+        .startVideoCapture(onStopFailed, onCapturing, onCaptureStarted)
         .then((value) => onCaptureCompleted(value))
         .onError((error, stackTrace) => onCaptureFailed(error as Exception));
     return VideoCapturing();

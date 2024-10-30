@@ -204,9 +204,10 @@ export function getLivePreview(): Promise<boolean> {
  * Stop live preview.
  *
  * @function StopLivePreview
+ * @return promise of boolean result
  */
-export function stopLivePreview() {
-  ThetaClientReactNative.stopLivePreview();
+export function stopLivePreview(): Promise<boolean> {
+  return ThetaClientReactNative.stopLivePreview();
 }
 
 /**

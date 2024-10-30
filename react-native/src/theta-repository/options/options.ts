@@ -32,6 +32,7 @@ import type { OffDelayEnum } from './option-off-delay';
 import type { SleepDelayEnum } from './option-sleep-delay';
 import type { EthernetConfig } from './option-ethernet-config';
 import type { FileFormatEnum } from './option-file-format';
+import type { CameraPowerEnum } from './option-camera-power';
 
 /** Aperture value. */
 export const ApertureEnum = {
@@ -348,6 +349,8 @@ export const OptionNameEnum = {
   CameraControlSource: 'CameraControlSource',
   /** cameraMode */
   CameraMode: 'CameraMode',
+  /** cameraPower */
+  CameraPower: 'CameraPower',
   /** captureInterval */
   CaptureInterval: 'CaptureInterval',
   /** captureMode */
@@ -474,6 +477,8 @@ export type Options = {
   cameraControlSource?: CameraControlSourceEnum;
   /** Camera mode. */
   cameraMode?: CameraModeEnum;
+  /** Camera power state */
+  cameraPower?: CameraPowerEnum;
   /**
    * Shooting interval (sec.) for interval shooting.
    *

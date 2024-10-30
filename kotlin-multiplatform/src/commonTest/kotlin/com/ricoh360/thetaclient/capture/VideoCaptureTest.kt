@@ -129,6 +129,11 @@ class VideoCaptureTest {
                     else -> assertEquals(status, CapturingStatusEnum.CAPTURING)
                 }
             }
+
+            override fun onCaptureStarted(fileUrl: String?) {
+                assertEquals(fileUrl, "http://192.168.1.1/files/100RICOH/R0010429.MP4", "onCaptureStarted")
+                deferred.complete(Unit)
+            }
         })
         runBlocking {
             withTimeout(10000) {

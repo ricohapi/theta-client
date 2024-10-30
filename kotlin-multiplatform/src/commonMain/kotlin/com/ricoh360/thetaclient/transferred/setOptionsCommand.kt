@@ -188,6 +188,20 @@ internal data class Options(
     var _cameraMode: CameraMode? = null,
 
     /**
+     * Camera power
+     *
+     * @see CameraPower
+     */
+    var _cameraPower: CameraPower? = null,
+
+    /**
+     * Camera power support
+     *
+     * @see CameraPower
+     */
+    var _cameraPowerSupport: List<CameraPower>? = null,
+
+    /**
      * Shooting interval (sec.) for interval shooting.
      */
     var captureInterval: Int? = null,
@@ -1295,6 +1309,52 @@ internal enum class CameraMode {
      */
     @SerialName("plugin")
     PLUGIN,
+}
+
+internal object CameraPowerSerializer :
+    SerialNameEnumIgnoreUnknownSerializer<CameraPower>(CameraPower.entries, CameraPower.UNKNOWN)
+
+/**
+ * _cameraPower is the power status of camera.
+ *
+ * For RICOH THETA X v2.61.0 or later
+ */
+@Serializable(with = CameraPowerSerializer::class)
+internal enum class CameraPower : SerialNameEnum {
+    /**
+     * Undefined value
+     */
+    UNKNOWN,
+
+    /**
+     * Power ON
+     */
+    ON {
+        override val serialName: String = "on"
+    },
+
+    /**
+     * Power OFF
+     */
+    OFF {
+        override val serialName: String = "off"
+    },
+
+    /**
+     * Power on, power saving mode. Camera is closed.
+     * Unavailable parameter when plugin is running. In this case, invalidParameterValue error will be returned.
+     */
+    POWER_SAVING {
+        override val serialName: String = "powerSaving"
+    },
+
+    /**
+     * Power on, silent mode. LCD/LED is turned off.
+     * Unavailable parameter when plugin is running. In this case, invalidParameterValue error will be returned.
+     */
+    SILENT_MODE {
+        override val serialName: String = "silentMode"
+    },
 }
 
 /**

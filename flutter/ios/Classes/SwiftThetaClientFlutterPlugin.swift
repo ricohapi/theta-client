@@ -26,6 +26,7 @@ let NOTIFY_CONTINUOUS_CAPTURING = 10062
 let NOTIFY_PHOTO_CAPTURING = 10071
 let NOTIFY_VIDEO_CAPTURE_STOP_ERROR = 10081
 let NOTIFY_VIDEO_CAPTURE_CAPTURING = 10082
+let NOTIFY_VIDEO_CAPTURE_STARTED = 10083
 
 public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     public func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -43,6 +44,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     static let messageNotInit: String = "Not initialized."
     static let messageNoResult: String = "Result is Null."
     static let messageNoArgument: String = "No Argument."
+    static let messageLivePreviewRunning = "Live preview is running."
     static var endPoint: String = "http://192.168.1.1"
     var eventSink: FlutterEventSink? = nil
     var previewing = false
@@ -113,7 +115,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         case "getLivePreview":
             getLivePreview(result: result)
         case "stopLivePreview":
-            previewing = false
+            stopLivePreview(result: result)
         case "listFiles":
             listFiles(call: call, result: result)
         case "deleteFiles":
@@ -382,6 +384,12 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     }
 
     func getLivePreview(result: @escaping FlutterResult) {
+        if previewing {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageLivePreviewRunning, details: nil)
+            result(flutterError)
+            return
+        }
+
         if thetaRepository == nil {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
@@ -416,6 +424,11 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 result(nil)
             }
         }
+    }
+    
+    func stopLivePreview(result: @escaping FlutterResult) {
+        previewing = false
+        result(true)
     }
 
     func listFiles(call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -737,6 +750,10 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             
             func onCapturing(status: CapturingStatusEnum) {
                 plugin?.sendNotifyEvent(id: NOTIFY_VIDEO_CAPTURE_CAPTURING, params: toCapturingNotifyParam(value: status))
+            }
+            
+            func onCaptureStarted(fileUrl: String?) {
+                plugin?.sendNotifyEvent(id: NOTIFY_VIDEO_CAPTURE_STARTED, params: toStartedNotifyParam(value: fileUrl ?? ""))
             }
         }
         videoCapturing = videoCapture!.startCapture(

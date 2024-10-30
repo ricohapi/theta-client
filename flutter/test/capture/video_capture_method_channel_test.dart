@@ -77,7 +77,7 @@ void main() {
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       return fileUrl;
     });
-    expect(await platform.startVideoCapture(null, null), fileUrl);
+    expect(await platform.startVideoCapture(null, null, null), fileUrl);
   });
 
   test('call onStopFailed', () async {
@@ -103,7 +103,7 @@ void main() {
     expect(
         await platform.startVideoCapture((exception) {
           isOnStopFailed = true;
-        }, null),
+        }, null, null),
         fileUrl);
     expect(platform.notifyList.containsKey(10081), false,
         reason: 'remove notify stop error');
@@ -133,10 +133,40 @@ void main() {
     expect(
         await platform.startVideoCapture(null, (status) {
           lastStatus = status;
-        }),
+        }, null),
         fileUrl);
     expect(platform.notifyList.containsKey(10082), false,
         reason: 'remove notify capturing status');
     expect(lastStatus, CapturingStatusEnum.selfTimerCountdown);
+  });
+
+  test('call onCaptureStarted', () async {
+    const fileUrl =
+        'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.MP4';
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+      expect(platform.notifyList.containsKey(10083), true,
+          reason: 'add notify stop error');
+
+      // native event
+      platform.onNotify({
+        'id': 10083,
+        'params': {
+          'fileUrl': "xxx.mp4",
+        },
+      });
+
+      return fileUrl;
+    });
+
+    String? thisTimeFileUrl;
+    expect(
+        await platform.startVideoCapture(null, null, (fileUrl) {
+          thisTimeFileUrl = fileUrl;
+        }),
+        fileUrl);
+    expect(platform.notifyList.containsKey(10083), true,
+        reason: 'capture started');
+    expect(thisTimeFileUrl, "xxx.mp4");
   });
 }

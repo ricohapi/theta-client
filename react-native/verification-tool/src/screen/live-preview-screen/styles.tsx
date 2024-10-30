@@ -38,6 +38,12 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  itemText: {
+    color: 'black',
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 2,
+  },
 });
 
 export default styles;

@@ -16,6 +16,7 @@ import com.ricoh360.thetaclient.transferred.BurstOption
 import com.ricoh360.thetaclient.transferred.BurstOrder
 import com.ricoh360.thetaclient.transferred.CameraControlSource
 import com.ricoh360.thetaclient.transferred.CameraMode
+import com.ricoh360.thetaclient.transferred.CameraPower
 import com.ricoh360.thetaclient.transferred.CaptureMode
 import com.ricoh360.thetaclient.transferred.EthernetConfig
 import com.ricoh360.thetaclient.transferred.FaceDetect
@@ -95,6 +96,7 @@ class OptionsTest {
         )
         val cameraControlSource = ThetaRepository.CameraControlSourceEnum.CAMERA
         val cameraMode = ThetaRepository.CameraModeEnum.CAPTURE
+        val cameraPower = ThetaRepository.CameraPowerEnum.ON
         val captureInterval = 6
         val captureMode = ThetaRepository.CaptureModeEnum.IMAGE
         val captureNumber = 0
@@ -166,6 +168,7 @@ class OptionsTest {
             burstOption = burstOption,
             cameraControlSource = cameraControlSource,
             cameraMode = cameraMode,
+            cameraPower = cameraPower,
             captureInterval = captureInterval,
             captureMode = captureMode,
             captureNumber = captureNumber,
@@ -231,6 +234,7 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.BurstOption), burstOption, "burstOption")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CameraControlSource), cameraControlSource, "cameraControlSource")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CameraMode), cameraMode, "cameraMode")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CameraPower), cameraPower, "cameraPower")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CaptureInterval), captureInterval, "captureInterval")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CaptureMode), captureMode, "captureMode")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CaptureNumber), captureNumber, "captureNumber")
@@ -324,6 +328,7 @@ class OptionsTest {
             ),
             Pair(ThetaRepository.OptionNameEnum.CameraControlSource, ThetaRepository.CameraControlSourceEnum.CAMERA),
             Pair(ThetaRepository.OptionNameEnum.CameraMode, ThetaRepository.CameraModeEnum.CAPTURE),
+            Pair(ThetaRepository.OptionNameEnum.CameraPower, ThetaRepository.CameraPowerEnum.ON),
             Pair(ThetaRepository.OptionNameEnum.CaptureInterval, 4),
             Pair(ThetaRepository.OptionNameEnum.CaptureMode, ThetaRepository.CaptureModeEnum.IMAGE),
             Pair(ThetaRepository.OptionNameEnum.CaptureNumber, 0),
@@ -455,6 +460,7 @@ class OptionsTest {
         )
         val cameraControlSource = Pair(CameraControlSource.CAMERA, ThetaRepository.CameraControlSourceEnum.CAMERA)
         val cameraMode = Pair(CameraMode.CAPTURE, ThetaRepository.CameraModeEnum.CAPTURE)
+        val cameraPower = Pair(CameraPower.OFF, ThetaRepository.CameraPowerEnum.OFF)
         val captureInterval = Pair(5, 5)
         val captureMode = Pair(CaptureMode.IMAGE, ThetaRepository.CaptureModeEnum.IMAGE)
         val captureNumber = Pair(9999, 9999)
@@ -535,6 +541,7 @@ class OptionsTest {
             _burstOption = burstOption.first,
             _cameraControlSource = cameraControlSource.first,
             _cameraMode = cameraMode.first,
+            _cameraPower = cameraPower.first,
             captureInterval = captureInterval.first,
             captureMode = captureMode.first,
             captureNumber = captureNumber.first,
@@ -595,6 +602,7 @@ class OptionsTest {
         assertEquals(options.burstOption, burstOption.second, "burstOption")
         assertEquals(options.cameraControlSource, cameraControlSource.second, "cameraControlSource")
         assertEquals(options.cameraMode, cameraMode.second, "cameraMode")
+        assertEquals(options.cameraPower, cameraPower.second, "cameraPower")
         assertEquals(options.captureInterval, captureInterval.second, "captureInterval")
         assertEquals(options.captureMode, captureMode.second, "captureMode")
         assertEquals(options.captureNumber, captureNumber.second, "captureNumber")
@@ -701,6 +709,7 @@ class OptionsTest {
         )
         val cameraControlSource = Pair(CameraControlSource.CAMERA, ThetaRepository.CameraControlSourceEnum.CAMERA)
         val cameraMode = Pair(CameraMode.CAPTURE, ThetaRepository.CameraModeEnum.CAPTURE)
+        val cameraPower = Pair(CameraPower.SILENT_MODE, ThetaRepository.CameraPowerEnum.SILENT_MODE)
         val captureInterval = Pair(20, 20)
         val captureMode = Pair(CaptureMode.IMAGE, ThetaRepository.CaptureModeEnum.IMAGE)
         val captureNumber = Pair(30, 30)
@@ -784,6 +793,7 @@ class OptionsTest {
             burstOption = burstOption.second,
             cameraControlSource = cameraControlSource.second,
             cameraMode = cameraMode.second,
+            cameraPower = cameraPower.second,
             captureInterval = captureInterval.second,
             captureMode = captureMode.second,
             captureNumber = captureNumber.second,
@@ -844,6 +854,7 @@ class OptionsTest {
         assertEquals(options._burstOption, burstOption.first, "burstOption")
         assertEquals(options._cameraControlSource, cameraControlSource.first, "cameraControlSource")
         assertEquals(options._cameraMode, cameraMode.first, "cameraMode")
+        assertEquals(options._cameraPower, cameraPower.first, "cameraPower")
         assertEquals(options.captureInterval, captureInterval.first, "captureInterval")
         assertEquals(options.captureMode, captureMode.first, "captureMode")
         assertEquals(options.captureNumber, captureNumber.first, "captureNumber")

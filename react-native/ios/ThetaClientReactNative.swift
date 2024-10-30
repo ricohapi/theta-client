@@ -2,6 +2,7 @@ import THETAClient
 
 let ERROR_CODE_ERROR = "error"
 let MESSAGE_NOT_INIT = "Not initialized."
+let MESSAGE_LIVE_PREVIEW_RUNNING = "Live Preview is running."
 let MESSAGE_NO_RESULT = "No result."
 let MESSAGE_NO_ARGUMENT = "No Argument."
 let MESSAGE_NO_PHOTO_CAPTURE = "No photoCapture."
@@ -35,6 +36,7 @@ let MESSAGE_NO_EVENT_WEBSOCKET = "no eventWebSocket."
 class ThetaClientReactNative: RCTEventEmitter {
     var thetaRepository: ThetaRepository?
     var previewing = false
+    var stopLivePreviewResolve: RCTPromiseResolveBlock?
     var photoCaptureBuilder: PhotoCapture.Builder?
     var photoCapture: PhotoCapture?
     var timeShiftCaptureBuilder: TimeShiftCapture.Builder?
@@ -74,6 +76,7 @@ class ThetaClientReactNative: RCTEventEmitter {
     static let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURING = "SHOT-COUNT-SPECIFIED-INTERVAL-CAPTURING"
     static let NOTIFY_VIDEO_CAPTURE_STOP_ERROR = "VIDEO-CAPTURE-STOP-ERROR"
     static let NOTIFY_VIDEO_CAPTURE_CAPTURING = "VIDEO-CAPTURE-CAPTURING"
+    static let NOTIFY_VIDEO_CAPTURE_STARTED = "VIDEO-CAPTURE-STARTED"
     static let NOTIFY_LIMITLESS_INTERVAL_CAPTURE_STOP_ERROR = "LIMITLESS-INTERVAL-CAPTURE-STOP-ERROR"
     static let NOTIFY_LIMITLESS_INTERVAL_CAPTURE_CAPTURING = "LIMITLESS-INTERVAL-CAPTURE-CAPTURING"
     static let NOTIFY_COMPOSITE_INTERVAL_PROGRESS = "COMPOSITE-INTERVAL-PROGRESS"
@@ -142,6 +145,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         continuousCaptureBuilder = nil
         continuousCapture = nil
         previewing = false
+        stopLivePreviewResolve = nil
         eventWebSocket?.stop(completionHandler: { _ in })
         eventWebSocket = nil
         
@@ -450,6 +454,11 @@ class ThetaClientReactNative: RCTEventEmitter {
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
+        if previewing {
+            reject(ERROR_CODE_ERROR, MESSAGE_LIVE_PREVIEW_RUNNING, nil)
+            return
+        }
+        
         class FrameHandler: KotlinSuspendFunction1 {
             let thetaClientReactNative: ThetaClientReactNative
             static let FrameInterval = CFTimeInterval(1.0 / 10.0)
@@ -476,7 +485,7 @@ class ThetaClientReactNative: RCTEventEmitter {
                         }
                     }
                 }
-                return thetaClientReactNative.previewing
+                return thetaClientReactNative.stopLivePreviewResolve == nil
             }
         }
 
@@ -485,11 +494,17 @@ class ThetaClientReactNative: RCTEventEmitter {
             return
         }
         let frameHandler = FrameHandler(self)
+        
         previewing = true
+        execAndResetStopLivePreviewResolve(false)
+        
         thetaRepository.getLivePreview(frameHandler: frameHandler) { error in
+            self.previewing = false
             if let error {
                 reject(ERROR_CODE_ERROR, error.localizedDescription, error)
             } else {
+                self.execAndResetStopLivePreviewResolve(true)
+                
                 resolve(true)
             }
         }
@@ -497,11 +512,19 @@ class ThetaClientReactNative: RCTEventEmitter {
 
     @objc(stopLivePreview:withRejecter:)
     func stopLivePreview(
-        resolve: RCTPromiseResolveBlock,
-        reject _: RCTPromiseRejectBlock
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject _: @escaping RCTPromiseRejectBlock
     ) {
-        previewing = false
-        resolve(nil)
+        if !previewing || stopLivePreviewResolve != nil {
+            resolve(false)
+            return
+        }
+        stopLivePreviewResolve = resolve
+    }
+    
+    private func execAndResetStopLivePreviewResolve(_ flag: Bool) {
+        stopLivePreviewResolve?(flag)
+        stopLivePreviewResolve = nil
     }
 
     @objc(getPhotoCaptureBuilder:withRejecter:)
@@ -838,6 +861,16 @@ class ThetaClientReactNative: RCTEventEmitter {
                     body: toNotify(
                         name: ThetaClientReactNative.NOTIFY_VIDEO_CAPTURE_CAPTURING,
                         params: toCapturingNotifyParam(value: status)
+                    )
+                )
+            }
+
+            func onCaptureStarted(fileUrl: String?) {
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_VIDEO_CAPTURE_STARTED,
+                        params: toStartedNotifyParam(value: fileUrl ?? "")
                     )
                 )
             }

@@ -17,6 +17,7 @@ const val KEY_NOTIFY_PARAM_COMPLETION = "completion"
 const val KEY_NOTIFY_PARAM_EVENT = "event"
 const val KEY_NOTIFY_PARAM_MESSAGE = "message"
 const val KEY_NOTIFY_PARAM_STATUS = "status"
+const val KEY_NOTIFY_PARAM_FILE_URL = "fileUrl"
 const val KEY_GPS_INFO = "gpsInfo"
 const val KEY_STATE_EXTERNAL_GPS_INFO = "externalGpsInfo"
 const val KEY_STATE_INTERNAL_GPS_INFO = "internalGpsInfo"
@@ -34,6 +35,7 @@ val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "burstOption" to OptionNameEnum.BurstOption,
   "cameraControlSource" to OptionNameEnum.CameraControlSource,
   "cameraMode" to OptionNameEnum.CameraMode,
+  "cameraPower" to OptionNameEnum.CameraPower,
   "captureInterval" to OptionNameEnum.CaptureInterval,
   "captureMode" to OptionNameEnum.CaptureMode,
   "captureNumber" to OptionNameEnum.CaptureNumber,
@@ -118,6 +120,12 @@ fun toMessageNotifyParam(value: String): WritableMap {
 fun toCapturingNotifyParam(status: CapturingStatusEnum): WritableMap {
   val result = Arguments.createMap()
   result.putString(KEY_NOTIFY_PARAM_STATUS, status.name)
+  return result
+}
+
+fun toStartedNotifyParam(value: String): WritableMap {
+  val result = Arguments.createMap()
+  result.putString(KEY_NOTIFY_PARAM_FILE_URL, value)
   return result
 }
 
@@ -793,6 +801,7 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
     OptionNameEnum.BurstMode -> BurstModeEnum.values().find { it.name == valueName }
     OptionNameEnum.CameraControlSource -> CameraControlSourceEnum.values().find { it.name == valueName }
     OptionNameEnum.CameraMode -> CameraModeEnum.values().find { it.name == valueName }
+    OptionNameEnum.CameraPower -> CameraPowerEnum.values().find { it.name == valueName }
     OptionNameEnum.CaptureMode -> CaptureModeEnum.values().find { it.name == valueName }
     OptionNameEnum.ContinuousNumber -> ContinuousNumberEnum.values().find { it.name == valueName }
     OptionNameEnum.ExposureCompensation -> ExposureCompensationEnum.values().find { it.name == valueName }

@@ -13,6 +13,7 @@ const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 const NOTIFY_NAME = 'VIDEO-CAPTURE-STOP-ERROR';
 const NOTIFY_CAPTURING = 'VIDEO-CAPTURE-CAPTURING';
+const NOTIFY_STARTED = 'VIDEO-CAPTURE-STARTED';
 
 interface CaptureStopErrorNotify extends BaseNotify {
   params?: {
@@ -23,6 +24,12 @@ interface CaptureStopErrorNotify extends BaseNotify {
 interface CapturingNotify extends BaseNotify {
   params?: {
     status: CapturingStatusEnum;
+  };
+}
+
+interface CaptureStartedNotify extends BaseNotify {
+  params?: {
+    fileUrl: string;
   };
 }
 
@@ -39,11 +46,13 @@ export class VideoCapture {
    * start video capture
    * @param onStopFailed the block for error of stopCapture
    * @param onCapturing Called when change capture status
+   * @param onCaptureStarted Called when capture started
    * @return promise of captured file url
    */
   startCapture(
     onStopFailed?: (error: any) => void,
-    onCapturing?: (status: CapturingStatusEnum) => void
+    onCapturing?: (status: CapturingStatusEnum) => void,
+    onCaptureStarted?: (fileUrl?: string) => void
   ): Promise<string | undefined> {
     if (onStopFailed) {
       this.notify.addNotify(NOTIFY_NAME, (event: CaptureStopErrorNotify) => {
@@ -57,6 +66,13 @@ export class VideoCapture {
         }
       });
     }
+    if (onCaptureStarted) {
+      this.notify.addNotify(NOTIFY_STARTED, (event: CaptureStartedNotify) => {
+        onCaptureStarted(
+          event.params?.fileUrl !== '' ? event.params?.fileUrl : undefined
+        );
+      });
+    }
     return new Promise<string | undefined>(async (resolve, reject) => {
       await ThetaClientReactNative.startVideoCapture()
         .then((result?: string) => {
@@ -68,6 +84,7 @@ export class VideoCapture {
         .finally(() => {
           this.notify.removeNotify(NOTIFY_NAME);
           this.notify.removeNotify(NOTIFY_CAPTURING);
+          this.notify.removeNotify(NOTIFY_STARTED);
         });
     });
   }

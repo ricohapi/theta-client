@@ -66,6 +66,7 @@ internal class CheckRequest {
             burstOption: BurstOption? = null,
             cameraControlSource: CameraControlSource? = null,
             cameraMode: CameraMode? = null,
+            cameraPower: CameraPower? = null,
             captureInterval: Int? = null,
             captureMode: CaptureMode? = null,
             captureNumber: Int? = null,
@@ -148,6 +149,9 @@ internal class CheckRequest {
             }
             cameraMode?.let {
                 assertEquals(optionsRequest.parameters.options._cameraMode, it, "setOptions cameraMode")
+            }
+            cameraPower?.let {
+                assertEquals(optionsRequest.parameters.options._cameraPower, it, "setOptions cameraPower")
             }
             captureInterval?.let {
                 assertEquals(optionsRequest.parameters.options.captureInterval, it, "setOptions captureInterval")

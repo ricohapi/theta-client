@@ -9,6 +9,7 @@ let KEY_NOTIFY_PARAM_COMPLETION = "completion"
 let KEY_NOTIFY_PARAM_IMAGE = "image"
 let KEY_NOTIFY_PARAM_MESSAGE = "message"
 let KEY_NOTIFY_PARAM_STATUS = "status"
+let KEY_NOTIFY_PARAM_FILE_URL = "fileUrl"
 let KEY_GPS_INFO = "gpsInfo"
 let KEY_STATE_EXTERNAL_GPS_INFO = "externalGpsInfo"
 let KEY_STATE_INTERNAL_GPS_INFO = "internalGpsInfo"
@@ -863,6 +864,8 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         options.cameraControlSource = getEnumValue(values: ThetaRepository.CameraControlSourceEnum.values(), name: value as! String)!
     case ThetaRepository.OptionNameEnum.cameramode.name:
         options.cameraMode = getEnumValue(values: ThetaRepository.CameraModeEnum.values(), name: value as! String)!
+    case ThetaRepository.OptionNameEnum.camerapower.name:
+        options.cameraPower = getEnumValue(values: ThetaRepository.CameraPowerEnum.values(), name: value as! String)!
     case ThetaRepository.OptionNameEnum.captureinterval.name:
         options.captureInterval = KotlinInt(integerLiteral: value as! Int)
     case ThetaRepository.OptionNameEnum.capturemode.name:
@@ -1124,5 +1127,11 @@ func toMessageNotifyParam(message: String) -> [String: Any] {
 func toCapturingNotifyParam(value: CapturingStatusEnum) -> [String: Any] {
     return [
         KEY_NOTIFY_PARAM_STATUS: value.name,
+    ]
+}
+
+func toStartedNotifyParam(value: String) -> [String: Any] {
+    return [
+        KEY_NOTIFY_PARAM_FILE_URL: value,
     ]
 }

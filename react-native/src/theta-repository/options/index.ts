@@ -7,6 +7,7 @@ export * from './option-burst-mode';
 export * from './option-burst-option';
 export * from './option-camera-control-source';
 export * from './option-camera-mode';
+export * from './option-camera-power';
 export * from './option-capture-mode';
 export * from './option-continuous-number';
 export * from './option-face-detect';

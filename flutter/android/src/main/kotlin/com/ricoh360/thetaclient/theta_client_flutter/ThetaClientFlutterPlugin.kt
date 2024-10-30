@@ -60,6 +60,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         const val messageNotInit: String = "Not initialized."
         const val messageNoResult: String = "Result is Null."
         const val messageNoArgument: String = "No Argument."
+        const val messageLivePreviewRunning: String = "Live preview is running."
 
         const val eventNameNotify = "theta_client_flutter/theta_notify"
         const val notifyIdLivePreview = 10001
@@ -85,6 +86,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         const val notifyIdPhotoCapturing = 10071
         const val notifyIdVideoCaptureStopError = 10081
         const val notifyIdVideoCaptureCapturing = 10082
+        const val notifyIdVideoCaptureStarted = 10083
     }
 
     fun sendNotifyEvent(id: Int, params: Map<String, Any?>) {
@@ -616,6 +618,11 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     suspend fun getLivePreview(result: Result) {
+        if (previewing) {
+            result.error(errorCode, messageLivePreviewRunning, null)
+            return
+        }
+
         val theta = thetaRepository
         if (theta == null) {
             result.error(errorCode, messageNotInit, null)
@@ -632,13 +639,14 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             }
             result.success(null)
         } catch (e: Exception) {
+            previewing = false
             result.error(e.javaClass.simpleName, e.message, null)
         }
     }
 
     fun stopLivePreview(result: Result) {
         previewing = false
-        result.success(null)
+        result.success(true)
     }
 
     fun getPhotoCaptureBuilder(result: Result) {
@@ -817,6 +825,13 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 sendNotifyEvent(
                     notifyIdVideoCaptureCapturing,
                     toCapturingNotifyParam(status)
+                )
+            }
+
+            override fun onCaptureStarted(fileUrl: String?) {
+                sendNotifyEvent(
+                    notifyIdVideoCaptureStarted,
+                    toStartedNotifyParam(fileUrl ?: "")
                 )
             }
         })

@@ -12,6 +12,7 @@ const val KEY_NOTIFY_PARAM_COMPLETION = "completion"
 const val KEY_NOTIFY_PARAM_IMAGE = "image"
 const val KEY_NOTIFY_PARAM_MESSAGE = "message"
 const val KEY_NOTIFY_PARAM_STATUS = "status"
+const val KEY_NOTIFY_PARAM_FILE_URL = "fileUrl"
 const val KEY_GPS_INFO = "gpsInfo"
 const val KEY_STATE_EXTERNAL_GPS_INFO = "externalGpsInfo"
 const val KEY_STATE_INTERNAL_GPS_INFO = "internalGpsInfo"
@@ -734,6 +735,7 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
         OptionNameEnum.BurstMode -> BurstModeEnum.values().find { it.name == valueName }
         OptionNameEnum.CameraControlSource -> CameraControlSourceEnum.values().find { it.name == valueName }
         OptionNameEnum.CameraMode -> CameraModeEnum.values().find { it.name == valueName }
+        OptionNameEnum.CameraPower -> CameraPowerEnum.values().find { it.name == valueName }
         OptionNameEnum.CaptureMode -> CaptureModeEnum.values().find { it.name == valueName }
         OptionNameEnum.ContinuousNumber -> ContinuousNumberEnum.values().find { it.name == valueName }
         OptionNameEnum.ExposureCompensation -> ExposureCompensationEnum.values().find { it.name == valueName }
@@ -926,5 +928,11 @@ fun toMessageNotifyParam(message: String): Map<String, Any> {
 fun toCapturingNotifyParam(status: CapturingStatusEnum): Map<String, Any> {
     return mapOf<String, Any>(
         KEY_NOTIFY_PARAM_STATUS to status.name
+    )
+}
+
+fun toStartedNotifyParam(value: String): Map<String, Any> {
+    return mapOf<String, Any>(
+        KEY_NOTIFY_PARAM_FILE_URL to value
     )
 }

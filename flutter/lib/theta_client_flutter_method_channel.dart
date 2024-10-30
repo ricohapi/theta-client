@@ -30,6 +30,7 @@ const notifyIdContinuousCaptureCapturing = 10062;
 const notifyIdPhotoCapturing = 10071;
 const notifyIdVideoCaptureStopError = 10081;
 const notifyIdVideoCaptureCapturing = 10082;
+const notifyIdVideoCaptureStarted = 10083;
 
 /// An implementation of [ThetaClientFlutterPlatform] that uses method channels.
 class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
@@ -181,14 +182,18 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
         final image = params?['image'] as Uint8List?;
         if (image != null && !frameHandler(image)) {
           removeNotify(notifyIdLivePreview);
-          methodChannel.invokeMethod<String>('stopLivePreview');
+          methodChannel.invokeMethod<bool>('stopLivePreview');
         }
       });
       await methodChannel.invokeMethod<void>('getLivePreview');
       completer.complete(null);
     } catch (e) {
-      removeNotify(notifyIdLivePreview);
-      completer.completeError(e);
+      if (e is PlatformException && e.message == "Live preview is running.") {
+        completer.completeError(e);
+      } else {
+        removeNotify(notifyIdLivePreview);
+        completer.completeError(e);
+      }
     }
     return completer.future;
   }
@@ -360,7 +365,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   @override
   Future<String?> startVideoCapture(
       void Function(Exception exception)? onStopFailed,
-      void Function(CapturingStatusEnum status)? onCapturing) async {
+      void Function(CapturingStatusEnum status)? onCapturing,
+      void Function(String? fileUrl)? onCaptureStarted) async {
     var completer = Completer<String?>();
     try {
       enableNotifyEventReceiver();
@@ -381,6 +387,12 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
               onCapturing(status);
             }
           }
+        });
+      }
+      if (onCaptureStarted != null) {
+        addNotify(notifyIdVideoCaptureStarted, (params) {
+          final fileUrl = params?['fileUrl'] as String?;
+          onCaptureStarted(fileUrl?.isNotEmpty == true ? fileUrl : null);
         });
       }
       final fileUrl =

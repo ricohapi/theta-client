@@ -758,6 +758,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _cameraPower
+         */
+        CameraPower("_cameraPower", CameraPowerEnum::class),
+
+        /**
+         * Option name
          * captureInterval
          */
         CaptureInterval("captureInterval", Int::class),
@@ -1122,6 +1128,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var cameraMode: CameraModeEnum? = null,
 
         /**
+         * @see CameraPowerEnum
+         */
+        var cameraPower: CameraPowerEnum? = null,
+
+        /**
          * Shooting interval (sec.) for interval shooting.
          *
          * ### Support value
@@ -1484,6 +1495,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             burstOption = null,
             cameraControlSource = null,
             cameraMode = null,
+            cameraPower = null,
             captureInterval = null,
             captureMode = null,
             captureNumber = null,
@@ -1546,6 +1558,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             burstOption = options._burstOption?.let { BurstOption(it) },
             cameraControlSource = options._cameraControlSource?.let { CameraControlSourceEnum.get(it) },
             cameraMode = options._cameraMode?.let { CameraModeEnum.get(it) },
+            cameraPower = options._cameraPower?.let { CameraPowerEnum.get(it) },
             captureInterval = options.captureInterval,
             captureMode = options.captureMode?.let { CaptureModeEnum.get(it) },
             captureNumber = options.captureNumber,
@@ -1617,6 +1630,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _burstOption = burstOption?.toTransferredBurstOption(),
                 _cameraControlSource = cameraControlSource?.value,
                 _cameraMode = cameraMode?.value,
+                _cameraPower = cameraPower?.value,
                 captureInterval = captureInterval,
                 captureMode = captureMode?.value,
                 captureNumber = captureNumber,
@@ -1691,6 +1705,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.BurstOption -> burstOption
                 OptionNameEnum.CameraControlSource -> cameraControlSource
                 OptionNameEnum.CameraMode -> cameraMode
+                OptionNameEnum.CameraPower -> cameraPower
                 OptionNameEnum.CaptureInterval -> captureInterval
                 OptionNameEnum.CaptureMode -> captureMode
                 OptionNameEnum.CaptureNumber -> captureNumber
@@ -1766,6 +1781,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.BurstOption -> burstOption = value as BurstOption
                 OptionNameEnum.CameraControlSource -> cameraControlSource = value as CameraControlSourceEnum
                 OptionNameEnum.CameraMode -> cameraMode = value as CameraModeEnum
+                OptionNameEnum.CameraPower -> cameraPower = value as CameraPowerEnum
                 OptionNameEnum.CaptureInterval -> captureInterval = value as Int
                 OptionNameEnum.CaptureMode -> captureMode = value as CaptureModeEnum
                 OptionNameEnum.CaptureNumber -> captureNumber = value as Int
@@ -2618,6 +2634,52 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @return CameraModeEnum
              */
             internal fun get(value: CameraMode): CameraModeEnum? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * _cameraPower is the power status of camera.
+     *
+     * For RICOH THETA X v2.61.0 or later
+     */
+    enum class CameraPowerEnum(internal val value: CameraPower) {
+        /**
+         * Undefined value
+         */
+        UNKNOWN(CameraPower.UNKNOWN),
+
+        /**
+         * Power ON
+         */
+        ON(CameraPower.ON),
+
+        /**
+         * Power OFF
+         */
+        OFF(CameraPower.OFF),
+
+        /**
+         * Power on, power saving mode. Camera is closed.
+         * Unavailable parameter when plugin is running. In this case, invalidParameterValue error will be returned.
+         */
+        POWER_SAVING(CameraPower.POWER_SAVING),
+
+        /**
+         * Power on, silent mode. LCD/LED is turned off.
+         * Unavailable parameter when plugin is running. In this case, invalidParameterValue error will be returned.
+         */
+        SILENT_MODE(CameraPower.SILENT_MODE);
+
+        companion object {
+            /**
+             * Convert CameraPower to CameraPowerEnum
+             *
+             * @param value CameraPower.
+             * @return CameraPowerEnum
+             */
+            internal fun get(value: CameraPower): CameraPowerEnum? {
                 return values().firstOrNull { it.value == value }
             }
         }
