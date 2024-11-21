@@ -31,6 +31,7 @@ const notifyIdPhotoCapturing = 10071;
 const notifyIdVideoCaptureStopError = 10081;
 const notifyIdVideoCaptureCapturing = 10082;
 const notifyIdVideoCaptureStarted = 10083;
+const notifyIdConvertVideoFormatsProgress = 10091;
 
 /// An implementation of [ThetaClientFlutterPlatform] that uses method channels.
 class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
@@ -43,6 +44,10 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   void addNotify(int id, Function(Map<dynamic, dynamic>?) callback) {
     notifyList[id] = callback;
+  }
+
+  bool existsNotify(int id) {
+    return notifyList.containsKey(id);
   }
 
   void removeNotify(int id) {
@@ -891,9 +896,22 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<String> convertVideoFormats(String fileUrl, bool toLowResolution,
-      bool applyTopBottomCorrection) async {
+      bool applyTopBottomCorrection, void Function(double)? onProgress) async {
     var completer = Completer<String>();
+    if (existsNotify(notifyIdConvertVideoFormatsProgress)) {
+      completer.completeError(Exception('convertVideoFormats is running.'));
+      return completer.future;
+    }
+
     try {
+      enableNotifyEventReceiver();
+      addNotify(notifyIdConvertVideoFormatsProgress, (params) {
+        final completion = params?['completion'] as double?;
+        if (onProgress != null && completion != null) {
+          onProgress(completion);
+        }
+      });
+
       final Map params = <String, dynamic>{
         'fileUrl': fileUrl,
         'toLowResolution': toLowResolution,
@@ -904,6 +922,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       completer.complete(result);
     } catch (e) {
       completer.completeError(e);
+    } finally {
+      removeNotify(notifyIdConvertVideoFormatsProgress);
     }
     return completer.future;
   }

@@ -51,7 +51,10 @@ const VideoConvertScreen: React.FC<
       const result = await convertVideoFormats(
         fileUrl,
         toLowResolution,
-        applyTopBottomCorrection
+        applyTopBottomCorrection,
+        (completion) => {
+          setMessage(`onProgress: ${completion}`);
+        }
       );
       setMessage('convertVideoFormats\nEnd convert.\nfileUrl:\n' + result);
     } catch (error) {

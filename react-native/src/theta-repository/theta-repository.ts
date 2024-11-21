@@ -33,6 +33,7 @@ import type { ThetaConfig } from './theta-config';
 import type { ThetaTimeout } from './theta-timeout';
 import { NotifyController } from './notify-controller';
 import { EventWebSocket } from './event-websocket';
+import { convertVideoFormatsImpl } from './libs';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 /**
@@ -239,17 +240,20 @@ export function stopSelfTimer(): Promise<boolean> {
  *   video, otherwise same resolution.
  * @param {boolean} applyTopBottomCorrection apply Top/bottom
  *   correction. This parameter is ignored on Theta X.
+ * @param onProgress the block for convertVideoFormats progress
  * @return promise of URL of a converted movie file.
  */
 export function convertVideoFormats(
   fileUrl: string,
   toLowResolution: boolean,
-  applyTopBottomCorrection: boolean
+  applyTopBottomCorrection: boolean,
+  onProgress?: (completion: number) => void
 ): Promise<string> {
-  return ThetaClientReactNative.convertVideoFormats(
+  return convertVideoFormatsImpl(
     fileUrl,
     toLowResolution,
-    applyTopBottomCorrection
+    applyTopBottomCorrection,
+    onProgress
   );
 }
 

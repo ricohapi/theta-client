@@ -92,6 +92,7 @@ class ThetaClientReactNative: RCTEventEmitter {
     static let NOTIFY_CONTINUOUS_CAPTURING = "CONTINUOUS-CAPTURING"
     static let NOTIFY_EVENT_WEBSOCKET_EVENT = "EVENT-WEBSOCKET-EVENT"
     static let NOTIFY_EVENT_WEBSOCKET_CLOSE = "EVENT-WEBSOCKET-CLOSE"
+    static let NOTIFY_CONVERT_VIDEO_FORMATS_PROGRESS = "CONVERT-VIDEO-FORMATS-PROGRESS"
 
     @objc
     override func supportedEvents() -> [String]! {
@@ -1837,7 +1838,15 @@ class ThetaClientReactNative: RCTEventEmitter {
             fileUrl: fileUrl,
             toLowResolution: toLowResolution,
             applyTopBottomCorrection: applyTopBottomCorrection
-        ) { fileUrl, error in
+        ) { completion in
+            self.sendEvent(
+                withName: ThetaClientReactNative.EVENT_NOTIFY,
+                body: toNotify(
+                    name: ThetaClientReactNative.NOTIFY_CONVERT_VIDEO_FORMATS_PROGRESS,
+                    params: toCaptureProgressNotifyParam(value: completion.floatValue)
+                )
+            )
+        } completionHandler: { fileUrl, error in
             if let error {
                 reject(ERROR_CODE_ERROR, error.localizedDescription, error)
             } else if let fileUrl {

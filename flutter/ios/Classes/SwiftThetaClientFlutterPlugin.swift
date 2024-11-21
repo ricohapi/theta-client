@@ -27,6 +27,7 @@ let NOTIFY_PHOTO_CAPTURING = 10071
 let NOTIFY_VIDEO_CAPTURE_STOP_ERROR = 10081
 let NOTIFY_VIDEO_CAPTURE_CAPTURING = 10082
 let NOTIFY_VIDEO_CAPTURE_STARTED = 10083
+let NOTIFY_CONVERT_VIDEO_FORMATS_PROGRESS = 10091
 
 public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     public func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -1422,7 +1423,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     }
 
     func convertVideoFormats(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        if thetaRepository == nil {
+        guard let thetaRepository = thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return
@@ -1431,7 +1432,13 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         let fileUrl = arguments["fileUrl"] as! String
         let toLowResolution = arguments["toLowResolution"] as! Bool
         let applyTopBottomCorrection = arguments["applyTopBottomCorrection"] as! Bool
-        thetaRepository!.convertVideoFormats(fileUrl: fileUrl, toLowResolution: toLowResolution, applyTopBottomCorrection: applyTopBottomCorrection) { response, error in
+        thetaRepository.convertVideoFormats(
+            fileUrl: fileUrl,
+            toLowResolution: toLowResolution,
+            applyTopBottomCorrection: applyTopBottomCorrection
+        ) { completion in
+            self.sendNotifyEvent(id: NOTIFY_CONVERT_VIDEO_FORMATS_PROGRESS, params: toCaptureProgressNotifyParam(value: completion.floatValue))
+        } completionHandler: { response, error in
             if let thetaError = error {
                 let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
                 result(flutterError)

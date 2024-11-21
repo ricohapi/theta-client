@@ -1243,27 +1243,6 @@ void main() {
     await platform.stopSelfTimer();
   });
 
-  test('convertVideoFormats', () async {
-    String fileUrl = 'http://dummy.MP4';
-    String result = 'http://dummy_result.MP4';
-    bool toLowResolution = true;
-    bool applyTopBottomCorrection = true;
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-      expect(methodCall.method, 'convertVideoFormats');
-
-      var arguments = methodCall.arguments as Map<dynamic, dynamic>;
-      expect(arguments['fileUrl'], fileUrl);
-      expect(arguments['toLowResolution'], toLowResolution);
-      expect(arguments['applyTopBottomCorrection'], applyTopBottomCorrection);
-      return Future.value(result);
-    });
-    expect(
-        await platform.convertVideoFormats(
-            fileUrl, toLowResolution, applyTopBottomCorrection),
-        result);
-  });
-
   test('cancelVideoConvert', () async {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {

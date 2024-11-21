@@ -260,12 +260,15 @@ class ThetaClientFlutter {
   /// - @param fileUrl URL of a saved movie file.
   /// - @param toLowResolution If true generates lower resolution video, otherwise same resolution.
   /// - @param applyTopBottomCorrection apply Top/bottom correction. This parameter is ignored on Theta X.
+  /// - @param onProgress the block for convertVideoFormats progress.
   /// - @return URL of a converted movie file.
   /// - @throws Command is currently disabled.
-  Future<String> convertVideoFormats(String fileUrl, bool toLowResolution,
-      [bool applyTopBottomCorrection = true]) {
+  Future<String> convertVideoFormats(String fileUrl,
+      bool toLowResolution,
+      [bool applyTopBottomCorrection = true,
+        void Function(double)? onProgress]) {
     return ThetaClientFlutterPlatform.instance.convertVideoFormats(
-        fileUrl, toLowResolution, applyTopBottomCorrection);
+        fileUrl, toLowResolution, applyTopBottomCorrection, onProgress);
   }
 
   /// Cancels the movie format conversion.

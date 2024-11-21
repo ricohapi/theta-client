@@ -39,6 +39,10 @@ export class NotifyController {
     this.notifyList.delete(name);
   }
 
+  existsNotify(name: string): boolean {
+    return this.notifyList.has(name);
+  }
+
   private addNotifyListener(
     callback: (event: BaseNotify) => void
   ): EmitterSubscription {

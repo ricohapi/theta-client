@@ -41,6 +41,7 @@ export const NativeModules = {
     getEventWebSocket: jest.fn(),
     eventWebSocketStart: jest.fn(),
     eventWebSocketStop: jest.fn(),
+    convertVideoFormats: jest.fn(),
   },
 };
 

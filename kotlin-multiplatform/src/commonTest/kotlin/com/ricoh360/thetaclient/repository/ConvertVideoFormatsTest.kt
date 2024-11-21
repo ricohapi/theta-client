@@ -12,7 +12,6 @@ import io.ktor.client.request.HttpRequestData
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.TextContent
 import io.ktor.utils.io.ByteReadChannel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -20,9 +19,10 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalSerializationApi::class, ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalSerializationApi::class)
 class ConvertVideoFormatsTest {
     private val endpoint = "http://192.168.1.1:80/"
 
@@ -105,12 +105,22 @@ class ConvertVideoFormatsTest {
 
         val thetaRepository = ThetaRepository(endpoint)
         thetaRepository.cameraModel = cameraModel
-        val response = thetaRepository.convertVideoFormats(fileUrl, toLowResolution, applyTopBottomCorrection)
+        var isProgress = false
+        val response = thetaRepository.convertVideoFormats(
+            fileUrl,
+            toLowResolution,
+            applyTopBottomCorrection
+        ) { completion ->
+            assertEquals(completion, 0.98f, "completion")
+            isProgress = true
+        }
         if (noConvert) {
             assertEquals(response, fileUrl, "No convert")
+            assertFalse(isProgress)
         } else {
             assertTrue(response != fileUrl, "convert file url")
             assertTrue(response.startsWith("http://"), "convert file url")
+            assertTrue(isProgress)
         }
     }
 
