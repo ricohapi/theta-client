@@ -17,7 +17,7 @@ dependencies {
     dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.10")
 }
 
-val thetaClientVersion = "1.11.0"
+val thetaClientVersion = "1.11.1"
 group = "com.ricoh360.thetaclient"
 version = thetaClientVersion
 
@@ -105,7 +105,7 @@ kotlin {
 
 android {
     namespace = "com.ricoh360.thetaclient"
-    compileSdk = 33
+    compileSdk = 34
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
         minSdk = 26
