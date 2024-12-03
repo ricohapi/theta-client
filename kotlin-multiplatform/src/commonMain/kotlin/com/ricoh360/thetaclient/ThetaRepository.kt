@@ -416,18 +416,9 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 throw ThetaWebApiException(response.toString())
             }
             val input = response.body<ByteReadPacket>()
-            val builder = StringBuilder()
-            try {
-                while (!input.endOfInput) {
-                    val char = input.readText(1, 1)
-                    builder.append(char)
-                }
-            } catch (e: Throwable) {
-                throw e
-            } finally {
-                input.close()
-            }
-            return builder.toString()
+            val bytes = input.readBytes()
+            // decodeToString replaces invalid byte sequence with \uFFFD
+            return bytes.decodeToString()
         } catch (e: JsonConvertException) {
             throw ThetaWebApiException(e.message ?: e.toString())
         } catch (e: ResponseException) {
@@ -7800,7 +7791,10 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             if (response.status != HttpStatusCode.OK) {
                 throw ThetaWebApiException(response.toString())
             }
-            return response.bodyAsText()
+            val input = response.body<ByteReadPacket>()
+            val bytes = input.readBytes()
+            // decodeToString replaces invalid byte sequence with \uFFFD
+            return bytes.decodeToString()
         } catch (e: JsonConvertException) {
             throw ThetaWebApiException(e.message ?: e.toString())
         } catch (e: ResponseException) {
