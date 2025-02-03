@@ -1632,7 +1632,15 @@ class ThetaClientReactNativeModule(
     }
     launch {
       try {
-        val convertedUrl = theta.convertVideoFormats(fileUrl, is4k, applyTopBottomCorrection)
+        val convertedUrl =
+          theta.convertVideoFormats(fileUrl, is4k, applyTopBottomCorrection) { completion ->
+            sendNotifyEvent(
+              toNotify(
+                NOTIFY_CONVERT_VIDEO_FORMATS_PROGRESS,
+                toCaptureProgressNotifyParam(value = completion)
+              )
+            )
+          }
         promise.resolve(convertedUrl)
       } catch (t: Throwable) {
         promise.reject(t)
@@ -2208,5 +2216,6 @@ class ThetaClientReactNativeModule(
     const val NOTIFY_CONTINUOUS_CAPTURING = "CONTINUOUS-CAPTURING"
     const val NOTIFY_EVENT_WEBSOCKET_EVENT = "EVENT-WEBSOCKET-EVENT"
     const val NOTIFY_EVENT_WEBSOCKET_CLOSE = "EVENT-WEBSOCKET-CLOSE"
+    const val NOTIFY_CONVERT_VIDEO_FORMATS_PROGRESS = "CONVERT-VIDEO-FORMATS-PROGRESS"
   }
 }

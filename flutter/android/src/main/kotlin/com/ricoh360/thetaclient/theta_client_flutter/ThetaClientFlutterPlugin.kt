@@ -87,6 +87,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         const val notifyIdVideoCaptureStopError = 10081
         const val notifyIdVideoCaptureCapturing = 10082
         const val notifyIdVideoCaptureStarted = 10083
+        const val notifyIdConvertVideoFormatsProgress = 10091
     }
 
     fun sendNotifyEvent(id: Int, params: Map<String, Any?>) {
@@ -1486,7 +1487,16 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             val fileUrl = call.argument<String>("fileUrl")!!
             val toLowResolution = call.argument<Boolean>("toLowResolution")!!
             val applyTopBottomCorrection = call.argument<Boolean>("applyTopBottomCorrection")!!
-            val response = thetaRepository!!.convertVideoFormats(fileUrl, toLowResolution, applyTopBottomCorrection)
+            val response = thetaRepository!!.convertVideoFormats(
+                fileUrl,
+                toLowResolution,
+                applyTopBottomCorrection
+            ) { completion ->
+                sendNotifyEvent(
+                    notifyIdConvertVideoFormatsProgress,
+                    toCaptureProgressNotifyParam(completion)
+                )
+            }
             result.success(response)
         } catch (e: Exception) {
             result.error(e.javaClass.simpleName, e.message, null)

@@ -303,8 +303,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('stopSelfTimer() has not been implemented.');
   }
 
-  Future<String> convertVideoFormats(
-      String fileUrl, bool toLowResolution, bool applyTopBottomCorrection) {
+  Future<String> convertVideoFormats(String fileUrl, bool toLowResolution,
+      bool applyTopBottomCorrection, void Function(double)? onProgress) {
     throw UnimplementedError('convertVideoFormats() has not been implemented.');
   }
 

@@ -5065,7 +5065,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         W1024_H512_F8(1024, 512, 8), // For Theta Z1 and V
         W640_H320_F30(640, 320, 30), // For Theta Z1 and V
         W640_H320_F8(640, 320, 8), // For Theta Z1 and V
-        W640_H320_F10(640, 320, 10); // For Theta S and SC
+        W640_H320_F10(640, 320, 10), // For Theta S and SC
+        W3840_H1920_F30(3840, 1920, 30); // For Theta X
 
         /**
          * Convert PreviewFormatEnum to PreviewFormat.
@@ -7131,12 +7132,18 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @param fileUrl URL of a saved movie file.
      * @param toLowResolution If true generates lower resolution video, otherwise same resolution.
      * @param applyTopBottomCorrection apply Top/bottom correction. This parameter is ignored on Theta X.
+     * @param progress the block for convertVideoFormats progress.
      * @return URL of a converted movie file.
      * @exception ThetaWebApiException Command is currently disabled.
      * @exception NotConnectedException
      */
     @Throws(Throwable::class)
-    suspend fun convertVideoFormats(fileUrl: String, toLowResolution: Boolean, applyTopBottomCorrection: Boolean = true): String {
+    suspend fun convertVideoFormats(
+        fileUrl: String,
+        toLowResolution: Boolean,
+        applyTopBottomCorrection: Boolean = true,
+        progress: ((completion: Float) -> Unit)? = null
+    ): String {
         val params = when {
             cameraModel == ThetaModel.THETA_X -> {
                 if (!toLowResolution) {
@@ -7167,6 +7174,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             convertVideoFormatsResponse = ThetaApi.callConvertVideoFormatsCommand(endpoint, params)
             val id = convertVideoFormatsResponse.id
             while (convertVideoFormatsResponse.state == CommandState.IN_PROGRESS) {
+                progress?.apply {
+                    convertVideoFormatsResponse.progress?.completion?.let {
+                        progress(it)
+                    }
+                }
                 delay(CHECK_COMMAND_STATUS_INTERVAL)
                 convertVideoFormatsResponse = ThetaApi.callStatusApi(
                     endpoint,

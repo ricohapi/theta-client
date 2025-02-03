@@ -19,6 +19,8 @@ export const PreviewFormatEnum = {
   W640_H320_F8: 'W640_H320_F8',
   /** For Theta S and SC */
   W640_H320_F10: 'W640_H320_F10',
+  /** For Theta X */
+  W3840_H1920_F30: 'W3840_H1920_F30',
 } as const;
 
 /** Type definition of PreviewFormatEnum */

@@ -260,12 +260,15 @@ class ThetaClientFlutter {
   /// - @param fileUrl URL of a saved movie file.
   /// - @param toLowResolution If true generates lower resolution video, otherwise same resolution.
   /// - @param applyTopBottomCorrection apply Top/bottom correction. This parameter is ignored on Theta X.
+  /// - @param onProgress the block for convertVideoFormats progress.
   /// - @return URL of a converted movie file.
   /// - @throws Command is currently disabled.
-  Future<String> convertVideoFormats(String fileUrl, bool toLowResolution,
-      [bool applyTopBottomCorrection = true]) {
+  Future<String> convertVideoFormats(String fileUrl,
+      bool toLowResolution,
+      [bool applyTopBottomCorrection = true,
+        void Function(double)? onProgress]) {
     return ThetaClientFlutterPlatform.instance.convertVideoFormats(
-        fileUrl, toLowResolution, applyTopBottomCorrection);
+        fileUrl, toLowResolution, applyTopBottomCorrection, onProgress);
   }
 
   /// Cancels the movie format conversion.
@@ -2484,7 +2487,11 @@ enum PreviewFormatEnum {
 
   /// For Theta S and SC
   // ignore: constant_identifier_names
-  w640_h320_f10('W640_H320_F10');
+  w640_h320_f10('W640_H320_F10'),
+
+  /// For Theta X
+  // ignore: constant_identifier_names
+  w3840_h1920_f30('W3840_H1920_F30');
 
   final String rawValue;
 

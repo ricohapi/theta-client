@@ -313,8 +313,10 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
-  Future<String> convertVideoFormats(
-      String fileUrl, bool toLowResolution, bool applyTopBottomCorrection) {
+  Future<String> convertVideoFormats(String fileUrl,
+      bool toLowResolution,
+      bool applyTopBottomCorrection,
+      void Function(double)? onProgress) {
     return Future.value('');
   }
 
