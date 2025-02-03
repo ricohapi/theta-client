@@ -10,6 +10,7 @@ describe('PreviewFormatEnum', () => {
     [PreviewFormatEnum.W640_H320_F30, 'W640_H320_F30'],
     [PreviewFormatEnum.W640_H320_F8, 'W640_H320_F8'],
     [PreviewFormatEnum.W640_H320_F10, 'W640_H320_F10'],
+    [PreviewFormatEnum.W3840_H1920_F30, 'W3840_H1920_F30'],
   ];
 
   test('length', () => {

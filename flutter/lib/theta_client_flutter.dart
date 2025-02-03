@@ -2487,7 +2487,11 @@ enum PreviewFormatEnum {
 
   /// For Theta S and SC
   // ignore: constant_identifier_names
-  w640_h320_f10('W640_H320_F10');
+  w640_h320_f10('W640_H320_F10'),
+
+  /// For Theta X
+  // ignore: constant_identifier_names
+  w3840_h1920_f30('W3840_H1920_F30');
 
   final String rawValue;
 

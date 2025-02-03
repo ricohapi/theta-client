@@ -751,6 +751,7 @@ void main() {
       [PreviewFormatEnum.w640_h320_f30, 'W640_H320_F30'],
       [PreviewFormatEnum.w640_h320_f8, 'W640_H320_F8'],
       [PreviewFormatEnum.w640_h320_f10, 'W640_H320_F10'],
+      [PreviewFormatEnum.w3840_h1920_f30, 'W3840_H1920_F30'],
     ];
     expect(data.length, PreviewFormatEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {

@@ -5065,7 +5065,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         W1024_H512_F8(1024, 512, 8), // For Theta Z1 and V
         W640_H320_F30(640, 320, 30), // For Theta Z1 and V
         W640_H320_F8(640, 320, 8), // For Theta Z1 and V
-        W640_H320_F10(640, 320, 10); // For Theta S and SC
+        W640_H320_F10(640, 320, 10), // For Theta S and SC
+        W3840_H1920_F30(3840, 1920, 30); // For Theta X
 
         /**
          * Convert PreviewFormatEnum to PreviewFormat.
