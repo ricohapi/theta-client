@@ -423,10 +423,10 @@ PODS:
     - React-Core
     - React-RCTImage
   - SocketRocket (0.6.1)
-  - theta-client-react-native (1.11.1):
+  - theta-client-react-native (1.12.0):
     - React-Core
-    - THETAClient (= 1.11.1)
-  - THETAClient (1.11.1)
+    - THETAClient (= 1.12.0)
+  - THETAClient (1.12.0)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -644,11 +644,11 @@ SPEC CHECKSUMS:
   ReactCommon: bb3d7051c9b8c58ee34f9af76f883bd0fd7c9c31
   RNScreens: 50ad6e3dbea9023272b3aa753e3ee2720b0c9b8f
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
-  theta-client-react-native: 470207335dee45ee345e4b1f96c3f798dddbb664
-  THETAClient: 8b6b2406ad7973adad21ef5ea8b0c64fb5c8ef8a
+  theta-client-react-native: facab9a31131b75ae4b5cb9b71595a620551cb15
+  THETAClient: 15961ec25ff4739c7f11e78ccee72c2bd68ecf03
   Yoga: d4f5b037672e6b68ba484c7cf7fe6790122df792
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
 PODFILE CHECKSUM: 9f18c6378e34edb93be82f2d2cca253260003120
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2
