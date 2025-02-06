@@ -20,7 +20,7 @@ class Viewer360: WKWebView, WKNavigationDelegate {
     init(frame: CGRect) {
         let config = WKWebViewConfiguration()
         config.allowsInlineMediaPlayback = true
-        config.setValue(true, forKey: "_allowUniversalAccessFromFileURLs")
+        config.setValue(true, forKey: "allowUniversalAccessFromFileURLs")
         super.init(frame: frame, configuration: config)
         loadViewer()
     }
