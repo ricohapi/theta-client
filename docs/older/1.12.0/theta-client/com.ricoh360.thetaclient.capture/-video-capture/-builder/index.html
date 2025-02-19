@@ -1,0 +1,303 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Builder</title>
+    <link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script>
+<link href="../../../../styles/multimodule.css" rel="Stylesheet">
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../../index.html">
+                            theta-client
+                    </a>
+            </div>
+            <div class="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;theta-client/com.ricoh360.thetaclient.capture/-video-capture/-builder/index.html&quot;}"><div class="versions-dropdown">
+  <div class="versions-dropdown-button">1.12.0</div>
+  <div class="versions-dropdown-data"><a href="../../../../../../theta-client/com.ricoh360.thetaclient.capture/-video-capture/-builder/index.html">1.12.1</a><a href="index.html">1.12.0</a><a href="../../../../../1.11.1/theta-client/com.ricoh360.thetaclient.capture/-video-capture/-builder/index.html">1.11.1</a><a href="../../../../../1.11.0/theta-client/com.ricoh360.thetaclient.capture/-video-capture/-builder/index.html">1.11.0</a><a href="../../../../../1.10.2/theta-client/com.ricoh360.thetaclient.capture/-video-capture/-builder/index.html">1.10.2</a><a href="../../../../../1.10.1/theta-client/com.ricoh360.thetaclient.capture/-video-capture/-builder/index.html">1.10.1</a><a href="../../../../../1.10.0/theta-client/com.ricoh360.thetaclient.capture/-video-capture/-builder/index.html">1.10.0</a><a href="../../../../../1.9.1/theta-client/com.ricoh360.thetaclient.capture/-video-capture/-builder/index.html">1.9.1</a><a href="../../../../../1.9.0/theta-client/com.ricoh360.thetaclient.capture/-video-capture/-builder/index.html">1.9.0</a><a href="../../../../../1.8.0/theta-client/com.ricoh360.thetaclient.capture/-video-capture/-builder/index.html">1.8.0</a><a href="../../../../../1.7.1/theta-client/com.ricoh360.thetaclient.capture/-video-capture/-builder/index.html">1.7.1</a><a href="../../../../../1.7.0/theta-client/com.ricoh360.thetaclient.capture/-video-capture/-builder/index.html">1.7.0</a><a href="../../../../../1.6.0/theta-client/com.ricoh360.thetaclient.capture/-video-capture/-builder/index.html">1.6.0</a><a href="../../../../../1.5.0/theta-client/com.ricoh360.thetaclient.capture/-video-capture/-builder/index.html">1.5.0</a><a href="../../../../../1.4.0/theta-client/com.ricoh360.thetaclient.capture/-video-capture/-builder/index.html">1.4.0</a><a href="../../../../../1.3.1/theta-client/com.ricoh360.thetaclient.capture/-video-capture/-builder/index.html">1.3.1</a><a href="../../../../../1.3.0/theta-client/com.ricoh360.thetaclient.capture/-video-capture/-builder/index.html">1.3.0</a><a href="../../../../../1.2.0/theta-client/com.ricoh360.thetaclient.capture/-video-capture/-builder/index.html">1.2.0</a></div>
+</div>
+</dokka-template-command>            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":kotlin-multiplatform:dokkaHtml/commonMain">common</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="theta-client::com.ricoh360.thetaclient.capture/VideoCapture.Builder///PointingToDeclaration//1539438162">
+  <div class="breadcrumbs"><a href="../../../../index.html">theta-client</a><span class="delimiter">/</span><a href="../../index.html">com.ricoh360.thetaclient.capture</a><span class="delimiter">/</span><a href="../index.html">VideoCapture</a><span class="delimiter">/</span><span class="current">Builder</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Builder</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">Builder</a> : <a href="../../-capture/-builder/index.html">Capture.Builder</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">VideoCapture.Builder</a><span class="token operator">&gt; </span></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="1656177471%2FFunctions%2F1539438162" anchor-label="build" id="1656177471%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="build.html"><span><span>build</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1656177471%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="build.html"><span class="token function">build</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../index.html">VideoCapture</a></div><div class="brief "><p class="paragraph">Builds an instance of a VideoCapture that has all the combined parameters of the Options that have been added to the Builder.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="410108831%2FFunctions%2F1539438162" anchor-label="setAperture" id="410108831%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../-capture/-builder/set-aperture.html"><span>set</span><wbr><span><span>Aperture</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="410108831%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="../../-capture/-builder/set-aperture.html"><span class="token function">setAperture</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">aperture<span class="token operator">: </span><a href="../../../com.ricoh360.thetaclient/-theta-repository/-aperture-enum/index.html">ThetaRepository.ApertureEnum</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">VideoCapture.Builder</a></div><div class="brief "><p class="paragraph">Set aperture value.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1872325604%2FFunctions%2F1539438162" anchor-label="setCheckStatusCommandInterval" id="1872325604%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-check-status-command-interval.html"><span>set</span><wbr><span>Check</span><wbr><span>Status</span><wbr><span>Command</span><wbr><span><span>Interval</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1872325604%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-check-status-command-interval.html"><span class="token function">setCheckStatusCommandInterval</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">timeMillis<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-long/index.html">Long</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">VideoCapture.Builder</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1932012117%2FFunctions%2F1539438162" anchor-label="setColorTemperature" id="-1932012117%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../-capture/-builder/set-color-temperature.html"><span>set</span><wbr><span>Color</span><wbr><span><span>Temperature</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1932012117%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="../../-capture/-builder/set-color-temperature.html"><span class="token function">setColorTemperature</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">kelvin<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">VideoCapture.Builder</a></div><div class="brief "><p class="paragraph">Set color temperature of the camera (Kelvin).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1525173057%2FFunctions%2F1539438162" anchor-label="setExposureCompensation" id="-1525173057%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../-capture/-builder/set-exposure-compensation.html"><span>set</span><wbr><span>Exposure</span><wbr><span><span>Compensation</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1525173057%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="../../-capture/-builder/set-exposure-compensation.html"><span class="token function">setExposureCompensation</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="../../../com.ricoh360.thetaclient/-theta-repository/-exposure-compensation-enum/index.html">ThetaRepository.ExposureCompensationEnum</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">VideoCapture.Builder</a></div><div class="brief "><p class="paragraph">Set exposure compensation (EV).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-379818745%2FFunctions%2F1539438162" anchor-label="setExposureDelay" id="-379818745%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../-capture/-builder/set-exposure-delay.html"><span>set</span><wbr><span>Exposure</span><wbr><span><span>Delay</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-379818745%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="../../-capture/-builder/set-exposure-delay.html"><span class="token function">setExposureDelay</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">delay<span class="token operator">: </span><a href="../../../com.ricoh360.thetaclient/-theta-repository/-exposure-delay-enum/index.html">ThetaRepository.ExposureDelayEnum</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">VideoCapture.Builder</a></div><div class="brief "><p class="paragraph">Set operating time (sec.) of the self-timer.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1239794949%2FFunctions%2F1539438162" anchor-label="setExposureProgram" id="1239794949%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../-capture/-builder/set-exposure-program.html"><span>set</span><wbr><span>Exposure</span><wbr><span><span>Program</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1239794949%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="../../-capture/-builder/set-exposure-program.html"><span class="token function">setExposureProgram</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">program<span class="token operator">: </span><a href="../../../com.ricoh360.thetaclient/-theta-repository/-exposure-program-enum/index.html">ThetaRepository.ExposureProgramEnum</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">VideoCapture.Builder</a></div><div class="brief "><p class="paragraph">Set exposure program. The exposure settings that take priority can be selected.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2126456493%2FFunctions%2F1539438162" anchor-label="setFileFormat" id="2126456493%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-file-format.html"><span>set</span><wbr><span>File</span><wbr><span><span>Format</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2126456493%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-file-format.html"><span class="token function">setFileFormat</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">fileFormat<span class="token operator">: </span><a href="../../../com.ricoh360.thetaclient/-theta-repository/-video-file-format-enum/index.html">ThetaRepository.VideoFileFormatEnum</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">VideoCapture.Builder</a></div><div class="brief "><p class="paragraph">Set video file format.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1950212912%2FFunctions%2F1539438162" anchor-label="setGpsInfo" id="-1950212912%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../-capture/-builder/set-gps-info.html"><span>set</span><wbr><span>Gps</span><wbr><span><span>Info</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1950212912%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="../../-capture/-builder/set-gps-info.html"><span class="token function">setGpsInfo</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">gpsInfo<span class="token operator">: </span><a href="../../../com.ricoh360.thetaclient/-theta-repository/-gps-info/index.html">ThetaRepository.GpsInfo</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">VideoCapture.Builder</a></div><div class="brief "><p class="paragraph">Set GPS information.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="239735165%2FFunctions%2F1539438162" anchor-label="setGpsTagRecording" id="239735165%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../-capture/-builder/set-gps-tag-recording.html"><span>set</span><wbr><span>Gps</span><wbr><span>Tag</span><wbr><span><span>Recording</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="239735165%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="../../-capture/-builder/set-gps-tag-recording.html"><span class="token function">setGpsTagRecording</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="../../../com.ricoh360.thetaclient/-theta-repository/-gps-tag-recording-enum/index.html">ThetaRepository.GpsTagRecordingEnum</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">VideoCapture.Builder</a></div><div class="brief "><p class="paragraph">Set turns position information assigning ON/OFF.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-214286219%2FFunctions%2F1539438162" anchor-label="setIso" id="-214286219%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../-capture/-builder/set-iso.html"><span>set</span><wbr><span><span>Iso</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-214286219%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="../../-capture/-builder/set-iso.html"><span class="token function">setIso</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">iso<span class="token operator">: </span><a href="../../../com.ricoh360.thetaclient/-theta-repository/-iso-enum/index.html">ThetaRepository.IsoEnum</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">VideoCapture.Builder</a></div><div class="brief "><p class="paragraph">Set ISO sensitivity.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-678347073%2FFunctions%2F1539438162" anchor-label="setIsoAutoHighLimit" id="-678347073%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../-capture/-builder/set-iso-auto-high-limit.html"><span>set</span><wbr><span>Iso</span><wbr><span>Auto</span><wbr><span>High</span><wbr><span><span>Limit</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-678347073%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="../../-capture/-builder/set-iso-auto-high-limit.html"><span class="token function">setIsoAutoHighLimit</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">iso<span class="token operator">: </span><a href="../../../com.ricoh360.thetaclient/-theta-repository/-iso-auto-high-limit-enum/index.html">ThetaRepository.IsoAutoHighLimitEnum</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">VideoCapture.Builder</a></div><div class="brief "><p class="paragraph">Set ISO sensitivity upper limit when ISO sensitivity is set to automatic.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="611161914%2FFunctions%2F1539438162" anchor-label="setMaxRecordableTime" id="611161914%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-max-recordable-time.html"><span>set</span><wbr><span>Max</span><wbr><span>Recordable</span><wbr><span><span>Time</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="611161914%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-max-recordable-time.html"><span class="token function">setMaxRecordableTime</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">time<span class="token operator">: </span><a href="../../../com.ricoh360.thetaclient/-theta-repository/-max-recordable-time-enum/index.html">ThetaRepository.MaxRecordableTimeEnum</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">VideoCapture.Builder</a></div><div class="brief "><p class="paragraph">Set maximum recordable time (in seconds) of the camera.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1868106753%2FFunctions%2F1539438162" anchor-label="setWhiteBalance" id="-1868106753%2FFunctions%2F1539438162" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":kotlin-multiplatform:dokkaHtml/commonMain" data-filterable-set=":kotlin-multiplatform:dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../-capture/-builder/set-white-balance.html"><span>set</span><wbr><span>White</span><wbr><span><span>Balance</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1868106753%2FFunctions%2F1539438162"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin-multiplatform:dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="../../-capture/-builder/set-white-balance.html"><span class="token function">setWhiteBalance</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">whiteBalance<span class="token operator">: </span><a href="../../../com.ricoh360.thetaclient/-theta-repository/-white-balance-enum/index.html">ThetaRepository.WhiteBalanceEnum</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">VideoCapture.Builder</a></div><div class="brief "><p class="paragraph">Set white balance.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2025 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
