@@ -1187,7 +1187,13 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
         if let arguments = call.arguments as? [String: Any] {
             setCaptureBuilderParams(params: arguments, builder: builder)
-            setMultiBracketCaptureBuilderParams(params: arguments, builder: builder)
+            do {
+                try setMultiBracketCaptureBuilderParams(params: arguments, builder: builder)
+            } catch {
+                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: error.localizedDescription, details: nil)
+                result(flutterError)
+                return
+            }
         }
         builder.build(completionHandler: { capture, error in
             if let thetaError = error {

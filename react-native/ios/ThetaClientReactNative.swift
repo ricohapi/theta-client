@@ -1513,7 +1513,12 @@ class ThetaClientReactNative: RCTEventEmitter {
 
         if let options = options as? [String: Any] {
             setCaptureBuilderParams(params: options, builder: multiBracketCaptureBuilder)
-            setMultiBracketCaptureBuilderParams(params: options, builder: multiBracketCaptureBuilder)
+            do {
+                try setMultiBracketCaptureBuilderParams(params: options, builder: multiBracketCaptureBuilder)
+            } catch {
+                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                return
+            }
         }
         multiBracketCaptureBuilder.build { capture, error in
             if let error {

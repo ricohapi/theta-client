@@ -577,4 +577,44 @@ class MultiBracketCaptureTest {
         // check result
         assertNull(files, "shooting is canceled")
     }
+
+    /**
+     * Number of shots test
+     */
+    @Test
+    fun bracketNumberTest() = runTest {
+        val thetaRepository = ThetaRepository(endpoint)
+
+        val bracketNumbers = mapOf(
+            ThetaRepository.ThetaModel.THETA_S to Pair(2, 13),
+            ThetaRepository.ThetaModel.THETA_SC to Pair(2, 13),
+            ThetaRepository.ThetaModel.THETA_V to Pair(2, 19),
+            ThetaRepository.ThetaModel.THETA_SC2 to Pair(2, 13),
+            ThetaRepository.ThetaModel.THETA_SC2_B to Pair(2, 13),
+            ThetaRepository.ThetaModel.THETA_Z1 to Pair(2, 19),
+            ThetaRepository.ThetaModel.THETA_X to Pair(2, 13),
+            null to Pair(0, 0)  // unsupported
+        )
+
+        bracketNumbers.forEach { (key, value) ->
+            thetaRepository.cameraModel = key
+            val builder = thetaRepository.getMultiBracketCaptureBuilder()
+            assertEquals(builder.getMinShots(), value.first, "Min: ${key?.name ?: "null"}")
+            assertEquals(builder.getMaxShots(), value.second, "Max: ${key?.name ?: "null"}")
+
+            for (i in 1..builder.getMaxShots()) {
+                builder.addBracketParameters(
+                    colorTemperature = 5000,
+                )
+            }
+            try {
+                builder.addBracketParameters(colorTemperature = 5000)
+                assertTrue(false, "Maximum number of exceptions not raised")
+            } catch (e: ThetaRepository.ThetaWebApiException) {
+                assertTrue(true, "Maximum number of exceptions")
+            } catch (e: Throwable) {
+                assertTrue(false, "Unexpected exceptions occur")
+            }
+        }
+    }
 }
