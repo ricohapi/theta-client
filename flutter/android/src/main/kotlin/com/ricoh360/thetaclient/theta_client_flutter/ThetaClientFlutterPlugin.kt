@@ -1206,8 +1206,8 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             return
         }
         setCaptureBuilderParams(call, multiBracketCaptureBuilder)
-        setMultiBracketCaptureBuilderParams(call, multiBracketCaptureBuilder)
         try {
+            setMultiBracketCaptureBuilderParams(call, multiBracketCaptureBuilder)
             multiBracketCapture = multiBracketCaptureBuilder.build()
             result.success(null)
         } catch (e: Exception) {

@@ -315,6 +315,15 @@ class MultiBracketCapture private constructor(
         private var interval: Long? = null
         private val bracketSettings: MutableList<ThetaRepository.BracketSetting> = mutableListOf()
 
+        internal val messageExceptionBracketNumber: String
+            get() {
+                val min = getMinShots()
+                return when (val max = getMaxShots()) {
+                    0 -> "Unsupported multi bracket capture"
+                    else -> "Number of shots in multi bracket shooting is $min to $max"
+                }
+            }
+
         /**
          * Builds an instance of a MultiBracketCapture that has all the combined parameters of the Options that have been added to the Builder.
          *
@@ -322,7 +331,9 @@ class MultiBracketCapture private constructor(
          */
         @Throws(Throwable::class)
         suspend fun build(): MultiBracketCapture {
-            if (bracketSettings.size < MIN_SHOTS) throw ThetaRepository.ThetaWebApiException("Number of shots in multi bracket shooting is 2 to 13 ")
+            if (bracketSettings.size < getMinShots()) {
+                throw ThetaRepository.ThetaWebApiException(messageExceptionBracketNumber)
+            }
             try {
                 // Turn into image capture mode
                 ThetaApi.callSetOptionsCommand(
@@ -370,7 +381,18 @@ class MultiBracketCapture private constructor(
 
         /**
          * Add bracket parameters for a shot.
-         * Number of shots in multi bracket shooting is 2 to 13.
+         *
+         * Number of shots in multi bracket shooting
+         * |                        | Min | Max |
+         * | ---------------------- | --- | --- |
+         * | THETA S                | 2   | 13  |
+         * | THETA SC               | 2   | 13  |
+         * | THETA V                | 2   | 19  |
+         * | THETA SC2              | 2   | 13  |
+         * | THETA SC2 for business | 2   | 13  |
+         * | THETA Z1               | 2   | 19  |
+         * | THETA X                | 2   | 13  |
+         *
          * Instead of this function, you can use [addBracketSettingList].
          *
          * @param aperture Only Theta Z1 supports.
@@ -383,6 +405,7 @@ class MultiBracketCapture private constructor(
          * @return MultiBracketCapture.Builder
          */
         @Suppress("CyclomaticComplexMethod")
+        @Throws(Throwable::class)
         fun addBracketParameters(
             aperture: ThetaRepository.ApertureEnum? = null,
             colorTemperature: Int? = null,
@@ -392,7 +415,9 @@ class MultiBracketCapture private constructor(
             shutterSpeed: ThetaRepository.ShutterSpeedEnum? = null,
             whiteBalance: ThetaRepository.WhiteBalanceEnum? = null,
         ): Builder {
-            if (bracketSettings.size >= MAX_SHOTS) throw ThetaRepository.ThetaWebApiException("Number of shots in multi bracket shooting is 2 to 13")
+            if (bracketSettings.size >= getMaxShots()) {
+                throw ThetaRepository.ThetaWebApiException(messageExceptionBracketNumber)
+            }
             val bracketSetting = ThetaRepository.BracketSetting(
                 aperture = when (cameraModel) {
                     ThetaRepository.ThetaModel.THETA_Z1 -> aperture
@@ -459,9 +484,21 @@ class MultiBracketCapture private constructor(
          * Add bracket setting list.
          * Instead of this function, you can use [addBracketParameters]
          *
-         * @param bracketSettingList size must be between 2 and 13.
+         * Number of shots in multi bracket shooting
+         * |                        | Min | Max |
+         * | ---------------------- | --- | --- |
+         * | THETA S                | 2   | 13  |
+         * | THETA SC               | 2   | 13  |
+         * | THETA V                | 2   | 19  |
+         * | THETA SC2              | 2   | 13  |
+         * | THETA SC2 for business | 2   | 13  |
+         * | THETA Z1               | 2   | 19  |
+         * | THETA X                | 2   | 13  |
+         *
+         * @param bracketSettingList Size must be the Number of shots in multi bracket shooting.
          * @return MultiBracketCapture.Builder
          */
+        @Throws(Throwable::class)
         fun addBracketSettingList(bracketSettingList: List<ThetaRepository.BracketSetting>): Builder {
             bracketSettingList.forEach {
                 addBracketParameters(
@@ -477,10 +514,47 @@ class MultiBracketCapture private constructor(
             return this
         }
 
+        /**
+         * Max number of shots in multi bracket shooting
+         * Returns 0 for unsupported
+         */
+        fun getMaxShots(): Int {
+            bracketNumbers[cameraModel]?.let {
+                return it.second
+            }
+            return 0
+        }
+
+        /**
+         * Max number of shots in multi bracket shooting
+         * Returns 0 for unsupported
+         */
+        fun getMinShots(): Int {
+            bracketNumbers[cameraModel]?.let {
+                return it.first
+            }
+            return 0
+        }
+
         companion object {
-            // Number of shots in multi bracket shooting is 2 to 13.
-            const val MIN_SHOTS = 2
-            const val MAX_SHOTS = 13
+            // Number of shots in multi bracket shooting.
+            internal const val MIN_SHOTS = 2
+            internal const val MAX_SHOTS = 13
+            internal const val MAX_SHOTS_V = 19
+            internal const val MAX_SHOTS_Z1 = 19
+            internal val bracketNumbers = mapOf(
+                ThetaRepository.ThetaModel.THETA_S to Pair(MIN_SHOTS, MAX_SHOTS),
+                ThetaRepository.ThetaModel.THETA_SC to Pair(MIN_SHOTS, MAX_SHOTS),
+                ThetaRepository.ThetaModel.THETA_V to Pair(MIN_SHOTS, MAX_SHOTS_V),
+                ThetaRepository.ThetaModel.THETA_SC2 to Pair(MIN_SHOTS, MAX_SHOTS),
+                ThetaRepository.ThetaModel.THETA_SC2_B to Pair(MIN_SHOTS, MAX_SHOTS),
+                ThetaRepository.ThetaModel.THETA_Z1 to Pair(MIN_SHOTS, MAX_SHOTS_Z1),
+                ThetaRepository.ThetaModel.THETA_X to Pair(MIN_SHOTS, MAX_SHOTS),
+            )
+
+            /**
+             * Default color temperature
+             */
             const val DEFAULT_COLOR_TEMPERATURE = 5000
         }
     }

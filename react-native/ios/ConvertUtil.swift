@@ -657,9 +657,9 @@ func setBurstCaptureBuilderParams(params: [String: Any], builder: BurstCapture.B
     }
 }
 
-func setMultiBracketCaptureBuilderParams(params: [String: Any], builder: MultiBracketCapture.Builder) {
+func setMultiBracketCaptureBuilderParams(params: [String: Any], builder: MultiBracketCapture.Builder) throws {
     if let autoBracket = params[KEY_AUTO_BRACKET] as? [[String: Any]] {
-        autoBracket.forEach { map in
+        try autoBracket.forEach { map in
             let aperture = {
                 if let name = map["aperture"] as? String {
                     return getEnumValue(values: ThetaRepository.ApertureEnum.values(), name: name)
@@ -716,7 +716,7 @@ func setMultiBracketCaptureBuilderParams(params: [String: Any], builder: MultiBr
                 }
             }()
 
-            builder.addBracketParameters(
+            try builder.addBracketParameters(
                 aperture: aperture,
                 colorTemperature: colorTemperature,
                 exposureCompensation: exposureCompensation,

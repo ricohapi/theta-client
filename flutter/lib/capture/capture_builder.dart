@@ -348,8 +348,19 @@ class MultiBracketCaptureBuilder
 
   /// Set capture settings for each shooting.
   ///
-  /// Number of settings have to be 2 to 13.
+  /// Number of shots in multi bracket shooting
+  /// |                        | Min | Max |
+  /// | ---------------------- | --- | --- |
+  /// | THETA S                | 2   | 13  |
+  /// | THETA SC               | 2   | 13  |
+  /// | THETA V                | 2   | 19  |
+  /// | THETA SC2              | 2   | 13  |
+  /// | THETA SC2 for business | 2   | 13  |
+  /// | THETA Z1               | 2   | 19  |
+  /// | THETA X                | 2   | 13  |
   ///
+  /// Number of settings have to be Number of shots in multi bracket shooting.
+  /// 
   /// For Theta SC2, S and SC, other settings than iso, shutterSpeed and
   /// colorTemperature are ignored.
   /// For Theta X, exposureProgram and exposureCompensation are ignored
