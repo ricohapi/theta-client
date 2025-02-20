@@ -359,10 +359,10 @@ PODS:
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
     - React-RCTImage
-  - theta-client-react-native (1.12.0):
+  - theta-client-react-native (1.12.1):
     - React-Core
-    - THETAClient (= 1.12.0)
-  - THETAClient (1.12.0)
+    - THETAClient (= 1.12.1)
+  - THETAClient (1.12.1)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -530,8 +530,8 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: ffe826b7b1cfbc32a35ed5b64d5886c0ff75f501
   ReactCommon: 7f3dd5e98a9ec627c6b03d26c062bf37ea9fc888
   RNScreens: 50ad6e3dbea9023272b3aa753e3ee2720b0c9b8f
-  theta-client-react-native: facab9a31131b75ae4b5cb9b71595a620551cb15
-  THETAClient: 15961ec25ff4739c7f11e78ccee72c2bd68ecf03
+  theta-client-react-native: 8ed0f1cda1a9db49043e2a9b6f60797f16349fab
+  THETAClient: 0fb33ddf2994806ef4dfad9296dc337d8c9013d2
   Yoga: e71803b4c1fff832ccf9b92541e00f9b873119b9
 
 PODFILE CHECKSUM: 1db31f88b35bc09c73c93dc318aed047b266c17c
