@@ -34,6 +34,7 @@ def getExtOrIntegerDefault(name) {
 }
 
 android {
+  namespace = "com.ricoh360.thetaclientreactnative"
   compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
 
   defaultConfig {

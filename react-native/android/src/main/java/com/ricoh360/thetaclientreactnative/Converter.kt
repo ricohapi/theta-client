@@ -307,8 +307,9 @@ fun setContinuousCaptureBuilderParams(optionMap: ReadableMap, builder: Continuou
 fun toGetOptionsParam(optionNames: ReadableArray): MutableList<OptionNameEnum> {
   val optionNameList = mutableListOf<OptionNameEnum>()
   for (index in 0..(optionNames.size() - 1)) {
-    val option = optionNames.getString(index)
-    optionNameList.add(OptionNameEnum.valueOf(option))
+    optionNames.getString(index)?.let {
+      optionNameList.add(OptionNameEnum.valueOf(it))
+    }
   }
   return optionNameList
 }

@@ -302,7 +302,9 @@ class ThetaClientReactNativeModule(
     }
     val fileList = mutableListOf<String>()
     for (index in 0..(fileUrls.size() - 1)) {
-      fileList.add(fileUrls.getString(index))
+      fileUrls.getString(index)?.let {
+        fileList.add(it)
+      }
     }
     launch {
       try {
@@ -1889,8 +1891,9 @@ class ThetaClientReactNativeModule(
       try {
         val optionNameList = mutableListOf<ThetaRepository.OptionNameEnum>()
         for (index in 0..(optionNames.size() - 1)) {
-          val option = optionNames.getString(index)
-          optionNameList.add(ThetaRepository.OptionNameEnum.valueOf(option))
+          optionNames.getString(index)?.let {
+            optionNameList.add(ThetaRepository.OptionNameEnum.valueOf(it))
+          }
         }
         val options = theta.getMySetting(optionNameList)
         promise.resolve(toResult(options = options))
@@ -2109,8 +2112,9 @@ class ThetaClientReactNativeModule(
       try {
         val pluginList = mutableListOf<String>()
         for (index in 0..(plugins.size() - 1)) {
-          val plugin = plugins.getString(index)
-          pluginList.add(plugin)
+          plugins.getString(index)?.let {
+            pluginList.add(it)
+          }
         }
         theta.setPluginOrders(pluginList)
         promise.resolve(true)
