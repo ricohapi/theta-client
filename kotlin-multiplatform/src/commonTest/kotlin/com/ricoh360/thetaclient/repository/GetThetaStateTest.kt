@@ -31,6 +31,7 @@ class GetThetaStateTest {
         // setup
         val jsonString = Resource("src/commonTest/resources/state/state_z1.json").readText()
         MockApiClient.onRequest = { request ->
+            assertEquals(request.headers.get("Cache-Control"), "no-store")
             assertEquals(request.url.encodedPath, "/osc/state", "request path")
             ByteReadChannel(jsonString)
         }
@@ -86,6 +87,7 @@ class GetThetaStateTest {
         // setup
         val jsonString = Resource("src/commonTest/resources/state/state_x.json").readText()
         MockApiClient.onRequest = { request ->
+            assertEquals(request.headers.get("Cache-Control"), "no-store")
             assertEquals(request.url.encodedPath, "/osc/state", "request path")
             ByteReadChannel(jsonString)
         }

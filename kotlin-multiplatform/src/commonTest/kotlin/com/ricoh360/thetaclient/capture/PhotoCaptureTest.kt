@@ -75,6 +75,7 @@ class PhotoCaptureTest {
                 else -> {
                     when (request.url.encodedPath) {
                         "/osc/commands/status" -> {
+                            assertEquals(request.headers.get("Cache-Control"), "no-store")
                             assertEquals(
                                 request.url.encodedPath,
                                 requestPathArray[2],

@@ -68,7 +68,12 @@ internal object ThetaApi {
         endpoint: String,
     ): InfoApiResponse {
         return syncExecutor(requestScope, ApiClient.timeout.requestTimeout) {
-            httpClient.get(getApiUrl(endpoint, InfoApi.PATH)).body()
+            httpClient.get(getApiUrl(endpoint, InfoApi.PATH)) {
+                headers {
+                    append("Content-Type", "application/json; charset=utf-8")
+                    append("Cache-Control", "no-store")
+                }
+            }.body()
         }
     }
 
@@ -106,7 +111,12 @@ internal object ThetaApi {
         endpoint: String,
     ): StateApiResponse {
         return syncExecutor(requestScope, ApiClient.timeout.requestTimeout) {
-            httpClient.post(getApiUrl(endpoint, StateApi.PATH)).body()
+            httpClient.post(getApiUrl(endpoint, StateApi.PATH)) {
+                headers {
+                    append("Content-Type", "application/json; charset=utf-8")
+                    append("Cache-Control", "no-store")
+                }
+            }.body()
         }
     }
 
@@ -133,7 +143,7 @@ internal object ThetaApi {
             val response = httpClient.post(getApiUrl(endpoint, StatusApi.PATH)) {
                 headers {
                     append("Content-Type", "application/json; charset=utf-8")
-                    append("Cache-Control", "no-cache")
+                    append("Cache-Control", "no-store")
                 }
                 setBody(request)
             }
@@ -904,7 +914,7 @@ internal object ThetaApi {
             httpClient.post(getApiUrl(endpoint, CommandApi.PATH)) {
                 headers {
                     append("Content-Type", "application/json; charset=utf-8")
-                    append("Cache-Control", "no-cache")
+                    append("Cache-Control", "no-store")
                 }
                 setBody<T>(body)
             }

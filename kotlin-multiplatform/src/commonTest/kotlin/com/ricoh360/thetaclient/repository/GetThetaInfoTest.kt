@@ -34,6 +34,7 @@ class GetThetaInfoTest {
         // setup
         val jsonString = Resource("src/commonTest/resources/info/info_z1.json").readText()
         MockApiClient.onRequest = { request ->
+            assertEquals(request.headers.get("Cache-Control"), "no-store")
             assertEquals(request.url.encodedPath, "/osc/info", "request path")
             ByteReadChannel(jsonString)
         }
