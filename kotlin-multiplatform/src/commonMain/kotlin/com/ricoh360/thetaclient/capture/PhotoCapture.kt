@@ -97,6 +97,9 @@ class PhotoCapture private constructor(
             )
             try {
                 takePictureResponse = ThetaApi.callTakePictureCommand(endpoint = endpoint)
+                takePictureResponse.error ?: let {
+                    callback.onCapturing(CapturingStatusEnum.STARTING)
+                }
                 monitor.start()
                 val id = takePictureResponse.id
                 while (takePictureResponse.state == CommandState.IN_PROGRESS) {

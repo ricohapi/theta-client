@@ -150,7 +150,9 @@ class LimitlessIntervalCapture private constructor(
                 }
                 ThetaApi.callStartCaptureCommand(endpoint, params).error?.let {
                     callOnCaptureFailed(ThetaRepository.ThetaWebApiException(it.message))
+                    return@launch
                 }
+                callback.onCapturing(CapturingStatusEnum.STARTING)
             } catch (e: JsonConvertException) {
                 callOnCaptureFailed(ThetaRepository.ThetaWebApiException(e.message ?: e.toString()))
             } catch (e: ResponseException) {

@@ -54,6 +54,9 @@ class Capture {
 
 /// Capturing status
 enum CapturingStatusEnum {
+  /// The process is starting
+  starting('STARTING'),
+
   /// Capture in progress
   capturing('CAPTURING'),
 

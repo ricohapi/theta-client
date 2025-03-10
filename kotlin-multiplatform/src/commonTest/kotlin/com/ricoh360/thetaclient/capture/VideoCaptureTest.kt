@@ -125,6 +125,7 @@ class VideoCaptureTest {
 
             override fun onCapturing(status: CapturingStatusEnum) {
                 when (stateCounter) {
+                    0 -> assertEquals(status, CapturingStatusEnum.STARTING)
                     1 -> assertEquals(status, CapturingStatusEnum.SELF_TIMER_COUNTDOWN)
                     else -> assertEquals(status, CapturingStatusEnum.CAPTURING)
                 }

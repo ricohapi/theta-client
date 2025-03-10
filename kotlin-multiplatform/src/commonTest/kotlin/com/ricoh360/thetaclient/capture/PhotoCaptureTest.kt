@@ -103,6 +103,7 @@ class PhotoCaptureTest {
         assertNull(photoCapture.getFileFormat(), "set option fileFormat")
 
         var file: String? = null
+        var onCapturingCount = 0
         photoCapture.takePicture(object : PhotoCapture.TakePictureCallback {
             override fun onSuccess(fileUrl: String?) {
                 file = fileUrl
@@ -110,7 +111,11 @@ class PhotoCaptureTest {
             }
 
             override fun onCapturing(status: CapturingStatusEnum) {
-                assertEquals(status, CapturingStatusEnum.CAPTURING)
+                when (onCapturingCount) {
+                    0 -> assertEquals(status, CapturingStatusEnum.STARTING)
+                    else -> assertEquals(status, CapturingStatusEnum.CAPTURING)
+                }
+                onCapturingCount += 1
             }
 
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
@@ -1502,7 +1507,8 @@ class PhotoCaptureTest {
 
             override fun onCapturing(status: CapturingStatusEnum) {
                 when (onCapturingCount) {
-                    0 -> assertEquals(status, CapturingStatusEnum.SELF_TIMER_COUNTDOWN)
+                    0 -> assertEquals(status, CapturingStatusEnum.STARTING)
+                    1 -> assertEquals(status, CapturingStatusEnum.SELF_TIMER_COUNTDOWN)
                     else -> assertEquals(status, CapturingStatusEnum.CAPTURING)
                 }
                 onCapturingCount += 1
@@ -1521,6 +1527,6 @@ class PhotoCaptureTest {
 
         // check result
         assertTrue(file?.startsWith("http://") ?: false, "take picture")
-        assertEquals(onCapturingCount, 2)
+        assertEquals(onCapturingCount, 3)
     }
 }

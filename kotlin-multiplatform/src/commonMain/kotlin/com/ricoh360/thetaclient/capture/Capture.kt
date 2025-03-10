@@ -13,6 +13,11 @@ import io.ktor.client.statement.HttpResponse
  */
 enum class CapturingStatusEnum {
     /**
+     * The process is starting
+     */
+    STARTING,
+
+    /**
      * Capture in progress
      */
     CAPTURING,

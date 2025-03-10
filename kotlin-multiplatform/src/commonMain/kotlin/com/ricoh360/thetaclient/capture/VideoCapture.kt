@@ -184,6 +184,7 @@ class VideoCapture private constructor(
                 response.error?.let {
                     callOnCaptureFailed(ThetaRepository.ThetaWebApiException(it.message))
                 }
+                callback.onCapturing(CapturingStatusEnum.STARTING)
             } catch (e: JsonConvertException) {
                 callOnCaptureFailed(ThetaRepository.ThetaWebApiException(e.message ?: e.toString()))
             } catch (e: ResponseException) {

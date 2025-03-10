@@ -107,6 +107,10 @@ class TimeShiftCapture private constructor(
                     endpoint = endpoint,
                     params = StartCaptureParams(_mode = ShootingMode.TIME_SHIFT_SHOOTING)
                 )
+                startCaptureResponse.error ?: let {
+                    callback.onCapturing(CapturingStatusEnum.STARTING)
+                }
+
                 monitor.start()
 
                 /*

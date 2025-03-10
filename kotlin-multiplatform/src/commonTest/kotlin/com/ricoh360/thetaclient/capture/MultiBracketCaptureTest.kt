@@ -130,11 +130,13 @@ class MultiBracketCaptureTest {
 
             override fun onCapturing(status: CapturingStatusEnum) {
                 onCapturingCounter++
-                if (onSelfTimer) {
-                    assertEquals(status, CapturingStatusEnum.CAPTURING)
-                } else {
-                    onSelfTimer = true
-                    assertEquals(status, CapturingStatusEnum.SELF_TIMER_COUNTDOWN)
+                when {
+                    onCapturingCounter == 1 -> assertEquals(status, CapturingStatusEnum.STARTING)
+                    onSelfTimer -> assertEquals(status, CapturingStatusEnum.CAPTURING)
+                    else -> {
+                        onSelfTimer = true
+                        assertEquals(status, CapturingStatusEnum.SELF_TIMER_COUNTDOWN)
+                    }
                 }
             }
 
@@ -243,6 +245,7 @@ class MultiBracketCaptureTest {
         ThetaApi.lastSetTimeConsumingOptionTime = 0
 
         var files: List<String>? = null
+        var onCapturingCount = 0
         multiBracketCapture.startCapture(object : MultiBracketCapture.StartCaptureCallback {
             override fun onCaptureCompleted(fileUrls: List<String>?) {
                 assertTrue(true, "onCaptureCompleted")
@@ -255,7 +258,11 @@ class MultiBracketCaptureTest {
             }
 
             override fun onCapturing(status: CapturingStatusEnum) {
-                assertEquals(status, CapturingStatusEnum.CAPTURING)
+                when (onCapturingCount) {
+                    0 -> assertEquals(status, CapturingStatusEnum.STARTING)
+                    else -> assertEquals(status, CapturingStatusEnum.CAPTURING)
+                }
+                onCapturingCount += 1
             }
 
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
@@ -345,6 +352,7 @@ class MultiBracketCaptureTest {
 
             override fun onCapturing(status: CapturingStatusEnum) {
                 when (counter) {
+                    0 -> assertEquals(status, CapturingStatusEnum.STARTING)
                     4 -> assertEquals(status, CapturingStatusEnum.SELF_TIMER_COUNTDOWN)
                     5 -> assertEquals(status, CapturingStatusEnum.CAPTURING)
                     6 -> assertEquals(status, CapturingStatusEnum.CAPTURING)

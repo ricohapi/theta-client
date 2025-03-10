@@ -912,6 +912,7 @@ void main() {
 
   test('CapturingStatusEnum', () async {
     List<List<dynamic>> data = [
+      [CapturingStatusEnum.starting, 'STARTING'],
       [CapturingStatusEnum.capturing, 'CAPTURING'],
       [CapturingStatusEnum.selfTimerCountdown, 'SELF_TIMER_COUNTDOWN'],
     ];

@@ -203,6 +203,7 @@ class ShotCountSpecifiedIntervalCapture private constructor(
                     callback.onCaptureFailed(exception = ThetaRepository.ThetaWebApiException(message = error.message))
                     return@launch
                 }
+                callback.onCapturing(CapturingStatusEnum.STARTING)
 
                 when (cameraModel) {
                     ThetaRepository.ThetaModel.THETA_SC2, ThetaRepository.ThetaModel.THETA_SC2_B -> {

@@ -126,6 +126,8 @@ export abstract class CaptureBuilder<T extends CaptureBuilder<T>> {
 
 /** Capturing status */
 export const CapturingStatusEnum = {
+  /** The process is starting */
+  STARTING: 'STARTING',
   /** Capture in progress */
   CAPTURING: 'CAPTURING',
   /** Self-timer in progress */
