@@ -301,15 +301,15 @@ class ThetaClientFlutter {
   /// - @param ssid SSID of the access point.
   /// - @param ssidStealth True if SSID stealth is enabled.
   /// - @param authMode Authentication mode.
-  /// - @param password Password. If [authMode] is "[none]", pass empty String.
+  /// - @param password Password. Not set if [authMode] is "[none]".
   /// - @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
   /// - @param proxy Proxy information to be used for the access point.
   /// - @throws If an error occurs in THETA.
   Future<void> setAccessPointDynamically(String ssid,
-      {bool ssidStealth = false,
+      {bool? ssidStealth,
       AuthModeEnum authMode = AuthModeEnum.none,
-      String password = '',
-      int connectionPriority = 1,
+      String? password,
+      int? connectionPriority,
       Proxy? proxy}) {
     return ThetaClientFlutterPlatform.instance.setAccessPointDynamically(
         ssid, ssidStealth, authMode, password, connectionPriority, proxy);
@@ -320,7 +320,7 @@ class ThetaClientFlutter {
   /// - @param ssid SSID of the access point.
   /// - @param ssidStealth True if SSID stealth is enabled.
   /// - @param authMode Authentication mode.
-  /// - @param password Password. If [authMode] is "[none]", pass empty String.
+  /// - @param password Password. Not set if [authMode] is "[none]".
   /// - @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
   /// - @param ipAddress IP address assigns to Theta.
   /// - @param subnetMask Subnet mask.
@@ -328,10 +328,10 @@ class ThetaClientFlutter {
   /// - @param proxy Proxy information to be used for the access point.
   /// - @throws If an error occurs in THETA.
   Future<void> setAccessPointStatically(String ssid,
-      {bool ssidStealth = false,
+      {bool? ssidStealth,
       AuthModeEnum authMode = AuthModeEnum.none,
-      String password = '',
-      int connectionPriority = 1,
+      String? password,
+      int? connectionPriority,
       required String ipAddress,
       required String subnetMask,
       required String defaultGateway,

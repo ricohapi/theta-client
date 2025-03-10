@@ -1716,22 +1716,12 @@ class ThetaClientReactNativeModule(
 
   /**
    * setAccessPointDynamically  -  set access point with dhcp
-   * @param ssid ssid to connect
-   * @param ssidStealth ssid is stealth or not
-   * @param authMode auth mode to connect
-   * @param password password to connect with auth
-   * @param connectionPriority connection priority
-   * @param proxy Proxy information to be used for the access point.
+   * @param params parameters of setAccessPointDynamically
    * @param promise promise to set result
    */
   @ReactMethod
   fun setAccessPointDynamically(
-    ssid: String,
-    ssidStealth: Boolean,
-    authMode: String,
-    password: String,
-    connectionPriority: Int,
-    proxy: ReadableMap?,
+    params: ReadableMap,
     promise: Promise
   ) {
     val theta = theta
@@ -1741,13 +1731,14 @@ class ThetaClientReactNativeModule(
     }
     launch {
       try {
+        val accessPointParams = toSetAccessPointParams(params)
         theta.setAccessPointDynamically(
-          ssid,
-          ssidStealth,
-          ThetaRepository.AuthModeEnum.valueOf(authMode),
-          password,
-          connectionPriority,
-          toProxy(map = proxy)
+          accessPointParams.ssid,
+          accessPointParams.ssidStealth,
+          accessPointParams.authMode,
+          accessPointParams.password,
+          accessPointParams.connectionPriority,
+          accessPointParams.proxy,
         )
         promise.resolve(true)
       } catch (t: Throwable) {
@@ -1758,28 +1749,12 @@ class ThetaClientReactNativeModule(
 
   /**
    * setAccessPointStatically  -  set access point with static connection info
-   * @param ssid ssid to connect
-   * @param ssidStealth ssid is stealth or not
-   * @param authMode auth mode to connect
-   * @param password password to connect with auth
-   * @param connectionPriority connection priority
-   * @param ipAddress static ipaddress to connect
-   * @param subnetMask subnet mask for ip address
-   * @param defaultGateway default gateway address
+   * @param params parameters of setAccessPointStatically
    * @param promise promise to set result
-   * @param proxy Proxy information to be used for the access point.
    */
   @ReactMethod
   fun setAccessPointStatically(
-    ssid: String,
-    ssidStealth: Boolean,
-    authMode: String,
-    password: String,
-    connectionPriority: Int,
-    ipAddress: String,
-    subnetMask: String,
-    defaultGateway: String,
-    proxy: ReadableMap?,
+    params: ReadableMap,
     promise: Promise
   ) {
     val theta = theta
@@ -1789,16 +1764,18 @@ class ThetaClientReactNativeModule(
     }
     launch {
       try {
+        val accessPointParams = toSetAccessPointParams(params)
+        val staticallyParams = toSetAccessPointStaticallyParams(params)
         theta.setAccessPointStatically(
-          ssid,
-          ssidStealth,
-          ThetaRepository.AuthModeEnum.valueOf(authMode),
-          password,
-          connectionPriority,
-          ipAddress,
-          subnetMask,
-          defaultGateway,
-          toProxy(map = proxy)
+          accessPointParams.ssid,
+          accessPointParams.ssidStealth,
+          accessPointParams.authMode,
+          accessPointParams.password,
+          accessPointParams.connectionPriority,
+          staticallyParams.ipAddress,
+          staticallyParams.subnetMask,
+          staticallyParams.defaultGateway,
+          accessPointParams.proxy
         )
         promise.resolve(true)
       } catch (t: Throwable) {

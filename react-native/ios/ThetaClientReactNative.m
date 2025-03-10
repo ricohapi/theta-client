@@ -204,24 +204,11 @@ RCT_EXTERN_METHOD(finishWlan:(RCTPromiseResolveBlock)resolve
 RCT_EXTERN_METHOD(listAccessPoints:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(setAccessPointDynamically:(NSString *)ssid
-                  withSsidStealth:(BOOL)ssidStealth
-                  withAuthMode:(NSString *)authMode
-                  withPassword:(NSString *)password
-                  withConnectionPriority:(int)connectionPriority
-                  withProxy:(NSDictionary *)proxy
+RCT_EXTERN_METHOD(setAccessPointDynamically:(NSDictionary *)params
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(setAccessPointStatically:(NSString *)ssid
-                  withSsidStealth:(BOOL)ssidStealth
-                  withAuthMode:(NSString *)authMode
-                  withPassword:(NSString *)password
-                  withConnectionPriority:(int)connectionPriority
-                  withIpAddress:(NSString *)ipAddress
-                  withSubnetMask:(NSString *)subnetMask
-                  withDefaultGateway:(NSString *)defaultGateway
-                  withProxy:(NSDictionary *)proxy
+RCT_EXTERN_METHOD(setAccessPointStatically:(NSDictionary *)params
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 

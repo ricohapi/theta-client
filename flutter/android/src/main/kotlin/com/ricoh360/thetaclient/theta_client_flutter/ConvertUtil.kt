@@ -253,7 +253,7 @@ fun toOffDelay(value: Any): OffDelay? {
     return null
 }
 
-fun toProxy(map: Map<String, Any>): Proxy {
+fun toProxy(map: Map<*, *>): Proxy {
     return Proxy(
         use = map["use"] as? Boolean ?: false,
         url = map["url"] as? String,
@@ -934,5 +934,62 @@ fun toCapturingNotifyParam(status: CapturingStatusEnum): Map<String, Any> {
 fun toStartedNotifyParam(value: String): Map<String, Any> {
     return mapOf<String, Any>(
         KEY_NOTIFY_PARAM_FILE_URL to value
+    )
+}
+
+data class SetAccessPointParams(
+    val ssid: String,
+    val ssidStealth: Boolean?,
+    val authMode: AuthModeEnum,
+    val password: String?,
+    val connectionPriority: Int?,
+    val proxy: Proxy?,
+)
+
+const val KEY_SSID = "ssid"
+const val KEY_SSID_STEALTH = "ssidStealth"
+const val KEY_AUTH_MODE = "authMode"
+const val KEY_PASSWORD = "password"
+const val KEY_CONNECTION_PRIORITY = "connectionPriority"
+const val KEY_IP_ADDRESS = "ipAddress"
+const val KEY_SUBNET_MASK = "subnetMask"
+const val KEY_DEFAULT_GATEWAY = "defaultGateway"
+const val KEY_PROXY = "proxy"
+
+fun toSetAccessPointParams(arguments: Map<*, *>): SetAccessPointParams {
+    val ssid = arguments[KEY_SSID] as? String ?: throw IllegalArgumentException(KEY_SSID)
+    val ssidStealth = arguments[KEY_SSID_STEALTH] as? Boolean
+    val authMode = (arguments[KEY_AUTH_MODE] as? String?)?.let {
+        AuthModeEnum.valueOf(it)
+    }?: throw IllegalArgumentException(KEY_AUTH_MODE)
+    val password = arguments[KEY_PASSWORD] as? String
+    val connectionPriority = arguments[KEY_CONNECTION_PRIORITY] as? Int
+    val proxy = (arguments[KEY_PROXY] as? Map<*, *>)?.let { toProxy(it) }
+
+    return SetAccessPointParams(
+        ssid = ssid,
+        ssidStealth = ssidStealth,
+        authMode = authMode,
+        password = password,
+        connectionPriority = connectionPriority,
+        proxy = proxy,
+    )
+}
+
+data class SetAccessPointStaticallyParams(
+    val ipAddress: String,
+    val subnetMask: String,
+    val defaultGateway: String,
+)
+
+fun toSetAccessPointStaticallyParams(arguments: Map<*, *>): SetAccessPointStaticallyParams {
+    val ipAddress = arguments[KEY_IP_ADDRESS] as? String ?: throw IllegalArgumentException(KEY_IP_ADDRESS)
+    val subnetMask = arguments[KEY_SUBNET_MASK] as? String ?: throw IllegalArgumentException(KEY_SUBNET_MASK)
+    val defaultGateway = arguments[KEY_DEFAULT_GATEWAY] as? String ?: throw IllegalArgumentException(KEY_DEFAULT_GATEWAY)
+
+    return SetAccessPointStaticallyParams(
+        ipAddress = ipAddress,
+        subnetMask = subnetMask,
+        defaultGateway = defaultGateway,
     )
 }

@@ -456,29 +456,39 @@ export function listAccessPoints(): Promise<AccessPoint[]> {
  *
  * @function setAccessPointDynamically
  * @param {string} ssid SSID of the access point.
- * @param {boolean} ssidStealth true if SSID stealth is enabled.
- * @param {AuthModeEnum} authMode Authentication mode.
- * @param {string} password Password. If authMode is "NONE", pass empty String.
- * @param {number} connectionPriority Connection priority 1 to 5.
- * @param {Proxy} proxy Proxy information to be used for the access point.
+ * @param {} params - Optional parameters for additional configuration.
+ * @param {boolean} params.ssidStealth true if SSID stealth is enabled.
+ * @param {AuthModeEnum} params.authMode Authentication mode.
+ * @param {string} params.password Password. Not set if authMode is “NONE”.
+ * @param {number} params.connectionPriority Connection priority 1 to 5.
+ * @param {Proxy} params.proxy Proxy information to be used for the access point.
  * @return promise of boolean result
  */
 export function setAccessPointDynamically(
   ssid: string,
-  ssidStealth: boolean = false,
-  authMode: AuthModeEnum = AuthModeEnum.NONE,
-  password: string = '',
-  connectionPriority: number = 1,
-  proxy?: Proxy
+  params?: {
+    ssidStealth?: boolean;
+    authMode?: AuthModeEnum;
+    password?: string;
+    connectionPriority?: number;
+    proxy?: Proxy;
+  }
 ): Promise<boolean> {
-  return ThetaClientReactNative.setAccessPointDynamically(
+  const {
+    ssidStealth,
+    authMode = AuthModeEnum.NONE,
+    password,
+    connectionPriority,
+    proxy,
+  } = params ?? {};
+  return ThetaClientReactNative.setAccessPointDynamically({
     ssid,
     ssidStealth,
     authMode,
     password,
     connectionPriority,
-    proxy
-  );
+    proxy,
+  });
 }
 
 /**
@@ -486,28 +496,38 @@ export function setAccessPointDynamically(
  *
  * @function setAccessPointStatically
  * @param {string} ssid SSID of the access point.
- * @param {boolean} ssidStealth True if SSID stealth is enabled.
- * @param {AuthModeEnum} authMode Authentication mode.
- * @param {string} password Password. If authMode is "NONE", pass empty String.
- * @param {number} connectionPriority Connection priority 1 to 5.
  * @param {string} ipAddress IP address assigns to Theta.
  * @param {string} subnetMask Subnet mask.
  * @param {string} defaultGateway Default gateway.
- * @param {Proxy} proxy Proxy information to be used for the access point.
+ * @param {} params - Optional parameters for additional configuration.
+ * @param {boolean} params.ssidStealth True if SSID stealth is enabled.
+ * @param {AuthModeEnum} params.authMode Authentication mode.
+ * @param {string} params.password Password. Not set if authMode is “NONE”.
+ * @param {number} params.connectionPriority Connection priority 1 to 5.
+ * @param {Proxy} params.proxy Proxy information to be used for the access point.
  * @return promise of boolean result
  */
 export function setAccessPointStatically(
   ssid: string,
-  ssidStealth: boolean = false,
-  authMode: AuthModeEnum = AuthModeEnum.NONE,
-  password: string = '',
-  connectionPriority: number = 1,
   ipAddress: string,
   subnetMask: string,
   defaultGateway: string,
-  proxy?: Proxy
+  params?: {
+    ssidStealth?: boolean;
+    authMode: AuthModeEnum;
+    password?: string;
+    connectionPriority?: number;
+    proxy?: Proxy;
+  }
 ): Promise<boolean> {
-  return ThetaClientReactNative.setAccessPointStatically(
+  const {
+    ssidStealth,
+    authMode = AuthModeEnum.NONE,
+    password,
+    connectionPriority,
+    proxy,
+  } = params ?? {};
+  return ThetaClientReactNative.setAccessPointStatically({
     ssid,
     ssidStealth,
     authMode,
@@ -516,8 +536,8 @@ export function setAccessPointStatically(
     ipAddress,
     subnetMask,
     defaultGateway,
-    proxy
-  );
+    proxy,
+  });
 }
 
 /**

@@ -322,10 +322,10 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
 
   Future<void> setAccessPointDynamically(
       String ssid,
-      bool ssidStealth,
+      bool? ssidStealth,
       AuthModeEnum authMode,
-      String password,
-      int connectionPriority,
+      String? password,
+      int? connectionPriority,
       Proxy? proxy) {
     throw UnimplementedError(
         'setAccessPointDynamically() has not been implemented.');
@@ -333,10 +333,10 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
 
   Future<void> setAccessPointStatically(
       String ssid,
-      bool ssidStealth,
+      bool? ssidStealth,
       AuthModeEnum authMode,
-      String password,
-      int connectionPriority,
+      String? password,
+      int? connectionPriority,
       String ipAddress,
       String subnetMask,
       String defaultGateway,

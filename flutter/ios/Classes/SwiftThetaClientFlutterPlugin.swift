@@ -29,6 +29,10 @@ let NOTIFY_VIDEO_CAPTURE_CAPTURING = 10082
 let NOTIFY_VIDEO_CAPTURE_STARTED = 10083
 let NOTIFY_CONVERT_VIDEO_FORMATS_PROGRESS = 10091
 
+enum ThetaClientError: Error {
+    case invalidArgument(String)
+}
+
 public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     public func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
         eventSink = events
@@ -1514,40 +1518,35 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             return
         }
         guard
-            let arguments = call.arguments as? [String: Any],
-            let ssid = arguments["ssid"] as? String,
-            let ssidStealth = arguments["ssidStealth"] as? Bool,
-            let authModeName = arguments["authMode"] as? String,
-            let authMode = getEnumValue(values: ThetaRepository.AuthModeEnum.values(), name: authModeName),
-            let password = arguments["password"] as? String,
-            let connectionPriority = arguments["connectionPriority"] as? Int32
+            let arguments = call.arguments as? [String: Any?]
         else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoArgument, details: nil)
             result(flutterError)
             return
         }
-
-        var proxy: ThetaRepository.Proxy?
-        if let proxyMap = arguments["proxy"] as? [String: Any] {
-            proxy = toProxy(params: proxyMap)
-        }
-
-        thetaRepository.setAccessPointDynamically(
-            ssid: ssid,
-            ssidStealth: ssidStealth,
-            authMode: authMode,
-            password: password,
-            connectionPriority: connectionPriority,
-            proxy: proxy,
-            completionHandler: { error in
-                if let thetaError = error {
-                    let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
-                    result(flutterError)
-                } else {
-                    result(nil)
+        
+        do {
+            let accessPointParams = try toSetAccessPointParams(params: arguments)
+            thetaRepository.setAccessPointDynamically(
+                ssid: accessPointParams.ssid,
+                ssidStealth: accessPointParams.ssidStealth,
+                authMode: accessPointParams.authMode,
+                password: accessPointParams.password,
+                connectionPriority: accessPointParams.connectionPriority,
+                proxy: accessPointParams.proxy,
+                completionHandler: { error in
+                    if let thetaError = error {
+                        let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                        result(flutterError)
+                    } else {
+                        result(nil)
+                    }
                 }
-            }
-        )
+            )
+        } catch {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: error.localizedDescription, details: nil)
+            result(flutterError)
+        }
     }
 
     func setAccessPointStatically(call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -1557,47 +1556,38 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             return
         }
         guard
-            let arguments = call.arguments as? [String: Any],
-            let ssid = arguments["ssid"] as? String,
-            let ssidStealth = arguments["ssidStealth"] as? Bool,
-            let authModeName = arguments["authMode"] as? String,
-            let authMode = getEnumValue(values: ThetaRepository.AuthModeEnum.values(), name: authModeName),
-            let connectionPriority = arguments["connectionPriority"] as? Int32,
-            let ipAddress = arguments["ipAddress"] as? String,
-            let subnetMask = arguments["subnetMask"] as? String,
-            let defaultGateway = arguments["defaultGateway"] as? String
+            let arguments = call.arguments as? [String: Any?]
         else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoArgument, details: nil)
             result(flutterError)
             return
         }
-
-        let password = arguments["password"] as? String
-
-        var proxy: ThetaRepository.Proxy?
-        if let proxyMap = arguments["proxy"] as? [String: Any] {
-            proxy = toProxy(params: proxyMap)
-        }
-
-        thetaRepository.setAccessPointStatically(
-            ssid: ssid,
-            ssidStealth: ssidStealth,
-            authMode: authMode,
-            password: password,
-            connectionPriority: connectionPriority,
-            ipAddress: ipAddress,
-            subnetMask: subnetMask,
-            defaultGateway: defaultGateway,
-            proxy: proxy,
-            completionHandler: { error in
-                if let thetaError = error {
-                    let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
-                    result(flutterError)
-                } else {
-                    result(nil)
+        do {
+            let accessPointParams = try toSetAccessPointParams(params: arguments)
+            let staticallyParams = try toSetAccessPointStaticallyParams(params: arguments)
+            thetaRepository.setAccessPointStatically(
+                ssid: accessPointParams.ssid,
+                ssidStealth: accessPointParams.ssidStealth,
+                authMode: accessPointParams.authMode,
+                password: accessPointParams.password,
+                connectionPriority: accessPointParams.connectionPriority,
+                ipAddress: staticallyParams.ipAddress,
+                subnetMask: staticallyParams.subnetMask,
+                defaultGateway: staticallyParams.defaultGateway,
+                proxy: accessPointParams.proxy,
+                completionHandler: { error in
+                    if let thetaError = error {
+                        let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                        result(flutterError)
+                    } else {
+                        result(nil)
+                    }
                 }
-            }
-        )
+            )
+        } catch {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: error.localizedDescription, details: nil)
+            result(flutterError)
+        }
     }
 
     func deleteAccessPoint(call: FlutterMethodCall, result: @escaping FlutterResult) {

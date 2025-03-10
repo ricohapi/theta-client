@@ -23,6 +23,15 @@ const val KEY_STATE_EXTERNAL_GPS_INFO = "externalGpsInfo"
 const val KEY_STATE_INTERNAL_GPS_INFO = "internalGpsInfo"
 const val KEY_STATE_BOARD_TEMP = "boardTemp"
 const val KEY_STATE_BATTERY_TEMP = "batteryTemp"
+const val KEY_SSID = "ssid"
+const val KEY_SSID_STEALTH = "ssidStealth"
+const val KEY_AUTH_MODE = "authMode"
+const val KEY_PASSWORD = "password"
+const val KEY_CONNECTION_PRIORITY = "connectionPriority"
+const val KEY_IP_ADDRESS = "ipAddress"
+const val KEY_SUBNET_MASK = "subnetMask"
+const val KEY_DEFAULT_GATEWAY = "defaultGateway"
+const val KEY_PROXY = "proxy"
 
 val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "aiAutoThumbnail" to OptionNameEnum.AiAutoThumbnail,
@@ -1013,4 +1022,58 @@ fun toSleepDelay(objects: ReadableMap): SleepDelay? {
     else -> {}
   }
   return null
+}
+
+data class SetAccessPointParams(
+  val ssid: String,
+  val ssidStealth: Boolean?,
+  val authMode: AuthModeEnum,
+  val password: String?,
+  val connectionPriority: Int?,
+  val proxy: Proxy?,
+)
+
+fun toSetAccessPointParams(objects: ReadableMap): SetAccessPointParams {
+  val ssid = objects.getString(KEY_SSID) ?: throw IllegalArgumentException(KEY_SSID)
+  val ssidStealth = if (objects.hasKey(KEY_SSID_STEALTH)) {
+    objects.getBoolean(KEY_SSID_STEALTH)
+  } else {
+    null
+  }
+  val authMode = objects.getString(KEY_AUTH_MODE)?.let { AuthModeEnum.valueOf(it) }
+    ?: throw IllegalArgumentException(KEY_AUTH_MODE)
+  val password = objects.getString(KEY_PASSWORD)
+  val connectionPriority = if (objects.hasKey(KEY_CONNECTION_PRIORITY)) {
+    objects.getInt(KEY_CONNECTION_PRIORITY)
+  } else {
+    null
+  }
+  val proxy = if (objects.hasKey(KEY_PROXY)) toProxy(objects.getMap(KEY_PROXY)) else null
+
+  return SetAccessPointParams(
+    ssid = ssid,
+    ssidStealth = ssidStealth,
+    authMode = authMode,
+    password = password,
+    connectionPriority = connectionPriority,
+    proxy = proxy,
+  )
+}
+
+data class SetAccessPointStaticallyParams(
+  val ipAddress: String,
+  val subnetMask: String,
+  val defaultGateway: String,
+)
+
+fun toSetAccessPointStaticallyParams(objects: ReadableMap): SetAccessPointStaticallyParams {
+  val ipAddress = objects.getString(KEY_IP_ADDRESS) ?: throw IllegalArgumentException(KEY_IP_ADDRESS)
+  val subnetMask = objects.getString(KEY_SUBNET_MASK) ?: throw IllegalArgumentException(KEY_SUBNET_MASK)
+  val defaultGateway = objects.getString(KEY_DEFAULT_GATEWAY) ?: throw IllegalArgumentException(KEY_DEFAULT_GATEWAY)
+
+  return SetAccessPointStaticallyParams(
+    ipAddress = ipAddress,
+    subnetMask = subnetMask,
+    defaultGateway = defaultGateway,
+  )
 }

@@ -32,6 +32,10 @@ let MESSAGE_NO_CONTINUOUS_CAPTURE = "No continuousCapture."
 let MESSAGE_NO_CONTINUOUS_CAPTURE_BUILDER = "no continuousCaptureBuilder."
 let MESSAGE_NO_EVENT_WEBSOCKET = "no eventWebSocket."
 
+enum ThetaClientError: Error {
+    case invalidArgument(String)
+}
+
 @objc(ThetaClientReactNative)
 class ThetaClientReactNative: RCTEventEmitter {
     var thetaRepository: ThetaRepository?
@@ -1924,21 +1928,11 @@ class ThetaClientReactNative: RCTEventEmitter {
 
     @objc(
         setAccessPointDynamically:
-            withSsidStealth:
-            withAuthMode:
-            withPassword:
-            withConnectionPriority:
-            withProxy:
             withResolver:
             withRejecter:
     )
     func setAccessPointDynamically(
-        ssid: String,
-        ssidStealth: Bool,
-        authMode: String,
-        password: String,
-        connectionPriority: Int,
-        proxy: [AnyHashable: Any]?,
+        params: [AnyHashable: Any],
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
@@ -1946,60 +1940,34 @@ class ThetaClientReactNative: RCTEventEmitter {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
-        guard
-            let authMode = getEnumValue(
-                values: ThetaRepository.AuthModeEnum.values(), name: authMode
-            )
-        else {
-            reject(ERROR_CODE_ERROR, MESSAGE_NO_ARGUMENT, nil)
-            return
-        }
-
-        let proxyParam: ThetaRepository.Proxy? = {
-            if let proxy = proxy as? [String: Any] {
-                return toProxy(params: proxy)
+        do {
+            let accessPointParams = try toSetAccessPointParams(params: params as? [String: Any] ?? [:])
+            thetaRepository.setAccessPointDynamically(
+                ssid: accessPointParams.ssid,
+                ssidStealth: accessPointParams.ssidStealth,
+                authMode: accessPointParams.authMode,
+                password: accessPointParams.password,
+                connectionPriority: accessPointParams.connectionPriority,
+                proxy: accessPointParams.proxy
+            ) { error in
+                if let error {
+                    reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                } else {
+                    resolve(true)
+                }
             }
-            return nil
-        }()
-        thetaRepository.setAccessPointDynamically(
-            ssid: ssid,
-            ssidStealth: ssidStealth,
-            authMode: authMode,
-            password: password,
-            connectionPriority: Int32(connectionPriority),
-            proxy: proxyParam
-        ) { error in
-            if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
-            } else {
-                resolve(true)
-            }
+        } catch {
+            reject(ERROR_CODE_ERROR, error.localizedDescription, error)
         }
     }
-
+    
     @objc(
         setAccessPointStatically:
-            withSsidStealth:
-            withAuthMode:
-            withPassword:
-            withConnectionPriority:
-            withIpAddress:
-            withSubnetMask:
-            withDefaultGateway:
-            withProxy:
             withResolver:
             withRejecter:
     )
     func setAccessPointStatically(
-        ssid: String,
-        ssidStealth: Bool,
-        authMode: String,
-        password: String?,
-        connectionPriority: Int,
-        ipAddress: String,
-        subnetMask: String,
-        defaultGateway: String,
-        proxy: [AnyHashable: Any]?,
+        params: [AnyHashable: Any],
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
@@ -2007,37 +1975,28 @@ class ThetaClientReactNative: RCTEventEmitter {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
-        guard
-            let authMode = getEnumValue(
-                values: ThetaRepository.AuthModeEnum.values(), name: authMode
-            )
-        else {
-            reject(ERROR_CODE_ERROR, MESSAGE_NO_ARGUMENT, nil)
-            return
-        }
-
-        let proxyParam: ThetaRepository.Proxy? = {
-            if let proxy = proxy as? [String: Any] {
-                return toProxy(params: proxy)
+        do {
+            let accessPointParams = try toSetAccessPointParams(params: params as? [String: Any] ?? [:])
+            let staticallyParams = try toSetAccessPointStaticallyParams(params: params as? [String: Any] ?? [:])
+            thetaRepository.setAccessPointStatically(
+                ssid: accessPointParams.ssid,
+                ssidStealth: accessPointParams.ssidStealth,
+                authMode: accessPointParams.authMode,
+                password: accessPointParams.password,
+                connectionPriority: accessPointParams.connectionPriority,
+                ipAddress: staticallyParams.ipAddress,
+                subnetMask: staticallyParams.subnetMask,
+                defaultGateway: staticallyParams.defaultGateway,
+                proxy: accessPointParams.proxy
+            ) { error in
+                if let error {
+                    reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                } else {
+                    resolve(true)
+                }
             }
-            return nil
-        }()
-        thetaRepository.setAccessPointStatically(
-            ssid: ssid,
-            ssidStealth: ssidStealth,
-            authMode: authMode,
-            password: password,
-            connectionPriority: Int32(connectionPriority),
-            ipAddress: ipAddress,
-            subnetMask: subnetMask,
-            defaultGateway: defaultGateway,
-            proxy: proxyParam
-        ) { error in
-            if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
-            } else {
-                resolve(true)
-            }
+        } catch {
+            reject(ERROR_CODE_ERROR, error.localizedDescription, error)
         }
     }
 

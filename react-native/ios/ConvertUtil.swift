@@ -72,6 +72,11 @@ let KEY_SUBNET_MASK = "subnetMask"
 let KEY_DEFAULT_GATEWAY = "defaultGateway"
 let KEY_OPTIONS = "options"
 let KEY_STATE = "state"
+let KEY_SSID = "ssid"
+let KEY_SSID_STEALTH = "ssidStealth"
+let KEY_CONNECTION_PRIORITY = "connectionPriority"
+let KEY_AUTH_MODE = "authMode"
+let KEY_PASSWORD = "password"
 
 public class ConvertUtil: NSObject {}
 
@@ -1468,5 +1473,72 @@ func toTimeout(params: [String: Any]) -> ThetaRepository.Timeout? {
         connectTimeout: connectTimeout,
         requestTimeout: requestTimeout,
         socketTimeout: socketTimeout
+    )
+}
+
+struct SetAccessPointParams {
+    let ssid: String
+    let ssidStealth: KotlinBoolean?
+    let authMode: ThetaRepository.AuthModeEnum
+    let password: String?
+    let connectionPriority: KotlinInt?
+    let proxy: ThetaRepository.Proxy?
+}
+
+func toSetAccessPointParams(params: [String: Any?]) throws -> SetAccessPointParams {
+    guard let ssid = params[KEY_SSID] as? String else {
+        throw ThetaClientError.invalidArgument(KEY_SSID)
+    }
+    let ssidStealth = toKotlinBoolean(value: params[KEY_SSID_STEALTH] as? Bool)
+    guard let authMode = params[KEY_AUTH_MODE] as? String else {
+        throw ThetaClientError.invalidArgument(KEY_AUTH_MODE)
+    }
+    guard
+        let authModeEnum = getEnumValue(
+            values: ThetaRepository.AuthModeEnum.values(), name: authMode
+        ) else {
+        throw ThetaClientError.invalidArgument(KEY_AUTH_MODE)
+    }
+    let password = params[KEY_PASSWORD] as? String
+    let connectionPriority = toKotlinInt(value: params[KEY_CONNECTION_PRIORITY] as? Int)
+    let proxy = params[KEY_PROXY]
+    let proxyParam: ThetaRepository.Proxy? = {
+        if let proxy = proxy as? [String: Any] {
+            return toProxy(params: proxy)
+        }
+        return nil
+    }()
+    
+    return SetAccessPointParams(
+        ssid: ssid,
+        ssidStealth: ssidStealth,
+        authMode: authModeEnum,
+        password: password,
+        connectionPriority: connectionPriority,
+        proxy: proxyParam
+    )
+}
+
+struct SetAccessPointStaticallyParams {
+    let ipAddress: String
+    let subnetMask: String
+    let defaultGateway: String
+}
+
+func toSetAccessPointStaticallyParams(params: [String: Any?]) throws -> SetAccessPointStaticallyParams {
+    guard let ipAddress = params[KEY_IP_ADDRESS] as? String else {
+        throw ThetaClientError.invalidArgument(KEY_IP_ADDRESS)
+    }
+    guard let subnetMask = params[KEY_SUBNET_MASK] as? String else {
+        throw ThetaClientError.invalidArgument(KEY_SUBNET_MASK)
+    }
+    guard let defaultGateway = params[KEY_DEFAULT_GATEWAY] as? String else {
+        throw ThetaClientError.invalidArgument(KEY_DEFAULT_GATEWAY)
+    }
+    
+    return SetAccessPointStaticallyParams(
+        ipAddress: ipAddress,
+        subnetMask: subnetMask,
+        defaultGateway: defaultGateway
     )
 }

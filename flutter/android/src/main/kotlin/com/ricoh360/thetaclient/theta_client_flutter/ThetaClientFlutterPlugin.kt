@@ -1552,20 +1552,14 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             return
         }
         try {
-            val ssid = call.argument<String>("ssid")!!
-            val ssidStealth = call.argument<Boolean>("ssidStealth")!!
-            val authModeName = call.argument<String>("authMode")!!
-            val authMode = ThetaRepository.AuthModeEnum.values().find {
-                it.name == authModeName
-            }!!
-            val password = call.argument<String>("password")!!
-            val connectionPriority = call.argument<Int>("connectionPriority")!!
-
-            var proxy: ThetaRepository.Proxy? = null
-            (call.argument<Any>("proxy") as? Map<String, Any>)?.let {
-                proxy = toProxy(map = it)
-            }
-            thetaRepository?.setAccessPointDynamically(ssid, ssidStealth, authMode, password, connectionPriority, proxy)
+            val params = toSetAccessPointParams(call.arguments as Map<*, *>)
+            thetaRepository?.setAccessPointDynamically(
+                params.ssid,
+                params.ssidStealth,
+                params.authMode,
+                params.password,
+                params.connectionPriority,
+                params.proxy)
             result.success(null)
         } catch (e: Exception) {
             result.error(e.javaClass.simpleName, e.message, null)
@@ -1578,23 +1572,18 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             return
         }
         try {
-            val ssid = call.argument<String>("ssid")!!
-            val ssidStealth = call.argument<Boolean>("ssidStealth")!!
-            val authModeName = call.argument<String>("authMode")!!
-            val authMode = ThetaRepository.AuthModeEnum.values().find {
-                it.name == authModeName
-            }!!
-            val password = call.argument<String>("password")!!
-            val connectionPriority = call.argument<Int>("connectionPriority")!!
-            val ipAddress = call.argument<String>("ipAddress")!!
-            val subnetMask = call.argument<String>("subnetMask")!!
-            val defaultGateway = call.argument<String>("defaultGateway")!!
-
-            var proxy: ThetaRepository.Proxy? = null
-            (call.argument<Any>("proxy") as? Map<String, Any>)?.let {
-                proxy = toProxy(map = it)
-            }
-            thetaRepository?.setAccessPointStatically(ssid, ssidStealth, authMode, password, connectionPriority, ipAddress, subnetMask, defaultGateway, proxy)
+            val params = toSetAccessPointParams(call.arguments as Map<*, *>)
+            val staticallyParams = toSetAccessPointStaticallyParams(call.arguments as Map<*, *>)
+            thetaRepository?.setAccessPointStatically(
+                params.ssid,
+                params.ssidStealth,
+                params.authMode,
+                params.password,
+                params.connectionPriority,
+                staticallyParams.ipAddress,
+                staticallyParams.subnetMask,
+                staticallyParams.defaultGateway,
+                params.proxy)
             result.success(null)
         } catch (e: Exception) {
             result.error(e.javaClass.simpleName, e.message, null)

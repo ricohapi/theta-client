@@ -7298,10 +7298,10 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     @Throws(Throwable::class)
     internal suspend fun setAccessPoint(
         ssid: String,
-        ssidStealth: Boolean = false,
+        ssidStealth: Boolean? = null,
         authMode: AuthModeEnum = AuthModeEnum.NONE,
         password: String? = null,
-        connectionPriority: Int = 1,
+        connectionPriority: Int? = null,
         ipAddressAllocation: IpAddressAllocation,
         ipAddress: String? = null,
         subnetMask: String? = null,
@@ -7350,10 +7350,10 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     @Throws(Throwable::class)
     suspend fun setAccessPointDynamically(
         ssid: String,
-        ssidStealth: Boolean = false,
+        ssidStealth: Boolean? = null,
         authMode: AuthModeEnum = AuthModeEnum.NONE,
-        password: String = "",
-        connectionPriority: Int = 1,
+        password: String? = null,
+        connectionPriority: Int? = null,
         proxy: Proxy? = null,
     ) {
         setAccessPoint(
@@ -7385,10 +7385,10 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     @Throws(Throwable::class)
     suspend fun setAccessPointStatically(
         ssid: String,
-        ssidStealth: Boolean = false,
+        ssidStealth: Boolean? = null,
         authMode: AuthModeEnum = AuthModeEnum.NONE,
         password: String? = null,
-        connectionPriority: Int = 1,
+        connectionPriority: Int? = null,
         ipAddress: String,
         subnetMask: String,
         defaultGateway: String,
