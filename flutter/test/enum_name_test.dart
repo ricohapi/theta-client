@@ -747,6 +747,7 @@ void main() {
       [PreviewFormatEnum.w1024_h512_f15, 'W1024_H512_F15'],
       [PreviewFormatEnum.w512_h512_f30, 'W512_H512_F30'],
       [PreviewFormatEnum.w1920_h960_f8, 'W1920_H960_F8'],
+      [PreviewFormatEnum.w1920_h960_f30, 'W1920_H960_F30'],
       [PreviewFormatEnum.w1024_h512_f8, 'W1024_H512_F8'],
       [PreviewFormatEnum.w640_h320_f30, 'W640_H320_F30'],
       [PreviewFormatEnum.w640_h320_f8, 'W640_H320_F8'],

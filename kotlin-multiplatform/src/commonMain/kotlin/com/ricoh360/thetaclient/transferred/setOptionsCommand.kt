@@ -423,9 +423,11 @@ internal data class Options(
      *
      * The condition below will result in an error.
      *
-     * fileFormat is raw+ and _filter is Noise reduction, HDR or
-     * Handheld HDR _shootingMethod is except for Normal shooting and
-     * _filter is enabled Access during video capture mode
+     * - When attempting to set [_filter] to Noise reduction,
+     *   HDR or Handheld HDR while [fileFormat] is set to raw+,
+     *   but this restriction is only for RICOH THETA Z1 firmware v1.80.1 or earlier.
+     * - [_shootingMethod] is except for Normal shooting and [_filter] is enabled
+     * - Access during video capture mode
      *
      * @see ImageFilter
      */

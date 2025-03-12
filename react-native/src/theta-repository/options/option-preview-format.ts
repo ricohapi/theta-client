@@ -11,6 +11,8 @@ export const PreviewFormatEnum = {
   W512_H512_F30: 'W512_H512_F30',
   /** For Theta Z1 and V */
   W1920_H960_F8: 'W1920_H960_F8',
+  /** For Theta X firmware v2.71.1 or later */
+  W1920_H960_F30: 'W1920_H960_F30',
   /** For Theta Z1 and V */
   W1024_H512_F8: 'W1024_H512_F8',
   /** For Theta Z1 and V */

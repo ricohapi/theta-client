@@ -21,6 +21,7 @@ import {
   OptionNameEnum,
   Options,
   PresetEnum,
+  PreviewFormatEnum,
   SleepDelayEnum,
   TopBottomCorrectionOptionEnum,
   VideoStitchingEnum,
@@ -386,6 +387,23 @@ const optionList: OptionItem[] = [
         />
       ),
       defaultValue: { preset: PresetEnum.FACE },
+    },
+  },
+  {
+    name: 'previewFormat',
+    value: {
+      optionName: OptionNameEnum.PreviewFormat,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'previewFormat'}
+          option={options?.previewFormat}
+          onChange={(previewFormat) => {
+            onChange({ previewFormat });
+          }}
+          optionEnum={PreviewFormatEnum}
+        />
+      ),
+      defaultValue: { previewFormat: PreviewFormatEnum.W1024_H512_F30 },
     },
   },
   {

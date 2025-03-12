@@ -91,6 +91,7 @@ class PreviewFormatTest {
             Pair(ThetaRepository.PreviewFormatEnum.W1024_H512_F30, PreviewFormat(1024, 512, 30)),
             Pair(ThetaRepository.PreviewFormatEnum.W1024_H512_F8, PreviewFormat(1024, 512, 8)),
             Pair(ThetaRepository.PreviewFormatEnum.W1920_H960_F8, PreviewFormat(1920, 960, 8)),
+            Pair(ThetaRepository.PreviewFormatEnum.W1920_H960_F30, PreviewFormat(1920, 960, 30)),
             Pair(ThetaRepository.PreviewFormatEnum.W512_H512_F30, PreviewFormat(512, 512, 30)),
             Pair(ThetaRepository.PreviewFormatEnum.W640_H320_F30, PreviewFormat(640, 320, 30)),
             Pair(ThetaRepository.PreviewFormatEnum.W640_H320_F10, PreviewFormat(640, 320, 10)),

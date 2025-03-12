@@ -1272,9 +1272,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Also, when filter is enabled, the exposure program is set to the Normal program.
          *
          * The condition below will result in an error.
-         *  [fileFormat] is raw+ and _filter is Noise reduction, HDR or Handheld HDR
-         *  shootingMethod is except for Normal shooting and [filter] is enabled
-         *  Access during video capture mode
+         *
+         * - When attempting to set [filter] to Noise reduction,
+         *   HDR or Handheld HDR while [fileFormat] is set to raw+,
+         *   but this restriction is only for RICOH THETA Z1 firmware v1.80.1 or earlier.
+         * - [shootingMethod] is except for Normal shooting and [filter] is enabled
+         * - Access during video capture mode
          */
         var filter: FilterEnum? = null,
 
@@ -5062,6 +5065,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         W1024_H512_F15(1024, 512, 15), // For Theta X. This value can't set.
         W512_H512_F30(512, 512, 30), // For Theta X
         W1920_H960_F8(1920, 960, 8), // For Theta Z1 and V
+        W1920_H960_F30(1920, 960, 30), // For Theta X firmware v2.71.1 or later
         W1024_H512_F8(1024, 512, 8), // For Theta Z1 and V
         W640_H320_F30(640, 320, 30), // For Theta Z1 and V
         W640_H320_F8(640, 320, 8), // For Theta Z1 and V

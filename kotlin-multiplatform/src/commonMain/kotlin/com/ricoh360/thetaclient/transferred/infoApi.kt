@@ -37,6 +37,10 @@ internal data class InfoApiResponse(
     /**
      * MAC address of wireless LAN
      * (RICOH THETA V firmware v2.11.1 or later)
+     *
+     * For THETA X, firmware versions v2.63.0 and earlier display `the communication MAC address`,
+     * while v2.71.1 and later diplay `the physical MAC address`.
+     * For other than THETA X, `the physical MAC address` is displayed.
      */
     val _wlanMacAddress: String?,
 

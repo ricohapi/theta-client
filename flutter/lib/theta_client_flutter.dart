@@ -539,7 +539,12 @@ class ThetaInfo {
   /// Theta serial number.
   final String serialNumber;
 
-  /// MAC address of wireless LAN (RICOH THETA V firmware v2.11.1 or later)
+  /// MAC address of wireless LAN
+  /// (RICOH THETA V firmware v2.11.1 or later)
+  ///
+  /// For THETA X, firmware versions v2.63.0 and earlier display `the communication MAC address`,
+  /// while v2.71.1 and later diplay `the physical MAC address`.
+  /// For other than THETA X, `the physical MAC address` is displayed.
   final String? wlanMacAddress;
 
   /// MAC address of Bluetooth (RICOH THETA V firmware v2.11.1 or later)
@@ -2473,6 +2478,10 @@ enum PreviewFormatEnum {
   // ignore: constant_identifier_names
   w1920_h960_f8('W1920_H960_F8'),
 
+  /// For Theta X firmware v2.71.1 or later
+  // ignore: constant_identifier_names
+  w1920_h960_f30('W1920_H960_F30'),
+
   /// For Theta Z1 and V
   // ignore: constant_identifier_names
   w1024_h512_f8('W1024_H512_F8'),
@@ -3386,9 +3395,12 @@ class Options {
   /// Also, when filter is enabled, the exposure program is set to the Normal program.
   ///
   /// The condition below will result in an error.
-  /// [fileFormat] is raw+ and _filter is Noise reduction, HDR or Handheld HDR
-  /// shootingMethod is except for Normal shooting and [filter] is enabled
-  /// Access during video capture mode
+  ///
+  /// - When attempting to set [filter] to Noise reduction,
+  ///   HDR or Handheld HDR while [fileFormat] is set to raw+,
+  ///   but this restriction is only for RICOH THETA Z1 firmware v1.80.1 or earlier.
+  /// - [shootingMethod] is except for Normal shooting and [filter] is enabled
+  /// - Access during video capture mode
   FilterEnum? filter;
 
   /// see [ShootingFunctionEnum]
