@@ -176,7 +176,7 @@ internal object ThetaApi {
         filePaths: List<String>,
         connectTimeout: Long,
         socketTimeout: Long,
-        callback: ((Int) -> Unit)?,
+        callback: ((Int) -> Boolean)?,
     ): UpdateFirmwareApiResponse {
         val DUMMY_RESPONSE = "{\"name\":\"camera.${apiPath}\",\"state\":\"done\"}"
         if (filePaths.isEmpty()) {

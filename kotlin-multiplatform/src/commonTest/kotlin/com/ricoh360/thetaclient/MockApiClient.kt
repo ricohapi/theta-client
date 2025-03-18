@@ -113,7 +113,7 @@ internal object MockApiClient {
             filePaths: List<String>,
             connectionTimeout: Long,
             socketTimeout: Long,
-            callback: ((Int) -> Unit)?,
+            callback: ((Int) -> Boolean)?,
             boundary: String,
         ): ByteArray {
             onMultipartPostRequest?.let {
