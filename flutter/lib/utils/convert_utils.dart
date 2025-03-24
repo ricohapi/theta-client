@@ -329,6 +329,19 @@ class ConvertUtils {
     };
   }
 
+  static ColorTemperatureSupport? convertColorTemperatureSupport(
+      Map<dynamic, dynamic>? data) {
+    if (data == null) {
+      return null;
+    }
+
+    return ColorTemperatureSupport(
+      data['maxTemperature'],
+      data['minTemperature'],
+      data['stepSize'],
+    );
+  }
+
   static EthernetConfig? convertEthernetConfig(Map<dynamic, dynamic>? data) {
     if (data == null) {
       return null;
@@ -445,6 +458,10 @@ class ConvertUtils {
           break;
         case OptionNameEnum.colorTemperature:
           result.colorTemperature = entry.value;
+          break;
+        case OptionNameEnum.colorTemperatureSupport:
+          result.colorTemperatureSupport =
+              convertColorTemperatureSupport(entry.value);
           break;
         case OptionNameEnum.compositeShootingOutputInterval:
           result.compositeShootingOutputInterval = entry.value;

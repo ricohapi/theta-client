@@ -1262,6 +1262,9 @@ enum OptionNameEnum {
   /// Option name _colorTemperature
   colorTemperature('ColorTemperature', int),
 
+  /// Option name _colorTemperatureSupport
+  colorTemperatureSupport('ColorTemperatureSupport', int),
+
   /// Option name _compositeShootingOutputInterval
   compositeShootingOutputInterval('CompositeShootingOutputInterval', int),
 
@@ -3322,6 +3325,9 @@ class Options {
   /// 2500 to 10000. In 100-Kelvin units.
   int? colorTemperature;
 
+  /// supported color temperature.
+  ColorTemperatureSupport? colorTemperatureSupport;
+
   /// In-progress save interval for interval composite shooting (sec).
   ///
   /// 0 (no saving), 60 to 600. In 60-second units.
@@ -3561,6 +3567,8 @@ class Options {
         return captureNumber as T;
       case OptionNameEnum.colorTemperature:
         return colorTemperature as T;
+      case OptionNameEnum.colorTemperatureSupport:
+        return colorTemperatureSupport as T;
       case OptionNameEnum.compositeShootingOutputInterval:
         return compositeShootingOutputInterval as T;
       case OptionNameEnum.compositeShootingTime:
@@ -3705,6 +3713,9 @@ class Options {
         break;
       case OptionNameEnum.colorTemperature:
         colorTemperature = value;
+        break;
+      case OptionNameEnum.colorTemperatureSupport:
+        colorTemperatureSupport = value;
         break;
       case OptionNameEnum.compositeShootingOutputInterval:
         compositeShootingOutputInterval = value;

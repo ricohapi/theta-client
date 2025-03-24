@@ -77,6 +77,10 @@ let KEY_SSID_STEALTH = "ssidStealth"
 let KEY_CONNECTION_PRIORITY = "connectionPriority"
 let KEY_AUTH_MODE = "authMode"
 let KEY_PASSWORD = "password"
+let KEY_COLOR_TEMPERATURE_SUPPORT = "colorTemperatureSupport"
+let KEY_COLOR_TEMPERATURE_SUPPORT_MAX = "maxTemperature"
+let KEY_COLOR_TEMPERATURE_SUPPORT_MIN = "minTemperature"
+let KEY_COLOR_TEMPERATURE_SUPPORT_STEP_SIZE = "stepSize"
 
 public class ConvertUtil: NSObject {}
 
@@ -99,6 +103,7 @@ let optionItemNameToEnum = [
     "captureMode": ThetaRepository.OptionNameEnum.capturemode,
     "captureNumber": ThetaRepository.OptionNameEnum.capturenumber,
     "colorTemperature": ThetaRepository.OptionNameEnum.colortemperature,
+    "colorTemperatureSupport": ThetaRepository.OptionNameEnum.colortemperaturesupport,
     "compositeShootingOutputInterval": ThetaRepository.OptionNameEnum
         .compositeshootingoutputinterval,
     "compositeShootingTime": ThetaRepository.OptionNameEnum.compositeshootingtime,
@@ -407,6 +412,10 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                           let burstOption = value as? ThetaRepository.BurstOption
                 {
                     result[key] = convertResult(burstOption: burstOption)
+                } else if value is ThetaRepository.ColorTemperatureSupport,
+                          let colorTemperatureSupport = value as? ThetaRepository.ColorTemperatureSupport
+                {
+                    result[key] = convertResult(colorTemperatureSupport: colorTemperatureSupport)
                 } else if value is ThetaRepository.EthernetConfig,
                           let ethernetConfig = value as? ThetaRepository.EthernetConfig
                 {
@@ -1018,6 +1027,14 @@ func convertResult(autoBracket: ThetaRepository.BracketSettingList) -> [[String:
     }
 
     return resultList
+}
+
+func convertResult(colorTemperatureSupport: ThetaRepository.ColorTemperatureSupport) -> [String: Any] {
+    var result: [String: Any] = [:]
+    result[KEY_COLOR_TEMPERATURE_SUPPORT_MAX] = colorTemperatureSupport.maxTemperature
+    result[KEY_COLOR_TEMPERATURE_SUPPORT_MIN] = colorTemperatureSupport.minTemperature
+    result[KEY_COLOR_TEMPERATURE_SUPPORT_STEP_SIZE] = colorTemperatureSupport.stepSize
+    return result
 }
 
 func convertResult(ethernetConfig: ThetaRepository.EthernetConfig) -> [String: Any] {

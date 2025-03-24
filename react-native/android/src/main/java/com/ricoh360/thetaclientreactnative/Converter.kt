@@ -49,6 +49,7 @@ val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "captureMode" to OptionNameEnum.CaptureMode,
   "captureNumber" to OptionNameEnum.CaptureNumber,
   "colorTemperature" to OptionNameEnum.ColorTemperature,
+  "colorTemperatureSupport" to OptionNameEnum.ColorTemperatureSupport,
   "compositeShootingOutputInterval" to OptionNameEnum.CompositeShootingOutputInterval,
   "compositeShootingTime" to OptionNameEnum.CompositeShootingTime,
   "continuousNumber" to OptionNameEnum.ContinuousNumber,
@@ -359,6 +360,10 @@ fun toResult(options: Options): WritableMap {
       options.burstOption?.let {
         result.putMap("burstOption", toResult(burstOption = it))
       }
+    } else if (name == OptionNameEnum.ColorTemperatureSupport) {
+      options.colorTemperatureSupport?.let {
+        result.putMap("colorTemperatureSupport", toResult(colorTemperatureSupport = it))
+      }
     } else if (name == OptionNameEnum.EthernetConfig) {
       options.ethernetConfig?.let {
         result.putMap("ethernetConfig", toResult(ethernetConfig = it))
@@ -547,6 +552,14 @@ fun toResult(fileInfo: FileInfo): ReadableMap {
   fileInfo.storageID?.let {
     result.putString("storageID", it)
   }
+  return result
+}
+
+fun toResult(colorTemperatureSupport: ColorTemperatureSupport): WritableMap {
+  val result = Arguments.createMap()
+  result.putInt("maxTemperature", colorTemperatureSupport.maxTemperature)
+  result.putInt("minTemperature", colorTemperatureSupport.minTemperature)
+  result.putInt("stepSize", colorTemperatureSupport.stepSize)
   return result
 }
 

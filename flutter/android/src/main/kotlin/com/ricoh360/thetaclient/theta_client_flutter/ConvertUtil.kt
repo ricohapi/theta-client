@@ -16,6 +16,9 @@ const val KEY_NOTIFY_PARAM_FILE_URL = "fileUrl"
 const val KEY_GPS_INFO = "gpsInfo"
 const val KEY_STATE_EXTERNAL_GPS_INFO = "externalGpsInfo"
 const val KEY_STATE_INTERNAL_GPS_INFO = "internalGpsInfo"
+const val KEY_COLOR_TEMPERATURE_SUPPORT_MAX = "maxTemperature"
+const val KEY_COLOR_TEMPERATURE_SUPPORT_MIN = "minTemperature"
+const val KEY_COLOR_TEMPERATURE_SUPPORT_STEP_SIZE = "stepSize"
 
 fun toResult(thetaInfo: ThetaInfo): Map<String, Any?> {
     return mapOf(
@@ -220,7 +223,7 @@ fun toResult(burstOption: BurstOption): Map<String, Any?> {
 fun toEthernetConfig(map: Map<String, Any>): EthernetConfig {
     val proxy = map["proxy"]?.let {
         @Suppress("UNCHECKED_CAST")
-        (it as? Map<String, Any>)?.let{ map ->
+        (it as? Map<String, Any>)?.let { map ->
             toProxy(map)
         }
     }
@@ -497,6 +500,14 @@ fun toGetOptionsParam(data: List<String>): List<OptionNameEnum> {
     return optionNames
 }
 
+fun toResult(colorTemperatureSupport: ColorTemperatureSupport): Map<String, Any> {
+    return mapOf(
+        KEY_COLOR_TEMPERATURE_SUPPORT_MAX to colorTemperatureSupport.maxTemperature,
+        KEY_COLOR_TEMPERATURE_SUPPORT_MIN to colorTemperatureSupport.minTemperature,
+        KEY_COLOR_TEMPERATURE_SUPPORT_STEP_SIZE to colorTemperatureSupport.stepSize
+    )
+}
+
 fun toResult(ethernetConfig: EthernetConfig): Map<String, Any?> {
     val result = mutableMapOf<String, Any>()
 
@@ -599,6 +610,10 @@ fun toResult(options: Options): Map<String, Any> {
         } else if (name == OptionNameEnum.BurstOption) {
             options.getValue<BurstOption>(OptionNameEnum.BurstOption)?.let { burstOption ->
                 result[OptionNameEnum.BurstOption.name] = toResult(burstOption)
+            }
+        } else if (name == OptionNameEnum.ColorTemperatureSupport) {
+            options.getValue<ColorTemperatureSupport>(OptionNameEnum.ColorTemperatureSupport)?.let { colorTemperatureSupport ->
+                result[OptionNameEnum.ColorTemperatureSupport.name] = toResult(colorTemperatureSupport)
             }
         } else if (name == OptionNameEnum.EthernetConfig) {
             options.getValue<EthernetConfig>(OptionNameEnum.EthernetConfig)?.let { ethernetConfig ->
@@ -961,7 +976,7 @@ fun toSetAccessPointParams(arguments: Map<*, *>): SetAccessPointParams {
     val ssidStealth = arguments[KEY_SSID_STEALTH] as? Boolean
     val authMode = (arguments[KEY_AUTH_MODE] as? String?)?.let {
         AuthModeEnum.valueOf(it)
-    }?: throw IllegalArgumentException(KEY_AUTH_MODE)
+    } ?: throw IllegalArgumentException(KEY_AUTH_MODE)
     val password = arguments[KEY_PASSWORD] as? String
     val connectionPriority = arguments[KEY_CONNECTION_PRIORITY] as? Int
     val proxy = (arguments[KEY_PROXY] as? Map<*, *>)?.let { toProxy(it) }

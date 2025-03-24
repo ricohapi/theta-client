@@ -3,6 +3,7 @@ library;
 
 export 'bluetooth_role.dart';
 export 'camera_power.dart';
+export 'color_temperature_support.dart';
 export 'ethernet_config.dart';
 export 'file_format.dart';
 export 'max_recordable_time.dart';

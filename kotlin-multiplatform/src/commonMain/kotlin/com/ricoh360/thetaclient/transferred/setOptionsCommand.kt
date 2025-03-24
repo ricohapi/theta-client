@@ -265,6 +265,11 @@ internal data class Options(
     var _colorTemperature: Int? = null,
 
     /**
+     * supported color temperature.
+     */
+    var _colorTemperatureSupport: ColorTemperatureSupport? = null,
+
+    /**
      * In-progress save interval for interval composite shooting (sec).
      *
      * 0 (no saving), 60 to 600. In 60-second units.
@@ -2417,4 +2422,28 @@ internal data class CaptureNumberSupport(
      */
     @Serializable(with = NumberAsIntSerializer::class)
     val maxNumber: Int? = null,
+)
+
+/**
+ * supported color temperature.
+ */
+@Serializable
+internal data class ColorTemperatureSupport(
+    /**
+     * maximum value
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    val maxTemperature: Int,
+
+    /**
+     * minimum value
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    val minTemperature: Int,
+
+    /**
+     * step size
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    val stepSize: Int
 )

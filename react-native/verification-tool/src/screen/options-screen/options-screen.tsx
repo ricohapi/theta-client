@@ -151,6 +151,12 @@ const optionList: OptionItem[] = [
     },
   },
   {
+    name: 'colorTemperatureSupport',
+    value: {
+      optionName: OptionNameEnum.ColorTemperatureSupport,
+    },
+  },
+  {
     name: 'continuousNumber',
     value: {
       optionName: OptionNameEnum.ContinuousNumber,

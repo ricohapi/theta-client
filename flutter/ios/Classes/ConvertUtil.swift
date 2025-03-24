@@ -24,6 +24,9 @@ let KEY_PROXY = "proxy"
 let KEY_IP_ADDRESS = "ipAddress"
 let KEY_SUBNET_MASK = "subnetMask"
 let KEY_DEFAULT_GATEWAY = "defaultGateway"
+let KEY_COLOR_TEMPERATURE_SUPPORT_MAX = "maxTemperature"
+let KEY_COLOR_TEMPERATURE_SUPPORT_MIN = "minTemperature"
+let KEY_COLOR_TEMPERATURE_SUPPORT_STEP_SIZE = "stepSize"
 
 public class ConvertUtil: NSObject {}
 
@@ -709,6 +712,14 @@ func convertGetOptionsParam(params: [String]) -> [ThetaRepository.OptionNameEnum
     return array
 }
 
+func convertResult(colorTemperatureSupport: ThetaRepository.ColorTemperatureSupport) -> [String: Any] {
+    return [
+        KEY_COLOR_TEMPERATURE_SUPPORT_MAX: colorTemperatureSupport.maxTemperature,
+        KEY_COLOR_TEMPERATURE_SUPPORT_MIN: colorTemperatureSupport.minTemperature,
+        KEY_COLOR_TEMPERATURE_SUPPORT_STEP_SIZE: colorTemperatureSupport.stepSize,
+    ]
+}
+
 func convertResult(ethernetConfig: ThetaRepository.EthernetConfig) -> [String: Any] {
     var result: [String: Any] = [
         "usingDhcp": ethernetConfig.usingDhcp 
@@ -789,6 +800,8 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                 result[name.name] = convertResult(autoBracket: autoBracket)
             } else if value is ThetaRepository.BurstOption, let burstOption = value as? ThetaRepository.BurstOption {
                 result[name.name] = convertResult(burstOption: burstOption)
+            } else if value is ThetaRepository.ColorTemperatureSupport, let colorTemperatureSupport = value as? ThetaRepository.ColorTemperatureSupport {
+                result[name.name] = convertResult(colorTemperatureSupport: colorTemperatureSupport)
             } else if value is ThetaRepository.EthernetConfig, let ethernetConfig = value as? ThetaRepository.EthernetConfig {
                 result[name.name] = convertResult(ethernetConfig: ethernetConfig)
             } else if value is ThetaRepository.GpsInfo {

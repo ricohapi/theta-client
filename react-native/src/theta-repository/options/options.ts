@@ -33,6 +33,7 @@ import type { SleepDelayEnum } from './option-sleep-delay';
 import type { EthernetConfig } from './option-ethernet-config';
 import type { FileFormatEnum } from './option-file-format';
 import type { CameraPowerEnum } from './option-camera-power';
+import type { ColorTemperatureSupport } from './option-color-temperature-support';
 
 /** Aperture value. */
 export const ApertureEnum = {
@@ -359,6 +360,8 @@ export const OptionNameEnum = {
   CaptureNumber: 'CaptureNumber',
   /** colorTemperature */
   ColorTemperature: 'ColorTemperature',
+  /** _colorTemperatureSupport */
+  ColorTemperatureSupport: 'ColorTemperatureSupport',
   /** _compositeShootingOutputInterval */
   CompositeShootingOutputInterval: 'CompositeShootingOutputInterval',
   /** _compositeShootingTime */
@@ -544,6 +547,8 @@ export type Options = {
   compositeShootingTime?: number;
   /** Number of shots for continuous shooting. */
   continuousNumber?: ContinuousNumberEnum;
+  /** supported color temperature. */
+  colorTemperatureSupport?: ColorTemperatureSupport;
   /** Current system time of RICOH THETA. Setting another options will result in an error. */
   dateTimeZone?: string;
   /** IP address allocation to be used when wired LAN is enabled. */

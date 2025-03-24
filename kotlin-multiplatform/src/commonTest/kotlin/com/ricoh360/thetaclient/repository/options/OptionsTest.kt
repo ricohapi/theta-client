@@ -18,6 +18,7 @@ import com.ricoh360.thetaclient.transferred.CameraControlSource
 import com.ricoh360.thetaclient.transferred.CameraMode
 import com.ricoh360.thetaclient.transferred.CameraPower
 import com.ricoh360.thetaclient.transferred.CaptureMode
+import com.ricoh360.thetaclient.transferred.ColorTemperatureSupport
 import com.ricoh360.thetaclient.transferred.EthernetConfig
 import com.ricoh360.thetaclient.transferred.FaceDetect
 import com.ricoh360.thetaclient.transferred.FirstShootingEnum
@@ -101,6 +102,7 @@ class OptionsTest {
         val captureMode = ThetaRepository.CaptureModeEnum.IMAGE
         val captureNumber = 0
         val colorTemperature = 10
+        val colorTemperatureSupport = ThetaRepository.ColorTemperatureSupport(10000, 2000, 100)
         val compositeShootingOutputInterval = 60
         val compositeShootingTime = 600
         val continuousNumber = ThetaRepository.ContinuousNumberEnum.MAX_1
@@ -173,6 +175,7 @@ class OptionsTest {
             captureMode = captureMode,
             captureNumber = captureNumber,
             colorTemperature = colorTemperature,
+            colorTemperatureSupport = colorTemperatureSupport,
             compositeShootingOutputInterval = compositeShootingOutputInterval,
             compositeShootingTime = compositeShootingTime,
             continuousNumber = continuousNumber,
@@ -239,6 +242,7 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CaptureMode), captureMode, "captureMode")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CaptureNumber), captureNumber, "captureNumber")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ColorTemperature), colorTemperature, "colorTemperature")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ColorTemperatureSupport), colorTemperatureSupport, "colorTemperatureSupport")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CompositeShootingOutputInterval), compositeShootingOutputInterval, "compositeShootingOutputInterval")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CompositeShootingTime), compositeShootingTime, "compositeShootingTime")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ContinuousNumber), continuousNumber, "continuousNumber")
@@ -333,6 +337,7 @@ class OptionsTest {
             Pair(ThetaRepository.OptionNameEnum.CaptureMode, ThetaRepository.CaptureModeEnum.IMAGE),
             Pair(ThetaRepository.OptionNameEnum.CaptureNumber, 0),
             Pair(ThetaRepository.OptionNameEnum.ColorTemperature, 10),
+            Pair(ThetaRepository.OptionNameEnum.ColorTemperatureSupport, ThetaRepository.ColorTemperatureSupport(10000, 2000, 100)),
             Pair(ThetaRepository.OptionNameEnum.CompositeShootingOutputInterval, 60),
             Pair(ThetaRepository.OptionNameEnum.CompositeShootingTime, 600),
             Pair(ThetaRepository.OptionNameEnum.DateTimeZone, "2014:05:18 01:04:29+08:00"),
@@ -465,6 +470,7 @@ class OptionsTest {
         val captureMode = Pair(CaptureMode.IMAGE, ThetaRepository.CaptureModeEnum.IMAGE)
         val captureNumber = Pair(9999, 9999)
         val colorTemperature = Pair(10, 10)
+        val colorTemperatureSupport = Pair(ColorTemperatureSupport(10000, 2000, 100), ThetaRepository.ColorTemperatureSupport(10000, 2000, 100))
         val compositeShootingOutputInterval = Pair(60, 60)
         val compositeShootingTime = Pair(600, 600)
         val dateTimeZone = Pair("2014:05:18 01:04:29+08:00", "2014:05:18 01:04:29+08:00")
@@ -546,6 +552,7 @@ class OptionsTest {
             captureMode = captureMode.first,
             captureNumber = captureNumber.first,
             _colorTemperature = colorTemperature.first,
+            _colorTemperatureSupport = colorTemperatureSupport.first,
             _compositeShootingOutputInterval = compositeShootingOutputInterval.first,
             _compositeShootingTime = compositeShootingTime.first,
             dateTimeZone = dateTimeZone.first,
@@ -607,6 +614,7 @@ class OptionsTest {
         assertEquals(options.captureMode, captureMode.second, "captureMode")
         assertEquals(options.captureNumber, captureNumber.second, "captureNumber")
         assertEquals(options.colorTemperature, colorTemperature.second, "colorTemperature")
+        assertEquals(options.colorTemperatureSupport, colorTemperatureSupport.second, "colorTemperatureSupport")
         assertEquals(options.compositeShootingOutputInterval, compositeShootingOutputInterval.second, "compositeShootingOutputInterval")
         assertEquals(options.compositeShootingTime, compositeShootingTime.second, "compositeShootingTime")
         assertEquals(options.dateTimeZone, dateTimeZone.second, "dateTimeZone")
@@ -714,6 +722,7 @@ class OptionsTest {
         val captureMode = Pair(CaptureMode.IMAGE, ThetaRepository.CaptureModeEnum.IMAGE)
         val captureNumber = Pair(30, 30)
         val colorTemperature = Pair(10, 10)
+        val colorTemperatureSupport = Pair(ColorTemperatureSupport(10000, 2000, 100), ThetaRepository.ColorTemperatureSupport(10000, 2000, 100))
         val compositeShootingOutputInterval = Pair(60, 60)
         val compositeShootingTime = Pair(600, 600)
         val dateTimeZone = Pair("2014:05:18 01:04:29+08:00", "2014:05:18 01:04:29+08:00")
@@ -798,6 +807,7 @@ class OptionsTest {
             captureMode = captureMode.second,
             captureNumber = captureNumber.second,
             colorTemperature = colorTemperature.second,
+            colorTemperatureSupport = colorTemperatureSupport.second,
             compositeShootingOutputInterval = compositeShootingOutputInterval.second,
             compositeShootingTime = compositeShootingTime.second,
             dateTimeZone = dateTimeZone.second,
@@ -859,6 +869,7 @@ class OptionsTest {
         assertEquals(options.captureMode, captureMode.first, "captureMode")
         assertEquals(options.captureNumber, captureNumber.first, "captureNumber")
         assertEquals(options._colorTemperature, colorTemperature.first, "colorTemperature")
+        assertEquals(options._colorTemperatureSupport, colorTemperatureSupport.first, "colorTemperatureSupport")
         assertEquals(options._compositeShootingOutputInterval, compositeShootingOutputInterval.first, "compositeShootingOutputInterval")
         assertEquals(options._compositeShootingTime, compositeShootingTime.first, "compositeShootingTime")
         assertEquals(options.dateTimeZone, dateTimeZone.first, "dateTimeZone")

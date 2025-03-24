@@ -788,6 +788,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _colorTemperatureSupport
+         */
+        ColorTemperatureSupport("_colorTemperatureSupport", ThetaRepository.ColorTemperatureSupport::class),
+
+        /**
+         * Option name
          * _compositeShootingOutputInterval
          *
          * For
@@ -1188,6 +1194,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var colorTemperature: Int? = null,
 
         /**
+         * supported color temperature.
+         */
+        var colorTemperatureSupport: ColorTemperatureSupport? = null,
+
+        /**
          * In-progress save interval for interval composite shooting (sec).
          *
          * 0 (no saving), 60 to 600. In 60-second units.
@@ -1503,6 +1514,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             captureMode = null,
             captureNumber = null,
             colorTemperature = null,
+            colorTemperatureSupport = null,
             compositeShootingOutputInterval = null,
             compositeShootingTime = null,
             continuousNumber = null,
@@ -1566,6 +1578,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             captureMode = options.captureMode?.let { CaptureModeEnum.get(it) },
             captureNumber = options.captureNumber,
             colorTemperature = options._colorTemperature,
+            colorTemperatureSupport = options._colorTemperatureSupport?.let { ColorTemperatureSupport(it) },
             compositeShootingOutputInterval = options._compositeShootingOutputInterval,
             compositeShootingTime = options._compositeShootingTime,
             continuousNumber = options.continuousNumber?.let { ContinuousNumberEnum.get(it) },
@@ -1638,6 +1651,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 captureMode = captureMode?.value,
                 captureNumber = captureNumber,
                 _colorTemperature = colorTemperature,
+                _colorTemperatureSupport = colorTemperatureSupport?.toTransferredColorTemperatureSupport(),
                 _compositeShootingOutputInterval = compositeShootingOutputInterval,
                 _compositeShootingTime = compositeShootingTime,
                 continuousNumber = continuousNumber?.value,
@@ -1713,6 +1727,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.CaptureMode -> captureMode
                 OptionNameEnum.CaptureNumber -> captureNumber
                 OptionNameEnum.ColorTemperature -> colorTemperature
+                OptionNameEnum.ColorTemperatureSupport -> colorTemperatureSupport
                 OptionNameEnum.CompositeShootingOutputInterval -> compositeShootingOutputInterval
                 OptionNameEnum.CompositeShootingTime -> compositeShootingTime
                 OptionNameEnum.ContinuousNumber -> continuousNumber
@@ -1789,6 +1804,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.CaptureMode -> captureMode = value as CaptureModeEnum
                 OptionNameEnum.CaptureNumber -> captureNumber = value as Int
                 OptionNameEnum.ColorTemperature -> colorTemperature = value as Int
+                OptionNameEnum.ColorTemperatureSupport -> colorTemperatureSupport = value as ColorTemperatureSupport
                 OptionNameEnum.CompositeShootingOutputInterval -> compositeShootingOutputInterval = value as Int
                 OptionNameEnum.CompositeShootingTime -> compositeShootingTime = value as Int
                 OptionNameEnum.ContinuousNumber -> continuousNumber = value as ContinuousNumberEnum
@@ -2733,6 +2749,43 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             internal fun get(value: CaptureMode): CaptureModeEnum? {
                 return values().firstOrNull { it.value == value }
             }
+        }
+    }
+
+    /**
+     * supported color temperature.
+     */
+    data class ColorTemperatureSupport(
+        /**
+         * maximum value
+         */
+        val maxTemperature: Int,
+        /**
+         * minimum value
+         */
+        val minTemperature: Int,
+        /**
+         * step size
+         */
+        val stepSize: Int,
+    ) {
+        internal constructor(support: com.ricoh360.thetaclient.transferred.ColorTemperatureSupport) : this(
+            maxTemperature = support.maxTemperature,
+            minTemperature = support.minTemperature,
+            stepSize = support.stepSize
+        )
+
+        /**
+         * Convert ColorTemperatureSupport to transferred.ColorTemperatureSupport
+         *
+         * @return transferred.ColorTemperatureSupport
+         */
+        internal fun toTransferredColorTemperatureSupport(): com.ricoh360.thetaclient.transferred.ColorTemperatureSupport {
+            return com.ricoh360.thetaclient.transferred.ColorTemperatureSupport(
+                maxTemperature = maxTemperature,
+                minTemperature = minTemperature,
+                stepSize = stepSize
+            )
         }
     }
 
