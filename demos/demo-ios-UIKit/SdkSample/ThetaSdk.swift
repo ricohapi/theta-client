@@ -20,7 +20,7 @@ let theta = Theta()
 class Theta {
     private static let endPoint: String = "http://192.168.1.1"
     private var thetaRepository: ThetaRepository?
-    private var lastInfo: ThetaInfo?
+    var lastInfo: ThetaInfo?
 
     func reset() {
         thetaRepository = nil

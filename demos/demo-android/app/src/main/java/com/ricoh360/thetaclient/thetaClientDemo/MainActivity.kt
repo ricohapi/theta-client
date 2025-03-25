@@ -17,6 +17,7 @@ class MainActivity : ComponentActivity() {
             NavHost(navController = navController, startDestination = "mainScreen") {
                 composable("mainScreen") {
                     MainScreen(
+                        toInfo = { navController.navigate("infoScreen") },
                         toPhotoList = { navController.navigate("photoListScreen") },
                         toPreview = { navController.navigate("previewScreen") }
                     )
@@ -25,6 +26,13 @@ class MainActivity : ComponentActivity() {
                     PreviewScreen(
                         toPhoto = { photoUrl ->
                             navController.navigate("photoScreen/${URLEncoder.encode(photoUrl, "UTF-8")}")
+                        }
+                    )
+                }
+                composable("infoScreen") {
+                    PhotoListScreen(
+                        toPhoto = { fileName, photoUrl ->
+                            navController.navigate("photoScreen/$fileName/${URLEncoder.encode(photoUrl, "UTF-8")}")
                         }
                     )
                 }

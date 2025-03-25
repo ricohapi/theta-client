@@ -12,8 +12,6 @@ class LiveCheck {
     var isNew = false
 
     @objc func fireTimer(timer: Timer) {
-        guard let context = timer.userInfo as? [String: String] else { return }
-
         if let lastUpdated {
             let last = lastUpdated.timeIntervalSince1970
             let now = Date().timeIntervalSince1970
@@ -81,18 +79,7 @@ struct TakePhotoView: View {
 
                             let preview = UIImage(data: frame)
                             myTimer.lastUpdated = Date()
-//                            var bitmapWidth = preview?.size.width ?? 0
-//                            var bitmapHeight = preview?.size.height ?? 0
-//                            let surfaceWidth = UIScreen.main.bounds.width
-//                            let surfaceHeight = UIScreen.main.bounds.height
-//                            if surfaceWidth/surfaceHeight > bitmapWidth/bitmapHeight {
-//                                bitmapHeight = surfaceHeight/bitmapHeight
-//                            } else {
-//                                bitmapWidth = surfaceWidth/bitmapWidth
-//                            }
-
                             self.preview = preview
-//                            ?.resizeImageTo(size: CGSize(width: bitmapWidth, height: bitmapHeight))
                             return self.previewing
                         }
                     )

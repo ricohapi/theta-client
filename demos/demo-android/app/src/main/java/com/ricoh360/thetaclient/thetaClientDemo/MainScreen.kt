@@ -19,7 +19,7 @@ import com.ricoh360.thetaclient.thetaClientDemo.ui.theme.ThetaSimpleAndroidAppTh
  * @param toPreview NavController.navigate() to PreviewScreen.
  */
 @Composable
-fun MainScreen(toPhotoList: () -> Unit, toPreview: () -> Unit) {
+fun MainScreen(toInfo: () -> Unit, toPhotoList: () -> Unit, toPreview: () -> Unit) {
     ThetaSimpleAndroidAppTheme {
         Scaffold(
             topBar = {
@@ -33,6 +33,10 @@ fun MainScreen(toPhotoList: () -> Unit, toPreview: () -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
+                Button(onClick = { toInfo() }) {
+                    Text("Info")
+                }
+
                 Button(onClick = { toPreview() }) {
                     Text("Take a photo")
                 }
