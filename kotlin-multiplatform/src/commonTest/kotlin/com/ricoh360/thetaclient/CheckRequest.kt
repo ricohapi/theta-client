@@ -104,6 +104,7 @@ internal class CheckRequest {
             timeShift: TimeShift? = null,
             topBottomCorrection: TopBottomCorrectionOption? = null,
             topBottomCorrectionRotation: TopBottomCorrectionRotation? = null,
+            topBottomCorrectionRotationSupport: TopBottomCorrectionRotationSupport? = null,
             videoStitching: VideoStitching? = null,
             visibilityReduction: VisibilityReduction? = null,
             whiteBalance: WhiteBalance? = null,
@@ -263,6 +264,9 @@ internal class CheckRequest {
             }
             topBottomCorrectionRotation?.let {
                 assertEquals(optionsRequest.parameters.options._topBottomCorrectionRotation, it, "setOptions topBottomCorrectionRotation")
+            }
+            topBottomCorrectionRotationSupport?.let {
+                assertEquals(optionsRequest.parameters.options._topBottomCorrectionRotationSupport, it, "setOptions topBottomCorrectionRotationSupport")
             }
             videoStitching?.let {
                 assertEquals(optionsRequest.parameters.options.videoStitching, it, "setOptions videoStitching")

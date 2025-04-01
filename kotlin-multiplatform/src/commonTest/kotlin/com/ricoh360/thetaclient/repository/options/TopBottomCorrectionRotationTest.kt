@@ -14,7 +14,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlin.test.*
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class TopBottomCorrectionRotationTest {
     private val endpoint = "http://192.168.1.1:80/"
 
@@ -59,7 +58,7 @@ class TopBottomCorrectionRotationTest {
      */
     @Test
     fun setOptionTest() = runTest {
-        val value = Pair(ThetaRepository.TopBottomCorrectionRotation(pitch = 1.0f, roll = 1.0f, yaw = 1.0f), TopBottomCorrectionRotation(pitch = 1.0f, roll = 1.0f, yaw = 1.0f))
+        val value = Pair(ThetaRepository.TopBottomCorrectionRotation(pitch = 1.0f, roll = 1.0f, yaw = 1.0f), TopBottomCorrectionRotation(pitch = "1.0", roll = "1.0", yaw = "1.0"))
 
         MockApiClient.onRequest = { request ->
             // check request
@@ -81,7 +80,7 @@ class TopBottomCorrectionRotationTest {
     @Test
     fun convertOptionTest() = runTest {
         val values = listOf(
-            Pair(ThetaRepository.TopBottomCorrectionRotation(pitch = 1.0f, roll = 1.0f, yaw = 1.0f), TopBottomCorrectionRotation(pitch = 1.0f, roll = 1.0f, yaw = 1.0f)),
+            Pair(ThetaRepository.TopBottomCorrectionRotation(pitch = 1.0f, roll = 1.0f, yaw = 1.0f), TopBottomCorrectionRotation(pitch = "1.0", roll = "1.0", yaw = "1.0")),
         )
 
         values.forEach {

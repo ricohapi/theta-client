@@ -81,6 +81,23 @@ let KEY_COLOR_TEMPERATURE_SUPPORT = "colorTemperatureSupport"
 let KEY_COLOR_TEMPERATURE_SUPPORT_MAX = "maxTemperature"
 let KEY_COLOR_TEMPERATURE_SUPPORT_MIN = "minTemperature"
 let KEY_COLOR_TEMPERATURE_SUPPORT_STEP_SIZE = "stepSize"
+let KEY_WLAN_FREQUENCY_CL_MODE = "wlanFrequencyClMode"
+let KEY_WLAN_FREQUENCY_CL_MODE_2_4 = "enable2_4"
+let KEY_WLAN_FREQUENCY_CL_MODE_5_2 = "enable5_2"
+let KEY_WLAN_FREQUENCY_CL_MODE_5_8 = "enable5_8"
+let KEY_ROAMING = "roaming"
+let KEY_PLAN = "plan"
+let KEY_CAMERA_LOCK_CONFIG_IS_POWER_KEY_LOCKED = "isPowerKeyLocked"
+let KEY_CAMERA_LOCK_CONFIG_IS_SHUTTER_KEY_LOCKED = "isShutterKeyLocked"
+let KEY_CAMERA_LOCK_CONFIG_IS_MODE_KEY_LOCKED = "isModeKeyLocked"
+let KEY_CAMERA_LOCK_CONFIG_IS_WLAN_KEY_LOCKED = "isWlanKeyLocked"
+let KEY_CAMERA_LOCK_CONFIG_IS_FN_KEY_LOCKED = "isFnKeyLocked"
+let KEY_CAMERA_LOCK_CONFIG_IS_PANEL_LOCKED = "isPanelLocked"
+let KEY_DHCP_LEASE_ADDRESS = "dhcpLeaseAddress"
+let KEY_TOP_BOTTOM_CORRECTION_ROTATION_SUPPORT = "topBottomCorrectionRotationSupport"
+let KEY_MAX = "max"
+let KEY_MIN = "min"
+let KEY_STEP_SIZE = "stepSize"
 
 public class ConvertUtil: NSObject {}
 
@@ -143,6 +160,7 @@ let optionItemNameToEnum = [
     "timeShift": ThetaRepository.OptionNameEnum.timeshift,
     "topBottomCorrection": ThetaRepository.OptionNameEnum.topbottomcorrection,
     "topBottomCorrectionRotation": ThetaRepository.OptionNameEnum.topbottomcorrectionrotation,
+    KEY_TOP_BOTTOM_CORRECTION_ROTATION_SUPPORT: ThetaRepository.OptionNameEnum.topbottomcorrectionrotationsupport,
     "totalSpace": ThetaRepository.OptionNameEnum.totalspace,
     "username": ThetaRepository.OptionNameEnum.username,
     "videoStitching": ThetaRepository.OptionNameEnum.videostitching,
@@ -390,6 +408,7 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
 
 func convertResult(options: ThetaRepository.Options) -> [String: Any] {
     var result = [String: Any]()
+    var jsonResult = [String: Any]()
     let nameList = ThetaRepository.OptionNameEnum.values()
     for i in 0 ..< nameList.size {
         if let name = nameList.get(index: i),
@@ -433,6 +452,9 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                     result[key] = convertResult(timeshift: timeshift)
                 } else if value is ThetaRepository.TopBottomCorrectionRotation, let rotation = value as? ThetaRepository.TopBottomCorrectionRotation {
                     result[key] = convertResult(rotation: rotation)
+                } else if value is ThetaRepository.TopBottomCorrectionRotationSupport,
+                            let support = value as? ThetaRepository.TopBottomCorrectionRotationSupport {
+                    jsonResult[key] = convertJson(topBottomCorrectionRotationSupport: support)
                 } else if let offDelay = value as? ThetaRepository.OffDelaySec {
                     result[key] =
                         offDelay.sec == 0 ? ThetaRepository.OffDelayEnum.disable.name : offDelay.sec
@@ -445,7 +467,11 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
             }
         }
     }
-    return result
+  
+    var response = [String: Any]()
+    response["options"] = result
+    response["json"] = jsonResult
+    return response
 }
 
 // MARK: - Notify event
@@ -1110,6 +1136,29 @@ func convertResult(rotation: ThetaRepository.TopBottomCorrectionRotation) -> [St
     ]
 }
 
+func convertJson(topBottomCorrectionRotationSupport: ThetaRepository.TopBottomCorrectionRotationSupport) -> String {
+    let convertJson = """
+        {
+          "pitch": {
+            "max": \(topBottomCorrectionRotationSupport.pitch.max),
+            "min": \(topBottomCorrectionRotationSupport.pitch.min),
+            "stepSize": \(topBottomCorrectionRotationSupport.pitch.stepSize)
+          },
+          "roll": {
+            "max": \(topBottomCorrectionRotationSupport.roll.max),
+            "min": \(topBottomCorrectionRotationSupport.roll.min),
+            "stepSize": \(topBottomCorrectionRotationSupport.roll.stepSize)
+          },
+          "yaw": {
+            "max": \(topBottomCorrectionRotationSupport.yaw.max),
+            "min": \(topBottomCorrectionRotationSupport.yaw.min),
+            "stepSize": \(topBottomCorrectionRotationSupport.yaw.stepSize)
+          }
+        }
+        """
+    return convertJson
+}
+
 func convertResult(exif: ThetaRepository.Exif) -> [String: Any] {
     var result = [String: Any]()
     result["exifVersion"] = exif.exifVersion
@@ -1434,14 +1483,14 @@ func toTimeShift(params: [String: Any]) -> ThetaRepository.TimeShiftSetting {
 }
 
 func toTopBottomCorrectionRotation(params: [String: Any]) -> ThetaRepository.TopBottomCorrectionRotation? {
-    guard let pitch = params[KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH] as? Double,
-          let roll = params[KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL] as? Double,
-          let yaw = params[KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW] as? Double else { return nil }
+    let pitch = Float(params[KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH] as? Double ?? 0)
+    let roll = Float(params[KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL] as? Double ?? 0)
+    let yaw = Float(params[KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW] as? Double ?? 0)
 
     return ThetaRepository.TopBottomCorrectionRotation(
-        pitch: Float(pitch),
-        roll: Float(roll),
-        yaw: Float(yaw)
+        pitch: pitch,
+        roll: roll,
+        yaw: yaw
     )
 }
 

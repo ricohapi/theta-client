@@ -1,0 +1,25 @@
+{
+  "name": "camera.getOptions",
+  "state": "done",
+  "results": {
+    "options": {
+      "_topBottomCorrectionRotationSupport": {
+        "pitch": {
+          "maxPitch": "+90.0",
+          "minPitch": "-90.0",
+          "stepSize": "0.1"
+        },
+        "roll": {
+          "maxRoll": "+180.0",
+          "minRoll": "-180.0",
+          "stepSize": "0.1"
+        },
+        "yaw": {
+          "maxYaw": "+180.0",
+          "minYaw": "-180.0",
+          "stepSize": "0.1"
+        }
+      }
+    }
+  }
+}

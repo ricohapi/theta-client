@@ -33,19 +33,23 @@ import com.ricoh360.thetaclient.transferred.MediaFileFormat
 import com.ricoh360.thetaclient.transferred.MediaType
 import com.ricoh360.thetaclient.transferred.NetworkType
 import com.ricoh360.thetaclient.transferred.Options
+import com.ricoh360.thetaclient.transferred.PitchSupport
 import com.ricoh360.thetaclient.transferred.PowerSaving
 import com.ricoh360.thetaclient.transferred.Preset
 import com.ricoh360.thetaclient.transferred.PreviewFormat
 import com.ricoh360.thetaclient.transferred.Proxy
+import com.ricoh360.thetaclient.transferred.RollSupport
 import com.ricoh360.thetaclient.transferred.ShootingFunction
 import com.ricoh360.thetaclient.transferred.ShootingMethod
 import com.ricoh360.thetaclient.transferred.TimeShift
 import com.ricoh360.thetaclient.transferred.TopBottomCorrectionOption
 import com.ricoh360.thetaclient.transferred.TopBottomCorrectionRotation
+import com.ricoh360.thetaclient.transferred.TopBottomCorrectionRotationSupport
 import com.ricoh360.thetaclient.transferred.VideoStitching
 import com.ricoh360.thetaclient.transferred.VisibilityReduction
 import com.ricoh360.thetaclient.transferred.WhiteBalance
 import com.ricoh360.thetaclient.transferred.WhiteBalanceAutoStrength
+import com.ricoh360.thetaclient.transferred.YawSupport
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -151,6 +155,11 @@ class OptionsTest {
         )
         val topBottomCorrection = ThetaRepository.TopBottomCorrectionOptionEnum.APPLY_AUTO
         val topBottomCorrectionRotation = ThetaRepository.TopBottomCorrectionRotation(1.0f, 2.0f, 3.0f)
+        val topBottomCorrectionRotationSupport = ThetaRepository.TopBottomCorrectionRotationSupport(
+            pitch = ThetaRepository.TopBottomCorrectionRotationValueSupport(100f, -100f, 0.2f),
+            roll = ThetaRepository.TopBottomCorrectionRotationValueSupport(200f, -200f, 0.4f),
+            yaw = ThetaRepository.TopBottomCorrectionRotationValueSupport(300f, -300f, 0.6f)
+        )
         val totalSpace = 100L
         val username = "username"
         val videoStitching = ThetaRepository.VideoStitchingEnum.ONDEVICE
@@ -214,6 +223,7 @@ class OptionsTest {
             timeShift = timeShift,
             topBottomCorrection = topBottomCorrection,
             topBottomCorrectionRotation = topBottomCorrectionRotation,
+            topBottomCorrectionRotationSupport = topBottomCorrectionRotationSupport,
             totalSpace = totalSpace,
             username = username,
             videoStitching = videoStitching,
@@ -281,6 +291,7 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.TimeShift), timeShift, "timeShift")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.TopBottomCorrection), topBottomCorrection, "topBottomCorrection")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.TopBottomCorrectionRotation), topBottomCorrectionRotation, "topBottomCorrectionRotation")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.TopBottomCorrectionRotationSupport), topBottomCorrectionRotationSupport, "topBottomCorrectionRotationSupport")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.TotalSpace), totalSpace, "totalSpace")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Username), username, "userName")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.VideoStitching), videoStitching, "videoStitching")
@@ -387,6 +398,13 @@ class OptionsTest {
             ),
             Pair(ThetaRepository.OptionNameEnum.TopBottomCorrection, ThetaRepository.TopBottomCorrectionOptionEnum.APPLY),
             Pair(ThetaRepository.OptionNameEnum.TopBottomCorrectionRotation, ThetaRepository.TopBottomCorrectionRotation(pitch = 1.0f, roll = 1.0f, yaw = 1.0f)),
+            Pair(
+                ThetaRepository.OptionNameEnum.TopBottomCorrectionRotationSupport, ThetaRepository.TopBottomCorrectionRotationSupport(
+                    pitch = ThetaRepository.TopBottomCorrectionRotationValueSupport(100f, -100f, 0.2f),
+                    roll = ThetaRepository.TopBottomCorrectionRotationValueSupport(200f, -200f, 0.4f),
+                    yaw = ThetaRepository.TopBottomCorrectionRotationValueSupport(300f, -300f, 0.6f)
+                )
+            ),
             Pair(ThetaRepository.OptionNameEnum.TotalSpace, 104L),
             Pair(ThetaRepository.OptionNameEnum.Username, "username"),
             Pair(ThetaRepository.OptionNameEnum.VideoStitching, ThetaRepository.VideoStitchingEnum.NONE),
@@ -528,7 +546,18 @@ class OptionsTest {
             ThetaRepository.TimeShiftSetting(true, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_4, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_5)
         )
         val topBottomCorrection = Pair(TopBottomCorrectionOption.DISAPPLY, ThetaRepository.TopBottomCorrectionOptionEnum.DISAPPLY)
-        val topBottomCorrectionRotation = Pair(TopBottomCorrectionRotation(3.0f, 2.0f, 1.0f), ThetaRepository.TopBottomCorrectionRotation(3.0f, 2.0f, 1.0f))
+        val topBottomCorrectionRotation = Pair(TopBottomCorrectionRotation("3.0", "2.0", "1.0"), ThetaRepository.TopBottomCorrectionRotation(3.0f, 2.0f, 1.0f))
+        val topBottomCorrectionRotationSupport = Pair(
+            TopBottomCorrectionRotationSupport(
+                pitch = PitchSupport(100f, -100f, 0.2f),
+                roll = RollSupport(200f, -200f, 0.4f),
+                yaw = YawSupport(300f, -300f, 0.6f)
+            ), ThetaRepository.TopBottomCorrectionRotationSupport(
+                pitch = ThetaRepository.TopBottomCorrectionRotationValueSupport(100f, -100f, 0.2f),
+                roll = ThetaRepository.TopBottomCorrectionRotationValueSupport(200f, -200f, 0.4f),
+                yaw = ThetaRepository.TopBottomCorrectionRotationValueSupport(300f, -300f, 0.6f)
+            )
+        )
         val totalSpace = Pair(104L, 104L)
         val username = Pair("username", "username")
         val videoStitching = Pair(VideoStitching.NONE, ThetaRepository.VideoStitchingEnum.NONE)
@@ -590,6 +619,7 @@ class OptionsTest {
             _timeShift = timeShift.first,
             _topBottomCorrection = topBottomCorrection.first,
             _topBottomCorrectionRotation = topBottomCorrectionRotation.first,
+            _topBottomCorrectionRotationSupport = topBottomCorrectionRotationSupport.first,
             totalSpace = totalSpace.first,
             _username = username.first,
             videoStitching = videoStitching.first,
@@ -652,6 +682,7 @@ class OptionsTest {
         assertEquals(options.timeShift, timeShift.second, "timeShift")
         assertEquals(options.topBottomCorrection, topBottomCorrection.second, "topBottomCorrection")
         assertEquals(options.topBottomCorrectionRotation, topBottomCorrectionRotation.second, "topBottomCorrectionRotation")
+        assertEquals(options.topBottomCorrectionRotationSupport, topBottomCorrectionRotationSupport.second, "topBottomCorrectionRotationSupport")
         assertEquals(options.totalSpace, totalSpace.second, "totalSpace")
         assertEquals(options.username, username.second, "username")
         assertEquals(options.videoStitching, videoStitching.second, "videoStitching")
@@ -783,7 +814,18 @@ class OptionsTest {
             ThetaRepository.TimeShiftSetting(false, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_6, ThetaRepository.TimeShiftIntervalEnum.INTERVAL_7)
         )
         val topBottomCorrection = Pair(TopBottomCorrectionOption.MANUAL, ThetaRepository.TopBottomCorrectionOptionEnum.MANUAL)
-        val topBottomCorrectionRotation = Pair(TopBottomCorrectionRotation(0.0f, 0.0f, 0.0f), ThetaRepository.TopBottomCorrectionRotation(0.0f, 0.0f, 0.0f))
+        val topBottomCorrectionRotation = Pair(TopBottomCorrectionRotation("0.0", "0.0", "0.0"), ThetaRepository.TopBottomCorrectionRotation(0.0f, 0.0f, 0.0f))
+        val topBottomCorrectionRotationSupport = Pair(
+            TopBottomCorrectionRotationSupport(
+                pitch = PitchSupport(100f, -100f, 0.2f),
+                roll = RollSupport(200f, -200f, 0.4f),
+                yaw = YawSupport(300f, -300f, 0.6f)
+            ), ThetaRepository.TopBottomCorrectionRotationSupport(
+                pitch = ThetaRepository.TopBottomCorrectionRotationValueSupport(100f, -100f, 0.2f),
+                roll = ThetaRepository.TopBottomCorrectionRotationValueSupport(200f, -200f, 0.4f),
+                yaw = ThetaRepository.TopBottomCorrectionRotationValueSupport(300f, -300f, 0.6f)
+            )
+        )
         val totalSpace = Pair(104L, 104L)
         val userName = Pair("username", "username")
         val videoStitching = Pair(VideoStitching.NONE, ThetaRepository.VideoStitchingEnum.NONE)
@@ -845,6 +887,7 @@ class OptionsTest {
             timeShift = timeShift.second,
             topBottomCorrection = topBottomCorrection.second,
             topBottomCorrectionRotation = topBottomCorrectionRotation.second,
+            topBottomCorrectionRotationSupport = topBottomCorrectionRotationSupport.second,
             totalSpace = totalSpace.second,
             username = userName.second,
             videoStitching = videoStitching.second,
@@ -907,6 +950,7 @@ class OptionsTest {
         assertEquals(options._timeShift, timeShift.first, "timeShift")
         assertEquals(options._topBottomCorrection, topBottomCorrection.first, "topBottomCorrection")
         assertEquals(options._topBottomCorrectionRotation, topBottomCorrectionRotation.first, "topBottomCorrectionRotation")
+        assertEquals(options._topBottomCorrectionRotationSupport, topBottomCorrectionRotationSupport.first, "topBottomCorrectionRotationSupport")
         assertEquals(options.totalSpace, totalSpace.first, "totalSpace")
         assertEquals(options._username, userName.first, "userName")
         assertEquals(options.videoStitching, videoStitching.first, "videoStitching")

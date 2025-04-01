@@ -34,6 +34,7 @@ import type { EthernetConfig } from './option-ethernet-config';
 import type { FileFormatEnum } from './option-file-format';
 import type { CameraPowerEnum } from './option-camera-power';
 import type { ColorTemperatureSupport } from './option-color-temperature-support';
+import type { TopBottomCorrectionRotationSupport } from './option-top-bottom-correction-rotation-support';
 
 /** Aperture value. */
 export const ApertureEnum = {
@@ -436,6 +437,8 @@ export const OptionNameEnum = {
   TopBottomCorrection: 'TopBottomCorrection',
   /** topBottomCorrectionRotation */
   TopBottomCorrectionRotation: 'TopBottomCorrectionRotation',
+  /** topBottomCorrectionRotationSupport */
+  TopBottomCorrectionRotationSupport: 'TopBottomCorrectionRotationSupport',
   /** totalSpace */
   TotalSpace: 'TotalSpace',
   /** shutterVolume */
@@ -627,6 +630,8 @@ export type Options = {
    * Enabled only for _topBottomCorrection Manual.
    */
   topBottomCorrectionRotation?: TopBottomCorrectionRotation;
+  /** Supported TopBottomCorrectionRotation */
+  topBottomCorrectionRotationSupport?: TopBottomCorrectionRotationSupport;
   /** Total storage space (byte). */
   totalSpace?: number;
   /** User name used for digest authentication when _networkType is set to client mode. */

@@ -10,6 +10,8 @@ import com.ricoh360.thetaclient.DigestAuth
 import com.ricoh360.thetaclient.ThetaRepository.*
 import com.ricoh360.thetaclient.capture.*
 import com.ricoh360.thetaclient.websocket.CameraEvent
+import kotlin.reflect.KClass
+import kotlin.Pair
 
 const val KEY_NOTIFY_NAME = "name"
 const val KEY_NOTIFY_PARAMS = "params"
@@ -32,6 +34,17 @@ const val KEY_IP_ADDRESS = "ipAddress"
 const val KEY_SUBNET_MASK = "subnetMask"
 const val KEY_DEFAULT_GATEWAY = "defaultGateway"
 const val KEY_PROXY = "proxy"
+const val KEY_MAC_ADDRESS = "macAddress"
+const val KEY_HOST_NAME = "hostName"
+const val KEY_DHCP_LEASE_ADDRESS = "dhcpLeaseAddress"
+const val KEY_TOP_BOTTOM_CORRECTION_ROTATION = "topBottomCorrectionRotation"
+const val KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH = "pitch"
+const val KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL = "roll"
+const val KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW = "yaw"
+const val KEY_TOP_BOTTOM_CORRECTION_ROTATION_SUPPORT = "topBottomCorrectionRotationSupport"
+const val KEY_MAX = "max"
+const val KEY_MIN = "min"
+const val KEY_STEP_SIZE = "stepSize"
 
 val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "aiAutoThumbnail" to OptionNameEnum.AiAutoThumbnail,
@@ -86,6 +99,9 @@ val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "shutterVolume" to OptionNameEnum.ShutterVolume,
   "sleepDelay" to OptionNameEnum.SleepDelay,
   "timeShift" to OptionNameEnum.TimeShift,
+  "topBottomCorrection" to OptionNameEnum.TopBottomCorrection,
+  KEY_TOP_BOTTOM_CORRECTION_ROTATION to OptionNameEnum.TopBottomCorrectionRotation,
+  KEY_TOP_BOTTOM_CORRECTION_ROTATION_SUPPORT to OptionNameEnum.TopBottomCorrectionRotationSupport,
   "totalSpace" to OptionNameEnum.TotalSpace,
   "username" to OptionNameEnum.Username,
   "videoStitching" to OptionNameEnum.VideoStitching,
@@ -326,6 +342,7 @@ fun toGetOptionsParam(optionNames: ReadableArray): MutableList<OptionNameEnum> {
 
 fun toResult(options: Options): WritableMap {
   val result = Arguments.createMap()
+  val jsonResult = Arguments.createMap()
 
   val valueOptions = listOf(
     OptionNameEnum.CaptureInterval,
@@ -396,13 +413,26 @@ fun toResult(options: Options): WritableMap {
       options.timeShift?.let {
         result.putMap("timeShift", toResult(timeShift = it))
       }
+    } else if (name == OptionNameEnum.TopBottomCorrectionRotation) {
+      options.topBottomCorrectionRotation?.let {
+        result.putMap(KEY_TOP_BOTTOM_CORRECTION_ROTATION, toResult(rotation = it))
+      }
+    } else if (name == OptionNameEnum.TopBottomCorrectionRotationSupport) {
+      options.topBottomCorrectionRotationSupport?.let {
+        val json = toJson(rotationSupport = it)
+        jsonResult.putString(KEY_TOP_BOTTOM_CORRECTION_ROTATION_SUPPORT, json)
+      }
     } else if (valueOptions.contains(name)) {
       addOptionsValueToMap<Any>(options, name, result)
     } else {
       addOptionsEnumToMap(options, name, result)
     }
   }
-  return result
+
+  val response = Arguments.createMap()
+  response.putMap("options", result)
+  response.putMap("json", jsonResult)
+  return response
 }
 
 fun <T : Enum<T>> addOptionsEnumToMap(options: Options, name: OptionNameEnum, objects: WritableMap) {
@@ -630,6 +660,55 @@ fun toResult(timeShift: TimeShiftSetting): WritableMap {
   return result
 }
 
+fun toResult(rotation: TopBottomCorrectionRotation): WritableMap {
+  val result = Arguments.createMap()
+  rotation.pitch?.let { value ->
+    result.putDouble(KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH, value.toDouble())
+  }
+  rotation.roll?.let { value ->
+    result.putDouble(KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL, value.toDouble())
+  }
+  rotation.yaw?.let { value ->
+    result.putDouble(KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW, value.toDouble())
+  }
+  return result
+}
+
+/**
+ * Avoided floating-point errors by converting to JSON string in the bridge,
+ * then to object in TypeScript.
+ */
+fun toJson(rotationSupport: TopBottomCorrectionRotationSupport): String {
+  val convertJson = """
+    {
+      "pitch": {
+        "max": ${rotationSupport.pitch.max},
+        "min": ${rotationSupport.pitch.min},
+        "stepSize": ${rotationSupport.pitch.stepSize}
+      },
+      "roll": {
+        "max": ${rotationSupport.roll.max},
+        "min": ${rotationSupport.roll.min},
+        "stepSize": ${rotationSupport.roll.stepSize}
+      },
+      "yaw": {
+        "max": ${rotationSupport.yaw.max},
+        "min": ${rotationSupport.yaw.min},
+        "stepSize": ${rotationSupport.yaw.stepSize}
+      }
+    }
+  """.trimIndent()
+  return convertJson
+}
+
+fun toResult(rotationValueSupport: TopBottomCorrectionRotationValueSupport): WritableMap {
+  val result = Arguments.createMap()
+  result.putString(KEY_MAX, rotationValueSupport.max.toString())
+  result.putString(KEY_MIN, rotationValueSupport.min.toString())
+  result.putString(KEY_STEP_SIZE, rotationValueSupport.stepSize.toString())
+  return result
+}
+
 fun toResult(state: ThetaState): WritableMap {
   val result = Arguments.createMap()
   state.fingerprint?.let {
@@ -710,7 +789,7 @@ fun toResult(state: ThetaState): WritableMap {
 fun toResult(cameraEvent: CameraEvent): WritableMap {
   val result = Arguments.createMap()
   cameraEvent.options?.let {
-    result.putMap("options", toResult(it))
+    result.putMap("options", toResult(options = it).getMap("options"))
   }
   cameraEvent.state?.let {
     result.putMap("state", toResult(it))
@@ -806,6 +885,10 @@ fun setOptionValue(options: Options, name: OptionNameEnum, optionsMap: ReadableM
     optionsMap.getMap(key)?.let {
       options.setValue(name, toTimeShift(map = it))
     }
+  } else if (name == OptionNameEnum.TopBottomCorrectionRotation) {
+    optionsMap.getMap(key)?.let {
+      options.setValue(name, toTopBottomCorrectionRotation(map = it))
+    }
   } else {
     (optionsMap.getString(key))?.let { value ->
       getOptionValueEnum(name, value)?.let {
@@ -849,6 +932,7 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
     OptionNameEnum.ShootingMethod -> ShootingMethodEnum.values().find { it.name == valueName }
     OptionNameEnum.ShutterSpeed -> ShutterSpeedEnum.values().find { it.name == valueName }
     OptionNameEnum.SleepDelay -> SleepDelayEnum.values().find { it.name == valueName }
+    OptionNameEnum.TopBottomCorrection -> TopBottomCorrectionOptionEnum.values().find { it.name == valueName }
     OptionNameEnum.VideoStitching -> VideoStitchingEnum.values().find { it.name == valueName }
     OptionNameEnum.VisibilityReduction -> VisibilityReductionEnum.values().find { it.name == valueName }
     OptionNameEnum.WhiteBalance -> WhiteBalanceEnum.values().find { it.name == valueName }
@@ -946,6 +1030,13 @@ fun toTimeShift(map: ReadableMap): TimeShiftSetting {
     timeShift.secondInterval = TimeShiftIntervalEnum.valueOf(it)
   }
   return timeShift
+}
+
+fun toTopBottomCorrectionRotation(map: ReadableMap): TopBottomCorrectionRotation {
+  val pitch = map.getDouble(KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH)?.toFloat() ?: 0.0f
+  val roll = map.getDouble(KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL)?.toFloat() ?: 0.0f
+  val yaw = map.getDouble(KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW)?.toFloat() ?: 0.0f
+  return TopBottomCorrectionRotation(pitch = pitch, roll = roll, yaw = yaw)
 }
 
 fun configToTheta(objects: ReadableMap): Config {

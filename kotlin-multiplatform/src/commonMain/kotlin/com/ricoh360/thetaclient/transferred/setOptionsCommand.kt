@@ -762,6 +762,11 @@ internal data class Options(
     var _topBottomCorrectionRotation: TopBottomCorrectionRotation? = null,
 
     /**
+     * @see TopBottomCorrectionRotationSupport
+     */
+    var _topBottomCorrectionRotationSupport: TopBottomCorrectionRotationSupport? = null,
+
+    /**
      * Total storage space (byte).
      */
     @Serializable(with = NumberAsLongSerializer::class)
@@ -1851,19 +1856,103 @@ internal data class TopBottomCorrectionRotation(
      * Specifies the pitch.
      * Specified range is -90.0 to +90.0, stepSize is 0.1
      */
-    val pitch: Float? = null,
+    val pitch: String,
 
     /**
      * Specifies the roll.
      * Specified range is -180.0 to +180.0, stepSize is 0.1
      */
-    val roll: Float? = null,
+    val roll: String,
 
     /**
      * Specifies the yaw.
      * Specified range is -180.0 to +180.0, stepSize is 0.1
      */
-    val yaw: Float? = null
+    val yaw: String
+)
+
+/**
+ * Supported TopBottomCorrectionRotation
+ */
+@Serializable
+internal data class TopBottomCorrectionRotationSupport(
+    /**
+     * Supported pitch
+     */
+    val pitch: PitchSupport,
+
+    /**
+     * Supported roll
+     */
+    val roll: RollSupport,
+
+    /**
+     * Supported yaw
+     */
+    val yaw: YawSupport
+)
+
+/**
+ * Supported pitch of TopBottomCorrectionRotation
+ */
+@Serializable
+internal data class PitchSupport(
+    /**
+     * maximum pitch volume
+     */
+    val maxPitch: Float,
+
+    /**
+     * minimum pitch volume
+     */
+    val minPitch: Float,
+
+    /**
+     * pitch step size
+     */
+    val stepSize: Float
+)
+
+/**
+ * Supported roll of TopBottomCorrectionRotation
+ */
+@Serializable
+internal data class RollSupport(
+    /**
+     * maximum roll volume
+     */
+    val maxRoll: Float,
+
+    /**
+     * minimum roll volume
+     */
+    val minRoll: Float,
+
+    /**
+     * roll step size
+     */
+    val stepSize: Float
+)
+
+/**
+ * Supported yaw of TopBottomCorrectionRotation
+ */
+@Serializable
+internal data class YawSupport(
+    /**
+     * maximum yaw volume
+     */
+    val maxYaw: Float,
+
+    /**
+     * minimum yaw volume
+     */
+    val minYaw: Float,
+
+    /**
+     * yaw step size
+     */
+    val stepSize: Float
 )
 
 /**

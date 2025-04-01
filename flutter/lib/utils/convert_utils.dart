@@ -406,6 +406,36 @@ class ConvertUtils {
     return rotation;
   }
 
+  static TopBottomCorrectionRotationSupport?
+      convertTopBottomCorrectionRotationSupport(Map<dynamic, dynamic>? data) {
+    if (data == null) {
+      return null;
+    }
+
+    var pitchData = data['pitch'];
+    var rollData = data['roll'];
+    var yawData = data['yaw'];
+
+    var support = TopBottomCorrectionRotationSupport(
+      pitch: TopBottomCorrectionRotationValueSupport(
+        max: double.parse(pitchData['max']),
+        min: double.parse(pitchData['min']),
+        stepSize: double.parse(pitchData['stepSize']),
+      ),
+      roll: TopBottomCorrectionRotationValueSupport(
+        max: double.parse(rollData['max']),
+        min: double.parse(rollData['min']),
+        stepSize: double.parse(rollData['stepSize']),
+      ),
+      yaw: TopBottomCorrectionRotationValueSupport(
+        max: double.parse(yawData['max']),
+        min: double.parse(yawData['min']),
+        stepSize: double.parse(yawData['stepSize']),
+      ),
+    );
+    return support;
+  }
+
   static Options convertOptions(Map<dynamic, dynamic> data) {
     var result = Options();
     for (var entry in data.entries) {
@@ -581,6 +611,10 @@ class ConvertUtils {
         case OptionNameEnum.topBottomCorrectionRotation:
           result.topBottomCorrectionRotation =
               convertTopBottomCorrectionRotation(entry.value);
+          break;
+        case OptionNameEnum.topBottomCorrectionRotationSupport:
+          result.topBottomCorrectionRotationSupport =
+              convertTopBottomCorrectionRotationSupport(entry.value);
           break;
         case OptionNameEnum.totalSpace:
           result.totalSpace = entry.value;

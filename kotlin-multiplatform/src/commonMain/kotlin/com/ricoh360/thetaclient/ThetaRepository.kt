@@ -1013,6 +1013,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _topBottomCorrectionRotationSupport
+         */
+        TopBottomCorrectionRotationSupport("_topBottomCorrectionRotationSupport", ThetaRepository.TopBottomCorrectionRotationSupport::class),
+
+        /**
+         * Option name
          * totalSpace
          */
         TotalSpace("totalSpace", Long::class),
@@ -1449,6 +1455,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var topBottomCorrectionRotation: TopBottomCorrectionRotation? = null,
 
         /**
+         * @see TopBottomCorrectionRotationSupport
+         */
+        var topBottomCorrectionRotationSupport: TopBottomCorrectionRotationSupport? = null,
+
+        /**
          * Total storage space (byte).
          */
         var totalSpace: Long? = null,
@@ -1553,6 +1564,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             timeShift = null,
             topBottomCorrection = null,
             topBottomCorrectionRotation = null,
+            topBottomCorrectionRotationSupport = null,
             totalSpace = null,
             username = null,
             videoStitching = null,
@@ -1620,6 +1632,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             timeShift = options._timeShift?.let { TimeShiftSetting(it) },
             topBottomCorrection = options._topBottomCorrection?.let { TopBottomCorrectionOptionEnum.get(it) },
             topBottomCorrectionRotation = options._topBottomCorrectionRotation?.let { TopBottomCorrectionRotation(it) },
+            topBottomCorrectionRotationSupport = options._topBottomCorrectionRotationSupport?.let { TopBottomCorrectionRotationSupport(it) },
             totalSpace = options.totalSpace,
             shutterVolume = options._shutterVolume,
             username = options._username,
@@ -1687,6 +1700,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _timeShift = timeShift?.toTransferredTimeShift(),
                 _topBottomCorrection = topBottomCorrection?.value,
                 _topBottomCorrectionRotation = topBottomCorrectionRotation?.toTransferredTopBottomCorrectionRotation(),
+                _topBottomCorrectionRotationSupport = topBottomCorrectionRotationSupport?.toTransferredTopBottomCorrectionRotationSupport(),
                 totalSpace = totalSpace,
                 _shootingMethod = shootingMethod?.value,
                 shutterSpeed = shutterSpeed?.value,
@@ -1766,6 +1780,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.TimeShift -> timeShift
                 OptionNameEnum.TopBottomCorrection -> topBottomCorrection
                 OptionNameEnum.TopBottomCorrectionRotation -> topBottomCorrectionRotation
+                OptionNameEnum.TopBottomCorrectionRotationSupport -> topBottomCorrectionRotationSupport
                 OptionNameEnum.TotalSpace -> totalSpace
                 OptionNameEnum.Username -> username
                 OptionNameEnum.VideoStitching -> videoStitching
@@ -1843,6 +1858,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.TimeShift -> timeShift = value as TimeShiftSetting
                 OptionNameEnum.TopBottomCorrection -> topBottomCorrection = value as TopBottomCorrectionOptionEnum
                 OptionNameEnum.TopBottomCorrectionRotation -> topBottomCorrectionRotation = value as TopBottomCorrectionRotation
+                OptionNameEnum.TopBottomCorrectionRotationSupport -> topBottomCorrectionRotationSupport = value as TopBottomCorrectionRotationSupport
                 OptionNameEnum.TotalSpace -> totalSpace = value as Long
                 OptionNameEnum.Username -> username = value as String
                 OptionNameEnum.VideoStitching -> videoStitching = value as VideoStitchingEnum
@@ -6000,9 +6016,9 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         val yaw: Float
     ) {
         internal constructor(rotation: com.ricoh360.thetaclient.transferred.TopBottomCorrectionRotation) : this(
-            pitch = rotation.pitch ?: 0f,
-            roll = rotation.roll ?: 0f,
-            yaw = rotation.yaw ?: 0f
+            pitch = rotation.pitch.toFloatOrNull() ?: 0.0f,
+            roll = rotation.roll.toFloatOrNull() ?: 0.0f,
+            yaw = rotation.yaw.toFloatOrNull() ?: 0.0f
         )
 
         /**
@@ -6011,10 +6027,126 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * @return transferred.TopBottomCorrectionRotation
          */
         internal fun toTransferredTopBottomCorrectionRotation(): com.ricoh360.thetaclient.transferred.TopBottomCorrectionRotation {
-            return com.ricoh360.thetaclient.transferred.TopBottomCorrectionRotation(
-                pitch = pitch,
-                roll = roll,
-                yaw = yaw
+            return TopBottomCorrectionRotation(
+                pitch = pitch.toString(),
+                roll = roll.toString(),
+                yaw = yaw.toString()
+            )
+        }
+    }
+
+    /**
+     * Supported TopBottomCorrectionRotation
+     */
+    data class TopBottomCorrectionRotationSupport(
+        /**
+         * Supported pitch
+         */
+        val pitch: TopBottomCorrectionRotationValueSupport,
+
+        /**
+         * Supported roll
+         */
+        val roll: TopBottomCorrectionRotationValueSupport,
+
+        /**
+         * Supported yaw
+         */
+        val yaw: TopBottomCorrectionRotationValueSupport
+    ) {
+        internal constructor(rotation: com.ricoh360.thetaclient.transferred.TopBottomCorrectionRotationSupport) : this(
+            pitch = TopBottomCorrectionRotationValueSupport(rotation.pitch),
+            roll = TopBottomCorrectionRotationValueSupport(rotation.roll),
+            yaw = TopBottomCorrectionRotationValueSupport(rotation.yaw)
+        )
+
+        /**
+         * Convert TopBottomCorrectionRotationSupport to transferred.TopBottomCorrectionRotationSupport. for ThetaApi.
+         *
+         * @return transferred.TopBottomCorrectionRotationSupport
+         */
+        internal fun toTransferredTopBottomCorrectionRotationSupport(): com.ricoh360.thetaclient.transferred.TopBottomCorrectionRotationSupport {
+            return TopBottomCorrectionRotationSupport(
+                pitch = pitch.toTransferredPitchSupport(),
+                roll = roll.toTransferredRollSupport(),
+                yaw = yaw.toTransferredYawSupport()
+            )
+        }
+    }
+
+    /**
+     * Supported value of TopBottomCorrectionRotation
+     */
+    data class TopBottomCorrectionRotationValueSupport(
+        /**
+         * maximum value
+         */
+        val max: Float,
+
+        /**
+         * minimum value
+         */
+        val min: Float,
+
+        /**
+         * step size
+         */
+        val stepSize: Float
+    ) {
+        internal constructor(support: PitchSupport) : this(
+            max = support.maxPitch,
+            min = support.minPitch,
+            stepSize = support.stepSize
+        )
+
+        internal constructor(support: RollSupport) : this(
+            max = support.maxRoll,
+            min = support.minRoll,
+            stepSize = support.stepSize
+        )
+
+        internal constructor(support: YawSupport) : this(
+            max = support.maxYaw,
+            min = support.minYaw,
+            stepSize = support.stepSize
+        )
+
+        /**
+         * Convert TopBottomCorrectionRotationValueSupport to transferred.PitchSupport. for ThetaApi.
+         *
+         * @return transferred.PitchSupport
+         */
+        internal fun toTransferredPitchSupport(): PitchSupport {
+            return PitchSupport(
+                maxPitch = max,
+                minPitch = min,
+                stepSize = stepSize
+            )
+        }
+
+        /**
+         * Convert TopBottomCorrectionRotationValueSupport to transferred.RollSupport. for ThetaApi.
+         *
+         * @return transferred.RollSupport
+         */
+        internal fun toTransferredRollSupport(): RollSupport {
+            return RollSupport(
+                maxRoll = max,
+                minRoll = min,
+                stepSize = stepSize
+            )
+        }
+
+        /**
+         * Convert TopBottomCorrectionRotationValueSupport to transferred.YawSupport. for ThetaApi.
+         *
+         * @return transferred.YawSupport
+         */
+        internal fun toTransferredYawSupport(): YawSupport {
+            return YawSupport(
+                maxYaw = max,
+                minYaw = min,
+                stepSize = stepSize
             )
         }
     }

@@ -33,7 +33,7 @@ import type { ThetaConfig } from './theta-config';
 import type { ThetaTimeout } from './theta-timeout';
 import { NotifyController } from './notify-controller';
 import { EventWebSocket } from './event-websocket';
-import { convertVideoFormatsImpl } from './libs';
+import { convertOptions, convertVideoFormatsImpl } from './libs';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 /**
@@ -415,8 +415,13 @@ export function deleteAllVideoFiles(): Promise<boolean> {
  * @param {OptionNameEnum[]} optionNames List of OptionNameEnum.
  * @return promise of Options acquired
  */
-export function getOptions(optionNames: OptionNameEnum[]): Promise<Options> {
-  return ThetaClientReactNative.getOptions(optionNames);
+export async function getOptions(
+  optionNames: OptionNameEnum[]
+): Promise<Options> {
+  const response = await ThetaClientReactNative.getOptions(optionNames);
+  const { options, json } = response;
+  const result = convertOptions(options, json);
+  return result;
 }
 
 /**

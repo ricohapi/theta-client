@@ -486,6 +486,24 @@ const optionList: OptionItem[] = [
     },
   },
   {
+    name: 'topBottomCorrectionRotation',
+    value: {
+      optionName: OptionNameEnum.TopBottomCorrectionRotation,
+      editor: (options, onChange) => (
+        <TopBottomCorrectionRotationEdit
+          onChange={onChange}
+          options={options}
+        />
+      ),
+    },
+  },
+  {
+    name: 'topBottomCorrectionRotationSupport',
+    value: {
+      optionName: OptionNameEnum.TopBottomCorrectionRotationSupport,
+    },
+  },
+  {
     name: 'videoStitching',
     value: {
       optionName: OptionNameEnum.VideoStitching,
@@ -502,18 +520,6 @@ const optionList: OptionItem[] = [
       defaultValue: {
         videoStitching: VideoStitchingEnum.NONE,
       },
-    },
-  },
-  {
-    name: 'topBottomCorrectionRotation',
-    value: {
-      optionName: OptionNameEnum.TopBottomCorrectionRotation,
-      editor: (options, onChange) => (
-        <TopBottomCorrectionRotationEdit
-          onChange={onChange}
-          options={options}
-        />
-      ),
     },
   },
   {
@@ -620,6 +626,8 @@ const OptionsScreen: React.FC<
               selectedItem={selectedOption}
               placeHolder="select option"
             />
+          </View>
+          <View style={styles.editorContainerLayout}>
             <Button
               title="Get"
               onPress={onPressGet}

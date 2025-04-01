@@ -9,3 +9,6 @@ export 'file_format.dart';
 export 'max_recordable_time.dart';
 export 'off_delay.dart';
 export 'sleep_delay.dart';
+export 'top_bottom_correction.dart';
+export 'top_bottom_correction_rotation.dart';
+export 'top_bottom_correction_rotation_support.dart';

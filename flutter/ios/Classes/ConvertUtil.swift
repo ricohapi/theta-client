@@ -27,6 +27,16 @@ let KEY_DEFAULT_GATEWAY = "defaultGateway"
 let KEY_COLOR_TEMPERATURE_SUPPORT_MAX = "maxTemperature"
 let KEY_COLOR_TEMPERATURE_SUPPORT_MIN = "minTemperature"
 let KEY_COLOR_TEMPERATURE_SUPPORT_STEP_SIZE = "stepSize"
+let KEY_MAC_ADDRESS = "macAddress"
+let KEY_HOST_NAME = "hostName"
+let KEY_DHCP_LEASE_ADDRESS = "dhcpLeaseAddress"
+let KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH = "pitch"
+let KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL = "roll"
+let KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW = "yaw"
+let KEY_TOP_BOTTOM_CORRECTION_ROTATION_SUPPORT = "topBottomCorrectionRotationSupport"
+let KEY_MAX = "max"
+let KEY_MIN = "min"
+let KEY_STEP_SIZE = "stepSize"
 
 public class ConvertUtil: NSObject {}
 
@@ -781,6 +791,27 @@ func convertResult(rotation: ThetaRepository.TopBottomCorrectionRotation) -> [St
     ]
 }
 
+func convertResult(topBottomCorrectionRotationSupport: ThetaRepository.TopBottomCorrectionRotationSupport) -> [String: Any] {
+    return [
+        KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH: [
+            KEY_MAX: String(topBottomCorrectionRotationSupport.pitch.max),
+            KEY_MIN: String(topBottomCorrectionRotationSupport.pitch.min),
+            KEY_STEP_SIZE: String(topBottomCorrectionRotationSupport.pitch.stepSize)
+        ],
+        KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL: [
+            KEY_MAX: String(topBottomCorrectionRotationSupport.roll.max),
+            KEY_MIN: String(topBottomCorrectionRotationSupport.roll.min),
+            KEY_STEP_SIZE: String(topBottomCorrectionRotationSupport.roll.stepSize)
+        ],
+        KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW: [
+            KEY_MAX: String(topBottomCorrectionRotationSupport.yaw.max),
+            KEY_MIN: String(topBottomCorrectionRotationSupport.yaw.min),
+            KEY_STEP_SIZE: String(topBottomCorrectionRotationSupport.yaw.stepSize)
+        ]
+    ]
+
+}
+
 func convertResult(options: ThetaRepository.Options) -> [String: Any] {
     var result = [String: Any]()
     let nameList = ThetaRepository.OptionNameEnum.values()
@@ -825,6 +856,8 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                 result[name.name] = convertResult(timeshift: timeshift)
             } else if value is ThetaRepository.TopBottomCorrectionRotation, let rotation = value as? ThetaRepository.TopBottomCorrectionRotation {
                 result[name.name] = convertResult(rotation: rotation)
+            } else if value is ThetaRepository.TopBottomCorrectionRotationSupport, let support = value as? ThetaRepository.TopBottomCorrectionRotationSupport {
+                result[name.name] = convertResult(topBottomCorrectionRotationSupport: support)
             }
         }
     }

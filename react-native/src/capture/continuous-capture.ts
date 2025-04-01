@@ -78,10 +78,8 @@ export class ContinuousCapture {
    * @returns ContinuousNumberEnum
    */
   async getContinuousNumber(): Promise<ContinuousNumberEnum> {
-    return (
-      (await getOptions([OptionNameEnum.ContinuousNumber])).continuousNumber ??
-      ContinuousNumberEnum.UNSUPPORTED
-    );
+    const options = await getOptions([OptionNameEnum.ContinuousNumber]);
+    return options?.continuousNumber ?? ContinuousNumberEnum.UNSUPPORTED;
   }
 }
 

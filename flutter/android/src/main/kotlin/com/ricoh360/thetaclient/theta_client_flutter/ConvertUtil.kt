@@ -19,6 +19,28 @@ const val KEY_STATE_INTERNAL_GPS_INFO = "internalGpsInfo"
 const val KEY_COLOR_TEMPERATURE_SUPPORT_MAX = "maxTemperature"
 const val KEY_COLOR_TEMPERATURE_SUPPORT_MIN = "minTemperature"
 const val KEY_COLOR_TEMPERATURE_SUPPORT_STEP_SIZE = "stepSize"
+const val KEY_WLAN_FREQUENCY_CL_MODE_2_4 = "enable2_4"
+const val KEY_WLAN_FREQUENCY_CL_MODE_5_2 = "enable5_2"
+const val KEY_WLAN_FREQUENCY_CL_MODE_5_8 = "enable5_8"
+const val KEY_IP_ADDRESS = "ipAddress"
+const val KEY_MAC_ADDRESS = "macAddress"
+const val KEY_HOST_NAME = "hostName"
+const val KEY_DHCP_LEASE_ADDRESS = "dhcpLeaseAddress"
+const val KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH = "pitch"
+const val KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL = "roll"
+const val KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW = "yaw"
+const val KEY_TOP_BOTTOM_CORRECTION_ROTATION_SUPPORT = "topBottomCorrectionRotationSupport"
+const val KEY_MAX = "max"
+const val KEY_MIN = "min"
+const val KEY_STEP_SIZE = "stepSize"
+const val KEY_SSID = "ssid"
+const val KEY_SSID_STEALTH = "ssidStealth"
+const val KEY_AUTH_MODE = "authMode"
+const val KEY_PASSWORD = "password"
+const val KEY_CONNECTION_PRIORITY = "connectionPriority"
+const val KEY_SUBNET_MASK = "subnetMask"
+const val KEY_DEFAULT_GATEWAY = "defaultGateway"
+const val KEY_PROXY = "proxy"
 
 fun toResult(thetaInfo: ThetaInfo): Map<String, Any?> {
     return mapOf(
@@ -569,11 +591,28 @@ fun toResult(timeShift: TimeShiftSetting): Map<String, Any> {
 
 fun toResult(rotation: TopBottomCorrectionRotation): Map<String, Any> {
     return mapOf(
-        "pitch" to rotation.pitch,
-        "roll" to rotation.roll,
-        "yaw" to rotation.yaw
+        KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH to rotation.pitch,
+        KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL to rotation.roll,
+        KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW to rotation.yaw
     )
 }
+
+fun toResult(topBottomCorrectionRotationSupport: TopBottomCorrectionRotationSupport): Map<String, Any> {
+    return mapOf(
+        KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH to toResult(rotationValueSupport = topBottomCorrectionRotationSupport.pitch),
+        KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL to toResult(rotationValueSupport = topBottomCorrectionRotationSupport.roll),
+        KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW to toResult(rotationValueSupport = topBottomCorrectionRotationSupport.yaw)
+    )
+}
+
+fun toResult(rotationValueSupport: TopBottomCorrectionRotationValueSupport): Map<String, Any> {
+    return mapOf(
+        KEY_MAX to rotationValueSupport.max.toString(),
+        KEY_MIN to rotationValueSupport.min.toString(),
+        KEY_STEP_SIZE to rotationValueSupport.stepSize.toString()
+    )
+}
+
 
 fun toResult(options: Options): Map<String, Any> {
     val result = mutableMapOf<String, Any>()
@@ -644,6 +683,10 @@ fun toResult(options: Options): Map<String, Any> {
         } else if (name == OptionNameEnum.TopBottomCorrectionRotation) {
             options.getValue<TopBottomCorrectionRotation>(OptionNameEnum.TopBottomCorrectionRotation)?.let { rotation ->
                 result[OptionNameEnum.TopBottomCorrectionRotation.name] = toResult(rotation)
+            }
+        } else if (name == OptionNameEnum.TopBottomCorrectionRotationSupport) {
+            options.getValue<TopBottomCorrectionRotationSupport>(OptionNameEnum.TopBottomCorrectionRotationSupport)?.let { support ->
+                result[OptionNameEnum.TopBottomCorrectionRotationSupport.name] = toResult(topBottomCorrectionRotationSupport = support)
             }
         } else if (valueOptions.contains(name)) {
             addOptionsValueToMap<Any>(options, name, result)
@@ -960,16 +1003,6 @@ data class SetAccessPointParams(
     val connectionPriority: Int?,
     val proxy: Proxy?,
 )
-
-const val KEY_SSID = "ssid"
-const val KEY_SSID_STEALTH = "ssidStealth"
-const val KEY_AUTH_MODE = "authMode"
-const val KEY_PASSWORD = "password"
-const val KEY_CONNECTION_PRIORITY = "connectionPriority"
-const val KEY_IP_ADDRESS = "ipAddress"
-const val KEY_SUBNET_MASK = "subnetMask"
-const val KEY_DEFAULT_GATEWAY = "defaultGateway"
-const val KEY_PROXY = "proxy"
 
 fun toSetAccessPointParams(arguments: Map<*, *>): SetAccessPointParams {
     val ssid = arguments[KEY_SSID] as? String ?: throw IllegalArgumentException(KEY_SSID)

@@ -30,6 +30,7 @@ export * from './option-sleep-delay';
 export * from './option-time-shift';
 export * from './option-top-bottom-correction';
 export * from './option-top-bottom-correction-rotation';
+export * from './option-top-bottom-correction-rotation-support';
 export * from './option-video-stitching';
 export * from './option-visibility-reduction';
 export * from './option-white-balance-auto-strength';
