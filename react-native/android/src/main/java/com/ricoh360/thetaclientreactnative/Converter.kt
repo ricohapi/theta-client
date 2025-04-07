@@ -45,6 +45,7 @@ const val KEY_TOP_BOTTOM_CORRECTION_ROTATION_SUPPORT = "topBottomCorrectionRotat
 const val KEY_MAX = "max"
 const val KEY_MIN = "min"
 const val KEY_STEP_SIZE = "stepSize"
+const val KEY_GPS_TAG_RECORDING_SUPPORT = "gpsTagRecordingSupport"
 
 val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "aiAutoThumbnail" to OptionNameEnum.AiAutoThumbnail,
@@ -86,6 +87,7 @@ val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "maxRecordableTime" to OptionNameEnum.MaxRecordableTime,
   "networkType" to OptionNameEnum.NetworkType,
   "offDelay" to OptionNameEnum.OffDelay,
+  KEY_GPS_TAG_RECORDING_SUPPORT to OptionNameEnum.GpsTagRecordingSupport,
   "password" to OptionNameEnum.Password,
   "powerSaving" to OptionNameEnum.PowerSaving,
   "preset" to OptionNameEnum.Preset,
@@ -360,6 +362,9 @@ fun toResult(options: Options): WritableMap {
     OptionNameEnum.ShutterVolume,
     OptionNameEnum.Username
   )
+  val supportOptions = mapOf<OptionNameEnum, KClass<*>>(
+    OptionNameEnum.GpsTagRecordingSupport to GpsTagRecordingEnum::class
+  )
   OptionNameEnum.values().forEach { name ->
     if (name == OptionNameEnum.AutoBracket) {
       options.autoBracket?.let {
@@ -424,6 +429,8 @@ fun toResult(options: Options): WritableMap {
       }
     } else if (valueOptions.contains(name)) {
       addOptionsValueToMap<Any>(options, name, result)
+    } else if (supportOptions.keys.contains(name)) {
+      addSupportOptionsValueToMap(options, name, result, supportOptions[name]!!)
     } else {
       addOptionsEnumToMap(options, name, result)
     }
@@ -440,6 +447,27 @@ fun <T : Enum<T>> addOptionsEnumToMap(options: Options, name: OptionNameEnum, ob
   if (key == null) return
   options.getValue<T>(name)?.let { value ->
     objects.putString(key, value.toString())
+  }
+}
+
+fun addSupportOptionsValueToMap(
+  options: Options,
+  name: OptionNameEnum,
+  objects: WritableMap,
+  valueClazz: KClass<*>
+) {
+  val key = optionNameEnumToItemName[name] ?: return
+  options.getValue<List<*>>(name)?.let { list ->
+    val array = Arguments.createArray()
+    for (item in list) {
+      when {
+        // for enum value
+        java.lang.Enum::class.java.isAssignableFrom(valueClazz.java) -> {
+          array.pushString(item.toString())
+        }
+      }
+    }
+    objects.putArray(key, array)
   }
 }
 

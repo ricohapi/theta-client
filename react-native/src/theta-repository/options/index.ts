@@ -16,6 +16,7 @@ export * from './option-file-format';
 export * from './option-filter';
 export * from './option-function';
 export * from './option-gain';
+export * from './option-gps-tag-recording';
 export * from './option-image-stitching';
 export * from './option-max-recordable-time';
 export * from './option-network-type';

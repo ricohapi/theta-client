@@ -487,6 +487,11 @@ internal data class Options(
     var _gpsTagRecording: GpsTagRecording? = null,
 
     /**
+     * Supported GpsTagRecording
+     */
+    var _gpsTagRecordingSupport: List<GpsTagRecording>? = null,
+
+    /**
      * Still image stitching setting during shooting.
      */
     var _imageStitching: ImageStitching? = null,
@@ -2190,22 +2195,32 @@ internal enum class Language {
     KO,
 }
 
+internal object GpsTagRecordingSerializer :
+    SerialNameEnumIgnoreUnknownSerializer<GpsTagRecording>(GpsTagRecording.entries, GpsTagRecording.UNKNOWN)
+
 /**
  * gps position information
  */
-@Serializable
-internal enum class GpsTagRecording {
+@Serializable(with = GpsTagRecordingSerializer::class)
+internal enum class GpsTagRecording : SerialNameEnum {
+    /**
+     * Undefined value
+     */
+    UNKNOWN,
+
     /**
      * Assign position information
      */
-    @SerialName("on")
-    ON,
+    ON {
+        override val serialName: String = "on"
+    },
 
     /**
      * Do not assign position information
      */
-    @SerialName("off")
-    OFF,
+    OFF {
+        override val serialName: String = "off"
+    },
 }
 
 /**

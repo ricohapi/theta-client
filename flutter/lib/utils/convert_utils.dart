@@ -536,6 +536,10 @@ class ConvertUtils {
         case OptionNameEnum.gpsInfo:
           result.gpsInfo = convertGpsInfo(entry.value);
           break;
+        case OptionNameEnum.gpsTagRecordingSupport:
+          result.gpsTagRecordingSupport =
+              convertSupportValueList(entry.value, GpsTagRecordingEnum.values);
+          break;
         case OptionNameEnum.imageStitching:
           result.imageStitching = ImageStitchingEnum.getValue(entry.value);
           break;
@@ -650,6 +654,19 @@ class ConvertUtils {
       var value = options.getValue(element);
       if (value != null) {
         result[element.rawValue] = convertOptionValueToMapValue(value);
+      }
+    }
+    return result;
+  }
+
+  static List<T> convertSupportValueList<T extends Enum>(
+      List<Object?> supportValueList, List<T?> enumValues) {
+    List<T> result = [];
+    for (var value in supportValueList) {
+      var element = enumValues
+          .firstWhere((element) => element.toString() == value.toString());
+      if (element != null) {
+        result.add(element);
       }
     }
     return result;

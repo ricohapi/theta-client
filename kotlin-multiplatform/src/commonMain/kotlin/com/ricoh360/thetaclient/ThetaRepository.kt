@@ -891,6 +891,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _gpsTagRecordingSupport
+         */
+        GpsTagRecordingSupport("_gpsTagRecordingSupport", List::class),
+
+        /**
+         * Option name
          * _imageStitching
          */
         ImageStitching("_imageStitching", ImageStitchingEnum::class),
@@ -1325,6 +1331,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var gpsInfo: GpsInfo? = null,
 
         /**
+         * Supported GpsTagRecording
+         * For THETA X
+         */
+        var gpsTagRecordingSupport: List<GpsTagRecordingEnum>? = null,
+
+        /**
          * Still image stitching setting during shooting.
          */
         var imageStitching: ImageStitchingEnum? = null,
@@ -1540,6 +1552,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             function = null,
             gain = null,
             gpsInfo = null,
+            gpsTagRecordingSupport = null,
             imageStitching = null,
             isGpsOn = null,
             iso = null,
@@ -1609,6 +1622,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             function = options._function?.let { ShootingFunctionEnum.get(it) },
             gain = options._gain?.let { GainEnum.get(it) },
             gpsInfo = options.gpsInfo?.let { GpsInfo(it) },
+            gpsTagRecordingSupport = options._gpsTagRecordingSupport?.map { GpsTagRecordingEnum.get(it) },
             imageStitching = options._imageStitching?.let { ImageStitchingEnum.get(it) },
             isGpsOn = options._gpsTagRecording?.let { it == GpsTagRecording.ON },
             iso = options.iso?.let { IsoEnum.get(it) },
@@ -1680,6 +1694,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _gain = gain?.value,
                 gpsInfo = gpsInfo?.toTransferredGpsInfo(),
                 _gpsTagRecording = isGpsOn?.let { if (it) GpsTagRecording.ON else GpsTagRecording.OFF },
+                _gpsTagRecordingSupport = gpsTagRecordingSupport?.map { it.value },
                 _imageStitching = imageStitching?.value,
                 iso = iso?.value,
                 isoAutoHighLimit = isoAutoHighLimit?.value,
@@ -1756,6 +1771,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.Function -> function
                 OptionNameEnum.Gain -> gain
                 OptionNameEnum.GpsInfo -> gpsInfo
+                OptionNameEnum.GpsTagRecordingSupport -> gpsTagRecordingSupport
                 OptionNameEnum.ImageStitching -> imageStitching
                 OptionNameEnum.IsGpsOn -> isGpsOn
                 OptionNameEnum.Iso -> iso
@@ -1834,6 +1850,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.Function -> function = value as ShootingFunctionEnum
                 OptionNameEnum.Gain -> gain = value as GainEnum
                 OptionNameEnum.GpsInfo -> gpsInfo = value as GpsInfo
+                OptionNameEnum.GpsTagRecordingSupport -> gpsTagRecordingSupport = value as List<GpsTagRecordingEnum>
                 OptionNameEnum.ImageStitching -> imageStitching = value as ImageStitchingEnum
                 OptionNameEnum.IsGpsOn -> isGpsOn = value as Boolean
                 OptionNameEnum.Iso -> iso = value as IsoEnum
@@ -4376,6 +4393,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     enum class GpsTagRecordingEnum(internal val value: GpsTagRecording) {
         /**
+         * Undefined value
+         */
+        UNKNOWN(GpsTagRecording.UNKNOWN),
+
+        /**
          * Position information assigning ON.
          */
         ON(GpsTagRecording.ON),
@@ -4392,8 +4414,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value Turns position information assigning for ThetaApi.
              * @return GpsTagRecordingEnum
              */
-            internal fun get(value: GpsTagRecording): GpsTagRecordingEnum? {
-                return values().firstOrNull { it.value == value }
+            internal fun get(value: GpsTagRecording): GpsTagRecordingEnum {
+                return entries.firstOrNull { it.value == value } ?: UNKNOWN
             }
         }
     }

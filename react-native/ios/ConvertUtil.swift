@@ -98,6 +98,7 @@ let KEY_TOP_BOTTOM_CORRECTION_ROTATION_SUPPORT = "topBottomCorrectionRotationSup
 let KEY_MAX = "max"
 let KEY_MIN = "min"
 let KEY_STEP_SIZE = "stepSize"
+let KEY_GPS_TAG_RECORDING_SUPPORT = "gpsTagRecordingSupport"
 
 public class ConvertUtil: NSObject {}
 
@@ -136,6 +137,7 @@ let optionItemNameToEnum = [
     "function": ThetaRepository.OptionNameEnum.function,
     "gain": ThetaRepository.OptionNameEnum.gain,
     "gpsInfo": ThetaRepository.OptionNameEnum.gpsinfo,
+    KEY_GPS_TAG_RECORDING_SUPPORT: ThetaRepository.OptionNameEnum.gpstagrecordingsupport,
     "imageStitching": ThetaRepository.OptionNameEnum.imagestitching,
     "isGpsOn": ThetaRepository.OptionNameEnum.isgpson,
     "iso": ThetaRepository.OptionNameEnum.iso,
@@ -168,6 +170,10 @@ let optionItemNameToEnum = [
     "whiteBalance": ThetaRepository.OptionNameEnum.whitebalance,
     "whiteBalanceAutoStrength": ThetaRepository.OptionNameEnum.whitebalanceautostrength,
     "wlanFrequency": ThetaRepository.OptionNameEnum.wlanfrequency,
+]
+
+let supportOptions: [ThetaRepository.OptionNameEnum : Any.Type] = [
+    ThetaRepository.OptionNameEnum.gpstagrecordingsupport: ThetaRepository.GpsTagRecordingEnum.self,
 ]
 
 let optionNameEnumToItemName = {
@@ -462,6 +468,8 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                     result[key] =
                         sleepDelay.sec == 0
                             ? ThetaRepository.SleepDelayEnum.disable.name : sleepDelay.sec
+                } else if let enumValue = value as? [AnyObject], let enumType = supportOptions[name] {
+                  result[key] = convertSupportResult(supportValueList: enumValue, enumType: enumType)
                 }
                 // TODO: Add class item when adding options
             }
@@ -1252,6 +1260,24 @@ func convertResult(cameraEvent: CameraEvent) -> [String: Any]
         result[KEY_STATE] = convertResult(thetaState: value)
     }
 
+    return result
+}
+
+/**
+ * Convert support values
+ *
+ * @param supportValueList Support values
+ * @param enumType values type. e.g. ThetaRepository.WlanStandardInfoEnum.self , Int.self {class}.seff
+ */
+func convertSupportResult(supportValueList: [Any], enumType: Any.Type) -> [Any] {
+    var result = [Any]()
+    for item in supportValueList {
+        // for enum value
+        if let value = item as? KotlinEnum<AnyObject>,
+           enumType is KotlinEnum<AnyObject>.Type {
+            result.append(value.name)
+        }
+    }
     return result
 }
 

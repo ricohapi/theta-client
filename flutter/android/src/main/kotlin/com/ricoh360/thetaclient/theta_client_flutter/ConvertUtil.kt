@@ -4,6 +4,7 @@ import com.ricoh360.thetaclient.DigestAuth
 import com.ricoh360.thetaclient.ThetaRepository.*
 import com.ricoh360.thetaclient.capture.*
 import io.flutter.plugin.common.MethodCall
+import kotlin.reflect.KClass
 
 const val KEY_CLIENT_MODE = "clientMode"
 const val KEY_NOTIFY_ID = "id"
@@ -633,6 +634,9 @@ fun toResult(options: Options): Map<String, Any> {
         OptionNameEnum.ShutterVolume,
         OptionNameEnum.Username
     )
+    val supportOptions = mapOf<OptionNameEnum, KClass<*>>(
+        OptionNameEnum.GpsTagRecordingSupport to GpsTagRecordingEnum::class
+    )
     OptionNameEnum.values().forEach { name ->
         if (name == OptionNameEnum.AutoBracket) {
             options.getValue<BracketSettingList>(OptionNameEnum.AutoBracket)?.let { autoBracket ->
@@ -690,6 +694,8 @@ fun toResult(options: Options): Map<String, Any> {
             }
         } else if (valueOptions.contains(name)) {
             addOptionsValueToMap<Any>(options, name, result)
+        } else if (supportOptions.keys.contains(name)) {
+            addSupportOptionsValueToMap(options, name, result, supportOptions[name]!!)
         } else {
             addOptionsEnumToMap(options, name, result)
         }
@@ -706,6 +712,26 @@ fun <T : Enum<T>> addOptionsEnumToMap(options: Options, name: OptionNameEnum, ma
 fun <T> addOptionsValueToMap(options: Options, name: OptionNameEnum, map: MutableMap<String, Any>) {
     options.getValue<T>(name)?.let {
         map[name.name] = it
+    }
+}
+
+fun addSupportOptionsValueToMap(
+    options: Options,
+    name: OptionNameEnum,
+    map: MutableMap<String, Any>,
+    valueClazz: KClass<*>
+) {
+    options.getValue<List<*>>(name)?.let { list ->
+        val array = mutableListOf<String>()
+        for (item in list) {
+            when {
+                // for enum value
+                java.lang.Enum::class.java.isAssignableFrom(valueClazz.java) -> {
+                    array.add(item.toString())
+                }
+            }
+        }
+        map[name.name] = array
     }
 }
 

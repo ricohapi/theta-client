@@ -35,6 +35,7 @@ import type { FileFormatEnum } from './option-file-format';
 import type { CameraPowerEnum } from './option-camera-power';
 import type { ColorTemperatureSupport } from './option-color-temperature-support';
 import type { TopBottomCorrectionRotationSupport } from './option-top-bottom-correction-rotation-support';
+import type { GpsTagRecordingEnum } from './option-gps-tag-recording';
 
 /** Aperture value. */
 export const ApertureEnum = {
@@ -160,18 +161,6 @@ export type GpsInfo = {
   /** Location information acquisition time */
   dateTimeZone: string;
 };
-
-/** Turns position information assigning ON/OFF. */
-export const GpsTagRecordingEnum = {
-  /** Position information assigning ON. */
-  ON: 'ON',
-  /** Position information assigning OFF. */
-  OFF: 'OFF',
-} as const;
-
-/** type definition of GpsTagRecordingEnum */
-export type GpsTagRecordingEnum =
-  (typeof GpsTagRecordingEnum)[keyof typeof GpsTagRecordingEnum];
 
 /** ISO sensitivity. */
 export const IsoEnum = {
@@ -391,6 +380,8 @@ export const OptionNameEnum = {
   Gain: 'Gain',
   /** gpsInfo */
   GpsInfo: 'GpsInfo',
+  /** _gpsTagRecordingSupport */
+  GpsTagRecordingSupport: 'GpsTagRecordingSupport',
   /** imageStitching */
   ImageStitching: 'ImageStitching',
   /** isGpsOn */
@@ -574,6 +565,11 @@ export type Options = {
   gain?: GainEnum;
   /** GPS location information. */
   gpsInfo?: GpsInfo;
+  /**
+   * Supported GpsTagRecording
+   * For THETA X
+   */
+  gpsTagRecordingSupport?: GpsTagRecordingEnum[];
   /** Still image stitching setting during shooting. */
   imageStitching?: ImageStitchingEnum;
   /** Turns position information assigning ON/OFF. */

@@ -38,6 +38,10 @@ let KEY_MAX = "max"
 let KEY_MIN = "min"
 let KEY_STEP_SIZE = "stepSize"
 
+let supportOptions: [ThetaRepository.OptionNameEnum : Any.Type] = [
+    ThetaRepository.OptionNameEnum.gpstagrecordingsupport: ThetaRepository.GpsTagRecordingEnum.self
+]
+
 public class ConvertUtil: NSObject {}
 
 func getEnumValue<T, E: KotlinEnum<T>>(values: KotlinArray<E>, name: String) -> E? {
@@ -858,6 +862,8 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                 result[name.name] = convertResult(rotation: rotation)
             } else if value is ThetaRepository.TopBottomCorrectionRotationSupport, let support = value as? ThetaRepository.TopBottomCorrectionRotationSupport {
                 result[name.name] = convertResult(topBottomCorrectionRotationSupport: support)
+            } else if let enumValues = value as? [AnyObject], let enumType = supportOptions[name] {
+                result[name.name] = convertSupportResult(supportValueList: enumValues, enumType: enumType)
             }
         }
     }
@@ -1256,4 +1262,16 @@ func toSetAccessPointStaticallyParams(params: [String: Any?]) throws -> SetAcces
         subnetMask: subnetMask,
         defaultGateway: defaultGateway
     )
+}
+
+func convertSupportResult(supportValueList: [Any], enumType: Any.Type) -> [Any] {
+    var result = [Any]()
+    for item in supportValueList {
+        // for enum value
+        if let value = item as? KotlinEnum<AnyObject>,
+           enumType is KotlinEnum<AnyObject>.Type {
+            result.append(value.name)
+        }
+    }
+    return result
 }

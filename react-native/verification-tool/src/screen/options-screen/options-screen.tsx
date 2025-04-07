@@ -275,6 +275,12 @@ const optionList: OptionItem[] = [
     },
   },
   {
+    name: 'gpsTagRecordingSupport',
+    value: {
+      optionName: OptionNameEnum.GpsTagRecordingSupport,
+    },
+  },
+  {
     name: 'iso',
     value: {
       optionName: OptionNameEnum.Iso,

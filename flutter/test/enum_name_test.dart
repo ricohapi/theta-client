@@ -613,18 +613,6 @@ void main() {
     }
   });
 
-  test('GpsTagRecordingEnum', () async {
-    List<List<dynamic>> data = [
-      [GpsTagRecordingEnum.on, 'ON'],
-      [GpsTagRecordingEnum.off, 'OFF'],
-    ];
-    expect(data.length, GpsTagRecordingEnum.values.length,
-        reason: 'enum count');
-    for (int i = 0; i < data.length; i++) {
-      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
-    }
-  });
-
   test('IsoEnum', () async {
     List<List<dynamic>> data = [
       [IsoEnum.isoAuto, 'ISO_AUTO'],

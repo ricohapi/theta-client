@@ -1307,6 +1307,9 @@ enum OptionNameEnum {
   /// Option name gpsInfo
   gpsInfo('GpsInfo', GpsInfo),
 
+  /// Option name gpsTagRecordingSupport
+  gpsTagRecordingSupport('GpsTagRecordingSupport', List<GpsTagRecordingEnum>),
+
   /// Option name imageStitching
   imageStitching('ImageStitching', ImageStitchingEnum),
 
@@ -3075,26 +3078,6 @@ enum WlanFrequencyEnum {
   }
 }
 
-/// Turns position information assigning ON/OFF.
-///
-/// For RICOH THETA X
-enum GpsTagRecordingEnum {
-  /// Position information assigning ON.
-  on('ON'),
-
-  /// Position information assigning OFF.
-  off('OFF');
-
-  final String rawValue;
-
-  const GpsTagRecordingEnum(this.rawValue);
-
-  @override
-  String toString() {
-    return rawValue;
-  }
-}
-
 /// GPS information.
 /// 65535 is set for latitude and longitude when disabling the GPS setting at
 /// RICOH THETA Z1 and prior.
@@ -3351,6 +3334,10 @@ class Options {
   /// In order to append the location information, this property should be specified by the client.
   GpsInfo? gpsInfo;
 
+  /// Supported GpsTagRecording
+  /// For THETA X
+  List<GpsTagRecordingEnum>? gpsTagRecordingSupport;
+
   /// Still image stitching setting during shooting.
   ImageStitchingEnum? imageStitching;
 
@@ -3531,6 +3518,8 @@ class Options {
         return gain as T;
       case OptionNameEnum.gpsInfo:
         return gpsInfo as T;
+      case OptionNameEnum.gpsTagRecordingSupport:
+        return gpsTagRecordingSupport as T;
       case OptionNameEnum.imageStitching:
         return imageStitching as T;
       case OptionNameEnum.isGpsOn:
@@ -3695,6 +3684,8 @@ class Options {
       case OptionNameEnum.gpsInfo:
         gpsInfo = value;
         break;
+      case OptionNameEnum.gpsTagRecordingSupport:
+        throw Exception('This value cannot be set');
       case OptionNameEnum.imageStitching:
         imageStitching = value;
         break;

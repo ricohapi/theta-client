@@ -127,6 +127,7 @@ class OptionsTest {
         val function = ThetaRepository.ShootingFunctionEnum.NORMAL
         val gain = ThetaRepository.GainEnum.NORMAL
         val gpsInfo = ThetaRepository.GpsInfo.disabled
+        val gpsTagRecordingSupport = listOf(ThetaRepository.GpsTagRecordingEnum.ON, ThetaRepository.GpsTagRecordingEnum.OFF)
         val imageStitching = ThetaRepository.ImageStitchingEnum.AUTO
         val isGpsOn = true
         val iso = ThetaRepository.IsoEnum.ISO_125
@@ -199,6 +200,7 @@ class OptionsTest {
             function = function,
             gain = gain,
             gpsInfo = gpsInfo,
+            gpsTagRecordingSupport = gpsTagRecordingSupport,
             imageStitching = imageStitching,
             isGpsOn = isGpsOn,
             iso = iso,
@@ -267,6 +269,7 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Function), function, "function")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Gain), gain, "gain")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.GpsInfo), gpsInfo, "gpsInfo")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.GpsTagRecordingSupport), gpsTagRecordingSupport, "gpsTagRecordingSupport")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ImageStitching), imageStitching, "imageStitching")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.IsGpsOn), isGpsOn, "isGpsOn")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Iso), iso, "iso")
@@ -520,6 +523,7 @@ class OptionsTest {
         val function = Pair(ShootingFunction.NORMAL, ThetaRepository.ShootingFunctionEnum.NORMAL)
         val gain = Pair(Gain.NORMAL, ThetaRepository.GainEnum.NORMAL)
         val gpsInfo = Pair(GpsInfo(65535.0f, 65535.0f, 0f, null, null), ThetaRepository.GpsInfo.disabled)
+        val gpsTagRecordingSupport = Pair(listOf(GpsTagRecording.ON, GpsTagRecording.OFF), listOf(ThetaRepository.GpsTagRecordingEnum.ON, ThetaRepository.GpsTagRecordingEnum.OFF))
         val imageStitching = Pair(ImageStitching.AUTO, ThetaRepository.ImageStitchingEnum.AUTO)
         val isGpsOn = Pair(GpsTagRecording.ON, true)
         val iso = Pair(125, ThetaRepository.IsoEnum.ISO_125)
@@ -596,6 +600,7 @@ class OptionsTest {
             _gain = gain.first,
             gpsInfo = gpsInfo.first,
             _gpsTagRecording = isGpsOn.first,
+            _gpsTagRecordingSupport = gpsTagRecordingSupport.first,
             _imageStitching = imageStitching.first,
             iso = iso.first,
             isoAutoHighLimit = isoAutoHighLimit.first,
@@ -658,6 +663,7 @@ class OptionsTest {
         assertEquals(options.function, function.second, "function")
         assertEquals(options.gain, gain.second, "gain")
         assertEquals(options.gpsInfo, gpsInfo.second, "gpsInfo")
+        assertEquals(options.gpsTagRecordingSupport, gpsTagRecordingSupport.second, "gpsTagRecordingSupport")
         assertEquals(options.imageStitching, imageStitching.second, "imageStitching")
         assertEquals(options.isGpsOn, isGpsOn.second, "isGpsOn")
         assertEquals(options.iso, iso.second, "iso")
@@ -788,6 +794,7 @@ class OptionsTest {
             GpsInfo(65535.0f, 65535.0f, 0f, "", ""),
             ThetaRepository.GpsInfo(65535.0f, 65535.0f, 0f, "")
         )
+        val gpsTagRecordingSupport = Pair(listOf(GpsTagRecording.ON, GpsTagRecording.OFF), listOf(ThetaRepository.GpsTagRecordingEnum.ON, ThetaRepository.GpsTagRecordingEnum.OFF))
         val imageStitching = Pair(ImageStitching.AUTO, ThetaRepository.ImageStitchingEnum.AUTO)
         val isGpsOn = Pair(GpsTagRecording.ON, true)
         val iso = Pair(125, ThetaRepository.IsoEnum.ISO_125)
@@ -863,6 +870,7 @@ class OptionsTest {
             function = function.second,
             gain = gain.second,
             gpsInfo = gpsInfo.second,
+            gpsTagRecordingSupport = gpsTagRecordingSupport.second,
             imageStitching = imageStitching.second,
             isGpsOn = isGpsOn.second,
             iso = iso.second,
@@ -927,6 +935,7 @@ class OptionsTest {
         assertEquals(options._gain, gain.first, "gain")
         assertEquals(options.gpsInfo, gpsInfo.first, "gpsInfo")
         assertEquals(options._gpsTagRecording, isGpsOn.first, "isGpsOn")
+        assertEquals(options._gpsTagRecordingSupport, gpsTagRecordingSupport.first, "gpsTagRecordingSupport")
         assertEquals(options._imageStitching, imageStitching.first, "imageStitching")
         assertEquals(options.iso, iso.first, "iso")
         assertEquals(options.isoAutoHighLimit, isoAutoHighLimit.first, "isoAutoHighLimit")
