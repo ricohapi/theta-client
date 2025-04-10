@@ -20,6 +20,7 @@ let KEY_REQUEST_TIMEOUT = "requestTimeout"
 let KEY_SOCKET_TIMEOUT = "socketTimeout"
 let KEY_THETA_MODEL = "thetaModel"
 let KEY_TIMESHIFT = "timeShift"
+let KEY_AI_AUTO_THUMBNAIL_SUPPORT = "aiAutoThumbnailSupport"
 let KEY_APERTURE = "aperture"
 let KEY_CAPTURE_INTERVAL = "captureInterval"
 let KEY_COMPOSITE_SHOOTING_OUTPUT_INTERVAL = "compositeShootingOutputInterval"
@@ -107,6 +108,7 @@ public class ConvertUtil: NSObject {}
 let optionItemNameToEnum = [
     // TODO: Add items when adding options
     "aiAutoThumbnail": ThetaRepository.OptionNameEnum.aiautothumbnail,
+    KEY_AI_AUTO_THUMBNAIL_SUPPORT: ThetaRepository.OptionNameEnum.aiautothumbnailsupport,
     "aperture": ThetaRepository.OptionNameEnum.aperture,
     "autoBracket": ThetaRepository.OptionNameEnum.autobracket,
     "bitrate": ThetaRepository.OptionNameEnum.bitrate,
@@ -174,6 +176,7 @@ let optionItemNameToEnum = [
 
 let supportOptions: [ThetaRepository.OptionNameEnum : Any.Type] = [
     ThetaRepository.OptionNameEnum.gpstagrecordingsupport: ThetaRepository.GpsTagRecordingEnum.self,
+    ThetaRepository.OptionNameEnum.aiautothumbnailsupport: ThetaRepository.AiAutoThumbnailEnum.self,
 ]
 
 let optionNameEnumToItemName = {

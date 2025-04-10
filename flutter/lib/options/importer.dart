@@ -1,6 +1,7 @@
 /// Options
 library;
 
+export 'ai_auto_thumbnail.dart';
 export 'bluetooth_role.dart';
 export 'camera_power.dart';
 export 'color_temperature_support.dart';

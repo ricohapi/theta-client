@@ -17,13 +17,13 @@ void main() {
         .setMockMethodCallHandler(channel, null);
   });
 
-  test('GpsTagRecordingEnum const', () async {
+  test('AiAutoThumbnailEnum const', () async {
     List<List<dynamic>> data = [
-      [GpsTagRecordingEnum.unknown, 'UNKNOWN'],
-      [GpsTagRecordingEnum.on, 'ON'],
-      [GpsTagRecordingEnum.off, 'OFF'],
+      [AiAutoThumbnailEnum.unknown, 'UNKNOWN'],
+      [AiAutoThumbnailEnum.on, 'ON'],
+      [AiAutoThumbnailEnum.off, 'OFF'],
     ];
-    expect(data.length, GpsTagRecordingEnum.values.length,
+    expect(data.length, AiAutoThumbnailEnum.values.length,
         reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);

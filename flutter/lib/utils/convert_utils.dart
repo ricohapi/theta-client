@@ -444,6 +444,10 @@ class ConvertUtils {
         case OptionNameEnum.aiAutoThumbnail:
           result.aiAutoThumbnail = AiAutoThumbnailEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.aiAutoThumbnailSupport:
+          result.aiAutoThumbnailSupport =
+              convertSupportValueList(entry.value, AiAutoThumbnailEnum.values);
+          break;
         case OptionNameEnum.aperture:
           result.aperture = ApertureEnum.getValue(entry.value);
           break;

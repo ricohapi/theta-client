@@ -1461,22 +1461,32 @@ internal enum class Gain {
     MUTE,
 }
 
+internal object AiAutoThumbnailSerializer :
+     SerialNameEnumIgnoreUnknownSerializer<AiAutoThumbnail>(AiAutoThumbnail.entries, AiAutoThumbnail.UNKNOWN)
+
 /**
  * AI auto thumbnail setting
  */
-@Serializable
-internal enum class AiAutoThumbnail {
+@Serializable(with = AiAutoThumbnailSerializer::class)
+internal enum class AiAutoThumbnail: SerialNameEnum {
+    /**
+     * Undefined value
+     */
+    UNKNOWN,
+    
     /**
      * AI auto setting ON
      */
-    @SerialName("ON")
-    ON,
+    ON {
+        override val serialName: String = "ON"
+    },
 
     /**
      * AI auto setting OFF
      */
-    @SerialName("OFF")
-    OFF,
+    OFF {
+        override val serialName: String = "OFF"
+    },
 }
 
 /**

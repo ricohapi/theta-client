@@ -635,7 +635,8 @@ fun toResult(options: Options): Map<String, Any> {
         OptionNameEnum.Username
     )
     val supportOptions = mapOf<OptionNameEnum, KClass<*>>(
-        OptionNameEnum.GpsTagRecordingSupport to GpsTagRecordingEnum::class
+        OptionNameEnum.GpsTagRecordingSupport to GpsTagRecordingEnum::class,
+        OptionNameEnum.AiAutoThumbnailSupport to AiAutoThumbnailEnum::class,
     )
     OptionNameEnum.values().forEach { name ->
         if (name == OptionNameEnum.AutoBracket) {

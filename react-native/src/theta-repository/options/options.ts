@@ -322,6 +322,8 @@ export type WhiteBalanceEnum =
 export const OptionNameEnum = {
   /** _aiAutoThumbnail */
   AiAutoThumbnail: 'AiAutoThumbnail',
+  /** _aiAutoThumbnailSupport */
+  AiAutoThumbnailSupport: 'AiAutoThumbnailSupport',
   /** aperture */
   Aperture: 'Aperture',
   /** autoBracket */
@@ -456,6 +458,8 @@ export type OptionNameEnum =
 export type Options = {
   /** AI auto thumbnail setting. */
   aiAutoThumbnail?: AiAutoThumbnailEnum;
+  /** Supported AI auto thumbnail setting. */
+  aiAutoThumbnailSupport?: AiAutoThumbnailEnum[];
   /** Aperture value. */
   aperture?: ApertureEnum;
   /**  */

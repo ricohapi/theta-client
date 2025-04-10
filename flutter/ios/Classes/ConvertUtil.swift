@@ -39,7 +39,9 @@ let KEY_MIN = "min"
 let KEY_STEP_SIZE = "stepSize"
 
 let supportOptions: [ThetaRepository.OptionNameEnum : Any.Type] = [
-    ThetaRepository.OptionNameEnum.gpstagrecordingsupport: ThetaRepository.GpsTagRecordingEnum.self
+    ThetaRepository.OptionNameEnum.gpstagrecordingsupport: ThetaRepository.GpsTagRecordingEnum.self,
+    ThetaRepository.OptionNameEnum.aiautothumbnailsupport: ThetaRepository.AiAutoThumbnailEnum.self,
+    
 ]
 
 public class ConvertUtil: NSObject {}

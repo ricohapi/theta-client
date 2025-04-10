@@ -60,6 +60,12 @@ interface OptionItem extends Item {
 
 const optionList: OptionItem[] = [
   {
+    name: 'aiAutoThumbnailSupport',
+    value: {
+      optionName: OptionNameEnum.AiAutoThumbnailSupport,
+    },
+  },
+  {
     name: 'aperture',
     value: {
       optionName: OptionNameEnum.Aperture,

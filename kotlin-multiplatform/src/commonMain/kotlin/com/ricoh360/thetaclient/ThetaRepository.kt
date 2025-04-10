@@ -705,6 +705,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _aiAutoThumbnailSupport
+         */
+        AiAutoThumbnailSupport("_aiAutoThumbnailSupport", List::class),
+
+        /**
+         * Option name
          * aperture
          */
         Aperture("aperture", ApertureEnum::class),
@@ -1099,6 +1105,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * AI auto thumbnail setting.
          */
         var aiAutoThumbnail: AiAutoThumbnailEnum? = null,
+
+        /**
+         * Supported AI auto thumbnail setting.
+         */
+        var aiAutoThumbnailSupport: List<AiAutoThumbnailEnum>? = null,
 
         /**
          * Aperture value.
@@ -1523,6 +1534,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     ) {
         constructor() : this(
             aiAutoThumbnail = null,
+            aiAutoThumbnailSupport = null,
             aperture = null,
             autoBracket = null,
             bitrate = null,
@@ -1589,6 +1601,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         internal constructor(options: com.ricoh360.thetaclient.transferred.Options) : this(
             aiAutoThumbnail = options._aiAutoThumbnail?.let { AiAutoThumbnailEnum.get(it) },
+            aiAutoThumbnailSupport = options._aiAutoThumbnailSupport?.map { AiAutoThumbnailEnum.get(it) },
             aperture = options.aperture?.let { ApertureEnum.get(it) },
             autoBracket = options._autoBracket?.let { BracketSettingList.get(it) },
             bitrate = options._bitrate?.let { BitrateEnum.get(it) },
@@ -1664,6 +1677,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         internal fun toOptions(): com.ricoh360.thetaclient.transferred.Options {
             return Options(
                 _aiAutoThumbnail = aiAutoThumbnail?.value,
+                _aiAutoThumbnailSupport = aiAutoThumbnailSupport?.map { it.value },
                 aperture = aperture?.value,
                 _autoBracket = autoBracket?.toTransferredAutoBracket(),
                 _bitrate = bitrate?.rawValue,
@@ -1742,6 +1756,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             @Suppress("UNCHECKED_CAST")
             return when (name) {
                 OptionNameEnum.AiAutoThumbnail -> aiAutoThumbnail
+                OptionNameEnum.AiAutoThumbnailSupport -> aiAutoThumbnailSupport
                 OptionNameEnum.Aperture -> aperture
                 OptionNameEnum.AutoBracket -> autoBracket
                 OptionNameEnum.Bitrate -> bitrate
@@ -1821,6 +1836,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             }
             when (name) {
                 OptionNameEnum.AiAutoThumbnail -> aiAutoThumbnail = value as AiAutoThumbnailEnum
+                OptionNameEnum.AiAutoThumbnailSupport -> aiAutoThumbnailSupport = value as List<AiAutoThumbnailEnum>
                 OptionNameEnum.Aperture -> aperture = value as ApertureEnum
                 OptionNameEnum.AutoBracket -> autoBracket = value as BracketSettingList
                 OptionNameEnum.Bitrate -> bitrate = value as Bitrate
@@ -1892,6 +1908,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     enum class AiAutoThumbnailEnum(internal val value: AiAutoThumbnail) {
         /**
+         * Undefined value
+         */
+        UNKNOWN(AiAutoThumbnail.UNKNOWN),
+
+        /**
          * AI auto setting ON
          */
         ON(AiAutoThumbnail.ON),
@@ -1908,8 +1929,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value AI auto thumbnail setting.
              * @return AiAutoThumbnailEnum
              */
-            internal fun get(value: AiAutoThumbnail): AiAutoThumbnailEnum? {
-                return values().firstOrNull { it.value == value }
+            internal fun get(value: AiAutoThumbnail): AiAutoThumbnailEnum {
+                return entries.firstOrNull { it.value == value } ?: UNKNOWN
             }
         }
     }

@@ -1,5 +1,7 @@
 /** AI auto thumbnail setting. */
 export const AiAutoThumbnailEnum = {
+  /** Undefined value */
+  UNKNOWN: 'UNKNOWN',
   /** ON */
   ON: 'ON',
   /** OFF */

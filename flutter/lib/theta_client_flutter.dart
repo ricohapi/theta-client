@@ -1220,6 +1220,9 @@ enum OptionNameEnum {
   /// Option name _aiAutoThumbnail
   aiAutoThumbnail('AiAutoThumbnail', AiAutoThumbnailEnum),
 
+  /// Option name _aiAutoThumbnailSupport
+  aiAutoThumbnailSupport('AiAutoThumbnailSupport', List<AiAutoThumbnailEnum>),
+
   /// Option name _autoBracket
   autoBracket('AutoBracket', List<BracketSetting>),
 
@@ -1424,32 +1427,6 @@ enum OptionNameEnum {
 
   static OptionNameEnum? getValue(String rawValue) {
     return OptionNameEnum.values.cast<OptionNameEnum?>().firstWhere(
-        (element) => element?.rawValue == rawValue,
-        orElse: () => null);
-  }
-}
-
-/// AI auto thumbnail setting.
-///
-/// For RICOH THETA X
-enum AiAutoThumbnailEnum {
-  /// AI auto setting ON.
-  on('ON'),
-
-  /// AI auto setting OFF.
-  off('OFF');
-
-  final String rawValue;
-
-  const AiAutoThumbnailEnum(this.rawValue);
-
-  @override
-  String toString() {
-    return rawValue;
-  }
-
-  static AiAutoThumbnailEnum? getValue(String rawValue) {
-    return AiAutoThumbnailEnum.values.cast<AiAutoThumbnailEnum?>().firstWhere(
         (element) => element?.rawValue == rawValue,
         orElse: () => null);
   }
@@ -3153,6 +3130,9 @@ class Options {
   /// AI auto thumbnail setting.
   AiAutoThumbnailEnum? aiAutoThumbnail;
 
+  /// Supported AI auto thumbnail setting.
+  List<AiAutoThumbnailEnum>? aiAutoThumbnailSupport;
+
   /// Aperture value.
   ApertureEnum? aperture;
 
@@ -3460,6 +3440,8 @@ class Options {
     switch (name) {
       case OptionNameEnum.aiAutoThumbnail:
         return aiAutoThumbnail as T;
+      case OptionNameEnum.aiAutoThumbnailSupport:
+        return aiAutoThumbnailSupport as T;
       case OptionNameEnum.aperture:
         return aperture as T;
       case OptionNameEnum.autoBracket:
@@ -3597,6 +3579,8 @@ class Options {
       case OptionNameEnum.aiAutoThumbnail:
         aiAutoThumbnail = value;
         break;
+      case OptionNameEnum.aiAutoThumbnailSupport:
+        throw Exception('This value cannot be set');
       case OptionNameEnum.aperture:
         aperture = value;
         break;

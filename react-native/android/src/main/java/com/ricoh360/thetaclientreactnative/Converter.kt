@@ -49,6 +49,7 @@ const val KEY_GPS_TAG_RECORDING_SUPPORT = "gpsTagRecordingSupport"
 
 val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "aiAutoThumbnail" to OptionNameEnum.AiAutoThumbnail,
+  "aiAutoThumbnailSupport" to OptionNameEnum.AiAutoThumbnailSupport,
   "aperture" to OptionNameEnum.Aperture,
   "autoBracket" to OptionNameEnum.AutoBracket,
   "bitrate" to OptionNameEnum.Bitrate,
@@ -363,7 +364,8 @@ fun toResult(options: Options): WritableMap {
     OptionNameEnum.Username
   )
   val supportOptions = mapOf<OptionNameEnum, KClass<*>>(
-    OptionNameEnum.GpsTagRecordingSupport to GpsTagRecordingEnum::class
+    OptionNameEnum.GpsTagRecordingSupport to GpsTagRecordingEnum::class,
+    OptionNameEnum.AiAutoThumbnailSupport to AiAutoThumbnailEnum::class
   )
   OptionNameEnum.values().forEach { name ->
     if (name == OptionNameEnum.AutoBracket) {

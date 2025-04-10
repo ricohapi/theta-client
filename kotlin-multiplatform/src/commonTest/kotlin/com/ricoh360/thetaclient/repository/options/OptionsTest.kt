@@ -71,6 +71,7 @@ class OptionsTest {
     @Test
     fun optionsPrimaryConstructorTest() {
         val aiAutoThumbnail = ThetaRepository.AiAutoThumbnailEnum.ON
+        val aiAutoThumbnailSupport = listOf(ThetaRepository.AiAutoThumbnailEnum.ON,ThetaRepository.AiAutoThumbnailEnum.OFF)
         val aperture = ThetaRepository.ApertureEnum.APERTURE_2_1
         val autoBracket = ThetaRepository.BracketSettingList().add(
             ThetaRepository.BracketSetting(
@@ -171,6 +172,7 @@ class OptionsTest {
 
         val options = ThetaRepository.Options(
             aiAutoThumbnail = aiAutoThumbnail,
+            aiAutoThumbnailSupport = aiAutoThumbnailSupport,
             aperture = aperture,
             autoBracket = autoBracket,
             bitrate = bitrate,
@@ -240,6 +242,7 @@ class OptionsTest {
         }
 
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.AiAutoThumbnail), aiAutoThumbnail, "aiAutoThumbnail")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.AiAutoThumbnailSupport), aiAutoThumbnailSupport, "aiAutoThumbnailSupport")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Aperture), aperture, "aperture")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.AutoBracket), autoBracket, "autoBracket")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Bitrate), bitrate, "bitrate")
@@ -432,6 +435,7 @@ class OptionsTest {
     @Test
     fun optionsSecondaryConstructorTest() {
         val aiAutoThumbnail = Pair(AiAutoThumbnail.OFF, ThetaRepository.AiAutoThumbnailEnum.OFF)
+        val aiAutoThumbnailSupport = Pair(listOf(AiAutoThumbnail.ON, AiAutoThumbnail.OFF), listOf(ThetaRepository.AiAutoThumbnailEnum.ON, ThetaRepository.AiAutoThumbnailEnum.OFF))
         val aperture = Pair(2.1f, ThetaRepository.ApertureEnum.APERTURE_2_1)
         val autoBracket = Pair(
             AutoBracket(
@@ -571,6 +575,7 @@ class OptionsTest {
 
         val orgOptions = Options(
             _aiAutoThumbnail = aiAutoThumbnail.first,
+            _aiAutoThumbnailSupport = aiAutoThumbnailSupport.first,
             aperture = aperture.first,
             _autoBracket = autoBracket.first,
             _bitrate = bitrate.first,
@@ -635,6 +640,7 @@ class OptionsTest {
         val options = ThetaRepository.Options(orgOptions)
 
         assertEquals(options.aiAutoThumbnail, aiAutoThumbnail.second, "aiAutoThumbnail")
+        assertEquals(options.aiAutoThumbnailSupport, aiAutoThumbnailSupport.second, "aiAutoThumbnailSupport")
         assertEquals(options.aperture, aperture.second, "aperture")
         assertEquals(options.autoBracket, autoBracket.second, "autoBracket")
         assertEquals(options.bitrate, bitrate.second, "bitrate")
@@ -700,6 +706,7 @@ class OptionsTest {
     @Test
     fun optionsConvertTest() {
         val aiAutoThumbnail = Pair(AiAutoThumbnail.ON, ThetaRepository.AiAutoThumbnailEnum.ON)
+        val aiAutoThumbnailSupport = Pair(listOf(AiAutoThumbnail.ON, AiAutoThumbnail.OFF), listOf(ThetaRepository.AiAutoThumbnailEnum.ON, ThetaRepository.AiAutoThumbnailEnum.OFF))
         val aperture = Pair(2.1f, ThetaRepository.ApertureEnum.APERTURE_2_1)
         val autoBracket = Pair(
             AutoBracket(
@@ -842,6 +849,7 @@ class OptionsTest {
 
         val orgOptions = ThetaRepository.Options(
             aiAutoThumbnail = aiAutoThumbnail.second,
+            aiAutoThumbnailSupport = aiAutoThumbnailSupport.second,
             aperture = aperture.second,
             autoBracket = autoBracket.second,
             bitrate = bitrate.second,
@@ -906,6 +914,7 @@ class OptionsTest {
         val options = orgOptions.toOptions()
 
         assertEquals(options._aiAutoThumbnail, aiAutoThumbnail.first, "aiAutoThumbnail")
+        assertEquals(options._aiAutoThumbnailSupport, aiAutoThumbnailSupport.first, "aiAutoThumbnailSupport")
         assertEquals(options.aperture, aperture.first, "aperture")
         assertEquals(options._autoBracket, autoBracket.first, "autoBracket")
         assertEquals(options._bitrate, bitrate.first, "bitrate")
