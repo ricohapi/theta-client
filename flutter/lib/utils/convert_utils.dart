@@ -475,6 +475,10 @@ class ConvertUtils {
           result.cameraControlSource =
               CameraControlSourceEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.cameraControlSourceSupport:
+          result.cameraControlSourceSupport = convertSupportValueList(
+              entry.value, CameraControlSourceEnum.values);
+          break;
         case OptionNameEnum.cameraMode:
           result.cameraMode = CameraModeEnum.getValue(entry.value);
           break;

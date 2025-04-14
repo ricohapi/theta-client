@@ -58,6 +58,7 @@ val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "burstMode" to OptionNameEnum.BurstMode,
   "burstOption" to OptionNameEnum.BurstOption,
   "cameraControlSource" to OptionNameEnum.CameraControlSource,
+  "cameraControlSourceSupport" to OptionNameEnum.CameraControlSourceSupport,
   "cameraMode" to OptionNameEnum.CameraMode,
   "cameraPower" to OptionNameEnum.CameraPower,
   "captureInterval" to OptionNameEnum.CaptureInterval,
@@ -365,7 +366,8 @@ fun toResult(options: Options): WritableMap {
   )
   val supportOptions = mapOf<OptionNameEnum, KClass<*>>(
     OptionNameEnum.GpsTagRecordingSupport to GpsTagRecordingEnum::class,
-    OptionNameEnum.AiAutoThumbnailSupport to AiAutoThumbnailEnum::class
+    OptionNameEnum.AiAutoThumbnailSupport to AiAutoThumbnailEnum::class,
+    OptionNameEnum.CameraControlSourceSupport to CameraControlSourceEnum::class,
   )
   OptionNameEnum.values().forEach { name ->
     if (name == OptionNameEnum.AutoBracket) {

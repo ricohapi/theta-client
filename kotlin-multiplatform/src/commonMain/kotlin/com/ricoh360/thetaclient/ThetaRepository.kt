@@ -757,6 +757,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         CameraControlSource("_cameraControlSource", CameraControlSourceEnum::class),
 
         /**
+         * _cameraControlSourceSupport
+         */
+        CameraControlSourceSupport("_cameraControlSourceSupport", List::class),
+
+        /**
          * Option name
          * _cameraMode
          */
@@ -1152,6 +1157,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var cameraControlSource: CameraControlSourceEnum? = null,
 
         /**
+         * Supported Camera Control Source.
+         */
+        var cameraControlSourceSupport: List<CameraControlSourceEnum>? = null,
+
+        /**
          * @see CameraModeEnum
          */
         var cameraMode: CameraModeEnum? = null,
@@ -1543,6 +1553,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             burstMode = null,
             burstOption = null,
             cameraControlSource = null,
+            cameraControlSourceSupport = null,
             cameraMode = null,
             cameraPower = null,
             captureInterval = null,
@@ -1610,6 +1621,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             burstMode = options._burstMode?.let { BurstModeEnum.get(it) },
             burstOption = options._burstOption?.let { BurstOption(it) },
             cameraControlSource = options._cameraControlSource?.let { CameraControlSourceEnum.get(it) },
+            cameraControlSourceSupport = options._cameraControlSourceSupport?.map { CameraControlSourceEnum.get(it) },
             cameraMode = options._cameraMode?.let { CameraModeEnum.get(it) },
             cameraPower = options._cameraPower?.let { CameraPowerEnum.get(it) },
             captureInterval = options.captureInterval,
@@ -1686,6 +1698,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _burstMode = burstMode?.value,
                 _burstOption = burstOption?.toTransferredBurstOption(),
                 _cameraControlSource = cameraControlSource?.value,
+                _cameraControlSourceSupport = cameraControlSourceSupport?.map { it.value },
                 _cameraMode = cameraMode?.value,
                 _cameraPower = cameraPower?.value,
                 captureInterval = captureInterval,
@@ -1765,6 +1778,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.BurstMode -> burstMode
                 OptionNameEnum.BurstOption -> burstOption
                 OptionNameEnum.CameraControlSource -> cameraControlSource
+                OptionNameEnum.CameraControlSourceSupport -> cameraControlSourceSupport
                 OptionNameEnum.CameraMode -> cameraMode
                 OptionNameEnum.CameraPower -> cameraPower
                 OptionNameEnum.CaptureInterval -> captureInterval
@@ -1845,6 +1859,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.BurstMode -> burstMode = value as BurstModeEnum
                 OptionNameEnum.BurstOption -> burstOption = value as BurstOption
                 OptionNameEnum.CameraControlSource -> cameraControlSource = value as CameraControlSourceEnum
+                OptionNameEnum.CameraControlSourceSupport -> cameraControlSourceSupport = value as List<CameraControlSourceEnum>
                 OptionNameEnum.CameraMode -> cameraMode = value as CameraModeEnum
                 OptionNameEnum.CameraPower -> cameraPower = value as CameraPowerEnum
                 OptionNameEnum.CaptureInterval -> captureInterval = value as Int
@@ -2648,6 +2663,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     enum class CameraControlSourceEnum(internal val value: CameraControlSource) {
         /**
+         * Undefined value
+         */
+        UNKNOWN(CameraControlSource.UNKNOWN),
+
+        /**
          * Operation is possible with the camera. Locks the smartphone
          * application UI (supported app only).
          */
@@ -2666,8 +2686,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value camera control source
              * @return CameraControlSourceEnum
              */
-            internal fun get(value: CameraControlSource): CameraControlSourceEnum? {
-                return values().firstOrNull { it.value == value }
+            internal fun get(value: CameraControlSource): CameraControlSourceEnum {
+                return entries.firstOrNull { it.value == value } ?: UNKNOWN
             }
         }
     }

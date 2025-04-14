@@ -1247,6 +1247,10 @@ enum OptionNameEnum {
   /// Option name _cameraControlSource
   cameraControlSource('CameraControlSource', CameraControlSourceEnum),
 
+  /// Option name _cameraControlSourceSupport
+  cameraControlSourceSupport(
+      'CameraControlSourceSupport', List<CameraControlSourceEnum>),
+
   /// Option name _cameraMode
   cameraMode('CameraMode', CameraModeEnum),
 
@@ -1602,33 +1606,6 @@ class BracketSetting {
         shutterSpeed,
         whiteBalance
       ]);
-}
-
-/// Camera control source.
-enum CameraControlSourceEnum {
-  /// Operation is possible with the camera. Locks the smartphone
-  /// application UI (supported app only).
-  camera('CAMERA'),
-
-  /// Operation is possible with the smartphone application. Locks
-  /// the UI on the shooting screen on the camera.
-  app('APP');
-
-  final String rawValue;
-
-  const CameraControlSourceEnum(this.rawValue);
-
-  @override
-  String toString() {
-    return rawValue;
-  }
-
-  static CameraControlSourceEnum? getValue(String rawValue) {
-    return CameraControlSourceEnum.values
-        .cast<CameraControlSourceEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue,
-            orElse: () => null);
-  }
 }
 
 /// Camera mode.
@@ -3163,6 +3140,9 @@ class Options {
   /// For RICOH THETA X
   CameraControlSourceEnum? cameraControlSource;
 
+  /// Supported Camera Control Source.
+  List<CameraControlSourceEnum>? cameraControlSourceSupport;
+
   /// Camera mode.
   /// The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
   ///
@@ -3458,6 +3438,8 @@ class Options {
         return burstOption as T;
       case OptionNameEnum.cameraControlSource:
         return cameraControlSource as T;
+      case OptionNameEnum.cameraControlSourceSupport:
+        return cameraControlSourceSupport as T;
       case OptionNameEnum.cameraMode:
         return cameraMode as T;
       case OptionNameEnum.cameraPower:
@@ -3605,6 +3587,8 @@ class Options {
       case OptionNameEnum.cameraControlSource:
         cameraControlSource = value;
         break;
+      case OptionNameEnum.cameraControlSourceSupport:
+        throw Exception('This value cannot be set');
       case OptionNameEnum.cameraMode:
         cameraMode = value;
         break;

@@ -6,6 +6,7 @@ import Button from '../../components/ui/button';
 import {
   ApertureEnum,
   BluetoothRoleEnum,
+  CameraControlSourceEnum,
   CameraPowerEnum,
   CaptureModeEnum,
   ContinuousNumberEnum,
@@ -107,6 +108,29 @@ const optionList: OptionItem[] = [
           optionEnum={BluetoothRoleEnum}
         />
       ),
+    },
+  },
+  {
+    name: 'cameraControlSource',
+    value: {
+      optionName: OptionNameEnum.CameraControlSource,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'cameraControlSource'}
+          option={options?.cameraControlSource}
+          onChange={(cameraControlSource) => {
+            onChange({ cameraControlSource });
+          }}
+          optionEnum={CameraControlSourceEnum}
+        />
+      ),
+      defaultValue: { cameraControlSource: CameraControlSourceEnum.CAMERA },
+    },
+  },
+  {
+    name: 'cameraControlSourceSupport',
+    value: {
+      optionName: OptionNameEnum.CameraControlSourceSupport,
     },
   },
   {

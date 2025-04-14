@@ -6,6 +6,9 @@
  * For RICOH THETA X
  */
 export const CameraControlSourceEnum = {
+  /** Undefined value */
+  UNKNOWN: 'UNKNOWN',
+
   /**
    * Operation is possible with the camera. Locks the smartphone
    * application UI (supported app only).

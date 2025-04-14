@@ -340,6 +340,8 @@ export const OptionNameEnum = {
   BurstOption: 'BurstOption',
   /** _cameraControlSource */
   CameraControlSource: 'CameraControlSource',
+  /** _cameraControlSourceSupport */
+  CameraControlSourceSupport: 'CameraControlSourceSupport',
   /** cameraMode */
   CameraMode: 'CameraMode',
   /** cameraPower */
@@ -476,6 +478,8 @@ export type Options = {
   burstOption?: BurstOption;
   /** camera control source. */
   cameraControlSource?: CameraControlSourceEnum;
+  /** Supported Camera Control Source. */
+  cameraControlSourceSupport?: CameraControlSourceEnum[];
   /** Camera mode. */
   cameraMode?: CameraModeEnum;
   /** Camera power state */

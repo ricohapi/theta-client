@@ -384,18 +384,6 @@ void main() {
     }
   });
 
-  test('CameraControlSourceEnum', () async {
-    List<List<dynamic>> data = [
-      [CameraControlSourceEnum.camera, 'CAMERA'],
-      [CameraControlSourceEnum.app, 'APP'],
-    ];
-    expect(data.length, CameraControlSourceEnum.values.length,
-        reason: 'enum count');
-    for (int i = 0; i < data.length; i++) {
-      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
-    }
-  });
-
   test('CameraModeEnum', () async {
     List<List<dynamic>> data = [
       [CameraModeEnum.capture, 'CAPTURE'],

@@ -1271,6 +1271,9 @@ internal object BurstOrderSerializer : KSerializer<BurstOrder> {
     }
 }
 
+internal object CameraControlSourceSerializer :
+     SerialNameEnumIgnoreUnknownSerializer<CameraControlSource>(CameraControlSource.entries, CameraControlSource.UNKNOWN)
+
 /**
  * camera control source
  * Sets whether to lock/unlock the camera UI.
@@ -1278,21 +1281,28 @@ internal object BurstOrderSerializer : KSerializer<BurstOrder> {
  *
  * For RICOH THETA X
  */
-@Serializable
-internal enum class CameraControlSource {
+@Serializable(with = CameraControlSourceSerializer::class)
+internal enum class CameraControlSource: SerialNameEnum {
+    /**
+     * Undefined value
+     */
+    UNKNOWN,
+    
     /**
      * Operation is possible with the camera. Locks the smartphone
      * application UI (supported app only).
      */
-    @SerialName("camera")
-    CAMERA,
+    CAMERA {
+        override val serialName: String = "camera"
+    },
 
     /**
      * Operation is possible with the smartphone application. Locks
      * the UI on the shooting screen on the camera.
      */
-    @SerialName("app")
-    APP,
+    APP {
+        override val serialName: String = "app"
+    },
 }
 
 /**
