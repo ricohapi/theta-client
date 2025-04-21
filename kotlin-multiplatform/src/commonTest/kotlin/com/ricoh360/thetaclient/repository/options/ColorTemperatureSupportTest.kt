@@ -79,7 +79,7 @@ class ColorTemperatureSupportTest {
         val options = orgOptionsTR.toOptions()
         assertEquals(
             options._colorTemperatureSupport,
-            values.first,
+            null,
             "_colorTemperatureSupport ${values.first}"
         )
     }

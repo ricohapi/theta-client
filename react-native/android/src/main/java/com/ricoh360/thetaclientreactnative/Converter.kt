@@ -46,11 +46,13 @@ const val KEY_MAX = "max"
 const val KEY_MIN = "min"
 const val KEY_STEP_SIZE = "stepSize"
 const val KEY_GPS_TAG_RECORDING_SUPPORT = "gpsTagRecordingSupport"
+const val KEY_APERTURE_SUPPORT = "apertureSupport"
 
 val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "aiAutoThumbnail" to OptionNameEnum.AiAutoThumbnail,
   "aiAutoThumbnailSupport" to OptionNameEnum.AiAutoThumbnailSupport,
   "aperture" to OptionNameEnum.Aperture,
+  KEY_APERTURE_SUPPORT to OptionNameEnum.ApertureSupport,
   "autoBracket" to OptionNameEnum.AutoBracket,
   "bitrate" to OptionNameEnum.Bitrate,
   "bluetoothPower" to OptionNameEnum.BluetoothPower,
@@ -365,6 +367,7 @@ fun toResult(options: Options): WritableMap {
     OptionNameEnum.Username
   )
   val supportOptions = mapOf<OptionNameEnum, KClass<*>>(
+    OptionNameEnum.ApertureSupport to ApertureEnum::class,
     OptionNameEnum.GpsTagRecordingSupport to GpsTagRecordingEnum::class,
     OptionNameEnum.AiAutoThumbnailSupport to AiAutoThumbnailEnum::class,
     OptionNameEnum.CameraControlSourceSupport to CameraControlSourceEnum::class,

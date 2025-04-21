@@ -84,6 +84,12 @@ const optionList: OptionItem[] = [
     },
   },
   {
+    name: 'apertureSupport',
+    value: {
+      optionName: OptionNameEnum.ApertureSupport,
+    },
+  },
+  {
     name: 'autoBracket',
     value: {
       optionName: OptionNameEnum.AutoBracket,

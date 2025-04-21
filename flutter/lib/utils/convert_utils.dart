@@ -451,6 +451,10 @@ class ConvertUtils {
         case OptionNameEnum.aperture:
           result.aperture = ApertureEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.apertureSupport:
+          result.apertureSupport =
+              convertSupportValueList(entry.value, ApertureEnum.values);
+          break;
         case OptionNameEnum.autoBracket:
           result.autoBracket = convertAutoBracketOption(entry.value);
           break;

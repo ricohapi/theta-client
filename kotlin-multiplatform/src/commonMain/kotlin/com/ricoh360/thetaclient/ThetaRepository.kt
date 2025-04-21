@@ -717,6 +717,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * apertureSupport
+         */
+        ApertureSupport("apertureSupport", List::class),
+
+        /**
+         * Option name
          * _autoBracket
          */
         AutoBracket("_autoBracket", BracketSettingList::class),
@@ -1120,6 +1126,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Aperture value.
          */
         var aperture: ApertureEnum? = null,
+
+        /**
+         * Supported aperture value.
+         */
+        var apertureSupport: List<ApertureEnum>? = null,
 
         /**
          * Multi bracket shooting setting.
@@ -1546,6 +1557,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             aiAutoThumbnail = null,
             aiAutoThumbnailSupport = null,
             aperture = null,
+            apertureSupport = null,
             autoBracket = null,
             bitrate = null,
             bluetoothPower = null,
@@ -1614,6 +1626,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             aiAutoThumbnail = options._aiAutoThumbnail?.let { AiAutoThumbnailEnum.get(it) },
             aiAutoThumbnailSupport = options._aiAutoThumbnailSupport?.map { AiAutoThumbnailEnum.get(it) },
             aperture = options.aperture?.let { ApertureEnum.get(it) },
+            apertureSupport = options.apertureSupport?.map { ApertureEnum.get(it) },
             autoBracket = options._autoBracket?.let { BracketSettingList.get(it) },
             bitrate = options._bitrate?.let { BitrateEnum.get(it) },
             bluetoothPower = options._bluetoothPower?.let { BluetoothPowerEnum.get(it) },
@@ -1705,7 +1718,6 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 captureMode = captureMode?.value,
                 captureNumber = captureNumber,
                 _colorTemperature = colorTemperature,
-                _colorTemperatureSupport = colorTemperatureSupport?.toTransferredColorTemperatureSupport(),
                 _compositeShootingOutputInterval = compositeShootingOutputInterval,
                 _compositeShootingTime = compositeShootingTime,
                 continuousNumber = continuousNumber?.value,
@@ -1721,7 +1733,6 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _gain = gain?.value,
                 gpsInfo = gpsInfo?.toTransferredGpsInfo(),
                 _gpsTagRecording = isGpsOn?.let { if (it) GpsTagRecording.ON else GpsTagRecording.OFF },
-                _gpsTagRecordingSupport = gpsTagRecordingSupport?.map { it.value },
                 _imageStitching = imageStitching?.value,
                 iso = iso?.value,
                 isoAutoHighLimit = isoAutoHighLimit?.value,
@@ -1742,7 +1753,6 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _timeShift = timeShift?.toTransferredTimeShift(),
                 _topBottomCorrection = topBottomCorrection?.value,
                 _topBottomCorrectionRotation = topBottomCorrectionRotation?.toTransferredTopBottomCorrectionRotation(),
-                _topBottomCorrectionRotationSupport = topBottomCorrectionRotationSupport?.toTransferredTopBottomCorrectionRotationSupport(),
                 totalSpace = totalSpace,
                 _shootingMethod = shootingMethod?.value,
                 shutterSpeed = shutterSpeed?.value,
@@ -1771,6 +1781,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.AiAutoThumbnail -> aiAutoThumbnail
                 OptionNameEnum.AiAutoThumbnailSupport -> aiAutoThumbnailSupport
                 OptionNameEnum.Aperture -> aperture
+                OptionNameEnum.ApertureSupport -> apertureSupport
                 OptionNameEnum.AutoBracket -> autoBracket
                 OptionNameEnum.Bitrate -> bitrate
                 OptionNameEnum.BluetoothPower -> bluetoothPower
@@ -1852,6 +1863,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.AiAutoThumbnail -> aiAutoThumbnail = value as AiAutoThumbnailEnum
                 OptionNameEnum.AiAutoThumbnailSupport -> aiAutoThumbnailSupport = value as List<AiAutoThumbnailEnum>
                 OptionNameEnum.Aperture -> aperture = value as ApertureEnum
+                OptionNameEnum.ApertureSupport -> apertureSupport = value as List<ApertureEnum>
                 OptionNameEnum.AutoBracket -> autoBracket = value as BracketSettingList
                 OptionNameEnum.Bitrate -> bitrate = value as Bitrate
                 OptionNameEnum.BluetoothPower -> bluetoothPower = value as BluetoothPowerEnum
@@ -1953,7 +1965,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Aperture value.
      */
-    enum class ApertureEnum(val value: Float) {
+    enum class ApertureEnum(val value: Float?) {
+        /**
+         * Undefined value
+         */
+        UNKNOWN(null),
+
         /**
          * Aperture value.
          * AUTO(0)
@@ -2007,8 +2024,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value Aperture value.
              * @return ApertureEnum
              */
-            fun get(value: Float): ApertureEnum? {
-                return values().firstOrNull { it.value == value }
+            fun get(value: Float): ApertureEnum {
+                return entries.firstOrNull { it.value == value } ?: UNKNOWN
             }
         }
     }

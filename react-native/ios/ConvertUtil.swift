@@ -101,6 +101,7 @@ let KEY_MAX = "max"
 let KEY_MIN = "min"
 let KEY_STEP_SIZE = "stepSize"
 let KEY_GPS_TAG_RECORDING_SUPPORT = "gpsTagRecordingSupport"
+let KEY_APERTURE_SUPPORT = "apertureSupport"
 
 public class ConvertUtil: NSObject {}
 
@@ -111,6 +112,7 @@ let optionItemNameToEnum = [
     "aiAutoThumbnail": ThetaRepository.OptionNameEnum.aiautothumbnail,
     KEY_AI_AUTO_THUMBNAIL_SUPPORT: ThetaRepository.OptionNameEnum.aiautothumbnailsupport,
     "aperture": ThetaRepository.OptionNameEnum.aperture,
+    KEY_APERTURE_SUPPORT: ThetaRepository.OptionNameEnum.aperturesupport,
     "autoBracket": ThetaRepository.OptionNameEnum.autobracket,
     "bitrate": ThetaRepository.OptionNameEnum.bitrate,
     "bluetoothPower": ThetaRepository.OptionNameEnum.bluetoothpower,
@@ -177,6 +179,7 @@ let optionItemNameToEnum = [
 ]
 
 let supportOptions: [ThetaRepository.OptionNameEnum : Any.Type] = [
+    ThetaRepository.OptionNameEnum.aperturesupport: ThetaRepository.ApertureEnum.self,
     ThetaRepository.OptionNameEnum.gpstagrecordingsupport: ThetaRepository.GpsTagRecordingEnum.self,
     ThetaRepository.OptionNameEnum.aiautothumbnailsupport: ThetaRepository.AiAutoThumbnailEnum.self,
     ThetaRepository.OptionNameEnum.cameracontrolsourcesupport: ThetaRepository.CameraControlSourceEnum.self,

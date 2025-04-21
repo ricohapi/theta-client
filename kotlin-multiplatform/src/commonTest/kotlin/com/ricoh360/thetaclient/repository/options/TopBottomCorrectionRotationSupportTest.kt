@@ -98,7 +98,7 @@ class TopBottomCorrectionRotationSupportTest {
                 topBottomCorrectionRotationSupport = it.first
             )
             val options = orgOptions.toOptions()
-            assertEquals(options._topBottomCorrectionRotationSupport, it.second, "_topBottomCorrectionRotationSupport ${it.second}")
+            assertEquals(options._topBottomCorrectionRotationSupport, null, "_topBottomCorrectionRotationSupport ${it.second}")
         }
     }
 }

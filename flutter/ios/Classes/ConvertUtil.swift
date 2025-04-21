@@ -37,11 +37,13 @@ let KEY_TOP_BOTTOM_CORRECTION_ROTATION_SUPPORT = "topBottomCorrectionRotationSup
 let KEY_MAX = "max"
 let KEY_MIN = "min"
 let KEY_STEP_SIZE = "stepSize"
+let KEY_APERTURE_SUPPORT = "apertureSupport"
 
 let supportOptions: [ThetaRepository.OptionNameEnum : Any.Type] = [
+    ThetaRepository.OptionNameEnum.aperturesupport: ThetaRepository.ApertureEnum.self,
+    ThetaRepository.OptionNameEnum.cameracontrolsourcesupport: ThetaRepository.CameraControlSourceEnum.self,
     ThetaRepository.OptionNameEnum.gpstagrecordingsupport: ThetaRepository.GpsTagRecordingEnum.self,
     ThetaRepository.OptionNameEnum.aiautothumbnailsupport: ThetaRepository.AiAutoThumbnailEnum.self,
-    ThetaRepository.OptionNameEnum.cameracontrolsourcesupport: ThetaRepository.CameraControlSourceEnum.self,
 ]
 
 public class ConvertUtil: NSObject {}

@@ -42,6 +42,7 @@ const val KEY_CONNECTION_PRIORITY = "connectionPriority"
 const val KEY_SUBNET_MASK = "subnetMask"
 const val KEY_DEFAULT_GATEWAY = "defaultGateway"
 const val KEY_PROXY = "proxy"
+const val KEY_APERTURE_SUPPORT = "apertureSupport"
 
 fun toResult(thetaInfo: ThetaInfo): Map<String, Any?> {
     return mapOf(
@@ -635,6 +636,7 @@ fun toResult(options: Options): Map<String, Any> {
         OptionNameEnum.Username
     )
     val supportOptions = mapOf<OptionNameEnum, KClass<*>>(
+        OptionNameEnum.ApertureSupport to ApertureEnum::class,
         OptionNameEnum.GpsTagRecordingSupport to GpsTagRecordingEnum::class,
         OptionNameEnum.AiAutoThumbnailSupport to AiAutoThumbnailEnum::class,
         OptionNameEnum.CameraControlSourceSupport to CameraControlSourceEnum::class,

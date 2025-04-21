@@ -1,10 +1,10 @@
 import type {
-  ApertureEnum,
   ExposureCompensationEnum,
   ExposureProgramEnum,
   IsoEnum,
   WhiteBalanceEnum,
 } from './options';
+import type { ApertureEnum } from './option-aperture';
 import type { ShutterSpeedEnum } from './option-shutter-speed';
 
 /**

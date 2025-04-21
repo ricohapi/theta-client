@@ -71,8 +71,9 @@ class OptionsTest {
     @Test
     fun optionsPrimaryConstructorTest() {
         val aiAutoThumbnail = ThetaRepository.AiAutoThumbnailEnum.ON
-        val aiAutoThumbnailSupport = listOf(ThetaRepository.AiAutoThumbnailEnum.ON,ThetaRepository.AiAutoThumbnailEnum.OFF)
+        val aiAutoThumbnailSupport = listOf(ThetaRepository.AiAutoThumbnailEnum.ON, ThetaRepository.AiAutoThumbnailEnum.OFF)
         val aperture = ThetaRepository.ApertureEnum.APERTURE_2_1
+        val apertureSupport = listOf(ThetaRepository.ApertureEnum.APERTURE_2_1, ThetaRepository.ApertureEnum.APERTURE_3_5)
         val autoBracket = ThetaRepository.BracketSettingList().add(
             ThetaRepository.BracketSetting(
                 exposureProgram = ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM,
@@ -175,6 +176,7 @@ class OptionsTest {
             aiAutoThumbnail = aiAutoThumbnail,
             aiAutoThumbnailSupport = aiAutoThumbnailSupport,
             aperture = aperture,
+            apertureSupport = apertureSupport,
             autoBracket = autoBracket,
             bitrate = bitrate,
             bluetoothPower = bluetoothPower,
@@ -246,6 +248,7 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.AiAutoThumbnail), aiAutoThumbnail, "aiAutoThumbnail")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.AiAutoThumbnailSupport), aiAutoThumbnailSupport, "aiAutoThumbnailSupport")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Aperture), aperture, "aperture")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ApertureSupport), apertureSupport, "apertureSupport")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.AutoBracket), autoBracket, "autoBracket")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.Bitrate), bitrate, "bitrate")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.BluetoothPower), bluetoothPower, "bluetoothPower")
@@ -318,6 +321,7 @@ class OptionsTest {
         val values = listOf(
             Pair(ThetaRepository.OptionNameEnum.AiAutoThumbnail, ThetaRepository.AiAutoThumbnailEnum.OFF),
             Pair(ThetaRepository.OptionNameEnum.Aperture, ThetaRepository.ApertureEnum.APERTURE_2_1),
+            Pair(ThetaRepository.OptionNameEnum.ApertureSupport, listOf(ThetaRepository.ApertureEnum.APERTURE_AUTO, ThetaRepository.ApertureEnum.APERTURE_2_4)),
             Pair(
                 ThetaRepository.OptionNameEnum.AutoBracket,
                 ThetaRepository.BracketSettingList().add(
@@ -440,6 +444,7 @@ class OptionsTest {
         val aiAutoThumbnail = Pair(AiAutoThumbnail.OFF, ThetaRepository.AiAutoThumbnailEnum.OFF)
         val aiAutoThumbnailSupport = Pair(listOf(AiAutoThumbnail.ON, AiAutoThumbnail.OFF), listOf(ThetaRepository.AiAutoThumbnailEnum.ON, ThetaRepository.AiAutoThumbnailEnum.OFF))
         val aperture = Pair(2.1f, ThetaRepository.ApertureEnum.APERTURE_2_1)
+        val apertureSupport = Pair(listOf(2.1f, 3.5f), listOf(ThetaRepository.ApertureEnum.APERTURE_2_1, ThetaRepository.ApertureEnum.APERTURE_3_5))
         val autoBracket = Pair(
             AutoBracket(
                 2, listOf(
@@ -581,6 +586,7 @@ class OptionsTest {
             _aiAutoThumbnail = aiAutoThumbnail.first,
             _aiAutoThumbnailSupport = aiAutoThumbnailSupport.first,
             aperture = aperture.first,
+            apertureSupport = apertureSupport.first,
             _autoBracket = autoBracket.first,
             _bitrate = bitrate.first,
             _bluetoothPower = bluetoothPower.first,
@@ -647,6 +653,7 @@ class OptionsTest {
         assertEquals(options.aiAutoThumbnail, aiAutoThumbnail.second, "aiAutoThumbnail")
         assertEquals(options.aiAutoThumbnailSupport, aiAutoThumbnailSupport.second, "aiAutoThumbnailSupport")
         assertEquals(options.aperture, aperture.second, "aperture")
+        assertEquals(options.apertureSupport, apertureSupport.second, "apertureSupport")
         assertEquals(options.autoBracket, autoBracket.second, "autoBracket")
         assertEquals(options.bitrate, bitrate.second, "bitrate")
         assertEquals(options.bluetoothPower, bluetoothPower.second, "bluetoothPower")
@@ -712,7 +719,6 @@ class OptionsTest {
     @Test
     fun optionsConvertTest() {
         val aiAutoThumbnail = Pair(AiAutoThumbnail.ON, ThetaRepository.AiAutoThumbnailEnum.ON)
-        val aiAutoThumbnailSupport = Pair(listOf(AiAutoThumbnail.ON, AiAutoThumbnail.OFF), listOf(ThetaRepository.AiAutoThumbnailEnum.ON, ThetaRepository.AiAutoThumbnailEnum.OFF))
         val aperture = Pair(2.1f, ThetaRepository.ApertureEnum.APERTURE_2_1)
         val autoBracket = Pair(
             AutoBracket(
@@ -773,7 +779,6 @@ class OptionsTest {
         val captureMode = Pair(CaptureMode.IMAGE, ThetaRepository.CaptureModeEnum.IMAGE)
         val captureNumber = Pair(30, 30)
         val colorTemperature = Pair(10, 10)
-        val colorTemperatureSupport = Pair(ColorTemperatureSupport(10000, 2000, 100), ThetaRepository.ColorTemperatureSupport(10000, 2000, 100))
         val compositeShootingOutputInterval = Pair(60, 60)
         val compositeShootingTime = Pair(600, 600)
         val dateTimeZone = Pair("2014:05:18 01:04:29+08:00", "2014:05:18 01:04:29+08:00")
@@ -808,7 +813,6 @@ class OptionsTest {
             GpsInfo(65535.0f, 65535.0f, 0f, "", ""),
             ThetaRepository.GpsInfo(65535.0f, 65535.0f, 0f, "")
         )
-        val gpsTagRecordingSupport = Pair(listOf(GpsTagRecording.ON, GpsTagRecording.OFF), listOf(ThetaRepository.GpsTagRecordingEnum.ON, ThetaRepository.GpsTagRecordingEnum.OFF))
         val imageStitching = Pair(ImageStitching.AUTO, ThetaRepository.ImageStitchingEnum.AUTO)
         val isGpsOn = Pair(GpsTagRecording.ON, true)
         val iso = Pair(125, ThetaRepository.IsoEnum.ISO_125)
@@ -836,17 +840,6 @@ class OptionsTest {
         )
         val topBottomCorrection = Pair(TopBottomCorrectionOption.MANUAL, ThetaRepository.TopBottomCorrectionOptionEnum.MANUAL)
         val topBottomCorrectionRotation = Pair(TopBottomCorrectionRotation("0.0", "0.0", "0.0"), ThetaRepository.TopBottomCorrectionRotation(0.0f, 0.0f, 0.0f))
-        val topBottomCorrectionRotationSupport = Pair(
-            TopBottomCorrectionRotationSupport(
-                pitch = PitchSupport(100f, -100f, 0.2f),
-                roll = RollSupport(200f, -200f, 0.4f),
-                yaw = YawSupport(300f, -300f, 0.6f)
-            ), ThetaRepository.TopBottomCorrectionRotationSupport(
-                pitch = ThetaRepository.TopBottomCorrectionRotationValueSupport(100f, -100f, 0.2f),
-                roll = ThetaRepository.TopBottomCorrectionRotationValueSupport(200f, -200f, 0.4f),
-                yaw = ThetaRepository.TopBottomCorrectionRotationValueSupport(300f, -300f, 0.6f)
-            )
-        )
         val totalSpace = Pair(104L, 104L)
         val userName = Pair("username", "username")
         val videoStitching = Pair(VideoStitching.NONE, ThetaRepository.VideoStitchingEnum.NONE)
@@ -856,7 +849,6 @@ class OptionsTest {
 
         val orgOptions = ThetaRepository.Options(
             aiAutoThumbnail = aiAutoThumbnail.second,
-            aiAutoThumbnailSupport = aiAutoThumbnailSupport.second,
             aperture = aperture.second,
             autoBracket = autoBracket.second,
             bitrate = bitrate.second,
@@ -872,7 +864,6 @@ class OptionsTest {
             captureMode = captureMode.second,
             captureNumber = captureNumber.second,
             colorTemperature = colorTemperature.second,
-            colorTemperatureSupport = colorTemperatureSupport.second,
             compositeShootingOutputInterval = compositeShootingOutputInterval.second,
             compositeShootingTime = compositeShootingTime.second,
             dateTimeZone = dateTimeZone.second,
@@ -886,7 +877,6 @@ class OptionsTest {
             function = function.second,
             gain = gain.second,
             gpsInfo = gpsInfo.second,
-            gpsTagRecordingSupport = gpsTagRecordingSupport.second,
             imageStitching = imageStitching.second,
             isGpsOn = isGpsOn.second,
             iso = iso.second,
@@ -911,7 +901,6 @@ class OptionsTest {
             timeShift = timeShift.second,
             topBottomCorrection = topBottomCorrection.second,
             topBottomCorrectionRotation = topBottomCorrectionRotation.second,
-            topBottomCorrectionRotationSupport = topBottomCorrectionRotationSupport.second,
             totalSpace = totalSpace.second,
             username = userName.second,
             videoStitching = videoStitching.second,
@@ -922,7 +911,6 @@ class OptionsTest {
         val options = orgOptions.toOptions()
 
         assertEquals(options._aiAutoThumbnail, aiAutoThumbnail.first, "aiAutoThumbnail")
-        assertEquals(options._aiAutoThumbnailSupport, aiAutoThumbnailSupport.first, "aiAutoThumbnailSupport")
         assertEquals(options.aperture, aperture.first, "aperture")
         assertEquals(options._autoBracket, autoBracket.first, "autoBracket")
         assertEquals(options._bitrate, bitrate.first, "bitrate")
@@ -938,7 +926,6 @@ class OptionsTest {
         assertEquals(options.captureMode, captureMode.first, "captureMode")
         assertEquals(options.captureNumber, captureNumber.first, "captureNumber")
         assertEquals(options._colorTemperature, colorTemperature.first, "colorTemperature")
-        assertEquals(options._colorTemperatureSupport, colorTemperatureSupport.first, "colorTemperatureSupport")
         assertEquals(options._compositeShootingOutputInterval, compositeShootingOutputInterval.first, "compositeShootingOutputInterval")
         assertEquals(options._compositeShootingTime, compositeShootingTime.first, "compositeShootingTime")
         assertEquals(options.dateTimeZone, dateTimeZone.first, "dateTimeZone")
@@ -953,7 +940,6 @@ class OptionsTest {
         assertEquals(options._gain, gain.first, "gain")
         assertEquals(options.gpsInfo, gpsInfo.first, "gpsInfo")
         assertEquals(options._gpsTagRecording, isGpsOn.first, "isGpsOn")
-        assertEquals(options._gpsTagRecordingSupport, gpsTagRecordingSupport.first, "gpsTagRecordingSupport")
         assertEquals(options._imageStitching, imageStitching.first, "imageStitching")
         assertEquals(options.iso, iso.first, "iso")
         assertEquals(options.isoAutoHighLimit, isoAutoHighLimit.first, "isoAutoHighLimit")
@@ -977,7 +963,6 @@ class OptionsTest {
         assertEquals(options._timeShift, timeShift.first, "timeShift")
         assertEquals(options._topBottomCorrection, topBottomCorrection.first, "topBottomCorrection")
         assertEquals(options._topBottomCorrectionRotation, topBottomCorrectionRotation.first, "topBottomCorrectionRotation")
-        assertEquals(options._topBottomCorrectionRotationSupport, topBottomCorrectionRotationSupport.first, "topBottomCorrectionRotationSupport")
         assertEquals(options.totalSpace, totalSpace.first, "totalSpace")
         assertEquals(options._username, userName.first, "userName")
         assertEquals(options.videoStitching, videoStitching.first, "videoStitching")

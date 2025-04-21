@@ -537,7 +537,7 @@ class PhotoCaptureTest {
             // check result
             assertEquals(
                 photoCapture.getAperture(),
-                it,
+                if (it == ThetaRepository.ApertureEnum.UNKNOWN) null else it,
                 "set option aperture $valueIndex"
             )
 
