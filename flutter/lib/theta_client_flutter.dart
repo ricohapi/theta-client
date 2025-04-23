@@ -1260,6 +1260,9 @@ enum OptionNameEnum {
   /// Option name _cameraPower
   cameraPower('CameraPower', CameraPowerEnum),
 
+  /// Option name _cameraPowerSupport
+  cameraPowerSupport('CameraPowerSupport', List<CameraPowerEnum>),
+
   /// Option name captureInterval
   captureInterval('CaptureInterval', int),
 
@@ -3116,6 +3119,9 @@ class Options {
   /// see [CameraPowerEnum]
   CameraPowerEnum? cameraPower;
 
+  /// Supported Camera Power.
+  List<CameraPowerEnum>? cameraPowerSupport;
+
   /// Shooting interval (sec.) for interval shooting.
   ///
   /// ### Support value
@@ -3413,6 +3419,8 @@ class Options {
         return cameraMode as T;
       case OptionNameEnum.cameraPower:
         return cameraPower as T;
+      case OptionNameEnum.cameraPowerSupport:
+        return cameraPowerSupport as T;
       case OptionNameEnum.captureInterval:
         return captureInterval as T;
       case OptionNameEnum.captureMode:
@@ -3569,6 +3577,8 @@ class Options {
       case OptionNameEnum.cameraPower:
         cameraPower = value;
         break;
+      case OptionNameEnum.cameraPowerSupport:
+        throw Exception('This value cannot be set');
       case OptionNameEnum.captureInterval:
         captureInterval = value;
         break;

@@ -23,6 +23,7 @@ let KEY_TIMESHIFT = "timeShift"
 let KEY_AI_AUTO_THUMBNAIL_SUPPORT = "aiAutoThumbnailSupport"
 let KEY_APERTURE = "aperture"
 let KEY_CAMERA_CONTROL_SOURCE_SUPPORT = "cameraControlSourceSupport"
+let KEY_CAMERA_POWER_SUPPORT = "cameraPowerSupport"
 let KEY_CAPTURE_INTERVAL = "captureInterval"
 let KEY_COMPOSITE_SHOOTING_OUTPUT_INTERVAL = "compositeShootingOutputInterval"
 let KEY_COLOR_TEMPERATURE = "colorTemperature"
@@ -121,6 +122,7 @@ let optionItemNameToEnum = [
     KEY_CAMERA_CONTROL_SOURCE_SUPPORT: ThetaRepository.OptionNameEnum.cameracontrolsourcesupport,
     "cameraMode": ThetaRepository.OptionNameEnum.cameramode,
     "cameraPower": ThetaRepository.OptionNameEnum.camerapower,
+    KEY_CAMERA_POWER_SUPPORT: ThetaRepository.OptionNameEnum.camerapowersupport,
     "captureInterval": ThetaRepository.OptionNameEnum.captureinterval,
     "captureMode": ThetaRepository.OptionNameEnum.capturemode,
     "captureNumber": ThetaRepository.OptionNameEnum.capturenumber,
@@ -181,6 +183,7 @@ let supportOptions: [ThetaRepository.OptionNameEnum : Any.Type] = [
     ThetaRepository.OptionNameEnum.gpstagrecordingsupport: ThetaRepository.GpsTagRecordingEnum.self,
     ThetaRepository.OptionNameEnum.aiautothumbnailsupport: ThetaRepository.AiAutoThumbnailEnum.self,
     ThetaRepository.OptionNameEnum.cameracontrolsourcesupport: ThetaRepository.CameraControlSourceEnum.self,
+    ThetaRepository.OptionNameEnum.camerapowersupport: ThetaRepository.CameraPowerEnum.self,
 ]
 
 let optionNameEnumToItemName = {

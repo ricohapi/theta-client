@@ -38,6 +38,7 @@ let KEY_APERTURE_SUPPORT = "apertureSupport"
 let supportOptions: [ThetaRepository.OptionNameEnum : Any.Type] = [
     ThetaRepository.OptionNameEnum.aperturesupport: ThetaRepository.ApertureEnum.self,
     ThetaRepository.OptionNameEnum.cameracontrolsourcesupport: ThetaRepository.CameraControlSourceEnum.self,
+    ThetaRepository.OptionNameEnum.camerapowersupport: ThetaRepository.CameraPowerEnum.self,    
     ThetaRepository.OptionNameEnum.gpstagrecordingsupport: ThetaRepository.GpsTagRecordingEnum.self,
     ThetaRepository.OptionNameEnum.aiautothumbnailsupport: ThetaRepository.AiAutoThumbnailEnum.self,
 ]

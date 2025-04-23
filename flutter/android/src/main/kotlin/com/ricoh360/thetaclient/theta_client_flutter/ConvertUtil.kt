@@ -627,6 +627,7 @@ fun toResult(options: Options): Map<String, Any> {
         OptionNameEnum.GpsTagRecordingSupport to GpsTagRecordingEnum::class,
         OptionNameEnum.AiAutoThumbnailSupport to AiAutoThumbnailEnum::class,
         OptionNameEnum.CameraControlSourceSupport to CameraControlSourceEnum::class,
+        OptionNameEnum.CameraPowerSupport to CameraPowerEnum::class,
     )
     val intValueRangeSupportOptions = listOf(
         OptionNameEnum.ColorTemperatureSupport,

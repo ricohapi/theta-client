@@ -489,6 +489,10 @@ class ConvertUtils {
         case OptionNameEnum.cameraPower:
           result.cameraPower = CameraPowerEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.cameraPowerSupport:
+          result.cameraPowerSupport =
+              convertSupportValueList(entry.value, CameraPowerEnum.values);
+          break;
         case OptionNameEnum.captureInterval:
           result.captureInterval = entry.value;
           break;

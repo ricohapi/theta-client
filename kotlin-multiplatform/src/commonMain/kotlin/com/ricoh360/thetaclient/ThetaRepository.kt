@@ -781,6 +781,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _cameraPowerSupport
+         */
+        CameraPowerSupport("_cameraPowerSupport", List::class),
+
+        /**
+         * Option name
          * captureInterval
          */
         CaptureInterval("captureInterval", Int::class),
@@ -1188,6 +1194,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var cameraPower: CameraPowerEnum? = null,
 
         /**
+         * Supported Camera Power.
+         */
+        var cameraPowerSupport: List<CameraPowerEnum>? = null,
+
+        /**
          * Shooting interval (sec.) for interval shooting.
          *
          * ### Support value
@@ -1578,6 +1589,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             cameraControlSourceSupport = null,
             cameraMode = null,
             cameraPower = null,
+            cameraPowerSupport = null,
             captureInterval = null,
             captureMode = null,
             captureNumber = null,
@@ -1648,6 +1660,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             cameraControlSourceSupport = options._cameraControlSourceSupport?.map { CameraControlSourceEnum.get(it) },
             cameraMode = options._cameraMode?.let { CameraModeEnum.get(it) },
             cameraPower = options._cameraPower?.let { CameraPowerEnum.get(it) },
+            cameraPowerSupport = options._cameraPowerSupport?.map { CameraPowerEnum.get(it) },
             captureInterval = options.captureInterval,
             captureMode = options.captureMode?.let { CaptureModeEnum.get(it) },
             captureNumber = options.captureNumber,
@@ -1804,6 +1817,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.CameraControlSourceSupport -> cameraControlSourceSupport
                 OptionNameEnum.CameraMode -> cameraMode
                 OptionNameEnum.CameraPower -> cameraPower
+                OptionNameEnum.CameraPowerSupport -> cameraPowerSupport
                 OptionNameEnum.CaptureInterval -> captureInterval
                 OptionNameEnum.CaptureMode -> captureMode
                 OptionNameEnum.CaptureNumber -> captureNumber
@@ -1887,6 +1901,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.CameraControlSourceSupport -> cameraControlSourceSupport = value as List<CameraControlSourceEnum>
                 OptionNameEnum.CameraMode -> cameraMode = value as CameraModeEnum
                 OptionNameEnum.CameraPower -> cameraPower = value as CameraPowerEnum
+                OptionNameEnum.CameraPowerSupport -> cameraPowerSupport = value as List<CameraPowerEnum>
                 OptionNameEnum.CaptureInterval -> captureInterval = value as Int
                 OptionNameEnum.CaptureMode -> captureMode = value as CaptureModeEnum
                 OptionNameEnum.CaptureNumber -> captureNumber = value as Int
@@ -2803,8 +2818,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value CameraPower.
              * @return CameraPowerEnum
              */
-            internal fun get(value: CameraPower): CameraPowerEnum? {
-                return values().firstOrNull { it.value == value }
+            internal fun get(value: CameraPower): CameraPowerEnum {
+                return entries.firstOrNull { it.value == value } ?: UNKNOWN
             }
         }
     }

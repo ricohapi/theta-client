@@ -329,6 +329,8 @@ export const OptionNameEnum = {
   CameraMode: 'CameraMode',
   /** cameraPower */
   CameraPower: 'CameraPower',
+  /** _cameraPowerSupport */
+  CameraPowerSupport: 'CameraPowerSupport',
   /** captureInterval */
   CaptureInterval: 'CaptureInterval',
   /** captureMode */
@@ -472,6 +474,8 @@ export type Options = {
   cameraMode?: CameraModeEnum;
   /** Camera power state */
   cameraPower?: CameraPowerEnum;
+  /** Supported Camera Power. */
+  cameraPowerSupport?: CameraPowerEnum[];
   /**
    * Shooting interval (sec.) for interval shooting.
    *

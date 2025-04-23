@@ -157,6 +157,12 @@ const optionList: OptionItem[] = [
     },
   },
   {
+    name: 'cameraPowerSupport',
+    value: {
+      optionName: OptionNameEnum.CameraPowerSupport,
+    },
+  },
+  {
     name: 'captureMode',
     value: {
       optionName: OptionNameEnum.CaptureMode,
