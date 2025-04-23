@@ -1,0 +1,13 @@
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "_compositeShootingOutputIntervalSupport": {
+        "maxInterval": 600,
+        "minInterval": 0,
+        "stepSize": 60
+      }
+    }
+  },
+  "state": "done"
+}

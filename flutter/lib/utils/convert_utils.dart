@@ -329,16 +329,16 @@ class ConvertUtils {
     };
   }
 
-  static ColorTemperatureSupport? convertColorTemperatureSupport(
+  static ValueRange<T>? convertValueRangeSupport<T extends num>(
       Map<dynamic, dynamic>? data) {
     if (data == null) {
       return null;
     }
 
-    return ColorTemperatureSupport(
-      data['maxTemperature'],
-      data['minTemperature'],
-      data['stepSize'],
+    return ValueRange<T>(
+      data['max'] as T,
+      data['min'] as T,
+      data['stepSize'] as T,
     );
   }
 
@@ -417,20 +417,20 @@ class ConvertUtils {
     var yawData = data['yaw'];
 
     var support = TopBottomCorrectionRotationSupport(
-      pitch: TopBottomCorrectionRotationValueSupport(
-        max: double.parse(pitchData['max']),
-        min: double.parse(pitchData['min']),
-        stepSize: double.parse(pitchData['stepSize']),
+      pitch: ValueRange<double>(
+        double.parse(pitchData['max']),
+        double.parse(pitchData['min']),
+        double.parse(pitchData['stepSize']),
       ),
-      roll: TopBottomCorrectionRotationValueSupport(
-        max: double.parse(rollData['max']),
-        min: double.parse(rollData['min']),
-        stepSize: double.parse(rollData['stepSize']),
+      roll: ValueRange<double>(
+        double.parse(rollData['max']),
+        double.parse(rollData['min']),
+        double.parse(rollData['stepSize']),
       ),
-      yaw: TopBottomCorrectionRotationValueSupport(
-        max: double.parse(yawData['max']),
-        min: double.parse(yawData['min']),
-        stepSize: double.parse(yawData['stepSize']),
+      yaw: ValueRange<double>(
+        double.parse(yawData['max']),
+        double.parse(yawData['min']),
+        double.parse(yawData['stepSize']),
       ),
     );
     return support;
@@ -503,10 +503,14 @@ class ConvertUtils {
           break;
         case OptionNameEnum.colorTemperatureSupport:
           result.colorTemperatureSupport =
-              convertColorTemperatureSupport(entry.value);
+              convertValueRangeSupport<int>(entry.value);
           break;
         case OptionNameEnum.compositeShootingOutputInterval:
           result.compositeShootingOutputInterval = entry.value;
+          break;
+        case OptionNameEnum.compositeShootingOutputIntervalSupport:
+          result.compositeShootingOutputIntervalSupport =
+              convertValueRangeSupport<int>(entry.value);
           break;
         case OptionNameEnum.compositeShootingTime:
           result.compositeShootingTime = entry.value;

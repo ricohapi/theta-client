@@ -34,7 +34,6 @@ import type { SleepDelayEnum } from './option-sleep-delay';
 import type { EthernetConfig } from './option-ethernet-config';
 import type { FileFormatEnum } from './option-file-format';
 import type { CameraPowerEnum } from './option-camera-power';
-import type { ColorTemperatureSupport } from './option-color-temperature-support';
 import type { TopBottomCorrectionRotationSupport } from './option-top-bottom-correction-rotation-support';
 import type { GpsTagRecordingEnum } from './option-gps-tag-recording';
 
@@ -342,6 +341,9 @@ export const OptionNameEnum = {
   ColorTemperatureSupport: 'ColorTemperatureSupport',
   /** _compositeShootingOutputInterval */
   CompositeShootingOutputInterval: 'CompositeShootingOutputInterval',
+  /** _compositeShootingOutputIntervalSupport */
+  CompositeShootingOutputIntervalSupport:
+    'CompositeShootingOutputIntervalSupport',
   /** _compositeShootingTime */
   CompositeShootingTime: 'CompositeShootingTime',
   /** continuousNumber */
@@ -511,6 +513,8 @@ export type Options = {
   captureNumber?: number;
   /** Color temperature of the camera (Kelvin). */
   colorTemperature?: number;
+  /** supported color temperature. */
+  colorTemperatureSupport?: ValueRange;
   /**
    * In-progress save interval for interval composite shooting (sec).
    *
@@ -522,6 +526,10 @@ export type Options = {
    * RICOH THETA S firmware v01.82 or later
    */
   compositeShootingOutputInterval?: number;
+  /**
+   * Supported in-progress save interval for interval composite shooting (sec).
+   */
+  compositeShootingOutputIntervalSupport?: ValueRange;
   /**
    * Shooting time for interval composite shooting (sec).
    *
@@ -535,8 +543,6 @@ export type Options = {
   compositeShootingTime?: number;
   /** Number of shots for continuous shooting. */
   continuousNumber?: ContinuousNumberEnum;
-  /** supported color temperature. */
-  colorTemperatureSupport?: ColorTemperatureSupport;
   /** Current system time of RICOH THETA. Setting another options will result in an error. */
   dateTimeZone?: string;
   /** IP address allocation to be used when wired LAN is enabled. */
@@ -638,4 +644,13 @@ export type Options = {
   wlanFrequency?: WlanFrequencyEnum;
   /** GPS setting used in only capturing */
   _gpsTagRecording?: GpsTagRecordingEnum;
+};
+
+export type ValueRange = {
+  /** maximum value */
+  max: number;
+  /** minimum value */
+  min: number;
+  /** step size */
+  stepSize: number;
 };

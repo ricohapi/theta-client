@@ -6,7 +6,6 @@ export 'aperture.dart';
 export 'bluetooth_role.dart';
 export 'camera_control_source.dart';
 export 'camera_power.dart';
-export 'color_temperature_support.dart';
 export 'ethernet_config.dart';
 export 'file_format.dart';
 export 'gps_tag_recording.dart';

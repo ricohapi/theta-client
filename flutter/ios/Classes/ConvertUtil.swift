@@ -24,16 +24,12 @@ let KEY_PROXY = "proxy"
 let KEY_IP_ADDRESS = "ipAddress"
 let KEY_SUBNET_MASK = "subnetMask"
 let KEY_DEFAULT_GATEWAY = "defaultGateway"
-let KEY_COLOR_TEMPERATURE_SUPPORT_MAX = "maxTemperature"
-let KEY_COLOR_TEMPERATURE_SUPPORT_MIN = "minTemperature"
-let KEY_COLOR_TEMPERATURE_SUPPORT_STEP_SIZE = "stepSize"
 let KEY_MAC_ADDRESS = "macAddress"
 let KEY_HOST_NAME = "hostName"
 let KEY_DHCP_LEASE_ADDRESS = "dhcpLeaseAddress"
 let KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH = "pitch"
 let KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL = "roll"
 let KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW = "yaw"
-let KEY_TOP_BOTTOM_CORRECTION_ROTATION_SUPPORT = "topBottomCorrectionRotationSupport"
 let KEY_MAX = "max"
 let KEY_MIN = "min"
 let KEY_STEP_SIZE = "stepSize"
@@ -730,11 +726,11 @@ func convertGetOptionsParam(params: [String]) -> [ThetaRepository.OptionNameEnum
     return array
 }
 
-func convertResult(colorTemperatureSupport: ThetaRepository.ColorTemperatureSupport) -> [String: Any] {
+func convertValueRangeSupportResult<T>(valueRange: ThetaRepositoryValueRange<T>) -> [String: Any] {
     return [
-        KEY_COLOR_TEMPERATURE_SUPPORT_MAX: colorTemperatureSupport.maxTemperature,
-        KEY_COLOR_TEMPERATURE_SUPPORT_MIN: colorTemperatureSupport.minTemperature,
-        KEY_COLOR_TEMPERATURE_SUPPORT_STEP_SIZE: colorTemperatureSupport.stepSize,
+        KEY_MAX: valueRange.max,
+        KEY_MIN: valueRange.min,
+        KEY_STEP_SIZE: valueRange.stepSize
     ]
 }
 
@@ -800,24 +796,26 @@ func convertResult(rotation: ThetaRepository.TopBottomCorrectionRotation) -> [St
 }
 
 func convertResult(topBottomCorrectionRotationSupport: ThetaRepository.TopBottomCorrectionRotationSupport) -> [String: Any] {
-    return [
-        KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH: [
-            KEY_MAX: String(topBottomCorrectionRotationSupport.pitch.max),
-            KEY_MIN: String(topBottomCorrectionRotationSupport.pitch.min),
-            KEY_STEP_SIZE: String(topBottomCorrectionRotationSupport.pitch.stepSize)
-        ],
-        KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL: [
-            KEY_MAX: String(topBottomCorrectionRotationSupport.roll.max),
-            KEY_MIN: String(topBottomCorrectionRotationSupport.roll.min),
-            KEY_STEP_SIZE: String(topBottomCorrectionRotationSupport.roll.stepSize)
-        ],
-        KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW: [
-            KEY_MAX: String(topBottomCorrectionRotationSupport.yaw.max),
-            KEY_MIN: String(topBottomCorrectionRotationSupport.yaw.min),
-            KEY_STEP_SIZE: String(topBottomCorrectionRotationSupport.yaw.stepSize)
-        ]
+    let pitch = [
+        KEY_MAX: String(topBottomCorrectionRotationSupport.pitch.max.floatValue),
+        KEY_MIN: String(topBottomCorrectionRotationSupport.pitch.min.floatValue),
+        KEY_STEP_SIZE: String(topBottomCorrectionRotationSupport.pitch.stepSize.floatValue)
     ]
-
+    let roll = [
+        KEY_MAX: String(topBottomCorrectionRotationSupport.roll.max.floatValue),
+        KEY_MIN: String(topBottomCorrectionRotationSupport.roll.min.floatValue),
+        KEY_STEP_SIZE: String(topBottomCorrectionRotationSupport.roll.stepSize.floatValue)
+    ]
+    let yaw = [
+        KEY_MAX: String(topBottomCorrectionRotationSupport.yaw.max.floatValue),
+        KEY_MIN: String(topBottomCorrectionRotationSupport.yaw.min.floatValue),
+        KEY_STEP_SIZE: String(topBottomCorrectionRotationSupport.yaw.stepSize.floatValue)
+    ]
+    return [
+        KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH: pitch,
+        KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL: roll,
+        KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW: yaw
+    ]
 }
 
 func convertResult(options: ThetaRepository.Options) -> [String: Any] {
@@ -839,8 +837,6 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                 result[name.name] = convertResult(autoBracket: autoBracket)
             } else if value is ThetaRepository.BurstOption, let burstOption = value as? ThetaRepository.BurstOption {
                 result[name.name] = convertResult(burstOption: burstOption)
-            } else if value is ThetaRepository.ColorTemperatureSupport, let colorTemperatureSupport = value as? ThetaRepository.ColorTemperatureSupport {
-                result[name.name] = convertResult(colorTemperatureSupport: colorTemperatureSupport)
             } else if value is ThetaRepository.EthernetConfig, let ethernetConfig = value as? ThetaRepository.EthernetConfig {
                 result[name.name] = convertResult(ethernetConfig: ethernetConfig)
             } else if value is ThetaRepository.GpsInfo {
@@ -868,6 +864,8 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                 result[name.name] = convertResult(topBottomCorrectionRotationSupport: support)
             } else if let enumValues = value as? [AnyObject], let enumType = supportOptions[name] {
                 result[name.name] = convertSupportResult(supportValueList: enumValues, enumType: enumType)
+            } else if let valueRange = value as? ThetaRepositoryValueRange<NSNumber> {
+                result[name.name] = convertValueRangeSupportResult(valueRange: valueRange)
             }
         }
     }

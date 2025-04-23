@@ -4,7 +4,7 @@ import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
-import com.ricoh360.thetaclient.transferred.ColorTemperatureSupport
+import com.ricoh360.thetaclient.transferred.CompositeShootingOutputIntervalSupport
 import com.ricoh360.thetaclient.transferred.Options
 import io.ktor.http.HttpStatusCode
 import io.ktor.utils.io.ByteReadChannel
@@ -14,7 +14,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ColorTemperatureSupportTest {
+class CompositeShootingOutputIntervalSupportTest {
     private val endpoint = "http://192.168.1.1:80/"
 
     @BeforeTest
@@ -33,24 +33,24 @@ class ColorTemperatureSupportTest {
     @Test
     fun getOption() = runTest {
         val optionNames = listOf(
-            ThetaRepository.OptionNameEnum.ColorTemperatureSupport
+            ThetaRepository.OptionNameEnum.CompositeShootingOutputIntervalSupport
         )
         val stringOptionNames = listOf(
-            "_colorTemperatureSupport"
+            "_compositeShootingOutputIntervalSupport"
         )
 
         MockApiClient.onRequest = { request ->
             // check request
             CheckRequest.checkGetOptions(request, stringOptionNames)
 
-            ByteReadChannel(Resource("src/commonTest/resources/options/option_color_temperature_support.json").readText())
+            ByteReadChannel(Resource("src/commonTest/resources/options/option_composite_shooting_output_interval_support.json").readText())
         }
 
         val thetaRepository = ThetaRepository(endpoint)
         val options = thetaRepository.getOptions(optionNames)
-        assertEquals(options.colorTemperatureSupport?.max, 10000, "maxTemperature")
-        assertEquals(options.colorTemperatureSupport?.min, 2500, "minTemperature")
-        assertEquals(options.colorTemperatureSupport?.stepSize, 100, "stepSize")
+        assertEquals(options.compositeShootingOutputIntervalSupport?.max, 600, "maxInterval")
+        assertEquals(options.compositeShootingOutputIntervalSupport?.min, 0, "minInterval")
+        assertEquals(options.compositeShootingOutputIntervalSupport?.stepSize, 60, "stepSize")
     }
 
     /**
@@ -59,28 +59,28 @@ class ColorTemperatureSupportTest {
     @Test
     fun convertOptionTest() = runTest {
         val values = Pair(
-            ColorTemperatureSupport(10000, 3000, 100),
-            ThetaRepository.ValueRange(10000, 3000, 100)
+            CompositeShootingOutputIntervalSupport(600, 0, 60),
+            ThetaRepository.ValueRange(600, 0, 60)
         )
 
         val orgOptions = Options(
-            _colorTemperatureSupport = values.first
+            _compositeShootingOutputIntervalSupport = values.first
         )
         val optionsTR = ThetaRepository.Options(orgOptions)
         assertEquals(
-            optionsTR.colorTemperatureSupport,
+            optionsTR.compositeShootingOutputIntervalSupport,
             values.second,
-            "colorTemperatureSupport ${values.second}"
+            "compositeShootingOutputIntervalSupport ${values.second}"
         )
 
         val orgOptionsTR = ThetaRepository.Options(
-            colorTemperatureSupport = values.second
+            compositeShootingOutputIntervalSupport = values.second
         )
         val options = orgOptionsTR.toOptions()
         assertEquals(
-            options._colorTemperatureSupport,
+            options._compositeShootingOutputIntervalSupport,
             null,
-            "_colorTemperatureSupport ${values.first}"
+            "_compositeShootingOutputIntervalSupport ${values.first}"
         )
     }
 }

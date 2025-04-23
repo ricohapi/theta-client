@@ -19,6 +19,7 @@ import com.ricoh360.thetaclient.transferred.CameraMode
 import com.ricoh360.thetaclient.transferred.CameraPower
 import com.ricoh360.thetaclient.transferred.CaptureMode
 import com.ricoh360.thetaclient.transferred.ColorTemperatureSupport
+import com.ricoh360.thetaclient.transferred.CompositeShootingOutputIntervalSupport
 import com.ricoh360.thetaclient.transferred.EthernetConfig
 import com.ricoh360.thetaclient.transferred.FaceDetect
 import com.ricoh360.thetaclient.transferred.FirstShootingEnum
@@ -102,15 +103,16 @@ class OptionsTest {
             burstOrder = ThetaRepository.BurstOrderEnum.BURST_BRACKET_ORDER_0
         )
         val cameraControlSource = ThetaRepository.CameraControlSourceEnum.CAMERA
-        val cameraControlSourceSupport = listOf(ThetaRepository.CameraControlSourceEnum.CAMERA,ThetaRepository.CameraControlSourceEnum.APP)
+        val cameraControlSourceSupport = listOf(ThetaRepository.CameraControlSourceEnum.CAMERA, ThetaRepository.CameraControlSourceEnum.APP)
         val cameraMode = ThetaRepository.CameraModeEnum.CAPTURE
         val cameraPower = ThetaRepository.CameraPowerEnum.ON
         val captureInterval = 6
         val captureMode = ThetaRepository.CaptureModeEnum.IMAGE
         val captureNumber = 0
         val colorTemperature = 10
-        val colorTemperatureSupport = ThetaRepository.ColorTemperatureSupport(10000, 2000, 100)
+        val colorTemperatureSupport = ThetaRepository.ValueRange(10000, 2000, 100)
         val compositeShootingOutputInterval = 60
+        val compositeShootingOutputIntervalSupport = ThetaRepository.ValueRange(600, 0, 60)
         val compositeShootingTime = 600
         val continuousNumber = ThetaRepository.ContinuousNumberEnum.MAX_1
         val dateTimeZone = "2014:05:18 01:04:29+08:00"
@@ -160,9 +162,9 @@ class OptionsTest {
         val topBottomCorrection = ThetaRepository.TopBottomCorrectionOptionEnum.APPLY_AUTO
         val topBottomCorrectionRotation = ThetaRepository.TopBottomCorrectionRotation(1.0f, 2.0f, 3.0f)
         val topBottomCorrectionRotationSupport = ThetaRepository.TopBottomCorrectionRotationSupport(
-            pitch = ThetaRepository.TopBottomCorrectionRotationValueSupport(100f, -100f, 0.2f),
-            roll = ThetaRepository.TopBottomCorrectionRotationValueSupport(200f, -200f, 0.4f),
-            yaw = ThetaRepository.TopBottomCorrectionRotationValueSupport(300f, -300f, 0.6f)
+            pitch = ThetaRepository.ValueRange(100f, -100f, 0.2f),
+            roll = ThetaRepository.ValueRange(200f, -200f, 0.4f),
+            yaw = ThetaRepository.ValueRange(300f, -300f, 0.6f)
         )
         val totalSpace = 100L
         val username = "username"
@@ -193,6 +195,7 @@ class OptionsTest {
             colorTemperature = colorTemperature,
             colorTemperatureSupport = colorTemperatureSupport,
             compositeShootingOutputInterval = compositeShootingOutputInterval,
+            compositeShootingOutputIntervalSupport = compositeShootingOutputIntervalSupport,
             compositeShootingTime = compositeShootingTime,
             continuousNumber = continuousNumber,
             dateTimeZone = dateTimeZone,
@@ -265,6 +268,11 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ColorTemperature), colorTemperature, "colorTemperature")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ColorTemperatureSupport), colorTemperatureSupport, "colorTemperatureSupport")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CompositeShootingOutputInterval), compositeShootingOutputInterval, "compositeShootingOutputInterval")
+        assertEquals(
+            options.getValue(ThetaRepository.OptionNameEnum.CompositeShootingOutputIntervalSupport),
+            compositeShootingOutputIntervalSupport,
+            "compositeShootingOutputIntervalSupport"
+        )
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.CompositeShootingTime), compositeShootingTime, "compositeShootingTime")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ContinuousNumber), continuousNumber, "continuousNumber")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.DateTimeZone), dateTimeZone, "dateTimeZone")
@@ -361,8 +369,9 @@ class OptionsTest {
             Pair(ThetaRepository.OptionNameEnum.CaptureMode, ThetaRepository.CaptureModeEnum.IMAGE),
             Pair(ThetaRepository.OptionNameEnum.CaptureNumber, 0),
             Pair(ThetaRepository.OptionNameEnum.ColorTemperature, 10),
-            Pair(ThetaRepository.OptionNameEnum.ColorTemperatureSupport, ThetaRepository.ColorTemperatureSupport(10000, 2000, 100)),
+            Pair(ThetaRepository.OptionNameEnum.ColorTemperatureSupport, ThetaRepository.ValueRange(10000, 2000, 100)),
             Pair(ThetaRepository.OptionNameEnum.CompositeShootingOutputInterval, 60),
+            Pair(ThetaRepository.OptionNameEnum.CompositeShootingOutputIntervalSupport, ThetaRepository.ValueRange(600, 0, 60)),
             Pair(ThetaRepository.OptionNameEnum.CompositeShootingTime, 600),
             Pair(ThetaRepository.OptionNameEnum.DateTimeZone, "2014:05:18 01:04:29+08:00"),
             Pair(
@@ -413,9 +422,9 @@ class OptionsTest {
             Pair(ThetaRepository.OptionNameEnum.TopBottomCorrectionRotation, ThetaRepository.TopBottomCorrectionRotation(pitch = 1.0f, roll = 1.0f, yaw = 1.0f)),
             Pair(
                 ThetaRepository.OptionNameEnum.TopBottomCorrectionRotationSupport, ThetaRepository.TopBottomCorrectionRotationSupport(
-                    pitch = ThetaRepository.TopBottomCorrectionRotationValueSupport(100f, -100f, 0.2f),
-                    roll = ThetaRepository.TopBottomCorrectionRotationValueSupport(200f, -200f, 0.4f),
-                    yaw = ThetaRepository.TopBottomCorrectionRotationValueSupport(300f, -300f, 0.6f)
+                    pitch = ThetaRepository.ValueRange(100f, -100f, 0.2f),
+                    roll = ThetaRepository.ValueRange(200f, -200f, 0.4f),
+                    yaw = ThetaRepository.ValueRange(300f, -300f, 0.6f)
                 )
             ),
             Pair(ThetaRepository.OptionNameEnum.TotalSpace, 104L),
@@ -497,15 +506,17 @@ class OptionsTest {
             )
         )
         val cameraControlSource = Pair(CameraControlSource.CAMERA, ThetaRepository.CameraControlSourceEnum.CAMERA)
-        val cameraControlSourceSupport = Pair(listOf(CameraControlSource.CAMERA, CameraControlSource.APP), listOf(ThetaRepository.CameraControlSourceEnum.CAMERA, ThetaRepository.CameraControlSourceEnum.APP))
+        val cameraControlSourceSupport =
+            Pair(listOf(CameraControlSource.CAMERA, CameraControlSource.APP), listOf(ThetaRepository.CameraControlSourceEnum.CAMERA, ThetaRepository.CameraControlSourceEnum.APP))
         val cameraMode = Pair(CameraMode.CAPTURE, ThetaRepository.CameraModeEnum.CAPTURE)
         val cameraPower = Pair(CameraPower.OFF, ThetaRepository.CameraPowerEnum.OFF)
         val captureInterval = Pair(5, 5)
         val captureMode = Pair(CaptureMode.IMAGE, ThetaRepository.CaptureModeEnum.IMAGE)
         val captureNumber = Pair(9999, 9999)
         val colorTemperature = Pair(10, 10)
-        val colorTemperatureSupport = Pair(ColorTemperatureSupport(10000, 2000, 100), ThetaRepository.ColorTemperatureSupport(10000, 2000, 100))
+        val colorTemperatureSupport = Pair(ColorTemperatureSupport(10000, 2000, 100), ThetaRepository.ValueRange(10000, 2000, 100))
         val compositeShootingOutputInterval = Pair(60, 60)
+        val compositeShootingOutputIntervalSupport = Pair(CompositeShootingOutputIntervalSupport(600, 0, 60), ThetaRepository.ValueRange(600, 0, 60))
         val compositeShootingTime = Pair(600, 600)
         val dateTimeZone = Pair("2014:05:18 01:04:29+08:00", "2014:05:18 01:04:29+08:00")
         val ethernetConfig = Pair(
@@ -570,9 +581,9 @@ class OptionsTest {
                 roll = RollSupport(200f, -200f, 0.4f),
                 yaw = YawSupport(300f, -300f, 0.6f)
             ), ThetaRepository.TopBottomCorrectionRotationSupport(
-                pitch = ThetaRepository.TopBottomCorrectionRotationValueSupport(100f, -100f, 0.2f),
-                roll = ThetaRepository.TopBottomCorrectionRotationValueSupport(200f, -200f, 0.4f),
-                yaw = ThetaRepository.TopBottomCorrectionRotationValueSupport(300f, -300f, 0.6f)
+                pitch = ThetaRepository.ValueRange(100f, -100f, 0.2f),
+                roll = ThetaRepository.ValueRange(200f, -200f, 0.4f),
+                yaw = ThetaRepository.ValueRange(300f, -300f, 0.6f)
             )
         )
         val totalSpace = Pair(104L, 104L)
@@ -603,6 +614,7 @@ class OptionsTest {
             _colorTemperature = colorTemperature.first,
             _colorTemperatureSupport = colorTemperatureSupport.first,
             _compositeShootingOutputInterval = compositeShootingOutputInterval.first,
+            _compositeShootingOutputIntervalSupport = compositeShootingOutputIntervalSupport.first,
             _compositeShootingTime = compositeShootingTime.first,
             dateTimeZone = dateTimeZone.first,
             _ethernetConfig = ethernetConfig.first,
@@ -670,6 +682,7 @@ class OptionsTest {
         assertEquals(options.colorTemperature, colorTemperature.second, "colorTemperature")
         assertEquals(options.colorTemperatureSupport, colorTemperatureSupport.second, "colorTemperatureSupport")
         assertEquals(options.compositeShootingOutputInterval, compositeShootingOutputInterval.second, "compositeShootingOutputInterval")
+        assertEquals(options.compositeShootingOutputIntervalSupport, compositeShootingOutputIntervalSupport.second, "compositeShootingOutputIntervalSupport")
         assertEquals(options.compositeShootingTime, compositeShootingTime.second, "compositeShootingTime")
         assertEquals(options.dateTimeZone, dateTimeZone.second, "dateTimeZone")
         assertEquals(options.ethernetConfig, ethernetConfig.second, "ethernetConfig")
@@ -772,7 +785,8 @@ class OptionsTest {
             )
         )
         val cameraControlSource = Pair(CameraControlSource.CAMERA, ThetaRepository.CameraControlSourceEnum.CAMERA)
-        val cameraControlSourceSupport = Pair(listOf(CameraControlSource.CAMERA, CameraControlSource.APP), listOf(ThetaRepository.CameraControlSourceEnum.CAMERA, ThetaRepository.CameraControlSourceEnum.APP))
+        val cameraControlSourceSupport =
+            Pair(listOf(CameraControlSource.CAMERA, CameraControlSource.APP), listOf(ThetaRepository.CameraControlSourceEnum.CAMERA, ThetaRepository.CameraControlSourceEnum.APP))
         val cameraMode = Pair(CameraMode.CAPTURE, ThetaRepository.CameraModeEnum.CAPTURE)
         val cameraPower = Pair(CameraPower.SILENT_MODE, ThetaRepository.CameraPowerEnum.SILENT_MODE)
         val captureInterval = Pair(20, 20)

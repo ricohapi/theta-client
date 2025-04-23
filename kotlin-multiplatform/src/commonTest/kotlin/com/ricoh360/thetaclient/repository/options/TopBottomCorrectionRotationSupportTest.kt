@@ -74,9 +74,9 @@ class TopBottomCorrectionRotationSupportTest {
         val values = listOf(
             Pair(
                 ThetaRepository.TopBottomCorrectionRotationSupport(
-                    pitch = ThetaRepository.TopBottomCorrectionRotationValueSupport(100f, -100f, 0.2f),
-                    roll = ThetaRepository.TopBottomCorrectionRotationValueSupport(200f, -200f, 0.4f),
-                    yaw = ThetaRepository.TopBottomCorrectionRotationValueSupport(300f, -300f, 0.6f)
+                    pitch = ThetaRepository.ValueRange(100f, -100f, 0.2f),
+                    roll = ThetaRepository.ValueRange(200f, -200f, 0.4f),
+                    yaw = ThetaRepository.ValueRange(300f, -300f, 0.6f)
                 ), TopBottomCorrectionRotationSupport(
                     pitch = PitchSupport(100f, -100f, 0.2f),
                     roll = RollSupport(200f, -200f, 0.4f),

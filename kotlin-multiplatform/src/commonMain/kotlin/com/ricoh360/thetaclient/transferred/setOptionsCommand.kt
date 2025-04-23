@@ -284,7 +284,7 @@ internal data class Options(
     /**
      * Supported in-progress save interval for interval composite shooting (sec).
      */
-    var _compositeShootingOutputIntervalSupport: List<Int>? = null,
+    var _compositeShootingOutputIntervalSupport: CompositeShootingOutputIntervalSupport? = null,
 
     /**
      * Shooting time for interval composite shooting (sec).
@@ -2564,6 +2564,30 @@ internal data class ColorTemperatureSupport(
      */
     @Serializable(with = NumberAsIntSerializer::class)
     val minTemperature: Int,
+
+    /**
+     * step size
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    val stepSize: Int
+)
+
+/**
+ * Supported in-progress save interval for interval composite shooting (sec).
+ */
+@Serializable
+internal data class CompositeShootingOutputIntervalSupport(
+    /**
+     * maximum value
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    val maxInterval: Int,
+
+    /**
+     * minimum value
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    val minInterval: Int,
 
     /**
      * step size

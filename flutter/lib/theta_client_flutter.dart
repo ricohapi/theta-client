@@ -1273,10 +1273,14 @@ enum OptionNameEnum {
   colorTemperature('ColorTemperature', int),
 
   /// Option name _colorTemperatureSupport
-  colorTemperatureSupport('ColorTemperatureSupport', int),
+  colorTemperatureSupport('ColorTemperatureSupport', ValueRange),
 
   /// Option name _compositeShootingOutputInterval
   compositeShootingOutputInterval('CompositeShootingOutputInterval', int),
+
+  /// Option name _compositeShootingOutputIntervalSupport
+  compositeShootingOutputIntervalSupport(
+      'CompositeShootingOutputIntervalSupport', ValueRange),
 
   /// Option name _compositeShootingTime
   compositeShootingTime('CompositeShootingTime', int),
@@ -3160,7 +3164,7 @@ class Options {
   int? colorTemperature;
 
   /// supported color temperature.
-  ColorTemperatureSupport? colorTemperatureSupport;
+  ValueRange<int>? colorTemperatureSupport;
 
   /// In-progress save interval for interval composite shooting (sec).
   ///
@@ -3171,6 +3175,9 @@ class Options {
   /// RICOH THETA SC firmware v1.10 or later
   /// RICOH THETA S firmware v01.82 or later
   int? compositeShootingOutputInterval;
+
+  /// Supported in-progress save interval for interval composite shooting (sec).
+  ValueRange<int>? compositeShootingOutputIntervalSupport;
 
   /// Shooting time for interval composite shooting (sec).
   ///
@@ -3418,6 +3425,8 @@ class Options {
         return colorTemperatureSupport as T;
       case OptionNameEnum.compositeShootingOutputInterval:
         return compositeShootingOutputInterval as T;
+      case OptionNameEnum.compositeShootingOutputIntervalSupport:
+        return compositeShootingOutputIntervalSupport as T;
       case OptionNameEnum.compositeShootingTime:
         return compositeShootingTime as T;
       case OptionNameEnum.continuousNumber:
@@ -3577,6 +3586,9 @@ class Options {
         break;
       case OptionNameEnum.compositeShootingOutputInterval:
         compositeShootingOutputInterval = value;
+        break;
+      case OptionNameEnum.compositeShootingOutputIntervalSupport:
+        compositeShootingOutputIntervalSupport = value;
         break;
       case OptionNameEnum.compositeShootingTime:
         compositeShootingTime = value;
@@ -3799,4 +3811,23 @@ class PluginInfo {
       this.hasWebServer,
       this.exitStatus,
       this.message);
+}
+
+class ValueRange<T extends num> {
+  /// maximum value
+  T max;
+
+  /// minimum value
+  T min;
+
+  /// step size
+  T stepSize;
+
+  ValueRange(this.max, this.min, this.stepSize);
+
+  @override
+  bool operator ==(Object other) => hashCode == other.hashCode;
+
+  @override
+  int get hashCode => Object.hashAll([max, min, stepSize]);
 }

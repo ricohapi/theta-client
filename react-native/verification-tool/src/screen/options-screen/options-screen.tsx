@@ -193,6 +193,12 @@ const optionList: OptionItem[] = [
     },
   },
   {
+    name: 'compositeShootingOutputIntervalSupport',
+    value: {
+      optionName: OptionNameEnum.CompositeShootingOutputIntervalSupport,
+    },
+  },
+  {
     name: 'continuousNumber',
     value: {
       optionName: OptionNameEnum.ContinuousNumber,

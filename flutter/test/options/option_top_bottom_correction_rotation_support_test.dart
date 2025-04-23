@@ -39,20 +39,20 @@ void main() {
     expect(
         options.topBottomCorrectionRotationSupport,
         TopBottomCorrectionRotationSupport(
-            pitch: TopBottomCorrectionRotationValueSupport(
-              max: double.parse(pitchData['max'] ?? '0.0'),
-              min: double.parse(pitchData['min'] ?? '0.0'),
-              stepSize: double.parse(pitchData['stepSize'] ?? '0.0'),
+            pitch: ValueRange<double>(
+              double.parse(pitchData['max'] ?? '0.0'),
+              double.parse(pitchData['min'] ?? '0.0'),
+              double.parse(pitchData['stepSize'] ?? '0.0'),
             ),
-            roll: TopBottomCorrectionRotationValueSupport(
-              max: double.parse(rollData['max'] ?? '0.0'),
-              min: double.parse(rollData['min'] ?? '0.0'),
-              stepSize: double.parse(rollData['stepSize'] ?? '0.0'),
+            roll: ValueRange<double>(
+              double.parse(rollData['max'] ?? '0.0'),
+              double.parse(rollData['min'] ?? '0.0'),
+              double.parse(rollData['stepSize'] ?? '0.0'),
             ),
-            yaw: TopBottomCorrectionRotationValueSupport(
-              max: double.parse(yawData['max'] ?? '0.0'),
-              min: double.parse(yawData['min'] ?? '0.0'),
-              stepSize: double.parse(yawData['stepSize'] ?? '0.0'),
+            yaw: ValueRange<double>(
+              double.parse(yawData['max'] ?? '0.0'),
+              double.parse(yawData['min'] ?? '0.0'),
+              double.parse(yawData['stepSize'] ?? '0.0'),
             )),
         reason: 'quality');
   });

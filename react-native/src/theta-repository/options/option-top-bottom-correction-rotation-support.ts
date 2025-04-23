@@ -1,3 +1,5 @@
+import type { ValueRange } from './options';
+
 /**
  * Supported TopBottomCorrectionRotation
  */
@@ -5,31 +7,13 @@ export type TopBottomCorrectionRotationSupport = {
   /**
    * Supported pitch
    */
-  pitch: TopBottomCorrectionRotationValueSupport;
+  pitch: ValueRange;
   /**
    * Supported roll
    */
-  roll: TopBottomCorrectionRotationValueSupport;
+  roll: ValueRange;
   /**
    * Supported yaw
    */
-  yaw: TopBottomCorrectionRotationValueSupport;
-};
-
-/**
- * Supported value of TopBottomCorrectionRotation
- */
-export type TopBottomCorrectionRotationValueSupport = {
-  /**
-   * maximum value
-   */
-  max: number;
-  /**
-   * minimum value
-   */
-  min: number;
-  /**
-   * Step size
-   */
-  stepSize: number;
+  yaw: ValueRange;
 };

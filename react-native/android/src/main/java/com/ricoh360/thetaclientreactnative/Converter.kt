@@ -46,6 +46,7 @@ const val KEY_MAX = "max"
 const val KEY_MIN = "min"
 const val KEY_STEP_SIZE = "stepSize"
 const val KEY_GPS_TAG_RECORDING_SUPPORT = "gpsTagRecordingSupport"
+const val KEY_COMPOSITE_SHOOTING_OUTPUT_INTERVAL_SUPPORT = "compositeShootingOutputIntervalSupport"
 const val KEY_APERTURE_SUPPORT = "apertureSupport"
 
 val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
@@ -69,6 +70,7 @@ val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "colorTemperature" to OptionNameEnum.ColorTemperature,
   "colorTemperatureSupport" to OptionNameEnum.ColorTemperatureSupport,
   "compositeShootingOutputInterval" to OptionNameEnum.CompositeShootingOutputInterval,
+  KEY_COMPOSITE_SHOOTING_OUTPUT_INTERVAL_SUPPORT to OptionNameEnum.CompositeShootingOutputIntervalSupport,
   "compositeShootingTime" to OptionNameEnum.CompositeShootingTime,
   "continuousNumber" to OptionNameEnum.ContinuousNumber,
   "dateTimeZone" to OptionNameEnum.DateTimeZone,
@@ -372,6 +374,10 @@ fun toResult(options: Options): WritableMap {
     OptionNameEnum.AiAutoThumbnailSupport to AiAutoThumbnailEnum::class,
     OptionNameEnum.CameraControlSourceSupport to CameraControlSourceEnum::class,
   )
+  val intValueRangeSupportOptions = listOf(
+    OptionNameEnum.ColorTemperatureSupport,
+    OptionNameEnum.CompositeShootingOutputIntervalSupport
+  )
   OptionNameEnum.values().forEach { name ->
     if (name == OptionNameEnum.AutoBracket) {
       options.autoBracket?.let {
@@ -388,10 +394,6 @@ fun toResult(options: Options): WritableMap {
     } else if (name == OptionNameEnum.BurstOption) {
       options.burstOption?.let {
         result.putMap("burstOption", toResult(burstOption = it))
-      }
-    } else if (name == OptionNameEnum.ColorTemperatureSupport) {
-      options.colorTemperatureSupport?.let {
-        result.putMap("colorTemperatureSupport", toResult(colorTemperatureSupport = it))
       }
     } else if (name == OptionNameEnum.EthernetConfig) {
       options.ethernetConfig?.let {
@@ -438,6 +440,8 @@ fun toResult(options: Options): WritableMap {
       addOptionsValueToMap<Any>(options, name, result)
     } else if (supportOptions.keys.contains(name)) {
       addSupportOptionsValueToMap(options, name, result, supportOptions[name]!!)
+    } else if (intValueRangeSupportOptions.contains(name)) {
+      addValueRangeSupportOptionsValueToMap<Int>(options, name, result)
     } else {
       addOptionsEnumToMap(options, name, result)
     }
@@ -477,6 +481,32 @@ fun addSupportOptionsValueToMap(
     objects.putArray(key, array)
   }
 }
+
+fun <T : Number> addValueRangeSupportOptionsValueToMap(
+  options: Options,
+  name: OptionNameEnum,
+  objects: WritableMap
+) {
+  val key = optionNameEnumToItemName[name] ?: return
+  options.getValue<ValueRange<T>>(name)?.let { value ->
+    val result = Arguments.createMap()
+    when (value.max) {
+      is Int -> {
+        result.putInt(KEY_MAX, value.max as Int)
+        result.putInt(KEY_MIN, value.min as Int)
+        result.putInt(KEY_STEP_SIZE, value.stepSize as Int)
+      }
+
+      is Double -> {
+        result.putDouble(KEY_MAX, value.max as Double)
+        result.putDouble(KEY_MIN, value.min as Double)
+        result.putDouble(KEY_STEP_SIZE, value.stepSize as Double)
+      }
+    }
+    objects.putMap(key, result)
+  }
+}
+
 
 fun <T> addOptionsValueToMap(options: Options, name: OptionNameEnum, objects: WritableMap) {
   val key = optionNameEnumToItemName[name] ?: return
@@ -620,14 +650,6 @@ fun toResult(fileInfo: FileInfo): ReadableMap {
   return result
 }
 
-fun toResult(colorTemperatureSupport: ColorTemperatureSupport): WritableMap {
-  val result = Arguments.createMap()
-  result.putInt("maxTemperature", colorTemperatureSupport.maxTemperature)
-  result.putInt("minTemperature", colorTemperatureSupport.minTemperature)
-  result.putInt("stepSize", colorTemperatureSupport.stepSize)
-  return result
-}
-
 fun toResult(ethernetConfig: EthernetConfig): WritableMap {
   val result = Arguments.createMap()
   result.putBoolean("usingDhcp", ethernetConfig.usingDhcp)
@@ -734,14 +756,6 @@ fun toJson(rotationSupport: TopBottomCorrectionRotationSupport): String {
     }
   """.trimIndent()
   return convertJson
-}
-
-fun toResult(rotationValueSupport: TopBottomCorrectionRotationValueSupport): WritableMap {
-  val result = Arguments.createMap()
-  result.putString(KEY_MAX, rotationValueSupport.max.toString())
-  result.putString(KEY_MIN, rotationValueSupport.min.toString())
-  result.putString(KEY_STEP_SIZE, rotationValueSupport.stepSize.toString())
-  return result
 }
 
 fun toResult(state: ThetaState): WritableMap {

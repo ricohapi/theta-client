@@ -80,9 +80,6 @@ let KEY_CONNECTION_PRIORITY = "connectionPriority"
 let KEY_AUTH_MODE = "authMode"
 let KEY_PASSWORD = "password"
 let KEY_COLOR_TEMPERATURE_SUPPORT = "colorTemperatureSupport"
-let KEY_COLOR_TEMPERATURE_SUPPORT_MAX = "maxTemperature"
-let KEY_COLOR_TEMPERATURE_SUPPORT_MIN = "minTemperature"
-let KEY_COLOR_TEMPERATURE_SUPPORT_STEP_SIZE = "stepSize"
 let KEY_WLAN_FREQUENCY_CL_MODE = "wlanFrequencyClMode"
 let KEY_WLAN_FREQUENCY_CL_MODE_2_4 = "enable2_4"
 let KEY_WLAN_FREQUENCY_CL_MODE_5_2 = "enable5_2"
@@ -101,6 +98,7 @@ let KEY_MAX = "max"
 let KEY_MIN = "min"
 let KEY_STEP_SIZE = "stepSize"
 let KEY_GPS_TAG_RECORDING_SUPPORT = "gpsTagRecordingSupport"
+let KEY_COMPOSITE_SHOOTING_OUTPUT_INTERVAL_SUPPORT = "compositeShootingOutputIntervalSupport"
 let KEY_APERTURE_SUPPORT = "apertureSupport"
 
 public class ConvertUtil: NSObject {}
@@ -127,9 +125,9 @@ let optionItemNameToEnum = [
     "captureMode": ThetaRepository.OptionNameEnum.capturemode,
     "captureNumber": ThetaRepository.OptionNameEnum.capturenumber,
     "colorTemperature": ThetaRepository.OptionNameEnum.colortemperature,
-    "colorTemperatureSupport": ThetaRepository.OptionNameEnum.colortemperaturesupport,
-    "compositeShootingOutputInterval": ThetaRepository.OptionNameEnum
-        .compositeshootingoutputinterval,
+    KEY_COLOR_TEMPERATURE_SUPPORT: ThetaRepository.OptionNameEnum.colortemperaturesupport,
+    "compositeShootingOutputInterval": ThetaRepository.OptionNameEnum.compositeshootingoutputinterval,
+    KEY_COMPOSITE_SHOOTING_OUTPUT_INTERVAL_SUPPORT: ThetaRepository.OptionNameEnum.compositeshootingoutputintervalsupport,
     "compositeShootingTime": ThetaRepository.OptionNameEnum.compositeshootingtime,
     "continuousNumber": ThetaRepository.OptionNameEnum.continuousnumber,
     "dateTimeZone": ThetaRepository.OptionNameEnum.datetimezone,
@@ -446,10 +444,6 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                           let burstOption = value as? ThetaRepository.BurstOption
                 {
                     result[key] = convertResult(burstOption: burstOption)
-                } else if value is ThetaRepository.ColorTemperatureSupport,
-                          let colorTemperatureSupport = value as? ThetaRepository.ColorTemperatureSupport
-                {
-                    result[key] = convertResult(colorTemperatureSupport: colorTemperatureSupport)
                 } else if value is ThetaRepository.EthernetConfig,
                           let ethernetConfig = value as? ThetaRepository.EthernetConfig
                 {
@@ -479,6 +473,8 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                             ? ThetaRepository.SleepDelayEnum.disable.name : sleepDelay.sec
                 } else if let enumValue = value as? [AnyObject], let enumType = supportOptions[name] {
                   result[key] = convertSupportResult(supportValueList: enumValue, enumType: enumType)
+                } else if let valueRange = value as? ThetaRepositoryValueRange<NSNumber> {
+                  result[key] = convertValueRangeSupportResult(valueRange: valueRange)
                 }
                 // TODO: Add class item when adding options
             }
@@ -1072,14 +1068,6 @@ func convertResult(autoBracket: ThetaRepository.BracketSettingList) -> [[String:
     return resultList
 }
 
-func convertResult(colorTemperatureSupport: ThetaRepository.ColorTemperatureSupport) -> [String: Any] {
-    var result: [String: Any] = [:]
-    result[KEY_COLOR_TEMPERATURE_SUPPORT_MAX] = colorTemperatureSupport.maxTemperature
-    result[KEY_COLOR_TEMPERATURE_SUPPORT_MIN] = colorTemperatureSupport.minTemperature
-    result[KEY_COLOR_TEMPERATURE_SUPPORT_STEP_SIZE] = colorTemperatureSupport.stepSize
-    return result
-}
-
 func convertResult(ethernetConfig: ThetaRepository.EthernetConfig) -> [String: Any] {
     var result: [String: Any] = ["usingDhcp": ethernetConfig.usingDhcp]
     if let ipAddress = ethernetConfig.ipAddress {
@@ -1287,6 +1275,14 @@ func convertSupportResult(supportValueList: [Any], enumType: Any.Type) -> [Any] 
             result.append(value.name)
         }
     }
+    return result
+}
+
+func convertValueRangeSupportResult<T>(valueRange: ThetaRepositoryValueRange<T>) -> [String: Any] {
+    var result: [String: Any] = [:]
+    result[KEY_MAX] = valueRange.max
+    result[KEY_MIN] = valueRange.min
+    result[KEY_STEP_SIZE] = valueRange.stepSize
     return result
 }
 

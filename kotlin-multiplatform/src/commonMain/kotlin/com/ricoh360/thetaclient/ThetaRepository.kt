@@ -807,7 +807,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Option name
          * _colorTemperatureSupport
          */
-        ColorTemperatureSupport("_colorTemperatureSupport", ThetaRepository.ColorTemperatureSupport::class),
+        ColorTemperatureSupport("_colorTemperatureSupport", ValueRange::class),
 
         /**
          * Option name
@@ -819,6 +819,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * RICOH THETA S firmware v01.82 or later
          */
         CompositeShootingOutputInterval("_compositeShootingOutputInterval", Int::class),
+
+        /**
+         * Supported in-progress save interval for interval composite shooting (sec).
+         */
+        CompositeShootingOutputIntervalSupport("_compositeShootingOutputIntervalSupport", ValueRange::class),
 
         /**
          * Option name
@@ -1240,7 +1245,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         /**
          * supported color temperature.
          */
-        var colorTemperatureSupport: ColorTemperatureSupport? = null,
+        var colorTemperatureSupport: ValueRange<Int>? = null,
 
         /**
          * In-progress save interval for interval composite shooting (sec).
@@ -1253,6 +1258,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * RICOH THETA S firmware v01.82 or later
          */
         var compositeShootingOutputInterval: Int? = null,
+
+        /**
+         * Supported in-progress save interval for interval composite shooting (sec).
+         */
+        var compositeShootingOutputIntervalSupport: ValueRange<Int>? = null,
 
         /**
          * Shooting time for interval composite shooting (sec).
@@ -1574,6 +1584,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             colorTemperature = null,
             colorTemperatureSupport = null,
             compositeShootingOutputInterval = null,
+            compositeShootingOutputIntervalSupport = null,
             compositeShootingTime = null,
             continuousNumber = null,
             dateTimeZone = null,
@@ -1641,8 +1652,9 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             captureMode = options.captureMode?.let { CaptureModeEnum.get(it) },
             captureNumber = options.captureNumber,
             colorTemperature = options._colorTemperature,
-            colorTemperatureSupport = options._colorTemperatureSupport?.let { ColorTemperatureSupport(it) },
+            colorTemperatureSupport = options._colorTemperatureSupport?.let { ValueRange<Int>(it) },
             compositeShootingOutputInterval = options._compositeShootingOutputInterval,
+            compositeShootingOutputIntervalSupport = options._compositeShootingOutputIntervalSupport?.let { ValueRange<Int>(it) },
             compositeShootingTime = options._compositeShootingTime,
             continuousNumber = options.continuousNumber?.let { ContinuousNumberEnum.get(it) },
             dateTimeZone = options.dateTimeZone,
@@ -1798,6 +1810,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.ColorTemperature -> colorTemperature
                 OptionNameEnum.ColorTemperatureSupport -> colorTemperatureSupport
                 OptionNameEnum.CompositeShootingOutputInterval -> compositeShootingOutputInterval
+                OptionNameEnum.CompositeShootingOutputIntervalSupport -> compositeShootingOutputIntervalSupport
                 OptionNameEnum.CompositeShootingTime -> compositeShootingTime
                 OptionNameEnum.ContinuousNumber -> continuousNumber
                 OptionNameEnum.DateTimeZone -> dateTimeZone
@@ -1878,8 +1891,9 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.CaptureMode -> captureMode = value as CaptureModeEnum
                 OptionNameEnum.CaptureNumber -> captureNumber = value as Int
                 OptionNameEnum.ColorTemperature -> colorTemperature = value as Int
-                OptionNameEnum.ColorTemperatureSupport -> colorTemperatureSupport = value as ColorTemperatureSupport
+                OptionNameEnum.ColorTemperatureSupport -> colorTemperatureSupport = value as ValueRange<Int>
                 OptionNameEnum.CompositeShootingOutputInterval -> compositeShootingOutputInterval = value as Int
+                OptionNameEnum.CompositeShootingOutputIntervalSupport -> compositeShootingOutputIntervalSupport = value as ValueRange<Int>
                 OptionNameEnum.CompositeShootingTime -> compositeShootingTime = value as Int
                 OptionNameEnum.ContinuousNumber -> continuousNumber = value as ContinuousNumberEnum
                 OptionNameEnum.DateTimeZone -> dateTimeZone = value as String
@@ -2840,43 +2854,6 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             internal fun get(value: CaptureMode): CaptureModeEnum? {
                 return values().firstOrNull { it.value == value }
             }
-        }
-    }
-
-    /**
-     * supported color temperature.
-     */
-    data class ColorTemperatureSupport(
-        /**
-         * maximum value
-         */
-        val maxTemperature: Int,
-        /**
-         * minimum value
-         */
-        val minTemperature: Int,
-        /**
-         * step size
-         */
-        val stepSize: Int,
-    ) {
-        internal constructor(support: com.ricoh360.thetaclient.transferred.ColorTemperatureSupport) : this(
-            maxTemperature = support.maxTemperature,
-            minTemperature = support.minTemperature,
-            stepSize = support.stepSize
-        )
-
-        /**
-         * Convert ColorTemperatureSupport to transferred.ColorTemperatureSupport
-         *
-         * @return transferred.ColorTemperatureSupport
-         */
-        internal fun toTransferredColorTemperatureSupport(): com.ricoh360.thetaclient.transferred.ColorTemperatureSupport {
-            return com.ricoh360.thetaclient.transferred.ColorTemperatureSupport(
-                maxTemperature = maxTemperature,
-                minTemperature = minTemperature,
-                stepSize = stepSize
-            )
         }
     }
 
@@ -6122,113 +6099,23 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         /**
          * Supported pitch
          */
-        val pitch: TopBottomCorrectionRotationValueSupport,
+        val pitch: ValueRange<Float>,
 
         /**
          * Supported roll
          */
-        val roll: TopBottomCorrectionRotationValueSupport,
+        val roll: ValueRange<Float>,
 
         /**
          * Supported yaw
          */
-        val yaw: TopBottomCorrectionRotationValueSupport
+        val yaw: ValueRange<Float>
     ) {
         internal constructor(rotation: com.ricoh360.thetaclient.transferred.TopBottomCorrectionRotationSupport) : this(
-            pitch = TopBottomCorrectionRotationValueSupport(rotation.pitch),
-            roll = TopBottomCorrectionRotationValueSupport(rotation.roll),
-            yaw = TopBottomCorrectionRotationValueSupport(rotation.yaw)
+            pitch = ValueRange<Float>(rotation.pitch),
+            roll = ValueRange<Float>(rotation.roll),
+            yaw = ValueRange<Float>(rotation.yaw)
         )
-
-        /**
-         * Convert TopBottomCorrectionRotationSupport to transferred.TopBottomCorrectionRotationSupport. for ThetaApi.
-         *
-         * @return transferred.TopBottomCorrectionRotationSupport
-         */
-        internal fun toTransferredTopBottomCorrectionRotationSupport(): com.ricoh360.thetaclient.transferred.TopBottomCorrectionRotationSupport {
-            return TopBottomCorrectionRotationSupport(
-                pitch = pitch.toTransferredPitchSupport(),
-                roll = roll.toTransferredRollSupport(),
-                yaw = yaw.toTransferredYawSupport()
-            )
-        }
-    }
-
-    /**
-     * Supported value of TopBottomCorrectionRotation
-     */
-    data class TopBottomCorrectionRotationValueSupport(
-        /**
-         * maximum value
-         */
-        val max: Float,
-
-        /**
-         * minimum value
-         */
-        val min: Float,
-
-        /**
-         * step size
-         */
-        val stepSize: Float
-    ) {
-        internal constructor(support: PitchSupport) : this(
-            max = support.maxPitch,
-            min = support.minPitch,
-            stepSize = support.stepSize
-        )
-
-        internal constructor(support: RollSupport) : this(
-            max = support.maxRoll,
-            min = support.minRoll,
-            stepSize = support.stepSize
-        )
-
-        internal constructor(support: YawSupport) : this(
-            max = support.maxYaw,
-            min = support.minYaw,
-            stepSize = support.stepSize
-        )
-
-        /**
-         * Convert TopBottomCorrectionRotationValueSupport to transferred.PitchSupport. for ThetaApi.
-         *
-         * @return transferred.PitchSupport
-         */
-        internal fun toTransferredPitchSupport(): PitchSupport {
-            return PitchSupport(
-                maxPitch = max,
-                minPitch = min,
-                stepSize = stepSize
-            )
-        }
-
-        /**
-         * Convert TopBottomCorrectionRotationValueSupport to transferred.RollSupport. for ThetaApi.
-         *
-         * @return transferred.RollSupport
-         */
-        internal fun toTransferredRollSupport(): RollSupport {
-            return RollSupport(
-                maxRoll = max,
-                minRoll = min,
-                stepSize = stepSize
-            )
-        }
-
-        /**
-         * Convert TopBottomCorrectionRotationValueSupport to transferred.YawSupport. for ThetaApi.
-         *
-         * @return transferred.YawSupport
-         */
-        internal fun toTransferredYawSupport(): YawSupport {
-            return YawSupport(
-                maxYaw = max,
-                minYaw = min,
-                stepSize = stepSize
-            )
-        }
     }
 
     /**
@@ -8193,6 +8080,59 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     fun getEventWebSocket(): EventWebSocket {
         return EventWebSocket(endpoint)
     }
+
+    data class ValueRange<T : Number>(
+        /**
+         * maximum value
+         */
+        val max: T,
+
+        /**
+         * minimum value
+         */
+        val min: T,
+
+        /**
+         * step size
+         */
+        val stepSize: T
+    ) {
+        @Suppress("UNCHECKED_CAST")
+        internal constructor(support: ColorTemperatureSupport) : this(
+            max = support.maxTemperature as T,
+            min = support.minTemperature as T,
+            stepSize = support.stepSize as T
+        )
+
+        @Suppress("UNCHECKED_CAST")
+        internal constructor(support: CompositeShootingOutputIntervalSupport) : this(
+            max = support.maxInterval as T,
+            min = support.minInterval as T,
+            stepSize = support.stepSize as T
+        )
+
+        @Suppress("UNCHECKED_CAST")
+        internal constructor(support: PitchSupport) : this(
+            max = support.maxPitch as T,
+            min = support.minPitch as T,
+            stepSize = support.stepSize as T
+        )
+
+        @Suppress("UNCHECKED_CAST")
+        internal constructor(support: RollSupport) : this(
+            max = support.maxRoll as T,
+            min = support.minRoll as T,
+            stepSize = support.stepSize as T
+        )
+
+        @Suppress("UNCHECKED_CAST")
+        internal constructor(support: YawSupport) : this(
+            max = support.maxYaw as T,
+            min = support.minYaw as T,
+            stepSize = support.stepSize as T
+        )
+    }
+
 }
 
 

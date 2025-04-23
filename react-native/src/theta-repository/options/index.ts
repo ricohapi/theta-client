@@ -11,7 +11,6 @@ export * from './option-camera-mode';
 export * from './option-camera-power';
 export * from './option-capture-mode';
 export * from './option-continuous-number';
-export * from './option-color-temperature-support';
 export * from './option-face-detect';
 export * from './option-file-format';
 export * from './option-filter';

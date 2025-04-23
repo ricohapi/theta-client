@@ -17,9 +17,6 @@ const val KEY_NOTIFY_PARAM_FILE_URL = "fileUrl"
 const val KEY_GPS_INFO = "gpsInfo"
 const val KEY_STATE_EXTERNAL_GPS_INFO = "externalGpsInfo"
 const val KEY_STATE_INTERNAL_GPS_INFO = "internalGpsInfo"
-const val KEY_COLOR_TEMPERATURE_SUPPORT_MAX = "maxTemperature"
-const val KEY_COLOR_TEMPERATURE_SUPPORT_MIN = "minTemperature"
-const val KEY_COLOR_TEMPERATURE_SUPPORT_STEP_SIZE = "stepSize"
 const val KEY_WLAN_FREQUENCY_CL_MODE_2_4 = "enable2_4"
 const val KEY_WLAN_FREQUENCY_CL_MODE_5_2 = "enable5_2"
 const val KEY_WLAN_FREQUENCY_CL_MODE_5_8 = "enable5_8"
@@ -30,7 +27,6 @@ const val KEY_DHCP_LEASE_ADDRESS = "dhcpLeaseAddress"
 const val KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH = "pitch"
 const val KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL = "roll"
 const val KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW = "yaw"
-const val KEY_TOP_BOTTOM_CORRECTION_ROTATION_SUPPORT = "topBottomCorrectionRotationSupport"
 const val KEY_MAX = "max"
 const val KEY_MIN = "min"
 const val KEY_STEP_SIZE = "stepSize"
@@ -524,14 +520,6 @@ fun toGetOptionsParam(data: List<String>): List<OptionNameEnum> {
     return optionNames
 }
 
-fun toResult(colorTemperatureSupport: ColorTemperatureSupport): Map<String, Any> {
-    return mapOf(
-        KEY_COLOR_TEMPERATURE_SUPPORT_MAX to colorTemperatureSupport.maxTemperature,
-        KEY_COLOR_TEMPERATURE_SUPPORT_MIN to colorTemperatureSupport.minTemperature,
-        KEY_COLOR_TEMPERATURE_SUPPORT_STEP_SIZE to colorTemperatureSupport.stepSize
-    )
-}
-
 fun toResult(ethernetConfig: EthernetConfig): Map<String, Any?> {
     val result = mutableMapOf<String, Any>()
 
@@ -601,20 +589,19 @@ fun toResult(rotation: TopBottomCorrectionRotation): Map<String, Any> {
 
 fun toResult(topBottomCorrectionRotationSupport: TopBottomCorrectionRotationSupport): Map<String, Any> {
     return mapOf(
-        KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH to toResult(rotationValueSupport = topBottomCorrectionRotationSupport.pitch),
-        KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL to toResult(rotationValueSupport = topBottomCorrectionRotationSupport.roll),
-        KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW to toResult(rotationValueSupport = topBottomCorrectionRotationSupport.yaw)
+        KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH to toResultValueRangeString(valueRange = topBottomCorrectionRotationSupport.pitch),
+        KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL to toResultValueRangeString(valueRange = topBottomCorrectionRotationSupport.roll),
+        KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW to toResultValueRangeString(valueRange = topBottomCorrectionRotationSupport.yaw)
     )
 }
 
-fun toResult(rotationValueSupport: TopBottomCorrectionRotationValueSupport): Map<String, Any> {
+fun <T : Number> toResultValueRangeString(valueRange: ValueRange<T>): Map<String, String> {
     return mapOf(
-        KEY_MAX to rotationValueSupport.max.toString(),
-        KEY_MIN to rotationValueSupport.min.toString(),
-        KEY_STEP_SIZE to rotationValueSupport.stepSize.toString()
+        KEY_MAX to valueRange.max.toString(),
+        KEY_MIN to valueRange.min.toString(),
+        KEY_STEP_SIZE to valueRange.stepSize.toString()
     )
 }
-
 
 fun toResult(options: Options): Map<String, Any> {
     val result = mutableMapOf<String, Any>()
@@ -641,6 +628,10 @@ fun toResult(options: Options): Map<String, Any> {
         OptionNameEnum.AiAutoThumbnailSupport to AiAutoThumbnailEnum::class,
         OptionNameEnum.CameraControlSourceSupport to CameraControlSourceEnum::class,
     )
+    val intValueRangeSupportOptions = listOf(
+        OptionNameEnum.ColorTemperatureSupport,
+        OptionNameEnum.CompositeShootingOutputIntervalSupport
+    )
     OptionNameEnum.values().forEach { name ->
         if (name == OptionNameEnum.AutoBracket) {
             options.getValue<BracketSettingList>(OptionNameEnum.AutoBracket)?.let { autoBracket ->
@@ -657,10 +648,6 @@ fun toResult(options: Options): Map<String, Any> {
         } else if (name == OptionNameEnum.BurstOption) {
             options.getValue<BurstOption>(OptionNameEnum.BurstOption)?.let { burstOption ->
                 result[OptionNameEnum.BurstOption.name] = toResult(burstOption)
-            }
-        } else if (name == OptionNameEnum.ColorTemperatureSupport) {
-            options.getValue<ColorTemperatureSupport>(OptionNameEnum.ColorTemperatureSupport)?.let { colorTemperatureSupport ->
-                result[OptionNameEnum.ColorTemperatureSupport.name] = toResult(colorTemperatureSupport)
             }
         } else if (name == OptionNameEnum.EthernetConfig) {
             options.getValue<EthernetConfig>(OptionNameEnum.EthernetConfig)?.let { ethernetConfig ->
@@ -700,6 +687,8 @@ fun toResult(options: Options): Map<String, Any> {
             addOptionsValueToMap<Any>(options, name, result)
         } else if (supportOptions.keys.contains(name)) {
             addSupportOptionsValueToMap(options, name, result, supportOptions[name]!!)
+        } else if (intValueRangeSupportOptions.contains(name)) {
+            addValueRangeSupportOptionsValueToMap<Int>(options, name, result)
         } else {
             addOptionsEnumToMap(options, name, result)
         }
@@ -736,6 +725,20 @@ fun addSupportOptionsValueToMap(
             }
         }
         map[name.name] = array
+    }
+}
+
+fun <T : Number> addValueRangeSupportOptionsValueToMap(
+    options: Options,
+    name: OptionNameEnum,
+    map: MutableMap<String, Any>
+) {
+    options.getValue<ValueRange<T>>(name)?.let { value ->
+        map[name.name] = mapOf(
+            KEY_MAX to value.max,
+            KEY_MIN to value.min,
+            KEY_STEP_SIZE to value.stepSize
+        )
     }
 }
 
