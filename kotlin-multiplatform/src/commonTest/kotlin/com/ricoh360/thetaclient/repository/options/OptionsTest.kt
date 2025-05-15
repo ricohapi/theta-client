@@ -20,6 +20,7 @@ import com.ricoh360.thetaclient.transferred.CameraPower
 import com.ricoh360.thetaclient.transferred.CaptureMode
 import com.ricoh360.thetaclient.transferred.ColorTemperatureSupport
 import com.ricoh360.thetaclient.transferred.CompositeShootingOutputIntervalSupport
+import com.ricoh360.thetaclient.transferred.CompositeShootingTimeSupport
 import com.ricoh360.thetaclient.transferred.EthernetConfig
 import com.ricoh360.thetaclient.transferred.FaceDetect
 import com.ricoh360.thetaclient.transferred.FirstShootingEnum
@@ -115,6 +116,7 @@ class OptionsTest {
         val compositeShootingOutputInterval = 60
         val compositeShootingOutputIntervalSupport = ThetaRepository.ValueRange(600, 0, 60)
         val compositeShootingTime = 600
+        val compositeShootingTimeSupport = ThetaRepository.ValueRange(86400, 600, 600)
         val continuousNumber = ThetaRepository.ContinuousNumberEnum.MAX_1
         val dateTimeZone = "2014:05:18 01:04:29+08:00"
         val ethernetConfig = ThetaRepository.EthernetConfig(
@@ -199,6 +201,7 @@ class OptionsTest {
             compositeShootingOutputInterval = compositeShootingOutputInterval,
             compositeShootingOutputIntervalSupport = compositeShootingOutputIntervalSupport,
             compositeShootingTime = compositeShootingTime,
+            compositeShootingTimeSupport = compositeShootingTimeSupport,
             continuousNumber = continuousNumber,
             dateTimeZone = dateTimeZone,
             ethernetConfig = ethernetConfig,
@@ -376,6 +379,7 @@ class OptionsTest {
             Pair(ThetaRepository.OptionNameEnum.CompositeShootingOutputInterval, 60),
             Pair(ThetaRepository.OptionNameEnum.CompositeShootingOutputIntervalSupport, ThetaRepository.ValueRange(600, 0, 60)),
             Pair(ThetaRepository.OptionNameEnum.CompositeShootingTime, 600),
+            Pair(ThetaRepository.OptionNameEnum.CompositeShootingTimeSupport, ThetaRepository.ValueRange(86400, 600, 600)),
             Pair(ThetaRepository.OptionNameEnum.DateTimeZone, "2014:05:18 01:04:29+08:00"),
             Pair(
                 ThetaRepository.OptionNameEnum.EthernetConfig,
@@ -521,6 +525,7 @@ class OptionsTest {
         val compositeShootingOutputInterval = Pair(60, 60)
         val compositeShootingOutputIntervalSupport = Pair(CompositeShootingOutputIntervalSupport(600, 0, 60), ThetaRepository.ValueRange(600, 0, 60))
         val compositeShootingTime = Pair(600, 600)
+        val compositeShootingTimeSupport = Pair(CompositeShootingTimeSupport(86400, 600, 600), ThetaRepository.ValueRange(86400, 600, 600))
         val dateTimeZone = Pair("2014:05:18 01:04:29+08:00", "2014:05:18 01:04:29+08:00")
         val ethernetConfig = Pair(
             EthernetConfig(
@@ -620,6 +625,7 @@ class OptionsTest {
             _compositeShootingOutputInterval = compositeShootingOutputInterval.first,
             _compositeShootingOutputIntervalSupport = compositeShootingOutputIntervalSupport.first,
             _compositeShootingTime = compositeShootingTime.first,
+            _compositeShootingTimeSupport = compositeShootingTimeSupport.first,
             dateTimeZone = dateTimeZone.first,
             _ethernetConfig = ethernetConfig.first,
             exposureCompensation = exposureCompensation.first,
@@ -689,6 +695,7 @@ class OptionsTest {
         assertEquals(options.compositeShootingOutputInterval, compositeShootingOutputInterval.second, "compositeShootingOutputInterval")
         assertEquals(options.compositeShootingOutputIntervalSupport, compositeShootingOutputIntervalSupport.second, "compositeShootingOutputIntervalSupport")
         assertEquals(options.compositeShootingTime, compositeShootingTime.second, "compositeShootingTime")
+        assertEquals(options.compositeShootingTimeSupport, compositeShootingTimeSupport.second, "compositeShootingTimeSupport")
         assertEquals(options.dateTimeZone, dateTimeZone.second, "dateTimeZone")
         assertEquals(options.ethernetConfig, ethernetConfig.second, "ethernetConfig")
         assertEquals(options.exposureCompensation, exposureCompensation.second, "exposureCompensation")

@@ -205,6 +205,25 @@ const optionList: OptionItem[] = [
     },
   },
   {
+    name: 'compositeShootingTime',
+    value: {
+      optionName: OptionNameEnum.CompositeShootingTime,
+      editor: (options, onChange) => (
+        <NumberEdit
+          propName={'compositeShootingTime'}
+          onChange={onChange}
+          options={options}
+        />
+      ),
+    },
+  },
+  {
+    name: 'compositeShootingTimeSupport',
+    value: {
+      optionName: OptionNameEnum.CompositeShootingTimeSupport,
+    },
+  },
+  {
     name: 'continuousNumber',
     value: {
       optionName: OptionNameEnum.ContinuousNumber,

@@ -299,9 +299,9 @@ internal data class Options(
     var _compositeShootingTime: Int? = null,
 
     /**
-     * Supported shooting time for interval composite shooting (sec
+     * Supported shooting time for interval composite shooting (sec).
      */
-    var _compositeShootingTimeSupport: List<Int>? = null,
+    var _compositeShootingTimeSupport: CompositeShootingTimeSupport? = null,
 
     /**
      * Number of shots for continuous shooting.
@@ -2588,6 +2588,30 @@ internal data class CompositeShootingOutputIntervalSupport(
      */
     @Serializable(with = NumberAsIntSerializer::class)
     val minInterval: Int,
+
+    /**
+     * step size
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    val stepSize: Int
+)
+
+/**
+ * Supported shooting time for interval composite shooting (sec).
+ */
+@Serializable
+internal data class CompositeShootingTimeSupport(
+    /**
+     * maximum value
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    val maxTime: Int,
+
+    /**
+     * minimum value
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    val minTime: Int,
 
     /**
      * step size

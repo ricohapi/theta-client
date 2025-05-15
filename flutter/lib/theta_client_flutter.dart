@@ -1288,6 +1288,9 @@ enum OptionNameEnum {
   /// Option name _compositeShootingTime
   compositeShootingTime('CompositeShootingTime', int),
 
+  /// Option name _compositeShootingTimeSupport
+  compositeShootingTimeSupport('CompositeShootingTimeSupport', ValueRange),
+
   /// Option name continuousNumber
   continuousNumber('ContinuousNumber', ContinuousNumberEnum),
 
@@ -3195,6 +3198,9 @@ class Options {
   /// RICOH THETA S firmware v01.82 or later
   int? compositeShootingTime;
 
+  /// Supported shooting time for interval composite shooting (sec).
+  ValueRange<int>? compositeShootingTimeSupport;
+
   /// see [ContinuousNumberEnum]
   ContinuousNumberEnum? continuousNumber;
 
@@ -3437,6 +3443,8 @@ class Options {
         return compositeShootingOutputIntervalSupport as T;
       case OptionNameEnum.compositeShootingTime:
         return compositeShootingTime as T;
+      case OptionNameEnum.compositeShootingTimeSupport:
+        return compositeShootingTimeSupport as T;
       case OptionNameEnum.continuousNumber:
         return continuousNumber as T;
       case OptionNameEnum.dateTimeZone:
@@ -3602,6 +3610,9 @@ class Options {
         break;
       case OptionNameEnum.compositeShootingTime:
         compositeShootingTime = value;
+        break;
+      case OptionNameEnum.compositeShootingTimeSupport:
+        compositeShootingTimeSupport = value;
         break;
       case OptionNameEnum.continuousNumber:
         continuousNumber = value;

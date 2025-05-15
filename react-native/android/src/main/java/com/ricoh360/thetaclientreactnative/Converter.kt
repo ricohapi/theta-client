@@ -47,6 +47,7 @@ const val KEY_MIN = "min"
 const val KEY_STEP_SIZE = "stepSize"
 const val KEY_GPS_TAG_RECORDING_SUPPORT = "gpsTagRecordingSupport"
 const val KEY_COMPOSITE_SHOOTING_OUTPUT_INTERVAL_SUPPORT = "compositeShootingOutputIntervalSupport"
+const val KEY_COMPOSITE_SHOOTING_TIME_SUPPORT = "compositeShootingTimeSupport"
 const val KEY_APERTURE_SUPPORT = "apertureSupport"
 
 val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
@@ -73,6 +74,7 @@ val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "compositeShootingOutputInterval" to OptionNameEnum.CompositeShootingOutputInterval,
   KEY_COMPOSITE_SHOOTING_OUTPUT_INTERVAL_SUPPORT to OptionNameEnum.CompositeShootingOutputIntervalSupport,
   "compositeShootingTime" to OptionNameEnum.CompositeShootingTime,
+  KEY_COMPOSITE_SHOOTING_TIME_SUPPORT to OptionNameEnum.CompositeShootingTimeSupport,
   "continuousNumber" to OptionNameEnum.ContinuousNumber,
   "dateTimeZone" to OptionNameEnum.DateTimeZone,
   "ethernetConfig" to OptionNameEnum.EthernetConfig,
@@ -378,7 +380,8 @@ fun toResult(options: Options): WritableMap {
   )
   val intValueRangeSupportOptions = listOf(
     OptionNameEnum.ColorTemperatureSupport,
-    OptionNameEnum.CompositeShootingOutputIntervalSupport
+    OptionNameEnum.CompositeShootingOutputIntervalSupport,
+    OptionNameEnum.CompositeShootingTimeSupport
   )
   OptionNameEnum.values().forEach { name ->
     if (name == OptionNameEnum.AutoBracket) {

@@ -100,6 +100,7 @@ let KEY_MIN = "min"
 let KEY_STEP_SIZE = "stepSize"
 let KEY_GPS_TAG_RECORDING_SUPPORT = "gpsTagRecordingSupport"
 let KEY_COMPOSITE_SHOOTING_OUTPUT_INTERVAL_SUPPORT = "compositeShootingOutputIntervalSupport"
+let KEY_COMPOSITE_SHOOTING_TIME_SUPPORT = "compositeShootingTimeSupport"
 let KEY_APERTURE_SUPPORT = "apertureSupport"
 
 public class ConvertUtil: NSObject {}
@@ -131,6 +132,7 @@ let optionItemNameToEnum = [
     "compositeShootingOutputInterval": ThetaRepository.OptionNameEnum.compositeshootingoutputinterval,
     KEY_COMPOSITE_SHOOTING_OUTPUT_INTERVAL_SUPPORT: ThetaRepository.OptionNameEnum.compositeshootingoutputintervalsupport,
     "compositeShootingTime": ThetaRepository.OptionNameEnum.compositeshootingtime,
+    KEY_COMPOSITE_SHOOTING_TIME_SUPPORT: ThetaRepository.OptionNameEnum.compositeshootingtimesupport,
     "continuousNumber": ThetaRepository.OptionNameEnum.continuousnumber,
     "dateTimeZone": ThetaRepository.OptionNameEnum.datetimezone,
     "ethernetConfig": ThetaRepository.OptionNameEnum.ethernetconfig,

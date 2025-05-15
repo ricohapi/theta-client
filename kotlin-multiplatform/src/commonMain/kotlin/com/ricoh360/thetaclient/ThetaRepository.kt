@@ -843,6 +843,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         CompositeShootingTime("_compositeShootingTime", Int::class),
 
         /**
+         * Supported shooting time for interval composite shooting (sec).
+         */
+        CompositeShootingTimeSupport("_compositeShootingTimeSupport", ValueRange::class),
+
+        /**
          * Option name
          * continuousNumber
          */
@@ -1288,6 +1293,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var compositeShootingTime: Int? = null,
 
         /**
+         * Supported shooting time for interval composite shooting (sec).
+         */
+        var compositeShootingTimeSupport: ValueRange<Int>? = null,
+
+        /**
          * @see ContinuousNumberEnum
          */
         var continuousNumber: ContinuousNumberEnum? = null,
@@ -1598,6 +1608,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             compositeShootingOutputInterval = null,
             compositeShootingOutputIntervalSupport = null,
             compositeShootingTime = null,
+            compositeShootingTimeSupport = null,
             continuousNumber = null,
             dateTimeZone = null,
             ethernetConfig = null,
@@ -1669,6 +1680,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             compositeShootingOutputInterval = options._compositeShootingOutputInterval,
             compositeShootingOutputIntervalSupport = options._compositeShootingOutputIntervalSupport?.let { ValueRange<Int>(it) },
             compositeShootingTime = options._compositeShootingTime,
+            compositeShootingTimeSupport = options._compositeShootingTimeSupport?.let { ValueRange<Int>(it) },
             continuousNumber = options.continuousNumber?.let { ContinuousNumberEnum.get(it) },
             dateTimeZone = options.dateTimeZone,
             ethernetConfig = options._ethernetConfig?.let { EthernetConfig(it) },
@@ -1826,6 +1838,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.CompositeShootingOutputInterval -> compositeShootingOutputInterval
                 OptionNameEnum.CompositeShootingOutputIntervalSupport -> compositeShootingOutputIntervalSupport
                 OptionNameEnum.CompositeShootingTime -> compositeShootingTime
+                OptionNameEnum.CompositeShootingTimeSupport -> compositeShootingTimeSupport
                 OptionNameEnum.ContinuousNumber -> continuousNumber
                 OptionNameEnum.DateTimeZone -> dateTimeZone
                 OptionNameEnum.EthernetConfig -> ethernetConfig
@@ -1910,6 +1923,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.CompositeShootingOutputInterval -> compositeShootingOutputInterval = value as Int
                 OptionNameEnum.CompositeShootingOutputIntervalSupport -> compositeShootingOutputIntervalSupport = value as ValueRange<Int>
                 OptionNameEnum.CompositeShootingTime -> compositeShootingTime = value as Int
+                OptionNameEnum.CompositeShootingTimeSupport -> compositeShootingTimeSupport = value as ValueRange<Int>
                 OptionNameEnum.ContinuousNumber -> continuousNumber = value as ContinuousNumberEnum
                 OptionNameEnum.DateTimeZone -> dateTimeZone = value as String
                 OptionNameEnum.EthernetConfig -> ethernetConfig = value as EthernetConfig
@@ -8123,6 +8137,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         internal constructor(support: CompositeShootingOutputIntervalSupport) : this(
             max = support.maxInterval as T,
             min = support.minInterval as T,
+            stepSize = support.stepSize as T
+        )
+
+        @Suppress("UNCHECKED_CAST")
+        internal constructor(support: CompositeShootingTimeSupport) : this(
+            max = support.maxTime as T,
+            min = support.minTime as T,
             stepSize = support.stepSize as T
         )
 

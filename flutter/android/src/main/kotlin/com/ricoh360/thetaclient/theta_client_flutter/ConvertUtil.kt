@@ -631,7 +631,8 @@ fun toResult(options: Options): Map<String, Any> {
     )
     val intValueRangeSupportOptions = listOf(
         OptionNameEnum.ColorTemperatureSupport,
-        OptionNameEnum.CompositeShootingOutputIntervalSupport
+        OptionNameEnum.CompositeShootingOutputIntervalSupport,
+        OptionNameEnum.CompositeShootingTimeSupport,
     )
     OptionNameEnum.values().forEach { name ->
         if (name == OptionNameEnum.AutoBracket) {

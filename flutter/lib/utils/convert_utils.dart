@@ -519,6 +519,10 @@ class ConvertUtils {
         case OptionNameEnum.compositeShootingTime:
           result.compositeShootingTime = entry.value;
           break;
+        case OptionNameEnum.compositeShootingTimeSupport:
+          result.compositeShootingTimeSupport =
+              convertValueRangeSupport<int>(entry.value);
+          break;
         case OptionNameEnum.continuousNumber:
           result.continuousNumber = ContinuousNumberEnum.getValue(entry.value);
           break;

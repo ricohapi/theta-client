@@ -1,0 +1,13 @@
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "_compositeShootingTimeSupport": {
+        "maxTime": 86400,
+        "minTime": 600,
+        "stepSize": 600
+      }
+    }
+  },
+  "state": "done"
+}

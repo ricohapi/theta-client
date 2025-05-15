@@ -348,6 +348,8 @@ export const OptionNameEnum = {
     'CompositeShootingOutputIntervalSupport',
   /** _compositeShootingTime */
   CompositeShootingTime: 'CompositeShootingTime',
+  /** _compositeShootingTimeSupport */
+  CompositeShootingTimeSupport: 'CompositeShootingTimeSupport',
   /** continuousNumber */
   ContinuousNumber: 'ContinuousNumber',
   /** dateTimeZone */
@@ -545,6 +547,10 @@ export type Options = {
    * RICOH THETA S firmware v01.82 or later
    */
   compositeShootingTime?: number;
+  /**
+   * Supported shooting time for interval composite shooting (sec).
+   */
+  compositeShootingTimeSupport?: ValueRange;
   /** Number of shots for continuous shooting. */
   continuousNumber?: ContinuousNumberEnum;
   /** Current system time of RICOH THETA. Setting another options will result in an error. */
