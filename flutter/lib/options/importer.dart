@@ -7,6 +7,7 @@ export 'bluetooth_role.dart';
 export 'camera_control_source.dart';
 export 'camera_power.dart';
 export 'ethernet_config.dart';
+export 'exposure_delay.dart';
 export 'file_format.dart';
 export 'gps_tag_recording.dart';
 export 'max_recordable_time.dart';

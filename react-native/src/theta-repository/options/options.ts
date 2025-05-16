@@ -360,6 +360,8 @@ export const OptionNameEnum = {
   ExposureCompensation: 'ExposureCompensation',
   /** exposureDelay */
   ExposureDelay: 'ExposureDelay',
+  /** exposureDelaySupport */
+  ExposureDelaySupport: 'ExposureDelaySupport',
   /** exposureProgram */
   ExposureProgram: 'ExposureProgram',
   /** _faceDetect */
@@ -561,6 +563,8 @@ export type Options = {
   exposureCompensation?: ExposureCompensationEnum;
   /** Operating time (sec.) of the self-timer. */
   exposureDelay?: ExposureDelayEnum;
+  /** Supported operating time (sec.) of the self-timer. */
+  exposureDelaySupport?: ExposureDelayEnum[];
   /** Exposure program. The exposure settings that take priority can be selected. */
   exposureProgram?: ExposureProgramEnum;
   /** Face detection */

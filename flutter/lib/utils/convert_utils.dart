@@ -539,6 +539,10 @@ class ConvertUtils {
         case OptionNameEnum.exposureDelay:
           result.exposureDelay = ExposureDelayEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.exposureDelaySupport:
+          result.exposureDelaySupport =
+              convertSupportValueList(entry.value, ExposureDelayEnum.values);
+          break;
         case OptionNameEnum.exposureProgram:
           result.exposureProgram = ExposureProgramEnum.getValue(entry.value);
           break;

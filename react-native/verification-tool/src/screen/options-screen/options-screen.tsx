@@ -284,6 +284,12 @@ const optionList: OptionItem[] = [
     },
   },
   {
+    name: 'exposureDelaySupport',
+    value: {
+      optionName: OptionNameEnum.ExposureDelaySupport,
+    },
+  },
+  {
     name: 'exposureProgram',
     value: {
       optionName: OptionNameEnum.ExposureProgram,

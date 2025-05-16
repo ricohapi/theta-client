@@ -138,6 +138,7 @@ let optionItemNameToEnum = [
     "ethernetConfig": ThetaRepository.OptionNameEnum.ethernetconfig,
     "exposureCompensation": ThetaRepository.OptionNameEnum.exposurecompensation,
     "exposureDelay": ThetaRepository.OptionNameEnum.exposuredelay,
+    "exposureDelaySupport": ThetaRepository.OptionNameEnum.exposuredelaysupport,
     "exposureProgram": ThetaRepository.OptionNameEnum.exposureprogram,
     "faceDetect": ThetaRepository.OptionNameEnum.facedetect,
     "fileFormat": ThetaRepository.OptionNameEnum.fileformat,
@@ -186,6 +187,7 @@ let supportOptions: [ThetaRepository.OptionNameEnum : Any.Type] = [
     ThetaRepository.OptionNameEnum.aiautothumbnailsupport: ThetaRepository.AiAutoThumbnailEnum.self,
     ThetaRepository.OptionNameEnum.cameracontrolsourcesupport: ThetaRepository.CameraControlSourceEnum.self,
     ThetaRepository.OptionNameEnum.camerapowersupport: ThetaRepository.CameraPowerEnum.self,
+    ThetaRepository.OptionNameEnum.exposuredelaysupport: ThetaRepository.ExposureDelayEnum.self,
 ]
 
 let optionNameEnumToItemName = {
@@ -470,12 +472,9 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                             let support = value as? ThetaRepository.TopBottomCorrectionRotationSupport {
                     jsonResult[key] = convertJson(topBottomCorrectionRotationSupport: support)
                 } else if let offDelay = value as? ThetaRepository.OffDelaySec {
-                    result[key] =
-                        offDelay.sec == 0 ? ThetaRepository.OffDelayEnum.disable.name : offDelay.sec
+                    result[key] = offDelay.sec_ == 0 ? ThetaRepository.OffDelayEnum.disable.name : offDelay.sec_
                 } else if let sleepDelay = value as? ThetaRepository.SleepDelaySec {
-                    result[key] =
-                        sleepDelay.sec == 0
-                            ? ThetaRepository.SleepDelayEnum.disable.name : sleepDelay.sec
+                    result[key] = sleepDelay.sec_ == 0 ? ThetaRepository.SleepDelayEnum.disable.name : sleepDelay.sec_
                 } else if let enumValue = value as? [AnyObject], let enumType = supportOptions[name] {
                   result[key] = convertSupportResult(supportValueList: enumValue, enumType: enumType)
                 } else if let valueRange = value as? ThetaRepositoryValueRange<NSNumber> {

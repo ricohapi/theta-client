@@ -128,6 +128,7 @@ class OptionsTest {
         )
         val exposureCompensation = ThetaRepository.ExposureCompensationEnum.M0_3
         val exposureDelay = ThetaRepository.ExposureDelayEnum.DELAY_10
+        val exposureDelaySupport = listOf(ThetaRepository.ExposureDelayEnum.DELAY_OFF, ThetaRepository.ExposureDelayEnum.DELAY_10)
         val exposureProgram = ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM
         val faceDetect = ThetaRepository.FaceDetectEnum.ON
         val fileFormat = ThetaRepository.FileFormatEnum.IMAGE_11K
@@ -207,6 +208,7 @@ class OptionsTest {
             ethernetConfig = ethernetConfig,
             exposureCompensation = exposureCompensation,
             exposureDelay = exposureDelay,
+            exposureDelaySupport = exposureDelaySupport,
             exposureProgram = exposureProgram,
             faceDetect = faceDetect,
             fileFormat = fileFormat,
@@ -285,6 +287,7 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.EthernetConfig), ethernetConfig, "ethernetConfig")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ExposureCompensation), exposureCompensation, "exposureCompensation")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ExposureDelay), exposureDelay, "exposureDelay")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ExposureDelaySupport), exposureDelaySupport, "exposureDelaySupport")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ExposureProgram), exposureProgram, "exposureProgram")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.FaceDetect), faceDetect, "faceDetect")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.FileFormat), fileFormat, "fileFormat")
@@ -393,6 +396,7 @@ class OptionsTest {
             ),
             Pair(ThetaRepository.OptionNameEnum.ExposureCompensation, ThetaRepository.ExposureCompensationEnum.M0_3),
             Pair(ThetaRepository.OptionNameEnum.ExposureDelay, ThetaRepository.ExposureDelayEnum.DELAY_10),
+            Pair(ThetaRepository.OptionNameEnum.ExposureDelaySupport, listOf(ThetaRepository.ExposureDelayEnum.DELAY_OFF, ThetaRepository.ExposureDelayEnum.DELAY_10)),
             Pair(ThetaRepository.OptionNameEnum.ExposureProgram, ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM),
             Pair(ThetaRepository.OptionNameEnum.FaceDetect, ThetaRepository.FaceDetectEnum.OFF),
             Pair(ThetaRepository.OptionNameEnum.FileFormat, ThetaRepository.FileFormatEnum.IMAGE_11K),
@@ -545,6 +549,7 @@ class OptionsTest {
         )
         val exposureCompensation = Pair(-0.3f, ThetaRepository.ExposureCompensationEnum.M0_3)
         val exposureDelay = Pair(10, ThetaRepository.ExposureDelayEnum.DELAY_10)
+        val exposureDelaySupport = Pair(listOf(0, 10), listOf(ThetaRepository.ExposureDelayEnum.DELAY_OFF, ThetaRepository.ExposureDelayEnum.DELAY_10))
         val exposureProgram = Pair(2, ThetaRepository.ExposureProgramEnum.NORMAL_PROGRAM)
         val faceDetect = Pair(FaceDetect.OFF, ThetaRepository.FaceDetectEnum.OFF)
         val fileFormat = Pair(
@@ -630,6 +635,7 @@ class OptionsTest {
             _ethernetConfig = ethernetConfig.first,
             exposureCompensation = exposureCompensation.first,
             exposureDelay = exposureDelay.first,
+            exposureDelaySupport = exposureDelaySupport.first,
             exposureProgram = exposureProgram.first,
             _faceDetect = faceDetect.first,
             fileFormat = fileFormat.first,
@@ -700,6 +706,7 @@ class OptionsTest {
         assertEquals(options.ethernetConfig, ethernetConfig.second, "ethernetConfig")
         assertEquals(options.exposureCompensation, exposureCompensation.second, "exposureCompensation")
         assertEquals(options.exposureDelay, exposureDelay.second, "exposureDelay")
+        assertEquals(options.exposureDelaySupport, exposureDelaySupport.second, "exposureDelaySupport")
         assertEquals(options.exposureProgram, exposureProgram.second, "exposureProgram")
         assertEquals(options.faceDetect, faceDetect.second, "faceDetect")
         assertEquals(options.fileFormat, fileFormat.second, "fileFormat")

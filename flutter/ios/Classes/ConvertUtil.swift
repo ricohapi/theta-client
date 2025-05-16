@@ -38,7 +38,8 @@ let KEY_APERTURE_SUPPORT = "apertureSupport"
 let supportOptions: [ThetaRepository.OptionNameEnum : Any.Type] = [
     ThetaRepository.OptionNameEnum.aperturesupport: ThetaRepository.ApertureEnum.self,
     ThetaRepository.OptionNameEnum.cameracontrolsourcesupport: ThetaRepository.CameraControlSourceEnum.self,
-    ThetaRepository.OptionNameEnum.camerapowersupport: ThetaRepository.CameraPowerEnum.self,    
+    ThetaRepository.OptionNameEnum.camerapowersupport: ThetaRepository.CameraPowerEnum.self,
+    ThetaRepository.OptionNameEnum.exposuredelaysupport: ThetaRepository.ExposureDelayEnum.self,
     ThetaRepository.OptionNameEnum.gpstagrecordingsupport: ThetaRepository.GpsTagRecordingEnum.self,
     ThetaRepository.OptionNameEnum.aiautothumbnailsupport: ThetaRepository.AiAutoThumbnailEnum.self,
 ]
@@ -847,7 +848,7 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                 if let enumValue = offDelay as? ThetaRepository.OffDelayEnum {
                     result[name.name] = enumValue.name
                 } else {
-                    result[name.name] = offDelay.sec
+                    result[name.name] = offDelay.sec_
                 }
             } else if value is ThetaRepository.Proxy, let proxy = value as? ThetaRepository.Proxy {
                 result[name.name] = convertResult(proxy: proxy)
@@ -855,7 +856,7 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                 if let enumValue = sleepDelay as? ThetaRepository.SleepDelayEnum {
                     result[name.name] = enumValue.name
                 } else {
-                    result[name.name] = sleepDelay.sec
+                    result[name.name] = sleepDelay.sec_
                 }
             } else if value is ThetaRepository.TimeShiftSetting, let timeshift = value as? ThetaRepository.TimeShiftSetting {
                 result[name.name] = convertResult(timeshift: timeshift)

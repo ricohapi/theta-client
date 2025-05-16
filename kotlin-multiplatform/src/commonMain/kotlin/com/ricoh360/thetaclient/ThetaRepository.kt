@@ -882,6 +882,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * exposureDelaySupport
+         */
+        ExposureDelaySupport("exposureDelaySupport", List::class),
+
+        /**
+         * Option name
          * exposureProgram
          */
         ExposureProgram("exposureProgram", ExposureProgramEnum::class),
@@ -1337,6 +1343,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var exposureDelay: ExposureDelayEnum? = null,
 
         /**
+         * Supported operating time (sec.) of the self-timer.
+         */
+        var exposureDelaySupport: List<ExposureDelayEnum>? = null,
+
+        /**
          * Exposure program. The exposure settings that take priority can be selected.
          *
          * It can be set for video shooting mode at RICOH THETA V firmware v3.00.1 or later.
@@ -1614,6 +1625,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             ethernetConfig = null,
             exposureCompensation = null,
             exposureDelay = null,
+            exposureDelaySupport = null,
             exposureProgram = null,
             faceDetect = null,
             fileFormat = null,
@@ -1690,6 +1702,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 )
             },
             exposureDelay = options.exposureDelay?.let { ExposureDelayEnum.get(it) },
+            exposureDelaySupport = options.exposureDelaySupport?.map { ExposureDelayEnum.get(it) },
             exposureProgram = options.exposureProgram?.let { ExposureProgramEnum.get(it) },
             faceDetect = options._faceDetect?.let { FaceDetectEnum.get(it) },
             fileFormat = options.fileFormat?.let { FileFormatEnum.get(it) },
@@ -1844,6 +1857,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.EthernetConfig -> ethernetConfig
                 OptionNameEnum.ExposureCompensation -> exposureCompensation
                 OptionNameEnum.ExposureDelay -> exposureDelay
+                OptionNameEnum.ExposureDelaySupport -> exposureDelaySupport
                 OptionNameEnum.ExposureProgram -> exposureProgram
                 OptionNameEnum.FaceDetect -> faceDetect
                 OptionNameEnum.FileFormat -> fileFormat
@@ -1929,6 +1943,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.EthernetConfig -> ethernetConfig = value as EthernetConfig
                 OptionNameEnum.ExposureCompensation -> exposureCompensation = value as ExposureCompensationEnum
                 OptionNameEnum.ExposureDelay -> exposureDelay = value as ExposureDelayEnum
+                OptionNameEnum.ExposureDelaySupport -> exposureDelaySupport = value as List<ExposureDelayEnum>
                 OptionNameEnum.ExposureProgram -> exposureProgram = value as ExposureProgramEnum
                 OptionNameEnum.FaceDetect -> faceDetect = value as FaceDetectEnum
                 OptionNameEnum.FileFormat -> fileFormat = value as FileFormatEnum
@@ -3175,7 +3190,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Operating time (sec.) of the self-timer.
      */
-    enum class ExposureDelayEnum(val sec: Int) {
+    enum class ExposureDelayEnum(val sec: Int?) {
+        /**
+         * Undefined value
+         */
+        UNKNOWN(null),
+
         /**
          * Disable self-timer.
          */
@@ -3243,8 +3263,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param sec Self-timer time.
              * @return ExposureDelayEnum
              */
-            fun get(sec: Int): ExposureDelayEnum? {
-                return values().firstOrNull { it.sec == sec }
+            fun get(sec: Int): ExposureDelayEnum {
+                return entries.firstOrNull { it.sec == sec } ?: UNKNOWN
             }
         }
     }

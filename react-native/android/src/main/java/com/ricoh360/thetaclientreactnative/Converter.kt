@@ -80,6 +80,7 @@ val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "ethernetConfig" to OptionNameEnum.EthernetConfig,
   "exposureCompensation" to OptionNameEnum.ExposureCompensation,
   "exposureDelay" to OptionNameEnum.ExposureDelay,
+  "exposureDelaySupport" to OptionNameEnum.ExposureDelaySupport,
   "exposureProgram" to OptionNameEnum.ExposureProgram,
   "faceDetect" to OptionNameEnum.FaceDetect,
   "fileFormat" to OptionNameEnum.FileFormat,
@@ -377,6 +378,7 @@ fun toResult(options: Options): WritableMap {
     OptionNameEnum.AiAutoThumbnailSupport to AiAutoThumbnailEnum::class,
     OptionNameEnum.CameraControlSourceSupport to CameraControlSourceEnum::class,
     OptionNameEnum.CameraPowerSupport to CameraPowerEnum::class,
+    OptionNameEnum.ExposureDelaySupport to ExposureDelayEnum::class,
   )
   val intValueRangeSupportOptions = listOf(
     OptionNameEnum.ColorTemperatureSupport,

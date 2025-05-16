@@ -702,7 +702,7 @@ class PhotoCaptureTest {
 
             // check result
             assertEquals(
-                photoCapture.getExposureDelay(),
+                photoCapture.getExposureDelay() ?: ThetaRepository.ExposureDelayEnum.UNKNOWN,
                 it,
                 "set option exposureDelay $valueIndex"
             )
