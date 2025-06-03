@@ -14,6 +14,8 @@ export const ThetaModel = {
   THETA_SC2: 'THETA_SC2',
   /** THETA SC2 for business */
   THETA_SC2_B: 'THETA_SC2_B',
+  /** THETA A1 */
+  THETA_A1: 'THETA_A1',
 } as const;
 
 /** type definition of ThetaModel */

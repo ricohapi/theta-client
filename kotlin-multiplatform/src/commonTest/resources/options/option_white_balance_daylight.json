@@ -1,1 +1,9 @@
-{"name":"camera.getOptions","results":{"options":{"whiteBalance":"daylight"}},"state":"done"}
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "whiteBalance": "daylight"
+    }
+  },
+  "state": "done"
+}

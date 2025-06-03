@@ -5,6 +5,7 @@ describe('CameraPowerEnum', () => {
     [CameraPowerEnum.UNKNOWN, 'UNKNOWN'],
     [CameraPowerEnum.ON, 'ON'],
     [CameraPowerEnum.OFF, 'OFF'],
+    [CameraPowerEnum.SLEEP, 'SLEEP'],
     [CameraPowerEnum.POWER_SAVING, 'POWER_SAVING'],
     [CameraPowerEnum.SILENT_MODE, 'SILENT_MODE'],
   ];

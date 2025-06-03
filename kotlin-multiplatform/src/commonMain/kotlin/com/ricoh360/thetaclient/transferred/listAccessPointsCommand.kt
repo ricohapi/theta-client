@@ -75,48 +75,76 @@ internal data class ResultListAccessPoints(
 @Serializable
 internal data class AccessPoint(
     /**
-     * SSID
+     * SSID (Up to 32 bytes)
      */
     val ssid: String,
 
     /**
-     * True if SSID stealth is enabled
+     * (Optional)
+     * SSID stealth
+     * (true: enable, false: disable. Default is false.)
      */
     val ssidStealth: Boolean,
 
     /**
+     * (Mandatory)
      * Authentication mode
+     * ("none", "WEP", "WPA/WPA2 PSK")
+     * This can be optional parameter only when overwriting access point information.
      */
     val security: AuthenticationMode,
 
     /**
-     * Connection priority
+     * (Optional)
+     * (RICOH THETA V, Z1)
+     * Connection priority (1 to 5). Default is 1.
+     *
+     * (RICOH THETA X)
+     * Fixed to 1 (The access point registered later has a higher priority.)
      */
     val connectionPriority: Int,
 
     /**
-     * IP address allocation. This can be acquired when SSID is
-     * registered as an enable access point.
+     * (Optional)
+     * IP address allocation
+     * "dynamic" or "static". Default is "dynamic"
      */
     val ipAddressAllocation: IpAddressAllocation,
 
     /**
-     * IP address assigned to camera. This setting can be acquired
-     * when "ipAddressAllocation" is "static"
+     * (Optional)
+     * IP address assigned to camera
+     * This setting must be set when ipAddressAllocation is "static"
      */
     val ipAddress: String?,
 
     /**
-     * Subnet Mask. This setting can be acquired when
-     * "ipAddressAllocation" is "static"
+     * (Optional)
+     * Subnet mask
+     * This setting must be set when ipAddressAllocation is "static"
      */
     val subnetMask: String?,
 
     /**
-     * Default Gateway. This setting can be acquired when
-     * "ipAddressAllocation" is "static
+     * (Optional)
+     * Default gateway
+     * This setting must be set when ipAddressAllocation is "static"
      */
     val defaultGateway: String?,
+
+    /**
+     * (Optional)
+     * Primary DNS server.
+     * This setting must be set when ipAddressAllocation is "static"
+     */
+    var dns1: String?,
+
+    /**
+     * (Optional)
+     * Secondary DNS server.
+     * This setting must be set when ipAddressAllocation is "static"
+     */
+    var dns2: String?,
 
     /**
      * Proxy information to be used for the access point.
@@ -130,28 +158,46 @@ internal data class AccessPoint(
     val proxy: Proxy? = null,
 )
 
+internal object AuthenticationModeSerializer :
+    SerialNameEnumIgnoreUnknownSerializer<AuthenticationMode>(AuthenticationMode.entries, AuthenticationMode.UNKNOWN)
+
 /**
  * authentication mode
  */
-@Serializable
-internal enum class AuthenticationMode {
+@Serializable(with = AuthenticationModeSerializer::class)
+internal enum class AuthenticationMode : SerialNameEnum {
+    /**
+     * Undefined value
+     */
+    UNKNOWN,
+
     /**
      * no authetication required
      */
-    @SerialName("none")
-    NONE,
+    NONE {
+        override val serialName: String = "none"
+    },
 
     /**
      * WEP authentication
      */
-    @SerialName("WEP")
-    WEP,
+    WEP {
+        override val serialName: String = "WEP"
+    },
 
     /**
      * WPA or WPA2 PSK authentication
      */
-    @SerialName("WPA/WPA2 PSK")
-    WPA_WPA2_PSK,
+    WPA_WPA2_PSK {
+        override val serialName: String = "WPA/WPA2 PSK"
+    },
+
+    /**
+     * WPA3-SAE authentication
+     */
+    WPA3_SAE {
+        override val serialName: String = "WPA3-SAE"
+    },
 }
 
 /**

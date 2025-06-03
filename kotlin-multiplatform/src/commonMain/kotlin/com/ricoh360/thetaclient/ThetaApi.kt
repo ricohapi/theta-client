@@ -47,6 +47,8 @@ internal object ThetaApi {
     var lastSetTimeConsumingOptionTime: Long = 0
     var currentOptions = Options()
 
+    var apiLogListener: ((message: String) -> Unit)? = null
+
     fun initOptions() {
         currentOptions = Options()
         lastSetTimeConsumingOptionTime = 0
@@ -441,6 +443,25 @@ internal object ThetaApi {
         params: ListFilesParams,
     ): ListFilesResponse {
         val request = ListFilesRequest(parameters = params)
+        return postCommandApi(endpoint, request).body()
+    }
+
+    /**
+     * Call camera._reboot
+     * @param endpoint Endpoint of Theta web API
+     * @return response of reboot command
+     * @see ResetResponse
+     * @exception java.net.ConnectException can not connect to target endpoint
+     * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
+     * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
+     * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
+     * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
+     */
+    @Throws(Throwable::class)
+    suspend fun callRebootCommand(
+        endpoint: String,
+    ): ResetResponse {
+        val request = RebootRequest()
         return postCommandApi(endpoint, request).body()
     }
 

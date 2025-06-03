@@ -3,6 +3,7 @@ import THETAClient
 import UIKit
 
 let EVENT_NOTIFY = "theta_client_flutter/theta_notify"
+let NOTIFY_API_LOG = 1
 let NOTIFY_LIVE_PREVIEW = 10001
 let NOTIFY_TIME_SHIFT_PROGRESS = 10011
 let NOTIFY_TIME_SHIFT_STOP_ERROR = 10012
@@ -28,6 +29,9 @@ let NOTIFY_VIDEO_CAPTURE_STOP_ERROR = 10081
 let NOTIFY_VIDEO_CAPTURE_CAPTURING = 10082
 let NOTIFY_VIDEO_CAPTURE_STARTED = 10083
 let NOTIFY_CONVERT_VIDEO_FORMATS_PROGRESS = 10091
+let NOTIFY_TIME_SHIFT_MANUAL_PROGRESS = 10101
+let NOTIFY_TIME_SHIFT_MANUAL_STOP_ERROR = 10102
+let NOTIFY_TIME_SHIFT_MANUAL_CAPTURING = 10103
 
 enum ThetaClientError: Error {
     case invalidArgument(String)
@@ -59,6 +63,9 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     var timeShiftCaptureBuilder: TimeShiftCapture.Builder? = nil
     var timeShiftCapture: TimeShiftCapture? = nil
     var timeShiftCapturing: TimeShiftCapturing? = nil
+    var timeShiftManualCaptureBuilder: TimeShiftManualCapture.Builder? = nil
+    var timeShiftManualCapture: TimeShiftManualCapture? = nil
+    var timeShiftManualCapturing: TimeShiftManualCapturing? = nil
     var videoCaptureBuilder: VideoCapture.Builder? = nil
     var videoCapture: VideoCapture? = nil
     var videoCapturing: VideoCapturing? = nil
@@ -90,7 +97,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     }
 
     func sendNotifyEvent(id: Int, params: [String: Any]?) {
-        if let eventSink = eventSink {
+        if let eventSink {
             DispatchQueue.main.async {
                 eventSink(toNotify(id: id, params: params))
             }
@@ -101,6 +108,8 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         switch call.method {
         case "getPlatformVersion":
             result("iOS " + UIDevice.current.systemVersion)
+        case "setApiLogListener":
+            setApiLogListener(call: call, result: result)
         case "initialize":
             Task.detached {
                 try await self.initialize(call: call, result: result)
@@ -145,6 +154,16 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             startTimeShiftCapture(result: result)
         case "stopTimeShiftCapture":
             stopTimeShiftCapture(result: result)
+        case "getTimeShiftManualCaptureBuilder":
+            getTimeShiftManualCaptureBuilder(result: result)
+        case "buildTimeShiftManualCapture":
+            buildTimeShiftManualCapture(call: call, result: result)
+        case "startTimeShiftManualCapture":
+            startTimeShiftManualCapture(result: result)
+        case "startTimeShiftManualSecondCapture":
+            startTimeShiftManualSecondCapture(result: result)
+        case "stopTimeShiftManualCapture":
+            stopTimeShiftManualCapture(result: result)
         case "getVideoCaptureBuilder":
             getVideoCaptureBuilder(result: result)
         case "buildVideoCapture":
@@ -205,6 +224,8 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             setOptions(call: call, result: result)
         case "getMetadata":
             getMetadata(call: call, result: result)
+        case "reboot":
+            reboot(result: result)
         case "reset":
             reset(result: result)
         case "stopSelfTimer":
@@ -249,6 +270,22 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             setBluetoothDevice(call: call, result: result)
         default:
             result("Error. no method: " + call.method)
+        }
+    }
+
+    func setApiLogListener(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        Task {
+            if call.arguments as? Bool ?? false {
+                try UtilKt.setApiLogListener { message in
+                    self.sendNotifyEvent(
+                        id: NOTIFY_API_LOG,
+                        params: [KEY_NOTIFY_PARAM_MESSAGE: message]
+                    )
+                }
+            } else {
+                try UtilKt.setApiLogListener(listener: nil)
+            }
+            result(nil)
         }
     }
 
@@ -430,14 +467,14 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             }
         }
     }
-    
+
     func stopLivePreview(result: @escaping FlutterResult) {
         previewing = false
         result(true)
     }
 
     func listFiles(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        guard let thetaRepository = thetaRepository else {
+        guard let thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return
@@ -662,11 +699,11 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             func onProgress(completion: Float) {
                 plugin?.sendNotifyEvent(id: NOTIFY_TIME_SHIFT_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
             }
-            
+
             func onCapturing(status: CapturingStatusEnum) {
                 plugin?.sendNotifyEvent(id: NOTIFY_TIME_SHIFT_CAPTURING, params: toCapturingNotifyParam(value: status))
             }
-            
+
             func onCaptureCompleted(fileUrl: String?) {
                 callback(fileUrl, nil)
             }
@@ -687,6 +724,109 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
 
     func stopTimeShiftCapture(result: @escaping FlutterResult) {
         guard let _ = thetaRepository, let capturing = timeShiftCapturing else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        capturing.stopCapture()
+        result(nil)
+    }
+
+    func getTimeShiftManualCaptureBuilder(result: @escaping FlutterResult) {
+        guard let thetaRepository else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        timeShiftManualCaptureBuilder = thetaRepository.getTimeShiftManualCaptureBuilder()
+        result(nil)
+    }
+
+    func buildTimeShiftManualCapture(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let _ = thetaRepository, let builder = timeShiftManualCaptureBuilder else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        timeShiftManualCapture = nil
+        timeShiftManualCapturing = nil
+        let arguments = call.arguments as! [String: Any]
+        setCaptureBuilderParams(params: arguments, builder: builder)
+        setTimeShiftManualCaptureBuilderParams(params: arguments, builder: builder)
+        builder.build(completionHandler: { capture, error in
+            if let thetaError = error {
+                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                result(flutterError)
+            } else {
+                self.timeShiftManualCapture = capture
+                result(nil)
+            }
+        })
+    }
+
+    func startTimeShiftManualCapture(result: @escaping FlutterResult) {
+        guard let _ = thetaRepository, let capture = timeShiftManualCapture else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        class Callback: TimeShiftManualCaptureStartCaptureCallback {
+            let callback: (_ url: String?, _ error: Error?) -> Void
+            weak var plugin: SwiftThetaClientFlutterPlugin?
+            init(_ callback: @escaping (_ url: String?, _ error: Error?) -> Void, plugin: SwiftThetaClientFlutterPlugin) {
+                self.callback = callback
+                self.plugin = plugin
+            }
+
+            func onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                callback(nil, exception.asError())
+                plugin?.timeShiftManualCapturing = nil
+            }
+
+            func onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                let error = exception.asError()
+                plugin?.sendNotifyEvent(id: NOTIFY_TIME_SHIFT_MANUAL_PROGRESS, params: toMessageNotifyParam(message: error.localizedDescription))
+            }
+
+            func onProgress(completion: Float) {
+                plugin?.sendNotifyEvent(id: NOTIFY_TIME_SHIFT_MANUAL_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
+            }
+
+            func onCapturing(status: CapturingStatusEnum) {
+                plugin?.sendNotifyEvent(id: NOTIFY_TIME_SHIFT_MANUAL_CAPTURING, params: toCapturingNotifyParam(value: status))
+            }
+
+            func onCaptureCompleted(fileUrl: String?) {
+                callback(fileUrl, nil)
+                plugin?.timeShiftManualCapturing = nil
+            }
+        }
+
+        timeShiftManualCapturing = capture.startCapture(
+            callback: Callback({ fileUrl, error in
+                                   if let thetaError = error {
+                                       let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                                       result(flutterError)
+                                   } else {
+                                       result(fileUrl)
+                                   }
+                               },
+                               plugin: self)
+        )
+    }
+
+    func startTimeShiftManualSecondCapture(result: @escaping FlutterResult) {
+        guard let _ = thetaRepository, let capturing = timeShiftManualCapturing else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        capturing.startSecondCapture()
+        result(nil)
+    }
+
+    func stopTimeShiftManualCapture(result: @escaping FlutterResult) {
+        guard let _ = thetaRepository, let capturing = timeShiftManualCapturing else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return
@@ -752,11 +892,11 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 let error = exception.asError()
                 plugin?.sendNotifyEvent(id: NOTIFY_VIDEO_CAPTURE_STOP_ERROR, params: toMessageNotifyParam(message: error.localizedDescription))
             }
-            
+
             func onCapturing(status: CapturingStatusEnum) {
                 plugin?.sendNotifyEvent(id: NOTIFY_VIDEO_CAPTURE_CAPTURING, params: toCapturingNotifyParam(value: status))
             }
-            
+
             func onCaptureStarted(fileUrl: String?) {
                 plugin?.sendNotifyEvent(id: NOTIFY_VIDEO_CAPTURE_STARTED, params: toStartedNotifyParam(value: fileUrl ?? ""))
             }
@@ -929,11 +1069,11 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             func onProgress(completion: Float) {
                 plugin?.sendNotifyEvent(id: NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
             }
-            
+
             func onCapturing(status: CapturingStatusEnum) {
                 plugin?.sendNotifyEvent(id: NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURE_CAPTURING, params: toCapturingNotifyParam(value: status))
             }
-            
+
             func onCaptureCompleted(fileUrls: [String]?) {
                 callback(fileUrls, nil)
             }
@@ -1021,11 +1161,11 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             func onProgress(completion: Float) {
                 plugin?.sendNotifyEvent(id: NOTIFY_COMPOSITE_INTERVAL_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
             }
-            
+
             func onCapturing(status: CapturingStatusEnum) {
                 plugin?.sendNotifyEvent(id: NOTIFY_COMPOSITE_INTERVAL_CAPTURING, params: toCapturingNotifyParam(value: status))
             }
-            
+
             func onCaptureCompleted(fileUrls: [String]?) {
                 callback(fileUrls, nil)
             }
@@ -1322,11 +1462,11 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             func onProgress(completion: Float) {
                 plugin?.sendNotifyEvent(id: NOTIFY_CONTINUOUS_PROGRESS, params: toCaptureProgressNotifyParam(value: completion))
             }
-            
+
             func onCapturing(status: CapturingStatusEnum) {
                 plugin?.sendNotifyEvent(id: NOTIFY_CONTINUOUS_CAPTURING, params: toCapturingNotifyParam(value: status))
             }
-            
+
             func onCaptureCompleted(fileUrls: [String]?) {
                 callback(fileUrls, nil)
             }
@@ -1400,6 +1540,22 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         })
     }
 
+    func reboot(result: @escaping FlutterResult) {
+        guard let thetaRepository else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        thetaRepository.reboot { error in
+            if let thetaError = error {
+                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                result(flutterError)
+            } else {
+                result(nil)
+            }
+        }
+    }
+
     func reset(result: @escaping FlutterResult) {
         if thetaRepository == nil {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
@@ -1433,7 +1589,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     }
 
     func convertVideoFormats(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        guard let thetaRepository = thetaRepository else {
+        guard let thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return
@@ -1491,7 +1647,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     }
 
     func listAccessPoints(result: @escaping FlutterResult) {
-        guard let thetaRepository = thetaRepository else {
+        guard let thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return
@@ -1501,7 +1657,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
                 result(flutterError)
             } else {
-                if let response = response {
+                if let response {
                     result(convertResult(accessPointList: response))
                 } else {
                     let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoResult, details: nil)
@@ -1512,7 +1668,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     }
 
     func setAccessPointDynamically(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        guard let thetaRepository = thetaRepository else {
+        guard let thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return
@@ -1524,7 +1680,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             result(flutterError)
             return
         }
-        
+
         do {
             let accessPointParams = try toSetAccessPointParams(params: arguments)
             thetaRepository.setAccessPointDynamically(
@@ -1550,7 +1706,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     }
 
     func setAccessPointStatically(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        guard let thetaRepository = thetaRepository else {
+        guard let thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return
@@ -1574,6 +1730,8 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 ipAddress: staticallyParams.ipAddress,
                 subnetMask: staticallyParams.subnetMask,
                 defaultGateway: staticallyParams.defaultGateway,
+                dns1: accessPointParams.dns1,
+                dns2: accessPointParams.dns2,
                 proxy: accessPointParams.proxy,
                 completionHandler: { error in
                     if let thetaError = error {
@@ -1591,7 +1749,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     }
 
     func deleteAccessPoint(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        guard let thetaRepository = thetaRepository else {
+        guard let thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return
@@ -1612,7 +1770,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     }
 
     func getMySetting(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        guard let thetaRepository = thetaRepository else {
+        guard let thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return
@@ -1626,18 +1784,18 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
 
         var captureMode: ThetaRepository.CaptureModeEnum?
         if let captureModeName = arguments["captureMode"] as? String,
-           let mode = getEnumValue(values: ThetaRepository.CaptureModeEnum.values(), name: captureModeName) as? ThetaRepository.CaptureModeEnum
+           let mode = getEnumValue(values: ThetaRepository.CaptureModeEnum.values(), name: captureModeName)
         {
             captureMode = mode
         }
 
-        if let captureMode = captureMode {
+        if let captureMode {
             thetaRepository.getMySetting(captureMode: captureMode, completionHandler: { options, error in
                 if let thetaError = error {
                     let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
                     result(flutterError)
                 } else {
-                    if let options = options {
+                    if let options {
                         result(convertResult(options: options))
                     } else {
                         let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoResult, details: nil)
@@ -1652,7 +1810,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     }
 
     func getMySettingFromOldModel(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        guard let thetaRepository = thetaRepository else {
+        guard let thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return
@@ -1671,7 +1829,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             optionNames = names
         }
 
-        if let optionNames = optionNames {
+        if let optionNames {
             thetaRepository.getMySetting(optionNames: optionNames, completionHandler: { options, error in
                 if let thetaError = error {
                     let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
@@ -1687,7 +1845,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     }
 
     func setMySetting(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        guard let thetaRepository = thetaRepository else {
+        guard let thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return
@@ -1695,7 +1853,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
 
         guard let arguments = call.arguments as? [String: Any],
               let captureModeName = arguments["captureMode"] as? String,
-              let captureMode = getEnumValue(values: ThetaRepository.CaptureModeEnum.values(), name: captureModeName) as? ThetaRepository.CaptureModeEnum,
+              let captureMode = getEnumValue(values: ThetaRepository.CaptureModeEnum.values(), name: captureModeName),
               let optionDic = arguments["options"] as? [String: Any]
         else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoArgument, details: nil)
@@ -1715,7 +1873,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     }
 
     func deleteMySetting(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        guard let thetaRepository = thetaRepository else {
+        guard let thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return
@@ -1741,7 +1899,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     }
 
     func listPlugins(result: @escaping FlutterResult) {
-        guard let thetaRepository = thetaRepository else {
+        guard let thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return
@@ -1752,7 +1910,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
                 result(flutterError)
             } else {
-                if let response = response {
+                if let response {
                     result(toPluginInfosResult(pluginInfoList: response))
                 } else {
                     let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoResult, details: nil)
@@ -1763,7 +1921,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     }
 
     func setPlugin(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        guard let thetaRepository = thetaRepository else {
+        guard let thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return
@@ -1786,7 +1944,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     }
 
     func startPlugin(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        guard let thetaRepository = thetaRepository else {
+        guard let thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return
@@ -1804,7 +1962,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     }
 
     func stopPlugin(result: @escaping FlutterResult) {
-        guard let thetaRepository = thetaRepository else {
+        guard let thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return
@@ -1821,7 +1979,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     }
 
     func getPluginLicense(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        guard let thetaRepository = thetaRepository else {
+        guard let thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return
@@ -1838,7 +1996,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
                 result(flutterError)
             } else {
-                if let response = response {
+                if let response {
                     result(response)
                 } else {
                     let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoResult, details: nil)
@@ -1849,7 +2007,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     }
 
     func getPluginOrders(result: @escaping FlutterResult) {
-        guard let thetaRepository = thetaRepository else {
+        guard let thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return
@@ -1860,7 +2018,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
                 result(flutterError)
             } else {
-                if let response = response {
+                if let response {
                     result(response)
                 } else {
                     let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoResult, details: nil)
@@ -1871,7 +2029,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     }
 
     func setPluginOrders(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        guard let thetaRepository = thetaRepository else {
+        guard let thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return
@@ -1894,7 +2052,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
     }
 
     func setBluetoothDevice(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        guard let thetaRepository = thetaRepository else {
+        guard let thetaRepository else {
             let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
             result(flutterError)
             return
@@ -1911,7 +2069,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
                 result(flutterError)
             } else {
-                if let response = response {
+                if let response {
                     result(response)
                 } else {
                     let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoResult, details: nil)

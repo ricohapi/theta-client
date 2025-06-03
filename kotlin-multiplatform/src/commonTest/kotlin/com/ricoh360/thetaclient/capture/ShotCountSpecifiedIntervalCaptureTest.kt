@@ -182,6 +182,7 @@ class ShotCountSpecifiedIntervalCaptureTest {
             override fun onProgress(completion: Float) {
                 assertTrue(false, "onProgress")
             }
+
             override fun onCapturing(status: CapturingStatusEnum) {
                 when (counter) {
                     3 -> assertEquals(status, CapturingStatusEnum.STARTING)

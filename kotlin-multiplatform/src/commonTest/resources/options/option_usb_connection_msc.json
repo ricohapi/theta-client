@@ -1,0 +1,9 @@
+{
+  "results": {
+    "options": {
+      "_usbConnection": "MSC"
+    }
+  },
+  "name": "camera.getOptions",
+  "state": "done"
+}

@@ -15,19 +15,27 @@ export class NotifyController {
     return NotifyController._instance;
   }
 
+  eventEmitter?: NativeEventEmitter = undefined;
   eventListener?: EmitterSubscription = undefined;
   notifyList = new Map<string, ((notify: BaseNotify) => void) | undefined>();
 
   init() {
-    this.release();
-    this.eventListener = this.addNotifyListener((notify: BaseNotify) => {
-      this.notifyList.get(notify.name)?.(notify as BaseNotify);
-    });
+    this.notifyList.clear();
+    if (this.eventListener == null) {
+      this.eventListener = this.addNotifyListener((notify: BaseNotify) => {
+        this.notifyList.get(notify.name)?.(notify as BaseNotify);
+      });
+    }
+  }
+
+  isInit() {
+    return this.eventListener != null;
   }
 
   release() {
     this.eventListener?.remove();
     this.eventListener = undefined;
+    this.eventEmitter = undefined;
     this.notifyList.clear();
   }
 
@@ -46,9 +54,11 @@ export class NotifyController {
   private addNotifyListener(
     callback: (event: BaseNotify) => void
   ): EmitterSubscription {
-    const eventEmitter = new NativeEventEmitter(
-      NativeModules.ThetaClientReactNative
-    );
-    return eventEmitter.addListener('ThetaNotify', callback);
+    if (this.eventEmitter == null) {
+      this.eventEmitter = new NativeEventEmitter(
+        NativeModules.ThetaClientReactNative
+      );
+    }
+    return this.eventEmitter.addListener('ThetaNotify', callback);
   }
 }

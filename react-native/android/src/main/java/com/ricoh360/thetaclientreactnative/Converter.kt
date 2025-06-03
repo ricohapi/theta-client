@@ -11,7 +11,6 @@ import com.ricoh360.thetaclient.ThetaRepository.*
 import com.ricoh360.thetaclient.capture.*
 import com.ricoh360.thetaclient.websocket.CameraEvent
 import kotlin.reflect.KClass
-import kotlin.Pair
 
 const val KEY_NOTIFY_NAME = "name"
 const val KEY_NOTIFY_PARAMS = "params"
@@ -49,8 +48,15 @@ const val KEY_GPS_TAG_RECORDING_SUPPORT = "gpsTagRecordingSupport"
 const val KEY_COMPOSITE_SHOOTING_OUTPUT_INTERVAL_SUPPORT = "compositeShootingOutputIntervalSupport"
 const val KEY_COMPOSITE_SHOOTING_TIME_SUPPORT = "compositeShootingTimeSupport"
 const val KEY_APERTURE_SUPPORT = "apertureSupport"
+const val KEY_WLAN_FREQUENCY_CL_MODE = "wlanFrequencyClMode"
+const val KEY_WLAN_FREQUENCY_CL_MODE_2_4 = "enable2_4"
+const val KEY_WLAN_FREQUENCY_CL_MODE_5_2 = "enable5_2"
+const val KEY_WLAN_FREQUENCY_CL_MODE_5_8 = "enable5_8"
+const val KEY_DNS1 = "dns1"
+const val KEY_DNS2 = "dns2"
 
 val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
+  "accessInfo" to OptionNameEnum.AccessInfo,
   "aiAutoThumbnail" to OptionNameEnum.AiAutoThumbnail,
   "aiAutoThumbnailSupport" to OptionNameEnum.AiAutoThumbnailSupport,
   "aperture" to OptionNameEnum.Aperture,
@@ -63,6 +69,8 @@ val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "burstOption" to OptionNameEnum.BurstOption,
   "cameraControlSource" to OptionNameEnum.CameraControlSource,
   "cameraControlSourceSupport" to OptionNameEnum.CameraControlSourceSupport,
+  "cameraLock" to OptionNameEnum.CameraLock,
+  "cameraLockConfig" to OptionNameEnum.CameraLockConfig,
   "cameraMode" to OptionNameEnum.CameraMode,
   "cameraPower" to OptionNameEnum.CameraPower,
   "cameraPowerSupport" to OptionNameEnum.CameraPowerSupport,
@@ -71,6 +79,7 @@ val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "captureNumber" to OptionNameEnum.CaptureNumber,
   "colorTemperature" to OptionNameEnum.ColorTemperature,
   "colorTemperatureSupport" to OptionNameEnum.ColorTemperatureSupport,
+  "compassDirectionRef" to OptionNameEnum.CompassDirectionRef,
   "compositeShootingOutputInterval" to OptionNameEnum.CompositeShootingOutputInterval,
   KEY_COMPOSITE_SHOOTING_OUTPUT_INTERVAL_SUPPORT to OptionNameEnum.CompositeShootingOutputIntervalSupport,
   "compositeShootingTime" to OptionNameEnum.CompositeShootingTime,
@@ -87,7 +96,7 @@ val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "filter" to OptionNameEnum.Filter,
   "function" to OptionNameEnum.Function,
   "gain" to OptionNameEnum.Gain,
-  "gpsInfo" to OptionNameEnum.GpsInfo,
+  KEY_GPS_INFO to OptionNameEnum.GpsInfo,
   "imageStitching" to OptionNameEnum.ImageStitching,
   "isGpsOn" to OptionNameEnum.IsGpsOn,
   "iso" to OptionNameEnum.Iso,
@@ -95,14 +104,17 @@ val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "language" to OptionNameEnum.Language,
   "latestEnabledExposureDelayTime" to OptionNameEnum.LatestEnabledExposureDelayTime,
   "maxRecordableTime" to OptionNameEnum.MaxRecordableTime,
+  "microphoneNoiseReduction" to OptionNameEnum.MicrophoneNoiseReduction,
+  "mobileNetworkSetting" to OptionNameEnum.MobileNetworkSetting,
   "networkType" to OptionNameEnum.NetworkType,
   "offDelay" to OptionNameEnum.OffDelay,
   KEY_GPS_TAG_RECORDING_SUPPORT to OptionNameEnum.GpsTagRecordingSupport,
-  "password" to OptionNameEnum.Password,
+  "offDelayUsb" to OptionNameEnum.OffDelayUsb,
+  KEY_PASSWORD to OptionNameEnum.Password,
   "powerSaving" to OptionNameEnum.PowerSaving,
   "preset" to OptionNameEnum.Preset,
   "previewFormat" to OptionNameEnum.PreviewFormat,
-  "proxy" to OptionNameEnum.Proxy,
+  KEY_PROXY to OptionNameEnum.Proxy,
   "remainingPictures" to OptionNameEnum.RemainingPictures,
   "remainingVideoSeconds" to OptionNameEnum.RemainingVideoSeconds,
   "remainingSpace" to OptionNameEnum.RemainingSpace,
@@ -115,12 +127,16 @@ val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   KEY_TOP_BOTTOM_CORRECTION_ROTATION to OptionNameEnum.TopBottomCorrectionRotation,
   KEY_TOP_BOTTOM_CORRECTION_ROTATION_SUPPORT to OptionNameEnum.TopBottomCorrectionRotationSupport,
   "totalSpace" to OptionNameEnum.TotalSpace,
+  "usbConnection" to OptionNameEnum.UsbConnection,
   "username" to OptionNameEnum.Username,
   "videoStitching" to OptionNameEnum.VideoStitching,
   "visibilityReduction" to OptionNameEnum.VisibilityReduction,
   "whiteBalance" to OptionNameEnum.WhiteBalance,
   "whiteBalanceAutoStrength" to OptionNameEnum.WhiteBalanceAutoStrength,
+  "wlanAntennaConfig" to OptionNameEnum.WlanAntennaConfig,
   "wlanFrequency" to OptionNameEnum.WlanFrequency,
+  "wlanFrequencySupport" to OptionNameEnum.WlanFrequencySupport,
+  KEY_WLAN_FREQUENCY_CL_MODE to OptionNameEnum.WlanFrequencyClMode,
 )
 
 val optionNameEnumToItemName: Map<OptionNameEnum, String> = optionItemNameToEnum.entries.associate { (key, value) -> value to key }
@@ -192,7 +208,7 @@ fun <T> setCaptureBuilderParams(optionMap: ReadableMap, builder: Capture.Builder
   optionMap.getString("exposureProgram")?.let {
     builder.setExposureProgram(ExposureProgramEnum.valueOf(it))
   }
-  optionMap.getMap("gpsInfo")?.let {
+  optionMap.getMap(KEY_GPS_INFO)?.let {
     builder.setGpsInfo(toGpsInfo(map = it))
   }
   optionMap.getString("gpsTagRecording")?.let {
@@ -229,6 +245,27 @@ fun setPhotoCaptureBuilderParams(optionMap: ReadableMap, builder: PhotoCapture.B
 }
 
 fun setTimeShiftCaptureBuilderParams(optionMap: ReadableMap, builder: TimeShiftCapture.Builder) {
+  val interval = if (optionMap.hasKey("_capture_interval")) optionMap.getInt("_capture_interval") else null
+  interval?.let {
+    if (it >= 0) {
+      builder.setCheckStatusCommandInterval(it.toLong())
+    }
+  }
+
+  optionMap.getMap("timeShift")?.let { timeShiftMap ->
+    if (timeShiftMap.hasKey("isFrontFirst")) {
+      builder.setIsFrontFirst(timeShiftMap.getBoolean("isFrontFirst"))
+    }
+    timeShiftMap.getString("firstInterval")?.let {
+      builder.setFirstInterval(TimeShiftIntervalEnum.valueOf(it))
+    }
+    timeShiftMap.getString("secondInterval")?.let {
+      builder.setSecondInterval(TimeShiftIntervalEnum.valueOf(it))
+    }
+  }
+}
+
+fun setTimeShiftManualCaptureBuilderParams(optionMap: ReadableMap, builder: TimeShiftManualCapture.Builder) {
   val interval = if (optionMap.hasKey("_capture_interval")) optionMap.getInt("_capture_interval") else null
   interval?.let {
     if (it >= 0) {
@@ -373,12 +410,13 @@ fun toResult(options: Options): WritableMap {
     OptionNameEnum.Username
   )
   val supportOptions = mapOf<OptionNameEnum, KClass<*>>(
-    OptionNameEnum.ApertureSupport to ApertureEnum::class,
-    OptionNameEnum.GpsTagRecordingSupport to GpsTagRecordingEnum::class,
     OptionNameEnum.AiAutoThumbnailSupport to AiAutoThumbnailEnum::class,
+    OptionNameEnum.ApertureSupport to ApertureEnum::class,
     OptionNameEnum.CameraControlSourceSupport to CameraControlSourceEnum::class,
     OptionNameEnum.CameraPowerSupport to CameraPowerEnum::class,
     OptionNameEnum.ExposureDelaySupport to ExposureDelayEnum::class,
+    OptionNameEnum.GpsTagRecordingSupport to GpsTagRecordingEnum::class,
+    OptionNameEnum.WlanFrequencySupport to WlanFrequencyEnum::class
   )
   val intValueRangeSupportOptions = listOf(
     OptionNameEnum.ColorTemperatureSupport,
@@ -386,7 +424,11 @@ fun toResult(options: Options): WritableMap {
     OptionNameEnum.CompositeShootingTimeSupport
   )
   OptionNameEnum.values().forEach { name ->
-    if (name == OptionNameEnum.AutoBracket) {
+    if (name == OptionNameEnum.AccessInfo) {
+      options.accessInfo?.let {
+        result.putMap("accessInfo", toResult(accessInfo = it))
+      }
+    } else if (name == OptionNameEnum.AutoBracket) {
       options.autoBracket?.let {
         result.putArray("autoBracket", toResult(autoBracket = it))
       }
@@ -406,9 +448,17 @@ fun toResult(options: Options): WritableMap {
       options.ethernetConfig?.let {
         result.putMap("ethernetConfig", toResult(ethernetConfig = it))
       }
+    } else if (name == OptionNameEnum.CameraLockConfig) {
+      options.cameraLockConfig?.let {
+        result.putMap("cameraLockConfig", toResult(cameraLockConfig = it))
+      }
     } else if (name == OptionNameEnum.GpsInfo) {
       options.gpsInfo?.let {
-        result.putMap("gpsInfo", toResult(gpsInfo = it))
+        result.putMap(KEY_GPS_INFO, toResult(gpsInfo = it))
+      }
+    } else if (name == OptionNameEnum.MobileNetworkSetting) {
+      options.mobileNetworkSetting?.let {
+        result.putMap("mobileNetworkSetting", toResult(mobileNetworkSetting = it))
       }
     } else if (name == OptionNameEnum.OffDelay) {
       options.offDelay?.let {
@@ -418,9 +468,17 @@ fun toResult(options: Options): WritableMap {
           result.putInt("offDelay", it.sec)
         }
       }
+    } else if (name == OptionNameEnum.OffDelayUsb) {
+      options.offDelayUsb?.let {
+        if (it is OffDelayUsbEnum) {
+          result.putString("offDelayUsb", it.name)
+        } else if (it is OffDelayUsbSec) {
+          result.putInt("offDelayUsb", it.sec)
+        }
+      }
     } else if (name == OptionNameEnum.Proxy) {
       options.proxy?.let {
-        result.putMap("proxy", toResult(proxy = it))
+        result.putMap(KEY_PROXY, toResult(proxy = it))
       }
     } else if (name == OptionNameEnum.SleepDelay) {
       options.sleepDelay?.let {
@@ -442,6 +500,10 @@ fun toResult(options: Options): WritableMap {
       options.topBottomCorrectionRotationSupport?.let {
         val json = toJson(rotationSupport = it)
         jsonResult.putString(KEY_TOP_BOTTOM_CORRECTION_ROTATION_SUPPORT, json)
+      }
+    } else if (name == OptionNameEnum.WlanFrequencyClMode) {
+      options.wlanFrequencyClMode?.let {
+        result.putMap(KEY_WLAN_FREQUENCY_CL_MODE, toResult(wlanFrequencyClMode = it))
       }
     } else if (valueOptions.contains(name)) {
       addOptionsValueToMap<Any>(options, name, result)
@@ -538,6 +600,45 @@ fun <T> addOptionsValueToMap(options: Options, name: OptionNameEnum, objects: Wr
   }
 }
 
+fun toResult(accessInfo: AccessInfo): WritableMap {
+  val result = Arguments.createMap()
+  result.putString(KEY_SSID, accessInfo.ssid)
+  result.putString(KEY_IP_ADDRESS, accessInfo.ipAddress)
+  result.putString(KEY_SUBNET_MASK, accessInfo.subnetMask)
+  result.putString(KEY_DEFAULT_GATEWAY, accessInfo.defaultGateway)
+  accessInfo.dns1?.let {
+    result.putString(KEY_DNS1, it)
+  }
+  accessInfo.dns2?.let {
+    result.putString(KEY_DNS2, it)
+  }
+  result.putString("proxyURL", accessInfo.proxyURL)
+  result.putString("frequency", accessInfo.frequency.name)
+  result.putInt("wlanSignalStrength", accessInfo.wlanSignalStrength)
+  result.putInt("wlanSignalLevel", accessInfo.wlanSignalLevel)
+  result.putInt("lteSignalStrength", accessInfo.lteSignalStrength)
+  result.putInt("lteSignalLevel", accessInfo.lteSignalLevel)
+
+  accessInfo.dhcpLeaseAddress?.let { list ->
+    val array = Arguments.createArray()
+    list.forEach {
+      array.pushMap(toResult(dhcpLeaseAddress = it))
+    }
+    if (array.size() > 0) {
+      result.putArray(KEY_DHCP_LEASE_ADDRESS, array)
+    }
+  }
+  return result
+}
+
+fun toResult(dhcpLeaseAddress: DhcpLeaseAddress): WritableMap {
+  val result = Arguments.createMap()
+  result.putString(KEY_IP_ADDRESS, dhcpLeaseAddress.ipAddress)
+  result.putString(KEY_MAC_ADDRESS, dhcpLeaseAddress.macAddress)
+  result.putString(KEY_HOST_NAME, dhcpLeaseAddress.hostName)
+  return result
+}
+
 fun toResult(autoBracket: BracketSettingList): WritableArray {
   val resultList = Arguments.createArray()
 
@@ -589,6 +690,29 @@ fun toResult(burstOption: BurstOption): WritableMap {
   }
   burstOption.burstOrder?.name?.let { name ->
     result.putString("burstOrder", name)
+  }
+  return result
+}
+
+fun toResult(cameraLockConfig: CameraLockConfig): WritableMap {
+  val result = Arguments.createMap()
+  cameraLockConfig.isPowerKeyLocked?.let { isPowerKeyLocked ->
+    result.putBoolean("isPowerKeyLocked", isPowerKeyLocked)
+  }
+  cameraLockConfig.isShutterKeyLocked?.let { isShutterKeyLocked ->
+    result.putBoolean("isShutterKeyLocked", isShutterKeyLocked)
+  }
+  cameraLockConfig.isModeKeyLocked?.let { isModeKeyLocked ->
+    result.putBoolean("isModeKeyLocked", isModeKeyLocked)
+  }
+  cameraLockConfig.isWlanKeyLocked?.let { isWlanKeyLocked ->
+    result.putBoolean("isWlanKeyLocked", isWlanKeyLocked)
+  }
+  cameraLockConfig.isFnKeyLocked?.let { isFnKeyLocked ->
+    result.putBoolean("isFnKeyLocked", isFnKeyLocked)
+  }
+  cameraLockConfig.isPanelLocked?.let { isPanelLocked ->
+    result.putBoolean("isPanelLocked", isPanelLocked)
   }
   return result
 }
@@ -661,16 +785,22 @@ fun toResult(ethernetConfig: EthernetConfig): WritableMap {
   val result = Arguments.createMap()
   result.putBoolean("usingDhcp", ethernetConfig.usingDhcp)
   ethernetConfig.ipAddress?.let { ipAddress ->
-    result.putString("ipAddress", ipAddress)
+    result.putString(KEY_IP_ADDRESS, ipAddress)
   }
   ethernetConfig.subnetMask?.let { subnetMask ->
-    result.putString("subnetMask", subnetMask)
+    result.putString(KEY_SUBNET_MASK, subnetMask)
   }
   ethernetConfig.defaultGateway?.let { defaultGateway ->
-    result.putString("defaultGateway", defaultGateway)
+    result.putString(KEY_DEFAULT_GATEWAY, defaultGateway)
+  }
+  ethernetConfig.dns1?.let { dns1 ->
+    result.putString(KEY_DNS1, dns1)
+  }
+  ethernetConfig.dns2?.let { dns2 ->
+    result.putString(KEY_DNS2, dns2)
   }
   ethernetConfig.proxy?.let { proxy ->
-    result.putMap("proxy", toResult(proxy = proxy))
+    result.putMap(KEY_PROXY, toResult(proxy = proxy))
   }
   return result
 }
@@ -705,7 +835,7 @@ fun toResult(proxy: Proxy): WritableMap {
     result.putString("userid", userid)
   }
   proxy.password?.let { password ->
-    result.putString("password", password)
+    result.putString(KEY_PASSWORD, password)
   }
   return result
 }
@@ -853,6 +983,25 @@ fun toResult(cameraEvent: CameraEvent): WritableMap {
   return result
 }
 
+fun toResult(wlanFrequencyClMode: WlanFrequencyClMode): WritableMap {
+  val result = Arguments.createMap()
+  result.putBoolean(KEY_WLAN_FREQUENCY_CL_MODE_2_4, wlanFrequencyClMode.enable2_4)
+  result.putBoolean(KEY_WLAN_FREQUENCY_CL_MODE_5_2, wlanFrequencyClMode.enable5_2)
+  result.putBoolean(KEY_WLAN_FREQUENCY_CL_MODE_5_8, wlanFrequencyClMode.enable5_8)
+  return result
+}
+
+fun toResult(mobileNetworkSetting: MobileNetworkSetting): WritableMap {
+  val result = Arguments.createMap()
+  mobileNetworkSetting.roaming?.name?.let { name ->
+    result.putString("roaming", name)
+  }
+  mobileNetworkSetting.plan?.name?.let { name ->
+    result.putString("plan", name)
+  }
+  return result
+}
+
 fun toSetOptionsParam(optionsMap: ReadableMap): Options {
   val result = Options()
   val iterator = optionsMap.keySetIterator()
@@ -900,6 +1049,10 @@ fun setOptionValue(options: Options, name: OptionNameEnum, optionsMap: ReadableM
     options.setValue(name, optionsMap.getDouble(key).toLong())
   } else if (boolOptions.contains(name)) {
     options.setValue(name, optionsMap.getBoolean(key))
+  } else if (name == OptionNameEnum.AccessInfo) {
+    optionsMap.getMap(key)?.let {
+      options.setValue(name, toAccessInfo(map = it))
+    }
   } else if (name == OptionNameEnum.AutoBracket) {
     optionsMap.getArray(key)?.let {
       options.setValue(name, toAutoBracket(list = it))
@@ -917,6 +1070,10 @@ fun setOptionValue(options: Options, name: OptionNameEnum, optionsMap: ReadableM
     optionsMap.getMap(key)?.let {
       options.setValue(name, toBurstOption(map = it))
     }
+  } else if (name == OptionNameEnum.CameraLockConfig) {
+    optionsMap.getMap(key)?.let {
+      options.setValue(name, toCameraLockConfig(map = it) as Any)
+    }
   } else if (name == OptionNameEnum.EthernetConfig) {
     optionsMap.getMap(key)?.let {
       options.setValue(name, toEthernetConfig(map = it) as Any)
@@ -925,8 +1082,16 @@ fun setOptionValue(options: Options, name: OptionNameEnum, optionsMap: ReadableM
     optionsMap.getMap(key)?.let {
       options.setValue(name, toGpsInfo(map = it))
     }
+  } else if (name == OptionNameEnum.MobileNetworkSetting) {
+    optionsMap.getMap(key)?.let {
+      options.setValue(name, toMobileNetworkSetting(map = it))
+    }
   } else if (name == OptionNameEnum.OffDelay) {
     toOffDelay(optionsMap)?.let {
+      options.setValue(name, it)
+    }
+  } else if (name == OptionNameEnum.OffDelayUsb) {
+    toOffDelayUsb(optionsMap)?.let {
       options.setValue(name, it)
     }
   } else if (name == OptionNameEnum.Proxy) {
@@ -945,6 +1110,10 @@ fun setOptionValue(options: Options, name: OptionNameEnum, optionsMap: ReadableM
     optionsMap.getMap(key)?.let {
       options.setValue(name, toTopBottomCorrectionRotation(map = it))
     }
+  } else if (name == OptionNameEnum.WlanFrequencyClMode) {
+    optionsMap.getMap(key)?.let {
+      options.setValue(name, toWlanFrequencyClMode(it))
+    }
   } else {
     (optionsMap.getString(key))?.let { value ->
       getOptionValueEnum(name, value)?.let {
@@ -962,9 +1131,11 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
     OptionNameEnum.BluetoothRole -> BluetoothRoleEnum.values().find { it.name == valueName }
     OptionNameEnum.BurstMode -> BurstModeEnum.values().find { it.name == valueName }
     OptionNameEnum.CameraControlSource -> CameraControlSourceEnum.values().find { it.name == valueName }
+    OptionNameEnum.CameraLock -> CameraLockEnum.values().find { it.name == valueName }
     OptionNameEnum.CameraMode -> CameraModeEnum.values().find { it.name == valueName }
     OptionNameEnum.CameraPower -> CameraPowerEnum.values().find { it.name == valueName }
     OptionNameEnum.CaptureMode -> CaptureModeEnum.values().find { it.name == valueName }
+    OptionNameEnum.CompassDirectionRef -> CompassDirectionRefEnum.values().find { it.name == valueName }
     OptionNameEnum.ContinuousNumber -> ContinuousNumberEnum.values().find { it.name == valueName }
     OptionNameEnum.ExposureCompensation -> ExposureCompensationEnum.values().find { it.name == valueName }
     OptionNameEnum.ExposureDelay -> ExposureDelayEnum.values().find { it.name == valueName }
@@ -980,8 +1151,10 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
     OptionNameEnum.Language -> LanguageEnum.values().find { it.name == valueName }
     OptionNameEnum.LatestEnabledExposureDelayTime -> ExposureDelayEnum.values().find { it.name == valueName }
     OptionNameEnum.MaxRecordableTime -> MaxRecordableTimeEnum.values().find { it.name == valueName }
+    OptionNameEnum.MicrophoneNoiseReduction -> MicrophoneNoiseReductionEnum.values().find { it.name == valueName }
     OptionNameEnum.NetworkType -> NetworkTypeEnum.values().find { it.name == valueName }
     OptionNameEnum.OffDelay -> OffDelayEnum.values().find { it.name == valueName }
+    OptionNameEnum.OffDelayUsb -> OffDelayUsbEnum.entries.find { it.name == valueName }
     OptionNameEnum.PowerSaving -> PowerSavingEnum.values().find { it.name == valueName }
     OptionNameEnum.Preset -> PresetEnum.values().find { it.name == valueName }
     OptionNameEnum.PreviewFormat -> PreviewFormatEnum.values().find { it.name == valueName }
@@ -989,10 +1162,12 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
     OptionNameEnum.ShutterSpeed -> ShutterSpeedEnum.values().find { it.name == valueName }
     OptionNameEnum.SleepDelay -> SleepDelayEnum.values().find { it.name == valueName }
     OptionNameEnum.TopBottomCorrection -> TopBottomCorrectionOptionEnum.values().find { it.name == valueName }
+    OptionNameEnum.UsbConnection -> UsbConnectionEnum.entries.find { it.name == valueName }
     OptionNameEnum.VideoStitching -> VideoStitchingEnum.values().find { it.name == valueName }
     OptionNameEnum.VisibilityReduction -> VisibilityReductionEnum.values().find { it.name == valueName }
     OptionNameEnum.WhiteBalance -> WhiteBalanceEnum.values().find { it.name == valueName }
     OptionNameEnum.WhiteBalanceAutoStrength -> WhiteBalanceAutoStrengthEnum.values().find { it.name == valueName }
+    OptionNameEnum.WlanAntennaConfig -> WlanAntennaConfigEnum.values().find { it.name == valueName }
     OptionNameEnum.WlanFrequency -> WlanFrequencyEnum.values().find { it.name == valueName }
     else -> null
   }
@@ -1002,21 +1177,67 @@ fun toListAccessPointsResult(accessPointList: List<AccessPoint>): WritableArray 
   val result = Arguments.createArray()
   accessPointList.forEach {
     val apinfo = Arguments.createMap()
-    apinfo.putString("ssid", it.ssid)
-    apinfo.putBoolean("ssidStealth", it.ssidStealth)
-    apinfo.putString("authMode", it.authMode.toString())
-    apinfo.putInt("connectionPriority", it.connectionPriority)
+    apinfo.putString(KEY_SSID, it.ssid)
+    apinfo.putBoolean(KEY_SSID_STEALTH, it.ssidStealth)
+    apinfo.putString(KEY_AUTH_MODE, it.authMode.toString())
+    apinfo.putInt(KEY_CONNECTION_PRIORITY, it.connectionPriority)
     apinfo.putBoolean("usingDhcp", it.usingDhcp)
-    apinfo.putString("ipAddress", it.ipAddress)
-    apinfo.putString("subnetMask", it.subnetMask)
-    apinfo.putString("defaultGateway", it.defaultGateway)
+    apinfo.putString(KEY_IP_ADDRESS, it.ipAddress)
+    apinfo.putString(KEY_SUBNET_MASK, it.subnetMask)
+    apinfo.putString(KEY_DEFAULT_GATEWAY, it.defaultGateway)
+    it.dns1?.let { dns1 ->
+      apinfo.putString(KEY_DNS1, dns1)
+    }
+    it.dns2?.let { dns2 ->
+      apinfo.putString(KEY_DNS2, dns2)
+    }
     it.proxy?.let { proxy ->
-      apinfo.putMap("proxy", toResult(proxy = proxy))
+      apinfo.putMap(KEY_PROXY, toResult(proxy = proxy))
     }
 
     result.pushMap(apinfo)
   }
   return result
+}
+
+fun toAccessInfo(map: ReadableMap): AccessInfo {
+  val dhcpLeaseAddress = map.getArray(KEY_DHCP_LEASE_ADDRESS)?.let { array ->
+    val list = mutableListOf<DhcpLeaseAddress>()
+    for (i in 0 until array.size()) {
+      array.getMap(i)?.let { map ->
+        toDhcpLeaseAddress(map)?.let {
+          list.add(it)
+        }
+      }
+    }
+    if (list.size > 0) list else null
+  }
+
+  return AccessInfo(
+    ssid = map.getString(KEY_SSID) ?: "",
+    ipAddress = map.getString(KEY_IP_ADDRESS) ?: "",
+    subnetMask = map.getString(KEY_SUBNET_MASK) ?: "",
+    defaultGateway = map.getString(KEY_DEFAULT_GATEWAY) ?: "",
+    dns1 = map.getString(KEY_DNS1) ?: "",
+    dns2 = map.getString(KEY_DNS2) ?: "",
+    proxyURL = map.getString("proxyURL") ?: "",
+    frequency = map.getString("frequency")?.let { WlanFrequencyAccessInfoEnum.valueOf(it) } ?: WlanFrequencyAccessInfoEnum.INITIAL_VALUE,
+    wlanSignalStrength = map.getInt("wlanSignalStrength"),
+    wlanSignalLevel = map.getInt("wlanSignalLevel"),
+    lteSignalStrength = map.getInt("lteSignalStrength"),
+    lteSignalLevel = map.getInt("lteSignalLevel"),
+    dhcpLeaseAddress = dhcpLeaseAddress
+  )
+}
+
+fun toDhcpLeaseAddress(value: ReadableMap): DhcpLeaseAddress? {
+  val ipAddress = value.getString(KEY_IP_ADDRESS)
+  val macAddress = value.getString(KEY_MAC_ADDRESS)
+  val hostName = value.getString(KEY_HOST_NAME)
+  if (ipAddress == null || macAddress == null || hostName == null) {
+    return null
+  }
+  return DhcpLeaseAddress(ipAddress, macAddress, hostName)
 }
 
 fun toAutoBracket(list: ReadableArray): BracketSettingList {
@@ -1039,14 +1260,29 @@ fun toAutoBracket(list: ReadableArray): BracketSettingList {
   return autoBracket
 }
 
+fun toCameraLockConfig(map: ReadableMap?): CameraLockConfig? {
+  return map?.let {
+    CameraLockConfig(
+      isPowerKeyLocked = if (it.hasKey("isPowerKeyLocked")) it.getBoolean("isPowerKeyLocked") else null,
+      isShutterKeyLocked = if (it.hasKey("isShutterKeyLocked")) it.getBoolean("isShutterKeyLocked") else null,
+      isModeKeyLocked = if (it.hasKey("isModeKeyLocked")) it.getBoolean("isModeKeyLocked") else null,
+      isWlanKeyLocked = if (it.hasKey("isWlanKeyLocked")) it.getBoolean("isWlanKeyLocked") else null,
+      isFnKeyLocked = if (it.hasKey("isFnKeyLocked")) it.getBoolean("isFnKeyLocked") else null,
+      isPanelLocked = if (it.hasKey("isPanelLocked")) it.getBoolean("isPanelLocked") else null,
+    )
+  }
+}
+
 fun toEthernetConfig(map: ReadableMap?): EthernetConfig? {
   return map?.let {
     EthernetConfig(
       usingDhcp = if (it.hasKey("usingDhcp")) it.getBoolean("usingDhcp") else true,
-      ipAddress = if (it.hasKey("ipAddress")) it.getString("ipAddress") else null,
-      subnetMask = if (it.hasKey("subnetMask")) it.getString("subnetMask") else null,
-      defaultGateway = if (it.hasKey("defaultGateway")) it.getString("defaultGateway") else null,
-      proxy = if (it.hasKey("proxy")) toProxy(map = it.getMap("proxy")) else null
+      ipAddress = if (it.hasKey(KEY_IP_ADDRESS)) it.getString(KEY_IP_ADDRESS) else null,
+      subnetMask = if (it.hasKey(KEY_SUBNET_MASK)) it.getString(KEY_SUBNET_MASK) else null,
+      defaultGateway = if (it.hasKey(KEY_DEFAULT_GATEWAY)) it.getString(KEY_DEFAULT_GATEWAY) else null,
+      dns1 = if (it.hasKey(KEY_DNS1)) it.getString(KEY_DNS1) else null,
+      dns2 = if (it.hasKey(KEY_DNS2)) it.getString(KEY_DNS2) else null,
+      proxy = if (it.hasKey(KEY_PROXY)) toProxy(map = it.getMap(KEY_PROXY)) else null
     )
   }
 }
@@ -1055,10 +1291,10 @@ fun toProxy(map: ReadableMap?): Proxy? {
   return map?.let {
     Proxy(
       use = it.getBoolean("use"),
-      url = it.getString("url"),
+      url = if (it.hasKey("url")) it.getString("url") else null,
       port = if (it.hasKey("port")) it.getInt("port") else null,
-      userid = it.getString("userid"),
-      password = it.getString("password")
+      userid = if (it.hasKey("userid")) it.getString("userid") else null,
+      password = if (it.hasKey(KEY_PASSWORD)) it.getString(KEY_PASSWORD) else null
     )
   }
 }
@@ -1095,6 +1331,13 @@ fun toTopBottomCorrectionRotation(map: ReadableMap): TopBottomCorrectionRotation
   return TopBottomCorrectionRotation(pitch = pitch, roll = roll, yaw = yaw)
 }
 
+fun toMobileNetworkSetting(map: ReadableMap): MobileNetworkSetting {
+  return MobileNetworkSetting(
+    roaming = map.getString("roaming")?.let { RoamingEnum.valueOf(it) },
+    plan = map.getString("plan")?.let { PlanEnum.valueOf(it) }
+  )
+}
+
 fun configToTheta(objects: ReadableMap): Config {
   val config = Config()
   config.dateTime = objects.getString("dateTime")
@@ -1128,8 +1371,8 @@ fun digestAuthToTheta(objects: ReadableMap): DigestAuth? {
   val username = objects.getString("username") ?: run {
     return null
   }
-  val password = if (objects.hasKey("password")) {
-    objects.getString("password")
+  val password = if (objects.hasKey(KEY_PASSWORD)) {
+    objects.getString(KEY_PASSWORD)
   } else {
     null
   }
@@ -1164,6 +1407,26 @@ fun toOffDelay(objects: ReadableMap): OffDelay? {
   return null
 }
 
+fun toOffDelayUsb(objects: ReadableMap): OffDelayUsb? {
+  if (!objects.hasKey("offDelayUsb")) {
+    return null
+  }
+  when (objects.getType("offDelayUsb")) {
+    ReadableType.String -> {
+      (objects.getString("offDelayUsb"))?.let { value ->
+        return getOptionValueEnum(OptionNameEnum.OffDelayUsb, value) as? OffDelayUsbEnum
+      }
+    }
+
+    ReadableType.Number -> {
+      return OffDelayUsbSec(objects.getInt("offDelayUsb"))
+    }
+
+    else -> {}
+  }
+  return null
+}
+
 fun toSleepDelay(objects: ReadableMap): SleepDelay? {
   if (!objects.hasKey("sleepDelay")) {
     return null
@@ -1190,6 +1453,8 @@ data class SetAccessPointParams(
   val authMode: AuthModeEnum,
   val password: String?,
   val connectionPriority: Int?,
+  val dns1: String?,
+  val dns2: String?,
   val proxy: Proxy?,
 )
 
@@ -1208,6 +1473,8 @@ fun toSetAccessPointParams(objects: ReadableMap): SetAccessPointParams {
   } else {
     null
   }
+  val dns1 = objects.getString(KEY_DNS1)
+  val dns2 = objects.getString(KEY_DNS2)
   val proxy = if (objects.hasKey(KEY_PROXY)) toProxy(objects.getMap(KEY_PROXY)) else null
 
   return SetAccessPointParams(
@@ -1216,6 +1483,8 @@ fun toSetAccessPointParams(objects: ReadableMap): SetAccessPointParams {
     authMode = authMode,
     password = password,
     connectionPriority = connectionPriority,
+    dns1 = dns1,
+    dns2 = dns2,
     proxy = proxy,
   )
 }
@@ -1236,4 +1505,11 @@ fun toSetAccessPointStaticallyParams(objects: ReadableMap): SetAccessPointStatic
     subnetMask = subnetMask,
     defaultGateway = defaultGateway,
   )
+}
+
+fun toWlanFrequencyClMode(objects: ReadableMap): WlanFrequencyClMode {
+  val enable2_4 = objects.getBoolean(KEY_WLAN_FREQUENCY_CL_MODE_2_4)
+  val enable5_2 = objects.getBoolean(KEY_WLAN_FREQUENCY_CL_MODE_5_2)
+  val enable5_8 = objects.getBoolean(KEY_WLAN_FREQUENCY_CL_MODE_5_8)
+  return WlanFrequencyClMode(enable2_4 = enable2_4, enable5_2 = enable5_2, enable5_8 = enable5_8)
 }

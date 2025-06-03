@@ -20,6 +20,11 @@ export const CaptureStatusEnum = {
   RETROSPECTIVE_IMAGE_RECORDING: 'RETROSPECTIVE_IMAGE_RECORDING',
   /** Performing burst shooting */
   BURST_SHOOTING: 'BURST_SHOOTING',
+  /**
+   * In the case of time-lag shooting by manual lens,
+   * set while waiting for the second shot to be taken after the first shot is completed.
+   */
+  TIME_SHIFT_SHOOTING_IDLE: 'TIME_SHIFT_SHOOTING_IDLE',
 } as const;
 
 /** type definition of CaptureStatusEnum */

@@ -1,1 +1,4 @@
-{"name":"camera.stopCapture","state":"done"}
+{
+  "name": "camera.stopCapture",
+  "state": "done"
+}

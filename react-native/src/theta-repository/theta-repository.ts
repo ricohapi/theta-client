@@ -22,6 +22,7 @@ import {
   PhotoCaptureBuilder,
   VideoCaptureBuilder,
   TimeShiftCaptureBuilder,
+  TimeShiftManualCaptureBuilder,
   LimitlessIntervalCaptureBuilder,
   ShotCountSpecifiedIntervalCaptureBuilder,
   CompositeIntervalCaptureBuilder,
@@ -36,6 +37,33 @@ import { EventWebSocket } from './event-websocket';
 import { convertOptions, convertVideoFormatsImpl } from './libs';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
+const NOTIFY_API_LOG = 'API-LOG';
+let apiLogListener: ((message: string) => void) | undefined;
+
+async function setNotifyApiLogListener(listener?: (message: string) => void) {
+  if (listener) {
+    NotifyController.instance.addNotify(NOTIFY_API_LOG, (event) => {
+      listener(event.params.message);
+    });
+  } else {
+    NotifyController.instance.removeNotify(NOTIFY_API_LOG);
+  }
+  await ThetaClientReactNative.setApiLogListener(listener != null);
+}
+
+/**
+ * Set up a log listener for THETA API calls
+ *
+ * @param listener Called when there is a THETA API request and response; if undefined, unregister.
+ */
+export async function setApiLogListener(listener?: (message: string) => void) {
+  if (!NotifyController.instance.isInit()) {
+    NotifyController.instance.init();
+  }
+  apiLogListener = listener;
+  await setNotifyApiLogListener(apiLogListener);
+}
+
 /**
  * initialize theta client sdk
  *
@@ -45,12 +73,15 @@ const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
  * @param {ThetaTimeout} timeout Timeout of HTTP call.
  * @return promise of boolean result
  **/
-export function initialize(
+export async function initialize(
   endPoint: string = 'http://192.168.1.1',
   config?: ThetaConfig,
   timeout?: ThetaTimeout
 ): Promise<boolean> {
   NotifyController.instance.init();
+  if (apiLogListener) {
+    await setNotifyApiLogListener(apiLogListener);
+  }
 
   return ThetaClientReactNative.initialize(endPoint, config, timeout);
 }
@@ -63,6 +94,19 @@ export function initialize(
  **/
 export function isInitialized(): Promise<boolean> {
   return ThetaClientReactNative.isInitialized();
+}
+
+/**
+ * Turn off/on (reboot) the camera.
+ * Supported models are THETA A1 only.
+ *
+ * Error when connecting in CL mode for Japan-bound models only
+ *
+ * @function reboot
+ * @return promise
+ */
+export function reboot(): Promise<void> {
+  return ThetaClientReactNative.reboot();
 }
 
 /**
@@ -94,6 +138,16 @@ export function getPhotoCaptureBuilder(): PhotoCaptureBuilder {
  */
 export function getTimeShiftCaptureBuilder(): TimeShiftCaptureBuilder {
   return new TimeShiftCaptureBuilder();
+}
+
+/**
+ * Get TimeShiftManualCaptureBuilder for manual time-shift.
+ *
+ * @function getTimeShiftManualCaptureBuilder
+ * @return created TimeShiftManualCaptureBuilder
+ */
+export function getTimeShiftManualCaptureBuilder(): TimeShiftManualCaptureBuilder {
+  return new TimeShiftManualCaptureBuilder();
 }
 
 /**
@@ -509,6 +563,8 @@ export function setAccessPointDynamically(
  * @param {AuthModeEnum} params.authMode Authentication mode.
  * @param {string} params.password Password. Not set if authMode is “NONE”.
  * @param {number} params.connectionPriority Connection priority 1 to 5.
+ * @param {string} params.dns1 Primary DNS server.
+ * @param {string} params.dns2 Secondary DNS server.
  * @param {Proxy} params.proxy Proxy information to be used for the access point.
  * @return promise of boolean result
  */
@@ -522,6 +578,8 @@ export function setAccessPointStatically(
     authMode: AuthModeEnum;
     password?: string;
     connectionPriority?: number;
+    dns1?: string;
+    dns2?: string;
     proxy?: Proxy;
   }
 ): Promise<boolean> {
@@ -530,6 +588,8 @@ export function setAccessPointStatically(
     authMode = AuthModeEnum.NONE,
     password,
     connectionPriority,
+    dns1,
+    dns2,
     proxy,
   } = params ?? {};
   return ThetaClientReactNative.setAccessPointStatically({
@@ -541,6 +601,8 @@ export function setAccessPointStatically(
     ipAddress,
     subnetMask,
     defaultGateway,
+    dns1,
+    dns2,
     proxy,
   });
 }

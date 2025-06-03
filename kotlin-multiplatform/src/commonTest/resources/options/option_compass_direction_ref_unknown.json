@@ -1,0 +1,9 @@
+{
+  "results": {
+    "options": {
+      "_compassDirectionRef": "abc"
+    }
+  },
+  "name": "camera.getOptions",
+  "state": "done"
+}

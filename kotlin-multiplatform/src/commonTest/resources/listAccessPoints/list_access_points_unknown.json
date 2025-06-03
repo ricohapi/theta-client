@@ -1,0 +1,15 @@
+{
+  "name": "camera._listAccessPoints",
+  "results": {
+    "accessPoints": [
+      {
+        "connectionPriority": 3,
+        "ipAddressAllocation": "dynamic",
+        "security": "abcd",
+        "ssid": "abcd",
+        "ssidStealth": true
+      }
+    ]
+  },
+  "state": "done"
+}

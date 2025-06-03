@@ -3,6 +3,7 @@
  */
 package com.ricoh360.thetaclient.transferred
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -15,7 +16,7 @@ import kotlinx.serialization.encoding.Encoder
 /**
  * set options request
  */
-@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 internal data class SetOptionsRequest(
     override val name: String = "camera.setOptions",
@@ -99,6 +100,10 @@ internal data class ResultSetOptions(
 @Suppress("ConstructorParameterNaming")
 internal data class Options(
     /**
+     * Connected network information.
+     */
+    var _accessInfo: AccessInfo? = null,
+    /**
      * Turns the AI auto setting ON/OFF.
      */
     var _aiAutoThumbnail: AiAutoThumbnail? = null,
@@ -181,6 +186,24 @@ internal data class Options(
     var _cameraControlSourceSupport: List<CameraControlSource>? = null,
 
     /**
+     * Camera lock
+     * @see CameraLock
+     */
+    var _cameraLock: CameraLock? = null,
+
+    /**
+     * Camera lock support
+     * @see CameraLock
+     */
+    var _cameraLockSupport: List<CameraLock>? = null,
+
+    /**
+     * Camera lock config
+     * @see CameraLockConfig
+     */
+    var _cameraLockConfig: CameraLockConfig? = null,
+
+    /**
      * Camera mode.
      *
      * @see CameraMode
@@ -250,7 +273,7 @@ internal data class Options(
     /**
      * supported client versions.
      */
-    @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+    @OptIn(ExperimentalSerializationApi::class)
     @Serializable(with = NumbersAsIntsSerializer::class)
     var clientVersionSupport: List<Int>? = null,
 
@@ -268,6 +291,20 @@ internal data class Options(
      * supported color temperature.
      */
     var _colorTemperatureSupport: ColorTemperatureSupport? = null,
+
+    /**
+     * _compassDirectionRef
+     *
+     * @see CompassDirectionRef
+     */
+    var _compassDirectionRef: CompassDirectionRef? = null,
+
+    /**
+     * _compassDirectionRef support
+     *
+     * @see CompassDirectionRef
+     */
+    var _compassDirectionRefSupport: List<CompassDirectionRef>? = null,
 
     /**
      * In-progress save interval for interval composite shooting (sec).
@@ -365,7 +402,7 @@ internal data class Options(
     /**
      * Supported operating time (sec.) of the self-timer.
      */
-    @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+    @OptIn(ExperimentalSerializationApi::class)
     @Serializable(with = NumbersAsIntsSerializer::class)
     var exposureDelaySupport: List<Int>? = null,
 
@@ -384,7 +421,7 @@ internal data class Options(
     /**
      * Supported exposure program
      */
-    @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+    @OptIn(ExperimentalSerializationApi::class)
     @Serializable(with = NumbersAsIntsSerializer::class)
     var exposureProgramSupport: List<Int>? = null,
 
@@ -514,7 +551,7 @@ internal data class Options(
     /**
      * Supported ISO sensitivity.
      */
-    @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+    @OptIn(ExperimentalSerializationApi::class)
     @Serializable(with = NumbersAsIntsSerializer::class)
     var isoSupport: List<Int>? = null,
 
@@ -528,7 +565,7 @@ internal data class Options(
     /**
      * supported ISO sensitivity upper limit.
      */
-    @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+    @OptIn(ExperimentalSerializationApi::class)
     @Serializable(with = NumbersAsIntsSerializer::class)
     var isoAutoHighLimitSupport: List<Int>? = null,
 
@@ -559,7 +596,7 @@ internal data class Options(
     /**
      * Supported maximum recordable time (in seconds) of the camera.
      */
-    @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+    @OptIn(ExperimentalSerializationApi::class)
     @Serializable(with = NumbersAsIntsSerializer::class)
     var _maxRecordableTimeSupport: List<Int>? = null,
 
@@ -582,6 +619,27 @@ internal data class Options(
      * Supported microphone channel
      */
     var _microphoneChannelSupport: List<MicrophoneChannel>? = null,
+
+    /**
+     * @see MicrophoneNoiseReduction
+     */
+    var _microphoneNoiseReduction: MicrophoneNoiseReduction? = null,
+
+    /**
+     * _microphoneNoiseReduction support
+     * @see MicrophoneNoiseReduction
+     */
+    var _microphoneNoiseReductionSupport: List<MicrophoneNoiseReduction>? = null,
+
+    /**
+     * @see MobileNetworkSetting
+     */
+    var _mobileNetworkSetting: MobileNetworkSetting? = null,
+
+    /**
+     * @see MobileNetworkSettingSupport
+     */
+    var _mobileNetworkSettingSupport: MobileNetworkSettingSupport? = null,
 
     /**
      * Network type.
@@ -613,9 +671,26 @@ internal data class Options(
     /**
      * Length of standby time before the camera automatically powers OFF.
      */
-    @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+    @OptIn(ExperimentalSerializationApi::class)
     @Serializable(with = NumbersAsIntsSerializer::class)
     var offDelaySupport: List<Int>? = null,
+
+    /**
+     * Auto power off time with USB power supply.
+     *
+     * For RICOH THETA A1
+     * 0, or a value that is a multiple of 60 out of 600 or more and 2592000 or less (unit: second), or 65535.
+     * Return 0 when 65535 is set and obtained (Do not turn power OFF).
+     */
+    @Serializable(with = NumberAsIntSerializer::class)
+    var _offDelayUSB: Int? = null,
+
+    /**
+     * Supported auto power off time with USB power supply.
+     */
+    @OptIn(ExperimentalSerializationApi::class)
+    @Serializable(with = NumbersAsIntsSerializer::class)
+    var offDelayUSBSupport: List<Int>? = null,
 
     /**
      * Password used for digest authentication when _networkType is set to client mode.
@@ -735,7 +810,7 @@ internal data class Options(
     /**
      * Length of standby time before the camera enters the sleep mode.
      */
-    @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+    @OptIn(ExperimentalSerializationApi::class)
     @Serializable(with = NumbersAsIntsSerializer::class)
     var sleepDelaySupport: List<Int>? = null,
 
@@ -776,6 +851,17 @@ internal data class Options(
      */
     @Serializable(with = NumberAsLongSerializer::class)
     var totalSpace: Long? = null,
+
+    /**
+     * @see UsbConnection
+     */
+    var _usbConnection: UsbConnection? = null,
+
+    /**
+     * _usbConnection support
+     * @see UsbConnection
+     */
+    var _usbConnectionSupport: List<UsbConnection>? = null,
 
     /**
      * User name used for digest authentication when _networkType is set to client mode.
@@ -825,6 +911,18 @@ internal data class Options(
     var _whiteBalanceAutoStrengthSupport: List<WhiteBalanceAutoStrength>? = null,
 
     /**
+     * @see WlanAntennaConfig
+     */
+    var _wlanAntennaConfig: WlanAntennaConfig? = null,
+
+    /**
+     * WlanAntennaConfig support
+     *
+     * @see WlanAntennaConfig
+     */
+    var _wlanAntennaConfigSupport: List<WlanAntennaConfig>? = null,
+
+    /**
      * Wireless LAN frequency of the camera supported by Theta V, Z1 and X.
      */
     var _wlanFrequency: WlanFrequency? = null,
@@ -833,6 +931,115 @@ internal data class Options(
      * Supported WlanFrequency
      */
     var _wlanFrequencySupport: List<WlanFrequency>? = null,
+
+    /**
+     * Whether the camera's WLAN CL mode uses 2.4 GHz, 5.2 GHz, or 5.8 GHz frequencies
+     *
+     * For RICOH THETA A1
+     */
+    var _wlanFrequencyCLmode: WlanFrequencyClMode? = null,
+
+    /**
+     * Supported WlanFrequencyClMode
+     */
+    var _wlanFrequencyCLmodeSupport: WlanFrequencyClModeSupport? = null,
+)
+
+/**
+ * _accessInfo
+ */
+@Serializable
+internal data class AccessInfo(
+    /**
+     * SSID of the wireless LAN access point that THETA connects to
+     */
+    var ssid: String,
+
+    /**
+     * IP address of access point
+     */
+    var ipAddress: String,
+
+    /**
+     * subnet mask of access point
+     */
+    var subnetMask: String,
+
+    /**
+     * default gateway of access point
+     */
+    var defaultGateway: String,
+
+    /**
+     * Primary DNS server
+     */
+    var dns1: String?,
+
+    /**
+     * Secondary DNS server
+     */
+    var dns2: String?,
+
+    /**
+     * proxy URL of access point
+     */
+    var proxyURL: String,
+
+    /**
+     * Radio frequency, e.g. 2.4 5.2
+     */
+    var frequency: WlanFrequencyAccessInfo,
+
+    /**
+     * WLAN signal strength
+     * [dBm]
+     */
+    var wlanSignalStrength: Int,
+
+    /**
+     * WLAN signal level
+     * 0~4
+     */
+    var wlanSignalLevel: Int,
+
+    /**
+     * LTE signal strength
+     * [dBm]
+     */
+    var lteSignalStrength: Int,
+
+    /**
+     * LTE signal level
+     * 0~4
+     */
+    var lteSignalLevel: Int,
+
+    /**
+     * client devices information
+     */
+    @SerialName("_dhcpLeaseAddress")
+    var dhcpLeaseAddress: List<DhcpLeaseAddress>? = null,
+)
+
+/**
+ * client devices information
+ */
+@Serializable
+internal data class DhcpLeaseAddress(
+    /**
+     * IP address of client device
+     */
+    val ipAddress: String,
+
+    /**
+     * MAC address of client device
+     */
+    val macAddress: String,
+
+    /**
+     * host name of client device
+     */
+    val hostName: String,
 )
 
 /**
@@ -1272,7 +1479,7 @@ internal object BurstOrderSerializer : KSerializer<BurstOrder> {
 }
 
 internal object CameraControlSourceSerializer :
-     SerialNameEnumIgnoreUnknownSerializer<CameraControlSource>(CameraControlSource.entries, CameraControlSource.UNKNOWN)
+    SerialNameEnumIgnoreUnknownSerializer<CameraControlSource>(CameraControlSource.entries, CameraControlSource.UNKNOWN)
 
 /**
  * camera control source
@@ -1282,12 +1489,12 @@ internal object CameraControlSourceSerializer :
  * For RICOH THETA X
  */
 @Serializable(with = CameraControlSourceSerializer::class)
-internal enum class CameraControlSource: SerialNameEnum {
+internal enum class CameraControlSource : SerialNameEnum {
     /**
      * Undefined value
      */
     UNKNOWN,
-    
+
     /**
      * Operation is possible with the camera. Locks the smartphone
      * application UI (supported app only).
@@ -1303,6 +1510,118 @@ internal enum class CameraControlSource: SerialNameEnum {
     APP {
         override val serialName: String = "app"
     },
+}
+
+internal object CameraLockSerializer :
+    SerialNameEnumIgnoreUnknownSerializer<CameraLock>(CameraLock.entries, CameraLock.UNKNOWN)
+
+/**
+ * Control camera lock/unlock
+ */
+@Serializable(with = CameraLockSerializer::class)
+internal enum class CameraLock : SerialNameEnum {
+    /**
+     * Undefined value
+     */
+    UNKNOWN,
+
+    /**
+     * Camera is unlocked
+     */
+    UNLOCK {
+        override val serialName: String = "unlock"
+    },
+
+    /**
+     * Camera basic lock state
+     * (Mode button, WLAN button, and Fn button presses are inhibited)
+     */
+    BASIC_LOCK {
+        override val serialName: String = "basicLock"
+    },
+
+    /**
+     * Lock according to the parameters set in _cameraLockConfig.
+     */
+    CUSTOM_LOCK {
+        override val serialName: String = "customLock"
+    },
+}
+
+/**
+ * Camera Lock Config
+ *
+ * - It is possible to enable/disable the function for each HW key.
+ * - It is possible to enable/disable the operation of the panel.
+ * - When all supported buttons/components are in the "unlock" state, it will be the same as the normal setting.
+ * - For THETA models, if there are no wlanKey, fnKey, or panel, it will return "lock". If there are no supported buttons/components, setting to "unlock" or "lock" will not return an error and will not perform any action.
+ */
+@Serializable
+internal data class CameraLockConfig(
+    /**
+     * power key locked or unlocked.
+     */
+    val powerKey: CameraLockType? = null,
+
+    /**
+     * Shutter key locked or unlocked.
+     */
+    val shutterKey: CameraLockType? = null,
+
+    /**
+     * mode key locked or unlocked.
+     */
+    val modeKey: CameraLockType? = null,
+
+    /**
+     * wlan key locked or unlocked.
+     */
+    val wlanKey: CameraLockType? = null,
+
+    /**
+     * fn key locked or unlocked.
+     */
+    val fnKey: CameraLockType? = null,
+
+    /**
+     * panel locked or unlocked.
+     * Fixed to LOCK. UNLOCK does not cause an error, but it is not reflected either.
+     */
+    val panel: CameraLockType? = null,
+)
+
+internal object CameraLockTypeSerializer :
+    SerialNameEnumIgnoreUnknownSerializer<CameraLockType>(CameraLockType.entries, CameraLockType.UNKNOWN)
+
+/**
+ * Camera lock type
+ */
+@Serializable(with = CameraLockTypeSerializer::class)
+internal enum class CameraLockType(val isLocked: Boolean) : SerialNameEnum {
+    /**
+     * Undefined value
+     */
+    UNKNOWN(true),
+
+    /**
+     * Camera is locked
+     */
+    LOCK(true) {
+        override val serialName: String = "lock"
+    },
+
+    /**
+     * Camera is unlocked
+     */
+    UNLOCK(false) {
+        override val serialName: String = "unlock"
+    };
+
+    companion object {
+        fun from(isLocked: Boolean?): CameraLockType? {
+            return isLocked?.let { if (it) LOCK else UNLOCK }
+        }
+    }
 }
 
 /**
@@ -1342,6 +1661,7 @@ internal object CameraPowerSerializer :
     SerialNameEnumIgnoreUnknownSerializer<CameraPower>(CameraPower.entries, CameraPower.UNKNOWN)
 
 /**
+ * Camera power state.
  * _cameraPower is the power status of camera.
  *
  * For RICOH THETA X v2.61.0 or later
@@ -1368,6 +1688,14 @@ internal enum class CameraPower : SerialNameEnum {
     },
 
     /**
+     * Sleep
+     */
+    SLEEP {
+        override val serialName: String = "sleep"
+    },
+
+    /**
+     * Power Saving Mode
      * Power on, power saving mode. Camera is closed.
      * Unavailable parameter when plugin is running. In this case, invalidParameterValue error will be returned.
      */
@@ -1418,6 +1746,43 @@ internal enum class CaptureMode {
      */
     @SerialName("_preset")
     PRESET,
+}
+
+internal object CompassDirectionRefSerializer :
+    SerialNameEnumIgnoreUnknownSerializer<CompassDirectionRef>(CompassDirectionRef.entries, CompassDirectionRef.UNKNOWN)
+
+/**
+ * _compassDirectionRef
+ */
+@Serializable(with = CompassDirectionRefSerializer::class)
+internal enum class CompassDirectionRef : SerialNameEnum {
+    /**
+     * Undefined value
+     */
+    UNKNOWN,
+
+    /**
+     * If GPS positioning is available, record in true north;
+     * if GPS is off or not available, record in magnetic north.
+     */
+    AUTO {
+        override val serialName: String = "auto"
+    },
+
+    /**
+     * If the azimuth is set to true north, GPS is turned off, or positioning is not possible,
+     * the azimuth information is not recorded (positioning information is required for conversion).
+     */
+    TRUE_NORTH {
+        override val serialName: String = "true"
+    },
+
+    /**
+     * Do not set azimuth to true north, set azimuth to magnetic north
+     */
+    MAGNETIC {
+        override val serialName: String = "magnetic"
+    },
 }
 
 /**
@@ -1472,18 +1837,18 @@ internal enum class Gain {
 }
 
 internal object AiAutoThumbnailSerializer :
-     SerialNameEnumIgnoreUnknownSerializer<AiAutoThumbnail>(AiAutoThumbnail.entries, AiAutoThumbnail.UNKNOWN)
+    SerialNameEnumIgnoreUnknownSerializer<AiAutoThumbnail>(AiAutoThumbnail.entries, AiAutoThumbnail.UNKNOWN)
 
 /**
  * AI auto thumbnail setting
  */
 @Serializable(with = AiAutoThumbnailSerializer::class)
-internal enum class AiAutoThumbnail: SerialNameEnum {
+internal enum class AiAutoThumbnail : SerialNameEnum {
     /**
      * Undefined value
      */
     UNKNOWN,
-    
+
     /**
      * AI auto setting ON
      */
@@ -1512,21 +1877,37 @@ internal data class EthernetConfig(
 
     /**
      * (optional) IPv4 for IP address
+     * Do not specify this property when ipAddressAllocation is dynamic.
      */
     val ipAddress: String? = null,
 
     /**
      * (optional) IPv4 for subnet mask
+     * Do not specify this property when ipAddressAllocation is dynamic.
      */
     val subnetMask: String? = null,
 
     /**
      * (optional) IPv4 for default gateway
+     * Do not specify this property when ipAddressAllocation is dynamic.
      */
     val defaultGateway: String? = null,
 
     /**
+     * (optional) IPv4 for Primary DNS server
+     * Do not specify this property when ipAddressAllocation is dynamic.
+     */
+    var dns1: String? = null,
+
+    /**
+     * (optional) IPv4 for Secondary DNS server
+     * Do not specify this property when ipAddressAllocation is dynamic.
+     */
+    var dns2: String? = null,
+
+    /**
      * (optional) refer to _proxy for detail
+     * Do not specify this property when ipAddressAllocation is dynamic.
      */
     val _proxy: Proxy? = null,
 )
@@ -1549,34 +1930,229 @@ internal enum class MicrophoneChannel {
     MONAURAL,
 }
 
+
+internal object MicrophoneNoiseReductionSerializer :
+    SerialNameEnumIgnoreUnknownSerializer<MicrophoneNoiseReduction>(MicrophoneNoiseReduction.entries, MicrophoneNoiseReduction.UNKNOWN)
+
+/**
+ * Built-in microphone noise reduction.
+ *
+ * 1) Video: Ignore changes during recording
+ * 2) Live Streaming: Ignore changes during delivery
+ */
+@Serializable(with = MicrophoneNoiseReductionSerializer::class)
+internal enum class MicrophoneNoiseReduction : SerialNameEnum {
+    /**
+     * Undefined value
+     */
+    UNKNOWN,
+
+    /**
+     * ON
+     */
+    ON {
+        override val serialName: String = "on"
+    },
+
+    /**
+     * OFF
+     */
+    OFF {
+        override val serialName: String = "off"
+    },
+}
+
+/**
+ * Mobile Network Settings
+ */
+@Serializable
+internal data class MobileNetworkSetting(
+    /**
+     * roaming
+     */
+    val roaming: Roaming?,
+
+    /**
+     * plan
+     */
+    val plan: Plan?
+)
+
+/**
+ * Mobile Network Settings Support
+ */
+@Serializable
+internal data class MobileNetworkSettingSupport(
+    /**
+     * roaming support
+     */
+    val roaming: List<Roaming>,
+
+    /**
+     * plan support
+     */
+    val plan: List<Plan>
+)
+
+internal object RoamingSerializer :
+    SerialNameEnumIgnoreUnknownSerializer<Roaming>(Roaming.entries, Roaming.UNKNOWN)
+
+/**
+ * Roaming of MobileNetworkSetting
+ */
+@Serializable(with = RoamingSerializer::class)
+internal enum class Roaming : SerialNameEnum {
+    /**
+     * Undefined value
+     */
+    UNKNOWN,
+
+    /**
+     * OFF
+     */
+    OFF {
+        override val serialName: String = "OFF"
+    },
+
+    /**
+     * ON
+     */
+    ON {
+        override val serialName: String = "ON"
+    },
+}
+
+internal object PlanSerializer :
+    SerialNameEnumIgnoreUnknownSerializer<Plan>(Plan.entries, Plan.UNKNOWN)
+
+/**
+ * Plan of MobileNetworkSetting
+ */
+@Serializable(with = PlanSerializer::class)
+internal enum class Plan : SerialNameEnum {
+    /**
+     * Undefined value
+     */
+    UNKNOWN,
+
+    /**
+     * Communicate with APN settings for plan-D
+     */
+    SORACOM {
+        override val serialName: String = "SORACOM"
+    },
+
+    /**
+     * Communicate with APN settings for plan-DU
+     */
+    SORACOM_PLAN_DU {
+        override val serialName: String = "SORACOM Plan-DU"
+    },
+}
+
+internal object NetworkTypeSerializer :
+    SerialNameEnumIgnoreUnknownSerializer<NetworkType>(NetworkType.entries, NetworkType.UNKNOWN)
+
 /**
  * Network type setting supported by Theta V, Z1, and X.
  */
-@Serializable
-internal enum class NetworkType {
+@Serializable(with = NetworkTypeSerializer::class)
+internal enum class NetworkType : SerialNameEnum {
+    /**
+     * Undefined value
+     */
+    UNKNOWN,
+
     /**
      * Direct mode
      */
-    @SerialName("AP")
-    DIRECT,
+    DIRECT {
+        override val serialName: String = "AP"
+    },
 
     /**
      * Client mode
      */
-    @SerialName("CL")
-    CLIENT,
+    CLIENT {
+        override val serialName: String = "CL"
+    },
 
     /**
      * Client mode via Ethernet cable, supported only by Theta V and Z1.
      */
-    @SerialName("ETHERNET")
-    ETHERNET,
+    ETHERNET {
+        override val serialName: String = "ETHERNET"
+    },
 
     /**
      * Network is off. This value can be gotten only by plugin.
      */
-    @SerialName("OFF")
-    OFF,
+    OFF {
+        override val serialName: String = "OFF"
+    },
+
+    /**
+     * LTE plan-D
+     *
+     * For RICOH THETA A1
+     */
+    LTE_D {
+        override val serialName: String = "LTE plan-D"
+    },
+
+    /**
+     * LTE plan-DU
+     *
+     * For RICOH THETA A1
+     */
+    LTE_DU {
+        override val serialName: String = "LTE plan-DU"
+    },
+
+    /**
+     * LTE plan01s
+     *
+     * For RICOH THETA A1
+     */
+    LTE_01S {
+        override val serialName: String = "LTE plan01s"
+    },
+
+    /**
+     * LTE planX3
+     *
+     * For RICOH THETA A1
+     */
+    LTE_X3 {
+        override val serialName: String = "LTE planX3"
+    },
+
+    /**
+     * LTE planP1
+     *
+     * For RICOH THETA A1
+     */
+    LTE_P1 {
+        override val serialName: String = "LTE planP1"
+    },
+
+    /**
+     * LTE plan-K2
+     *
+     * For RICOH THETA A1
+     */
+    LTE_K2 {
+        override val serialName: String = "LTE plan-K2"
+    },
+
+    /**
+     * LTE plan-K
+     *
+     * For RICOH THETA A1
+     */
+    LTE_K {
+        override val serialName: String = "LTE plan-K"
+    },
 }
 
 /**
@@ -1980,6 +2556,38 @@ internal data class YawSupport(
     val stepSize: Float
 )
 
+
+internal object UsbConnectionSerializer :
+    SerialNameEnumIgnoreUnknownSerializer<UsbConnection>(UsbConnection.entries, UsbConnection.UNKNOWN)
+
+/**
+ * USB connection of the camera.
+ *
+ * Default value is "MTP".
+ * After switching the setting value, reconnect the camera to USB to enable it.
+ */
+@Serializable(with = UsbConnectionSerializer::class)
+internal enum class UsbConnection : SerialNameEnum {
+    /**
+     * Undefined value
+     */
+    UNKNOWN,
+
+    /**
+     * MTP
+     */
+    MTP {
+        override val serialName: String = "MTP"
+    },
+
+    /**
+     * MSC
+     */
+    MSC {
+        override val serialName: String = "MSC"
+    },
+}
+
 /**
  * White balance setting
  */
@@ -2082,11 +2690,44 @@ internal enum class WhiteBalanceAutoStrength {
     OFF,
 }
 
+internal object WlanAntennaConfigSerializer :
+    SerialNameEnumIgnoreUnknownSerializer<WlanAntennaConfig>(WlanAntennaConfig.entries, WlanAntennaConfig.UNKNOWN)
+
+/**
+ * Configure SISO or MIMO for Wireless LAN.
+ */
+@Serializable(with = WlanAntennaConfigSerializer::class)
+internal enum class WlanAntennaConfig : SerialNameEnum {
+    /**
+     * Undefined value
+     */
+    UNKNOWN,
+
+    /**
+     * SISO
+     */
+    SISO {
+        override val serialName: String = "SISO"
+    },
+
+    /**
+     * MIMO
+     */
+    MIMO {
+        override val serialName: String = "MIMO"
+    },
+}
+
 /**
  * Wireless LAN frequency of the camera supported by Theta V, Z1 and X.
  */
 @Serializable(with = WlanFrequencySerializer::class)
 internal enum class WlanFrequency(val frequency: Double) {
+    /**
+     * Undefined value
+     */
+    UNKNOWN(0.0),
+
     /**
      * 2.4GHz
      */
@@ -2096,6 +2737,20 @@ internal enum class WlanFrequency(val frequency: Double) {
      * 5GHz
      */
     GHZ_5(5.0),
+
+    /**
+     * 5.2GHz
+     *
+     * For RICOH THETA A1
+     */
+    GHZ_5_2(5.2),
+
+    /**
+     * 5.8GHz
+     *
+     * For RICOH THETA A1
+     */
+    GHZ_5_8(5.8),
 }
 
 /**
@@ -2112,8 +2767,53 @@ internal object WlanFrequencySerializer : KSerializer<WlanFrequency> {
 
     override fun deserialize(decoder: Decoder): WlanFrequency {
         val frequency = decoder.decodeDouble()
-        return if (frequency < 5) WlanFrequency.GHZ_2_4 else WlanFrequency.GHZ_5
+        return WlanFrequency.entries.firstOrNull { it.frequency == frequency } ?: let {
+            println("Web API unknown value. ${WlanFrequency::class.simpleName}: $frequency")
+            WlanFrequency.UNKNOWN
+        }
     }
+}
+
+internal object WlanFrequencyAccessInfoSerializer :
+    SerialNameEnumIgnoreUnknownSerializer<WlanFrequencyAccessInfo>(WlanFrequencyAccessInfo.entries, WlanFrequencyAccessInfo.UNKNOWN)
+
+/**
+ * WLAN frequency of the access point.
+ */
+@Serializable(with = WlanFrequencyAccessInfoSerializer::class)
+internal enum class WlanFrequencyAccessInfo : SerialNameEnum {
+    /**
+     * Undefined value
+     */
+    UNKNOWN,
+
+    /**
+     * 2.4GHz
+     */
+    GHZ_2_4 {
+        override val serialName: String = "2.4"
+    },
+
+    /**
+     * 5.2GHz
+     */
+    GHZ_5_2 {
+        override val serialName: String = "5.2"
+    },
+
+    /**
+     * 5.8GHz
+     */
+    GHZ_5_8 {
+        override val serialName: String = "5.8"
+    },
+
+    /**
+     * Initial value
+     */
+    INITIAL_VALUE {
+        override val serialName: String = ""
+    },
 }
 
 /**
@@ -2618,4 +3318,56 @@ internal data class CompositeShootingTimeSupport(
      */
     @Serializable(with = NumberAsIntSerializer::class)
     val stepSize: Int
+)
+
+/**
+ * Whether the camera's WLAN CL mode uses 2.4 GHz, 5.2 GHz, or 5.8 GHz frequencies
+ */
+@Serializable
+internal data class WlanFrequencyClMode(
+    /**
+     * 2.4GHz
+     */
+    @SerialName("enable2.4GHz")
+    val enable2_4: Boolean,
+
+    /**
+     * 5.2GHz
+     */
+    @SerialName("enable5.2GHz")
+    val enable5_2: Boolean,
+
+    /**
+     * 5.8GHz
+     */
+    @SerialName("enable5.8GHz")
+    val enable5_8: Boolean,
+)
+
+/**
+ * Supported WlanFrequencyClMode
+ */
+@OptIn(ExperimentalSerializationApi::class)
+@Serializable
+internal data class WlanFrequencyClModeSupport(
+    /**
+     * 2.4GHz
+     */
+    @SerialName("enable2.4GHz")
+    @Serializable(with = BooleanListSerializer::class)
+    val enable2_4: List<Boolean>,
+
+    /**
+     * 5.2GHz
+     */
+    @SerialName("enable5.2GHz")
+    @Serializable(with = BooleanListSerializer::class)
+    val enable5_2: List<Boolean>,
+
+    /**
+     * 5.8GHz
+     */
+    @SerialName("enable5.8GHz")
+    @Serializable(with = BooleanListSerializer::class)
+    val enable5_8: List<Boolean>,
 )

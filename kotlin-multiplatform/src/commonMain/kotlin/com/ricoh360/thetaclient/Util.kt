@@ -46,3 +46,13 @@ internal suspend fun <T> syncExecutor(
     }
     return deferred.await()
 }
+
+/**
+ * Set up a log listener for THETA API calls
+ *
+ * @param listener Called when there is a THETA API request and response; if null, unregister.
+ */
+@Throws(Throwable::class)
+fun setApiLogListener(listener: ((message: String) -> Unit)?) {
+    ThetaApi.apiLogListener = listener
+}

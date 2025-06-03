@@ -1,1 +1,14 @@
-{"name":"camera._getMySetting","state":"done","results":{"options":{"fileFormat":{"type":"jpeg","width":5376,"height":2688},"whiteBalance":"auto"}}}
+{
+  "name": "camera._getMySetting",
+  "state": "done",
+  "results": {
+    "options": {
+      "fileFormat": {
+        "type": "jpeg",
+        "width": 5376,
+        "height": 2688
+      },
+      "whiteBalance": "auto"
+    }
+  }
+}

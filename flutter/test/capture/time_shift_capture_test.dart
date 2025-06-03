@@ -195,7 +195,7 @@ void main() {
   test('call onCapturing', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
     MockThetaClientFlutterPlatform fakePlatform =
-    MockThetaClientFlutterPlatform();
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     var completer = Completer<void>();
@@ -215,11 +215,11 @@ void main() {
     var capture = await builder.build();
     var isOnCapturing = false;
     var capturing = capture.startCapture(
-            (fileUrl) {
+        (fileUrl) {
           expect(false, isTrue, reason: 'startCapture');
         },
-            (completion) {},
-            (exception) {},
+        (completion) {},
+        (exception) {},
         onCapturing: (status) {
           expect(status, CapturingStatusEnum.capturing);
           isOnCapturing = true;

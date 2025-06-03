@@ -5,14 +5,20 @@ import com.ricoh360.thetaclient.ApiClient
 import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
-import io.ktor.http.*
-import io.ktor.utils.io.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class ThetaRepositoryTest {
     private val endpoint = "http://192.168.1.1:80/"
@@ -756,6 +762,7 @@ class ThetaRepositoryTest {
             arrayOf("RICOH THETA V", null, ThetaRepository.ThetaModel.THETA_V),
             arrayOf("RICOH THETA S", null, ThetaRepository.ThetaModel.THETA_S),
             arrayOf("RICOH THETA SC", null, ThetaRepository.ThetaModel.THETA_SC),
+            arrayOf("RICOH360 THETA A1", null, ThetaRepository.ThetaModel.THETA_A1),
         )
         for (item in data) {
             assertEquals(ThetaRepository.ThetaModel.get(item[0] as String, item[1] as? String), item[2], (item[2] as? ThetaRepository.ThetaModel)?.name ?: "null")

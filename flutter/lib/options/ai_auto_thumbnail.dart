@@ -4,7 +4,7 @@
 enum AiAutoThumbnailEnum {
   /// Undefined value
   unknown('UNKNOWN'),
-  
+
   /// AI auto setting ON.
   on('ON'),
 

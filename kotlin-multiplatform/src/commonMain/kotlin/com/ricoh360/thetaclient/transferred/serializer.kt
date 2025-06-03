@@ -218,10 +218,9 @@ internal abstract class SerialNameEnumIgnoreUnknownSerializer<T>(
     values: List<T>,
     private val defaultValue: T,
 ) : KSerializer<T>
-        where T : Enum<T>, T : SerialNameEnum
-{
+        where T : Enum<T>, T : SerialNameEnum {
     override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor(values.first()::class.qualifiedName ?: "" , PrimitiveKind.STRING)
+        PrimitiveSerialDescriptor(values.first()::class.qualifiedName ?: "", PrimitiveKind.STRING)
     private val lookup = values.associateBy({ it }, { it.serialName })
     private val revLookup = values.associateBy {
         it.serialName
@@ -238,7 +237,65 @@ internal abstract class SerialNameEnumIgnoreUnknownSerializer<T>(
                 println("Web API unknown value. ${defaultValue::class.simpleName}: $decodeString")
                 defaultValue
             }
+
             else -> value
         }
+    }
+}
+
+/**
+ * Boolean list serializer
+ *
+ * If there is only one value, do not make it an array.
+ */
+@kotlinx.serialization.ExperimentalSerializationApi
+internal object BooleanListSerializer : KSerializer<List<Boolean>> {
+    /**
+     * serial descriptor
+     */
+    override val descriptor: SerialDescriptor = listSerialDescriptor<Boolean>()
+
+    /**
+     * serialize value with encoder
+     * @param encoder encoder object
+     * @param value value to encode
+     */
+    override fun serialize(encoder: Encoder, value: List<Boolean>) {
+        if (value.size == 1) {
+            encoder.encodeBoolean(value[0])
+            return
+        }
+        val composite = encoder.beginCollection(descriptor, value.size)
+        val iterator = value.iterator()
+        for (index in value.indices) {
+            composite.encodeBooleanElement(descriptor, index, iterator.next())
+        }
+        composite.endStructure(descriptor)
+    }
+
+    /**
+     * deserialize value with decoder and return decoded value
+     * @param decoder decoder object
+     * @return decoded value
+     */
+    override fun deserialize(decoder: Decoder): List<Boolean> {
+        try {
+            // Not an array if it has a single value
+            val value = decoder.decodeBoolean()
+            return listOf(value)
+        } catch (_: Throwable) {
+        }
+
+        val result = mutableListOf<Boolean>()
+        val compositeDecoder = decoder.beginStructure(descriptor)
+        while (true) {
+            val index = compositeDecoder.decodeElementIndex(descriptor)
+            if (index == CompositeDecoder.DECODE_DONE) {
+                break
+            }
+            result.add(decoder.decodeBoolean())
+        }
+        compositeDecoder.endStructure(descriptor)
+        return result
     }
 }

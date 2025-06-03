@@ -1,3 +1,4 @@
+import type { AccessInfo } from './option-access-info';
 import type { AiAutoThumbnailEnum } from './option-ai-auto-thumbnail';
 import type { ApertureEnum } from './option-aperture';
 import type { BitrateEnum } from './option-bitrate';
@@ -6,36 +7,46 @@ import type { BracketSetting } from './option-auto-bracket';
 import type { BurstModeEnum } from './option-burst-mode';
 import type { BurstOption } from './option-burst-option';
 import type { CameraControlSourceEnum } from './option-camera-control-source';
+import type { CameraLockConfig } from './option-camera-lock-config';
+import type { CameraLockEnum } from './option-camera-lock';
 import type { CameraModeEnum } from './option-camera-mode';
+import type { CameraPowerEnum } from './option-camera-power';
 import type { CaptureModeEnum } from './option-capture-mode';
+import type { CompassDirectionRefEnum } from './option-compass-direction-ref';
 import type { ContinuousNumberEnum } from './option-continuous-number';
+import type { EthernetConfig } from './option-ethernet-config';
+import type { ExposureCompensationEnum } from './option-exposure-compensation';
 import type { FaceDetectEnum } from './option-face-detect';
+import type { FileFormatEnum } from './option-file-format';
 import type { FilterEnum } from './option-filter';
-import type { ShootingFunctionEnum } from './option-function';
 import type { GainEnum } from './option-gain';
+import type { GpsTagRecordingEnum } from './option-gps-tag-recording';
 import type { ImageStitchingEnum } from './option-image-stitching';
 import type { MaxRecordableTimeEnum } from './option-max-recordable-time';
+import type { MicrophoneNoiseReductionEnum } from './option-microphone-noise-reduction';
+import type { MobileNetworkSetting } from './option-mobile-network-setting';
 import type { NetworkTypeEnum } from './option-network-type';
+import type { OffDelayEnum } from './option-off-delay';
+import type { OffDelayUsbEnum } from './option-off-delay-usb';
 import type { PowerSavingEnum } from './option-power-saving';
 import type { PresetEnum } from './option-preset';
 import type { PreviewFormatEnum } from './option-preview-format';
 import type { Proxy } from './option-proxy';
+import type { ShootingFunctionEnum } from './option-function';
 import type { ShootingMethodEnum } from './option-shooting-method';
 import type { ShutterSpeedEnum } from './option-shutter-speed';
+import type { SleepDelayEnum } from './option-sleep-delay';
 import type { TimeShift } from './option-time-shift';
 import type { TopBottomCorrectionOptionEnum } from './option-top-bottom-correction';
 import type { TopBottomCorrectionRotation } from './option-top-bottom-correction-rotation';
+import type { TopBottomCorrectionRotationSupport } from './option-top-bottom-correction-rotation-support';
+import type { UsbConnectionEnum } from './option-usb-connection';
 import type { VideoStitchingEnum } from './option-video-stitching';
 import type { VisibilityReductionEnum } from './option-visibility-reduction';
 import type { WhiteBalanceAutoStrengthEnum } from './option-white-balance-auto-strength';
+import type { WlanAntennaConfigEnum } from './option-wlan-antenna-config';
+import type { WlanFrequencyClMode } from './option-wlan-frequency-cl-mode';
 import type { WlanFrequencyEnum } from './option-wlan-frequency';
-import type { OffDelayEnum } from './option-off-delay';
-import type { SleepDelayEnum } from './option-sleep-delay';
-import type { EthernetConfig } from './option-ethernet-config';
-import type { FileFormatEnum } from './option-file-format';
-import type { CameraPowerEnum } from './option-camera-power';
-import type { TopBottomCorrectionRotationSupport } from './option-top-bottom-correction-rotation-support';
-import type { GpsTagRecordingEnum } from './option-gps-tag-recording';
 
 /** BluetoothPower value. */
 export const BluetoothPowerEnum = {
@@ -48,40 +59,6 @@ export const BluetoothPowerEnum = {
 /** type definition of BluetoothPowerEnum */
 export type BluetoothPowerEnum =
   (typeof BluetoothPowerEnum)[keyof typeof BluetoothPowerEnum];
-
-/** Exposure compensation (EV). */
-export const ExposureCompensationEnum = {
-  /** -2.0 */
-  M_2_0: 'M2_0',
-  /** -1.7 */
-  M_1_7: 'M1_7',
-  /** -1.3 */
-  M_1_3: 'M1_3',
-  /** -1.0 */
-  M_1_0: 'M1_0',
-  /** -0.7 */
-  M_0_7: 'M0_7',
-  /** -0.3 */
-  M_0_3: 'M0_3',
-  /** 0 */
-  ZERO: 'ZERO',
-  /** 0.3 */
-  P_0_3: 'P0_3',
-  /** 0.7 */
-  P_0_7: 'P0_7',
-  /** 1.0 */
-  P_1_0: 'P1_0',
-  /** 1.3 */
-  P_1_3: 'P1_3',
-  /** 1.7 */
-  P_1_7: 'P1_7',
-  /** 2.0 */
-  P_2_0: 'P2_0',
-} as const;
-
-/** type definition of ExposureCompensationEnum */
-export type ExposureCompensationEnum =
-  (typeof ExposureCompensationEnum)[keyof typeof ExposureCompensationEnum];
 
 /** Operating time (sec.) of the self-timer. */
 export const ExposureDelayEnum = {
@@ -301,6 +278,8 @@ export type WhiteBalanceEnum =
 
 /** Camera setting options name. */
 export const OptionNameEnum = {
+  /** _accessInfo */
+  AccessInfo: 'AccessInfo',
   /** _aiAutoThumbnail */
   AiAutoThumbnail: 'AiAutoThumbnail',
   /** _aiAutoThumbnailSupport */
@@ -325,6 +304,10 @@ export const OptionNameEnum = {
   CameraControlSource: 'CameraControlSource',
   /** _cameraControlSourceSupport */
   CameraControlSourceSupport: 'CameraControlSourceSupport',
+  /** _cameraLock */
+  CameraLock: 'CameraLock',
+  /** _cameraLockConfig */
+  CameraLockConfig: 'CameraLockConfig',
   /** cameraMode */
   CameraMode: 'CameraMode',
   /** cameraPower */
@@ -341,6 +324,8 @@ export const OptionNameEnum = {
   ColorTemperature: 'ColorTemperature',
   /** _colorTemperatureSupport */
   ColorTemperatureSupport: 'ColorTemperatureSupport',
+  /** _compassDirectionRef */
+  CompassDirectionRef: 'CompassDirectionRef',
   /** _compositeShootingOutputInterval */
   CompositeShootingOutputInterval: 'CompositeShootingOutputInterval',
   /** _compositeShootingOutputIntervalSupport */
@@ -392,10 +377,16 @@ export const OptionNameEnum = {
   LatestEnabledExposureDelayTime: 'LatestEnabledExposureDelayTime',
   /** maxRecordableTime */
   MaxRecordableTime: 'MaxRecordableTime',
+  /** microphoneNoiseReduction */
+  MicrophoneNoiseReduction: 'MicrophoneNoiseReduction',
+  /** _mobileNetworkSetting */
+  MobileNetworkSetting: 'MobileNetworkSetting',
   /** networkType */
   NetworkType: 'NetworkType',
   /** offDelay */
   OffDelay: 'OffDelay',
+  /** _offDelayUSB */
+  OffDelayUsb: 'OffDelayUsb',
   /** password */
   Password: 'Password',
   /** powerSaving */
@@ -430,6 +421,8 @@ export const OptionNameEnum = {
   TotalSpace: 'TotalSpace',
   /** shutterVolume */
   ShutterVolume: 'ShutterVolume',
+  /** _usbConnection */
+  UsbConnection: 'UsbConnection',
   /** username */
   Username: 'Username',
   /** videoStitching */
@@ -440,8 +433,14 @@ export const OptionNameEnum = {
   WhiteBalance: 'WhiteBalance',
   /** _whiteBalanceAutoStrength */
   WhiteBalanceAutoStrength: 'WhiteBalanceAutoStrength',
+  /** _wlanAntennaConfig */
+  WlanAntennaConfig: 'WlanAntennaConfig',
   /** _wlanFrequency */
   WlanFrequency: 'WlanFrequency',
+  /** _wlanFrequencySupport */
+  WlanFrequencySupport: 'WlanFrequencySupport',
+  /** _wlanFrequencyCLmode */
+  WlanFrequencyClMode: 'WlanFrequencyClMode',
 } as const;
 
 /** type definition of OptionNameEnum */
@@ -450,6 +449,8 @@ export type OptionNameEnum =
 
 /** camera setting options */
 export type Options = {
+  /** Connected network information. */
+  accessInfo?: AccessInfo;
   /** AI auto thumbnail setting. */
   aiAutoThumbnail?: AiAutoThumbnailEnum;
   /** Supported AI auto thumbnail setting. */
@@ -474,6 +475,10 @@ export type Options = {
   cameraControlSource?: CameraControlSourceEnum;
   /** Supported Camera Control Source. */
   cameraControlSourceSupport?: CameraControlSourceEnum[];
+  /** Camera lock. */
+  cameraLock?: CameraLockEnum;
+  /** Camera lock config. */
+  cameraLockConfig?: CameraLockConfig;
   /** Camera mode. */
   cameraMode?: CameraModeEnum;
   /** Camera power state */
@@ -523,6 +528,8 @@ export type Options = {
   colorTemperature?: number;
   /** supported color temperature. */
   colorTemperatureSupport?: ValueRange;
+  /** _compassDirectionRef */
+  compassDirectionRef?: CompassDirectionRefEnum;
   /**
    * In-progress save interval for interval composite shooting (sec).
    *
@@ -598,10 +605,20 @@ export type Options = {
   latestEnabledExposureDelayTime?: ExposureDelayEnum;
   /** Maximum recordable time (in seconds) of the camera. */
   maxRecordableTime?: MaxRecordableTimeEnum;
+  /** _microphoneNoiseReduction */
+  microphoneNoiseReduction?: MicrophoneNoiseReductionEnum;
+  /** _mobileNetworkSetting */
+  mobileNetworkSetting?: MobileNetworkSetting;
   /** Network type of the camera */
   networkType?: NetworkTypeEnum;
   /** Length of standby time before the camera automatically powers OFF. */
   offDelay?: OffDelayEnum;
+  /**
+   * Auto power off time with USB power supply.
+   *
+   * For RICOH THETA A1
+   */
+  offDelayUsb?: OffDelayUsbEnum;
   /** Password used for digest authentication when _networkType is set to client mode. */
   password?: String;
   /** Power saving mode */
@@ -644,6 +661,8 @@ export type Options = {
   topBottomCorrectionRotationSupport?: TopBottomCorrectionRotationSupport;
   /** Total storage space (byte). */
   totalSpace?: number;
+  /** _usbConnection */
+  usbConnection?: UsbConnectionEnum;
   /** User name used for digest authentication when _networkType is set to client mode. */
   username?: String;
   /** Video stitching during shooting. */
@@ -655,7 +674,21 @@ export type Options = {
   /** White balance auto strength. */
   whiteBalanceAutoStrength?: WhiteBalanceAutoStrengthEnum;
   /** WLAN frequency */
+  wlanAntennaConfig?: WlanAntennaConfigEnum;
+  /** WlanAntennaConfig */
   wlanFrequency?: WlanFrequencyEnum;
+  /**
+   * Supported WlanFrequency
+   *
+   * For RICOH THETA X, Z1 and V.
+   */
+  wlanFrequencySupport?: WlanFrequencyEnum[];
+  /**
+   * Whether the camera's WLAN CL mode uses 2.4 GHz, 5.2 GHz, or 5.8 GHz frequencies
+   *
+   * For RICOH THETA A1
+   */
+  wlanFrequencyClMode?: WlanFrequencyClMode;
   /** GPS setting used in only capturing */
   _gpsTagRecording?: GpsTagRecordingEnum;
 };

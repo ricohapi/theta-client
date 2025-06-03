@@ -4,13 +4,18 @@ import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.EndPoint
-import io.ktor.client.network.sockets.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.utils.io.*
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.http.HttpStatusCode
+import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class GetThetaInfoTest {
@@ -303,6 +308,7 @@ class GetThetaInfoTest {
             ThetaRepository.ThetaModel.THETA_V,
             ThetaRepository.ThetaModel.THETA_Z1,
             ThetaRepository.ThetaModel.THETA_X,
+            ThetaRepository.ThetaModel.THETA_A1,
         )
         val modelNameArray = arrayOf(
             "RICOH THETA S",
@@ -312,6 +318,7 @@ class GetThetaInfoTest {
             "RICOH THETA V",
             "RICOH THETA Z1",
             "RICOH THETA X",
+            "RICOH360 THETA A1",
         )
 
         modelEnumArray.forEachIndexed { index, it ->

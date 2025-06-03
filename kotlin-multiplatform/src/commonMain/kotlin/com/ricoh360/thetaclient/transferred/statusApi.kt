@@ -5,7 +5,6 @@ package com.ricoh360.thetaclient.transferred
 
 import io.ktor.http.HttpMethod
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonPrimitive

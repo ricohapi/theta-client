@@ -15,6 +15,7 @@ describe('CaptureStatusEnum', () => {
       'RETROSPECTIVE_IMAGE_RECORDING',
     ],
     [CaptureStatusEnum.BURST_SHOOTING, 'BURST_SHOOTING'],
+    [CaptureStatusEnum.TIME_SHIFT_SHOOTING_IDLE, 'TIME_SHIFT_SHOOTING_IDLE'],
   ];
 
   test('length', () => {

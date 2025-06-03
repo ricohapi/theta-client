@@ -6,6 +6,9 @@ package com.ricoh360.thetaclient
 import kotlinx.cinterop.*
 import platform.Foundation.*
 import platform.UIKit.UIDevice
+import kotlin.experimental.ExperimentalNativeApi
+import kotlin.native.ref.WeakReference
+
 
 /**
  * describe platform
@@ -47,3 +50,6 @@ actual fun currentTimeMillis(): Long {
     val interval = NSDate().timeIntervalSince1970
     return (interval / 1000.0).toLong()
 }
+
+@OptIn(ExperimentalNativeApi::class)
+actual typealias WeakReference<T> = WeakReference<T>

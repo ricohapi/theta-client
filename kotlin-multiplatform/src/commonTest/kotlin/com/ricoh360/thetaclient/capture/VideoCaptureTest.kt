@@ -371,6 +371,7 @@ class VideoCaptureTest {
             Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_2K_NO_CODEC, MediaFileFormat(MediaType.MP4, 1920, 960, null, null)),
             Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_4K, MediaFileFormat(MediaType.MP4, 3840, 1920, "H.264/MPEG-4 AVC", null)),
             Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_4K_NO_CODEC, MediaFileFormat(MediaType.MP4, 3840, 1920, null, null)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_2K_15F, MediaFileFormat(MediaType.MP4, 1920, 960, "H.264/MPEG-4 AVC", 15)),
             Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_2K_30F, MediaFileFormat(MediaType.MP4, 1920, 960, "H.264/MPEG-4 AVC", 30)),
             Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_2K_60F, MediaFileFormat(MediaType.MP4, 1920, 960, "H.264/MPEG-4 AVC", 60)),
             Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_2_7K_2752_2F, MediaFileFormat(MediaType.MP4, 2752, 2752, "H.264/MPEG-4 AVC", 2)),
@@ -381,6 +382,8 @@ class VideoCaptureTest {
             Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_2_7K_2F, MediaFileFormat(MediaType.MP4, 2688, 2688, "H.264/MPEG-4 AVC", 2)),
             Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_3_6K_1F, MediaFileFormat(MediaType.MP4, 3648, 3648, "H.264/MPEG-4 AVC", 1)),
             Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_3_6K_2F, MediaFileFormat(MediaType.MP4, 3648, 3648, "H.264/MPEG-4 AVC", 2)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_4K_2F, MediaFileFormat(MediaType.MP4, 3840, 1920, "H.264/MPEG-4 AVC", 2)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_4K_5F, MediaFileFormat(MediaType.MP4, 3840, 1920, "H.264/MPEG-4 AVC", 5)),
             Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_4K_10F, MediaFileFormat(MediaType.MP4, 3840, 1920, "H.264/MPEG-4 AVC", 10)),
             Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_4K_15F, MediaFileFormat(MediaType.MP4, 3840, 1920, "H.264/MPEG-4 AVC", 15)),
             Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_4K_30F, MediaFileFormat(MediaType.MP4, 3840, 1920, "H.264/MPEG-4 AVC", 30)),
@@ -393,7 +396,20 @@ class VideoCaptureTest {
             Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_7K_2F, MediaFileFormat(MediaType.MP4, 7680, 3840, "H.264/MPEG-4 AVC", 2)),
             Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_7K_5F, MediaFileFormat(MediaType.MP4, 7680, 3840, "H.264/MPEG-4 AVC", 5)),
             Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_7K_10F, MediaFileFormat(MediaType.MP4, 7680, 3840, "H.264/MPEG-4 AVC", 10)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_2K_30F_H265_HEVC, MediaFileFormat(MediaType.MP4, 1920, 960, "H.265/HEVC", 30)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_4K_2F_H265_HEVC, MediaFileFormat(MediaType.MP4, 3840, 1920, "H.265/HEVC", 2)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_4K_5F_H265_HEVC, MediaFileFormat(MediaType.MP4, 3840, 1920, "H.265/HEVC", 5)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_4K_10F_H265_HEVC, MediaFileFormat(MediaType.MP4, 3840, 1920, "H.265/HEVC", 10)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_4K_30F_H265_HEVC, MediaFileFormat(MediaType.MP4, 3840, 1920, "H.265/HEVC", 30)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_5_7K_2F_H265_HEVC, MediaFileFormat(MediaType.MP4, 5760, 2880, "H.265/HEVC", 2)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_5_7K_5F_H265_HEVC, MediaFileFormat(MediaType.MP4, 5760, 2880, "H.265/HEVC", 5)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_5_7K_10F_H265_HEVC, MediaFileFormat(MediaType.MP4, 5760, 2880, "H.265/HEVC", 10)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_7K_2F_H265_HEVC, MediaFileFormat(MediaType.MP4, 7680, 3840, "H.265/HEVC", 2)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_7K_5F_H265_HEVC, MediaFileFormat(MediaType.MP4, 7680, 3840, "H.265/HEVC", 5)),
+            Pair(ThetaRepository.VideoFileFormatEnum.VIDEO_7K_10F_H265_HEVC, MediaFileFormat(MediaType.MP4, 7680, 3840, "H.265/HEVC", 10)),
         )
+
+        assertEquals(ThetaRepository.VideoFileFormatEnum.entries.size, valueList.size)
 
         val responseArray = arrayOf(
             Resource("src/commonTest/resources/setOptions/set_options_done.json").readText(),

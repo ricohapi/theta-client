@@ -1,1 +1,8 @@
-{"name":"camera.startSession","state":"done","results":{ "sessionId":"SID_0001","timeout":180}}
+{
+  "name": "camera.startSession",
+  "state": "done",
+  "results": {
+    "sessionId": "SID_0001",
+    "timeout": 180
+  }
+}

@@ -1,6 +1,11 @@
-{"name":"camera._getPluginOrders","results":{
-    "pluginOrders":[
-        "com.theta360.usbstorage",
-        "com.theta.remoteplayback",
-        ""
-    ]},"state":"done"}
+{
+  "name": "camera._getPluginOrders",
+  "results": {
+    "pluginOrders": [
+      "com.theta360.usbstorage",
+      "com.theta.remoteplayback",
+      ""
+    ]
+  },
+  "state": "done"
+}

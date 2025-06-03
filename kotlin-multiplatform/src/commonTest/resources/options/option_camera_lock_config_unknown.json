@@ -1,0 +1,16 @@
+{
+  "name": "camera.getOptions",
+  "state": "done",
+  "results": {
+    "options": {
+      "_cameraLockConfig": {
+        "powerKey": "a",
+        "shutterKey": "b",
+        "modeKey": "c",
+        "wlanKey": "d",
+        "fnKey": "e",
+        "panel": "f"
+      }
+    }
+  }
+}

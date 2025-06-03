@@ -215,7 +215,7 @@ void main() {
   test('call onStopFailed', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
     MockThetaClientFlutterPlatform fakePlatform =
-    MockThetaClientFlutterPlatform();
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     const imageUrls = ['http://test.jpeg'];
@@ -248,7 +248,7 @@ void main() {
   test('call onCapturing', () async {
     ThetaClientFlutter thetaClientPlugin = ThetaClientFlutter();
     MockThetaClientFlutterPlatform fakePlatform =
-    MockThetaClientFlutterPlatform();
+        MockThetaClientFlutterPlatform();
     ThetaClientFlutterPlatform.instance = fakePlatform;
 
     const imageUrls = ['http://test.jpeg'];

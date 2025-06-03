@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:theta_client_flutter/digest_auth.dart';
+import 'package:theta_client_flutter/options/access_info.dart';
 
 import 'capture/capture_builder.dart';
 import 'options/importer.dart';
@@ -18,6 +19,13 @@ export 'state/importer.dart';
 class ThetaClientFlutter {
   Future<String?> getPlatformVersion() {
     return ThetaClientFlutterPlatform.instance.getPlatformVersion();
+  }
+
+  /// Set up a log listener for THETA API calls
+  ///
+  /// @param listener Called when there is a THETA API request and response; if null, unregister.
+  Future<void> setApiLogListener(void Function(String message)? listener) {
+    return ThetaClientFlutterPlatform.instance.setApiLogListener(listener);
   }
 
   /// Initialize object.
@@ -146,6 +154,12 @@ class ThetaClientFlutter {
     return TimeShiftCaptureBuilder();
   }
 
+  /// Get TimeShiftManualCapture.Builder for capture time shift.
+  TimeShiftManualCaptureBuilder getTimeShiftManualCaptureBuilder() {
+    ThetaClientFlutterPlatform.instance.getTimeShiftManualCaptureBuilder();
+    return TimeShiftManualCaptureBuilder();
+  }
+
   /// Get VideoCapture.Builder for capture video.
   VideoCaptureBuilder getVideoCaptureBuilder() {
     ThetaClientFlutterPlatform.instance.getVideoCaptureBuilder();
@@ -238,6 +252,16 @@ class ThetaClientFlutter {
     return ThetaClientFlutterPlatform.instance.getMetadata(fileUrl);
   }
 
+  /// Turn off/on (reboot) the camera.
+  /// Supported models are THETA A1 only.
+  ///
+  /// Error when connecting in CL mode for Japan-bound models only
+  ///
+  /// - @throws If an error occurs in THETA.
+  Future<void> reboot() {
+    return ThetaClientFlutterPlatform.instance.reboot();
+  }
+
   /// Reset all device settings and capture settings.
   /// After reset, the camera will be restarted.
   ///
@@ -263,10 +287,9 @@ class ThetaClientFlutter {
   /// - @param onProgress the block for convertVideoFormats progress.
   /// - @return URL of a converted movie file.
   /// - @throws Command is currently disabled.
-  Future<String> convertVideoFormats(String fileUrl,
-      bool toLowResolution,
+  Future<String> convertVideoFormats(String fileUrl, bool toLowResolution,
       [bool applyTopBottomCorrection = true,
-        void Function(double)? onProgress]) {
+      void Function(double)? onProgress]) {
     return ThetaClientFlutterPlatform.instance.convertVideoFormats(
         fileUrl, toLowResolution, applyTopBottomCorrection, onProgress);
   }
@@ -318,13 +341,15 @@ class ThetaClientFlutter {
   /// Set access point. IP address is set statically.
   ///
   /// - @param ssid SSID of the access point.
-  /// - @param ssidStealth True if SSID stealth is enabled.
-  /// - @param authMode Authentication mode.
+  /// - @param ssidStealth True if SSID stealth is enabled. Default is false.
+  /// - @param authMode [AuthModeEnum] Authentication mode.
   /// - @param password Password. Not set if [authMode] is "[none]".
-  /// - @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
+  /// - @param connectionPriority Connection priority (1 to 5). Default is 1. Theta X fixed to 1 (The access point registered later has a higher priority.)
   /// - @param ipAddress IP address assigns to Theta.
   /// - @param subnetMask Subnet mask.
   /// - @param defaultGateway Default gateway.
+  /// - @param Primary DNS server.
+  /// - @param Secondary DNS server.
   /// - @param proxy Proxy information to be used for the access point.
   /// - @throws If an error occurs in THETA.
   Future<void> setAccessPointStatically(String ssid,
@@ -335,6 +360,8 @@ class ThetaClientFlutter {
       required String ipAddress,
       required String subnetMask,
       required String defaultGateway,
+      String? dns1,
+      String? dns2,
       Proxy? proxy}) {
     return ThetaClientFlutterPlatform.instance.setAccessPointStatically(
         ssid,
@@ -345,6 +372,8 @@ class ThetaClientFlutter {
         ipAddress,
         subnetMask,
         defaultGateway,
+        dns1,
+        dns2,
         proxy);
   }
 
@@ -510,7 +539,11 @@ enum ThetaModel {
   thetaSC2('THETA_SC2'),
 
   /// THETA SC2 for business
-  thetaSC2B('THETA_SC2_B');
+  thetaSC2B('THETA_SC2_B'),
+
+  /// THETA A1
+  thetaA1('THETA_A1'),
+  ;
 
   final String rawValue;
 
@@ -649,8 +682,14 @@ enum StorageEnum {
 
 /// Video codec
 enum CodecEnum {
+  /// Undefined value
+  unknown('UNKNOWN'),
+
   /// codec H.264/MPEG-4 AVC
-  h264mp4avc('H264MP4AVC');
+  h264mp4avc('H264MP4AVC'),
+
+  /// codec H.265/HEVC
+  h265hevc('H265HEVC');
 
   final String rawValue;
 
@@ -1147,6 +1186,9 @@ class Metadata {
 
 /// Enum for authentication mode.
 enum AuthModeEnum {
+  /// Undefined value
+  unknown('UNKNOWN'),
+
   /// Authentication mode. none
   none('NONE'),
 
@@ -1154,7 +1196,10 @@ enum AuthModeEnum {
   wep('WEP'),
 
   /// Authentication mode. WPA/WPA2 PSK
-  wpa('WPA');
+  wpa('WPA'),
+
+  /// Authentication mode. WPA3-SAE
+  wpa3('WPA3');
 
   final String rawValue;
 
@@ -1184,7 +1229,7 @@ class AccessPoint {
   AuthModeEnum authMode;
 
   /// Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
-  int connectionPriority = 1;
+  int connectionPriority;
 
   /// Using DHCP or not. This can be acquired when SSID is registered as an enable access point.
   bool usingDhcp;
@@ -1198,25 +1243,32 @@ class AccessPoint {
   /// Default Gateway. This setting can be acquired when “usingDhcp” is false.
   String? defaultGateway;
 
+  /// Primary DNS server.
+  String? dns1;
+
+  /// Secondary DNS server.
+  String? dns2;
+
   /// Proxy information to be used for the access point.
   Proxy? proxy;
 
-  AccessPoint(
-      this.ssid,
-      this.ssidStealth,
-      this.authMode,
-      this.connectionPriority,
-      this.usingDhcp,
+  AccessPoint(this.ssid, this.ssidStealth, this.authMode, this.usingDhcp,
+      [this.connectionPriority = 1,
       this.ipAddress,
       this.subnetMask,
       this.defaultGateway,
-      this.proxy);
+      this.dns1,
+      this.dns2,
+      this.proxy]);
 }
 
 /// Camera setting options name.
 ///
 /// [options name](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
 enum OptionNameEnum {
+  /// Option name _accessInfo
+  accessInfo('AccessInfo', AccessInfo),
+
   /// Option name _aiAutoThumbnail
   aiAutoThumbnail('AiAutoThumbnail', AiAutoThumbnailEnum),
 
@@ -1254,6 +1306,12 @@ enum OptionNameEnum {
   cameraControlSourceSupport(
       'CameraControlSourceSupport', List<CameraControlSourceEnum>),
 
+  /// Option name _cameraLock
+  cameraLock('CameraLock', CameraLockEnum),
+
+  /// Option name _cameraLockConfig
+  cameraLockConfig('CameraLockConfig', CameraLockConfig),
+
   /// Option name _cameraMode
   cameraMode('CameraMode', CameraModeEnum),
 
@@ -1277,6 +1335,9 @@ enum OptionNameEnum {
 
   /// Option name _colorTemperatureSupport
   colorTemperatureSupport('ColorTemperatureSupport', ValueRange),
+
+  /// Option name _compassDirectionRef
+  compassDirectionRef('CompassDirectionRef', CompassDirectionRefEnum),
 
   /// Option name _compositeShootingOutputInterval
   compositeShootingOutputInterval('CompositeShootingOutputInterval', int),
@@ -1357,11 +1418,21 @@ enum OptionNameEnum {
   /// Option name _maxRecordableTime
   maxRecordableTime('MaxRecordableTime', MaxRecordableTimeEnum),
 
+  /// Option name _microphoneNoiseReduction
+  microphoneNoiseReduction(
+      'MicrophoneNoiseReduction', MicrophoneNoiseReductionEnum),
+
+  /// Option name _mobileNetworkSetting
+  mobileNetworkSetting('MobileNetworkSetting', MobileNetworkSetting),
+
   /// Option name _networkType
   networkType('NetworkType', NetworkTypeEnum),
 
   /// Option name offDelay
   offDelay('OffDelay', OffDelayEnum),
+
+  /// Option name _offDelayUSB
+  offDelayUsb('OffDelayUsb', OffDelayUsbEnum),
 
   /// Option name _password
   password('Password', String),
@@ -1416,6 +1487,9 @@ enum OptionNameEnum {
   /// Option name totalSpace
   totalSpace('TotalSpace', int),
 
+  /// Option name _usbConnection
+  usbConnection('UsbConnection', UsbConnectionEnum),
+
   /// Option name _username
   username('Username', String),
 
@@ -1432,8 +1506,18 @@ enum OptionNameEnum {
   whiteBalanceAutoStrength(
       'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum),
 
-  // Option name wlanfrequency
-  wlanFrequency('WlanFrequency', WlanFrequencyEnum);
+  /// Option name _wlanAntennaConfig
+  wlanAntennaConfig('WlanAntennaConfig', WlanAntennaConfigEnum),
+
+  /// Option name wlanfrequency
+  wlanFrequency('WlanFrequency', WlanFrequencyEnum),
+
+  /// Option name wlanFrequencySupport
+  wlanFrequencySupport('WlanFrequencySupport', List<WlanFrequencyEnum>),
+
+  /// Option name wlanfrequencyCLmode
+  wlanFrequencyClMode('WlanFrequencyClMode', WlanFrequencyClMode),
+  ;
 
   final String rawValue;
   final dynamic valueType;
@@ -1732,64 +1816,6 @@ enum ContinuousNumberEnum {
     return ContinuousNumberEnum.values.cast<ContinuousNumberEnum?>().firstWhere(
         (element) => element?.rawValue == rawValue,
         orElse: () => null);
-  }
-}
-
-/// Exposure compensation (EV).
-enum ExposureCompensationEnum {
-  /// Exposure compensation -2.0
-  m2_0('M2_0'),
-
-  /// Exposure compensation -1.7
-  m1_7('M1_7'),
-
-  /// Exposure compensation -1.3
-  m1_3('M1_3'),
-
-  /// Exposure compensation -1.0
-  m1_0('M1_0'),
-
-  /// Exposure compensation -0.7
-  m0_7('M0_7'),
-
-  /// Exposure compensation -0.3
-  m0_3('M0_3'),
-
-  /// Exposure compensation 0.0
-  zero('ZERO'),
-
-  /// Exposure compensation 0.3
-  p0_3('P0_3'),
-
-  /// Exposure compensation 0.7
-  p0_7('P0_7'),
-
-  /// Exposure compensation 1.0
-  p1_0('P1_0'),
-
-  /// Exposure compensation 1.3
-  p1_3('P1_3'),
-
-  /// Exposure compensation 1.7
-  p1_7('P1_7'),
-
-  /// Exposure compensation 2.0
-  p2_0('P2_0');
-
-  final String rawValue;
-
-  const ExposureCompensationEnum(this.rawValue);
-
-  @override
-  String toString() {
-    return rawValue;
-  }
-
-  static ExposureCompensationEnum? getValue(String rawValue) {
-    return ExposureCompensationEnum.values
-        .cast<ExposureCompensationEnum?>()
-        .firstWhere((element) => element?.rawValue == rawValue,
-            orElse: () => null);
   }
 }
 
@@ -2263,36 +2289,6 @@ enum LanguageEnum {
   }
 }
 
-/// Network type of the camera supported by Theta X, Z1 and V.
-enum NetworkTypeEnum {
-  // Direct mode
-  direct('DIRECT'),
-
-  // Client mode via WLAN
-  client('CLIENT'),
-
-  // Client mode via Ethernet cable supported by Theta Z1 and V.
-  ethernet('ETHERNET'),
-
-  // Network is off. This value can be gotten only by plugin.
-  off('OFF');
-
-  final String rawValue;
-
-  const NetworkTypeEnum(this.rawValue);
-
-  @override
-  String toString() {
-    return rawValue;
-  }
-
-  static NetworkTypeEnum? getValue(String rawValue) {
-    return NetworkTypeEnum.values.cast<NetworkTypeEnum?>().firstWhere(
-        (element) => element?.rawValue == rawValue,
-        orElse: () => null);
-  }
-}
-
 /// PowerSaving
 ///
 /// For Theta X only
@@ -2337,65 +2333,6 @@ enum PresetEnum {
 
   static PresetEnum? getValue(String rawValue) {
     return PresetEnum.values.cast<PresetEnum?>().firstWhere(
-        (element) => element?.rawValue == rawValue,
-        orElse: () => null);
-  }
-}
-
-/// Format of live view
-enum PreviewFormatEnum {
-  /// width_height_framerate
-  /// For Theta X, Z1, V and SC2
-  // ignore: constant_identifier_names
-  w1024_h512_f30('W1024_H512_F30'),
-
-  /// For Theta X. This value can't set.
-  // ignore: constant_identifier_names
-  w1024_h512_f15('W1024_H512_F15'),
-
-  /// For Theta X
-  // ignore: constant_identifier_names
-  w512_h512_f30('W512_H512_F30'),
-
-  /// For Theta Z1 and V
-  // ignore: constant_identifier_names
-  w1920_h960_f8('W1920_H960_F8'),
-
-  /// For Theta X firmware v2.71.1 or later
-  // ignore: constant_identifier_names
-  w1920_h960_f30('W1920_H960_F30'),
-
-  /// For Theta Z1 and V
-  // ignore: constant_identifier_names
-  w1024_h512_f8('W1024_H512_F8'),
-
-  /// For Theta Z1 and V
-  // ignore: constant_identifier_names
-  w640_h320_f30('W640_H320_F30'),
-
-  /// For Theta Z1 and V
-  // ignore: constant_identifier_names
-  w640_h320_f8('W640_H320_F8'),
-
-  /// For Theta S and SC
-  // ignore: constant_identifier_names
-  w640_h320_f10('W640_H320_F10'),
-
-  /// For Theta X
-  // ignore: constant_identifier_names
-  w3840_h1920_f30('W3840_H1920_F30');
-
-  final String rawValue;
-
-  const PreviewFormatEnum(this.rawValue);
-
-  @override
-  String toString() {
-    return rawValue;
-  }
-
-  static PreviewFormatEnum? getValue(String rawValue) {
-    return PreviewFormatEnum.values.cast<PreviewFormatEnum?>().firstWhere(
         (element) => element?.rawValue == rawValue,
         orElse: () => null);
   }
@@ -2927,30 +2864,6 @@ enum WhiteBalanceAutoStrengthEnum {
   }
 }
 
-/// Wireless LAN frequency of the camera supported by Theta X, Z1 and V.
-enum WlanFrequencyEnum {
-  /// 2.4GHz
-  ghz_2_4('GHZ_2_4'),
-
-  /// 5GHz
-  ghz_5('GHZ_5');
-
-  final String rawValue;
-
-  const WlanFrequencyEnum(this.rawValue);
-
-  @override
-  String toString() {
-    return rawValue;
-  }
-
-  static WlanFrequencyEnum? getValue(String rawValue) {
-    return WlanFrequencyEnum.values.cast<WlanFrequencyEnum?>().firstWhere(
-        (element) => element?.rawValue == rawValue,
-        orElse: () => null);
-  }
-}
-
 /// GPS information.
 /// 65535 is set for latitude and longitude when disabling the GPS setting at
 /// RICOH THETA Z1 and prior.
@@ -3023,6 +2936,9 @@ class Proxy {
 ///
 /// Refer to the [options category](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
 class Options {
+  /// Connected network information.
+  AccessInfo? accessInfo;
+
   /// AI auto thumbnail setting.
   AiAutoThumbnailEnum? aiAutoThumbnail;
 
@@ -3064,6 +2980,12 @@ class Options {
 
   /// Supported Camera Control Source.
   List<CameraControlSourceEnum>? cameraControlSourceSupport;
+
+  /// see [CameraLockEnum]
+  CameraLockEnum? cameraLock;
+
+  /// see [CameraLockConfig]
+  CameraLockConfig? cameraLockConfig;
 
   /// Camera mode.
   /// The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
@@ -3126,6 +3048,9 @@ class Options {
 
   /// supported color temperature.
   ValueRange<int>? colorTemperatureSupport;
+
+  /// see [CompassDirectionRefEnum]
+  CompassDirectionRefEnum? compassDirectionRef;
 
   /// In-progress save interval for interval composite shooting (sec).
   ///
@@ -3258,6 +3183,12 @@ class Options {
   /// Maximum recordable time (in seconds) of the camera.
   MaxRecordableTimeEnum? maxRecordableTime;
 
+  /// see [MicrophoneNoiseReductionEnum]
+  MicrophoneNoiseReductionEnum? microphoneNoiseReduction;
+
+  /// see [MobileNetworkSetting]
+  MobileNetworkSetting? mobileNetworkSetting;
+
   /// Network type of the camera supported by Theta X, Z1 and V.
   NetworkTypeEnum? networkType;
 
@@ -3265,6 +3196,12 @@ class Options {
   ///
   /// Specify [OffDelayEnum]
   OffDelayEnum? offDelay;
+
+  /// Auto power off time with USB power supply.
+  ///
+  /// Specify [OffDelayUsbEnum]
+  /// For RICOH THETA A1
+  OffDelayUsbEnum? offDelayUsb;
 
   /// Password used for digest authentication when _networkType is set to client mode.
   String? password;
@@ -3324,6 +3261,9 @@ class Options {
   /// Total storage space (byte).
   int? totalSpace;
 
+  /// see [UsbConnectionEnum]
+  UsbConnectionEnum? usbConnection;
+
   /// User name used for digest authentication when _networkType is set to client mode.
   String? username;
 
@@ -3346,12 +3286,30 @@ class Options {
   /// For RICOH THETA Z1 firmware v2.20.3 or later
   WhiteBalanceAutoStrengthEnum? whiteBalanceAutoStrength;
 
+  /// see [WlanAntennaConfigEnum]
+  WlanAntennaConfigEnum? wlanAntennaConfig;
+
   /// Wireless LAN frequency of the camera supported by Theta X, Z1 and V.
   WlanFrequencyEnum? wlanFrequency;
+
+  /// Supported WlanFrequency
+  ///
+  /// For RICOH THETA X, Z1 and V.
+  List<WlanFrequencyEnum>? wlanFrequencySupport;
+
+  /// Whether the camera's WLAN CL mode uses 2.4 GHz, 5.2 GHz, or 5.8 GHz frequencies
+  ///
+  /// Can be set and retrieved when in AP mode.
+  /// Can be retrieved when in CL mode.
+  ///
+  /// For RICOH THETA A1
+  WlanFrequencyClMode? wlanFrequencyClMode;
 
   /// Get Option value.
   T? getValue<T>(OptionNameEnum name) {
     switch (name) {
+      case OptionNameEnum.accessInfo:
+        return accessInfo as T;
       case OptionNameEnum.aiAutoThumbnail:
         return aiAutoThumbnail as T;
       case OptionNameEnum.aiAutoThumbnailSupport:
@@ -3376,6 +3334,10 @@ class Options {
         return cameraControlSource as T;
       case OptionNameEnum.cameraControlSourceSupport:
         return cameraControlSourceSupport as T;
+      case OptionNameEnum.cameraLock:
+        return cameraLock as T;
+      case OptionNameEnum.cameraLockConfig:
+        return cameraLockConfig as T;
       case OptionNameEnum.cameraMode:
         return cameraMode as T;
       case OptionNameEnum.cameraPower:
@@ -3392,6 +3354,8 @@ class Options {
         return colorTemperature as T;
       case OptionNameEnum.colorTemperatureSupport:
         return colorTemperatureSupport as T;
+      case OptionNameEnum.compassDirectionRef:
+        return compassDirectionRef as T;
       case OptionNameEnum.compositeShootingOutputInterval:
         return compositeShootingOutputInterval as T;
       case OptionNameEnum.compositeShootingOutputIntervalSupport:
@@ -3442,10 +3406,16 @@ class Options {
         return latestEnabledExposureDelayTime as T;
       case OptionNameEnum.maxRecordableTime:
         return maxRecordableTime as T;
+      case OptionNameEnum.microphoneNoiseReduction:
+        return microphoneNoiseReduction as T;
+      case OptionNameEnum.mobileNetworkSetting:
+        return mobileNetworkSetting as T;
       case OptionNameEnum.networkType:
         return networkType as T;
       case OptionNameEnum.offDelay:
         return offDelay as T;
+      case OptionNameEnum.offDelayUsb:
+        return offDelayUsb as T;
       case OptionNameEnum.password:
         return password as T;
       case OptionNameEnum.powerSaving:
@@ -3480,6 +3450,8 @@ class Options {
         return topBottomCorrectionRotationSupport as T;
       case OptionNameEnum.totalSpace:
         return totalSpace as T;
+      case OptionNameEnum.usbConnection:
+        return usbConnection as T;
       case OptionNameEnum.username:
         return username as T;
       case OptionNameEnum.videoStitching:
@@ -3490,8 +3462,14 @@ class Options {
         return whiteBalance as T;
       case OptionNameEnum.whiteBalanceAutoStrength:
         return whiteBalanceAutoStrength as T;
+      case OptionNameEnum.wlanAntennaConfig:
+        return wlanAntennaConfig as T;
       case OptionNameEnum.wlanFrequency:
         return wlanFrequency as T;
+      case OptionNameEnum.wlanFrequencySupport:
+        return wlanFrequencySupport as T;
+      case OptionNameEnum.wlanFrequencyClMode:
+        return wlanFrequencyClMode as T;
     }
   }
 
@@ -3502,6 +3480,11 @@ class Options {
     }
 
     switch (name) {
+      case OptionNameEnum.wlanFrequencySupport:
+        throw Exception('This value cannot be set');
+      case OptionNameEnum.accessInfo:
+        accessInfo = value;
+        break;
       case OptionNameEnum.aiAutoThumbnail:
         aiAutoThumbnail = value;
         break;
@@ -3536,6 +3519,12 @@ class Options {
         break;
       case OptionNameEnum.cameraControlSourceSupport:
         throw Exception('This value cannot be set');
+      case OptionNameEnum.cameraLock:
+        cameraLock = value;
+        break;
+      case OptionNameEnum.cameraLockConfig:
+        cameraLockConfig = value;
+        break;
       case OptionNameEnum.cameraMode:
         cameraMode = value;
         break;
@@ -3558,6 +3547,9 @@ class Options {
         break;
       case OptionNameEnum.colorTemperatureSupport:
         colorTemperatureSupport = value;
+        break;
+      case OptionNameEnum.compassDirectionRef:
+        compassDirectionRef = value;
         break;
       case OptionNameEnum.compositeShootingOutputInterval:
         compositeShootingOutputInterval = value;
@@ -3633,11 +3625,20 @@ class Options {
       case OptionNameEnum.maxRecordableTime:
         maxRecordableTime = value;
         break;
+      case OptionNameEnum.microphoneNoiseReduction:
+        microphoneNoiseReduction = value;
+        break;
+      case OptionNameEnum.mobileNetworkSetting:
+        mobileNetworkSetting = value;
+        break;
       case OptionNameEnum.networkType:
         networkType = value;
         break;
       case OptionNameEnum.offDelay:
         offDelay = value;
+        break;
+      case OptionNameEnum.offDelayUsb:
+        offDelayUsb = value;
         break;
       case OptionNameEnum.password:
         password = value;
@@ -3690,6 +3691,9 @@ class Options {
       case OptionNameEnum.totalSpace:
         totalSpace = value;
         break;
+      case OptionNameEnum.usbConnection:
+        usbConnection = value;
+        break;
       case OptionNameEnum.username:
         username = value;
         break;
@@ -3705,8 +3709,14 @@ class Options {
       case OptionNameEnum.whiteBalanceAutoStrength:
         whiteBalanceAutoStrength = value;
         break;
+      case OptionNameEnum.wlanAntennaConfig:
+        wlanAntennaConfig = value;
+        break;
       case OptionNameEnum.wlanFrequency:
         wlanFrequency = value;
+        break;
+      case OptionNameEnum.wlanFrequencyClMode:
+        wlanFrequencyClMode = value;
         break;
     }
   }

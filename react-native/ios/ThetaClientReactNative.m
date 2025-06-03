@@ -2,6 +2,10 @@
 
 @interface RCT_EXTERN_MODULE(ThetaClientReactNative, NSObject)
 
+RCT_EXTERN_METHOD(setApiLogListener:(BOOL)enabled
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(initialize:(NSString)endPoint
                   withConfig:(NSDictionary*)config
                   withTimeout:(NSDictionary*)timeout
@@ -78,6 +82,22 @@ RCT_EXTERN_METHOD(startTimeShiftCapture:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(cancelTimeShiftCapture:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getTimeShiftManualCaptureBuilder:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(buildTimeShiftManualCapture:(NSDictionary*)options
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(startTimeShiftManualCapture:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(startTimeShiftManualSecondCapture:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(cancelTimeShiftManualCapture:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(getVideoCaptureBuilder:(RCTPromiseResolveBlock)resolve
@@ -178,6 +198,9 @@ RCT_EXTERN_METHOD(startContinuousCapture:(RCTPromiseResolveBlock)resolve
 
 RCT_EXTERN_METHOD(getMetadata:(NSString*)fileUrl
                   withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(reboot:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(reset:(RCTPromiseResolveBlock)resolve

@@ -1,1 +1,8 @@
-{"name":"camera.listFiles","results":{"entries":[],"totalEntries":36},"state":"done"}
+{
+  "name": "camera.listFiles",
+  "results": {
+    "entries": [],
+    "totalEntries": 36
+  },
+  "state": "done"
+}

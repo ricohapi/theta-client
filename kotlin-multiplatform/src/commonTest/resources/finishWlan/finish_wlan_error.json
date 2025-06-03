@@ -1,8 +1,8 @@
 {
-    "error": {
-        "code": "UnitTest",
-        "message": "UnitTest error"
-    },
-    "name": "camera._finishWlan",
-    "state": "error"
+  "error": {
+    "code": "UnitTest",
+    "message": "UnitTest error"
+  },
+  "name": "camera._finishWlan",
+  "state": "error"
 }

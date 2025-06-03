@@ -1,1 +1,9 @@
-{"name":"camera.getOptions","results":{"options":{"continuousNumber":20}},"state":"done"}
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "continuousNumber": 20
+    }
+  },
+  "state": "done"
+}

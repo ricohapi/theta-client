@@ -1,1 +1,9 @@
-{"name":"camera.getOptions","results":{"options":{"captureNumber":9999}},"state":"done"}
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "captureNumber": 9999
+    }
+  },
+  "state": "done"
+}

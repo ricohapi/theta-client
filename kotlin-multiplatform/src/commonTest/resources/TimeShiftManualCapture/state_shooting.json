@@ -1,0 +1,16 @@
+{
+  "fingerprint": "FIG_0003",
+  "state": {
+    "batteryLevel": 0.8,
+    "storageUri": "http://192.168.1.1/files/thetasc26c21a247daf35838792bad9e",
+    "_apiVersion": 2,
+    "_batteryState": "charging",
+    "_cameraError": [],
+    "_captureStatus": "shooting",
+    "_capturedPictures": 0,
+    "_latestFileUrl": "http://192.168.1.1/files/thetasc26c21a247daf35838792bad9e/100RICOH/R0012313.JPG",
+    "_recordableTime": 0,
+    "_recordedTime": 0,
+    "_function": "selfTimer"
+  }
+}

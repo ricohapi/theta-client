@@ -1,1 +1,9 @@
-{"name":"camera.getOptions","results":{"options":{"sleepDelay":180}},"state":"done"}
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "sleepDelay": 180
+    }
+  },
+  "state": "done"
+}

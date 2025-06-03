@@ -6,8 +6,8 @@ import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.Options
 import com.ricoh360.thetaclient.transferred.PreviewFormat
-import io.ktor.http.*
-import io.ktor.utils.io.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlin.test.AfterTest
@@ -55,6 +55,30 @@ class PreviewFormatTest {
     }
 
     /**
+     * Get option UNKNOWN.
+     */
+    @Test
+    fun getOptionUnknownTest() = runTest {
+        val optionNames = listOf(
+            ThetaRepository.OptionNameEnum.PreviewFormat
+        )
+        val stringOptionNames = listOf(
+            "previewFormat"
+        )
+
+        MockApiClient.onRequest = { request ->
+            // check request
+            CheckRequest.checkGetOptions(request, stringOptionNames)
+
+            ByteReadChannel(Resource("src/commonTest/resources/options/option_preview_format_unknown.json").readText())
+        }
+
+        val thetaRepository = ThetaRepository(endpoint)
+        val options = thetaRepository.getOptions(optionNames)
+        assertEquals(options.previewFormat, ThetaRepository.PreviewFormatEnum.UNKNOWN, "previewFormat")
+    }
+
+    /**
      * Set option previewFormat.
      */
     @Test
@@ -88,14 +112,17 @@ class PreviewFormatTest {
     @Test
     fun convertOptionPreviewFormatTest() = runTest {
         val values = listOf(
-            Pair(ThetaRepository.PreviewFormatEnum.W1024_H512_F30, PreviewFormat(1024, 512, 30)),
-            Pair(ThetaRepository.PreviewFormatEnum.W1024_H512_F8, PreviewFormat(1024, 512, 8)),
+            Pair(ThetaRepository.PreviewFormatEnum.UNKNOWN, PreviewFormat(0, 0, 0)),
             Pair(ThetaRepository.PreviewFormatEnum.W1920_H960_F8, PreviewFormat(1920, 960, 8)),
             Pair(ThetaRepository.PreviewFormatEnum.W1920_H960_F30, PreviewFormat(1920, 960, 30)),
-            Pair(ThetaRepository.PreviewFormatEnum.W512_H512_F30, PreviewFormat(512, 512, 30)),
+            Pair(ThetaRepository.PreviewFormatEnum.W1024_H512_F30, PreviewFormat(1024, 512, 30)),
+            Pair(ThetaRepository.PreviewFormatEnum.W1024_H512_F15, PreviewFormat(1024, 512, 15)),
+            Pair(ThetaRepository.PreviewFormatEnum.W1024_H512_F10, PreviewFormat(1024, 512, 10)),
+            Pair(ThetaRepository.PreviewFormatEnum.W1024_H512_F8, PreviewFormat(1024, 512, 8)),
             Pair(ThetaRepository.PreviewFormatEnum.W640_H320_F30, PreviewFormat(640, 320, 30)),
             Pair(ThetaRepository.PreviewFormatEnum.W640_H320_F10, PreviewFormat(640, 320, 10)),
             Pair(ThetaRepository.PreviewFormatEnum.W640_H320_F8, PreviewFormat(640, 320, 8)),
+            Pair(ThetaRepository.PreviewFormatEnum.W512_H512_F30, PreviewFormat(512, 512, 30)),
             Pair(ThetaRepository.PreviewFormatEnum.W3840_H1920_F30, PreviewFormat(3840, 1920, 30)),
         )
 

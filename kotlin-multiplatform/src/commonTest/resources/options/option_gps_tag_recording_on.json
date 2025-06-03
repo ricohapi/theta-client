@@ -1,1 +1,9 @@
-{"name":"camera.getOptions","results":{"options":{"_gpsTagRecording":"on"}},"state":"done"}
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "_gpsTagRecording": "on"
+    }
+  },
+  "state": "done"
+}

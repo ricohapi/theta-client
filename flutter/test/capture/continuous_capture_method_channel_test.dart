@@ -164,7 +164,7 @@ void main() {
 
     CapturingStatusEnum? lastStatus;
     var resultCapture =
-    platform.startContinuousCapture((completion) {}, (status) {
+        platform.startContinuousCapture((completion) {}, (status) {
       lastStatus = status;
     });
     var result = await resultCapture.timeout(const Duration(seconds: 5));

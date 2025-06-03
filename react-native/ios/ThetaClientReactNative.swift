@@ -10,6 +10,9 @@ let MESSAGE_NO_PHOTO_CAPTURE_BUILDER = "no photo capture builder."
 let MESSAGE_NO_TIMESHIFT_CAPTURE = "No timeShiftCapture."
 let MESSAGE_NO_TIMESHIFT_CAPTURE_BUILDER = "no time-shift capture builder."
 let MESSAGE_NO_TIMESHIFT_CAPTURING = "no timeShiftCapturing."
+let MESSAGE_NO_TIMESHIFT_MANUAL_CAPTURE = "No timeShiftManualCapture."
+let MESSAGE_NO_TIMESHIFT_MANUAL_CAPTURE_BUILDER = "no manual time-shift capture builder."
+let MESSAGE_NO_TIMESHIFT_MANUAL_CAPTURING = "no timeShiftManualCapturing."
 let MESSAGE_NO_VIDEO_CAPTURE = "No videoCapture."
 let MESSAGE_NO_VIDEO_CAPTURE_BUILDER = "no video capture builder."
 let MESSAGE_NO_VIDEO_CAPTURING = "no videoCapturing."
@@ -46,6 +49,9 @@ class ThetaClientReactNative: RCTEventEmitter {
     var timeShiftCaptureBuilder: TimeShiftCapture.Builder?
     var timeShiftCapture: TimeShiftCapture?
     var timeShiftCapturing: TimeShiftCapturing?
+    var timeShiftManualCaptureBuilder: TimeShiftManualCapture.Builder?
+    var timeShiftManualCapture: TimeShiftManualCapture?
+    var timeShiftManualCapturing: TimeShiftManualCapturing?
     var videoCaptureBuilder: VideoCapture.Builder?
     var videoCapture: VideoCapture?
     var videoCapturing: VideoCapturing?
@@ -67,7 +73,7 @@ class ThetaClientReactNative: RCTEventEmitter {
     var continuousCaptureBuilder: ContinuousCapture.Builder?
     var continuousCapture: ContinuousCapture?
     var eventWebSocket: EventWebSocket?
-    
+
     static let EVENT_FRAME = "ThetaFrameEvent"
     static let EVENT_NOTIFY = "ThetaNotify"
 
@@ -75,6 +81,9 @@ class ThetaClientReactNative: RCTEventEmitter {
     static let NOTIFY_TIMESHIFT_PROGRESS = "TIME-SHIFT-PROGRESS"
     static let NOTIFY_TIMESHIFT_STOP_ERROR = "TIME-SHIFT-STOP-ERROR"
     static let NOTIFY_TIMESHIFT_CAPTURING = "TIME-SHIFT-CAPTURING"
+    static let NOTIFY_TIMESHIFT_MANUAL_PROGRESS = "TIME-SHIFT-MANUAL-PROGRESS"
+    static let NOTIFY_TIMESHIFT_MANUAL_STOP_ERROR = "TIME-SHIFT-MANUAL-STOP-ERROR"
+    static let NOTIFY_TIMESHIFT_MANUAL_CAPTURING = "TIME-SHIFT-MANUAL-CAPTURING"
     static let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_PROGRESS = "SHOT-COUNT-SPECIFIED-INTERVAL-PROGRESS"
     static let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_STOP_ERROR = "SHOT-COUNT-SPECIFIED-INTERVAL-STOP-ERROR"
     static let NOTIFY_SHOT_COUNT_SPECIFIED_INTERVAL_CAPTURING = "SHOT-COUNT-SPECIFIED-INTERVAL-CAPTURING"
@@ -97,22 +106,44 @@ class ThetaClientReactNative: RCTEventEmitter {
     static let NOTIFY_EVENT_WEBSOCKET_EVENT = "EVENT-WEBSOCKET-EVENT"
     static let NOTIFY_EVENT_WEBSOCKET_CLOSE = "EVENT-WEBSOCKET-CLOSE"
     static let NOTIFY_CONVERT_VIDEO_FORMATS_PROGRESS = "CONVERT-VIDEO-FORMATS-PROGRESS"
+    static let NOTIFY_API_LOG = "API-LOG"
 
     @objc
     override func supportedEvents() -> [String]! {
-        return [ThetaClientReactNative.EVENT_FRAME, ThetaClientReactNative.EVENT_NOTIFY]
+        [ThetaClientReactNative.EVENT_FRAME, ThetaClientReactNative.EVENT_NOTIFY]
     }
 
     @objc
     override static func requiresMainQueueSetup() -> Bool {
-        return true
+        true
     }
 
     @objc
     override func constantsToExport() -> [AnyHashable: Any]! {
-        return [
+        [
             "DEFAULT_EVENT_NAME": ThetaClientReactNative.EVENT_FRAME,
         ]
+    }
+
+    @objc(setApiLogListener:withResolver:withRejecter:)
+    func setApiLogListener(enabled: Bool,
+                           resolve: @escaping RCTPromiseResolveBlock,
+                           reject _: @escaping RCTPromiseRejectBlock)
+    {
+        Task {
+            if enabled {
+                try UtilKt.setApiLogListener { message in
+                    self.sendEvent(withName: ThetaClientReactNative.EVENT_NOTIFY,
+                                   body: toNotify(
+                                       name: ThetaClientReactNative.NOTIFY_API_LOG,
+                                       params: [KEY_NOTIFY_PARAM_MESSAGE: message]
+                                   ))
+                }
+            } else {
+                try UtilKt.setApiLogListener(listener: nil)
+            }
+            resolve(nil)
+        }
     }
 
     @objc(initialize:withConfig:withTimeout:withResolver:withRejecter:)
@@ -129,6 +160,9 @@ class ThetaClientReactNative: RCTEventEmitter {
         timeShiftCaptureBuilder = nil
         timeShiftCapture = nil
         timeShiftCapturing = nil
+        timeShiftManualCaptureBuilder = nil
+        timeShiftManualCapture = nil
+        timeShiftManualCapturing = nil
         videoCaptureBuilder = nil
         videoCapture = nil
         videoCapturing = nil
@@ -153,7 +187,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         stopLivePreviewResolve = nil
         eventWebSocket?.stop(completionHandler: { _ in })
         eventWebSocket = nil
-        
+
         Task {
             let configParams: ThetaRepository.Config? = {
                 if let config = config as? [String: Any] {
@@ -238,7 +272,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             return
         }
 
-        thetaRepository.getThetaLicense() { response, error in
+        thetaRepository.getThetaLicense { response, error in
             if let error {
                 reject(ERROR_CODE_ERROR, error.localizedDescription, error)
             } else if let response {
@@ -463,7 +497,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             reject(ERROR_CODE_ERROR, MESSAGE_LIVE_PREVIEW_RUNNING, nil)
             return
         }
-        
+
         class FrameHandler: KotlinSuspendFunction1 {
             let thetaClientReactNative: ThetaClientReactNative
             static let FrameInterval = CFTimeInterval(1.0 / 10.0)
@@ -485,7 +519,7 @@ class ThetaClientReactNative: RCTEventEmitter {
                             let dataUrl = "data:image/jpeg;base64," + encodeString
                             thetaClientReactNative.sendEvent(
                                 withName: ThetaClientReactNative.EVENT_FRAME,
-                                body: ["data": dataUrl]
+                                body: ["data": dataUrl, "dataSize": nsData.count]
                             )
                         }
                     }
@@ -499,17 +533,17 @@ class ThetaClientReactNative: RCTEventEmitter {
             return
         }
         let frameHandler = FrameHandler(self)
-        
+
         previewing = true
         execAndResetStopLivePreviewResolve(false)
-        
+
         thetaRepository.getLivePreview(frameHandler: frameHandler) { error in
             self.previewing = false
             if let error {
                 reject(ERROR_CODE_ERROR, error.localizedDescription, error)
             } else {
                 self.execAndResetStopLivePreviewResolve(true)
-                
+
                 resolve(true)
             }
         }
@@ -526,7 +560,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
         stopLivePreviewResolve = resolve
     }
-    
+
     private func execAndResetStopLivePreviewResolve(_ flag: Bool) {
         stopLivePreviewResolve?(flag)
         stopLivePreviewResolve = nil
@@ -727,7 +761,7 @@ class ThetaClientReactNative: RCTEventEmitter {
                     )
                 )
             }
-            
+
             func onCapturing(status: CapturingStatusEnum) {
                 client?.sendEvent(
                     withName: ThetaClientReactNative.EVENT_NOTIFY,
@@ -737,7 +771,7 @@ class ThetaClientReactNative: RCTEventEmitter {
                     )
                 )
             }
-            
+
             func onCaptureCompleted(fileUrl: String?) {
                 callback(fileUrl, nil)
             }
@@ -769,6 +803,167 @@ class ThetaClientReactNative: RCTEventEmitter {
             return
         }
         timeShiftCapturing.cancelCapture()
+        resolve(nil)
+    }
+
+    @objc(getTimeShiftManualCaptureBuilder:withRejecter:)
+    func getTimeShiftManualCaptureBuilder(
+        resolve: RCTPromiseResolveBlock,
+        reject: RCTPromiseRejectBlock
+    ) {
+        guard let thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        timeShiftManualCaptureBuilder = thetaRepository.getTimeShiftManualCaptureBuilder()
+        resolve(nil)
+    }
+
+    @objc(buildTimeShiftManualCapture:withResolver:withRejecter:)
+    func buildTimeShiftManualCapture(
+        options: [AnyHashable: Any]?,
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let _ = thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        guard let timeShiftManualCaptureBuilder else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NO_TIMESHIFT_MANUAL_CAPTURE_BUILDER, nil)
+            return
+        }
+
+        timeShiftManualCapture = nil
+        timeShiftManualCapturing = nil
+        if let options = options as? [String: Any] {
+            setCaptureBuilderParams(params: options, builder: timeShiftManualCaptureBuilder)
+            setTimeShiftManualCaptureBuilderParams(params: options, builder: timeShiftManualCaptureBuilder)
+        }
+        timeShiftManualCaptureBuilder.build { capture, error in
+            if let error {
+                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+            } else if let capture {
+                self.timeShiftManualCapture = capture
+                self.timeShiftManualCaptureBuilder = nil
+                resolve(true)
+            } else {
+                reject(ERROR_CODE_ERROR, MESSAGE_NO_TIMESHIFT_MANUAL_CAPTURE, nil)
+            }
+        }
+    }
+
+    @objc(startTimeShiftManualCapture:withRejecter:)
+    func startTimeShiftManualCapture(
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let _ = thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        guard let timeShiftManualCapture else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NO_TIMESHIFT_MANUAL_CAPTURE, nil)
+            return
+        }
+
+        class Callback: TimeShiftManualCaptureStartCaptureCallback {
+            let callback: (_ url: String?, _ error: Error?) -> Void
+            weak var client: ThetaClientReactNative?
+            init(
+                _ callback: @escaping (_ url: String?, _ error: Error?) -> Void,
+                client: ThetaClientReactNative
+            ) {
+                self.callback = callback
+                self.client = client
+            }
+
+            func onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                callback(nil, exception.asError())
+                client?.timeShiftManualCapturing = nil
+            }
+
+            func onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                let error = exception.asError()
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_TIMESHIFT_MANUAL_STOP_ERROR,
+                        params: toMessageNotifyParam(value: error.localizedDescription)
+                    )
+                )
+            }
+
+            func onProgress(completion: Float) {
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_TIMESHIFT_MANUAL_PROGRESS,
+                        params: toCaptureProgressNotifyParam(value: completion)
+                    )
+                )
+            }
+
+            func onCapturing(status: CapturingStatusEnum) {
+                client?.sendEvent(
+                    withName: ThetaClientReactNative.EVENT_NOTIFY,
+                    body: toNotify(
+                        name: ThetaClientReactNative.NOTIFY_TIMESHIFT_MANUAL_CAPTURING,
+                        params: toCapturingNotifyParam(value: status)
+                    )
+                )
+            }
+
+            func onCaptureCompleted(fileUrl: String?) {
+                callback(fileUrl, nil)
+                client?.timeShiftManualCapturing = nil
+            }
+        }
+
+        timeShiftManualCapturing = timeShiftManualCapture.startCapture(
+            callback: Callback(
+                { url, error in
+                    if let error {
+                        reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                    } else {
+                        resolve(url)
+                    }
+                }, client: self
+            ))
+    }
+
+    @objc(startTimeShiftManualSecondCapture:withRejecter:)
+    func startTimeShiftManualSecondCapture(
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let _ = thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        guard let timeShiftManualCapturing else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NO_TIMESHIFT_MANUAL_CAPTURING, nil)
+            return
+        }
+
+        timeShiftManualCapturing.startSecondCapture()
+        resolve(nil)
+    }
+
+    @objc(cancelTimeShiftManualCapture:withRejecter:)
+    func cancelTimeShiftManualCapture(
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let _ = thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+        guard let timeShiftManualCapturing else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NO_TIMESHIFT_MANUAL_CAPTURING, nil)
+            return
+        }
+        timeShiftManualCapturing.cancelCapture()
         resolve(nil)
     }
 
@@ -859,7 +1054,7 @@ class ThetaClientReactNative: RCTEventEmitter {
                     )
                 )
             }
-            
+
             func onCapturing(status: CapturingStatusEnum) {
                 client?.sendEvent(
                     withName: ThetaClientReactNative.EVENT_NOTIFY,
@@ -999,7 +1194,7 @@ class ThetaClientReactNative: RCTEventEmitter {
                     )
                 )
             }
-            
+
             func onCapturing(status: CapturingStatusEnum) {
                 client?.sendEvent(
                     withName: ThetaClientReactNative.EVENT_NOTIFY,
@@ -1125,7 +1320,7 @@ class ThetaClientReactNative: RCTEventEmitter {
                     )
                 )
             }
-            
+
             func onCapturing(status: CapturingStatusEnum) {
                 client?.sendEvent(
                     withName: ThetaClientReactNative.EVENT_NOTIFY,
@@ -1135,7 +1330,7 @@ class ThetaClientReactNative: RCTEventEmitter {
                     )
                 )
             }
-            
+
             func onCaptureCompleted(fileUrls: [String]?) {
                 callback(fileUrls, nil)
             }
@@ -1575,7 +1770,7 @@ class ThetaClientReactNative: RCTEventEmitter {
                     )
                 )
             }
-            
+
             func onCapturing(status: CapturingStatusEnum) {
                 client?.sendEvent(
                     withName: ThetaClientReactNative.EVENT_NOTIFY,
@@ -1585,7 +1780,7 @@ class ThetaClientReactNative: RCTEventEmitter {
                     )
                 )
             }
-            
+
             func onCaptureCompleted(fileUrls: [String]?) {
                 callback(fileUrls, nil)
             }
@@ -1716,7 +1911,7 @@ class ThetaClientReactNative: RCTEventEmitter {
                     )
                 )
             }
-            
+
             func onCapturing(status: CapturingStatusEnum) {
                 client?.sendEvent(
                     withName: ThetaClientReactNative.EVENT_NOTIFY,
@@ -1726,7 +1921,7 @@ class ThetaClientReactNative: RCTEventEmitter {
                     )
                 )
             }
-            
+
             func onCaptureCompleted(fileUrls: [String]?) {
                 callback(fileUrls, nil)
             }
@@ -1766,6 +1961,25 @@ class ThetaClientReactNative: RCTEventEmitter {
                 resolve(convertResult(metadata: response))
             } else {
                 reject(ERROR_CODE_ERROR, MESSAGE_NO_RESULT, nil)
+            }
+        }
+    }
+
+    @objc(reboot:withRejecter:)
+    func reboot(
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let thetaRepository else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
+            return
+        }
+
+        thetaRepository.reboot { error in
+            if let error {
+                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+            } else {
+                resolve(true)
             }
         }
     }
@@ -1826,10 +2040,10 @@ class ThetaClientReactNative: RCTEventEmitter {
             }
         }
     }
-    
+
     @objc(
         convertVideoFormats:withToLowResolution:withApplyTopBottomCorrection:withResolver:
-            withRejecter:
+        withRejecter:
     )
     func convertVideoFormats(
         fileUrl: String,
@@ -1928,8 +2142,8 @@ class ThetaClientReactNative: RCTEventEmitter {
 
     @objc(
         setAccessPointDynamically:
-            withResolver:
-            withRejecter:
+        withResolver:
+        withRejecter:
     )
     func setAccessPointDynamically(
         params: [AnyHashable: Any],
@@ -1960,11 +2174,11 @@ class ThetaClientReactNative: RCTEventEmitter {
             reject(ERROR_CODE_ERROR, error.localizedDescription, error)
         }
     }
-    
+
     @objc(
         setAccessPointStatically:
-            withResolver:
-            withRejecter:
+        withResolver:
+        withRejecter:
     )
     func setAccessPointStatically(
         params: [AnyHashable: Any],
@@ -1987,6 +2201,8 @@ class ThetaClientReactNative: RCTEventEmitter {
                 ipAddress: staticallyParams.ipAddress,
                 subnetMask: staticallyParams.subnetMask,
                 defaultGateway: staticallyParams.defaultGateway,
+                dns1: accessPointParams.dns1,
+                dns2: accessPointParams.dns2,
                 proxy: accessPointParams.proxy
             ) { error in
                 if let error {
@@ -2095,7 +2311,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
         guard let options = options as? [String: Any],
               let captureMode = getEnumValue(
-                values: ThetaRepository.CaptureModeEnum.values(), name: captureMode
+                  values: ThetaRepository.CaptureModeEnum.values(), name: captureMode
               )
         else {
             reject(ERROR_CODE_ERROR, MESSAGE_NO_ARGUMENT, nil)
@@ -2313,7 +2529,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             }
         }
     }
-    
+
     @objc(getEventWebSocket:withRejecter:)
     func getEventWebSocket(
         resolve: @escaping RCTPromiseResolveBlock,
@@ -2328,7 +2544,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         eventWebSocket = thetaRepository.getEventWebSocket()
         resolve(true)
     }
-    
+
     @objc(eventWebSocketStart:withRejecter:)
     func eventWebSocketStart(
         resolve: @escaping RCTPromiseResolveBlock,
@@ -2344,13 +2560,14 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
         eventWebSocket.stop(completionHandler: { _ in
         })
-        
+
         class Callback: EventWebSocketCallback {
             let thetaClientReactNative: ThetaClientReactNative
-            
+
             init(_ thetaClientReactNative: ThetaClientReactNative) {
                 self.thetaClientReactNative = thetaClientReactNative
             }
+
             func onClose() {
                 thetaClientReactNative.sendEvent(
                     withName: ThetaClientReactNative.EVENT_NOTIFY,
@@ -2360,7 +2577,7 @@ class ThetaClientReactNative: RCTEventEmitter {
                     )
                 )
             }
-            
+
             func onReceive(event: CameraEvent) {
                 thetaClientReactNative.sendEvent(
                     withName: ThetaClientReactNative.EVENT_NOTIFY,
@@ -2379,7 +2596,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             }
         }
     }
-    
+
     @objc(eventWebSocketStop:withRejecter:)
     func eventWebSocketStop(
         resolve: @escaping RCTPromiseResolveBlock,

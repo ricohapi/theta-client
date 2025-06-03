@@ -93,6 +93,15 @@ enum FileFormatEnum {
   /// type: mp4
   /// size: 1920 x 960
   /// codec: H.264/MPEG-4 AVC
+  /// frame rate: 15
+  ///
+  /// For RICOH THETA A1
+  video_2K_15F('VIDEO_2K_15F'),
+
+  /// Video File format.
+  /// type: mp4
+  /// size: 1920 x 960
+  /// codec: H.264/MPEG-4 AVC
   /// frame rate: 30
   ///
   /// For RICOH THETA X or later
@@ -207,6 +216,24 @@ enum FileFormatEnum {
   /// type: mp4
   /// size: 3840 x 1920
   /// codec: H.264/MPEG-4 AVC
+  /// frame rate: 2
+  ///
+  /// For RICOH THETA A1
+  video_4K_2F('VIDEO_4K_2F'),
+
+  /// Video File format.
+  /// type: mp4
+  /// size: 3840 x 1920
+  /// codec: H.264/MPEG-4 AVC
+  /// frame rate: 5
+  ///
+  /// For RICOH THETA A1
+  video_4K_5F('VIDEO_4K_5F'),
+
+  /// Video File format.
+  /// type: mp4
+  /// size: 3840 x 1920
+  /// codec: H.264/MPEG-4 AVC
   /// frame rate: 10
   ///
   /// For RICOH THETA X or later
@@ -309,7 +336,127 @@ enum FileFormatEnum {
   /// frame rate: 10
   ///
   /// For RICOH THETA X or later
-  video_7K_10F('VIDEO_7K_10F');
+  video_7K_10F('VIDEO_7K_10F'),
+
+  /// Video File format.
+  /// type: mp4
+  /// size: 1920 x 960
+  /// codec: H.265/HEVC
+  /// frame rate: 30
+  ///
+  /// For RICOH THETA A1
+  // ignore: constant_identifier_names
+  video_2K_30F_h265Hevc('VIDEO_2K_30F_H265_HEVC'),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 3840 x 1920
+  /// codec: H.265/HEVC
+  /// frame rate: 2
+  ///
+  /// For RICOH THETA A1
+  // ignore: constant_identifier_names
+  video_4K_2F_h265Hevc('VIDEO_4K_2F_H265_HEVC'),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 3840 x 1920
+  /// codec: H.265/HEVC
+  /// frame rate: 5
+  ///
+  /// For RICOH THETA A1
+  // ignore: constant_identifier_names
+  video_4K_5F_h265Hevc('VIDEO_4K_5F_H265_HEVC'),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 3840 x 1920
+  /// codec: H.265/HEVC
+  /// frame rate: 10
+  ///
+  /// For RICOH THETA A1
+  // ignore: constant_identifier_names
+  video_4K_10F_h265Hevc('VIDEO_4K_10F_H265_HEVC'),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 3840 x 1920
+  /// codec: H.265/HEVC
+  /// frame rate: 30
+  ///
+  /// For RICOH THETA A1
+  // ignore: constant_identifier_names
+  video_4K_30F_h265Hevc('VIDEO_4K_30F_H265_HEVC'),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 5760 x 2880
+  /// codec: H.265/HEVC
+  /// frame rate: 2
+  ///
+  /// For RICOH THETA A1
+  // ignore: constant_identifier_names
+  video_5_7K_2F_h265Hevc('VIDEO_5_7K_2F_H265_HEVC'),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 5760 x 2880
+  /// codec: H.265/HEVC
+  /// frame rate: 5
+  ///
+  /// For RICOH THETA A1
+  // ignore: constant_identifier_names
+  video_5_7K_5F_h265Hevc('VIDEO_5_7K_5F_H265_HEVC'),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 5760 x 2880
+  /// codec: H.265/HEVC
+  /// frame rate: 10
+  ///
+  /// For RICOH THETA A1
+  // ignore: constant_identifier_names
+  video_5_7K_10F_h265Hevc('VIDEO_5_7K_10F_H265_HEVC'),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 7680 x 3840
+  /// codec: H.265/HEVC
+  /// frame rate: 2
+  ///
+  /// For RICOH THETA A1
+  // ignore: constant_identifier_names
+  video_7K_2F_h265Hevc('VIDEO_7K_2F_H265_HEVC'),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 7680 x 3840
+  /// codec: H.265/HEVC
+  /// frame rate: 5
+  ///
+  /// For RICOH THETA A1
+  // ignore: constant_identifier_names
+  video_7K_5F_h265Hevc('VIDEO_7K_5F_H265_HEVC'),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 7680 x 3840
+  /// codec: H.265/HEVC
+  /// frame rate: 10
+  ///
+  /// For RICOH THETA A1
+  // ignore: constant_identifier_names
+  video_7K_10F_h265Hevc('VIDEO_7K_10F_H265_HEVC');
 
   final String rawValue;
 

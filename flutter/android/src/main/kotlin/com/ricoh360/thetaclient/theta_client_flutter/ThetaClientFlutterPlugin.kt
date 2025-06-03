@@ -34,6 +34,9 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
     var timeShiftCaptureBuilder: TimeShiftCapture.Builder? = null
     var timeShiftCapture: TimeShiftCapture? = null
     var timeShiftCapturing: TimeShiftCapturing? = null
+    var timeShiftManualCaptureBuilder: TimeShiftManualCapture.Builder? = null
+    var timeShiftManualCapture: TimeShiftManualCapture? = null
+    var timeShiftManualCapturing: TimeShiftManualCapturing? = null
     var videoCaptureBuilder: VideoCapture.Builder? = null
     var videoCapture: VideoCapture? = null
     var videoCapturing: VideoCapturing? = null
@@ -63,6 +66,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         const val messageLivePreviewRunning: String = "Live preview is running."
 
         const val eventNameNotify = "theta_client_flutter/theta_notify"
+        const val notifyIdApiLog = 1
         const val notifyIdLivePreview = 10001
         const val notifyIdTimeShiftProgress = 10011
         const val notifyIdTimeShiftStopError = 10012
@@ -88,6 +92,9 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         const val notifyIdVideoCaptureCapturing = 10082
         const val notifyIdVideoCaptureStarted = 10083
         const val notifyIdConvertVideoFormatsProgress = 10091
+        const val notifyIdTimeShiftManualProgress = 10101
+        const val notifyIdTimeShiftManualStopError = 10102
+        const val notifyIdTimeShiftManualCapturing = 10103
     }
 
     fun sendNotifyEvent(id: Int, params: Map<String, Any?>) {
@@ -118,6 +125,12 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         when (call.method) {
             "getPlatformVersion" -> {
                 result.success("Android ${android.os.Build.VERSION.RELEASE}")
+            }
+
+            "setApiLogListener" -> {
+                scope.launch {
+                    setApiLogListener(call, result)
+                }
             }
 
             "initialize" -> {
@@ -228,6 +241,28 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
 
             "stopTimeShiftCapture" -> {
                 stopTimeShiftCapture(result)
+            }
+
+            "getTimeShiftManualCaptureBuilder" -> {
+                getTimeShiftManualCaptureBuilder(result)
+            }
+
+            "buildTimeShiftManualCapture" -> {
+                scope.launch {
+                    buildTimeShiftManualCapture(call, result)
+                }
+            }
+
+            "startTimeShiftManualCapture" -> {
+                startTimeShiftManualCapture(result)
+            }
+
+            "startTimeShiftManualSecondCapture" -> {
+                startTimeShiftManualSecondCapture(result)
+            }
+
+            "stopTimeShiftManualCapture" -> {
+                stopTimeShiftManualCapture(result)
             }
 
             "getVideoCaptureBuilder" -> {
@@ -370,6 +405,12 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 }
             }
 
+            "reboot" -> {
+                scope.launch {
+                    reboot(result)
+                }
+            }
+
             "reset" -> {
                 scope.launch {
                     reset(result)
@@ -506,6 +547,20 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         channel.setMethodCallHandler(null)
     }
 
+    suspend fun setApiLogListener(call: MethodCall, result: Result) {
+        if ((call.arguments as? Boolean) ?: false) {
+            com.ricoh360.thetaclient.setApiLogListener { message: String ->
+                sendNotifyEvent(
+                    notifyIdApiLog,
+                    mapOf(KEY_NOTIFY_PARAM_MESSAGE to message)
+                )
+            }
+        } else {
+            com.ricoh360.thetaclient.setApiLogListener(null)
+        }
+        result.success(null)
+    }
+
     suspend fun initialize(call: MethodCall, result: Result) {
         thetaRepository = null
         previewing = false
@@ -514,6 +569,9 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         timeShiftCaptureBuilder = null
         timeShiftCapture = null
         timeShiftCapturing = null
+        timeShiftManualCaptureBuilder = null
+        timeShiftManualCapture = null
+        timeShiftManualCapturing = null
         videoCaptureBuilder = null
         videoCapture = null
         videoCapturing = null
@@ -772,6 +830,99 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             return
         }
         timeShiftCapturing.stopCapture()
+        result.success(null)
+    }
+
+    fun getTimeShiftManualCaptureBuilder(result: Result) {
+        val theta = thetaRepository
+        if (theta == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        timeShiftManualCaptureBuilder = theta.getTimeShiftManualCaptureBuilder()
+        result.success(null)
+    }
+
+    suspend fun buildTimeShiftManualCapture(call: MethodCall, result: Result) {
+        val theta = thetaRepository
+        val timeShiftManualCaptureBuilder = timeShiftManualCaptureBuilder
+        if (theta == null || timeShiftManualCaptureBuilder == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        timeShiftManualCapture = null
+        timeShiftManualCapturing = null
+        setCaptureBuilderParams(call, timeShiftManualCaptureBuilder)
+        setTimeShiftManualCaptureBuilderParams(call, timeShiftManualCaptureBuilder)
+        try {
+            timeShiftManualCapture = timeShiftManualCaptureBuilder.build()
+            result.success(null)
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    fun startTimeShiftManualCapture(result: Result) {
+        val theta = thetaRepository
+        val timeShiftManualCapture = timeShiftManualCapture
+        if (theta == null || timeShiftManualCapture == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        timeShiftManualCapturing =
+            timeShiftManualCapture.startCapture(object : TimeShiftManualCapture.StartCaptureCallback {
+                override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    result.error(exception.javaClass.simpleName, exception.message, null)
+                    timeShiftManualCapturing = null
+                }
+
+                override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+                    sendNotifyEvent(
+                        notifyIdTimeShiftManualStopError,
+                        toMessageNotifyParam(exception.message ?: exception.toString())
+                    )
+                }
+
+                override fun onProgress(completion: Float) {
+                    sendNotifyEvent(
+                        notifyIdTimeShiftManualProgress,
+                        toCaptureProgressNotifyParam(completion)
+                    )
+                }
+
+                override fun onCapturing(status: CapturingStatusEnum) {
+                    sendNotifyEvent(
+                        notifyIdTimeShiftManualCapturing,
+                        toCapturingNotifyParam(status)
+                    )
+                }
+
+                override fun onCaptureCompleted(fileUrl: String?) {
+                    result.success(fileUrl)
+                    timeShiftManualCapturing = null
+                }
+            })
+    }
+
+    fun startTimeShiftManualSecondCapture(result: Result) {
+        val theta = thetaRepository
+        val timeShiftManualCapturing = timeShiftManualCapturing
+        if (theta == null || timeShiftManualCapturing == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        timeShiftManualCapturing.startSecondCapture()
+        result.success(null)
+    }
+
+    fun stopTimeShiftManualCapture(result: Result) {
+        val theta = thetaRepository
+        val timeShiftManualCapturing = timeShiftManualCapturing
+        if (theta == null || timeShiftManualCapturing == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        timeShiftManualCapturing.stopCapture()
         result.success(null)
     }
 
@@ -1452,6 +1603,19 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
+    suspend fun reboot(result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        try {
+            thetaRepository?.reboot()
+            result.success(null)
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
     suspend fun reset(result: Result) {
         if (thetaRepository == null) {
             result.error(errorCode, messageNotInit, null)
@@ -1559,7 +1723,8 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 params.authMode,
                 params.password,
                 params.connectionPriority,
-                params.proxy)
+                params.proxy
+            )
             result.success(null)
         } catch (e: Exception) {
             result.error(e.javaClass.simpleName, e.message, null)
@@ -1583,7 +1748,10 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 staticallyParams.ipAddress,
                 staticallyParams.subnetMask,
                 staticallyParams.defaultGateway,
-                params.proxy)
+                params.dns1,
+                params.dns2,
+                params.proxy
+            )
             result.success(null)
         } catch (e: Exception) {
             result.error(e.javaClass.simpleName, e.message, null)

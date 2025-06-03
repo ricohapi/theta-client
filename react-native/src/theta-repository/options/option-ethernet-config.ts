@@ -8,13 +8,17 @@ import type { Proxy } from './option-proxy';
  */
 export type EthernetConfig = {
   /** Using DHCP or not */
-  usingDhcp?: boolean;
-  /** (optional) IPv4 for IP address */
+  usingDhcp: boolean;
+  /** (optional) IPv4 for IP address. Do not specify this property when usingDhcp is true. */
   ipAddress?: string;
-  /** (optional) IPv4 for subnet mask */
+  /** (optional) IPv4 for subnet mask. Do not specify this property when usingDhcp is true. */
   subnetMask?: string;
-  /** (optional) IPv4 for default gateway */
+  /** (optional) IPv4 for default gateway. Do not specify this property when usingDhcp is true. */
   defaultGateway?: string;
+  /** (optional) IPv4 for Primary DNS server. Do not specify this property when usingDhcp is true. */
+  dns1?: string;
+  /** (optional) IPv4 for Secondary DNS server. Do not specify this property when usingDhcp is true. */
+  dns2?: string;
   /**
    * (optional) refer to _proxy for detail
    *

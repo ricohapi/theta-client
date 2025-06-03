@@ -21,6 +21,7 @@ void main() {
         'RETROSPECTIVE_IMAGE_RECORDING'
       ],
       [CaptureStatusEnum.burstShooting, 'BURST_SHOOTING'],
+      [CaptureStatusEnum.timeShiftShootingIdle, 'TIME_SHIFT_SHOOTING_IDLE'],
     ];
     expect(data.length, CaptureStatusEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {

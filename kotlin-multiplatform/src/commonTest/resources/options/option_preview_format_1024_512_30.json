@@ -1,1 +1,13 @@
-{"name":"camera.getOptions","results":{"options":{"previewFormat":{"framerate":30,"height":512,"width":1024}}},"state":"done"}
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "previewFormat": {
+        "framerate": 30,
+        "height": 512,
+        "width": 1024
+      }
+    }
+  },
+  "state": "done"
+}

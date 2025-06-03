@@ -23,3 +23,7 @@ expect fun frameFrom(packet: Pair<ByteArray, Int>): FrameSource
 internal expect fun randomUUID(): String
 
 internal expect fun currentTimeMillis(): Long
+
+expect class WeakReference<T : Any> internal constructor(referred: T) {
+    fun get(): T?
+}

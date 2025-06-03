@@ -8,14 +8,19 @@ import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.CaptureMode
 import com.ricoh360.thetaclient.transferred.MediaFileFormat
 import com.ricoh360.thetaclient.transferred.MediaType
-import io.ktor.client.network.sockets.*
-import io.ktor.http.*
-import io.ktor.utils.io.*
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.http.HttpStatusCode
+import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class PhotoCaptureTest {
     private val endpoint = "http://192.168.1.1:80/"
@@ -83,6 +88,7 @@ class PhotoCaptureTest {
                             )
                             responseArray[2]
                         }
+
                         else -> stateIdleResponse
                     }
                 }
@@ -647,7 +653,7 @@ class PhotoCaptureTest {
 
             // check result
             assertEquals(
-                photoCapture.getExposureCompensation(),
+                photoCapture.getExposureCompensation() ?: ThetaRepository.ExposureCompensationEnum.UNKNOWN,
                 it,
                 "set option exposureCompensation $valueIndex"
             )

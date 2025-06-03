@@ -11,7 +11,6 @@ import io.ktor.client.request.HttpRequestData
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.TextContent
 import io.ktor.utils.io.ByteReadChannel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -21,7 +20,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalSerializationApi::class, ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalSerializationApi::class)
 class SetAccessPointTest {
     private val endpoint = "http://192.168.1.1:80/"
 
@@ -46,6 +45,8 @@ class SetAccessPointTest {
         ipAddress: String?,
         subnetMask: String?,
         defaultGateway: String?,
+        dns1: String?,
+        dns2: String?,
         proxy: ThetaRepository.Proxy?
     ) {
         assertEquals(request.url.encodedPath, "/osc/commands/execute", "request path")
@@ -69,6 +70,8 @@ class SetAccessPointTest {
             assertEquals(it.ipAddress, ipAddress, "ipAddress")
             assertEquals(it.subnetMask, subnetMask, "subnetMask")
             assertEquals(it.defaultGateway, defaultGateway, "defaultGateway")
+            assertEquals(it.dns1, dns1, "dns1")
+            assertEquals(it.dns2, dns2, "dns2")
             assertEquals(it.proxy, proxy?.toTransferredProxy(), "_proxy")
         }
     }
@@ -95,6 +98,8 @@ class SetAccessPointTest {
                 password,
                 connectionPriority,
                 IpAddressAllocation.DYNAMIC,
+                null,
+                null,
                 null,
                 null,
                 null,
@@ -129,6 +134,8 @@ class SetAccessPointTest {
         val ipAddress = "192.168.1.2"
         val subnetMask = "255.255.255.0"
         val defaultGateway = "192.168.1.3"
+        val dns1 = "192.168.1.55"
+        val dns2 = "192.168.1.66"
         val proxy = ThetaRepository.Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
 
         MockApiClient.onRequest = { request ->
@@ -144,6 +151,8 @@ class SetAccessPointTest {
                 ipAddress,
                 subnetMask,
                 defaultGateway,
+                dns1,
+                dns2,
                 proxy
             )
 
@@ -160,6 +169,8 @@ class SetAccessPointTest {
             ipAddress = ipAddress,
             subnetMask = subnetMask,
             defaultGateway = defaultGateway,
+            dns1 = dns1,
+            dns2 = dns2,
             proxy = proxy
         )
         assertTrue(true, "response is normal.")
@@ -184,6 +195,8 @@ class SetAccessPointTest {
             val ipAddress = "192.168.1.2"
             val subnetMask = "255.255.255.0"
             val defaultGateway = "192.168.1.3"
+            val dns1 = "192.168.1.55"
+            val dns2 = "192.168.1.66"
             val ipAddressAllocation = IpAddressAllocation.STATIC
             val proxy = ThetaRepository.Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
 
@@ -196,6 +209,8 @@ class SetAccessPointTest {
                 ipAddress = ipAddress,
                 subnetMask = subnetMask,
                 defaultGateway = defaultGateway,
+                dns1 = dns1,
+                dns2 = dns2,
                 ipAddressAllocation = ipAddressAllocation,
                 proxy = proxy
             )
@@ -228,6 +243,8 @@ class SetAccessPointTest {
             val ipAddress = "192.168.1.2"
             val subnetMask = "255.255.255.0"
             val defaultGateway = "192.168.1.3"
+            val dns1 = "192.168.1.55"
+            val dns2 = "192.168.1.66"
             val ipAddressAllocation = IpAddressAllocation.STATIC
             val proxy = ThetaRepository.Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
 
@@ -240,6 +257,8 @@ class SetAccessPointTest {
                 ipAddress = ipAddress,
                 subnetMask = subnetMask,
                 defaultGateway = defaultGateway,
+                dns1 = dns1,
+                dns2 = dns2,
                 ipAddressAllocation = ipAddressAllocation,
                 proxy = proxy
             )
@@ -269,6 +288,8 @@ class SetAccessPointTest {
             val ipAddress = "192.168.1.2"
             val subnetMask = "255.255.255.0"
             val defaultGateway = "192.168.1.3"
+            val dns1 = "192.168.1.55"
+            val dns2 = "192.168.1.66"
             val ipAddressAllocation = IpAddressAllocation.STATIC
             val proxy = ThetaRepository.Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
 
@@ -281,6 +302,8 @@ class SetAccessPointTest {
                 ipAddress = ipAddress,
                 subnetMask = subnetMask,
                 defaultGateway = defaultGateway,
+                dns1 = dns1,
+                dns2 = dns2,
                 ipAddressAllocation = ipAddressAllocation,
                 proxy = proxy
             )
@@ -310,6 +333,8 @@ class SetAccessPointTest {
             val ipAddress = "192.168.1.2"
             val subnetMask = "255.255.255.0"
             val defaultGateway = "192.168.1.3"
+            val dns1 = "192.168.1.55"
+            val dns2 = "192.168.1.66"
             val ipAddressAllocation = IpAddressAllocation.STATIC
             val proxy = ThetaRepository.Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
 
@@ -322,6 +347,8 @@ class SetAccessPointTest {
                 ipAddress = ipAddress,
                 subnetMask = subnetMask,
                 defaultGateway = defaultGateway,
+                dns1 = dns1,
+                dns2 = dns2,
                 ipAddressAllocation = ipAddressAllocation,
                 proxy = proxy
             )
@@ -350,6 +377,8 @@ class SetAccessPointTest {
             val ipAddress = "192.168.1.2"
             val subnetMask = "255.255.255.0"
             val defaultGateway = "192.168.1.3"
+            val dns1 = "192.168.1.55"
+            val dns2 = "192.168.1.66"
             val ipAddressAllocation = IpAddressAllocation.STATIC
             val proxy = ThetaRepository.Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
 
@@ -362,6 +391,8 @@ class SetAccessPointTest {
                 ipAddress = ipAddress,
                 subnetMask = subnetMask,
                 defaultGateway = defaultGateway,
+                dns1 = dns1,
+                dns2 = dns2,
                 ipAddressAllocation = ipAddressAllocation,
                 proxy = proxy
             )

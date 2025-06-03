@@ -44,6 +44,8 @@ export const VideoFileFormatEnum = {
   VIDEO_4K: 'VIDEO_4K',
   /** mp4 3840 x 1920 no codec */
   VIDEO_4K_NO_CODEC: 'VIDEO_4K_NO_CODEC',
+  /** mp4 1920 x 960 15fps */
+  VIDEO_2K_15F: 'VIDEO_2K_15F',
   /** mp4 1920 x 960 30fps */
   VIDEO_2K_30F: 'VIDEO_2K_30F',
   /** mp4 1920 x 960 60fps */
@@ -64,6 +66,10 @@ export const VideoFileFormatEnum = {
   VIDEO_3_6K_1F: 'VIDEO_3_6K_1F',
   /** mp4 3648 x 3648 2fps */
   VIDEO_3_6K_2F: 'VIDEO_3_6K_2F',
+  /** mp4 3840 x 1920 2fps */
+  VIDEO_4K_2F: 'VIDEO_4K_2F',
+  /** mp4 3840 x 1920 5fps */
+  VIDEO_4K_5F: 'VIDEO_4K_5F',
   /** mp4 3840 x 1920 10fps */
   VIDEO_4K_10F: 'VIDEO_4K_10F',
   /** mp4 3840 x 1920 15fps */
@@ -88,6 +94,29 @@ export const VideoFileFormatEnum = {
   VIDEO_7K_5F: 'VIDEO_7K_5F',
   /** mp4 7680 x 3840 10fps */
   VIDEO_7K_10F: 'VIDEO_7K_10F',
+
+  /** mp4 1920 x 960 30fps H.265/HEVC */
+  VIDEO_2K_30F_H265_HEVC: 'VIDEO_2K_30F_H265_HEVC',
+  /** mp4 3840 x 1920 2fps H.265/HEVC */
+  VIDEO_4K_2F_H265_HEVC: 'VIDEO_4K_2F_H265_HEVC',
+  /** mp4 3840 x 1920 5fps H.265/HEVC */
+  VIDEO_4K_5F_H265_HEVC: 'VIDEO_4K_5F_H265_HEVC',
+  /** mp4 3840 x 1920 10fps H.265/HEVC */
+  VIDEO_4K_10F_H265_HEVC: 'VIDEO_4K_10F_H265_HEVC',
+  /** mp4 3840 x 1920 30fps H.265/HEVC */
+  VIDEO_4K_30F_H265_HEVC: 'VIDEO_4K_30F_H265_HEVC',
+  /** mp4 5760 x 2880 2fps H.265/HEVC */
+  VIDEO_5_7K_2F_H265_HEVC: 'VIDEO_5_7K_2F_H265_HEVC',
+  /** mp4 5760 x 2880 5fps H.265/HEVC */
+  VIDEO_5_7K_5F_H265_HEVC: 'VIDEO_5_7K_5F_H265_HEVC',
+  /** mp4 5760 x 2880 10fps H.265/HEVC */
+  VIDEO_5_7K_10F_H265_HEVC: 'VIDEO_5_7K_10F_H265_HEVC',
+  /** mp4 7680 x 3840 2fps H.265/HEVC */
+  VIDEO_7K_2F_H265_HEVC: 'VIDEO_7K_2F_H265_HEVC',
+  /** mp4 7680 x 3840 5fps H.265/HEVC */
+  VIDEO_7K_5F_H265_HEVC: 'VIDEO_7K_5F_H265_HEVC',
+  /** mp4 7680 x 3840 10fps H.265/HEVC */
+  VIDEO_7K_10F_H265_HEVC: 'VIDEO_7K_10F_H265_HEVC',
 } as const;
 
 /** type definition of PhotoFileFormatEnum */

@@ -71,8 +71,12 @@ let KEY_STATE_BOARD_TEMP = "boardTemp"
 let KEY_STATE_BATTERY_TEMP = "batteryTemp"
 let KEY_PROXY = "proxy"
 let KEY_IP_ADDRESS = "ipAddress"
+let KEY_MAC_ADDRESS = "macAddress"
+let KEY_HOST_NAME = "hostName"
 let KEY_SUBNET_MASK = "subnetMask"
 let KEY_DEFAULT_GATEWAY = "defaultGateway"
+let KEY_DNS1 = "dns1"
+let KEY_DNS2 = "dns2"
 let KEY_OPTIONS = "options"
 let KEY_STATE = "state"
 let KEY_SSID = "ssid"
@@ -109,85 +113,97 @@ public class ConvertUtil: NSObject {}
 
 let optionItemNameToEnum = [
     // TODO: Add items when adding options
+    "accessInfo": ThetaRepository.OptionNameEnum.accessinfo,
     "aiAutoThumbnail": ThetaRepository.OptionNameEnum.aiautothumbnail,
     KEY_AI_AUTO_THUMBNAIL_SUPPORT: ThetaRepository.OptionNameEnum.aiautothumbnailsupport,
-    "aperture": ThetaRepository.OptionNameEnum.aperture,
+    KEY_APERTURE: ThetaRepository.OptionNameEnum.aperture,
     KEY_APERTURE_SUPPORT: ThetaRepository.OptionNameEnum.aperturesupport,
-    "autoBracket": ThetaRepository.OptionNameEnum.autobracket,
+    KEY_AUTO_BRACKET: ThetaRepository.OptionNameEnum.autobracket,
     "bitrate": ThetaRepository.OptionNameEnum.bitrate,
     "bluetoothPower": ThetaRepository.OptionNameEnum.bluetoothpower,
     "bluetoothRole": ThetaRepository.OptionNameEnum.bluetoothrole,
-    "burstMode": ThetaRepository.OptionNameEnum.burstmode,
+    KEY_BURST_MODE: ThetaRepository.OptionNameEnum.burstmode,
     "burstOption": ThetaRepository.OptionNameEnum.burstoption,
     "cameraControlSource": ThetaRepository.OptionNameEnum.cameracontrolsource,
     KEY_CAMERA_CONTROL_SOURCE_SUPPORT: ThetaRepository.OptionNameEnum.cameracontrolsourcesupport,
+    "cameraLock": ThetaRepository.OptionNameEnum.cameralock,
+    "cameraLockConfig": ThetaRepository.OptionNameEnum.cameralockconfig,
     "cameraMode": ThetaRepository.OptionNameEnum.cameramode,
     "cameraPower": ThetaRepository.OptionNameEnum.camerapower,
     KEY_CAMERA_POWER_SUPPORT: ThetaRepository.OptionNameEnum.camerapowersupport,
-    "captureInterval": ThetaRepository.OptionNameEnum.captureinterval,
+    KEY_CAPTURE_INTERVAL: ThetaRepository.OptionNameEnum.captureinterval,
     "captureMode": ThetaRepository.OptionNameEnum.capturemode,
     "captureNumber": ThetaRepository.OptionNameEnum.capturenumber,
-    "colorTemperature": ThetaRepository.OptionNameEnum.colortemperature,
+    KEY_COLOR_TEMPERATURE: ThetaRepository.OptionNameEnum.colortemperature,
     KEY_COLOR_TEMPERATURE_SUPPORT: ThetaRepository.OptionNameEnum.colortemperaturesupport,
-    "compositeShootingOutputInterval": ThetaRepository.OptionNameEnum.compositeshootingoutputinterval,
     KEY_COMPOSITE_SHOOTING_OUTPUT_INTERVAL_SUPPORT: ThetaRepository.OptionNameEnum.compositeshootingoutputintervalsupport,
+    "compassDirectionRef": ThetaRepository.OptionNameEnum.compassdirectionref,
+    KEY_COMPOSITE_SHOOTING_OUTPUT_INTERVAL: ThetaRepository.OptionNameEnum.compositeshootingoutputinterval,
     "compositeShootingTime": ThetaRepository.OptionNameEnum.compositeshootingtime,
     KEY_COMPOSITE_SHOOTING_TIME_SUPPORT: ThetaRepository.OptionNameEnum.compositeshootingtimesupport,
     "continuousNumber": ThetaRepository.OptionNameEnum.continuousnumber,
-    "dateTimeZone": ThetaRepository.OptionNameEnum.datetimezone,
+    KEY_GPS_DATE_TIME_ZONE: ThetaRepository.OptionNameEnum.datetimezone,
     "ethernetConfig": ThetaRepository.OptionNameEnum.ethernetconfig,
-    "exposureCompensation": ThetaRepository.OptionNameEnum.exposurecompensation,
-    "exposureDelay": ThetaRepository.OptionNameEnum.exposuredelay,
+    KEY_EXPOSURE_COMPENSATION: ThetaRepository.OptionNameEnum.exposurecompensation,
+    KEY_EXPOSURE_DELAY: ThetaRepository.OptionNameEnum.exposuredelay,
     "exposureDelaySupport": ThetaRepository.OptionNameEnum.exposuredelaysupport,
-    "exposureProgram": ThetaRepository.OptionNameEnum.exposureprogram,
+    KEY_EXPOSURE_PROGRAM: ThetaRepository.OptionNameEnum.exposureprogram,
     "faceDetect": ThetaRepository.OptionNameEnum.facedetect,
-    "fileFormat": ThetaRepository.OptionNameEnum.fileformat,
-    "filter": ThetaRepository.OptionNameEnum.filter,
+    KEY_FILE_FORMAT: ThetaRepository.OptionNameEnum.fileformat,
+    KEY_FILTER: ThetaRepository.OptionNameEnum.filter,
     "function": ThetaRepository.OptionNameEnum.function,
     "gain": ThetaRepository.OptionNameEnum.gain,
-    "gpsInfo": ThetaRepository.OptionNameEnum.gpsinfo,
+    KEY_GPS_INFO: ThetaRepository.OptionNameEnum.gpsinfo,
     KEY_GPS_TAG_RECORDING_SUPPORT: ThetaRepository.OptionNameEnum.gpstagrecordingsupport,
     "imageStitching": ThetaRepository.OptionNameEnum.imagestitching,
     "isGpsOn": ThetaRepository.OptionNameEnum.isgpson,
-    "iso": ThetaRepository.OptionNameEnum.iso,
-    "isoAutoHighLimit": ThetaRepository.OptionNameEnum.isoautohighlimit,
-    "language": ThetaRepository.OptionNameEnum.language,
+    KEY_ISO: ThetaRepository.OptionNameEnum.iso,
+    KEY_ISO_AUTO_HIGH_LIMIT: ThetaRepository.OptionNameEnum.isoautohighlimit,
+    KEY_LANGUAGE: ThetaRepository.OptionNameEnum.language,
     "latestEnabledExposureDelayTime": ThetaRepository.OptionNameEnum.latestenabledexposuredelaytime,
-    "maxRecordableTime": ThetaRepository.OptionNameEnum.maxrecordabletime,
+    KEY_MAX_RECORDABLE_TIME: ThetaRepository.OptionNameEnum.maxrecordabletime,
+    "microphoneNoiseReduction": ThetaRepository.OptionNameEnum.microphonenoisereduction,
+    "mobileNetworkSetting": ThetaRepository.OptionNameEnum.mobilenetworksetting,
     "networkType": ThetaRepository.OptionNameEnum.networktype,
-    "offDelay": ThetaRepository.OptionNameEnum.offdelay,
-    "password": ThetaRepository.OptionNameEnum.password,
+    KEY_OFF_DELAY: ThetaRepository.OptionNameEnum.offdelay,
+    "offDelayUsb": ThetaRepository.OptionNameEnum.offdelayusb,
+    KEY_PROXY_PASSWORD: ThetaRepository.OptionNameEnum.password,
     "powerSaving": ThetaRepository.OptionNameEnum.powersaving,
-    "preset": ThetaRepository.OptionNameEnum.preset,
+    KEY_PRESET: ThetaRepository.OptionNameEnum.preset,
     "previewFormat": ThetaRepository.OptionNameEnum.previewformat,
-    "proxy": ThetaRepository.OptionNameEnum.proxy,
+    KEY_PROXY: ThetaRepository.OptionNameEnum.proxy,
     "remainingPictures": ThetaRepository.OptionNameEnum.remainingpictures,
     "remainingVideoSeconds": ThetaRepository.OptionNameEnum.remainingvideoseconds,
     "remainingSpace": ThetaRepository.OptionNameEnum.remainingspace,
     "shootingMethod": ThetaRepository.OptionNameEnum.shootingmethod,
     "shutterSpeed": ThetaRepository.OptionNameEnum.shutterspeed,
-    "shutterVolume": ThetaRepository.OptionNameEnum.shuttervolume,
-    "sleepDelay": ThetaRepository.OptionNameEnum.sleepdelay,
-    "timeShift": ThetaRepository.OptionNameEnum.timeshift,
+    KEY_SHUTTER_VOLUME: ThetaRepository.OptionNameEnum.shuttervolume,
+    KEY_SLEEP_DELAY: ThetaRepository.OptionNameEnum.sleepdelay,
+    KEY_TIMESHIFT: ThetaRepository.OptionNameEnum.timeshift,
     "topBottomCorrection": ThetaRepository.OptionNameEnum.topbottomcorrection,
     "topBottomCorrectionRotation": ThetaRepository.OptionNameEnum.topbottomcorrectionrotation,
     KEY_TOP_BOTTOM_CORRECTION_ROTATION_SUPPORT: ThetaRepository.OptionNameEnum.topbottomcorrectionrotationsupport,
     "totalSpace": ThetaRepository.OptionNameEnum.totalspace,
+    "usbConnection": ThetaRepository.OptionNameEnum.usbconnection,
     "username": ThetaRepository.OptionNameEnum.username,
     "videoStitching": ThetaRepository.OptionNameEnum.videostitching,
     "visibilityReduction": ThetaRepository.OptionNameEnum.visibilityreduction,
-    "whiteBalance": ThetaRepository.OptionNameEnum.whitebalance,
+    KEY_WHITE_BALANCE: ThetaRepository.OptionNameEnum.whitebalance,
     "whiteBalanceAutoStrength": ThetaRepository.OptionNameEnum.whitebalanceautostrength,
+    "wlanAntennaConfig": ThetaRepository.OptionNameEnum.wlanantennaconfig,
     "wlanFrequency": ThetaRepository.OptionNameEnum.wlanfrequency,
+    "wlanFrequencySupport": ThetaRepository.OptionNameEnum.wlanfrequencysupport,
+    KEY_WLAN_FREQUENCY_CL_MODE: ThetaRepository.OptionNameEnum.wlanfrequencyclmode,
 ]
 
-let supportOptions: [ThetaRepository.OptionNameEnum : Any.Type] = [
-    ThetaRepository.OptionNameEnum.aperturesupport: ThetaRepository.ApertureEnum.self,
-    ThetaRepository.OptionNameEnum.gpstagrecordingsupport: ThetaRepository.GpsTagRecordingEnum.self,
+let supportOptions: [ThetaRepository.OptionNameEnum: Any.Type] = [
     ThetaRepository.OptionNameEnum.aiautothumbnailsupport: ThetaRepository.AiAutoThumbnailEnum.self,
+    ThetaRepository.OptionNameEnum.aperturesupport: ThetaRepository.ApertureEnum.self,
     ThetaRepository.OptionNameEnum.cameracontrolsourcesupport: ThetaRepository.CameraControlSourceEnum.self,
     ThetaRepository.OptionNameEnum.camerapowersupport: ThetaRepository.CameraPowerEnum.self,
     ThetaRepository.OptionNameEnum.exposuredelaysupport: ThetaRepository.ExposureDelayEnum.self,
+    ThetaRepository.OptionNameEnum.gpstagrecordingsupport: ThetaRepository.GpsTagRecordingEnum.self,
+    ThetaRepository.OptionNameEnum.wlanfrequencysupport: ThetaRepository.WlanFrequencyEnum.self,
 ]
 
 let optionNameEnumToItemName = {
@@ -222,6 +238,10 @@ func convertSetOptionsParam(params: [String: Any]) -> ThetaRepository.Options {
 func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any) {
     // TODO: Add items when adding options
     switch name {
+    case ThetaRepository.OptionNameEnum.accessinfo.name:
+        if let params = value as? [String: Any?] {
+            options.accessInfo = toAccessInfo(params: params)
+        }
     case ThetaRepository.OptionNameEnum.aiautothumbnail.name:
         options.aiAutoThumbnail = getEnumValue(
             values: ThetaRepository.AiAutoThumbnailEnum.values(), name: value as! String
@@ -256,6 +276,14 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         options.cameraControlSource = getEnumValue(
             values: ThetaRepository.CameraControlSourceEnum.values(), name: value as! String
         )!
+    case ThetaRepository.OptionNameEnum.cameralock.name:
+        options.cameraLock = getEnumValue(
+            values: ThetaRepository.CameraLockEnum.values(), name: value as! String
+        )!
+    case ThetaRepository.OptionNameEnum.cameralockconfig.name:
+        if let params = value as? [String: Any] {
+            options.cameraLockConfig = toCameraLockConfig(params: params)
+        }
     case ThetaRepository.OptionNameEnum.cameramode.name:
         options.cameraMode = getEnumValue(
             values: ThetaRepository.CameraModeEnum.values(), name: value as! String
@@ -274,6 +302,10 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         options.captureNumber = KotlinInt(integerLiteral: value as! Int)
     case ThetaRepository.OptionNameEnum.colortemperature.name:
         options.colorTemperature = KotlinInt(integerLiteral: value as! Int)
+    case ThetaRepository.OptionNameEnum.compassdirectionref.name:
+        options.compassDirectionRef = getEnumValue(
+            values: ThetaRepository.CompassDirectionRefEnum.values(), name: value as! String
+        )!
     case ThetaRepository.OptionNameEnum.compositeshootingoutputinterval.name:
         options.compositeShootingOutputInterval = KotlinInt(integerLiteral: value as! Int)
     case ThetaRepository.OptionNameEnum.compositeshootingtime.name:
@@ -348,12 +380,22 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         options.maxRecordableTime = getEnumValue(
             values: ThetaRepository.MaxRecordableTimeEnum.values(), name: value as! String
         )!
+    case ThetaRepository.OptionNameEnum.microphonenoisereduction.name:
+        options.microphoneNoiseReduction = getEnumValue(
+            values: ThetaRepository.MicrophoneNoiseReductionEnum.values(), name: value as! String
+        )!
+    case ThetaRepository.OptionNameEnum.mobilenetworksetting.name:
+        if let params = value as? [String: Any] {
+            options.mobileNetworkSetting = toMobileNetworkSetting(params: params)
+        }
     case ThetaRepository.OptionNameEnum.networktype.name:
         options.networkType = getEnumValue(
             values: ThetaRepository.NetworkTypeEnum.values(), name: value as! String
         )!
     case ThetaRepository.OptionNameEnum.offdelay.name:
         options.offDelay = toOffDelay(value: value)
+    case ThetaRepository.OptionNameEnum.offdelayusb.name:
+        options.offDelayUsb = toOffDelayUsb(value: value)
     case ThetaRepository.OptionNameEnum.password.name:
         options.password = value as? String
     case ThetaRepository.OptionNameEnum.powersaving.name:
@@ -400,6 +442,10 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         options.topBottomCorrectionRotation = toTopBottomCorrectionRotation(params: value as! [String: Any])
     case ThetaRepository.OptionNameEnum.totalspace.name:
         options.totalSpace = KotlinLong(integerLiteral: value as! Int)
+    case ThetaRepository.OptionNameEnum.usbconnection.name:
+        options.usbConnection = getEnumValue(
+            values: ThetaRepository.UsbConnectionEnum.values(), name: value as! String
+        )!
     case ThetaRepository.OptionNameEnum.username.name:
         options.username = value as? String
     case ThetaRepository.OptionNameEnum.videostitching.name:
@@ -418,10 +464,16 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         options.whiteBalanceAutoStrength = getEnumValue(
             values: ThetaRepository.WhiteBalanceAutoStrengthEnum.values(), name: value as! String
         )!
+    case ThetaRepository.OptionNameEnum.wlanantennaconfig.name:
+        options.wlanAntennaConfig = getEnumValue(
+            values: ThetaRepository.WlanAntennaConfigEnum.values(), name: value as! String
+        )!
     case ThetaRepository.OptionNameEnum.wlanfrequency.name:
         options.wlanFrequency = getEnumValue(
             values: ThetaRepository.WlanFrequencyEnum.values(), name: value as! String
         )!
+    case ThetaRepository.OptionNameEnum.wlanfrequencyclmode.name:
+        options.wlanFrequencyClMode = toWlanFrequencyClMode(params: value as! [String: Any])
     default: break
     }
 }
@@ -441,6 +493,10 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                     result[key] = value as! Bool ? true : false
                 } else if value is NSNumber || value is String {
                     result[key] = value
+                } else if value is ThetaRepository.AccessInfo,
+                          let accessInfo = value as? ThetaRepository.AccessInfo
+                {
+                    result[key] = convertResult(accessInfo: accessInfo)
                 } else if value is ThetaRepository.BracketSettingList,
                           let autoBracket = value as? ThetaRepository.BracketSettingList
                 {
@@ -451,6 +507,10 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                           let burstOption = value as? ThetaRepository.BurstOption
                 {
                     result[key] = convertResult(burstOption: burstOption)
+                } else if value is ThetaRepository.CameraLockConfig,
+                          let config = value as? ThetaRepository.CameraLockConfig
+                {
+                    result[key] = convertResult(cameraLockConfig: config)
                 } else if value is ThetaRepository.EthernetConfig,
                           let ethernetConfig = value as? ThetaRepository.EthernetConfig
                 {
@@ -458,6 +518,10 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                 } else if value is ThetaRepository.GpsInfo {
                     let gpsInfo = value as! ThetaRepository.GpsInfo
                     result[key] = convertResult(gpsInfo: gpsInfo)
+                } else if value is ThetaRepository.MobileNetworkSetting,
+                          let mobileNetworkSetting = value as? ThetaRepository.MobileNetworkSetting
+                {
+                    result[key] = convertResult(mobileNetworkSetting: mobileNetworkSetting)
                 } else if value is ThetaRepository.Proxy,
                           let proxy = value as? ThetaRepository.Proxy
                 {
@@ -469,24 +533,35 @@ func convertResult(options: ThetaRepository.Options) -> [String: Any] {
                 } else if value is ThetaRepository.TopBottomCorrectionRotation, let rotation = value as? ThetaRepository.TopBottomCorrectionRotation {
                     result[key] = convertResult(rotation: rotation)
                 } else if value is ThetaRepository.TopBottomCorrectionRotationSupport,
-                            let support = value as? ThetaRepository.TopBottomCorrectionRotationSupport {
+                          let support = value as? ThetaRepository.TopBottomCorrectionRotationSupport
+                {
                     jsonResult[key] = convertJson(topBottomCorrectionRotationSupport: support)
                 } else if let offDelay = value as? ThetaRepository.OffDelaySec {
                     result[key] = offDelay.sec_ == 0 ? ThetaRepository.OffDelayEnum.disable.name : offDelay.sec_
                 } else if let sleepDelay = value as? ThetaRepository.SleepDelaySec {
                     result[key] = sleepDelay.sec_ == 0 ? ThetaRepository.SleepDelayEnum.disable.name : sleepDelay.sec_
                 } else if let enumValue = value as? [AnyObject], let enumType = supportOptions[name] {
-                  result[key] = convertSupportResult(supportValueList: enumValue, enumType: enumType)
+                    result[key] = convertSupportResult(supportValueList: enumValue, enumType: enumType)
                 } else if let valueRange = value as? ThetaRepositoryValueRange<NSNumber> {
-                  result[key] = convertValueRangeSupportResult(valueRange: valueRange)
+                    result[key] = convertValueRangeSupportResult(valueRange: valueRange)
+                } else if let offDelay = value as? ThetaRepository.OffDelaySec {
+                    result[key] = offDelay.sec_ == 0 ? ThetaRepository.OffDelayEnum.disable.name : offDelay.sec_
+                } else if let offDelayUsb = value as? ThetaRepository.OffDelayUsbSec {
+                    result[key] = offDelayUsb.sec_ == 0 ? ThetaRepository.OffDelayUsbEnum.disable.name : offDelayUsb.sec_
+                } else if let sleepDelay = value as? ThetaRepository.SleepDelaySec {
+                    result[key] = sleepDelay.sec_ == 0 ? ThetaRepository.SleepDelayEnum.disable.name : sleepDelay.sec_
+                } else if value is ThetaRepository.WlanFrequencyClMode, let wlanFrequencyClMode = value as? ThetaRepository.WlanFrequencyClMode {
+                    result[key] = convertResult(wlanFrequencyClMode: wlanFrequencyClMode)
+                } else if let enumValue = value as? [AnyObject], let enumType = supportOptions[name] {
+                    result[key] = convertSupportResult(supportValueList: enumValue, enumType: enumType)
                 }
                 // TODO: Add class item when adding options
             }
         }
     }
-  
+
     var response = [String: Any]()
-    response["options"] = result
+    response[KEY_OPTIONS] = result
     response["json"] = jsonResult
     return response
 }
@@ -497,45 +572,45 @@ func toNotify(name: String, params: [String: Any]?) -> [String: Any] {
     var result: [String: Any] = [
         KEY_NOTIFY_NAME: name,
     ]
-    if let params = params {
+    if let params {
         result[KEY_NOTIFY_PARAMS] = params
     }
     return result
 }
 
 func toCaptureProgressNotifyParam(value: Float) -> [String: Any] {
-    return [
+    [
         KEY_NOTIFY_PARAM_COMPLETION: value,
     ]
 }
 
 func toEventWebSocketEventNotifyParam(value: CameraEvent) -> [String: Any] {
-    return [
+    [
         KEY_NOTIFY_PARAM_EVENT: convertResult(cameraEvent: value),
     ]
 }
 
 func toMessageNotifyParam(value: String) -> [String: Any] {
-    return [
+    [
         KEY_NOTIFY_PARAM_MESSAGE: value,
     ]
 }
 
 func toCapturingNotifyParam(value: CapturingStatusEnum) -> [String: Any] {
-    return [
+    [
         KEY_NOTIFY_PARAM_STATUS: value.name,
     ]
 }
 
 func toStartedNotifyParam(value: String) -> [String: Any] {
-    return [
+    [
         KEY_NOTIFY_PARAM_FILE_URL: value,
     ]
 }
 
 // MARK: - Capture builder
 
-func setCaptureBuilderParams<T>(params: [String: Any], builder: CaptureBuilder<T>) {
+func setCaptureBuilderParams(params: [String: Any], builder: CaptureBuilder<some Any>) {
     if let value = params[KEY_APERTURE] as? String {
         if let enumValue = getEnumValue(values: ThetaRepository.ApertureEnum.values(), name: value)
         {
@@ -644,6 +719,26 @@ func setTimeShiftCaptureBuilderParams(params: [String: Any], builder: TimeShiftC
     }
 }
 
+func setTimeShiftManualCaptureBuilderParams(params: [String: Any], builder: TimeShiftManualCapture.Builder) {
+    if let interval = params[KEY_TIMESHIFT_CAPTURE_INTERVAL] as? Int,
+       interval >= 0
+    {
+        builder.setCheckStatusCommandInterval(timeMillis: Int64(interval))
+    }
+    if let timeShiftParams = params[KEY_TIMESHIFT] as? [String: Any] {
+        let timeShift = toTimeShift(params: timeShiftParams)
+        if let isFrontFirst = timeShift.isFrontFirst {
+            builder.setIsFrontFirst(isFrontFirst: isFrontFirst.boolValue)
+        }
+        if let firstInterval = timeShift.firstInterval {
+            builder.setFirstInterval(interval: firstInterval)
+        }
+        if let secondInterval = timeShift.secondInterval {
+            builder.setSecondInterval(interval: secondInterval)
+        }
+    }
+}
+
 func setVideoCaptureBuilderParams(params: [String: Any], builder: VideoCapture.Builder) {
     if let interval = params[KEY_TIMESHIFT_CAPTURE_INTERVAL] as? Int,
        interval >= 0
@@ -718,7 +813,7 @@ func setMultiBracketCaptureBuilderParams(params: [String: Any], builder: MultiBr
     if let autoBracket = params[KEY_AUTO_BRACKET] as? [[String: Any]] {
         try autoBracket.forEach { map in
             let aperture = {
-                if let name = map["aperture"] as? String {
+                if let name = map[KEY_APERTURE] as? String {
                     return getEnumValue(values: ThetaRepository.ApertureEnum.values(), name: name)
                 } else {
                     return nil
@@ -726,7 +821,7 @@ func setMultiBracketCaptureBuilderParams(params: [String: Any], builder: MultiBr
             }()
 
             let colorTemperature = {
-                if let value = map["colorTemperature"] as? Int {
+                if let value = map[KEY_COLOR_TEMPERATURE] as? Int {
                     return toKotlinInt(value: value)
                 } else {
                     return nil
@@ -734,7 +829,7 @@ func setMultiBracketCaptureBuilderParams(params: [String: Any], builder: MultiBr
             }()
 
             let exposureCompensation = {
-                if let name = map["exposureCompensation"] as? String {
+                if let name = map[KEY_EXPOSURE_COMPENSATION] as? String {
                     return getEnumValue(values: ThetaRepository.ExposureCompensationEnum.values(), name: name)
                 } else {
                     return nil
@@ -742,7 +837,7 @@ func setMultiBracketCaptureBuilderParams(params: [String: Any], builder: MultiBr
             }()
 
             let exposureProgram = {
-                if let name = map["exposureProgram"] as? String {
+                if let name = map[KEY_EXPOSURE_PROGRAM] as? String {
                     return getEnumValue(values: ThetaRepository.ExposureProgramEnum.values(), name: name)
                 } else {
                     return nil
@@ -750,7 +845,7 @@ func setMultiBracketCaptureBuilderParams(params: [String: Any], builder: MultiBr
             }()
 
             let iso = {
-                if let name = map["iso"] as? String {
+                if let name = map[KEY_ISO] as? String {
                     return getEnumValue(values: ThetaRepository.IsoEnum.values(), name: name)
                 } else {
                     return nil
@@ -766,7 +861,7 @@ func setMultiBracketCaptureBuilderParams(params: [String: Any], builder: MultiBr
             }()
 
             let whiteBalance = {
-                if let name = map["whiteBalance"] as? String {
+                if let name = map[KEY_WHITE_BALANCE] as? String {
                     return getEnumValue(values: ThetaRepository.WhiteBalanceEnum.values(), name: name)
                 } else {
                     return nil
@@ -814,7 +909,7 @@ func getEnumValue<T, E: KotlinEnum<T>>(values: KotlinArray<E>, name: String) -> 
 }
 
 func convertKotlinBooleanToBool(value: Any?) -> Bool? {
-    guard let value = value else { return nil }
+    guard let value else { return nil }
     guard value is KotlinBoolean, let numVal = value as? NSNumber else { return false }
 
     return numVal.boolValue
@@ -836,6 +931,42 @@ func toKotlinBoolean(value: Any?) -> KotlinBoolean? {
 
 // MARK: - Convert to react-native object
 
+func convertResult(accessInfo: ThetaRepository.AccessInfo) -> [String: Any] {
+    var result: [String: Any] = [:]
+    result[KEY_SSID] = accessInfo.ssid
+    result[KEY_IP_ADDRESS] = accessInfo.ipAddress
+    result[KEY_SUBNET_MASK] = accessInfo.subnetMask
+    result[KEY_DEFAULT_GATEWAY] = accessInfo.defaultGateway
+    if let dns1 = accessInfo.dns1 {
+        result[KEY_DNS1] = dns1
+    }
+    if let dns2 = accessInfo.dns2 {
+        result[KEY_DNS2] = dns2
+    }
+    result["proxyURL"] = accessInfo.proxyURL
+    result["frequency"] = accessInfo.frequency.name
+    result["wlanSignalStrength"] = accessInfo.wlanSignalStrength
+    result["wlanSignalLevel"] = accessInfo.wlanSignalLevel
+    result["lteSignalStrength"] = accessInfo.lteSignalStrength
+    result["lteSignalLevel"] = accessInfo.lteSignalLevel
+
+    if let list = accessInfo.dhcpLeaseAddress {
+        let array = list.map { item in convertResult(dhcpLeaseAddress: item) }
+        if !array.isEmpty {
+            result[KEY_DHCP_LEASE_ADDRESS] = array
+        }
+    }
+    return result
+}
+
+func convertResult(dhcpLeaseAddress: ThetaRepository.DhcpLeaseAddress) -> [String: Any] {
+    [
+        KEY_IP_ADDRESS: dhcpLeaseAddress.ipAddress,
+        KEY_MAC_ADDRESS: dhcpLeaseAddress.macAddress,
+        KEY_HOST_NAME: dhcpLeaseAddress.hostName,
+    ]
+}
+
 func convertResult(fileInfoList: [ThetaRepository.FileInfo]) -> [[String: Any]] {
     var resultList = [[String: Any]]()
     fileInfoList.forEach { fileInfo in
@@ -843,11 +974,11 @@ func convertResult(fileInfoList: [ThetaRepository.FileInfo]) -> [[String: Any]] 
             "name": fileInfo.name,
             "fileUrl": fileInfo.fileUrl,
             "size": fileInfo.size,
-            "dateTime": fileInfo.dateTime,
+            KEY_DATETIME: fileInfo.dateTime,
             "thumbnailUrl": fileInfo.thumbnailUrl,
         ]
         if let dateTimeZone = fileInfo.dateTimeZone {
-            item["dateTimeZone"] = dateTimeZone
+            item[KEY_GPS_DATE_TIME_ZONE] = dateTimeZone
         }
         if let lat = fileInfo.lat {
             item["lat"] = lat.floatValue
@@ -906,7 +1037,7 @@ func convertResult(fileInfoList: [ThetaRepository.FileInfo]) -> [[String: Any]] 
 }
 
 func convertResult(thetaInfo: ThetaRepository.ThetaInfo) -> [String: Any?] {
-    return [
+    [
         "manufacturer": thetaInfo.manufacturer,
         "model": thetaInfo.model,
         "serialNumber": thetaInfo.serialNumber,
@@ -927,7 +1058,7 @@ func convertResult(thetaInfo: ThetaRepository.ThetaInfo) -> [String: Any?] {
 }
 
 func convertResult(cameraErrorList: [ThetaRepository.CameraErrorEnum]?) -> [String]? {
-    guard let cameraErrorList = cameraErrorList else {
+    guard let cameraErrorList else {
         return nil
     }
     var result: [String] = []
@@ -1045,31 +1176,54 @@ func convertResult(autoBracket: ThetaRepository.BracketSettingList) -> [[String:
         var result: [String: Any] = [:]
         if let setting = bracketSetting as? ThetaRepository.BracketSetting {
             if let aperture = setting.aperture?.name {
-                result["aperture"] = aperture
+                result[KEY_APERTURE] = aperture
             }
             if let colorTemperature = setting.colorTemperature?.intValue {
-                result["colorTemperature"] = colorTemperature
+                result[KEY_COLOR_TEMPERATURE] = colorTemperature
             }
             if let exposureCompensation = setting.exposureCompensation?.name {
-                result["exposureCompensation"] = exposureCompensation
+                result[KEY_EXPOSURE_COMPENSATION] = exposureCompensation
             }
             if let exposureProgram = setting.exposureProgram?.name {
-                result["exposureProgram"] = exposureProgram
+                result[KEY_EXPOSURE_PROGRAM] = exposureProgram
             }
             if let iso = setting.iso?.name {
-                result["iso"] = iso
+                result[KEY_ISO] = iso
             }
             if let shutterSpeed = setting.shutterSpeed?.name {
                 result["shutterSpeed"] = shutterSpeed
             }
             if let whiteBalance = setting.whiteBalance?.name {
-                result["whiteBalance"] = whiteBalance
+                result[KEY_WHITE_BALANCE] = whiteBalance
             }
             resultList.append(result)
         }
     }
 
     return resultList
+}
+
+func convertResult(cameraLockConfig: ThetaRepository.CameraLockConfig) -> [String: Any] {
+    var result: [String: Any] = [:]
+    if let isPowerKeyLocked = cameraLockConfig.isPowerKeyLocked {
+        result[KEY_CAMERA_LOCK_CONFIG_IS_POWER_KEY_LOCKED] = isPowerKeyLocked.boolValue
+    }
+    if let isShutterKeyLocked = cameraLockConfig.isShutterKeyLocked {
+        result[KEY_CAMERA_LOCK_CONFIG_IS_SHUTTER_KEY_LOCKED] = isShutterKeyLocked.boolValue
+    }
+    if let isModeKeyLocked = cameraLockConfig.isModeKeyLocked {
+        result[KEY_CAMERA_LOCK_CONFIG_IS_MODE_KEY_LOCKED] = isModeKeyLocked.boolValue
+    }
+    if let isWlanKeyLocked = cameraLockConfig.isWlanKeyLocked {
+        result[KEY_CAMERA_LOCK_CONFIG_IS_WLAN_KEY_LOCKED] = isWlanKeyLocked.boolValue
+    }
+    if let isFnKeyLocked = cameraLockConfig.isFnKeyLocked {
+        result[KEY_CAMERA_LOCK_CONFIG_IS_FN_KEY_LOCKED] = isFnKeyLocked.boolValue
+    }
+    if let isPanelLocked = cameraLockConfig.isPanelLocked {
+        result[KEY_CAMERA_LOCK_CONFIG_IS_PANEL_LOCKED] = isPanelLocked.boolValue
+    }
+    return result
 }
 
 func convertResult(ethernetConfig: ThetaRepository.EthernetConfig) -> [String: Any] {
@@ -1083,6 +1237,12 @@ func convertResult(ethernetConfig: ThetaRepository.EthernetConfig) -> [String: A
     if let defaultGateway = ethernetConfig.defaultGateway {
         result[KEY_DEFAULT_GATEWAY] = defaultGateway
     }
+    if let dns1 = ethernetConfig.dns1 {
+        result[KEY_DNS1] = dns1
+    }
+    if let dns2 = ethernetConfig.dns2 {
+        result[KEY_DNS2] = dns2
+    }
     if let proxy = ethernetConfig.proxy {
         result[KEY_PROXY] = convertResult(proxy: proxy)
     }
@@ -1090,11 +1250,11 @@ func convertResult(ethernetConfig: ThetaRepository.EthernetConfig) -> [String: A
 }
 
 func convertResult(gpsInfo: ThetaRepository.GpsInfo) -> [String: Any] {
-    return [
-        "latitude": gpsInfo.latitude,
-        "longitude": gpsInfo.longitude,
-        "altitude": gpsInfo.altitude,
-        "dateTimeZone": gpsInfo.dateTimeZone,
+    [
+        KEY_GPS_LATITUDE: gpsInfo.latitude,
+        KEY_GPS_LONGITUDE: gpsInfo.longitude,
+        KEY_GPS_ALTITUDE: gpsInfo.altitude,
+        KEY_GPS_DATE_TIME_ZONE: gpsInfo.dateTimeZone,
     ]
 }
 
@@ -1138,7 +1298,7 @@ func convertResult(timeshift: ThetaRepository.TimeShiftSetting) -> [String: Any]
 }
 
 func convertResult(rotation: ThetaRepository.TopBottomCorrectionRotation) -> [String: Any] {
-    return [
+    [
         KEY_TOP_BOTTOM_CORRECTION_ROTATION_PITCH: rotation.pitch,
         KEY_TOP_BOTTOM_CORRECTION_ROTATION_ROLL: rotation.roll,
         KEY_TOP_BOTTOM_CORRECTION_ROTATION_YAW: rotation.yaw,
@@ -1147,31 +1307,31 @@ func convertResult(rotation: ThetaRepository.TopBottomCorrectionRotation) -> [St
 
 func convertJson(topBottomCorrectionRotationSupport: ThetaRepository.TopBottomCorrectionRotationSupport) -> String {
     let convertJson = """
-        {
-          "pitch": {
-            "max": \(topBottomCorrectionRotationSupport.pitch.max),
-            "min": \(topBottomCorrectionRotationSupport.pitch.min),
-            "stepSize": \(topBottomCorrectionRotationSupport.pitch.stepSize)
-          },
-          "roll": {
-            "max": \(topBottomCorrectionRotationSupport.roll.max),
-            "min": \(topBottomCorrectionRotationSupport.roll.min),
-            "stepSize": \(topBottomCorrectionRotationSupport.roll.stepSize)
-          },
-          "yaw": {
-            "max": \(topBottomCorrectionRotationSupport.yaw.max),
-            "min": \(topBottomCorrectionRotationSupport.yaw.min),
-            "stepSize": \(topBottomCorrectionRotationSupport.yaw.stepSize)
-          }
-        }
-        """
+    {
+      "pitch": {
+        "max": \(topBottomCorrectionRotationSupport.pitch.max),
+        "min": \(topBottomCorrectionRotationSupport.pitch.min),
+        "stepSize": \(topBottomCorrectionRotationSupport.pitch.stepSize)
+      },
+      "roll": {
+        "max": \(topBottomCorrectionRotationSupport.roll.max),
+        "min": \(topBottomCorrectionRotationSupport.roll.min),
+        "stepSize": \(topBottomCorrectionRotationSupport.roll.stepSize)
+      },
+      "yaw": {
+        "max": \(topBottomCorrectionRotationSupport.yaw.max),
+        "min": \(topBottomCorrectionRotationSupport.yaw.min),
+        "stepSize": \(topBottomCorrectionRotationSupport.yaw.stepSize)
+      }
+    }
+    """
     return convertJson
 }
 
 func convertResult(exif: ThetaRepository.Exif) -> [String: Any] {
     var result = [String: Any]()
     result["exifVersion"] = exif.exifVersion
-    result["dateTime"] = exif.dateTime
+    result[KEY_DATETIME] = exif.dateTime
     if let imageWidth = exif.imageWidth {
         result["imageWidth"] = imageWidth
     }
@@ -1199,7 +1359,7 @@ func convertResult(xmp: ThetaRepository.Xmp) -> [String: Any] {
 
 func convertResult(metadata: KotlinPair<ThetaRepository.Exif, ThetaRepository.Xmp>) -> [String: Any]
 {
-    return [
+    [
         "exif": convertResult(exif: metadata.first!),
         "xmp": convertResult(xmp: metadata.second!),
     ]
@@ -1209,10 +1369,10 @@ func convertResult(accessPointList: [ThetaRepository.AccessPoint]) -> [[String: 
     var resultList = [[String: Any]]()
     accessPointList.forEach { accessPoint in
         var result = [String: Any]()
-        result["ssid"] = accessPoint.ssid
-        result["ssidStealth"] = accessPoint.ssidStealth
-        result["authMode"] = accessPoint.authMode.name
-        result["connectionPriority"] = accessPoint.connectionPriority
+        result[KEY_SSID] = accessPoint.ssid
+        result[KEY_SSID_STEALTH] = accessPoint.ssidStealth
+        result[KEY_AUTH_MODE] = accessPoint.authMode.name
+        result[KEY_CONNECTION_PRIORITY] = accessPoint.connectionPriority
         result["usingDhcp"] = accessPoint.usingDhcp
         if let ipAddress = accessPoint.ipAddress {
             result[KEY_IP_ADDRESS] = ipAddress
@@ -1223,6 +1383,12 @@ func convertResult(accessPointList: [ThetaRepository.AccessPoint]) -> [[String: 
         if let defaultGateway = accessPoint.defaultGateway {
             result[KEY_DEFAULT_GATEWAY] = defaultGateway
         }
+        if let dns1 = accessPoint.dns1 {
+            result[KEY_DNS1] = dns1
+        }
+        if let dns2 = accessPoint.dns2 {
+            result[KEY_DNS2] = dns2
+        }
         if let proxy = accessPoint.proxy {
             result[KEY_PROXY] = convertResult(proxy: proxy)
         }
@@ -1231,11 +1397,22 @@ func convertResult(accessPointList: [ThetaRepository.AccessPoint]) -> [[String: 
     return resultList
 }
 
+func convertResult(mobileNetworkSetting: ThetaRepository.MobileNetworkSetting) -> [String: Any] {
+    var result: [String: Any] = [:]
+    if let roaming = mobileNetworkSetting.roaming {
+        result[KEY_ROAMING] = roaming.name
+    }
+    if let plan = mobileNetworkSetting.plan {
+        result[KEY_PLAN] = plan.name
+    }
+    return result
+}
+
 func toPluginInfosResult(pluginInfoList: [ThetaRepository.PluginInfo]) -> [[String: Any]] {
     var resultList = [[String: Any]]()
     pluginInfoList.forEach { pluginInfo in
         let item = [
-            "name": pluginInfo.name,
+            KEY_NOTIFY_NAME: pluginInfo.name,
             "packageName": pluginInfo.packageName,
             "version": pluginInfo.version,
             "isPreInstalled": pluginInfo.isPreInstalled,
@@ -1244,15 +1421,14 @@ func toPluginInfosResult(pluginInfoList: [ThetaRepository.PluginInfo]) -> [[Stri
             "isBoot": pluginInfo.isBoot,
             "hasWebServer": pluginInfo.hasWebServer,
             "exitStatus": pluginInfo.exitStatus,
-            "message": pluginInfo.message,
+            KEY_NOTIFY_PARAM_MESSAGE: pluginInfo.message,
         ]
         resultList.append(item)
     }
     return resultList
 }
 
-func convertResult(cameraEvent: CameraEvent) -> [String: Any]
-{
+func convertResult(cameraEvent: CameraEvent) -> [String: Any] {
     var result = [String: Any]()
     if let value = cameraEvent.options {
         result[KEY_OPTIONS] = convertResult(options: value)
@@ -1262,6 +1438,14 @@ func convertResult(cameraEvent: CameraEvent) -> [String: Any]
     }
 
     return result
+}
+
+func convertResult(wlanFrequencyClMode: ThetaRepository.WlanFrequencyClMode) -> [String: Any] {
+    [
+        KEY_WLAN_FREQUENCY_CL_MODE_2_4: wlanFrequencyClMode.enable2_4,
+        KEY_WLAN_FREQUENCY_CL_MODE_5_2: wlanFrequencyClMode.enable5_2,
+        KEY_WLAN_FREQUENCY_CL_MODE_5_8: wlanFrequencyClMode.enable5_8,
+    ]
 }
 
 /**
@@ -1275,14 +1459,15 @@ func convertSupportResult(supportValueList: [Any], enumType: Any.Type) -> [Any] 
     for item in supportValueList {
         // for enum value
         if let value = item as? KotlinEnum<AnyObject>,
-           enumType is KotlinEnum<AnyObject>.Type {
+           enumType is KotlinEnum<AnyObject>.Type
+        {
             result.append(value.name)
         }
     }
     return result
 }
 
-func convertValueRangeSupportResult<T>(valueRange: ThetaRepositoryValueRange<T>) -> [String: Any] {
+func convertValueRangeSupportResult(valueRange: ThetaRepositoryValueRange<some Any>) -> [String: Any] {
     var result: [String: Any] = [:]
     result[KEY_MAX] = valueRange.max
     result[KEY_MIN] = valueRange.min
@@ -1291,6 +1476,51 @@ func convertValueRangeSupportResult<T>(valueRange: ThetaRepositoryValueRange<T>)
 }
 
 // MARK: - Convert to theta-client object
+
+func toAccessInfo(params: [String: Any?]) -> ThetaRepository.AccessInfo {
+    let frequency = getEnumValue(
+        values: ThetaRepository.WlanFrequencyAccessInfoEnum.values(), name: params["frequency"] as! String
+    )!
+
+    let dhcpLeaseAddress: [ThetaRepository.DhcpLeaseAddress]? = {
+        guard let list = params[KEY_DHCP_LEASE_ADDRESS] as? [[String: Any?]] else {
+            return nil
+        }
+
+        let array = list.compactMap { toDhcpLeaseAddress(value: $0) }
+        return array.isEmpty ? nil : array
+    }()
+
+    return ThetaRepository.AccessInfo(
+        ssid: params[KEY_SSID] as! String,
+        ipAddress: params[KEY_IP_ADDRESS] as! String,
+        subnetMask: params[KEY_SUBNET_MASK] as! String,
+        defaultGateway: params[KEY_DEFAULT_GATEWAY] as! String,
+        dns1: params[KEY_DNS1] as? String,
+        dns2: params[KEY_DNS2] as? String,
+        proxyURL: params["proxyURL"] as! String,
+        frequency: frequency,
+        wlanSignalStrength: params["wlanSignalStrength"] as! Int32,
+        wlanSignalLevel: params["wlanSignalLevel"] as! Int32,
+        lteSignalStrength: params["lteSignalStrength"] as! Int32,
+        lteSignalLevel: params["lteSignalLevel"] as! Int32,
+        dhcpLeaseAddress: dhcpLeaseAddress
+    )
+}
+
+func toDhcpLeaseAddress(value: [String: Any?]) -> ThetaRepository.DhcpLeaseAddress? {
+    guard let ipAddress = value[KEY_IP_ADDRESS] as? String,
+          let macAddress = value[KEY_MAC_ADDRESS] as? String,
+          let hostName = value[KEY_HOST_NAME] as? String
+    else {
+        return nil
+    }
+    return ThetaRepository.DhcpLeaseAddress(
+        ipAddress: ipAddress,
+        macAddress: macAddress,
+        hostName: hostName
+    )
+}
 
 func toBitrate(value: Any) -> ThetaRepositoryBitrate? {
     if value is NSNumber, let intVal = value as? Int32 {
@@ -1318,6 +1548,18 @@ func toOffDelay(value: Any) -> ThetaRepositoryOffDelay? {
     }
 }
 
+func toOffDelayUsb(value: Any) -> ThetaRepositoryOffDelayUsb? {
+    if value is NSNumber, let intVal = value as? Int32 {
+        return ThetaRepository.OffDelayUsbSec(sec: intVal)
+    } else if let name = value as? String,
+              let enumValue = getEnumValue(values: ThetaRepository.OffDelayUsbEnum.values(), name: name)
+    {
+        return enumValue
+    } else {
+        return nil
+    }
+}
+
 func toSleepDelay(value: Any) -> ThetaRepositorySleepDelay? {
     if value is NSNumber, let intVal = value as? Int32 {
         return ThetaRepository.SleepDelaySec(sec: intVal)
@@ -1332,42 +1574,42 @@ func toSleepDelay(value: Any) -> ThetaRepositorySleepDelay? {
 
 func toBurstOption(params: [String: Any]) -> ThetaRepository.BurstOption {
     var burstCaptureNum: ThetaRepository.BurstCaptureNumEnum? = nil
-    if let name = params["burstCaptureNum"] as? String {
+    if let name = params[KEY_BURST_CAPTURE_NUM] as? String {
         burstCaptureNum = getEnumValue(
             values: ThetaRepository.BurstCaptureNumEnum.values(), name: name
         )
     }
 
     var burstBracketStep: ThetaRepository.BurstBracketStepEnum? = nil
-    if let name = params["burstBracketStep"] as? String {
+    if let name = params[KEY_BURST_BRACKET_STEP] as? String {
         burstBracketStep = getEnumValue(
             values: ThetaRepository.BurstBracketStepEnum.values(), name: name
         )
     }
 
     var burstCompensation: ThetaRepository.BurstCompensationEnum? = nil
-    if let name = params["burstCompensation"] as? String {
+    if let name = params[KEY_BURST_COMPENSATION] as? String {
         burstCompensation = getEnumValue(
             values: ThetaRepository.BurstCompensationEnum.values(), name: name
         )
     }
 
     var burstMaxExposureTime: ThetaRepository.BurstMaxExposureTimeEnum? = nil
-    if let name = params["burstMaxExposureTime"] as? String {
+    if let name = params[KEY_BURST_MAX_EXPOSURE_TIME] as? String {
         burstMaxExposureTime = getEnumValue(
             values: ThetaRepository.BurstMaxExposureTimeEnum.values(), name: name
         )
     }
 
     var burstEnableIsoControl: ThetaRepository.BurstEnableIsoControlEnum? = nil
-    if let name = params["burstEnableIsoControl"] as? String {
+    if let name = params[KEY_BURST_ENABLE_ISO_CONTROL] as? String {
         burstEnableIsoControl = getEnumValue(
             values: ThetaRepository.BurstEnableIsoControlEnum.values(), name: name
         )
     }
 
     var burstOrder: ThetaRepository.BurstOrderEnum? = nil
-    if let name = params["burstOrder"] as? String {
+    if let name = params[KEY_BURST_ORDER] as? String {
         burstOrder = getEnumValue(values: ThetaRepository.BurstOrderEnum.values(), name: name)
     }
 
@@ -1386,7 +1628,7 @@ func toAutoBracket(params: [[String: Any]]) -> ThetaRepository.BracketSettingLis
 
     params.forEach { map in
         let aperture = {
-            if let name = map["aperture"] as? String {
+            if let name = map[KEY_APERTURE] as? String {
                 return getEnumValue(values: ThetaRepository.ApertureEnum.values(), name: name)
             } else {
                 return nil
@@ -1394,7 +1636,7 @@ func toAutoBracket(params: [[String: Any]]) -> ThetaRepository.BracketSettingLis
         }()
 
         let colorTemperature = {
-            if let value = map["colorTemperature"] as? Int {
+            if let value = map[KEY_COLOR_TEMPERATURE] as? Int {
                 return toKotlinInt(value: value)
             } else {
                 return nil
@@ -1402,7 +1644,7 @@ func toAutoBracket(params: [[String: Any]]) -> ThetaRepository.BracketSettingLis
         }()
 
         let exposureCompensation = {
-            if let name = map["exposureCompensation"] as? String {
+            if let name = map[KEY_EXPOSURE_COMPENSATION] as? String {
                 return getEnumValue(values: ThetaRepository.ExposureCompensationEnum.values(), name: name)
             } else {
                 return nil
@@ -1410,7 +1652,7 @@ func toAutoBracket(params: [[String: Any]]) -> ThetaRepository.BracketSettingLis
         }()
 
         let exposureProgram = {
-            if let name = map["exposureProgram"] as? String {
+            if let name = map[KEY_EXPOSURE_PROGRAM] as? String {
                 return getEnumValue(values: ThetaRepository.ExposureProgramEnum.values(), name: name)
             } else {
                 return nil
@@ -1418,7 +1660,7 @@ func toAutoBracket(params: [[String: Any]]) -> ThetaRepository.BracketSettingLis
         }()
 
         let iso = {
-            if let name = map["iso"] as? String {
+            if let name = map[KEY_ISO] as? String {
                 return getEnumValue(values: ThetaRepository.IsoEnum.values(), name: name)
             } else {
                 return nil
@@ -1434,7 +1676,7 @@ func toAutoBracket(params: [[String: Any]]) -> ThetaRepository.BracketSettingLis
         }()
 
         let whiteBalance = {
-            if let name = map["whiteBalance"] as? String {
+            if let name = map[KEY_WHITE_BALANCE] as? String {
                 return getEnumValue(values: ThetaRepository.WhiteBalanceEnum.values(), name: name)
             } else {
                 return nil
@@ -1455,17 +1697,30 @@ func toAutoBracket(params: [[String: Any]]) -> ThetaRepository.BracketSettingLis
     return autoBracket
 }
 
+func toCameraLockConfig(params: [String: Any]) -> ThetaRepository.CameraLockConfig {
+    ThetaRepository.CameraLockConfig(
+        isPowerKeyLocked: toKotlinBoolean(value: params[KEY_CAMERA_LOCK_CONFIG_IS_POWER_KEY_LOCKED]),
+        isShutterKeyLocked: toKotlinBoolean(value: params[KEY_CAMERA_LOCK_CONFIG_IS_SHUTTER_KEY_LOCKED]),
+        isModeKeyLocked: toKotlinBoolean(value: params[KEY_CAMERA_LOCK_CONFIG_IS_MODE_KEY_LOCKED]),
+        isWlanKeyLocked: toKotlinBoolean(value: params[KEY_CAMERA_LOCK_CONFIG_IS_WLAN_KEY_LOCKED]),
+        isFnKeyLocked: toKotlinBoolean(value: params[KEY_CAMERA_LOCK_CONFIG_IS_FN_KEY_LOCKED]),
+        isPanelLocked: toKotlinBoolean(value: params[KEY_CAMERA_LOCK_CONFIG_IS_PANEL_LOCKED])
+    )
+}
+
 func toEthernetConfig(params: [String: Any]) -> ThetaRepository.EthernetConfig {
     var proxy: ThetaRepository.Proxy? = nil
     if let data = params[KEY_PROXY] as? [String: Any] {
         proxy = toProxy(params: data)
     }
-    
+
     return ThetaRepository.EthernetConfig(
         usingDhcp: params["usingDhcp"] as? Bool ?? true,
         ipAddress: params[KEY_IP_ADDRESS] as? String,
         subnetMask: params[KEY_SUBNET_MASK] as? String,
         defaultGateway: params[KEY_DEFAULT_GATEWAY] as? String,
+        dns1: params[KEY_DNS1] as? String,
+        dns2: params[KEY_DNS2] as? String,
         proxy: proxy
     )
 }
@@ -1486,32 +1741,32 @@ func toGpsInfo(params: [String: Any]) -> ThetaRepository.GpsInfo? {
 }
 
 func toProxy(params: [String: Any]) -> ThetaRepository.Proxy {
-    return ThetaRepository.Proxy(
-        use: params["use"] as? Bool ?? false,
-        url: params["url"] as? String,
-        port: toKotlinInt(value: params["port"]),
-        userid: params["userid"] as? String,
-        password: params["password"] as? String
+    ThetaRepository.Proxy(
+        use: params[KEY_PROXY_USE] as? Bool ?? false,
+        url: params[KEY_PROXY_URL] as? String,
+        port: toKotlinInt(value: params[KEY_PROXY_PORT]),
+        userid: params[KEY_PROXY_USER_ID] as? String,
+        password: params[KEY_PROXY_PASSWORD] as? String
     )
 }
 
 func toTimeShift(params: [String: Any]) -> ThetaRepository.TimeShiftSetting {
     var firstInterval: ThetaRepository.TimeShiftIntervalEnum? = nil
-    if let name = params["firstInterval"] as? String {
+    if let name = params[KEY_TIMESHIFT_FIRST_INTERVAL] as? String {
         firstInterval = getEnumValue(
             values: ThetaRepository.TimeShiftIntervalEnum.values(), name: name
         )
     }
 
     var secondInterval: ThetaRepository.TimeShiftIntervalEnum? = nil
-    if let name = params["secondInterval"] as? String {
+    if let name = params[KEY_TIMESHIFT_SECOND_INTERVAL] as? String {
         secondInterval = getEnumValue(
             values: ThetaRepository.TimeShiftIntervalEnum.values(), name: name
         )
     }
 
     return ThetaRepository.TimeShiftSetting(
-        isFrontFirst: toKotlinBoolean(value: params["isFrontFirst"]),
+        isFrontFirst: toKotlinBoolean(value: params[KEY_TIMESHIFT_IS_FRONT_FIRST]),
         firstInterval: firstInterval,
         secondInterval: secondInterval
     )
@@ -1530,11 +1785,11 @@ func toTopBottomCorrectionRotation(params: [String: Any]) -> ThetaRepository.Top
 }
 
 func toDigestAuth(params: [String: String?]?) -> DigestAuth? {
-    guard let params = params,
+    guard let params,
           let username = params["username"] as? String
     else { return nil }
 
-    let password = params["password"] as? String
+    let password = params[KEY_PROXY_PASSWORD] as? String
     return DigestAuth(username: username, password: password)
 }
 
@@ -1583,6 +1838,8 @@ struct SetAccessPointParams {
     let authMode: ThetaRepository.AuthModeEnum
     let password: String?
     let connectionPriority: KotlinInt?
+    let dns1: String?
+    let dns2: String?
     let proxy: ThetaRepository.Proxy?
 }
 
@@ -1597,11 +1854,14 @@ func toSetAccessPointParams(params: [String: Any?]) throws -> SetAccessPointPara
     guard
         let authModeEnum = getEnumValue(
             values: ThetaRepository.AuthModeEnum.values(), name: authMode
-        ) else {
+        )
+    else {
         throw ThetaClientError.invalidArgument(KEY_AUTH_MODE)
     }
     let password = params[KEY_PASSWORD] as? String
     let connectionPriority = toKotlinInt(value: params[KEY_CONNECTION_PRIORITY] as? Int)
+    let dns1 = params[KEY_DNS1] as? String
+    let dns2 = params[KEY_DNS2] as? String
     let proxy = params[KEY_PROXY]
     let proxyParam: ThetaRepository.Proxy? = {
         if let proxy = proxy as? [String: Any] {
@@ -1609,13 +1869,15 @@ func toSetAccessPointParams(params: [String: Any?]) throws -> SetAccessPointPara
         }
         return nil
     }()
-    
+
     return SetAccessPointParams(
         ssid: ssid,
         ssidStealth: ssidStealth,
         authMode: authModeEnum,
         password: password,
         connectionPriority: connectionPriority,
+        dns1: dns1,
+        dns2: dns2,
         proxy: proxyParam
     )
 }
@@ -1636,10 +1898,43 @@ func toSetAccessPointStaticallyParams(params: [String: Any?]) throws -> SetAcces
     guard let defaultGateway = params[KEY_DEFAULT_GATEWAY] as? String else {
         throw ThetaClientError.invalidArgument(KEY_DEFAULT_GATEWAY)
     }
-    
+
     return SetAccessPointStaticallyParams(
         ipAddress: ipAddress,
         subnetMask: subnetMask,
         defaultGateway: defaultGateway
+    )
+}
+
+func toWlanFrequencyClMode(params: [String: Any]) -> ThetaRepository.WlanFrequencyClMode? {
+    guard let enable2_4 = params[KEY_WLAN_FREQUENCY_CL_MODE_2_4] as? Bool,
+          let enable5_2 = params[KEY_WLAN_FREQUENCY_CL_MODE_5_2] as? Bool,
+          let enable5_8 = params[KEY_WLAN_FREQUENCY_CL_MODE_5_8] as? Bool
+    else { return nil }
+    return ThetaRepository.WlanFrequencyClMode(
+        enable2_4: enable2_4,
+        enable5_2: enable5_2,
+        enable5_8: enable5_8
+    )
+}
+
+func toMobileNetworkSetting(params: [String: Any]) -> ThetaRepository.MobileNetworkSetting {
+    var roaming: ThetaRepository.RoamingEnum? = nil
+    if let name = params[KEY_ROAMING] as? String {
+        roaming = getEnumValue(
+            values: ThetaRepository.RoamingEnum.values(), name: name
+        )
+    }
+
+    var plan: ThetaRepository.PlanEnum? = nil
+    if let name = params[KEY_PLAN] as? String {
+        plan = getEnumValue(
+            values: ThetaRepository.PlanEnum.values(), name: name
+        )
+    }
+
+    return ThetaRepository.MobileNetworkSetting(
+        roaming: roaming,
+        plan: plan
     )
 }

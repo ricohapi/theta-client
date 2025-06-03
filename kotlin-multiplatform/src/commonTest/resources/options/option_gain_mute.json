@@ -1,1 +1,9 @@
-{"results":{"options":{"_gain":"mute"}},"name":"camera.getOptions","state":"done"}
+{
+  "results": {
+    "options": {
+      "_gain": "mute"
+    }
+  },
+  "name": "camera.getOptions",
+  "state": "done"
+}

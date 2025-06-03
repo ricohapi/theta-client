@@ -1,1 +1,9 @@
-{"name":"camera.getOptions","results":{"options":{"_bitrate":"Fine"}},"state":"done"}
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "_bitrate": "Fine"
+    }
+  },
+  "state": "done"
+}

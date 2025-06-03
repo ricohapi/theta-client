@@ -26,6 +26,9 @@ import kotlin.reflect.KClass
  */
 class ThetaRepository internal constructor(val endpoint: String, config: Config? = null, timeout: Timeout? = null) {
 
+    /** logger */
+    internal val logger = ThetaApiLogger()
+
     /**
      * Configuration of THETA
      */
@@ -138,6 +141,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
     init {
         timeout?.let { ApiClient.timeout = it } ?: run { ApiClient.timeout = Timeout() }
+        timeout?.let { PreviewClient.timeout = it } ?: run { PreviewClient.timeout = Timeout() }
         config?.clientMode?.let { ApiClient.digestAuth = it } ?: run { ApiClient.digestAuth = null }
         initConfig = config
         ThetaApi.initOptions()
@@ -155,6 +159,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             val info = ThetaApi.callInfoApi(endpoint)
             cameraModel = ThetaModel.get(info.model, info.serialNumber)
             println("init camera model: ${cameraModel?.name}")
+            firmwareVersion = info.firmwareVersion
+            println("init camera firmware version: $firmwareVersion")
             if (checkChangedApi2(info.model, info.firmwareVersion)) {
                 val state = ThetaApi.callStateApi(endpoint)
                 if (state.state._apiVersion == 1) {
@@ -300,6 +306,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         internal set
 
     /**
+     * Camera firmware version.
+     */
+    var firmwareVersion: String? = null
+        internal set
+
+    /**
      * Support THETA model
      *
      * @param value Theta model got by [getThetaInfo]
@@ -341,7 +353,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * THETA SC2 for business, the first character of which serial number is always
          * FIRST_CHAR_OF_SERIAL_NUMBER_SC2_B.
          */
-        THETA_SC2_B("RICOH THETA SC2", FIRST_CHAR_OF_SERIAL_NUMBER_SC2_B);
+        THETA_SC2_B("RICOH THETA SC2", FIRST_CHAR_OF_SERIAL_NUMBER_SC2_B),
+
+        /**
+         * THETA A1
+         */
+        THETA_A1("RICOH360 THETA A1"),
+        ;
 
         companion object {
             /**
@@ -699,6 +717,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     enum class OptionNameEnum(val value: String, val valueType: KClass<*>) {
         /**
          * Option name
+         * _accessInfo
+         */
+        AccessInfo("_accessInfo", ThetaRepository.AccessInfo::class),
+
+        /**
+         * Option name
          * _aiAutoThumbnail
          */
         AiAutoThumbnail("_aiAutoThumbnail", AiAutoThumbnailEnum::class),
@@ -769,6 +793,18 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _cameraLock
+         */
+        CameraLock("_cameraLock", CameraLockEnum::class),
+
+        /**
+         * Option name
+         * _cameraLockConfig
+         */
+        CameraLockConfig("_cameraLockConfig", ThetaRepository.CameraLockConfig::class),
+
+        /**
+         * Option name
          * _cameraMode
          */
         CameraMode("_cameraMode", CameraModeEnum::class),
@@ -814,6 +850,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * _colorTemperatureSupport
          */
         ColorTemperatureSupport("_colorTemperatureSupport", ValueRange::class),
+
+        /**
+         * Option name
+         * _compassDirectionRef
+         */
+        CompassDirectionRef("_compassDirectionRef", CompassDirectionRefEnum::class),
 
         /**
          * Option name
@@ -980,6 +1022,18 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _microphoneNoiseReduction
+         */
+        MicrophoneNoiseReduction("_microphoneNoiseReduction", MicrophoneNoiseReductionEnum::class),
+
+        /**
+         * Option name
+         * _mobileNetworkSetting
+         */
+        MobileNetworkSetting("_mobileNetworkSetting", ThetaRepository.MobileNetworkSetting::class),
+
+        /**
+         * Option name
          * _networkType
          */
         NetworkType("_networkType", NetworkTypeEnum::class),
@@ -989,6 +1043,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * offDelay
          */
         OffDelay("offDelay", ThetaRepository.OffDelay::class),
+
+        /**
+         * Option name
+         * _offDelayUSB
+         *
+         * For RICOH THETA A1
+         */
+        OffDelayUsb("_offDelayUSB", ThetaRepository.OffDelayUsb::class),
 
         /**
          * Option name
@@ -1094,6 +1156,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          *  Option name
+         *  _usbConnection
+         */
+        UsbConnection("_usbConnection", UsbConnectionEnum::class),
+
+        /**
+         *  Option name
          *  _username
          */
         Username("_username", String::class),
@@ -1124,9 +1192,27 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _wlanAntennaConfig
+         */
+        WlanAntennaConfig("_wlanAntennaConfig", WlanAntennaConfigEnum::class),
+
+        /**
+         * Option name
          * _wlanFrequency
          */
         WlanFrequency("_wlanFrequency", WlanFrequencyEnum::class),
+
+        /**
+         * Option name
+         * _wlanFrequencySupport
+         */
+        WlanFrequencySupport("_wlanFrequencySupport", List::class),
+
+        /**
+         * Option name
+         * _wlanFrequencyCLmode
+         */
+        WlanFrequencyClMode("_wlanFrequencyCLmode", ThetaRepository.WlanFrequencyClMode::class),
     }
 
     /**
@@ -1134,6 +1220,10 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * Refer to the [options category](https://github.com/ricohapi/theta-api-specs/blob/main/theta-web-api-v2.1/options.md)
      */
     data class Options(
+        /**
+         * Connected network information.
+         */
+        var accessInfo: AccessInfo? = null,
         /**
          * AI auto thumbnail setting.
          */
@@ -1193,6 +1283,16 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Supported Camera Control Source.
          */
         var cameraControlSourceSupport: List<CameraControlSourceEnum>? = null,
+
+        /**
+         * @see CameraLockEnum
+         */
+        var cameraLock: CameraLockEnum? = null,
+
+        /**
+         * @see CameraLockConfig
+         */
+        var cameraLockConfig: CameraLockConfig? = null,
 
         /**
          * @see CameraModeEnum
@@ -1268,6 +1368,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * supported color temperature.
          */
         var colorTemperatureSupport: ValueRange<Int>? = null,
+
+        /**
+         * @see CompassDirectionRefEnum
+         */
+        var compassDirectionRef: CompassDirectionRefEnum? = null,
 
         /**
          * In-progress save interval for interval composite shooting (sec).
@@ -1452,6 +1557,16 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var maxRecordableTime: MaxRecordableTimeEnum? = null,
 
         /**
+         * @see MicrophoneNoiseReductionEnum
+         */
+        var microphoneNoiseReduction: MicrophoneNoiseReductionEnum? = null,
+
+        /**
+         * @see MobileNetworkSetting
+         */
+        var mobileNetworkSetting: MobileNetworkSetting? = null,
+
+        /**
          * Network type of the camera.
          */
         var networkType: NetworkTypeEnum? = null,
@@ -1462,6 +1577,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Specify [OffDelayEnum] or [OffDelaySec]
          */
         var offDelay: OffDelay? = null,
+
+        /**
+         * Auto power off time with USB power supply.
+         *
+         * Use in [OffDelayUsbEnum] or [OffDelayUsbSec]
+         * For RICOH THETA A1
+         */
+        var offDelayUsb: OffDelayUsb? = null,
 
         /**
          * Password used for digest authentication when _networkType is set to client mode.
@@ -1560,6 +1683,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var shutterVolume: Int? = null,
 
         /**
+         * @see UsbConnectionEnum
+         */
+        var usbConnection: UsbConnectionEnum? = null,
+
+        /**
          * User name used for digest authentication when _networkType is set to client mode.
          * Can be set by camera.setOptions during direct mode.
          */
@@ -1589,13 +1717,36 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var whiteBalanceAutoStrength: WhiteBalanceAutoStrengthEnum? = null,
 
         /**
+         * @see WlanAntennaConfigEnum
+         */
+        var wlanAntennaConfig: WlanAntennaConfigEnum? = null,
+
+        /**
          * Wireless LAN frequency of the camera
          *
          * For RICOH THETA X, Z1 and V.
          */
         var wlanFrequency: WlanFrequencyEnum? = null,
+
+        /**
+         * Supported WlanFrequency
+         *
+         * For RICOH THETA X, Z1 and V.
+         */
+        var wlanFrequencySupport: List<WlanFrequencyEnum>? = null,
+
+        /**
+         * Whether the camera's WLAN CL mode uses 2.4 GHz, 5.2 GHz, or 5.8 GHz frequencies
+         *
+         * Can be set and retrieved when in AP mode.
+         * Can be retrieved when in CL mode.
+         *
+         * For RICOH THETA A1
+         */
+        var wlanFrequencyClMode: WlanFrequencyClMode? = null,
     ) {
         constructor() : this(
+            accessInfo = null,
             aiAutoThumbnail = null,
             aiAutoThumbnailSupport = null,
             aperture = null,
@@ -1608,6 +1759,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             burstOption = null,
             cameraControlSource = null,
             cameraControlSourceSupport = null,
+            cameraLock = null,
+            cameraLockConfig = null,
             cameraMode = null,
             cameraPower = null,
             cameraPowerSupport = null,
@@ -1616,6 +1769,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             captureNumber = null,
             colorTemperature = null,
             colorTemperatureSupport = null,
+            compassDirectionRef = null,
             compositeShootingOutputInterval = null,
             compositeShootingOutputIntervalSupport = null,
             compositeShootingTime = null,
@@ -1641,8 +1795,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             language = null,
             latestEnabledExposureDelayTime = null,
             maxRecordableTime = null,
+            microphoneNoiseReduction = null,
+            mobileNetworkSetting = null,
             networkType = null,
             offDelay = null,
+            offDelayUsb = null,
             password = null,
             powerSaving = null,
             preset = null,
@@ -1660,15 +1817,20 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             topBottomCorrectionRotation = null,
             topBottomCorrectionRotationSupport = null,
             totalSpace = null,
+            usbConnection = null,
             username = null,
             videoStitching = null,
             visibilityReduction = null,
             whiteBalance = null,
             whiteBalanceAutoStrength = null,
+            wlanAntennaConfig = null,
             wlanFrequency = null,
+            wlanFrequencySupport = null,
+            wlanFrequencyClMode = null,
         )
 
         internal constructor(options: com.ricoh360.thetaclient.transferred.Options) : this(
+            accessInfo = options._accessInfo?.let { AccessInfo(it) },
             aiAutoThumbnail = options._aiAutoThumbnail?.let { AiAutoThumbnailEnum.get(it) },
             aiAutoThumbnailSupport = options._aiAutoThumbnailSupport?.map { AiAutoThumbnailEnum.get(it) },
             aperture = options.aperture?.let { ApertureEnum.get(it) },
@@ -1681,6 +1843,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             burstOption = options._burstOption?.let { BurstOption(it) },
             cameraControlSource = options._cameraControlSource?.let { CameraControlSourceEnum.get(it) },
             cameraControlSourceSupport = options._cameraControlSourceSupport?.map { CameraControlSourceEnum.get(it) },
+            cameraLock = options._cameraLock?.let { CameraLockEnum.get(it) },
+            cameraLockConfig = options._cameraLockConfig?.let { CameraLockConfig(it) },
             cameraMode = options._cameraMode?.let { CameraModeEnum.get(it) },
             cameraPower = options._cameraPower?.let { CameraPowerEnum.get(it) },
             cameraPowerSupport = options._cameraPowerSupport?.map { CameraPowerEnum.get(it) },
@@ -1689,6 +1853,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             captureNumber = options.captureNumber,
             colorTemperature = options._colorTemperature,
             colorTemperatureSupport = options._colorTemperatureSupport?.let { ValueRange<Int>(it) },
+            compassDirectionRef = options._compassDirectionRef?.let { CompassDirectionRefEnum.get(it) },
             compositeShootingOutputInterval = options._compositeShootingOutputInterval,
             compositeShootingOutputIntervalSupport = options._compositeShootingOutputIntervalSupport?.let { ValueRange<Int>(it) },
             compositeShootingTime = options._compositeShootingTime,
@@ -1718,8 +1883,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             language = options._language?.let { LanguageEnum.get(it) },
             latestEnabledExposureDelayTime = options._latestEnabledExposureDelayTime?.let { ExposureDelayEnum.get(it) },
             maxRecordableTime = options._maxRecordableTime?.let { MaxRecordableTimeEnum.get(it) },
+            microphoneNoiseReduction = options._microphoneNoiseReduction?.let { MicrophoneNoiseReductionEnum.get(it) },
+            mobileNetworkSetting = options._mobileNetworkSetting?.let { MobileNetworkSetting(it) },
             networkType = options._networkType?.let { NetworkTypeEnum.get(it) },
             offDelay = options.offDelay?.let { OffDelayEnum.get(it) },
+            offDelayUsb = options._offDelayUSB?.let { OffDelayUsbEnum.get(it) },
             password = options._password,
             powerSaving = options._powerSaving?.let { PowerSavingEnum.get(it) },
             preset = options._preset?.let { PresetEnum.get(it) },
@@ -1737,12 +1905,16 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             topBottomCorrectionRotationSupport = options._topBottomCorrectionRotationSupport?.let { TopBottomCorrectionRotationSupport(it) },
             totalSpace = options.totalSpace,
             shutterVolume = options._shutterVolume,
+            usbConnection = options._usbConnection?.let { UsbConnectionEnum.get(it) },
             username = options._username,
             videoStitching = options.videoStitching?.let { VideoStitchingEnum.get(it) },
             visibilityReduction = options._visibilityReduction?.let { VisibilityReductionEnum.get(it) },
             whiteBalance = options.whiteBalance?.let { WhiteBalanceEnum.get(it) },
             whiteBalanceAutoStrength = options._whiteBalanceAutoStrength?.let { WhiteBalanceAutoStrengthEnum.get(it) },
+            wlanAntennaConfig = options._wlanAntennaConfig?.let { WlanAntennaConfigEnum.get(it) },
             wlanFrequency = options._wlanFrequency?.let { WlanFrequencyEnum.get(it) },
+            wlanFrequencySupport = options._wlanFrequencySupport?.map { WlanFrequencyEnum.get(it) },
+            wlanFrequencyClMode = options._wlanFrequencyCLmode?.let { WlanFrequencyClMode(it) },
         )
 
         /**
@@ -1751,6 +1923,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          */
         internal fun toOptions(): com.ricoh360.thetaclient.transferred.Options {
             return Options(
+                _accessInfo = accessInfo?.toTransferredAccessInfo(),
                 _aiAutoThumbnail = aiAutoThumbnail?.value,
                 _aiAutoThumbnailSupport = aiAutoThumbnailSupport?.map { it.value },
                 aperture = aperture?.value,
@@ -1762,12 +1935,15 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _burstOption = burstOption?.toTransferredBurstOption(),
                 _cameraControlSource = cameraControlSource?.value,
                 _cameraControlSourceSupport = cameraControlSourceSupport?.map { it.value },
+                _cameraLock = cameraLock?.value,
+                _cameraLockConfig = cameraLockConfig?.toTransferredCameraLockConfig(),
                 _cameraMode = cameraMode?.value,
                 _cameraPower = cameraPower?.value,
                 captureInterval = captureInterval,
                 captureMode = captureMode?.value,
                 captureNumber = captureNumber,
                 _colorTemperature = colorTemperature,
+                _compassDirectionRef = compassDirectionRef?.value,
                 _compositeShootingOutputInterval = compositeShootingOutputInterval,
                 _compositeShootingTime = compositeShootingTime,
                 continuousNumber = continuousNumber?.value,
@@ -1789,8 +1965,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _language = language?.value,
                 _latestEnabledExposureDelayTime = latestEnabledExposureDelayTime?.sec,
                 _maxRecordableTime = maxRecordableTime?.sec,
+                _microphoneNoiseReduction = microphoneNoiseReduction?.value,
+                _mobileNetworkSetting = mobileNetworkSetting?.toTransferredMobileNetworkSetting(),
                 _networkType = networkType?.value,
                 offDelay = offDelay?.sec,
+                _offDelayUSB = offDelayUsb?.sec,
                 _password = password,
                 _powerSaving = powerSaving?.value,
                 _preset = preset?.value,
@@ -1807,12 +1986,16 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _shootingMethod = shootingMethod?.value,
                 shutterSpeed = shutterSpeed?.value,
                 _shutterVolume = shutterVolume,
+                _usbConnection = usbConnection?.value,
                 _username = username,
                 videoStitching = videoStitching?.value,
                 _visibilityReduction = visibilityReduction?.value,
                 whiteBalance = whiteBalance?.value,
                 _whiteBalanceAutoStrength = whiteBalanceAutoStrength?.value,
+                _wlanAntennaConfig = wlanAntennaConfig?.value,
                 _wlanFrequency = wlanFrequency?.value,
+                _wlanFrequencySupport = wlanFrequencySupport?.map { it.value },
+                _wlanFrequencyCLmode = wlanFrequencyClMode?.toTransferred(),
             )
         }
 
@@ -1828,6 +2011,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         fun <T> getValue(name: OptionNameEnum): T? {
             @Suppress("UNCHECKED_CAST")
             return when (name) {
+                OptionNameEnum.AccessInfo -> accessInfo
                 OptionNameEnum.AiAutoThumbnail -> aiAutoThumbnail
                 OptionNameEnum.AiAutoThumbnailSupport -> aiAutoThumbnailSupport
                 OptionNameEnum.Aperture -> aperture
@@ -1843,6 +2027,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.CameraMode -> cameraMode
                 OptionNameEnum.CameraPower -> cameraPower
                 OptionNameEnum.CameraPowerSupport -> cameraPowerSupport
+                OptionNameEnum.CameraLock -> cameraLock
+                OptionNameEnum.CameraLockConfig -> cameraLockConfig
+                OptionNameEnum.CameraMode -> cameraMode
+                OptionNameEnum.CameraPower -> cameraPower
+                OptionNameEnum.CompassDirectionRef -> compassDirectionRef
                 OptionNameEnum.CaptureInterval -> captureInterval
                 OptionNameEnum.CaptureMode -> captureMode
                 OptionNameEnum.CaptureNumber -> captureNumber
@@ -1873,8 +2062,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.Language -> language
                 OptionNameEnum.LatestEnabledExposureDelayTime -> latestEnabledExposureDelayTime
                 OptionNameEnum.MaxRecordableTime -> maxRecordableTime
+                OptionNameEnum.MicrophoneNoiseReduction -> microphoneNoiseReduction
+                OptionNameEnum.MobileNetworkSetting -> mobileNetworkSetting
                 OptionNameEnum.NetworkType -> networkType
                 OptionNameEnum.OffDelay -> offDelay
+                OptionNameEnum.OffDelayUsb -> offDelayUsb
                 OptionNameEnum.Password -> password
                 OptionNameEnum.PowerSaving -> powerSaving
                 OptionNameEnum.Preset -> preset
@@ -1892,12 +2084,16 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.TopBottomCorrectionRotation -> topBottomCorrectionRotation
                 OptionNameEnum.TopBottomCorrectionRotationSupport -> topBottomCorrectionRotationSupport
                 OptionNameEnum.TotalSpace -> totalSpace
+                OptionNameEnum.UsbConnection -> usbConnection
                 OptionNameEnum.Username -> username
                 OptionNameEnum.VideoStitching -> videoStitching
                 OptionNameEnum.VisibilityReduction -> visibilityReduction
                 OptionNameEnum.WhiteBalance -> whiteBalance
                 OptionNameEnum.WhiteBalanceAutoStrength -> whiteBalanceAutoStrength
+                OptionNameEnum.WlanAntennaConfig -> wlanAntennaConfig
                 OptionNameEnum.WlanFrequency -> wlanFrequency
+                OptionNameEnum.WlanFrequencySupport -> wlanFrequencySupport
+                OptionNameEnum.WlanFrequencyClMode -> wlanFrequencyClMode
             } as T
         }
 
@@ -1914,6 +2110,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 throw ThetaWebApiException("Invalid value type")
             }
             when (name) {
+                OptionNameEnum.AccessInfo -> accessInfo = value as AccessInfo
                 OptionNameEnum.AiAutoThumbnail -> aiAutoThumbnail = value as AiAutoThumbnailEnum
                 OptionNameEnum.AiAutoThumbnailSupport -> aiAutoThumbnailSupport = value as List<AiAutoThumbnailEnum>
                 OptionNameEnum.Aperture -> aperture = value as ApertureEnum
@@ -1929,6 +2126,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.CameraMode -> cameraMode = value as CameraModeEnum
                 OptionNameEnum.CameraPower -> cameraPower = value as CameraPowerEnum
                 OptionNameEnum.CameraPowerSupport -> cameraPowerSupport = value as List<CameraPowerEnum>
+                OptionNameEnum.CameraLock -> cameraLock = value as CameraLockEnum
+                OptionNameEnum.CameraLockConfig -> cameraLockConfig = value as CameraLockConfig
+                OptionNameEnum.CameraMode -> cameraMode = value as CameraModeEnum
+                OptionNameEnum.CameraPower -> cameraPower = value as CameraPowerEnum
+                OptionNameEnum.CompassDirectionRef -> compassDirectionRef = value as CompassDirectionRefEnum
                 OptionNameEnum.CaptureInterval -> captureInterval = value as Int
                 OptionNameEnum.CaptureMode -> captureMode = value as CaptureModeEnum
                 OptionNameEnum.CaptureNumber -> captureNumber = value as Int
@@ -1959,8 +2161,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.Language -> language = value as LanguageEnum
                 OptionNameEnum.LatestEnabledExposureDelayTime -> latestEnabledExposureDelayTime = value as ExposureDelayEnum
                 OptionNameEnum.MaxRecordableTime -> maxRecordableTime = value as MaxRecordableTimeEnum
+                OptionNameEnum.MicrophoneNoiseReduction -> microphoneNoiseReduction = value as MicrophoneNoiseReductionEnum
+                OptionNameEnum.MobileNetworkSetting -> mobileNetworkSetting = value as MobileNetworkSetting
                 OptionNameEnum.NetworkType -> networkType = value as NetworkTypeEnum
                 OptionNameEnum.OffDelay -> offDelay = value as OffDelay
+                OptionNameEnum.OffDelayUsb -> offDelayUsb = value as OffDelayUsb
                 OptionNameEnum.Password -> password = value as String
                 OptionNameEnum.PowerSaving -> powerSaving = value as PowerSavingEnum
                 OptionNameEnum.Preset -> preset = value as PresetEnum
@@ -1978,12 +2183,16 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.TopBottomCorrectionRotation -> topBottomCorrectionRotation = value as TopBottomCorrectionRotation
                 OptionNameEnum.TopBottomCorrectionRotationSupport -> topBottomCorrectionRotationSupport = value as TopBottomCorrectionRotationSupport
                 OptionNameEnum.TotalSpace -> totalSpace = value as Long
+                OptionNameEnum.UsbConnection -> usbConnection = value as UsbConnectionEnum
                 OptionNameEnum.Username -> username = value as String
                 OptionNameEnum.VideoStitching -> videoStitching = value as VideoStitchingEnum
                 OptionNameEnum.VisibilityReduction -> visibilityReduction = value as VisibilityReductionEnum
                 OptionNameEnum.WhiteBalance -> whiteBalance = value as WhiteBalanceEnum
                 OptionNameEnum.WhiteBalanceAutoStrength -> whiteBalanceAutoStrength = value as WhiteBalanceAutoStrengthEnum
+                OptionNameEnum.WlanAntennaConfig -> wlanAntennaConfig = value as WlanAntennaConfigEnum
                 OptionNameEnum.WlanFrequency -> wlanFrequency = value as WlanFrequencyEnum
+                OptionNameEnum.WlanFrequencySupport -> wlanFrequencySupport = value as List<WlanFrequencyEnum>
+                OptionNameEnum.WlanFrequencyClMode -> wlanFrequencyClMode = value as WlanFrequencyClMode
             }
         }
     }
@@ -2768,6 +2977,110 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Camera Lock Config
+     *
+     * - It is possible to enable/disable the function for each HW key.
+     * - It is possible to enable/disable the operation of the panel.
+     * - When all supported buttons/components are in the "unlock" state, it will be the same as the normal setting.
+     * - For THETA models, if there are no wlanKey, fnKey, or panel, it will return "lock". If there are no supported buttons/components, setting to "unlock" or "lock" will not return an error and will not perform any action.
+     */
+    data class CameraLockConfig(
+        /**
+         * power key locked or unlocked.
+         */
+        val isPowerKeyLocked: Boolean? = null,
+
+        /**
+         * Shutter key locked or unlocked.
+         */
+        val isShutterKeyLocked: Boolean? = null,
+
+        /**
+         * mode key locked or unlocked.
+         */
+        val isModeKeyLocked: Boolean? = null,
+
+        /**
+         * wlan key locked or unlocked.
+         */
+        val isWlanKeyLocked: Boolean? = null,
+
+        /**
+         * fn key locked or unlocked.
+         */
+        val isFnKeyLocked: Boolean? = null,
+
+        /**
+         * panel locked or unlocked.
+         * Fixed to true. Does not cause an error when false, but it is not reflected either.
+         */
+        val isPanelLocked: Boolean? = null,
+    ) {
+        internal constructor(config: com.ricoh360.thetaclient.transferred.CameraLockConfig) : this(
+            isPowerKeyLocked = config.powerKey?.isLocked,
+            isShutterKeyLocked = config.shutterKey?.isLocked,
+            isModeKeyLocked = config.modeKey?.isLocked,
+            isWlanKeyLocked = config.wlanKey?.isLocked,
+            isFnKeyLocked = config.fnKey?.isLocked,
+            isPanelLocked = config.panel?.isLocked,
+        )
+
+        /**
+         * Convert CameraLockConfig to transferred.CameraLockConfig
+         *
+         * @return transferred.CameraLockConfig
+         */
+        internal fun toTransferredCameraLockConfig(): com.ricoh360.thetaclient.transferred.CameraLockConfig {
+            return CameraLockConfig(
+                powerKey = CameraLockType.from(isPowerKeyLocked),
+                shutterKey = CameraLockType.from(isShutterKeyLocked),
+                modeKey = CameraLockType.from(isModeKeyLocked),
+                wlanKey = CameraLockType.from(isWlanKeyLocked),
+                fnKey = CameraLockType.from(isFnKeyLocked),
+                panel = CameraLockType.from(isPanelLocked),
+            )
+        }
+    }
+
+    /**
+     * Control camera lock/unlock
+     */
+    enum class CameraLockEnum(internal val value: CameraLock) {
+        /**
+         * Undefined value
+         */
+        UNKNOWN(CameraLock.UNKNOWN),
+
+        /**
+         * Camera is unlocked
+         */
+        UNLOCK(CameraLock.UNLOCK),
+
+        /**
+         * Camera basic lock state
+         * (Mode button, WLAN button, and Fn button presses are inhibited)
+         */
+        BASIC_LOCK(CameraLock.BASIC_LOCK),
+
+        /**
+         * Lock according to the parameters set in _cameraLockConfig.
+         */
+        CUSTOM_LOCK(CameraLock.CUSTOM_LOCK);
+
+        companion object {
+            /**
+             * Convert CameraLock to CameraLockEnum
+             *
+             * @param value CameraLock.
+             * @return CameraLockEnum
+             */
+            internal fun get(value: CameraLock): CameraLockEnum? {
+                return entries.firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
      * Camera mode.
      * The current setting can be acquired by camera.getOptions, and it can be changed by camera.setOptions.
      *
@@ -2808,6 +3121,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Camera power state.
      * _cameraPower is the power status of camera.
      *
      * For RICOH THETA X v2.61.0 or later
@@ -2827,6 +3141,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Power OFF
          */
         OFF(CameraPower.OFF),
+
+        /**
+         * Sleep
+         */
+        SLEEP(CameraPower.SLEEP),
 
         /**
          * Power on, power saving mode. Camera is closed.
@@ -2897,6 +3216,45 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              */
             internal fun get(value: CaptureMode): CaptureModeEnum? {
                 return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * _compassDirectionRef
+     */
+    enum class CompassDirectionRefEnum(internal val value: CompassDirectionRef) {
+        /**
+         * Undefined value
+         */
+        UNKNOWN(CompassDirectionRef.UNKNOWN),
+
+        /**
+         * If GPS positioning is available, record in true north;
+         * if GPS is off or not available, record in magnetic north.
+         */
+        AUTO(CompassDirectionRef.AUTO),
+
+        /**
+         * If the azimuth is set to true north, GPS is turned off, or positioning is not possible,
+         * the azimuth information is not recorded (positioning information is required for conversion).
+         */
+        TRUE_NORTH(CompassDirectionRef.TRUE_NORTH),
+
+        /**
+         * Do not set azimuth to true north, set azimuth to magnetic north
+         */
+        MAGNETIC(CompassDirectionRef.MAGNETIC);
+
+        companion object {
+            /**
+             * Convert CompassDirectionRef to CompassDirectionRefEnum
+             *
+             * @param value CompassDirectionRef.
+             * @return CompassDirectionRefEnum
+             */
+            internal fun get(value: CompassDirectionRef): CompassDirectionRefEnum? {
+                return entries.firstOrNull { it.value == value }
             }
         }
     }
@@ -3052,18 +3410,33 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         val usingDhcp: Boolean,
         /**
          * (optional) IPv4 for IP address
+         * Do not specify this property when usingDhcp is true.
          */
         val ipAddress: String? = null,
 
         /**
          * (optional) IPv4 for subnet mask
+         * Do not specify this property when usingDhcp is true.
          */
         val subnetMask: String? = null,
 
         /**
          * (optional) IPv4 for default gateway
+         * Do not specify this property when usingDhcp is true.
          */
         val defaultGateway: String? = null,
+
+        /**
+         * (optional) IPv4 for Primary DNS server
+         * Do not specify this property when usingDhcp is true.
+         */
+        var dns1: String? = null,
+
+        /**
+         * (optional) IPv4 for Secondary DNS server
+         * Do not specify this property when usingDhcp is true.
+         */
+        var dns2: String? = null,
 
         /**
          * (optional) refer to _proxy for detail
@@ -3082,6 +3455,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             ipAddress = config.ipAddress,
             subnetMask = config.subnetMask,
             defaultGateway = config.defaultGateway,
+            dns1 = config.dns1,
+            dns2 = config.dns2,
             proxy = config._proxy?.let { Proxy(info = it) },
         )
 
@@ -3100,6 +3475,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 ipAddress = ipAddress,
                 subnetMask = subnetMask,
                 defaultGateway = defaultGateway,
+                dns1 = dns1,
+                dns2 = dns2,
                 _proxy = proxy?.toTransferredProxy()
             )
         }
@@ -3108,7 +3485,54 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Exposure compensation (EV).
      */
-    enum class ExposureCompensationEnum(val value: Float) {
+    enum class ExposureCompensationEnum(val value: Float?) {
+        /**
+         * Undefined value
+         */
+        UNKNOWN(null),
+
+        /**
+         * Exposure compensation -4.0
+         *
+         * For RICOH THETA A1
+         */
+        M4_0(-4.0f),
+
+        /**
+         * Exposure compensation -3.7
+         *
+         * For RICOH THETA A1
+         */
+        M3_7(-3.7f),
+
+        /**
+         * Exposure compensation -3.3
+         *
+         * For RICOH THETA A1
+         */
+        M3_3(-3.3f),
+
+        /**
+         * Exposure compensation -3.0
+         *
+         * For RICOH THETA A1
+         */
+        M3_0(-3.0f),
+
+        /**
+         * Exposure compensation -2.7
+         *
+         * For RICOH THETA A1
+         */
+        M2_7(-2.7f),
+
+        /**
+         * Exposure compensation -2.3
+         *
+         * For RICOH THETA A1
+         */
+        M2_3(-2.3f),
+
         /**
          * Exposure compensation -2.0
          */
@@ -3172,7 +3596,49 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         /**
          * Exposure compensation 2.0
          */
-        P2_0(2.0f);
+        P2_0(2.0f),
+
+        /**
+         * Exposure compensation 2.3
+         *
+         * For RICOH THETA A1
+         */
+        P2_3(2.3f),
+
+        /**
+         * Exposure compensation 2.7
+         *
+         * For RICOH THETA A1
+         */
+        P2_7(2.7f),
+
+        /**
+         * Exposure compensation 3.0
+         *
+         * For RICOH THETA A1
+         */
+        P3_0(3.0f),
+
+        /**
+         * Exposure compensation 3.3
+         *
+         * For RICOH THETA A1
+         */
+        P3_3(3.3f),
+
+        /**
+         * Exposure compensation 3.7
+         *
+         * For RICOH THETA A1
+         */
+        P3_7(3.7f),
+
+        /**
+         * Exposure compensation 4.0
+         *
+         * For RICOH THETA A1
+         */
+        P4_0(4.0f);
 
         companion object {
             /**
@@ -3181,8 +3647,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value Exposure compensation value.
              * @return ExposureCompensationEnum
              */
-            fun get(value: Float): ExposureCompensationEnum? {
-                return values().firstOrNull { it.value == value }
+            fun get(value: Float?): ExposureCompensationEnum {
+                return entries.firstOrNull { it.value == value } ?: UNKNOWN
             }
         }
     }
@@ -3525,7 +3991,19 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         VIDEO_4K_NO_CODEC(FileFormatTypeEnum.MP4, 3840, 1920, null, null),
 
         /**
-         * Video File format.
+         * Streaming format.
+         *
+         * type: mp4
+         * size: 1920 x 960
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 15
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_2K_15F(FileFormatTypeEnum.MP4, 1920, 960, "H.264/MPEG-4 AVC", 15),
+
+        /**
+         * Video File / Streaming format.
          *
          * type: mp4
          * size: 1920 x 960
@@ -3670,6 +4148,30 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * type: mp4
          * size: 3840 x 1920
          * codec: H.264/MPEG-4 AVC
+         * frame rate: 2
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_4K_2F(FileFormatTypeEnum.MP4, 3840, 1920, "H.264/MPEG-4 AVC", 2),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 3840 x 1920
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 5
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_4K_5F(FileFormatTypeEnum.MP4, 3840, 1920, "H.264/MPEG-4 AVC", 5),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 3840 x 1920
+         * codec: H.264/MPEG-4 AVC
          * frame rate: 10
          *
          * For RICOH THETA X or later
@@ -3677,7 +4179,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         VIDEO_4K_10F(FileFormatTypeEnum.MP4, 3840, 1920, "H.264/MPEG-4 AVC", 10),
 
         /**
-         * Video File format.
+         * Video File / Streaming format.
          *
          * type: mp4
          * size: 3840 x 1920
@@ -3689,7 +4191,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         VIDEO_4K_15F(FileFormatTypeEnum.MP4, 3840, 1920, "H.264/MPEG-4 AVC", 15),
 
         /**
-         * Video File format.
+         * Video File / Streaming format.
          *
          * type: mp4
          * size: 3840 x 1920
@@ -3807,6 +4309,138 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * For RICOH THETA X or later
          */
         VIDEO_7K_10F(FileFormatTypeEnum.MP4, 7680, 3840, "H.264/MPEG-4 AVC", 10),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 1920 x 960
+         * codec: H.265/HEVC
+         * frame rate: 30
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_2K_30F_H265_HEVC(FileFormatTypeEnum.MP4, 1920, 960, "H.265/HEVC", 30),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 3840 x 1920
+         * codec: H.265/HEVC
+         * frame rate: 2
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_4K_2F_H265_HEVC(FileFormatTypeEnum.MP4, 3840, 1920, "H.265/HEVC", 2),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 3840 x 1920
+         * codec: H.265/HEVC
+         * frame rate: 5
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_4K_5F_H265_HEVC(FileFormatTypeEnum.MP4, 3840, 1920, "H.265/HEVC", 5),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 3840 x 1920
+         * codec: H.265/HEVC
+         * frame rate: 10
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_4K_10F_H265_HEVC(FileFormatTypeEnum.MP4, 3840, 1920, "H.265/HEVC", 10),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 3840 x 1920
+         * codec: H.265/HEVC
+         * frame rate: 30
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_4K_30F_H265_HEVC(FileFormatTypeEnum.MP4, 3840, 1920, "H.265/HEVC", 30),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 5760 x 2880
+         * codec: H.265/HEVC
+         * frame rate: 2
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_5_7K_2F_H265_HEVC(FileFormatTypeEnum.MP4, 5760, 2880, "H.265/HEVC", 2),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 5760 x 2880
+         * codec: H.265/HEVC
+         * frame rate: 5
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_5_7K_5F_H265_HEVC(FileFormatTypeEnum.MP4, 5760, 2880, "H.265/HEVC", 5),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 5760 x 2880
+         * codec: H.265/HEVC
+         * frame rate: 10
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_5_7K_10F_H265_HEVC(FileFormatTypeEnum.MP4, 5760, 2880, "H.265/HEVC", 10),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 7680 x 3840
+         * codec: H.265/HEVC
+         * frame rate: 2
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_7K_2F_H265_HEVC(FileFormatTypeEnum.MP4, 7680, 3840, "H.265/HEVC", 2),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 7680 x 3840
+         * codec: H.265/HEVC
+         * frame rate: 5
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_7K_5F_H265_HEVC(FileFormatTypeEnum.MP4, 7680, 3840, "H.265/HEVC", 5),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 7680 x 3840
+         * codec: H.265/HEVC
+         * frame rate: 10
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_7K_10F_H265_HEVC(FileFormatTypeEnum.MP4, 7680, 3840, "H.265/HEVC", 10),
 
         /**
          * Just used by getMySetting/setMySetting command
@@ -4003,6 +4637,18 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * type: mp4
          * size: 1920 x 960
          * codec: H.264/MPEG-4 AVC
+         * frame rate: 15
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_2K_15F(FileFormatEnum.VIDEO_2K_15F),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 1920 x 960
+         * codec: H.264/MPEG-4 AVC
          * frame rate: 30
          *
          * For RICOH THETA X or later
@@ -4136,6 +4782,30 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * and _1 is back lens. This mode does not record audio track to MP4 file.
          */
         VIDEO_3_6K_2F(FileFormatEnum.VIDEO_3_6K_2F),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 3840 x 1920
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 2
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_4K_2F(FileFormatEnum.VIDEO_4K_2F),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 3840 x 1920
+         * codec: H.264/MPEG-4 AVC
+         * frame rate: 5
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_4K_5F(FileFormatEnum.VIDEO_4K_5F),
 
         /**
          * Video File format.
@@ -4279,7 +4949,140 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          *
          * For RICOH THETA X or later
          */
-        VIDEO_7K_10F(FileFormatEnum.VIDEO_7K_10F);
+        VIDEO_7K_10F(FileFormatEnum.VIDEO_7K_10F),
+
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 1920 x 960
+         * codec: H.265/HEVC
+         * frame rate: 30
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_2K_30F_H265_HEVC(FileFormatEnum.VIDEO_2K_30F_H265_HEVC),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 3840 x 1920
+         * codec: H.265/HEVC
+         * frame rate: 2
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_4K_2F_H265_HEVC(FileFormatEnum.VIDEO_4K_2F_H265_HEVC),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 3840 x 1920
+         * codec: H.265/HEVC
+         * frame rate: 5
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_4K_5F_H265_HEVC(FileFormatEnum.VIDEO_4K_5F_H265_HEVC),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 3840 x 1920
+         * codec: H.265/HEVC
+         * frame rate: 10
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_4K_10F_H265_HEVC(FileFormatEnum.VIDEO_4K_10F_H265_HEVC),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 3840 x 1920
+         * codec: H.265/HEVC
+         * frame rate: 30
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_4K_30F_H265_HEVC(FileFormatEnum.VIDEO_4K_30F_H265_HEVC),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 5760 x 2880
+         * codec: H.265/HEVC
+         * frame rate: 2
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_5_7K_2F_H265_HEVC(FileFormatEnum.VIDEO_5_7K_2F_H265_HEVC),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 5760 x 2880
+         * codec: H.265/HEVC
+         * frame rate: 5
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_5_7K_5F_H265_HEVC(FileFormatEnum.VIDEO_5_7K_5F_H265_HEVC),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 5760 x 2880
+         * codec: H.265/HEVC
+         * frame rate: 10
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_5_7K_10F_H265_HEVC(FileFormatEnum.VIDEO_5_7K_10F_H265_HEVC),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 7680 x 3840
+         * codec: H.265/HEVC
+         * frame rate: 2
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_7K_2F_H265_HEVC(FileFormatEnum.VIDEO_7K_2F_H265_HEVC),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 7680 x 3840
+         * codec: H.265/HEVC
+         * frame rate: 5
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_7K_5F_H265_HEVC(FileFormatEnum.VIDEO_7K_5F_H265_HEVC),
+
+        /**
+         * Video File format.
+         *
+         * type: mp4
+         * size: 7680 x 3840
+         * codec: H.265/HEVC
+         * frame rate: 10
+         *
+         * For RICOH THETA A1
+         */
+        VIDEO_7K_10F_H265_HEVC(FileFormatEnum.VIDEO_7K_10F_H265_HEVC);
 
         companion object {
             /**
@@ -5041,9 +5844,144 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Built-in microphone noise reduction.
+     *
+     * 1) Video: Ignore changes during recording
+     * 2) Live Streaming: Ignore changes during delivery
+     */
+    enum class MicrophoneNoiseReductionEnum(internal val value: MicrophoneNoiseReduction) {
+        /**
+         * Undefined value
+         */
+        UNKNOWN(MicrophoneNoiseReduction.UNKNOWN),
+
+        /**
+         * ON
+         */
+        ON(MicrophoneNoiseReduction.ON),
+
+        /**
+         * OFF
+         */
+        OFF(MicrophoneNoiseReduction.OFF);
+
+        companion object {
+            /**
+             * Convert MicrophoneNoiseReduction to MicrophoneNoiseReductionEnum
+             *
+             * @param value MicrophoneNoiseReduction.
+             * @return MicrophoneNoiseReductionEnum
+             */
+            internal fun get(value: MicrophoneNoiseReduction): MicrophoneNoiseReductionEnum? {
+                return entries.firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Mobile Network Settings
+     */
+    data class MobileNetworkSetting(
+        /**
+         * roaming
+         */
+        val roaming: RoamingEnum?,
+        /**
+         * plan
+         */
+        val plan: PlanEnum?,
+    ) {
+        internal constructor(setting: com.ricoh360.thetaclient.transferred.MobileNetworkSetting) : this(
+            roaming = setting.roaming?.let { RoamingEnum.get(value = it) },
+            plan = setting.plan?.let { PlanEnum.get(value = it) }
+        )
+
+        /**
+         * Convert MobileNetworkSetting to transferred.MobileNetworkSetting
+         *
+         * @return transferred.MobileNetworkSetting
+         */
+        internal fun toTransferredMobileNetworkSetting(): com.ricoh360.thetaclient.transferred.MobileNetworkSetting {
+            return MobileNetworkSetting(
+                roaming = roaming?.value,
+                plan = plan?.value
+            )
+        }
+    }
+
+    /**
+     * Roaming of MobileNetworkSetting
+     */
+    enum class RoamingEnum(internal val value: Roaming) {
+        /**
+         * Undefined value
+         */
+        UNKNOWN(Roaming.UNKNOWN),
+
+        /**
+         * OFF
+         */
+        OFF(Roaming.OFF),
+
+        /**
+         * ON
+         */
+        ON(Roaming.ON);
+
+        companion object {
+            /**
+             * Convert Roaming to RoamingEnum
+             *
+             * @param value Roaming.
+             * @return RoamingEnum
+             */
+            internal fun get(value: Roaming): RoamingEnum? {
+                return entries.firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Plan of MobileNetworkSetting
+     */
+    enum class PlanEnum(internal val value: Plan) {
+        /**
+         * Undefined value
+         */
+        UNKNOWN(Plan.UNKNOWN),
+
+        /**
+         * Communicate with APN settings for plan-D
+         */
+        SORACOM(Plan.SORACOM),
+
+        /**
+         * Communicate with APN settings for plan-DU
+         */
+        SORACOM_PLAN_DU(Plan.SORACOM_PLAN_DU);
+
+        companion object {
+            /**
+             * Convert Plan to PlanEnum
+             *
+             * @param value Plan.
+             * @return PlanEnum
+             */
+            internal fun get(value: Plan): PlanEnum? {
+                return entries.firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
      * Network type supported by Theta V, Z1 and X.
      */
     enum class NetworkTypeEnum(internal val value: NetworkType) {
+        /**
+         * Undefined value
+         */
+        UNKNOWN(NetworkType.UNKNOWN),
+
         /**
          * Direct mode
          */
@@ -5062,7 +6000,56 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         /**
          * Network is off. This value can be gotten only by plugin
          */
-        OFF(NetworkType.OFF);
+        OFF(NetworkType.OFF),
+
+        /**
+         * LTE plan-D
+         *
+         * For RICOH THETA A1
+         */
+        LTE_D(NetworkType.LTE_D),
+
+        /**
+         * LTE plan-DU
+         *
+         * For RICOH THETA A1
+         */
+        LTE_DU(NetworkType.LTE_DU),
+
+        /**
+         * LTE plan01s
+         *
+         * For RICOH THETA A1
+         */
+        LTE_01S(NetworkType.LTE_01S),
+
+        /**
+         * LTE planX3
+         *
+         * For RICOH THETA A1
+         */
+        LTE_X3(NetworkType.LTE_X3),
+
+        /**
+         * LTE planP1
+         *
+         * For RICOH THETA A1
+         */
+        LTE_P1(NetworkType.LTE_P1),
+
+        /**
+         * LTE plan-K2
+         *
+         * For RICOH THETA A1
+         */
+        LTE_K2(NetworkType.LTE_K2),
+
+        /**
+         * LTE plan-K
+         *
+         * For RICOH THETA A1
+         */
+        LTE_K(NetworkType.LTE_K);
 
         companion object {
             /**
@@ -5071,8 +6058,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value Network type.
              * @return NetworkTypeEnum
              */
-            internal fun get(value: NetworkType): NetworkTypeEnum? {
-                return values().firstOrNull { it.value == value }
+            internal fun get(value: NetworkType?): NetworkTypeEnum {
+                return entries.firstOrNull { it.value == value } ?: UNKNOWN
             }
         }
     }
@@ -5103,9 +6090,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
             other as OffDelaySec
 
-            if (sec != other.sec) return false
-
-            return true
+            return sec == other.sec
         }
 
         override fun hashCode(): Int {
@@ -5155,6 +6140,109 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                     return DISABLE
                 }
                 return values().firstOrNull { it.sec == sec } ?: OffDelaySec(sec)
+            }
+        }
+    }
+
+    /**
+     * Auto power off time with USB power supply.
+     *
+     * Use in [OffDelayUsbEnum] or [OffDelayUsbSec]
+     */
+    interface OffDelayUsb {
+        val sec: Int
+    }
+
+    /**
+     * Auto power off time with USB power supply.
+     *
+     * For RICOH THETA A1
+     * 0, or a value that is a multiple of 60 out of 600 or more and 2592000 or less (unit: second), or 65535.
+     * Return 0 when 65535 is set and obtained (Do not turn power OFF).
+     */
+    class OffDelayUsbSec(override val sec: Int) : OffDelayUsb {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || this::class != other::class) return false
+
+            other as OffDelayUsbSec
+
+            return sec == other.sec
+        }
+
+        override fun hashCode(): Int {
+            return sec
+        }
+    }
+
+    /**
+     * Auto power off time with USB power supply.
+     *
+     * For RICOH THETA A1
+     */
+    enum class OffDelayUsbEnum(override val sec: Int) : OffDelayUsb {
+        /**
+         * Do not turn power off.
+         */
+        DISABLE(65535),
+
+        /**
+         * Power off after 10 minutes.(600sec)
+         */
+        OFF_DELAY_10M(600),
+
+        /**
+         * Power off after 1 hour.(3600sec)
+         */
+        OFF_DELAY_1H(3600),
+
+        /**
+         * Power off after 2 hour.(7200sec)
+         */
+        OFF_DELAY_2H(7200),
+
+        /**
+         * Power off after 4 hour.(14400sec)
+         */
+        OFF_DELAY_4H(14400),
+
+        /**
+         * Power off after 8 hour.(28800sec)
+         */
+        OFF_DELAY_8H(28800),
+
+        /**
+         * Power off after 12 hour.(43200sec)
+         */
+        OFF_DELAY_12H(43200),
+
+        /**
+         * Power off after 18 hour.(64800sec)
+         */
+        OFF_DELAY_18H(64800),
+
+        /**
+         * Power off after 24 hour.(86400sec)
+         */
+        OFF_DELAY_24H(86400),
+
+        /**
+         * Power off after 2 days.(172800sec)
+         */
+        OFF_DELAY_2D(172800),
+        ;
+
+        companion object {
+            /**
+             * Convert second to OffDelayUsb
+             *
+             * @return [OffDelayUsbEnum] or [OffDelayUsb]
+             */
+            fun get(sec: Int): OffDelayUsb {
+                if (sec == 0) {
+                    return DISABLE
+                }
+                return entries.firstOrNull { it.sec == sec } ?: OffDelayUsbSec(sec)
             }
         }
     }
@@ -5245,15 +6333,17 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * Format of live view
      */
     enum class PreviewFormatEnum(val width: Int, val height: Int, val framerate: Int) {
-        W1024_H512_F30(1024, 512, 30), // For Theta X, Z1, V and SC2
-        W1024_H512_F15(1024, 512, 15), // For Theta X. This value can't set.
-        W512_H512_F30(512, 512, 30), // For Theta X
-        W1920_H960_F8(1920, 960, 8), // For Theta Z1 and V
+        UNKNOWN(0, 0, 0), // Undefined value
         W1920_H960_F30(1920, 960, 30), // For Theta X firmware v2.71.1 or later
+        W1920_H960_F8(1920, 960, 8), // For Theta Z1 and V
+        W1024_H512_F30(1024, 512, 30), // For Theta A1, X, Z1, V, SC2
+        W1024_H512_F15(1024, 512, 15), // For Theta X. This value can't set.
+        W1024_H512_F10(1024, 512, 10), // For Theta A1
         W1024_H512_F8(1024, 512, 8), // For Theta Z1 and V
         W640_H320_F30(640, 320, 30), // For Theta Z1 and V
-        W640_H320_F8(640, 320, 8), // For Theta Z1 and V
         W640_H320_F10(640, 320, 10), // For Theta S and SC
+        W640_H320_F8(640, 320, 8), // For Theta Z1 and V
+        W512_H512_F30(512, 512, 30), // For Theta X
         W3840_H1920_F30(3840, 1920, 30); // For Theta X
 
         /**
@@ -5267,12 +6357,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             /**
              * Convert PreviewFormat to PreviewFormatEnum
              */
-            internal fun get(value: PreviewFormat): PreviewFormatEnum? {
-                return PreviewFormatEnum.values().firstOrNull {
-                    it.height == value.height &&
+            internal fun get(value: PreviewFormat?): PreviewFormatEnum {
+                return entries.firstOrNull {
+                    it.height == value?.height &&
                             it.width == value.width &&
                             it.framerate == value.framerate
-                }
+                } ?: UNKNOWN
             }
         }
     }
@@ -5842,9 +6932,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
             other as SleepDelaySec
 
-            if (sec != other.sec) return false
-
-            return true
+            return sec == other.sec
         }
 
         override fun hashCode(): Int {
@@ -6058,6 +7146,41 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              */
             internal fun get(value: TopBottomCorrectionOption): TopBottomCorrectionOptionEnum? {
                 return values().firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * USB connection of the camera.
+     *
+     * Default value is "MTP".
+     * After switching the setting value, reconnect the camera to USB to enable it.
+     */
+    enum class UsbConnectionEnum(internal val value: UsbConnection) {
+        /**
+         * Undefined value
+         */
+        UNKNOWN(UsbConnection.UNKNOWN),
+
+        /**
+         * MTP
+         */
+        MTP(UsbConnection.MTP),
+
+        /**
+         * MSC
+         */
+        MSC(UsbConnection.MSC);
+
+        companion object {
+            /**
+             * Convert UsbConnection to UsbConnectionEnum
+             *
+             * @param value UsbConnection.
+             * @return UsbConnectionEnum
+             */
+            internal fun get(value: UsbConnection): UsbConnectionEnum? {
+                return entries.firstOrNull { it.value == value }
             }
         }
     }
@@ -6331,9 +7454,46 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Configure SISO or MIMO for Wireless LAN.
+     */
+    enum class WlanAntennaConfigEnum(internal val value: WlanAntennaConfig) {
+        /**
+         * Undefined value
+         */
+        UNKNOWN(WlanAntennaConfig.UNKNOWN),
+
+        /**
+         * SISO
+         */
+        SISO(WlanAntennaConfig.SISO),
+
+        /**
+         * MIMO
+         */
+        MIMO(WlanAntennaConfig.MIMO);
+
+        companion object {
+            /**
+             * Convert WlanAntennaConfig to WlanAntennaConfigEnum
+             *
+             * @param value WlanAntennaConfig.
+             * @return WlanAntennaConfigEnum
+             */
+            internal fun get(value: WlanAntennaConfig): WlanAntennaConfigEnum? {
+                return entries.firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
      * Wireless LAN frequency of the camera supported by Theta V, Z1 and X.
      */
     enum class WlanFrequencyEnum(internal val value: WlanFrequency) {
+        /**
+         * Undefined value
+         */
+        UNKNOWN(WlanFrequency.UNKNOWN),
+
         /**
          * 2.4GHz
          */
@@ -6342,7 +7502,21 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         /**
          * 5GHz
          */
-        GHZ_5(WlanFrequency.GHZ_5);
+        GHZ_5(WlanFrequency.GHZ_5),
+
+        /**
+         * 5.2GHz
+         *
+         * For RICOH THETA A1
+         */
+        GHZ_5_2(WlanFrequency.GHZ_5_2),
+
+        /**
+         * 5.8GHz
+         *
+         * For RICOH THETA A1
+         */
+        GHZ_5_8(WlanFrequency.GHZ_5_8);
 
         companion object {
             /**
@@ -6351,11 +7525,50 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value wlan frequency
              * @return  WlanFrequencyEnum
              */
-            internal fun get(value: WlanFrequency): WlanFrequencyEnum? {
-                return values().firstOrNull { it.value == value }
+            internal fun get(value: WlanFrequency?): WlanFrequencyEnum {
+                return entries.firstOrNull { it.value == value } ?: UNKNOWN
             }
         }
 
+    }
+
+    /**
+     * Whether the camera's WLAN CL mode uses 2.4 GHz, 5.2 GHz, or 5.8 GHz frequencies
+     */
+    data class WlanFrequencyClMode(
+        /**
+         * 2.4GHz
+         */
+        val enable2_4: Boolean,
+
+        /**
+         * 5.2GHz
+         */
+        val enable5_2: Boolean,
+
+        /**
+         * 5.8GHz
+         */
+        val enable5_8: Boolean,
+    ) {
+        internal constructor(value: com.ricoh360.thetaclient.transferred.WlanFrequencyClMode) : this(
+            enable2_4 = value.enable2_4,
+            enable5_2 = value.enable5_2,
+            enable5_8 = value.enable5_8,
+        )
+
+        /**
+         * Convert WlanFrequencyClMode to transferred.WlanFrequencyClMode. for ThetaApi.
+         *
+         * @return transferred.WlanFrequencyClMode
+         */
+        internal fun toTransferred(): com.ricoh360.thetaclient.transferred.WlanFrequencyClMode {
+            return com.ricoh360.thetaclient.transferred.WlanFrequencyClMode(
+                enable2_4 = enable2_4,
+                enable5_2 = enable5_2,
+                enable5_8 = enable5_8,
+            )
+        }
     }
 
     /**
@@ -6440,11 +7653,21 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Video codec
      */
-    enum class CodecEnum(val value: String) {
+    enum class CodecEnum(val value: String?) {
+        /**
+         * Undefined value
+         */
+        UNKNOWN(null),
+
         /**
          * codec H.264/MPEG-4 AVC
          */
         H264MP4AVC("H.264/MPEG-4 AVC"),
+
+        /**
+         * codec H.265/HEVC
+         */
+        H265HEVC("H.265/HEVC"),
         ;
 
         companion object {
@@ -6454,8 +7677,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @param value codec
              * @return CodecEnum
              */
-            fun get(value: String): CodecEnum? {
-                return CodecEnum.values().firstOrNull { it.value == value }
+            fun get(value: String?): CodecEnum {
+                return CodecEnum.values().firstOrNull { it.value == value } ?: UNKNOWN
             }
         }
     }
@@ -6528,7 +7751,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             cameraFileInfo._recordTime,
             cameraFileInfo.isProcessed,
             cameraFileInfo.previewUrl,
-            cameraFileInfo._codec?.let { CodecEnum.get(it) },
+            codec = cameraFileInfo._codec?.let { CodecEnum.get(it) },
             cameraFileInfo._projectionType?.let { ProjectionTypeEnum.get(it) },
             cameraFileInfo._continuousShootingGroupId,
             cameraFileInfo._frameRate,
@@ -6557,12 +7780,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     @Suppress("RethrowCaughtException")
     fun getLivePreview(): Flow<ByteReadPacket> {
         try {
-            return ThetaApi.callGetLivePreviewCommand(endpoint)
+            return ThetaApi.callGetLivePreviewCommand(getEndpointOfLivePreview(endpoint))
         } catch (e: PreviewClientException) {
+            logger.log("PreviewClient: $e")
             throw ThetaWebApiException(e.toString())
         } catch (e: CancellationException) {
             throw e // Coroutine was cancelled.
         } catch (e: Exception) {
+            logger.log("PreviewClient: $e")
             throw NotConnectedException(e.toString())
         }
     }
@@ -6579,14 +7804,16 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     @Suppress("SwallowedException")
     suspend fun getLivePreview(frameHandler: suspend (Pair<ByteArray, Int>) -> Boolean) {
         try {
-            ThetaApi.callGetLivePreviewCommand(endpoint) {
+            ThetaApi.callGetLivePreviewCommand(getEndpointOfLivePreview(endpoint)) {
                 return@callGetLivePreviewCommand frameHandler(it)
             }
         } catch (e: PreviewClientException) {
+            logger.log("PreviewClient: $e")
             throw ThetaWebApiException(e.toString())
         } catch (e: CancellationException) {
             // Preview coroutine was cancelled. No need to do anything.
         } catch (e: Exception) {
+            logger.log("PreviewClient: $e")
             throw NotConnectedException(e.toString())
         }
     }
@@ -6616,6 +7843,15 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     fun getTimeShiftCaptureBuilder(): TimeShiftCapture.Builder {
         return TimeShiftCapture.Builder(endpoint, cameraModel)
+    }
+
+    /**
+     * Get TimeShiftCapture.Builder for time-shift manual.
+     *
+     * @return TimeShiftManualCapture.Builder
+     */
+    fun getTimeShiftManualCaptureBuilder(): TimeShiftManualCapture.Builder {
+        return TimeShiftManualCapture.Builder(endpoint)
     }
 
     /**
@@ -6930,6 +8166,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Performing burst shooting
          */
         BURST_SHOOTING,
+
+        /**
+         * In the case of time-lag shooting by manual lens,
+         * set while waiting for the second shot to be taken after the first shot is completed.
+         */
+        TIME_SHIFT_SHOOTING_IDLE,
         ;
 
         companion object {
@@ -6951,6 +8193,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                     CaptureStatus.CONTINUOUS_SHOOTING -> CONTINUOUS_SHOOTING
                     CaptureStatus.RETROSPECTIVE_IMAGE_RECORDING -> RETROSPECTIVE_IMAGE_RECORDING
                     CaptureStatus.BURST_SHOOTING -> BURST_SHOOTING
+                    CaptureStatus.TIME_SHIFT_SHOOTING_IDLE -> TIME_SHIFT_SHOOTING_IDLE
                 }
             }
         }
@@ -7214,6 +8457,55 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * WLAN frequency of the access point.
+     */
+    enum class WlanFrequencyAccessInfoEnum(internal val value: WlanFrequencyAccessInfo) {
+        /**
+         * Undefined value
+         */
+        UNKNOWN(WlanFrequencyAccessInfo.UNKNOWN),
+
+        /**
+         * 2.4GHz
+         */
+        GHZ_2_4(WlanFrequencyAccessInfo.GHZ_2_4),
+
+        /**
+         * 5.2GHz
+         */
+        GHZ_5_2(WlanFrequencyAccessInfo.GHZ_5_2),
+
+        /**
+         * 5.8GHz
+         */
+        GHZ_5_8(WlanFrequencyAccessInfo.GHZ_5_8),
+
+        /**
+         * Initial value
+         */
+        INITIAL_VALUE(WlanFrequencyAccessInfo.INITIAL_VALUE);
+
+        companion object {
+            /**
+             * Convert WlanFrequencyAccessInfo to WlanFrequencyAccessInfoEnum
+             *
+             * @param value wlan frequency
+             * @return  WlanFrequencyAccessInfoEnum
+             */
+            internal fun get(value: WlanFrequencyAccessInfo): WlanFrequencyAccessInfoEnum {
+                return when (value) {
+                    WlanFrequencyAccessInfo.UNKNOWN -> UNKNOWN
+                    WlanFrequencyAccessInfo.GHZ_2_4 -> GHZ_2_4
+                    WlanFrequencyAccessInfo.GHZ_5_2 -> GHZ_5_2
+                    WlanFrequencyAccessInfo.GHZ_5_8 -> GHZ_5_8
+                    WlanFrequencyAccessInfo.INITIAL_VALUE -> INITIAL_VALUE
+                }
+            }
+        }
+
+    }
+
+    /**
      * Get metadata of a still image
      *
      * This command cannot be executed during video recording.
@@ -7289,6 +8581,35 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             fullPanoWidthPixels = xmp.FullPanoWidthPixels,
             fullPanoHeightPixels = xmp.FullPanoHeightPixels
         )
+    }
+
+    /**
+     * Turn off/on (reboot) the camera.
+     * Supported models are THETA A1 only.
+     *
+     * Error when connecting in CL mode for Japan-bound models only
+     *
+     * @exception ThetaWebApiException If an error occurs in THETA.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun reboot() {
+        if (cameraModel != ThetaModel.THETA_A1) {
+            throw ThetaWebApiException("disabledCommand")
+        }
+        try {
+            ThetaApi.callRebootCommand(endpoint).error?.let {
+                throw ThetaWebApiException(it.message)
+            }
+        } catch (e: JsonConvertException) {
+            throw ThetaWebApiException(e.message ?: e.toString())
+        } catch (e: ResponseException) {
+            throw ThetaWebApiException.create(e)
+        } catch (e: ThetaWebApiException) {
+            throw e
+        } catch (e: Exception) {
+            throw NotConnectedException(e.message ?: e.toString())
+        }
     }
 
     /**
@@ -7496,15 +8817,17 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Set access point. IP address is set statically.
      *
-     * @param ssid SSID of the access point.
-     * @param ssidStealth True if SSID stealth is enabled.
-     * @param authMode Authentication mode.
-     * @param password Password. If [authMode] is "NONE", pass empty String.
-     * @param ipAddressAllocation [IpAddressAllocation] IP address allocation. DYNAMIC or STATIC.
-     * @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
-     * @param ipAddress IP address assigns to Theta. If DYNAMIC ip is null.
-     * @param subnetMask Subnet mask. If DYNAMIC ip is null.
-     * @param defaultGateway Default gateway. If DYNAMIC ip is null.
+     * @param ssid SSID
+     * @param ssidStealth SSID stealth. Default is false.
+     * @param authMode [AuthModeEnum] Authentication mode.
+     * @param password Password. This can be set when security is not "none".
+     * @param ipAddressAllocation [IpAddressAllocation] IP address allocation. DYNAMIC or STATIC. Default is DYNAMIC.
+     * @param connectionPriority Connection priority (1 to 5). Default is 1. Theta X fixed to 1 (The access point registered later has a higher priority.)
+     * @param ipAddress IP address assigned to camera. This setting must be set when ipAddressAllocation is STATIC.
+     * @param subnetMask Subnet mask. This setting must be set when ipAddressAllocation is STATIC.
+     * @param defaultGateway Default gateway. This setting must be set when ipAddressAllocation is STATIC.
+     * @param dns1 Primary DNS server. This setting must be set when ipAddressAllocation is STATIC.
+     * @param dns2 Secondary DNS server. This setting must be set when ipAddressAllocation is STATIC.
      * @param proxy Proxy information to be used for the access point.
      * @exception ThetaWebApiException If an error occurs in THETA.
      * @exception NotConnectedException
@@ -7520,6 +8843,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         ipAddress: String? = null,
         subnetMask: String? = null,
         defaultGateway: String? = null,
+        dns1: String? = null,
+        dns2: String? = null,
         proxy: Proxy? = null,
     ) {
         val params = SetAccessPointParams(
@@ -7532,6 +8857,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             ipAddress = ipAddress,
             subnetMask = subnetMask,
             defaultGateway = defaultGateway,
+            dns1 = dns1,
+            dns2 = dns2,
             proxy = proxy?.toTransferredProxy()
         )
         try {
@@ -7552,11 +8879,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Set access point. IP address is set dynamically.
      *
-     * @param ssid SSID of the access point.
-     * @param ssidStealth True if SSID stealth is enabled.
-     * @param authMode Authentication mode.
-     * @param password Password. If [authMode] is "NONE", pass empty String.
-     * @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
+     * @param ssid SSID
+     * @param ssidStealth SSID stealth. Default is false.
+     * @param authMode [AuthModeEnum] Authentication mode.
+     * @param password Password. This can be set when security is not "none".
+     * @param connectionPriority Connection priority (1 to 5). Default is 1. Theta X fixed to 1 (The access point registered later has a higher priority.)
      * @param proxy Proxy information to be used for the access point.
      * @exception ThetaWebApiException If an error occurs in THETA.
      * @exception NotConnectedException
@@ -7584,14 +8911,16 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Set access point. IP address is set statically.
      *
-     * @param ssid SSID of the access point.
-     * @param ssidStealth True if SSID stealth is enabled.
-     * @param authMode Authentication mode.
-     * @param password Password. If [authMode] is "NONE", pass empty String.
-     * @param connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
-     * @param ipAddress IP address assigns to Theta.
+     * @param ssid SSID
+     * @param ssidStealth SSID stealth. Default is false.
+     * @param authMode [AuthModeEnum] Authentication mode.
+     * @param password Password. This can be set when security is not "none".
+     * @param connectionPriority Connection priority (1 to 5). Default is 1. Theta X fixed to 1 (The access point registered later has a higher priority.)
+     * @param ipAddress IP address assigned to camera.
      * @param subnetMask Subnet mask.
      * @param defaultGateway Default gateway.
+     * @param dns1 Primary DNS server.
+     * @param dns2 Secondary DNS server.
      * @param proxy Proxy information to be used for the access point.
      * @exception ThetaWebApiException If an error occurs in THETA.
      * @exception NotConnectedException
@@ -7606,6 +8935,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         ipAddress: String,
         subnetMask: String,
         defaultGateway: String,
+        dns1: String? = null,
+        dns2: String? = null,
         proxy: Proxy? = null,
     ) {
         setAccessPoint(
@@ -7618,6 +8949,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             ipAddress = ipAddress,
             subnetMask = subnetMask,
             defaultGateway = defaultGateway,
+            dns1 = dns1,
+            dns2 = dns2,
             proxy = proxy
         )
     }
@@ -7649,16 +8982,122 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     }
 
     /**
+     * Connected network information.
+     *
+     * @property ssid SSID of the wireless LAN access point that THETA connects to. The initial value is ""(empty string).
+     * @property ipAddress IP address of access point. The initial value is ""(empty string).
+     * @property subnetMask subnet mask of access point. The initial value is ""(empty string).
+     * @property defaultGateway default gateway of access point. The initial value is ""(empty string).
+     * @property dns1 Primary DNS server
+     * @property dns2 Secondary DNS server
+     * @property proxyURL proxy URL of access point. The initial value is ""(empty string).
+     * @property frequency Radio frequency. The initial enum value is INITIAL_VALUE.
+     * @property wlanSignalStrength WLAN signal strength. The initial value is 0.
+     * @property wlanSignalLevel  WLAN signal level. The initial value is 0.
+     * @property lteSignalStrength LTE signal strength. The initial value is 0.
+     * @property lteSignalLevel  LTE signal level. The initial value is 0.
+     */
+    data class AccessInfo(
+        val ssid: String,
+        val ipAddress: String,
+        val subnetMask: String,
+        val defaultGateway: String,
+        val dns1: String?,
+        val dns2: String?,
+        val proxyURL: String,
+        val frequency: WlanFrequencyAccessInfoEnum,
+        val wlanSignalStrength: Int,
+        val wlanSignalLevel: Int,
+        val lteSignalStrength: Int,
+        val lteSignalLevel: Int,
+        val dhcpLeaseAddress: List<DhcpLeaseAddress>?,
+    ) {
+        internal constructor(accessInfo: com.ricoh360.thetaclient.transferred.AccessInfo) : this(
+            ssid = accessInfo.ssid,
+            ipAddress = accessInfo.ipAddress,
+            subnetMask = accessInfo.subnetMask,
+            defaultGateway = accessInfo.defaultGateway,
+            dns1 = accessInfo.dns1,
+            dns2 = accessInfo.dns2,
+            proxyURL = accessInfo.proxyURL,
+            frequency = accessInfo.frequency.let { WlanFrequencyAccessInfoEnum.get(it) },
+            wlanSignalStrength = accessInfo.wlanSignalStrength,
+            wlanSignalLevel = accessInfo.wlanSignalLevel,
+            lteSignalStrength = accessInfo.lteSignalStrength,
+            lteSignalLevel = accessInfo.lteSignalLevel,
+            dhcpLeaseAddress = accessInfo.dhcpLeaseAddress?.let { list ->
+                list.map { DhcpLeaseAddress(it) }
+            }
+        )
+
+        internal fun toTransferredAccessInfo(): com.ricoh360.thetaclient.transferred.AccessInfo {
+            return AccessInfo(
+                ssid = ssid,
+                ipAddress = ipAddress,
+                subnetMask = subnetMask,
+                defaultGateway = defaultGateway,
+                dns1 = dns1,
+                dns2 = dns2,
+                proxyURL = proxyURL,
+                frequency = frequency.value,
+                wlanSignalStrength = wlanSignalStrength,
+                wlanSignalLevel = wlanSignalLevel,
+                lteSignalStrength = lteSignalStrength,
+                lteSignalLevel = lteSignalLevel,
+                dhcpLeaseAddress = dhcpLeaseAddress?.let { list ->
+                    list.map { it.toTransferred() }
+                }
+            )
+        }
+    }
+
+    /**
+     * client devices information
+     */
+    data class DhcpLeaseAddress(
+        /**
+         * IP address of client device
+         */
+        val ipAddress: String,
+
+        /**
+         * MAC address of client device
+         */
+        val macAddress: String,
+
+        /**
+         * host name of client device
+         */
+        val hostName: String,
+    ) {
+        internal constructor(value: com.ricoh360.thetaclient.transferred.DhcpLeaseAddress) : this(
+            ipAddress = value.ipAddress,
+            macAddress = value.macAddress,
+            hostName = value.hostName,
+        )
+
+        internal fun toTransferred(): com.ricoh360.thetaclient.transferred.DhcpLeaseAddress {
+            return com.ricoh360.thetaclient.transferred.DhcpLeaseAddress(
+                ipAddress = ipAddress,
+                macAddress = macAddress,
+                hostName = hostName,
+            )
+        }
+    }
+
+    /**
      * Access point information.
      *
-     * @property ssid SSID of the access point.
-     * @property ssidStealth True if SSID stealth is enabled.
+     * @property ssid SSID
+     * @property ssidStealth SSID stealth. Default is false.
      * @property authMode Authentication mode.
-     * @property connectionPriority Connection priority 1 to 5. Theta X fixes to 1 (The access point registered later has a higher priority.)
+     * @property connectionPriority Connection priority (1 to 5). Default is 1. Theta X fixes to 1 (The access point registered later has a higher priority.)
      * @property usingDhcp Using DHCP or not. This can be acquired when SSID is registered as an enable access point.
      * @property ipAddress IP address assigned to camera. This setting can be acquired when “usingDhcp” is false.
      * @property subnetMask Subnet Mask. This setting can be acquired when “usingDhcp” is false.
      * @property defaultGateway Default Gateway. This setting can be acquired when “usingDhcp” is false.
+     * @property dns1 Primary DNS server. This setting can be acquired when “usingDhcp” is false.
+     * @property dns2 Secondary DNS server. This setting can be acquired when “usingDhcp” is false.
      * @property proxy Proxy information to be used for the access point.
      */
     data class AccessPoint(
@@ -7670,6 +9109,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         val ipAddress: String?,
         val subnetMask: String?,
         val defaultGateway: String?,
+        val dns1: String?,
+        val dns2: String?,
         val proxy: Proxy?,
     ) {
         internal constructor(accessPoint: com.ricoh360.thetaclient.transferred.AccessPoint) : this(
@@ -7681,6 +9122,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             ipAddress = accessPoint.ipAddress,
             subnetMask = accessPoint.subnetMask,
             defaultGateway = accessPoint.defaultGateway,
+            dns1 = accessPoint.dns1,
+            dns2 = accessPoint.dns2,
             proxy = accessPoint.proxy?.let { Proxy(info = it) },
         )
     }
@@ -7691,6 +9134,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * @property value AuthenticationMode.
      */
     enum class AuthModeEnum(internal val value: AuthenticationMode) {
+        /**
+         * Undefined value
+         */
+        UNKNOWN(AuthenticationMode.UNKNOWN),
+
         /**
          * Authentication mode
          * none
@@ -7707,7 +9155,13 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
          * Authentication mode
          * WPA/WPA2 PSK
          */
-        WPA(AuthenticationMode.WPA_WPA2_PSK);
+        WPA(AuthenticationMode.WPA_WPA2_PSK),
+
+        /**
+         * Authentication mode
+         * WPA3-SAE
+         */
+        WPA3(AuthenticationMode.WPA3_SAE);
 
         companion object {
             /**
@@ -8189,6 +9643,44 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         )
     }
 
+    /**
+     * Get the endpoint of live preview
+     *
+     * @param apiEndpoint The endpoint of web API other than live preview
+     * @return The port of live preview
+     */
+    internal fun getEndpointOfLivePreview(apiEndpoint: String): String {
+        val regexPort = Regex(""":\d+""")
+        val regexHost = Regex("""(\.[^/]+)/?""")
+        return when {
+            regexPort.containsMatchIn(apiEndpoint) -> apiEndpoint.replaceFirst(regexPort, ":" + getPortOfPreview())
+            else -> apiEndpoint.replaceFirst(regexHost, "$1:${getPortOfPreview()}/")
+        }
+    }
+
+    /**
+     *  Get the port of preview.
+     *
+     *  THETA A1 && (version < 1.10.1) port 49788
+     *  THETA A1 && (version == 1.10.1) port 80
+     *  THETA A1 && ( 1.10.1 < version < 1.20.0 ) port 49788
+     *  THETA A1 && ( 1.20.0 <= version ) port 80
+     *  Other models: 80
+     */
+    private fun getPortOfPreview(): Int {
+        val tmpPort = 49788
+        val finalPort = 80
+        return if (cameraModel == ThetaModel.THETA_A1) {
+            when {
+                firmwareVersion.orEmpty() < "1.10.1" -> tmpPort
+                firmwareVersion == "1.10.1" -> finalPort
+                firmwareVersion.orEmpty() < "1.20.0" -> tmpPort
+                else -> finalPort
+            }
+        } else {
+            finalPort
+        }
+    }
 }
 
 

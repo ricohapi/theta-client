@@ -1,0 +1,9 @@
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "exposureCompensation": 100.0
+    }
+  },
+  "state": "done"
+}

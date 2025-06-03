@@ -1,1 +1,5 @@
-{"name":"camera.startCapture","results":{},"state":"done"}
+{
+  "name": "camera.startCapture",
+  "results": {},
+  "state": "done"
+}

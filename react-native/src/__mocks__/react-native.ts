@@ -1,5 +1,6 @@
 export const NativeModules = {
   ThetaClientReactNative: {
+    setApiLogListener: jest.fn(),
     initialize: jest.fn(),
     getThetaModel: jest.fn(),
     listFiles: jest.fn(),
@@ -10,6 +11,11 @@ export const NativeModules = {
     buildTimeShiftCapture: jest.fn(),
     startTimeShiftCapture: jest.fn(),
     cancelTimeShiftCapture: jest.fn(),
+    getTimeShiftManualCaptureBuilder: jest.fn(),
+    buildTimeShiftManualCapture: jest.fn(),
+    startTimeShiftManualCapture: jest.fn(),
+    startTimeShiftManualSecondCapture: jest.fn(),
+    cancelTimeShiftManualCapture: jest.fn(),
     getVideoCaptureBuilder: jest.fn(),
     buildVideoCapture: jest.fn(),
     startVideoCapture: jest.fn(),

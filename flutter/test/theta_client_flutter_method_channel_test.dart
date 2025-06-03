@@ -405,6 +405,8 @@ void main() {
       'ipAddress': '',
       'subnetMask': '',
       'defaultGateway': '',
+      'dns1': '',
+      'dns2': '',
       'proxy': {
         'use': false,
         'url': '',
@@ -515,7 +517,7 @@ void main() {
       [
         OptionNameEnum.ethernetConfig,
         'EthernetConfig',
-        EthernetConfig(true, '', '', '', Proxy(false, '', 0, '', '')),
+        EthernetConfig(true, '', '', '', '', '', Proxy(false, '', 0, '', '')),
         ethernetConfigMap
       ],
       [
@@ -681,6 +683,16 @@ void main() {
         WlanFrequencyEnum.ghz_2_4,
         'GHZ_2_4'
       ],
+      [
+        OptionNameEnum.wlanFrequencyClMode,
+        'WlanFrequencyClMode',
+        WlanFrequencyClMode(true, false, true),
+        {
+          "enable2_4": true,
+          "enable5_2": false,
+          "enable5_8": true,
+        }
+      ],
     ];
 
     Map<String, dynamic> optionMap = {};
@@ -728,6 +740,8 @@ void main() {
       'ipAddress': '192.168.1.111',
       'subnetMask': '255.255.255.0',
       'defaultGateway': '192.168.1.1',
+      'dns1': '192.168.1.55',
+      'dns2': '192.168.1.66',
       'proxy': {
         'use': true,
         'url': '192.168.1.222',
@@ -826,7 +840,13 @@ void main() {
       [
         OptionNameEnum.ethernetConfig,
         'EthernetConfig',
-        EthernetConfig(false, '192.168.1.111', '255.255.255.0', '192.168.1.1',
+        EthernetConfig(
+            false,
+            '192.168.1.111',
+            '255.255.255.0',
+            '192.168.1.1',
+            '192.168.1.55',
+            '192.168.1.66',
             Proxy(true, '192.168.1.222', 80, 'abc', '123')),
         ethernetConfigMap
       ],
@@ -986,6 +1006,16 @@ void main() {
         'WlanFrequency',
         WlanFrequencyEnum.ghz_2_4,
         'GHZ_2_4'
+      ],
+      [
+        OptionNameEnum.wlanFrequencyClMode,
+        'WlanFrequencyClMode',
+        WlanFrequencyClMode(false, true, false),
+        {
+          "enable2_4": false,
+          "enable5_2": true,
+          "enable5_8": false,
+        }
       ],
     ];
 
@@ -1225,6 +1255,15 @@ void main() {
     expect(metadata.xmp.fullPanoHeightPixels, imageHeight);
   });
 
+  test('reboot', () async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+      expect(methodCall.method, 'reboot');
+      return Future.value();
+    });
+    await platform.reboot();
+  });
+
   test('reset', () async {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
@@ -1280,6 +1319,8 @@ void main() {
         'ipAddress': '192.168.1.2',
         'subnetMask': '255.255.255.0',
         'defaultGateway': '192.168.1.100',
+        'dns1': '192.168.1.55',
+        'dns2': '192.168.1.66',
         'proxy': {'use': false, 'url': '', 'port': 0, 'userid': ''},
       },
       {
@@ -1310,6 +1351,8 @@ void main() {
       expect(resultList[i].ipAddress, data[i]['ipAddress']);
       expect(resultList[i].subnetMask, data[i]['subnetMask']);
       expect(resultList[i].defaultGateway, data[i]['defaultGateway']);
+      expect(resultList[i].dns1, data[i]['dns1']);
+      expect(resultList[i].dns2, data[i]['dns2']);
       expect(resultList[i].proxy?.use,
           (data[i]['proxy'] as Map<String, dynamic>)['use']);
       expect(resultList[i].proxy?.url,
@@ -1359,6 +1402,8 @@ void main() {
     const ipAddress = '192.168.1.2';
     const subnetMask = '255.255.255.0';
     const defaultGateway = '192.168.1.3';
+    const dns1 = '192.168.1.55';
+    const dns2 = '192.168.1.66';
     var proxy = Proxy(true, 'https://xxx', 8081, 'abc', 'pwpwpwp111');
 
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
@@ -1374,6 +1419,8 @@ void main() {
       expect(arguments['ipAddress'], ipAddress);
       expect(arguments['subnetMask'], subnetMask);
       expect(arguments['defaultGateway'], defaultGateway);
+      expect(arguments['dns1'], dns1);
+      expect(arguments['dns2'], dns2);
       expect(arguments['proxy']['use'], proxy.use);
       expect(arguments['proxy']['url'], proxy.url);
       expect(arguments['proxy']['port'], proxy.port);
@@ -1390,6 +1437,8 @@ void main() {
         ipAddress,
         subnetMask,
         defaultGateway,
+        dns1,
+        dns2,
         proxy);
   });
 

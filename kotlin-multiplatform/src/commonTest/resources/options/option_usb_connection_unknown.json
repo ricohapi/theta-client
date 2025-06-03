@@ -1,0 +1,9 @@
+{
+  "results": {
+    "options": {
+      "_usbConnection": "abcde"
+    }
+  },
+  "name": "camera.getOptions",
+  "state": "done"
+}

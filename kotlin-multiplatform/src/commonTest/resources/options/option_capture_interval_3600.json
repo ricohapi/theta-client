@@ -1,1 +1,9 @@
-{"name":"camera.getOptions","results":{"options":{"captureInterval":3600}},"state":"done"}
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "captureInterval": 3600
+    }
+  },
+  "state": "done"
+}

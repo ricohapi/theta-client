@@ -1,1 +1,8 @@
-{"id":"2811","name":"camera._convertVideoFormats","progress":{"completion":0.98},"state":"inProgress"}
+{
+  "id": "2811",
+  "name": "camera._convertVideoFormats",
+  "progress": {
+    "completion": 0.98
+  },
+  "state": "inProgress"
+}

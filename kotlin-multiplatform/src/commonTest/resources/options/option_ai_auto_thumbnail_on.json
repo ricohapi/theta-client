@@ -1,1 +1,9 @@
-{"name":"camera.getOptions","results":{"options":{"_aiAutoThumbnail":"ON"}},"state":"done"}
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "_aiAutoThumbnail": "ON"
+    }
+  },
+  "state": "done"
+}

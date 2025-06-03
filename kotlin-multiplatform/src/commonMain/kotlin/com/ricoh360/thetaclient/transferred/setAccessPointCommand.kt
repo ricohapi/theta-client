@@ -27,54 +27,79 @@ internal data class SetAccessPointParams(
     val ssid: String,
 
     /**
-     * (Optional) SSID stealth (true: enable, false: disable. Default
-     * is false.)
+     * (Optional)
+     * SSID stealth
+     * (true: enable, false: disable. Default is false.)
      */
     val ssidStealth: Boolean? = null,
 
     /**
-     * (Optional) Authentication mode("none", "WEP","WPA/WPA2 PSK")
+     * (Mandatory)
+     * Authentication mode
+     * ("none", "WEP", "WPA/WPA2 PSK")
+     * This can be optional parameter only when overwriting access point information.
      */
     val security: AuthenticationMode? = null,
 
     /**
-     * (Optional) Password.
+     * (Optional)
+     * Password
      * This can be set when security is not "none"
      */
     val password: String? = null,
 
     /**
      * (Optional)
-     * (RICOH THETA V, Z1) Connection priority (1 to 5). Default is
-     * 1.(RICOH THETA X) Fixed to 1 (The access point registered later
-     * has a higher priority.
+     * (RICOH THETA V, Z1)
+     * Connection priority (1 to 5). Default is 1.
+     *
+     * (RICOH THETA X)
+     * Fixed to 1 (The access point registered later has a higher priority.)
      */
     @Serializable(with = NumberAsIntSerializer::class)
     val connectionPriority: Int? = null,
 
     /**
-     * (Optional) IP address allocation "dynamic" or
-     * "static". Default is "dynamic"
+     * (Optional)
+     * IP address allocation
+     * "dynamic" or "static". Default is "dynamic"
      */
     val ipAddressAllocation: IpAddressAllocation? = null,
 
     /**
-     * (Optional) IP address assigned to camera. This setting can be
-     * set when ipAddressAllocation is "static"
+     * (Optional)
+     * IP address assigned to camera
+     * This setting must be set when ipAddressAllocation is "static"
      */
     val ipAddress: String? = null,
 
     /**
-     * (Optional) Subnet mask. This setting can be set when
-     * ipAddressAllocation is "static"
+     * (Optional)
+     * Subnet mask
+     * This setting must be set when ipAddressAllocation is "static"
      */
     val subnetMask: String? = null,
 
     /**
-     * (Optional) Default gateway. This setting can be set when
-     * ipAddressAllocation is "static"
+     * (Optional)
+     * Default gateway
+     * This setting must be set when ipAddressAllocation is "static"
      */
     val defaultGateway: String? = null,
+
+    /**
+     * (Optional)
+     * Primary DNS server.
+     * This setting must be set when ipAddressAllocation is "static"
+     */
+    var dns1: String?,
+
+    /**
+     * (Optional)
+     * Secondary DNS server.
+     * This setting must be set when ipAddressAllocation is "static"
+     */
+    var dns2: String?,
 
     /**
      * Proxy information to be used for the access point.

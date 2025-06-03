@@ -27,6 +27,7 @@ const LivePreviewScreen: React.FC<
   const [dataUrl, setDataUrl] = React.useState<string | undefined>();
   const [previewing, setPreviewing] = React.useState<boolean>(false);
   const [isLoaded, setLoaded] = React.useState(false);
+  const [frameSize, setFrameSize] = React.useState<number>(0);
   const webViewRef = React.useRef<WebView>(null);
   const source =
     Platform.OS === 'android'
@@ -86,6 +87,7 @@ const LivePreviewScreen: React.FC<
       );
       const eventListener = emitter.addListener(THETA_EVENT_NAME, (event) => {
         setDataUrl(event.data);
+        setFrameSize(event.dataSize);
       });
       return () => {
         isInitialized().then((isInit) => {
@@ -119,7 +121,7 @@ const LivePreviewScreen: React.FC<
       </View>
       <View style={styles.bottomViewContainer}>
         <Text style={styles.itemText}>
-          {previewing ? 'Previewing...' : 'Stopped'}
+          {previewing ? 'Previewing...' : 'Stopped'} ({frameSize} byte)
         </Text>
         <View style={styles.bottomViewContainerLayout}>
           <Button style={styles.button} title="Start" onPress={onStart} />

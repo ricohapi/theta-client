@@ -62,6 +62,16 @@ enum CapturingStatusEnum {
 
   /// Self-timer in progress
   selfTimerCountdown('SELF_TIMER_COUNTDOWN'),
+
+  /// Performing timeShift shooting
+  timeShiftShooting('TIME_SHIFT_SHOOTING'),
+
+  /// Performing second capture of manual timeShift shooting
+  timeShiftShootingSecond('TIME_SHIFT_SHOOTING_SECOND'),
+
+  /// In the case of time-lag shooting by manual lens,
+  /// set while waiting for the second shot to be taken after the first shot is completed.
+  timeShiftShootingIdle('TIME_SHIFT_SHOOTING_IDLE'),
   ;
 
   final String rawValue;
@@ -141,12 +151,42 @@ class TimeShiftCapture extends Capture {
       void Function(double completion) onProgress,
       void Function(Exception exception) onCaptureFailed,
       {void Function(Exception exception)? onStopFailed,
-        void Function(CapturingStatusEnum status)? onCapturing}) {
+      void Function(CapturingStatusEnum status)? onCapturing}) {
     ThetaClientFlutterPlatform.instance
         .startTimeShiftCapture(onProgress, onStopFailed, onCapturing)
         .then((value) => onCaptureCompleted(value))
         .onError((error, stackTrace) => onCaptureFailed(error as Exception));
     return TimeShiftCapturing();
+  }
+}
+
+/// Capture of Manual TimeShift
+class TimeShiftManualCapture extends Capture {
+  final int _interval;
+
+  TimeShiftManualCapture(super.options, this._interval);
+
+  int getCheckStatusCommandInterval() {
+    return _interval;
+  }
+
+  TimeShift? getTimeShiftSetting() {
+    return _options[OptionNameEnum.timeShift.rawValue];
+  }
+
+  /// Starts TimeShift manual capture.
+  ///   Later, need to call TimeShiftManualCapturing.startSecondCapture() or TimeShiftManualCapturing.stopCapture()
+  TimeShiftManualCapturing startCapture(
+      void Function(String? fileUrl) onCaptureCompleted,
+      void Function(double completion) onProgress,
+      void Function(Exception exception) onCaptureFailed,
+      {void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing}) {
+    ThetaClientFlutterPlatform.instance
+        .startTimeShiftManualCapture(onProgress, onStopFailed, onCapturing)
+        .then((value) => onCaptureCompleted(value))
+        .onError((error, stackTrace) => onCaptureFailed(error as Exception));
+    return TimeShiftManualCapturing();
   }
 }
 
@@ -203,7 +243,7 @@ class LimitlessIntervalCapture extends Capture {
       void Function(List<String>? fileUrls) onCaptureCompleted,
       void Function(Exception exception) onCaptureFailed,
       {void Function(Exception exception)? onStopFailed,
-        void Function(CapturingStatusEnum status)? onCapturing}) {
+      void Function(CapturingStatusEnum status)? onCapturing}) {
     ThetaClientFlutterPlatform.instance
         .startLimitlessIntervalCapture(onStopFailed, onCapturing)
         .then((value) => onCaptureCompleted(value))
@@ -235,10 +275,10 @@ class ShotCountSpecifiedIntervalCapture extends Capture {
       void Function(double completion) onProgress,
       void Function(Exception exception) onCaptureFailed,
       {void Function(Exception exception)? onStopFailed,
-        void Function(CapturingStatusEnum status)? onCapturing}) {
+      void Function(CapturingStatusEnum status)? onCapturing}) {
     ThetaClientFlutterPlatform.instance
         .startShotCountSpecifiedIntervalCapture(
-        onProgress, onStopFailed, onCapturing)
+            onProgress, onStopFailed, onCapturing)
         .then((value) => onSuccess(value))
         .onError((error, stackTrace) => onCaptureFailed(error as Exception));
     return ShotCountSpecifiedIntervalCapturing();
@@ -269,7 +309,7 @@ class CompositeIntervalCapture extends Capture {
       void Function(double completion) onProgress,
       void Function(Exception exception) onCaptureFailed,
       {void Function(Exception exception)? onStopFailed,
-        void Function(CapturingStatusEnum status)? onCapturing}) {
+      void Function(CapturingStatusEnum status)? onCapturing}) {
     ThetaClientFlutterPlatform.instance
         .startCompositeIntervalCapture(onProgress, onStopFailed, onCapturing)
         .then((value) => onSuccess(value))
@@ -359,7 +399,8 @@ class ContinuousCapture extends Capture {
   }
 
   /// Starts continuous shooting
-  void startCapture(void Function(List<String>? fileUrls) onSuccess,
+  void startCapture(
+      void Function(List<String>? fileUrls) onSuccess,
       void Function(double completion) onProgress,
       void Function(Exception exception) onCaptureFailed,
       {void Function(CapturingStatusEnum status)? onCapturing}) {

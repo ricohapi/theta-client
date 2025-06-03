@@ -1,1 +1,9 @@
-{"name":"camera.getOptions","results":{"options":{"_wlanFrequency":5}},"state":"done"}
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "_wlanFrequency": 5
+    }
+  },
+  "state": "done"
+}

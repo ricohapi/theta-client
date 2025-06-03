@@ -1,1 +1,10 @@
-{"name":"camera.startCapture","results":{"fileUrls":["http://192.168.1.1/files/150100525831424d42075b6ace1cc300/100RICOH/R0010005.JPG","http://192.168.1.1/files/150100525831424d42075b6ace1cc300/100RICOH/R0010006.JPG"]},"state":"done"}
+{
+  "name": "camera.startCapture",
+  "results": {
+    "fileUrls": [
+      "http://192.168.1.1/files/150100525831424d42075b6ace1cc300/100RICOH/R0010005.JPG",
+      "http://192.168.1.1/files/150100525831424d42075b6ace1cc300/100RICOH/R0010006.JPG"
+    ]
+  },
+  "state": "done"
+}

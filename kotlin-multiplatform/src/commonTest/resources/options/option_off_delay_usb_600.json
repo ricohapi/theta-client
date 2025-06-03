@@ -1,0 +1,9 @@
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "_offDelayUSB": 600
+    }
+  },
+  "state": "done"
+}

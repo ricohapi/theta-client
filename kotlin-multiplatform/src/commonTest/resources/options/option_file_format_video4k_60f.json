@@ -2,7 +2,13 @@
   "name": "camera.getOptions",
   "results": {
     "options": {
-      "fileFormat": {"type": "mp4","width": 3840,"height": 1920, "_codec": "H.264/MPEG-4 AVC", "_frameRate": 60}
+      "fileFormat": {
+        "type": "mp4",
+        "width": 3840,
+        "height": 1920,
+        "_codec": "H.264/MPEG-4 AVC",
+        "_frameRate": 60
+      }
     }
   },
   "state": "done"

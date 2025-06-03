@@ -3,12 +3,26 @@ package com.ricoh360.thetaclient.repository
 import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
-import com.ricoh360.thetaclient.transferred.*
-import io.ktor.client.network.sockets.*
-import io.ktor.http.*
-import io.ktor.utils.io.*
+import com.ricoh360.thetaclient.transferred.CameraError
+import com.ricoh360.thetaclient.transferred.CameraState
+import com.ricoh360.thetaclient.transferred.CaptureStatus
+import com.ricoh360.thetaclient.transferred.ChargingState
+import com.ricoh360.thetaclient.transferred.MicrophoneOption
+import com.ricoh360.thetaclient.transferred.ShootingFunction
+import com.ricoh360.thetaclient.transferred.StateApiResponse
+import com.ricoh360.thetaclient.transferred.StorageOption
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.http.HttpStatusCode
+import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.test.runTest
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class GetThetaStateTest {
     private val endpoint = "http://192.168.1.1:80/"
@@ -570,6 +584,11 @@ class GetThetaStateTest {
         assertEquals(
             ThetaRepository.CaptureStatusEnum.get(CaptureStatus.BURST_SHOOTING),
             ThetaRepository.CaptureStatusEnum.BURST_SHOOTING,
+            "CaptureStatusEnum"
+        )
+        assertEquals(
+            ThetaRepository.CaptureStatusEnum.get(CaptureStatus.TIME_SHIFT_SHOOTING_IDLE),
+            ThetaRepository.CaptureStatusEnum.TIME_SHIFT_SHOOTING_IDLE,
             "CaptureStatusEnum"
         )
 

@@ -1,1 +1,89 @@
-{"results":{"entries":[{"dateTimeZone":"2023:05:17 13:22:54+09:00","_favorite":false,"fileUrl":"http://192.168.1.1/files/100RICOH/R0010010.JPG","height":2752,"_imageDescription":"","isProcessed":true,"name":"R0010010.JPG","previewUrl":"","_projectionType":"Equirectangular","size":3985065,"_storageID":"412176649172527ab3d5edabb50a7d69","_thumbSize":2247,"_uploaded":false,"width":5504},{"dateTimeZone":"2023:05:17 13:22:48+09:00","_favorite":false,"fileUrl":"http://192.168.1.1/files/100RICOH/R0010009.JPG","height":2752,"_imageDescription":"","isProcessed":true,"name":"R0010009.JPG","previewUrl":"","_projectionType":"Equirectangular","size":4039235,"_storageID":"412176649172527ab3d5edabb50a7d69","_thumbSize":2370,"_uploaded":false,"width":5504},{"dateTimeZone":"2023:05:17 13:22:41+09:00","_favorite":false,"fileUrl":"http://192.168.1.1/files/100RICOH/R0010008.JPG","height":2752,"_imageDescription":"","isProcessed":true,"name":"R0010008.JPG","previewUrl":"","_projectionType":"Equirectangular","size":4030941,"_storageID":"412176649172527ab3d5edabb50a7d69","_thumbSize":2390,"_uploaded":false,"width":5504},{"dateTimeZone":"2023:05:17 13:22:35+09:00","_favorite":false,"fileUrl":"http://192.168.1.1/files/100RICOH/R0010007.JPG","height":2752,"_imageDescription":"","isProcessed":true,"name":"R0010007.JPG","previewUrl":"","_projectionType":"Equirectangular","size":4050252,"_storageID":"412176649172527ab3d5edabb50a7d69","_thumbSize":2366,"_uploaded":false,"width":5504},{"dateTimeZone":"2023:05:17 13:22:28+09:00","_favorite":false,"fileUrl":"http://192.168.1.1/files/100RICOH/R0010006.JPG","height":2752,"_imageDescription":"","isProcessed":true,"name":"R0010006.JPG","previewUrl":"","_projectionType":"Equirectangular","size":4144748,"_storageID":"412176649172527ab3d5edabb50a7d69","_thumbSize":2438,"_uploaded":false,"width":5504}],"totalEntries":9},"name":"camera.listFiles","state":"done"}
+{
+  "results": {
+    "entries": [
+      {
+        "dateTimeZone": "2023:05:17 13:22:54+09:00",
+        "_favorite": false,
+        "fileUrl": "http://192.168.1.1/files/100RICOH/R0010010.JPG",
+        "height": 2752,
+        "_imageDescription": "",
+        "isProcessed": true,
+        "name": "R0010010.JPG",
+        "previewUrl": "",
+        "_projectionType": "Equirectangular",
+        "size": 3985065,
+        "_storageID": "412176649172527ab3d5edabb50a7d69",
+        "_thumbSize": 2247,
+        "_uploaded": false,
+        "width": 5504
+      },
+      {
+        "dateTimeZone": "2023:05:17 13:22:48+09:00",
+        "_favorite": false,
+        "fileUrl": "http://192.168.1.1/files/100RICOH/R0010009.JPG",
+        "height": 2752,
+        "_imageDescription": "",
+        "isProcessed": true,
+        "name": "R0010009.JPG",
+        "previewUrl": "",
+        "_projectionType": "Equirectangular",
+        "size": 4039235,
+        "_storageID": "412176649172527ab3d5edabb50a7d69",
+        "_thumbSize": 2370,
+        "_uploaded": false,
+        "width": 5504
+      },
+      {
+        "dateTimeZone": "2023:05:17 13:22:41+09:00",
+        "_favorite": false,
+        "fileUrl": "http://192.168.1.1/files/100RICOH/R0010008.JPG",
+        "height": 2752,
+        "_imageDescription": "",
+        "isProcessed": true,
+        "name": "R0010008.JPG",
+        "previewUrl": "",
+        "_projectionType": "Equirectangular",
+        "size": 4030941,
+        "_storageID": "412176649172527ab3d5edabb50a7d69",
+        "_thumbSize": 2390,
+        "_uploaded": false,
+        "width": 5504
+      },
+      {
+        "dateTimeZone": "2023:05:17 13:22:35+09:00",
+        "_favorite": false,
+        "fileUrl": "http://192.168.1.1/files/100RICOH/R0010007.JPG",
+        "height": 2752,
+        "_imageDescription": "",
+        "isProcessed": true,
+        "name": "R0010007.JPG",
+        "previewUrl": "",
+        "_projectionType": "Equirectangular",
+        "size": 4050252,
+        "_storageID": "412176649172527ab3d5edabb50a7d69",
+        "_thumbSize": 2366,
+        "_uploaded": false,
+        "width": 5504
+      },
+      {
+        "dateTimeZone": "2023:05:17 13:22:28+09:00",
+        "_favorite": false,
+        "fileUrl": "http://192.168.1.1/files/100RICOH/R0010006.JPG",
+        "height": 2752,
+        "_imageDescription": "",
+        "isProcessed": true,
+        "name": "R0010006.JPG",
+        "previewUrl": "",
+        "_projectionType": "Equirectangular",
+        "size": 4144748,
+        "_storageID": "412176649172527ab3d5edabb50a7d69",
+        "_thumbSize": 2438,
+        "_uploaded": false,
+        "width": 5504
+      }
+    ],
+    "totalEntries": 9
+  },
+  "name": "camera.listFiles",
+  "state": "done"
+}

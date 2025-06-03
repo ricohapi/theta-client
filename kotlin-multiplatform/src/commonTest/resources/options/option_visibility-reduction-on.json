@@ -1,1 +1,9 @@
-{"results":{"options":{"_visibilityReduction":"ON"}},"name":"camera.getOptions","state":"done"}
+{
+  "results": {
+    "options": {
+      "_visibilityReduction": "ON"
+    }
+  },
+  "name": "camera.getOptions",
+  "state": "done"
+}

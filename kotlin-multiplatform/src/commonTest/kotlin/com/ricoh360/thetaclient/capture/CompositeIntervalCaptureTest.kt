@@ -967,6 +967,7 @@ class CompositeIntervalCaptureTest {
                         status,
                         CapturingStatusEnum.STARTING
                     )
+
                     stateCounter == 1 -> assertEquals(
                         status,
                         CapturingStatusEnum.SELF_TIMER_COUNTDOWN

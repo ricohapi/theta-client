@@ -72,6 +72,12 @@ internal enum class ShootingMode {
     CONTINUOUS_SHOOTING,
 
     //MOVIE_SHOOTING("")
+
+    /**
+     * Start time-lapse photography by manual lens
+     */
+    @SerialName("timeShift_manual")
+    TIMESHIFT_MANUAL_SHOOTING,
 }
 
 /**

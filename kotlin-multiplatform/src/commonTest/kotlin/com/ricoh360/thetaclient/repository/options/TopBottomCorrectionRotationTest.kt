@@ -6,13 +6,13 @@ import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.Options
 import com.ricoh360.thetaclient.transferred.TopBottomCorrectionRotation
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.http.content.*
-import io.ktor.utils.io.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import io.ktor.http.HttpStatusCode
+import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.test.runTest
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class TopBottomCorrectionRotationTest {
     private val endpoint = "http://192.168.1.1:80/"
