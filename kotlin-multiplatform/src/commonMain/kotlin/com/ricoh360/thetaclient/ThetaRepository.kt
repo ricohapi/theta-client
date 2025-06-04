@@ -159,8 +159,6 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             val info = ThetaApi.callInfoApi(endpoint)
             cameraModel = ThetaModel.get(info.model, info.serialNumber)
             println("init camera model: ${cameraModel?.name}")
-            firmwareVersion = info.firmwareVersion
-            println("init camera firmware version: $firmwareVersion")
             if (checkChangedApi2(info.model, info.firmwareVersion)) {
                 val state = ThetaApi.callStateApi(endpoint)
                 if (state.state._apiVersion == 1) {
@@ -303,12 +301,6 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * Camera model.
      */
     var cameraModel: ThetaModel? = null
-        internal set
-
-    /**
-     * Camera firmware version.
-     */
-    var firmwareVersion: String? = null
         internal set
 
     /**
@@ -7780,7 +7772,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     @Suppress("RethrowCaughtException")
     fun getLivePreview(): Flow<ByteReadPacket> {
         try {
-            return ThetaApi.callGetLivePreviewCommand(getEndpointOfLivePreview(endpoint))
+            return ThetaApi.callGetLivePreviewCommand(endpoint)
         } catch (e: PreviewClientException) {
             logger.log("PreviewClient: $e")
             throw ThetaWebApiException(e.toString())
@@ -7804,7 +7796,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     @Suppress("SwallowedException")
     suspend fun getLivePreview(frameHandler: suspend (Pair<ByteArray, Int>) -> Boolean) {
         try {
-            ThetaApi.callGetLivePreviewCommand(getEndpointOfLivePreview(endpoint)) {
+            ThetaApi.callGetLivePreviewCommand(endpoint) {
                 return@callGetLivePreviewCommand frameHandler(it)
             }
         } catch (e: PreviewClientException) {
@@ -9641,45 +9633,6 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             min = support.minYaw as T,
             stepSize = support.stepSize as T
         )
-    }
-
-    /**
-     * Get the endpoint of live preview
-     *
-     * @param apiEndpoint The endpoint of web API other than live preview
-     * @return The port of live preview
-     */
-    internal fun getEndpointOfLivePreview(apiEndpoint: String): String {
-        val regexPort = Regex(""":\d+""")
-        val regexHost = Regex("""(\.[^/]+)/?""")
-        return when {
-            regexPort.containsMatchIn(apiEndpoint) -> apiEndpoint.replaceFirst(regexPort, ":" + getPortOfPreview())
-            else -> apiEndpoint.replaceFirst(regexHost, "$1:${getPortOfPreview()}/")
-        }
-    }
-
-    /**
-     *  Get the port of preview.
-     *
-     *  THETA A1 && (version < 1.10.1) port 49788
-     *  THETA A1 && (version == 1.10.1) port 80
-     *  THETA A1 && ( 1.10.1 < version < 1.20.0 ) port 49788
-     *  THETA A1 && ( 1.20.0 <= version ) port 80
-     *  Other models: 80
-     */
-    private fun getPortOfPreview(): Int {
-        val tmpPort = 49788
-        val finalPort = 80
-        return if (cameraModel == ThetaModel.THETA_A1) {
-            when {
-                firmwareVersion.orEmpty() < "1.10.1" -> tmpPort
-                firmwareVersion == "1.10.1" -> finalPort
-                firmwareVersion.orEmpty() < "1.20.0" -> tmpPort
-                else -> finalPort
-            }
-        } else {
-            finalPort
-        }
     }
 }
 
