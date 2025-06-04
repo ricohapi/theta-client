@@ -1,28 +1,25 @@
 import org.jetbrains.dokka.versioning.VersioningConfiguration
 import org.jetbrains.dokka.versioning.VersioningPlugin
-import java.util.Properties
+import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
     kotlin("multiplatform")
-    kotlin("plugin.serialization") version "1.9.10"
+    kotlin("plugin.serialization") version "1.9.20"
     id("com.android.library")
-    id("maven-publish")
-    id("org.jetbrains.dokka") version "1.9.10"
+    id("org.jetbrains.dokka") version "1.9.20"
     kotlin("native.cocoapods")
     signing
     id("io.gitlab.arturbosch.detekt").version("1.23.3")
+    id("com.vanniktech.maven.publish") version "0.32.0"
 }
 
 dependencies {
-    dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.10")
+    dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.20")
 }
 
 val thetaClientVersion = "1.12.1"
 group = "com.ricoh360.thetaclient"
 version = thetaClientVersion
-
-// Init publish property
-initProp()
 
 kotlin {
     androidTarget {
@@ -118,66 +115,47 @@ val javadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
 }
 
-// Publish the library to GitHub Packages Mavan repository.
+// Publish the library to Mavan repository.
 // Because the components are created only during the afterEvaluate phase, you must
 // configure your publications using the afterEvaluate() lifecycle method.
 afterEvaluate {
-    initProp()
-    publishing {
-        publications.withType(MavenPublication::class) {
-            artifact(javadocJar.get())
-            when (name) {
-                "androidRelease" -> {
-                    artifactId = "theta-client"
-                }
-
-                else -> {
-                    artifactId = "theta-client-$name"
+    mavenPublishing {
+        // publishing to https://central.sonatype.com/
+        publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+        signAllPublications()
+        coordinates(group.toString(), "theta-client", version.toString())
+        pom {
+            name.set("theta-client")
+            description.set("This library provides a way to control RICOH THETA using RICOH THETA API v2.1")
+            inceptionYear.set("2023")
+            url.set("https://github.com/ricohapi/theta-client")
+            licenses {
+                license {
+                    name.set("MIT")
+                    url.set("https://github.com/ricohapi/theta-client/blob/main/LICENSE")
                 }
             }
-            pom {
-                name.set("theta-client")
-                description.set("This library provides a way to control RICOH THETA using RICOH THETA API v2.1")
-                url.set("https://github.com/ricohapi/theta-client")
-                licenses {
-                    license {
-                        name.set("MIT")
-                        url.set("https://github.com/ricohapi/theta-client/blob/main/LICENSE")
-                    }
+            developers {
+                developer {
+                    organization.set("RICOH360")
+                    organizationUrl.set("https://github.com/ricohapi/theta-client")
                 }
-                developers {
-                    developer {
-                        organization.set("RICOH360")
-                        organizationUrl.set("https://github.com/ricohapi/theta-client")
-                    }
-                }
-                scm {
-                    connection.set("scm:git:git@github.com:ricohapi/theta-client.git")
-                    developerConnection.set("scm:git:git@github.com:ricohapi/theta-client.git")
-                    url.set("https://github.com/ricohapi/theta-client/tree/main")
-                }
+            }
+            scm {
+                connection.set("scm:git:git@github.com:ricohapi/theta-client.git")
+                developerConnection.set("scm:git:git@github.com:ricohapi/theta-client.git")
+                url.set("https://github.com/ricohapi/theta-client/tree/main")
             }
         }
-        repositories {
-            maven {
-                url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-                credentials {
-                    username = getExtraString("ossrhUsername")
-                    password = getExtraString("ossrhPassword")
-                }
-            }
-        }
-    }
-}
-
-signing {
-    if (getExtraString("signing.keyId") != null) {
-        useInMemoryPgpKeys(
-            getExtraString("signing.keyId"),
-            getExtraString("signing.key"),
-            getExtraString("signing.password")
-        )
-        sign(publishing.publications)
+        /* Secrets
+         *     Set following environment variables for Central Portal user token
+         *       * ORG_GRADLE_PROJECT_mavenCentralUsername: username of the user token of Central Portal
+         *       * ORG_GRADLE_PROJECT_mavenCentralPassword: password of the user token of Central Portal
+         *     Set following environment variables for GPG key. See https://vanniktech.github.io/gradle-maven-publish-plugin/central/#secrets
+         *       * ORG_GRADLE_PROJECT_signingInMemoryKey : Secret key in PEM format
+         *       * ORG_GRADLE_PROJECT_signingInMemoryKeyId : 8 characters key id
+         *       * ORG_GRADLE_PROJECT_signingInMemoryKeyPassword
+         */
     }
 }
 
@@ -192,38 +170,6 @@ detekt {
         "$rootDir/flutter/android/src/",
         "$rootDir/react-native/android/src/"
     ) // the folders to be checked
-}
-
-ext["signing.keyId"] = null
-ext["signing.key"] = null
-ext["signing.password"] = null
-ext["ossrhUsername"] = null
-ext["ossrhPassword"] = null
-
-fun initProp() {
-    val secretPropsFile = project.rootProject.file("local.properties")
-    if (secretPropsFile.exists()) {
-        secretPropsFile.reader().use {
-            Properties().apply {
-                load(it)
-            }
-        }.onEach { (name, value) ->
-            ext[name.toString()] = value
-        }
-    } else {
-        ext["signing.keyId"] = System.getenv("SIGNING_KEY_ID")
-        ext["signing.key"] = System.getenv("SIGNING_KEY")
-        ext["signing.password"] = System.getenv("SIGNING_PASSWORD")
-        ext["ossrhUsername"] = System.getenv("OSSRH_USERNAME")
-        ext["ossrhPassword"] = System.getenv("OSSRH_PASSWORD")
-    }
-}
-
-fun getExtraString(name: String): String? {
-    if (ext.has(name)) {
-        return ext[name]?.toString()
-    }
-    return null
 }
 
 tasks.dokkaHtml.configure {
