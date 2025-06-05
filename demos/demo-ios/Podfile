@@ -7,5 +7,5 @@ target 'SdkSample' do
   use_frameworks!
 
   # Pods for SdkSample
-  pod 'THETAClient', '1.12.1'
+  pod 'THETAClient', '1.13.0'
 end
