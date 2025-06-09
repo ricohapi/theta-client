@@ -268,7 +268,7 @@ PODS:
     - glog
   - react-native-safe-area-context (4.14.1):
     - React-Core
-  - react-native-webview (13.13.2):
+  - react-native-webview (13.15.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - React-perflogger (0.71.14)
@@ -355,14 +355,14 @@ PODS:
     - React-jsi (= 0.71.14)
     - React-logger (= 0.71.14)
     - React-perflogger (= 0.71.14)
-  - RNScreens (3.35.0):
+  - RNScreens (3.37.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
     - React-RCTImage
-  - theta-client-react-native (1.12.1):
+  - theta-client-react-native (1.13.0):
     - React-Core
-    - THETAClient (= 1.12.1)
-  - THETAClient (1.12.1)
+    - THETAClient (= 1.13.0)
+  - THETAClient (1.13.0)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -515,7 +515,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 7bf923954b4e035f494b01ac16633963412660d7
   React-logger: 655ff5db8bd922acfbe76a4983ffab048916343e
   react-native-safe-area-context: 141eca0fd4e4191288dfc8b96a7c7e1c2983447a
-  react-native-webview: f44e822d613d729859a140b79ca88641094f3550
+  react-native-webview: 80048ef70a4bbaf33fb27aab4482efcd060db81f
   React-perflogger: 4987ad83731c23d11813c84263963b0d3028c966
   React-RCTActionSheet: 5ad952b2a9740d87a5bd77280c4bc23f6f89ea0c
   React-RCTAnimation: d2de22af3f536cc80bb5b3918e1a455114d1b985
@@ -529,9 +529,9 @@ SPEC CHECKSUMS:
   React-RCTVibration: 64e412b9ac684c4edc938fa1187135ada9af7faf
   React-runtimeexecutor: ffe826b7b1cfbc32a35ed5b64d5886c0ff75f501
   ReactCommon: 7f3dd5e98a9ec627c6b03d26c062bf37ea9fc888
-  RNScreens: 50ad6e3dbea9023272b3aa753e3ee2720b0c9b8f
-  theta-client-react-native: 8ed0f1cda1a9db49043e2a9b6f60797f16349fab
-  THETAClient: 0fb33ddf2994806ef4dfad9296dc337d8c9013d2
+  RNScreens: 03955a91fd4229e4668841eefc7c04e513870608
+  theta-client-react-native: 072f44baa8d3eb25b42e415fbdc7121accf1c66e
+  THETAClient: 075f927b384ba040da2842bd168a5e1c1b55d3cf
   Yoga: e71803b4c1fff832ccf9b92541e00f9b873119b9
 
 PODFILE CHECKSUM: 1db31f88b35bc09c73c93dc318aed047b266c17c
