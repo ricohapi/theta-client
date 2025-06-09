@@ -4,14 +4,22 @@ import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
-import com.ricoh360.thetaclient.transferred.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.http.content.*
-import io.ktor.utils.io.*
+import com.ricoh360.thetaclient.transferred.BurstBracketStep
+import com.ricoh360.thetaclient.transferred.BurstCaptureNum
+import com.ricoh360.thetaclient.transferred.BurstCompensation
+import com.ricoh360.thetaclient.transferred.BurstEnableIsoControl
+import com.ricoh360.thetaclient.transferred.BurstMaxExposureTime
+import com.ricoh360.thetaclient.transferred.BurstOption
+import com.ricoh360.thetaclient.transferred.BurstOrder
+import com.ricoh360.thetaclient.transferred.Options
+import io.ktor.http.HttpStatusCode
+import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class BurstOptionTest {

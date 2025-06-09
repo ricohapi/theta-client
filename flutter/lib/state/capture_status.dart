@@ -26,9 +26,13 @@ enum CaptureStatusEnum {
 
   /// Capture status. Waiting for retrospective video...
   retrospectiveImageRecording('RETROSPECTIVE_IMAGE_RECORDING'),
-  
+
   /// Capture status. Performing burst shooting
   burstShooting('BURST_SHOOTING'),
+
+  /// In the case of time-lag shooting by manual lens,
+  /// set while waiting for the second shot to be taken after the first shot is completed.
+  timeShiftShootingIdle('TIME_SHIFT_SHOOTING_IDLE'),
   ;
 
   final String rawValue;

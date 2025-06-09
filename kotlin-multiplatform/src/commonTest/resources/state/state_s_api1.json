@@ -1,1 +1,15 @@
-{"fingerprint":"FIG_0002","state":{"sessionId":"SID_0001","batteryLevel":0.67,"storageChanged":false,"_captureStatus":"idle","_recordedTime":0,"_recordableTime":0,"_compositeShootingElapsedTime":0,"_latestFileUri":"","_batteryState":"disconnect","_apiVersion":1}}
+{
+  "fingerprint": "FIG_0002",
+  "state": {
+    "sessionId": "SID_0001",
+    "batteryLevel": 0.67,
+    "storageChanged": false,
+    "_captureStatus": "idle",
+    "_recordedTime": 0,
+    "_recordableTime": 0,
+    "_compositeShootingElapsedTime": 0,
+    "_latestFileUri": "",
+    "_batteryState": "disconnect",
+    "_apiVersion": 1
+  }
+}

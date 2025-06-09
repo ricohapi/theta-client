@@ -9,13 +9,24 @@ class EthernetConfig {
   bool usingDhcp;
 
   /// (optional) IPv4 for IP address
+  /// Do not specify this property when usingDhcp is true.
   String? ipAddress;
 
   /// (optional) IPv4 for subnet mask
+  /// Do not specify this property when usingDhcp is true.
   String? subnetMask;
 
   /// (optional) IPv4 for default gateway
+  /// Do not specify this property when usingDhcp is true.
   String? defaultGateway;
+
+  /// (optional) IPv4 for Primary DNS server
+  /// Do not specify this property when usingDhcp is true.
+  String? dns1;
+
+  /// (optional) IPv4 for Secondary DNS server
+  /// Do not specify this property when usingDhcp is true.
+  String? dns2;
 
   /// (optional) refer to _proxy for detail
   ///
@@ -28,12 +39,17 @@ class EthernetConfig {
   Proxy? proxy;
 
   EthernetConfig(this.usingDhcp,
-      [this.ipAddress, this.subnetMask, this.defaultGateway, this.proxy]);
+      [this.ipAddress,
+      this.subnetMask,
+      this.defaultGateway,
+      this.dns1,
+      this.dns2,
+      this.proxy]);
 
   @override
   bool operator ==(Object other) => hashCode == other.hashCode;
 
   @override
-  int get hashCode =>
-      Object.hashAll([usingDhcp, ipAddress, subnetMask, defaultGateway, proxy]);
+  int get hashCode => Object.hashAll(
+      [usingDhcp, ipAddress, subnetMask, defaultGateway, dns1, dns2, proxy]);
 }

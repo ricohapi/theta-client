@@ -1,1 +1,9 @@
-{"name":"camera.getOptions","results":{"options":{"_bluetoothPower":"ON"}},"state":"done"}
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "_bluetoothPower": "ON"
+    }
+  },
+  "state": "done"
+}

@@ -3,9 +3,15 @@ package com.ricoh360.thetaclient.capture
 import com.ricoh360.thetaclient.CHECK_COMMAND_STATUS_INTERVAL
 import com.ricoh360.thetaclient.ThetaApi
 import com.ricoh360.thetaclient.ThetaRepository
-import com.ricoh360.thetaclient.transferred.*
-import io.ktor.client.plugins.*
-import io.ktor.serialization.*
+import com.ricoh360.thetaclient.transferred.CaptureMode
+import com.ricoh360.thetaclient.transferred.CaptureStatus
+import com.ricoh360.thetaclient.transferred.Options
+import com.ricoh360.thetaclient.transferred.SetOptionsParams
+import com.ricoh360.thetaclient.transferred.ShootingMethod
+import com.ricoh360.thetaclient.transferred.ShootingMode
+import com.ricoh360.thetaclient.transferred.StartCaptureParams
+import io.ktor.client.plugins.ResponseException
+import io.ktor.serialization.JsonConvertException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -150,7 +156,9 @@ class LimitlessIntervalCapture private constructor(
                 }
                 ThetaApi.callStartCaptureCommand(endpoint, params).error?.let {
                     callOnCaptureFailed(ThetaRepository.ThetaWebApiException(it.message))
+                    return@launch
                 }
+                callback.onCapturing(CapturingStatusEnum.STARTING)
             } catch (e: JsonConvertException) {
                 callOnCaptureFailed(ThetaRepository.ThetaWebApiException(e.message ?: e.toString()))
             } catch (e: ResponseException) {

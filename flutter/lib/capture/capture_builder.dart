@@ -178,6 +178,61 @@ class TimeShiftCaptureBuilder extends CaptureBuilder<TimeShiftCaptureBuilder> {
   }
 }
 
+/// Builder of TimeShiftManualCapture
+class TimeShiftManualCaptureBuilder
+    extends CaptureBuilder<TimeShiftManualCaptureBuilder> {
+  int _interval = -1;
+  TimeShift? _timeShift;
+
+  void _checkAndInitTimeShiftSetting() {
+    if (_timeShift == null) {
+      _timeShift = TimeShift();
+      _options[OptionNameEnum.timeShift.rawValue] = _timeShift;
+    }
+  }
+
+  TimeShiftManualCaptureBuilder setCheckStatusCommandInterval(int timeMillis) {
+    _interval = timeMillis;
+    return this;
+  }
+
+  /// Set is front first
+  TimeShiftManualCaptureBuilder setIsFrontFirst(bool isFrontFirst) {
+    _checkAndInitTimeShiftSetting();
+    _timeShift?.isFrontFirst = isFrontFirst;
+    return this;
+  }
+
+  /// set time (sec) before 1st lens shooting
+  TimeShiftManualCaptureBuilder setSecondInterval(
+      TimeShiftIntervalEnum interval) {
+    _checkAndInitTimeShiftSetting();
+    _timeShift?.secondInterval = interval;
+    return this;
+  }
+
+  /// set time (sec) before 1st lens shooting
+  TimeShiftManualCaptureBuilder setFirstInterval(
+      TimeShiftIntervalEnum interval) {
+    _checkAndInitTimeShiftSetting();
+    _timeShift?.firstInterval = interval;
+    return this;
+  }
+
+  /// Builds an instance of a TimeShiftManualCapture that has all the combined parameters of the Options that have been added to the Builder.
+  Future<TimeShiftManualCapture> build() async {
+    var completer = Completer<TimeShiftManualCapture>();
+    try {
+      await ThetaClientFlutterPlatform.instance
+          .buildTimeShiftManualCapture(_options, _interval);
+      completer.complete(TimeShiftManualCapture(_options, _interval));
+    } catch (e) {
+      completer.completeError(e);
+    }
+    return completer.future;
+  }
+}
+
 /// Builder of VideoCapture
 class VideoCaptureBuilder extends CaptureBuilder<VideoCaptureBuilder> {
   int _interval = -1;
@@ -360,7 +415,7 @@ class MultiBracketCaptureBuilder
   /// | THETA X                | 2   | 13  |
   ///
   /// Number of settings have to be Number of shots in multi bracket shooting.
-  /// 
+  ///
   /// For Theta SC2, S and SC, other settings than iso, shutterSpeed and
   /// colorTemperature are ignored.
   /// For Theta X, exposureProgram and exposureCompensation are ignored
@@ -520,6 +575,15 @@ enum VideoFileFormatEnum {
   /// type: mp4
   /// size: 1920 x 960
   /// codec: H.264/MPEG-4 AVC
+  /// frame rate: 15
+  ///
+  /// For RICOH THETA A1
+  video_2K_15F(FileFormatEnum.video_2K_15F),
+
+  /// Video File format.
+  /// type: mp4
+  /// size: 1920 x 960
+  /// codec: H.264/MPEG-4 AVC
   /// frame rate: 30
   ///
   /// For RICOH THETA X or later
@@ -634,6 +698,24 @@ enum VideoFileFormatEnum {
   /// type: mp4
   /// size: 3840 x 1920
   /// codec: H.264/MPEG-4 AVC
+  /// frame rate: 2
+  ///
+  /// For RICOH THETA A1
+  video_4K_2F(FileFormatEnum.video_4K_2F),
+
+  /// Video File format.
+  /// type: mp4
+  /// size: 3840 x 1920
+  /// codec: H.264/MPEG-4 AVC
+  /// frame rate: 5
+  ///
+  /// For RICOH THETA A1
+  video_4K_5F(FileFormatEnum.video_4K_5F),
+
+  /// Video File format.
+  /// type: mp4
+  /// size: 3840 x 1920
+  /// codec: H.264/MPEG-4 AVC
   /// frame rate: 10
   ///
   /// For RICOH THETA X or later
@@ -736,7 +818,127 @@ enum VideoFileFormatEnum {
   /// frame rate: 10
   ///
   /// For RICOH THETA X or later
-  video_7K_10F(FileFormatEnum.video_7K_10F);
+  video_7K_10F(FileFormatEnum.video_7K_10F),
+
+  /// Video File format.
+  /// type: mp4
+  /// size: 1920 x 960
+  /// codec: H.265/HEVC
+  /// frame rate: 30
+  ///
+  /// For RICOH THETA A1
+  // ignore: constant_identifier_names
+  video_2K_30F_h265Hevc(FileFormatEnum.video_2K_30F_h265Hevc),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 3840 x 1920
+  /// codec: H.265/HEVC
+  /// frame rate: 2
+  ///
+  /// For RICOH THETA A1
+  // ignore: constant_identifier_names
+  video_4K_2F_h265Hevc(FileFormatEnum.video_4K_2F_h265Hevc),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 3840 x 1920
+  /// codec: H.265/HEVC
+  /// frame rate: 5
+  ///
+  /// For RICOH THETA A1
+  // ignore: constant_identifier_names
+  video_4K_5F_h265Hevc(FileFormatEnum.video_4K_5F_h265Hevc),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 3840 x 1920
+  /// codec: H.265/HEVC
+  /// frame rate: 10
+  ///
+  /// For RICOH THETA A1
+  // ignore: constant_identifier_names
+  video_4K_10F_h265Hevc(FileFormatEnum.video_4K_10F_h265Hevc),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 3840 x 1920
+  /// codec: H.265/HEVC
+  /// frame rate: 30
+  ///
+  /// For RICOH THETA A1
+  // ignore: constant_identifier_names
+  video_4K_30F_h265Hevc(FileFormatEnum.video_4K_30F_h265Hevc),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 5760 x 2880
+  /// codec: H.265/HEVC
+  /// frame rate: 2
+  ///
+  /// For RICOH THETA A1
+  // ignore: constant_identifier_names
+  video_5_7K_2F_h265Hevc(FileFormatEnum.video_5_7K_2F_h265Hevc),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 5760 x 2880
+  /// codec: H.265/HEVC
+  /// frame rate: 5
+  ///
+  /// For RICOH THETA A1
+  // ignore: constant_identifier_names
+  video_5_7K_5F_h265Hevc(FileFormatEnum.video_5_7K_5F_h265Hevc),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 5760 x 2880
+  /// codec: H.265/HEVC
+  /// frame rate: 10
+  ///
+  /// For RICOH THETA A1
+  // ignore: constant_identifier_names
+  video_5_7K_10F_h265Hevc(FileFormatEnum.video_5_7K_10F_h265Hevc),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 7680 x 3840
+  /// codec: H.265/HEVC
+  /// frame rate: 2
+  ///
+  /// For RICOH THETA A1
+  // ignore: constant_identifier_names
+  video_7K_2F_h265Hevc(FileFormatEnum.video_7K_2F_h265Hevc),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 7680 x 3840
+  /// codec: H.265/HEVC
+  /// frame rate: 5
+  ///
+  /// For RICOH THETA A1
+  // ignore: constant_identifier_names
+  video_7K_5F_h265Hevc(FileFormatEnum.video_7K_5F_h265Hevc),
+
+  /// Video File format.
+  ///
+  /// type: mp4
+  /// size: 7680 x 3840
+  /// codec: H.265/HEVC
+  /// frame rate: 10
+  ///
+  /// For RICOH THETA A1
+  // ignore: constant_identifier_names
+  video_7K_10F_h265Hevc(FileFormatEnum.video_7K_10F_h265Hevc);
 
   final FileFormatEnum rawValue;
 

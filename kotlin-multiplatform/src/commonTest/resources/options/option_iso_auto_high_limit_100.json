@@ -1,1 +1,9 @@
-{"name":"camera.getOptions","results":{"options":{"isoAutoHighLimit":100}},"state":"done"}
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "isoAutoHighLimit": 100
+    }
+  },
+  "state": "done"
+}

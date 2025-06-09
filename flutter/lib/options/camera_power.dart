@@ -1,3 +1,4 @@
+/// Camera power state.
 /// _cameraPower is the power status of camera.
 ///
 /// For RICOH THETA X v2.61.0 or later
@@ -10,6 +11,9 @@ enum CameraPowerEnum {
 
   /// Power OFF
   off('OFF'),
+
+  /// Sleep
+  sleep('SLEEP'),
 
   /// Power on, power saving mode. Camera is closed.
   /// Unavailable parameter when plugin is running. In this case, invalidParameterValue error will be returned.

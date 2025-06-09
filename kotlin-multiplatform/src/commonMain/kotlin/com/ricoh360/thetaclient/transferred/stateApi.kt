@@ -3,7 +3,7 @@
  */
 package com.ricoh360.thetaclient.transferred
 
-import io.ktor.http.*
+import io.ktor.http.HttpMethod
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -295,6 +295,14 @@ internal enum class CaptureStatus : SerialNameEnum {
      */
     BURST_SHOOTING {
         override val serialName: String = "burst shooting"
+    },
+
+    /**
+     * In the case of time-lag shooting by manual lens,
+     * set while waiting for the second shot to be taken after the first shot is completed.
+     */
+    TIME_SHIFT_SHOOTING_IDLE {
+        override val serialName: String = "timeShift shooting idle"
     },
 }
 

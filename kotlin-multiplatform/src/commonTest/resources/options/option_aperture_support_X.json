@@ -1,0 +1,11 @@
+{
+  "results": {
+    "options": {
+      "apertureSupport": [
+        2.4
+      ]
+    }
+  },
+  "name": "camera.getOptions",
+  "state": "done"
+}

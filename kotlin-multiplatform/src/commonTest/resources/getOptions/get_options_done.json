@@ -1,1 +1,10 @@
-{"name":"camera.getOptions","results":{"options":{"remainingPictures":2259,"remainingVideoSeconds":2578}},"state":"done"}
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "remainingPictures": 2259,
+      "remainingVideoSeconds": 2578
+    }
+  },
+  "state": "done"
+}

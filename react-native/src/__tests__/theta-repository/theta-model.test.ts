@@ -12,6 +12,7 @@ describe('getThetaModel', () => {
     [ThetaModel.THETA_X, 'THETA_X'],
     [ThetaModel.THETA_SC2, 'THETA_SC2'],
     [ThetaModel.THETA_SC2_B, 'THETA_SC2_B'],
+    [ThetaModel.THETA_A1, 'THETA_A1'],
   ];
 
   beforeEach(() => {

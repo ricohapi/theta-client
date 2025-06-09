@@ -259,7 +259,7 @@ describe('continuous shooting', () => {
         const options = {
           continuousNumber: ContinuousNumberEnum.MAX_10,
         };
-        return options;
+        return { options: options };
       })
     );
 

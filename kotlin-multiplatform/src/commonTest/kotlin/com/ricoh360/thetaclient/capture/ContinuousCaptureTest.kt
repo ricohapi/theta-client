@@ -5,13 +5,21 @@ import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaApi
 import com.ricoh360.thetaclient.ThetaRepository
-import com.ricoh360.thetaclient.transferred.*
-import io.ktor.client.network.sockets.*
-import io.ktor.http.*
-import io.ktor.utils.io.*
-import kotlinx.coroutines.*
+import com.ricoh360.thetaclient.transferred.CaptureMode
+import com.ricoh360.thetaclient.transferred.MediaFileFormat
+import com.ricoh360.thetaclient.transferred.MediaType
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.http.HttpStatusCode
+import io.ktor.utils.io.ByteReadChannel
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import kotlin.test.*
+import kotlinx.coroutines.withTimeout
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ContinuousCaptureTest {
     private val endpoint = "http://192.168.1.1:80/"
@@ -576,7 +584,12 @@ class ContinuousCaptureTest {
 
             override fun onCapturing(status: CapturingStatusEnum) {
                 when {
-                    stateCounter < 2 -> assertEquals(
+                    stateCounter == 0 -> assertEquals(
+                        status,
+                        CapturingStatusEnum.STARTING
+                    )
+
+                    stateCounter == 1 -> assertEquals(
                         status,
                         CapturingStatusEnum.SELF_TIMER_COUNTDOWN
                     )

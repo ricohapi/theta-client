@@ -1,1 +1,9 @@
-{"results":{"options":{"_cameraControlSource":"camera"}},"name":"camera.getOptions","state":"done"}
+{
+  "results": {
+    "options": {
+      "_cameraControlSource": "camera"
+    }
+  },
+  "name": "camera.getOptions",
+  "state": "done"
+}

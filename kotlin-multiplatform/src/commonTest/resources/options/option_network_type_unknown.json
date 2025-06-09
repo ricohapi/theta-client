@@ -1,0 +1,9 @@
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "_networkType": "aaa"
+    }
+  },
+  "state": "done"
+}

@@ -1,1 +1,8 @@
-{"id":"3","name":"camera.startCapture","progress":{"completion":0.50},"state":"inProgress"}
+{
+  "id": "3",
+  "name": "camera.startCapture",
+  "progress": {
+    "completion": 0.50
+  },
+  "state": "inProgress"
+}

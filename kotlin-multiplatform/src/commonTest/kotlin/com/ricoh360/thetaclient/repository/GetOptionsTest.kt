@@ -39,6 +39,7 @@ class GetOptionsTest {
     }
 
     private fun checkRequest(request: HttpRequestData, optionNames: List<String>) {
+        assertEquals(request.headers.get("Cache-Control"), "no-store")
         val body = request.body as TextContent
         val js = Json {
             encodeDefaults = true // Encode properties with default value.

@@ -1,1 +1,7 @@
-{"name":"camera._convertVideoFormats","results":{"fileUrl":"http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013330_er_2K_H264_tbc.MP4"},"state":"done"}
+{
+  "name": "camera._convertVideoFormats",
+  "results": {
+    "fileUrl": "http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013330_er_2K_H264_tbc.MP4"
+  },
+  "state": "done"
+}

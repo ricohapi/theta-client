@@ -22,6 +22,7 @@ import {
   PhotoCaptureBuilder,
   VideoCaptureBuilder,
   TimeShiftCaptureBuilder,
+  TimeShiftManualCaptureBuilder,
   LimitlessIntervalCaptureBuilder,
   ShotCountSpecifiedIntervalCaptureBuilder,
   CompositeIntervalCaptureBuilder,
@@ -33,8 +34,35 @@ import type { ThetaConfig } from './theta-config';
 import type { ThetaTimeout } from './theta-timeout';
 import { NotifyController } from './notify-controller';
 import { EventWebSocket } from './event-websocket';
-import { convertVideoFormatsImpl } from './libs';
+import { convertOptions, convertVideoFormatsImpl } from './libs';
 const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
+
+const NOTIFY_API_LOG = 'API-LOG';
+let apiLogListener: ((message: string) => void) | undefined;
+
+async function setNotifyApiLogListener(listener?: (message: string) => void) {
+  if (listener) {
+    NotifyController.instance.addNotify(NOTIFY_API_LOG, (event) => {
+      listener(event.params.message);
+    });
+  } else {
+    NotifyController.instance.removeNotify(NOTIFY_API_LOG);
+  }
+  await ThetaClientReactNative.setApiLogListener(listener != null);
+}
+
+/**
+ * Set up a log listener for THETA API calls
+ *
+ * @param listener Called when there is a THETA API request and response; if undefined, unregister.
+ */
+export async function setApiLogListener(listener?: (message: string) => void) {
+  if (!NotifyController.instance.isInit()) {
+    NotifyController.instance.init();
+  }
+  apiLogListener = listener;
+  await setNotifyApiLogListener(apiLogListener);
+}
 
 /**
  * initialize theta client sdk
@@ -45,12 +73,15 @@ const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
  * @param {ThetaTimeout} timeout Timeout of HTTP call.
  * @return promise of boolean result
  **/
-export function initialize(
+export async function initialize(
   endPoint: string = 'http://192.168.1.1',
   config?: ThetaConfig,
   timeout?: ThetaTimeout
 ): Promise<boolean> {
   NotifyController.instance.init();
+  if (apiLogListener) {
+    await setNotifyApiLogListener(apiLogListener);
+  }
 
   return ThetaClientReactNative.initialize(endPoint, config, timeout);
 }
@@ -63,6 +94,19 @@ export function initialize(
  **/
 export function isInitialized(): Promise<boolean> {
   return ThetaClientReactNative.isInitialized();
+}
+
+/**
+ * Turn off/on (reboot) the camera.
+ * Supported models are THETA A1 only.
+ *
+ * Error when connecting in CL mode for Japan-bound models only
+ *
+ * @function reboot
+ * @return promise
+ */
+export function reboot(): Promise<void> {
+  return ThetaClientReactNative.reboot();
 }
 
 /**
@@ -94,6 +138,16 @@ export function getPhotoCaptureBuilder(): PhotoCaptureBuilder {
  */
 export function getTimeShiftCaptureBuilder(): TimeShiftCaptureBuilder {
   return new TimeShiftCaptureBuilder();
+}
+
+/**
+ * Get TimeShiftManualCaptureBuilder for manual time-shift.
+ *
+ * @function getTimeShiftManualCaptureBuilder
+ * @return created TimeShiftManualCaptureBuilder
+ */
+export function getTimeShiftManualCaptureBuilder(): TimeShiftManualCaptureBuilder {
+  return new TimeShiftManualCaptureBuilder();
 }
 
 /**
@@ -415,8 +469,13 @@ export function deleteAllVideoFiles(): Promise<boolean> {
  * @param {OptionNameEnum[]} optionNames List of OptionNameEnum.
  * @return promise of Options acquired
  */
-export function getOptions(optionNames: OptionNameEnum[]): Promise<Options> {
-  return ThetaClientReactNative.getOptions(optionNames);
+export async function getOptions(
+  optionNames: OptionNameEnum[]
+): Promise<Options> {
+  const response = await ThetaClientReactNative.getOptions(optionNames);
+  const { options, json } = response;
+  const result = convertOptions(options, json);
+  return result;
 }
 
 /**
@@ -456,29 +515,39 @@ export function listAccessPoints(): Promise<AccessPoint[]> {
  *
  * @function setAccessPointDynamically
  * @param {string} ssid SSID of the access point.
- * @param {boolean} ssidStealth true if SSID stealth is enabled.
- * @param {AuthModeEnum} authMode Authentication mode.
- * @param {string} password Password. If authMode is "NONE", pass empty String.
- * @param {number} connectionPriority Connection priority 1 to 5.
- * @param {Proxy} proxy Proxy information to be used for the access point.
+ * @param {} params - Optional parameters for additional configuration.
+ * @param {boolean} params.ssidStealth true if SSID stealth is enabled.
+ * @param {AuthModeEnum} params.authMode Authentication mode.
+ * @param {string} params.password Password. Not set if authMode is “NONE”.
+ * @param {number} params.connectionPriority Connection priority 1 to 5.
+ * @param {Proxy} params.proxy Proxy information to be used for the access point.
  * @return promise of boolean result
  */
 export function setAccessPointDynamically(
   ssid: string,
-  ssidStealth: boolean = false,
-  authMode: AuthModeEnum = AuthModeEnum.NONE,
-  password: string = '',
-  connectionPriority: number = 1,
-  proxy?: Proxy
+  params?: {
+    ssidStealth?: boolean;
+    authMode?: AuthModeEnum;
+    password?: string;
+    connectionPriority?: number;
+    proxy?: Proxy;
+  }
 ): Promise<boolean> {
-  return ThetaClientReactNative.setAccessPointDynamically(
+  const {
+    ssidStealth,
+    authMode = AuthModeEnum.NONE,
+    password,
+    connectionPriority,
+    proxy,
+  } = params ?? {};
+  return ThetaClientReactNative.setAccessPointDynamically({
     ssid,
     ssidStealth,
     authMode,
     password,
     connectionPriority,
-    proxy
-  );
+    proxy,
+  });
 }
 
 /**
@@ -486,28 +555,44 @@ export function setAccessPointDynamically(
  *
  * @function setAccessPointStatically
  * @param {string} ssid SSID of the access point.
- * @param {boolean} ssidStealth True if SSID stealth is enabled.
- * @param {AuthModeEnum} authMode Authentication mode.
- * @param {string} password Password. If authMode is "NONE", pass empty String.
- * @param {number} connectionPriority Connection priority 1 to 5.
  * @param {string} ipAddress IP address assigns to Theta.
  * @param {string} subnetMask Subnet mask.
  * @param {string} defaultGateway Default gateway.
- * @param {Proxy} proxy Proxy information to be used for the access point.
+ * @param {} params - Optional parameters for additional configuration.
+ * @param {boolean} params.ssidStealth True if SSID stealth is enabled.
+ * @param {AuthModeEnum} params.authMode Authentication mode.
+ * @param {string} params.password Password. Not set if authMode is “NONE”.
+ * @param {number} params.connectionPriority Connection priority 1 to 5.
+ * @param {string} params.dns1 Primary DNS server.
+ * @param {string} params.dns2 Secondary DNS server.
+ * @param {Proxy} params.proxy Proxy information to be used for the access point.
  * @return promise of boolean result
  */
 export function setAccessPointStatically(
   ssid: string,
-  ssidStealth: boolean = false,
-  authMode: AuthModeEnum = AuthModeEnum.NONE,
-  password: string = '',
-  connectionPriority: number = 1,
   ipAddress: string,
   subnetMask: string,
   defaultGateway: string,
-  proxy?: Proxy
+  params?: {
+    ssidStealth?: boolean;
+    authMode: AuthModeEnum;
+    password?: string;
+    connectionPriority?: number;
+    dns1?: string;
+    dns2?: string;
+    proxy?: Proxy;
+  }
 ): Promise<boolean> {
-  return ThetaClientReactNative.setAccessPointStatically(
+  const {
+    ssidStealth,
+    authMode = AuthModeEnum.NONE,
+    password,
+    connectionPriority,
+    dns1,
+    dns2,
+    proxy,
+  } = params ?? {};
+  return ThetaClientReactNative.setAccessPointStatically({
     ssid,
     ssidStealth,
     authMode,
@@ -516,8 +601,10 @@ export function setAccessPointStatically(
     ipAddress,
     subnetMask,
     defaultGateway,
-    proxy
-  );
+    dns1,
+    dns2,
+    proxy,
+  });
 }
 
 /**

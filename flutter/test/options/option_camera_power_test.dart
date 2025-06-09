@@ -24,6 +24,7 @@ void main() {
       [CameraPowerEnum.unknown, 'UNKNOWN'],
       [CameraPowerEnum.on, 'ON'],
       [CameraPowerEnum.off, 'OFF'],
+      [CameraPowerEnum.sleep, 'SLEEP'],
       [CameraPowerEnum.powerSaving, 'POWER_SAVING'],
       [CameraPowerEnum.silentMode, 'SILENT_MODE']
     ];

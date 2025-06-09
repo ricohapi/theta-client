@@ -1,1 +1,8 @@
-{"name":"camera.takePicture","id":"6384","progress":{"completion":0.0},"state":"inProgress"}
+{
+  "name": "camera.takePicture",
+  "id": "6384",
+  "progress": {
+    "completion": 0.0
+  },
+  "state": "inProgress"
+}

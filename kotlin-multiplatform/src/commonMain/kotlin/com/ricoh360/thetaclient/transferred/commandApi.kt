@@ -3,7 +3,7 @@
  */
 package com.ricoh360.thetaclient.transferred
 
-import io.ktor.http.*
+import io.ktor.http.HttpMethod
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement

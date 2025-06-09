@@ -3,6 +3,7 @@
  */
 package com.ricoh360.thetaclient
 
+import com.ricoh360.thetaclient.PreviewClient.Companion.timeout
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
@@ -33,6 +34,11 @@ import kotlinx.coroutines.withTimeout
  * http client interface for preview only
  */
 internal interface PreviewClient {
+    companion object {
+        /** Timeout of HTTP call */
+        var timeout = ThetaRepository.Timeout()
+    }
+
     /**
      * request [method] [path] with [contentType] of [body] to [endpoint]
      */
@@ -110,20 +116,17 @@ internal class PreviewClientImpl : PreviewClient {
     /** fixed buffers */
     companion object {
         /** receive buffer */
-        val buffer: ByteArray = ByteArray(10 * 1024)
+        val buffer: ByteArray = ByteArray(64 * 1024)
 
         /** part buffer */
         var parts: ByteArray = ByteArray(100 * 1024)
 
         /** line buffer for headers */
         val lineBuffer: ByteArray = ByteArray(1024)
-
-        /** connection timeout (ms) */
-        const val connectionTimeout: Long = 20_000
-
-        /** read/write timeout (ms) */
-        const val socketTimeout: Long = 30_000
     }
+
+    /** logger */
+    internal val logger = ThetaApiLogger()
 
     /** input channel */
     private var input: ByteReadChannel? = null
@@ -192,12 +195,12 @@ internal class PreviewClientImpl : PreviewClient {
         val builder = aSocket(selector!!).tcpNoDelay().tcp()
         val self = this
         val context = currentCoroutineContext()
-        withTimeout(connectionTimeout) {
+        withTimeout(timeout.connectTimeout) {
             val socket = builder.connect(
                 InetSocketAddress(url.host, url.port),
             ) {
-                socketTimeout = Companion.socketTimeout
-                receiveBufferSize = buffer.size
+                socketTimeout = timeout.socketTimeout
+                // Do not set receiveBufferSize since the performance is better.
             }.let {
                 when (url.protocol) {
                     "https" -> it.tls(context) {
@@ -218,6 +221,11 @@ internal class PreviewClientImpl : PreviewClient {
      * close connection
      */
     override suspend fun close() {
+        logger.log("PreviewClient: close")
+        closeImple()
+    }
+
+    suspend fun closeImple() {
         try {
             input?.cancel()
         } catch (_: Throwable) {
@@ -261,7 +269,7 @@ internal class PreviewClientImpl : PreviewClient {
     private suspend fun fillBuffer(): Int {
         pos = 0
         try {
-            return withTimeout(socketTimeout) {
+            return withTimeout(timeout.socketTimeout) {
                 curr = input!!.readAvailable(buffer, 0, buffer.size)
                 curr
             }
@@ -368,6 +376,7 @@ internal class PreviewClientImpl : PreviewClient {
      */
     private suspend fun responseStatus(): PreviewClientImpl {
         val line: String = readUtf8Line() ?: throw PreviewClientException("no response status")
+        logger.log("PreviewClient: responseStatus: $line")
         status = 0
         statusMessage = null
         val match = Regex("HTTP/[0-9.]+ ([0-9]+) (.*)").find(line)
@@ -465,7 +474,8 @@ internal class PreviewClientImpl : PreviewClient {
         contentType: String,
         digest: String? = null,
     ): PreviewClient {
-        close()  // To prevent resource leaks
+        logger.log("PreviewClient:\nendpoint: $endpoint\nmethod: $method\npath: $path\nbody: $body\ncontentType: $contentType\ndigest: $digest")
+        closeImple()  // To prevent resource leaks
         val url = URL(endpoint)
         connect(url)
         write("$method $path HTTP/1.1\r\n")

@@ -105,6 +105,7 @@ class CameraPowerTest {
             Pair(ThetaRepository.CameraPowerEnum.UNKNOWN, CameraPower.UNKNOWN),
             Pair(ThetaRepository.CameraPowerEnum.ON, CameraPower.ON),
             Pair(ThetaRepository.CameraPowerEnum.OFF, CameraPower.OFF),
+            Pair(ThetaRepository.CameraPowerEnum.SLEEP, CameraPower.SLEEP),
             Pair(ThetaRepository.CameraPowerEnum.POWER_SAVING, CameraPower.POWER_SAVING),
             Pair(ThetaRepository.CameraPowerEnum.SILENT_MODE, CameraPower.SILENT_MODE),
         )

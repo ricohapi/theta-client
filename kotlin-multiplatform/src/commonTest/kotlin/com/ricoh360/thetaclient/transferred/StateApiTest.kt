@@ -39,6 +39,7 @@ class StateApiTest {
             Pair(CaptureStatus.CONTINUOUS_SHOOTING, "continuous shooting"),
             Pair(CaptureStatus.RETROSPECTIVE_IMAGE_RECORDING, "retrospective image recording"),
             Pair(CaptureStatus.BURST_SHOOTING, "burst shooting"),
+            Pair(CaptureStatus.TIME_SHIFT_SHOOTING_IDLE, "timeShift shooting idle"),
         )
 
         @Serializable

@@ -7,6 +7,7 @@ import 'package:theta_client_flutter/utils/convert_utils.dart';
 
 import 'theta_client_flutter_platform_interface.dart';
 
+const notifyIdApiLog = 1;
 const notifyIdLivePreview = 10001;
 const notifyIdTimeShiftProgress = 10011;
 const notifyIdTimeShiftStopError = 10012;
@@ -32,6 +33,9 @@ const notifyIdVideoCaptureStopError = 10081;
 const notifyIdVideoCaptureCapturing = 10082;
 const notifyIdVideoCaptureStarted = 10083;
 const notifyIdConvertVideoFormatsProgress = 10091;
+const notifyIdTimeShiftManualProgress = 10101;
+const notifyIdTimeShiftManualStopError = 10102;
+const notifyIdTimeShiftManualCapturing = 10103;
 
 /// An implementation of [ThetaClientFlutterPlatform] that uses method channels.
 class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
@@ -90,12 +94,40 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
     return version;
   }
 
+  void Function(String message)? apiLogListener;
+
+  Future<void> setNotifyApiLogListener(
+      void Function(String message)? listener) {
+    if (listener != null) {
+      addNotify(notifyIdApiLog, (params) {
+        final message = params?['message'] as String?;
+        if (message != null) {
+          listener(message);
+        }
+      });
+    } else {
+      removeNotify(notifyIdApiLog);
+    }
+    return methodChannel.invokeMethod<void>(
+        'setApiLogListener', listener != null);
+  }
+
+  @override
+  Future<void> setApiLogListener(void Function(String message)? listener) {
+    enableNotifyEventReceiver();
+    apiLogListener = listener;
+    return setNotifyApiLogListener(apiLogListener);
+  }
+
   @override
   Future<void> initialize(
       String endpoint, ThetaConfig? config, ThetaTimeout? timeout) async {
     clearNotify();
     disableNotifyEventReceiver();
     enableNotifyEventReceiver();
+    if (apiLogListener != null) {
+      setNotifyApiLogListener(apiLogListener);
+    }
 
     var completer = Completer<void>();
     try {
@@ -253,11 +285,11 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   }
 
   @override
-  Future<void> buildPhotoCapture(Map<String, dynamic> options, int interval) async {
+  Future<void> buildPhotoCapture(
+      Map<String, dynamic> options, int interval) async {
     final params = ConvertUtils.convertCaptureParams(options);
     params['_capture_interval'] = interval;
-    return methodChannel.invokeMethod<void>(
-        'buildPhotoCapture', params);
+    return methodChannel.invokeMethod<void>('buildPhotoCapture', params);
   }
 
   @override
@@ -301,7 +333,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   }
 
   @override
-  Future<String?> startTimeShiftCapture(void Function(double)? onProgress,
+  Future<String?> startTimeShiftCapture(
+      void Function(double)? onProgress,
       void Function(Exception exception)? onStopFailed,
       void Function(CapturingStatusEnum status)? onCapturing) async {
     var completer = Completer<String?>();
@@ -352,6 +385,81 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   @override
   Future<void> stopTimeShiftCapture() async {
     return methodChannel.invokeMethod<void>('stopTimeShiftCapture');
+  }
+
+  @override
+  Future<void> getTimeShiftManualCaptureBuilder() async {
+    return methodChannel.invokeMethod<void>('getTimeShiftManualCaptureBuilder');
+  }
+
+  @override
+  Future<void> buildTimeShiftManualCapture(
+      Map<String, dynamic> options, int interval) async {
+    final params = ConvertUtils.convertCaptureParams(options);
+    params['_capture_interval'] = interval;
+    return methodChannel.invokeMethod<void>(
+        'buildTimeShiftManualCapture', params);
+  }
+
+  @override
+  Future<String?> startTimeShiftManualCapture(
+      void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) async {
+    var completer = Completer<String?>();
+    try {
+      enableNotifyEventReceiver();
+      if (onProgress != null) {
+        addNotify(notifyIdTimeShiftManualProgress, (params) {
+          final completion = params?['completion'] as double?;
+          if (completion != null) {
+            onProgress(completion);
+          }
+        });
+      }
+      if (onStopFailed != null) {
+        addNotify(notifyIdTimeShiftManualStopError, (params) {
+          final message = params?['message'] as String?;
+          if (message != null) {
+            onStopFailed(Exception(message));
+          }
+        });
+      }
+      if (onCapturing != null) {
+        addNotify(notifyIdTimeShiftManualCapturing, (params) {
+          final strStatus = params?['status'] as String?;
+          if (strStatus != null) {
+            final status = CapturingStatusEnum.getValue(strStatus);
+            if (status != null) {
+              onCapturing(status);
+            }
+          }
+        });
+      }
+      final fileUrl = await methodChannel
+          .invokeMethod<String>('startTimeShiftManualCapture');
+      removeNotify(notifyIdTimeShiftManualProgress);
+      removeNotify(notifyIdTimeShiftManualStopError);
+      removeNotify(notifyIdTimeShiftManualCapturing);
+      completer.complete(fileUrl);
+    } catch (e) {
+      removeNotify(notifyIdTimeShiftManualProgress);
+      removeNotify(notifyIdTimeShiftManualStopError);
+      removeNotify(notifyIdTimeShiftManualCapturing);
+      completer.completeError(e);
+    }
+    return completer.future;
+  }
+
+  @override
+  Future<void> startTimeShiftManualSecondCapture() async {
+    return methodChannel
+        .invokeMethod<void>('startTimeShiftManualSecondCapture');
+  }
+
+  @override
+  Future<void> stopTimeShiftManualCapture() async {
+    return methodChannel.invokeMethod<void>('stopTimeShiftManualCapture');
   }
 
   @override
@@ -425,8 +533,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   }
 
   @override
-  Future<void> buildLimitlessIntervalCapture(Map<String, dynamic> options,
-      int interval) async {
+  Future<void> buildLimitlessIntervalCapture(
+      Map<String, dynamic> options, int interval) async {
     final params = ConvertUtils.convertCaptureParams(options);
     params['_capture_interval'] = interval;
     return methodChannel.invokeMethod<void>(
@@ -885,6 +993,11 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   }
 
   @override
+  Future<void> reboot() async {
+    return methodChannel.invokeMethod<void>('reboot');
+  }
+
+  @override
   Future<void> reset() async {
     return methodChannel.invokeMethod<void>('reset');
   }
@@ -956,10 +1069,10 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   @override
   Future<void> setAccessPointDynamically(
       String ssid,
-      bool ssidStealth,
+      bool? ssidStealth,
       AuthModeEnum authMode,
-      String password,
-      int connectionPriority,
+      String? password,
+      int? connectionPriority,
       Proxy? proxy) async {
     final Map params = <String, dynamic>{
       'ssid': ssid,
@@ -976,13 +1089,15 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   @override
   Future<void> setAccessPointStatically(
       String ssid,
-      bool ssidStealth,
+      bool? ssidStealth,
       AuthModeEnum authMode,
-      String password,
-      int connectionPriority,
+      String? password,
+      int? connectionPriority,
       String ipAddress,
       String subnetMask,
       String defaultGateway,
+      String? dns1,
+      String? dns2,
       Proxy? proxy) async {
     final Map params = <String, dynamic>{
       'ssid': ssid,
@@ -993,6 +1108,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       'ipAddress': ipAddress,
       'subnetMask': subnetMask,
       'defaultGateway': defaultGateway,
+      'dns1': dns1,
+      'dns2': dns2,
       'proxy': proxy != null ? ConvertUtils.convertProxyParam(proxy) : null
     };
     return methodChannel.invokeMethod<void>('setAccessPointStatically', params);

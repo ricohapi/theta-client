@@ -1,1 +1,41 @@
-{"name":"camera.listFiles","results":{"entries":[{"_codec":"H.264/MPEG-4 AVC","dateTimeZone":"2023:06:22 16:04:17+09:00","fileUrl":"http://192.168.1.1/files/150100525831424d420709bd9bf27400/100RICOH/R0010014.MP4","height":1920,"isProcessed":true,"lat":35.4856,"lng":134.2401,"name":"R0010014.MP4","previewUrl":"","_projectionType":"Dual-Fisheye","_recordTime":3,"size":24955909,"_thumbSize":36174,"width":3840},{"_codec":"H.264/MPEG-4 AVC","dateTimeZone":"2023:02:06 13:24:02+09:00","fileUrl":"http://192.168.1.1/files/150100525831424d420709bd9bf27400/100RICOH/R0010002.MP4","height":960,"isProcessed":true,"lat":35.4856,"lng":134.24,"name":"R0010002.MP4","previewUrl":"","_projectionType":"Dual-Fisheye","_recordTime":3,"size":9160386,"_thumbSize":35648,"width":1920}],"totalEntries":2},"state":"done"}
+{
+  "name": "camera.listFiles",
+  "results": {
+    "entries": [
+      {
+        "_codec": "H.264/MPEG-4 AVC",
+        "dateTimeZone": "2023:06:22 16:04:17+09:00",
+        "fileUrl": "http://192.168.1.1/files/150100525831424d420709bd9bf27400/100RICOH/R0010014.MP4",
+        "height": 1920,
+        "isProcessed": true,
+        "lat": 35.4856,
+        "lng": 134.2401,
+        "name": "R0010014.MP4",
+        "previewUrl": "",
+        "_projectionType": "Dual-Fisheye",
+        "_recordTime": 3,
+        "size": 24955909,
+        "_thumbSize": 36174,
+        "width": 3840
+      },
+      {
+        "_codec": "H.264/MPEG-4 AVC",
+        "dateTimeZone": "2023:02:06 13:24:02+09:00",
+        "fileUrl": "http://192.168.1.1/files/150100525831424d420709bd9bf27400/100RICOH/R0010002.MP4",
+        "height": 960,
+        "isProcessed": true,
+        "lat": 35.4856,
+        "lng": 134.24,
+        "name": "R0010002.MP4",
+        "previewUrl": "",
+        "_projectionType": "Dual-Fisheye",
+        "_recordTime": 3,
+        "size": 9160386,
+        "_thumbSize": 35648,
+        "width": 1920
+      }
+    ],
+    "totalEntries": 2
+  },
+  "state": "done"
+}

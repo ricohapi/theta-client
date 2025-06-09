@@ -1,0 +1,12 @@
+{
+  "name": "camera.getOptions",
+  "state": "done",
+  "results": {
+    "options": {
+      "_mobileNetworkSetting": {
+        "roaming": "OFF",
+        "plan": "SORACOM"
+      }
+    }
+  }
+}

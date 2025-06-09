@@ -1,1 +1,13 @@
-{"results":{"options":{"_proxy":{"use":false,"url":"","port":8080}}},"name":"camera.getOptions","state":"done"}
+{
+  "results": {
+    "options": {
+      "_proxy": {
+        "use": false,
+        "url": "",
+        "port": 8080
+      }
+    }
+  },
+  "name": "camera.getOptions",
+  "state": "done"
+}

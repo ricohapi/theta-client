@@ -12,6 +12,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalSerializationApi::class, ExperimentalCoroutinesApi::class)
@@ -32,6 +33,7 @@ class GetThetaLicenseTest {
     fun getPluginLicenseTest() = runTest {
         MockApiClient.onRequest = { request ->
             // check request
+            assertNull(request.headers.get("Cache-Control"))
             assertEquals(request.url.encodedPath, "/legal-information/open-source-licenses", "request path")
             ByteReadChannel(Resource("src/commonTest/resources/getThetaLicense/license.html").readText())
         }

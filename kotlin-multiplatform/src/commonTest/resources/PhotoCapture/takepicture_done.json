@@ -1,1 +1,7 @@
-{"name":"camera.takePicture","results":{"fileUrl":"http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013308.JPG"},"state":"done"}
+{
+  "name": "camera.takePicture",
+  "results": {
+    "fileUrl": "http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013308.JPG"
+  },
+  "state": "done"
+}

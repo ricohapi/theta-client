@@ -1,8 +1,8 @@
 {
-    "error": {
-        "code": "UnitTest",
-        "message": "UnitTest error"
-    },
-    "name": "camera._stopSelfTimer",
-    "state": "error"
+  "error": {
+    "code": "UnitTest",
+    "message": "UnitTest error"
+  },
+  "name": "camera._stopSelfTimer",
+  "state": "error"
 }

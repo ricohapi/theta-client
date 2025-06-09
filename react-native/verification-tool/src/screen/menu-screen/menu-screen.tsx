@@ -54,6 +54,14 @@ const MenuScreen: React.FC<
       },
     },
     {
+      name: '・time-shift manual capture',
+      value: {
+        selectedFunction: async () => {
+          navigation.navigate('timeShiftManualCapture');
+        },
+      },
+    },
+    {
       name: '・limitless interval capture',
       value: {
         selectedFunction: async () => {

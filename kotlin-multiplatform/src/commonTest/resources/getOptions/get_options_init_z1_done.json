@@ -1,1 +1,13 @@
-{"name":"camera.getOptions","results":{"options":{"dateTimeZone":"2022:11:25 17:17:43+09:00","_language":"en-US","offDelay":3600,"_shutterVolume":33,"sleepDelay":65535}},"state":"done"}
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "dateTimeZone": "2022:11:25 17:17:43+09:00",
+      "_language": "en-US",
+      "offDelay": 3600,
+      "_shutterVolume": 33,
+      "sleepDelay": 65535
+    }
+  },
+  "state": "done"
+}

@@ -62,8 +62,9 @@ class UpdateFirmwareOnActualTheta {
         assertTrue(true, "call updateFirmware()")
     }
 
-    fun getSentPercentage(percent: Int) {
+    fun getSentPercentage(percent: Int): Boolean {
         println("Sent $percent %")
+        return true
     }
 
     /**

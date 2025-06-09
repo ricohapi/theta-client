@@ -1,14 +1,15 @@
 package com.ricoh360.thetaclient
 
 import com.ricoh360.thetaclient.transferred.GetLivePreviewRequest
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.http.content.*
-import io.ktor.utils.io.*
+import io.ktor.client.request.HttpRequestData
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.TextContent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class PreviewTest {

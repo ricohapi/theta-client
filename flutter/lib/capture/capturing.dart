@@ -16,6 +16,21 @@ class TimeShiftCapturing extends Capturing {
   }
 }
 
+/// TimeShiftManualCapturing
+class TimeShiftManualCapturing extends Capturing {
+  /// Starts TimeShift manual second capture.
+  void startSecondCapture() {
+    ThetaClientFlutterPlatform.instance.startTimeShiftManualSecondCapture();
+  }
+
+  /// Stops Manual TimeShift capture.
+  /// When call stopCapture() then call property callback.
+  @override
+  void stopCapture() {
+    ThetaClientFlutterPlatform.instance.stopTimeShiftManualCapture();
+  }
+}
+
 /// VideoCapturing
 class VideoCapturing extends Capturing {
   /// Stops video capture.

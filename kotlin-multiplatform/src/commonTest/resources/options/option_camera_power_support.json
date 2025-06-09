@@ -1,0 +1,15 @@
+{
+  "name": "camera.getOptions",
+  "state": "done",
+  "results": {
+    "options": {
+      "_cameraPowerSupport": [
+        "on",
+        "off",
+        "powerSaving",
+        "silentMode",
+        "abc"
+      ]
+    }
+  }
+}

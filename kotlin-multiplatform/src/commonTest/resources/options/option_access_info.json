@@ -1,0 +1,29 @@
+{
+  "name": "camera.getOptions",
+  "state": "done",
+  "results": {
+    "options": {
+      "_accessInfo": {
+        "ssid": "ssid_test",
+        "ipAddress": "192.168.1.2",
+        "subnetMask": "255.255.0.0",
+        "defaultGateway": "192.168.1.12",
+        "dns1": "192.168.1.55",
+        "dns2": "192.168.1.66",
+        "proxyURL": "http://192.168.1.3",
+        "frequency": "2.4",
+        "wlanSignalStrength": -60,
+        "wlanSignalLevel": 4,
+        "lteSignalStrength": 0,
+        "lteSignalLevel": 0,
+        "_dhcpLeaseAddress": [
+          {
+            "ipAddress": "192.168.1.5",
+            "macAddress": "58:38:79:12:34:56",
+            "hostName": "Macbook-Pro"
+          }
+        ]
+      }
+    }
+  }
+}

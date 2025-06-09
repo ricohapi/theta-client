@@ -267,6 +267,7 @@ class MultiBracketCapture private constructor(
                     )
                     return@launch
                 }
+                callback.onCapturing(CapturingStatusEnum.STARTING)
 
                 when (cameraModel) {
                     ThetaRepository.ThetaModel.THETA_SC2, ThetaRepository.ThetaModel.THETA_SC2_B -> {

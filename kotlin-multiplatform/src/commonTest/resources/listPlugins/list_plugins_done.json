@@ -1,1 +1,120 @@
-{"name":"camera._listPlugins","results":{"plugins":[{"boot":false,"bootOptions":"","exitStatus":"success","force":false,"foreground":false,"message":"","packageName":"com.theta.remoteplayback","pluginName":"Remote Playback","running":false,"type":"system","version":"3.80.2","webServer":false},{"boot":false,"bootOptions":"","exitStatus":"success","force":false,"foreground":false,"message":"","packageName":"com.theta360.automaticfaceblur","pluginName":"Automatic Face Blur BETA","running":false,"type":"user","version":"1.6.0","webServer":true},{"boot":false,"bootOptions":"","exitStatus":"success","force":false,"foreground":false,"message":"","packageName":"com.theta360.cloudstreaming","pluginName":"Wireless Live Streaming","running":false,"type":"user","version":"1.1.3","webServer":true},{"boot":false,"bootOptions":"","exitStatus":"success","force":false,"foreground":false,"message":"","packageName":"com.theta360.clouduploadv2","pluginName":"File cloud upload V2","running":false,"type":"user","version":"1.0.0","webServer":true},{"boot":false,"bootOptions":"","exitStatus":"success","force":false,"foreground":false,"message":"","packageName":"com.theta360.pluginapplication","pluginName":"Plugin Application","running":false,"type":"user","version":"2.1.0","webServer":false},{"boot":false,"bootOptions":"","exitStatus":"success","force":false,"foreground":false,"message":"","packageName":"com.theta360.remotecontrol","pluginName":"Remote Control","running":false,"type":"system","version":"1.0.0","webServer":false},{"boot":true,"bootOptions":"","exitStatus":"success","force":false,"foreground":false,"message":"","packageName":"com.theta360.timeshiftshooting","pluginName":"Time Shift Shooting","running":false,"type":"user","version":"1.0.2","webServer":true},{"boot":false,"bootOptions":"","exitStatus":"success","force":false,"foreground":false,"message":"","packageName":"com.theta360.usbstorage","pluginName":"USBデータ転送","running":false,"type":"system","version":"2.0.0","webServer":true}]},"state":"done"}
+{
+  "name": "camera._listPlugins",
+  "results": {
+    "plugins": [
+      {
+        "boot": false,
+        "bootOptions": "",
+        "exitStatus": "success",
+        "force": false,
+        "foreground": false,
+        "message": "",
+        "packageName": "com.theta.remoteplayback",
+        "pluginName": "Remote Playback",
+        "running": false,
+        "type": "system",
+        "version": "3.80.2",
+        "webServer": false
+      },
+      {
+        "boot": false,
+        "bootOptions": "",
+        "exitStatus": "success",
+        "force": false,
+        "foreground": false,
+        "message": "",
+        "packageName": "com.theta360.automaticfaceblur",
+        "pluginName": "Automatic Face Blur BETA",
+        "running": false,
+        "type": "user",
+        "version": "1.6.0",
+        "webServer": true
+      },
+      {
+        "boot": false,
+        "bootOptions": "",
+        "exitStatus": "success",
+        "force": false,
+        "foreground": false,
+        "message": "",
+        "packageName": "com.theta360.cloudstreaming",
+        "pluginName": "Wireless Live Streaming",
+        "running": false,
+        "type": "user",
+        "version": "1.1.3",
+        "webServer": true
+      },
+      {
+        "boot": false,
+        "bootOptions": "",
+        "exitStatus": "success",
+        "force": false,
+        "foreground": false,
+        "message": "",
+        "packageName": "com.theta360.clouduploadv2",
+        "pluginName": "File cloud upload V2",
+        "running": false,
+        "type": "user",
+        "version": "1.0.0",
+        "webServer": true
+      },
+      {
+        "boot": false,
+        "bootOptions": "",
+        "exitStatus": "success",
+        "force": false,
+        "foreground": false,
+        "message": "",
+        "packageName": "com.theta360.pluginapplication",
+        "pluginName": "Plugin Application",
+        "running": false,
+        "type": "user",
+        "version": "2.1.0",
+        "webServer": false
+      },
+      {
+        "boot": false,
+        "bootOptions": "",
+        "exitStatus": "success",
+        "force": false,
+        "foreground": false,
+        "message": "",
+        "packageName": "com.theta360.remotecontrol",
+        "pluginName": "Remote Control",
+        "running": false,
+        "type": "system",
+        "version": "1.0.0",
+        "webServer": false
+      },
+      {
+        "boot": true,
+        "bootOptions": "",
+        "exitStatus": "success",
+        "force": false,
+        "foreground": false,
+        "message": "",
+        "packageName": "com.theta360.timeshiftshooting",
+        "pluginName": "Time Shift Shooting",
+        "running": false,
+        "type": "user",
+        "version": "1.0.2",
+        "webServer": true
+      },
+      {
+        "boot": false,
+        "bootOptions": "",
+        "exitStatus": "success",
+        "force": false,
+        "foreground": false,
+        "message": "",
+        "packageName": "com.theta360.usbstorage",
+        "pluginName": "USBデータ転送",
+        "running": false,
+        "type": "system",
+        "version": "2.0.0",
+        "webServer": true
+      }
+    ]
+  },
+  "state": "done"
+}

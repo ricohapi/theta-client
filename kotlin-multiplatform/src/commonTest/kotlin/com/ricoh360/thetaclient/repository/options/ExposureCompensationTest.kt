@@ -5,13 +5,14 @@ import com.ricoh360.thetaclient.CheckRequest
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.Options
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.http.content.*
-import io.ktor.utils.io.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ExposureCompensationTest {
@@ -52,6 +53,30 @@ class ExposureCompensationTest {
     }
 
     /**
+     * Get option UNKNOWN.
+     */
+    @Test
+    fun getOptionUnknownTest() = runTest {
+        val optionNames = listOf(
+            ThetaRepository.OptionNameEnum.ExposureCompensation
+        )
+        val stringOptionNames = listOf(
+            "exposureCompensation"
+        )
+
+        MockApiClient.onRequest = { request ->
+            // check request
+            CheckRequest.checkGetOptions(request, stringOptionNames)
+
+            ByteReadChannel(Resource("src/commonTest/resources/options/option_exposure_compensation_unknown.json").readText())
+        }
+
+        val thetaRepository = ThetaRepository(endpoint)
+        val options = thetaRepository.getOptions(optionNames)
+        assertEquals(options.exposureCompensation, ThetaRepository.ExposureCompensationEnum.UNKNOWN)
+    }
+
+    /**
      * Set option exposureCompensation.
      */
     @Test
@@ -78,6 +103,13 @@ class ExposureCompensationTest {
     @Test
     fun convertOptionExposureCompensationTest() = runTest {
         val values = listOf(
+            Pair(ThetaRepository.ExposureCompensationEnum.UNKNOWN, 999f),
+            Pair(ThetaRepository.ExposureCompensationEnum.M4_0, -4.0f),
+            Pair(ThetaRepository.ExposureCompensationEnum.M3_7, -3.7f),
+            Pair(ThetaRepository.ExposureCompensationEnum.M3_3, -3.3f),
+            Pair(ThetaRepository.ExposureCompensationEnum.M3_0, -3.0f),
+            Pair(ThetaRepository.ExposureCompensationEnum.M2_7, -2.7f),
+            Pair(ThetaRepository.ExposureCompensationEnum.M2_3, -2.3f),
             Pair(ThetaRepository.ExposureCompensationEnum.M2_0, -2.0f),
             Pair(ThetaRepository.ExposureCompensationEnum.M1_7, -1.7f),
             Pair(ThetaRepository.ExposureCompensationEnum.M1_3, -1.3f),
@@ -90,15 +122,23 @@ class ExposureCompensationTest {
             Pair(ThetaRepository.ExposureCompensationEnum.P1_0, 1.0f),
             Pair(ThetaRepository.ExposureCompensationEnum.P1_3, 1.3f),
             Pair(ThetaRepository.ExposureCompensationEnum.P1_7, 1.7f),
-            Pair(ThetaRepository.ExposureCompensationEnum.P2_0, 2.0f)
+            Pair(ThetaRepository.ExposureCompensationEnum.P2_0, 2.0f),
+            Pair(ThetaRepository.ExposureCompensationEnum.P2_3, 2.3f),
+            Pair(ThetaRepository.ExposureCompensationEnum.P2_7, 2.7f),
+            Pair(ThetaRepository.ExposureCompensationEnum.P3_0, 3.0f),
+            Pair(ThetaRepository.ExposureCompensationEnum.P3_3, 3.3f),
+            Pair(ThetaRepository.ExposureCompensationEnum.P3_7, 3.7f),
+            Pair(ThetaRepository.ExposureCompensationEnum.P4_0, 4.0f)
         )
+
+        assertEquals(ThetaRepository.ExposureCompensationEnum.entries.size, values.size)
 
         values.forEach {
             val orgOptions = Options(
                 exposureCompensation = it.second
             )
             val options = ThetaRepository.Options(orgOptions)
-            assertEquals(options.exposureCompensation, it.first, "exposureCompensation ${it.second}")
+            assertEquals(options.exposureCompensation, it.first, "exposureCompensation ${it.first}")
         }
 
         values.forEach {
@@ -106,7 +146,17 @@ class ExposureCompensationTest {
                 exposureCompensation = it.first
             )
             val options = orgOptions.toOptions()
-            assertEquals(options.exposureCompensation, it.second, "exposureCompensation ${it.second}")
+            when (it.first) {
+                ThetaRepository.ExposureCompensationEnum.UNKNOWN -> {
+                    assertEquals(options.exposureCompensation, null)
+                }
+
+                else -> assertEquals(
+                    options.exposureCompensation,
+                    it.second,
+                    "exposureCompensation ${it.first}"
+                )
+            }
         }
     }
 }

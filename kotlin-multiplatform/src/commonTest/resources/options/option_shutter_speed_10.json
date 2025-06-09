@@ -1,1 +1,9 @@
-{"name":"camera.getOptions","results":{"options":{"shutterSpeed":10}},"state":"done"}
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "shutterSpeed": 10
+    }
+  },
+  "state": "done"
+}

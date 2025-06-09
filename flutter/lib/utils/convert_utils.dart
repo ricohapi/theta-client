@@ -1,7 +1,83 @@
 import 'package:theta_client_flutter/digest_auth.dart';
+import 'package:theta_client_flutter/options/access_info.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
 class ConvertUtils {
+  static AccessInfo? convertAccessInfo(Map<dynamic, dynamic>? data) {
+    if (data == null) {
+      return null;
+    }
+
+    List<Map<dynamic, dynamic>>? dataList =
+        (data['dhcpLeaseAddress'] as List<dynamic>?)
+            ?.map((item) => item as Map<dynamic, dynamic>)
+            .toList();
+    List<DhcpLeaseAddress>? dhcpLeaseAddressList = dataList
+        ?.map((item) => convertDhcpLeaseAddress(item))
+        .where((address) => address != null)
+        .cast<DhcpLeaseAddress>()
+        .toList();
+
+    var accessInfo = AccessInfo(
+        data['ssid'],
+        data['ipAddress'],
+        data['subnetMask'],
+        data['defaultGateway'],
+        data['dns1'],
+        data['dns2'],
+        data['proxyURL'],
+        WlanFrequencyAccessInfoEnum.getValue(data['frequency'] as String)!,
+        data['wlanSignalStrength'],
+        data['wlanSignalLevel'],
+        data['lteSignalStrength'],
+        data['lteSignalLevel'],
+        dhcpLeaseAddressList);
+    return accessInfo;
+  }
+
+  static Map<String, dynamic> convertAccessInfoParam(AccessInfo accessInfo) {
+    return {
+      'ssid': accessInfo.ssid,
+      'ipAddress': accessInfo.ipAddress,
+      'subnetMask': accessInfo.subnetMask,
+      'defaultGateway': accessInfo.defaultGateway,
+      'dns1': accessInfo.dns1,
+      'dns2': accessInfo.dns2,
+      'proxyURL': accessInfo.proxyURL,
+      'frequency': accessInfo.frequency.rawValue,
+      'wlanSignalStrength': accessInfo.wlanSignalStrength,
+      'wlanSignalLevel': accessInfo.wlanSignalLevel,
+      'lteSignalStrength': accessInfo.lteSignalStrength,
+      'lteSignalLevel': accessInfo.lteSignalLevel,
+      'dhcpLeaseAddress': accessInfo.dhcpLeaseAddress
+          ?.map((address) => convertDhcpLeaseAddressParam(address))
+          .toList()
+    };
+  }
+
+  static DhcpLeaseAddress? convertDhcpLeaseAddress(
+      Map<dynamic, dynamic>? data) {
+    if (data == null) {
+      return null;
+    }
+
+    var result = DhcpLeaseAddress(
+      ipAddress: data['ipAddress'],
+      macAddress: data['macAddress'],
+      hostName: data['hostName'],
+    );
+    return result;
+  }
+
+  static Map<String, dynamic> convertDhcpLeaseAddressParam(
+      DhcpLeaseAddress dhcpLeaseAddress) {
+    return {
+      'ipAddress': dhcpLeaseAddress.ipAddress,
+      'macAddress': dhcpLeaseAddress.macAddress,
+      'hostName': dhcpLeaseAddress.hostName,
+    };
+  }
+
   static List<BracketSetting>? convertAutoBracketOption(List<dynamic>? data) {
     if (data == null) {
       return null;
@@ -222,6 +298,31 @@ class ConvertUtils {
     return optionNameList;
   }
 
+  static Map<String, dynamic> convertCameraLockConfigParam(
+      CameraLockConfig config) {
+    Map<String, dynamic> result = {};
+
+    if (config.isPowerKeyLocked != null) {
+      result['isPowerKeyLocked'] = config.isPowerKeyLocked;
+    }
+    if (config.isShutterKeyLocked != null) {
+      result['isShutterKeyLocked'] = config.isShutterKeyLocked;
+    }
+    if (config.isModeKeyLocked != null) {
+      result['isModeKeyLocked'] = config.isModeKeyLocked;
+    }
+    if (config.isWlanKeyLocked != null) {
+      result['isWlanKeyLocked'] = config.isWlanKeyLocked;
+    }
+    if (config.isFnKeyLocked != null) {
+      result['isFnKeyLocked'] = config.isFnKeyLocked;
+    }
+    if (config.isPanelLocked != null) {
+      result['isPanelLocked'] = config.isPanelLocked;
+    }
+    return result;
+  }
+
   static Map<String, dynamic> convertEthernetConfigParam(
       EthernetConfig ethernetConfig) {
     Map<String, dynamic> result = {};
@@ -236,6 +337,12 @@ class ConvertUtils {
     }
     if (ethernetConfig.defaultGateway != null) {
       result['defaultGateway'] = ethernetConfig.defaultGateway;
+    }
+    if (ethernetConfig.dns1 != null) {
+      result['dns1'] = ethernetConfig.dns1;
+    }
+    if (ethernetConfig.dns2 != null) {
+      result['dns2'] = ethernetConfig.dns2;
     }
 
     Proxy? proxy = ethernetConfig.proxy;
@@ -329,6 +436,55 @@ class ConvertUtils {
     };
   }
 
+  static ValueRange<T>? convertValueRangeSupport<T extends num>(
+      Map<dynamic, dynamic>? data) {
+    if (data == null) {
+      return null;
+    }
+    return ValueRange<T>(
+      data['max'] as T,
+      data['min'] as T,
+      data['stepSize'] as T,
+    );
+  }
+
+  static Map<String, dynamic> convertWlanFrequencyClModeParam(
+      WlanFrequencyClMode wlanFrequencyClMode) {
+    return {
+      'enable2_4': wlanFrequencyClMode.enable2_4,
+      'enable5_2': wlanFrequencyClMode.enable5_2,
+      'enable5_8': wlanFrequencyClMode.enable5_8,
+    };
+  }
+
+  static CameraLockConfig? convertCameraLockConfig(
+      Map<dynamic, dynamic>? data) {
+    if (data == null) {
+      return null;
+    }
+
+    var config = CameraLockConfig();
+    if (data['isPowerKeyLocked'] != null) {
+      config.isPowerKeyLocked = data['isPowerKeyLocked'];
+    }
+    if (data['isShutterKeyLocked'] != null) {
+      config.isShutterKeyLocked = data['isShutterKeyLocked'];
+    }
+    if (data['isModeKeyLocked'] != null) {
+      config.isModeKeyLocked = data['isModeKeyLocked'];
+    }
+    if (data['isWlanKeyLocked'] != null) {
+      config.isWlanKeyLocked = data['isWlanKeyLocked'];
+    }
+    if (data['isFnKeyLocked'] != null) {
+      config.isFnKeyLocked = data['isFnKeyLocked'];
+    }
+    if (data['isPanelLocked'] != null) {
+      config.isPanelLocked = data['isPanelLocked'];
+    }
+    return config;
+  }
+
   static EthernetConfig? convertEthernetConfig(Map<dynamic, dynamic>? data) {
     if (data == null) {
       return null;
@@ -344,6 +500,12 @@ class ConvertUtils {
     }
     if (data['defaultGateway'] != null) {
       ethernetConfig.defaultGateway = data['defaultGateway'];
+    }
+    if (data['dns1'] != null) {
+      ethernetConfig.dns1 = data['dns1'];
+    }
+    if (data['dns2'] != null) {
+      ethernetConfig.dns2 = data['dns2'];
     }
     if (data['proxy'] != null) {
       ethernetConfig.proxy = convertProxy(data['proxy']);
@@ -393,16 +555,57 @@ class ConvertUtils {
     return rotation;
   }
 
+  static TopBottomCorrectionRotationSupport?
+      convertTopBottomCorrectionRotationSupport(Map<dynamic, dynamic>? data) {
+    if (data == null) {
+      return null;
+    }
+
+    var pitchData = data['pitch'];
+    var rollData = data['roll'];
+    var yawData = data['yaw'];
+
+    var support = TopBottomCorrectionRotationSupport(
+      pitch: ValueRange<double>(
+        double.parse(pitchData['max']),
+        double.parse(pitchData['min']),
+        double.parse(pitchData['stepSize']),
+      ),
+      roll: ValueRange<double>(
+        double.parse(rollData['max']),
+        double.parse(rollData['min']),
+        double.parse(rollData['stepSize']),
+      ),
+      yaw: ValueRange<double>(
+        double.parse(yawData['max']),
+        double.parse(yawData['min']),
+        double.parse(yawData['stepSize']),
+      ),
+    );
+    return support;
+  }
+
   static Options convertOptions(Map<dynamic, dynamic> data) {
     var result = Options();
     for (var entry in data.entries) {
       final name = OptionNameEnum.getValue(entry.key)!;
       switch (name) {
+        case OptionNameEnum.accessInfo:
+          result.accessInfo = convertAccessInfo(entry.value);
+          break;
         case OptionNameEnum.aiAutoThumbnail:
           result.aiAutoThumbnail = AiAutoThumbnailEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.aiAutoThumbnailSupport:
+          result.aiAutoThumbnailSupport =
+              convertSupportValueList(entry.value, AiAutoThumbnailEnum.values);
+          break;
         case OptionNameEnum.aperture:
           result.aperture = ApertureEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.apertureSupport:
+          result.apertureSupport =
+              convertSupportValueList(entry.value, ApertureEnum.values);
           break;
         case OptionNameEnum.autoBracket:
           result.autoBracket = convertAutoBracketOption(entry.value);
@@ -428,11 +631,25 @@ class ConvertUtils {
           result.cameraControlSource =
               CameraControlSourceEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.cameraControlSourceSupport:
+          result.cameraControlSourceSupport = convertSupportValueList(
+              entry.value, CameraControlSourceEnum.values);
+          break;
+        case OptionNameEnum.cameraLock:
+          result.cameraLock = CameraLockEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.cameraLockConfig:
+          result.cameraLockConfig = convertCameraLockConfig(entry.value);
+          break;
         case OptionNameEnum.cameraMode:
           result.cameraMode = CameraModeEnum.getValue(entry.value);
           break;
         case OptionNameEnum.cameraPower:
           result.cameraPower = CameraPowerEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.cameraPowerSupport:
+          result.cameraPowerSupport =
+              convertSupportValueList(entry.value, CameraPowerEnum.values);
           break;
         case OptionNameEnum.captureInterval:
           result.captureInterval = entry.value;
@@ -446,11 +663,27 @@ class ConvertUtils {
         case OptionNameEnum.colorTemperature:
           result.colorTemperature = entry.value;
           break;
+        case OptionNameEnum.colorTemperatureSupport:
+          result.colorTemperatureSupport =
+              convertValueRangeSupport<int>(entry.value);
+          break;
+        case OptionNameEnum.compassDirectionRef:
+          result.compassDirectionRef =
+              CompassDirectionRefEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.compositeShootingOutputInterval:
           result.compositeShootingOutputInterval = entry.value;
           break;
+        case OptionNameEnum.compositeShootingOutputIntervalSupport:
+          result.compositeShootingOutputIntervalSupport =
+              convertValueRangeSupport<int>(entry.value);
+          break;
         case OptionNameEnum.compositeShootingTime:
           result.compositeShootingTime = entry.value;
+          break;
+        case OptionNameEnum.compositeShootingTimeSupport:
+          result.compositeShootingTimeSupport =
+              convertValueRangeSupport<int>(entry.value);
           break;
         case OptionNameEnum.continuousNumber:
           result.continuousNumber = ContinuousNumberEnum.getValue(entry.value);
@@ -467,6 +700,10 @@ class ConvertUtils {
           break;
         case OptionNameEnum.exposureDelay:
           result.exposureDelay = ExposureDelayEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.exposureDelaySupport:
+          result.exposureDelaySupport =
+              convertSupportValueList(entry.value, ExposureDelayEnum.values);
           break;
         case OptionNameEnum.exposureProgram:
           result.exposureProgram = ExposureProgramEnum.getValue(entry.value);
@@ -488,6 +725,10 @@ class ConvertUtils {
           break;
         case OptionNameEnum.gpsInfo:
           result.gpsInfo = convertGpsInfo(entry.value);
+          break;
+        case OptionNameEnum.gpsTagRecordingSupport:
+          result.gpsTagRecordingSupport =
+              convertSupportValueList(entry.value, GpsTagRecordingEnum.values);
           break;
         case OptionNameEnum.imageStitching:
           result.imageStitching = ImageStitchingEnum.getValue(entry.value);
@@ -512,11 +753,22 @@ class ConvertUtils {
           result.maxRecordableTime =
               MaxRecordableTimeEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.microphoneNoiseReduction:
+          result.microphoneNoiseReduction =
+              MicrophoneNoiseReductionEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.mobileNetworkSetting:
+          result.mobileNetworkSetting =
+              convertMobileNetworkSetting(entry.value);
+          break;
         case OptionNameEnum.networkType:
           result.networkType = NetworkTypeEnum.getValue(entry.value);
           break;
         case OptionNameEnum.offDelay:
           result.offDelay = OffDelayEnum.getValue(entry.value);
+          break;
+        case OptionNameEnum.offDelayUsb:
+          result.offDelayUsb = OffDelayUsbEnum.getValue(entry.value);
           break;
         case OptionNameEnum.password:
           result.password = entry.value;
@@ -565,8 +817,15 @@ class ConvertUtils {
           result.topBottomCorrectionRotation =
               convertTopBottomCorrectionRotation(entry.value);
           break;
+        case OptionNameEnum.topBottomCorrectionRotationSupport:
+          result.topBottomCorrectionRotationSupport =
+              convertTopBottomCorrectionRotationSupport(entry.value);
+          break;
         case OptionNameEnum.totalSpace:
           result.totalSpace = entry.value;
+          break;
+        case OptionNameEnum.usbConnection:
+          result.usbConnection = UsbConnectionEnum.getValue(entry.value);
           break;
         case OptionNameEnum.username:
           result.username = entry.value;
@@ -585,9 +844,33 @@ class ConvertUtils {
           result.whiteBalanceAutoStrength =
               WhiteBalanceAutoStrengthEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.wlanAntennaConfig:
+          result.wlanAntennaConfig =
+              WlanAntennaConfigEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.wlanFrequency:
           result.wlanFrequency = WlanFrequencyEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.wlanFrequencySupport:
+          result.wlanFrequencySupport =
+              convertSupportValueList(entry.value, WlanFrequencyEnum.values);
+          break;
+        case OptionNameEnum.wlanFrequencyClMode:
+          result.wlanFrequencyClMode = convertWlanFrequencyClMode(entry.value);
+          break;
+      }
+    }
+    return result;
+  }
+
+  static List<T> convertSupportValueList<T extends Enum>(
+      List<Object?> supportValueList, List<T?> enumValues) {
+    List<T> result = [];
+    for (var value in supportValueList) {
+      var element = enumValues
+          .firstWhere((element) => element.toString() == value.toString());
+      if (element != null) {
+        result.add(element);
       }
     }
     return result;
@@ -605,7 +888,9 @@ class ConvertUtils {
   }
 
   static dynamic convertOptionValueToMapValue(dynamic value) {
-    if (value is AiAutoThumbnailEnum) {
+    if (value is AccessInfo) {
+      return convertAccessInfoParam(value);
+    } else if (value is AiAutoThumbnailEnum) {
       return value.rawValue;
     } else if (value is ApertureEnum) {
       return value.rawValue;
@@ -625,11 +910,17 @@ class ConvertUtils {
       return convertBurstOptionParam(value);
     } else if (value is CameraControlSourceEnum) {
       return value.rawValue;
+    } else if (value is CameraLockEnum) {
+      return value.rawValue;
+    } else if (value is CameraLockConfig) {
+      return convertCameraLockConfigParam(value);
     } else if (value is CameraModeEnum) {
       return value.rawValue;
     } else if (value is CameraPowerEnum) {
       return value.rawValue;
     } else if (value is CaptureModeEnum) {
+      return value.rawValue;
+    } else if (value is CompassDirectionRefEnum) {
       return value.rawValue;
     } else if (value is ContinuousNumberEnum) {
       return value.rawValue;
@@ -661,9 +952,15 @@ class ConvertUtils {
       return value.rawValue;
     } else if (value is MaxRecordableTimeEnum) {
       return value.rawValue;
+    } else if (value is MicrophoneNoiseReductionEnum) {
+      return value.rawValue;
+    } else if (value is MobileNetworkSetting) {
+      return convertMobileNetworkSettingParam(value);
     } else if (value is NetworkTypeEnum) {
       return value.rawValue;
     } else if (value is OffDelayEnum) {
+      return value.rawValue;
+    } else if (value is OffDelayUsbEnum) {
       return value.rawValue;
     } else if (value is PowerSavingEnum) {
       return value.rawValue;
@@ -679,6 +976,8 @@ class ConvertUtils {
       return value.rawValue;
     } else if (value is TopBottomCorrectionOptionEnum) {
       return value.rawValue;
+    } else if (value is UsbConnectionEnum) {
+      return value.rawValue;
     } else if (value is VideoStitchingEnum) {
       return value.rawValue;
     } else if (value is VisibilityReductionEnum) {
@@ -686,6 +985,8 @@ class ConvertUtils {
     } else if (value is WhiteBalanceEnum) {
       return value.rawValue;
     } else if (value is WhiteBalanceAutoStrengthEnum) {
+      return value.rawValue;
+    } else if (value is WlanAntennaConfigEnum) {
       return value.rawValue;
     } else if (value is WlanFrequencyEnum) {
       return value.rawValue;
@@ -702,6 +1003,8 @@ class ConvertUtils {
       return convertTimeShiftParam(value);
     } else if (value is TopBottomCorrectionRotation) {
       return convertTopBottomCorrectionRotationParam(value);
+    } else if (value is WlanFrequencyClMode) {
+      return convertWlanFrequencyClModeParam(value);
     }
     return null;
   }
@@ -774,6 +1077,37 @@ class ConvertUtils {
     return nameList;
   }
 
+  static WlanFrequencyClMode convertWlanFrequencyClMode(
+      Map<dynamic, dynamic> data) {
+    var value = WlanFrequencyClMode(data['enable2_4'] ?? false,
+        data['enable5_2'] ?? false, data['enable5_8'] ?? false);
+    return value;
+  }
+
+  static MobileNetworkSetting? convertMobileNetworkSetting(
+      Map<dynamic, dynamic>? data) {
+    if (data == null) {
+      return null;
+    }
+
+    var result = MobileNetworkSetting(
+        data['roaming'] != null
+            ? RoamingEnum.getValue(data['roaming'] as String)
+            : null,
+        data['plan'] != null
+            ? PlanEnum.getValue(data['plan'] as String)
+            : null);
+    return result;
+  }
+
+  static Map<String, dynamic> convertMobileNetworkSettingParam(
+      MobileNetworkSetting mobileNetworkSetting) {
+    return {
+      'roaming': mobileNetworkSetting.roaming?.rawValue,
+      'plan': mobileNetworkSetting.plan?.rawValue,
+    };
+  }
+
   static List<AccessPoint> toAccessPointList(List<Map<dynamic, dynamic>> data) {
     var accessPointList = List<AccessPoint>.empty(growable: true);
     for (Map<dynamic, dynamic> element in data) {
@@ -782,11 +1116,13 @@ class ConvertUtils {
           element['ssid'],
           element['ssidStealth'],
           (authModeValue != null) ? authModeValue : AuthModeEnum.none,
-          element['connectionPriority'],
           element['usingDhcp'],
+          element['connectionPriority'],
           element['ipAddress'],
           element['subnetMask'],
           element['defaultGateway'],
+          element['dns1'],
+          element['dns2'],
           convertProxy(element['proxy']));
       accessPointList.add(accessPoint);
     }

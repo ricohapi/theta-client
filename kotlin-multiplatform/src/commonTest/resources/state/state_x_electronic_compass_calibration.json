@@ -5,7 +5,9 @@
     "_batteryInsert": true,
     "batteryLevel": 0.33,
     "_batteryState": "disconnect",
-    "_cameraError": ["ELECTRONIC_COMPASS_CALIBRATION"],
+    "_cameraError": [
+      "ELECTRONIC_COMPASS_CALIBRATION"
+    ],
     "_captureStatus": "idle",
     "_capturedPictures": 0,
     "_currentMicrophone": "Internal",

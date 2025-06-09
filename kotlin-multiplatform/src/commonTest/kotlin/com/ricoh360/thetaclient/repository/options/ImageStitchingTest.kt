@@ -6,11 +6,15 @@ import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.ImageStitching
 import com.ricoh360.thetaclient.transferred.Options
-import io.ktor.http.*
-import io.ktor.utils.io.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ImageStitchingTest {

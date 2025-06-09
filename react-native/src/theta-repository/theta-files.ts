@@ -84,8 +84,12 @@ export type StorageEnum = (typeof StorageEnum)[keyof typeof StorageEnum];
 
 /** Video codec */
 export const CodecEnum = {
+  /** Undefined value */
+  UNKNOWN: 'UNKNOWN',
   /** codec H.264/MPEG-4 AVC */
   H264MP4AVC: 'H264MP4AVC',
+  /** codec H.265/HEVC */
+  H265HEVC: 'H265HEVC',
 } as const;
 
 /** type definition of CodecEnum */

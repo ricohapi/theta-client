@@ -2,6 +2,10 @@
 
 @interface RCT_EXTERN_MODULE(ThetaClientReactNative, NSObject)
 
+RCT_EXTERN_METHOD(setApiLogListener:(BOOL)enabled
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(initialize:(NSString)endPoint
                   withConfig:(NSDictionary*)config
                   withTimeout:(NSDictionary*)timeout
@@ -78,6 +82,22 @@ RCT_EXTERN_METHOD(startTimeShiftCapture:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(cancelTimeShiftCapture:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getTimeShiftManualCaptureBuilder:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(buildTimeShiftManualCapture:(NSDictionary*)options
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(startTimeShiftManualCapture:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(startTimeShiftManualSecondCapture:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(cancelTimeShiftManualCapture:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(getVideoCaptureBuilder:(RCTPromiseResolveBlock)resolve
@@ -180,6 +200,9 @@ RCT_EXTERN_METHOD(getMetadata:(NSString*)fileUrl
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(reboot:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(reset:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
@@ -204,24 +227,11 @@ RCT_EXTERN_METHOD(finishWlan:(RCTPromiseResolveBlock)resolve
 RCT_EXTERN_METHOD(listAccessPoints:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(setAccessPointDynamically:(NSString *)ssid
-                  withSsidStealth:(BOOL)ssidStealth
-                  withAuthMode:(NSString *)authMode
-                  withPassword:(NSString *)password
-                  withConnectionPriority:(int)connectionPriority
-                  withProxy:(NSDictionary *)proxy
+RCT_EXTERN_METHOD(setAccessPointDynamically:(NSDictionary *)params
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(setAccessPointStatically:(NSString *)ssid
-                  withSsidStealth:(BOOL)ssidStealth
-                  withAuthMode:(NSString *)authMode
-                  withPassword:(NSString *)password
-                  withConnectionPriority:(int)connectionPriority
-                  withIpAddress:(NSString *)ipAddress
-                  withSubnetMask:(NSString *)subnetMask
-                  withDefaultGateway:(NSString *)defaultGateway
-                  withProxy:(NSDictionary *)proxy
+RCT_EXTERN_METHOD(setAccessPointStatically:(NSDictionary *)params
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 

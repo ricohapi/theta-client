@@ -6,15 +6,14 @@ import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.Options
 import com.ricoh360.thetaclient.transferred.TopBottomCorrectionRotation
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.http.content.*
-import io.ktor.utils.io.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import io.ktor.http.HttpStatusCode
+import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.test.runTest
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class TopBottomCorrectionRotationTest {
     private val endpoint = "http://192.168.1.1:80/"
 
@@ -59,7 +58,7 @@ class TopBottomCorrectionRotationTest {
      */
     @Test
     fun setOptionTest() = runTest {
-        val value = Pair(ThetaRepository.TopBottomCorrectionRotation(pitch = 1.0f, roll = 1.0f, yaw = 1.0f), TopBottomCorrectionRotation(pitch = 1.0f, roll = 1.0f, yaw = 1.0f))
+        val value = Pair(ThetaRepository.TopBottomCorrectionRotation(pitch = 1.0f, roll = 1.0f, yaw = 1.0f), TopBottomCorrectionRotation(pitch = "1.0", roll = "1.0", yaw = "1.0"))
 
         MockApiClient.onRequest = { request ->
             // check request
@@ -81,7 +80,7 @@ class TopBottomCorrectionRotationTest {
     @Test
     fun convertOptionTest() = runTest {
         val values = listOf(
-            Pair(ThetaRepository.TopBottomCorrectionRotation(pitch = 1.0f, roll = 1.0f, yaw = 1.0f), TopBottomCorrectionRotation(pitch = 1.0f, roll = 1.0f, yaw = 1.0f)),
+            Pair(ThetaRepository.TopBottomCorrectionRotation(pitch = 1.0f, roll = 1.0f, yaw = 1.0f), TopBottomCorrectionRotation(pitch = "1.0", roll = "1.0", yaw = "1.0")),
         )
 
         values.forEach {

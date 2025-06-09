@@ -1,0 +1,16 @@
+{
+  "name": "camera.getOptions",
+  "state": "done",
+  "results": {
+    "options": {
+      "_cameraLockConfig": {
+        "powerKey": "lock",
+        "shutterKey": "unlock",
+        "modeKey": "unlock",
+        "wlanKey": "unlock",
+        "fnKey": "unlock",
+        "panel": "lock"
+      }
+    }
+  }
+}

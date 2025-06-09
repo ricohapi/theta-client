@@ -1,8 +1,8 @@
 {
-    "error": {
-        "code": "UnitTest",
-        "message": "UnitTest error"
-    },
-    "name": "camera.reset",
-    "state": "error"
+  "error": {
+    "code": "UnitTest",
+    "message": "UnitTest error"
+  },
+  "name": "camera.reset",
+  "state": "error"
 }

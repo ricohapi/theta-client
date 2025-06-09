@@ -46,15 +46,18 @@ void main() {
       optionMap['MaxRecordableTime'] = 'RECORDABLE_TIME_180';
       return Future.value(optionMap);
     });
-    Options options = await platform.getOptions([OptionNameEnum.maxRecordableTime]);
-    expect(options.maxRecordableTime?.rawValue, 'RECORDABLE_TIME_180', reason: 'maxRecordableTime');
+    Options options =
+        await platform.getOptions([OptionNameEnum.maxRecordableTime]);
+    expect(options.maxRecordableTime?.rawValue, 'RECORDABLE_TIME_180',
+        reason: 'maxRecordableTime');
   });
 
   test('setOptions', () async {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
-      expect(arguments['MaxRecordableTime'], 'RECORDABLE_TIME_180', reason: 'maxRecordableTime');
+      expect(arguments['MaxRecordableTime'], 'RECORDABLE_TIME_180',
+          reason: 'maxRecordableTime');
       return Future.value();
     });
     final options = Options();

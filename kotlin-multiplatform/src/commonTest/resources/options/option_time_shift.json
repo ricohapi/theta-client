@@ -1,1 +1,13 @@
-{"name":"camera.getOptions","results":{"options":{"_timeShift":{"firstInterval":5,"firstShooting":"front","secondInterval":5}}},"state":"done"}
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "_timeShift": {
+        "firstInterval": 5,
+        "firstShooting": "front",
+        "secondInterval": 5
+      }
+    }
+  },
+  "state": "done"
+}

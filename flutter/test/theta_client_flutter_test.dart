@@ -38,6 +38,11 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
+  Future<void> setApiLogListener(void Function(String message)? listener) {
+    return onCallSetApiLogListener();
+  }
+
+  @override
   Future<void> initialize(
       String endpoint, ThetaConfig? config, ThetaTimeout? timeout) {
     return onCallInitialize();
@@ -92,6 +97,36 @@ class MockThetaClientFlutterPlatform
   @override
   Future<void> stopTimeShiftCapture() {
     return onCallStopTimeShiftCapture();
+  }
+
+  @override
+  Future<void> getTimeShiftManualCaptureBuilder() {
+    return onCallGetTimeShiftManualCaptureBuilder();
+  }
+
+  @override
+  Future<void> buildTimeShiftManualCapture(
+      Map<String, dynamic> options, int interval) {
+    return onCallBuildTimeShiftManualCapture(options, interval);
+  }
+
+  @override
+  Future<String?> startTimeShiftManualCapture(
+      void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) {
+    return onCallStartTimeShiftManualCapture(
+        onProgress, onStopFailed, onCapturing);
+  }
+
+  @override
+  Future<void> startTimeShiftManualSecondCapture() {
+    return onCallStartTimeShiftManualSecondCapture();
+  }
+
+  @override
+  Future<void> stopTimeShiftManualCapture() {
+    return onCallStopTimeShiftManualCapture();
   }
 
   @override
@@ -303,6 +338,11 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
+  Future<void> reboot() {
+    return Future.value();
+  }
+
+  @override
   Future<void> reset() {
     return Future.value();
   }
@@ -313,10 +353,8 @@ class MockThetaClientFlutterPlatform
   }
 
   @override
-  Future<String> convertVideoFormats(String fileUrl,
-      bool toLowResolution,
-      bool applyTopBottomCorrection,
-      void Function(double)? onProgress) {
+  Future<String> convertVideoFormats(String fileUrl, bool toLowResolution,
+      bool applyTopBottomCorrection, void Function(double)? onProgress) {
     return Future.value('');
   }
 
@@ -338,10 +376,10 @@ class MockThetaClientFlutterPlatform
   @override
   Future<void> setAccessPointDynamically(
       String ssid,
-      bool ssidStealth,
+      bool? ssidStealth,
       AuthModeEnum authMode,
-      String password,
-      int connectionPriority,
+      String? password,
+      int? connectionPriority,
       Proxy? proxy) {
     return Future.value();
   }
@@ -349,13 +387,15 @@ class MockThetaClientFlutterPlatform
   @override
   Future<void> setAccessPointStatically(
       String ssid,
-      bool ssidStealth,
+      bool? ssidStealth,
       AuthModeEnum authMode,
-      String password,
-      int connectionPriority,
+      String? password,
+      int? connectionPriority,
       String ipAddress,
       String subnetMask,
       String defaultGateway,
+      String? dns1,
+      String? dns2,
       Proxy? proxy) {
     return Future.value();
   }
@@ -426,6 +466,7 @@ class MockThetaClientFlutterPlatform
   }
 }
 
+Future<void> Function() onCallSetApiLogListener = Future.value;
 Future<void> Function() onCallInitialize = Future.value;
 Future<bool> Function() onCallIsInitialized = Future.value;
 Future<ThetaModel?> Function() onGetThetaModel = Future.value;
@@ -451,6 +492,18 @@ Future<String?> Function(
     onCallStartTimeShiftCapture =
     (onProgress, onStopFailed, onCapturing) => Future.value();
 Future<void> Function() onCallStopTimeShiftCapture = Future.value;
+
+Future<void> Function() onCallGetTimeShiftManualCaptureBuilder = Future.value;
+Future<void> Function(Map<String, dynamic> options, int interval)
+    onCallBuildTimeShiftManualCapture = (options, interval) => Future.value();
+Future<String?> Function(
+        void Function(double)? onProgress,
+        void Function(Exception exception)? onStopFailed,
+        void Function(CapturingStatusEnum status)? onCapturing)
+    onCallStartTimeShiftManualCapture =
+    (onProgress, onStopFailed, onCapturing) => Future.value();
+Future<void> Function() onCallStartTimeShiftManualSecondCapture = Future.value;
+Future<void> Function() onCallStopTimeShiftManualCapture = Future.value;
 
 Future<void> Function() onCallGetVideoCaptureBuilder = Future.value;
 Future<void> Function(Map<String, dynamic> options, int interval)

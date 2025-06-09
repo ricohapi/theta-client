@@ -106,12 +106,14 @@ class ShotCountSpecifiedIntervalCaptureTest {
 
             override fun onCapturing(status: CapturingStatusEnum) {
                 onCapturingCounter++
-                if (onSelfTimer) {
-                    assertEquals(status, CapturingStatusEnum.CAPTURING)
-                } else {
-                    onSelfTimer = true
-                    assertEquals(onCapturingCounter, 1)
-                    assertEquals(status, CapturingStatusEnum.SELF_TIMER_COUNTDOWN)
+                when {
+                    onCapturingCounter == 1 -> assertEquals(status, CapturingStatusEnum.STARTING)
+                    onSelfTimer -> assertEquals(status, CapturingStatusEnum.CAPTURING)
+                    else -> {
+                        onSelfTimer = true
+                        assertEquals(onCapturingCounter, 2)
+                        assertEquals(status, CapturingStatusEnum.SELF_TIMER_COUNTDOWN)
+                    }
                 }
             }
 
@@ -180,8 +182,10 @@ class ShotCountSpecifiedIntervalCaptureTest {
             override fun onProgress(completion: Float) {
                 assertTrue(false, "onProgress")
             }
+
             override fun onCapturing(status: CapturingStatusEnum) {
                 when (counter) {
+                    3 -> assertEquals(status, CapturingStatusEnum.STARTING)
                     4 -> assertEquals(status, CapturingStatusEnum.SELF_TIMER_COUNTDOWN)
                     else -> assertEquals(status, CapturingStatusEnum.CAPTURING)
                 }

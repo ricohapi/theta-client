@@ -7,16 +7,21 @@ import com.ricoh360.thetaclient.transferred.FileType
 import com.ricoh360.thetaclient.transferred.ListFilesRequest
 import com.ricoh360.thetaclient.transferred.Storage
 import com.ricoh360.thetaclient.transferred._ProjectionType
-import io.ktor.client.network.sockets.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.http.content.*
-import io.ktor.utils.io.*
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.client.request.HttpRequestData
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.TextContent
+import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ListFilesTest {
@@ -512,7 +517,9 @@ class ListFilesTest {
     @Test
     fun convertCodecEnumTest() = runTest {
         val values = listOf(
+            Pair(ThetaRepository.CodecEnum.UNKNOWN, null),
             Pair(ThetaRepository.CodecEnum.H264MP4AVC, "H.264/MPEG-4 AVC"),
+            Pair(ThetaRepository.CodecEnum.H265HEVC, "H.265/HEVC"),
         )
 
         assertEquals(ThetaRepository.CodecEnum.values().size, values.size)

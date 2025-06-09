@@ -30,6 +30,10 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
 
+  Future<void> setApiLogListener(void Function(String message)? listener) {
+    throw UnimplementedError('setApiLogListener() has not been implemented.');
+  }
+
   Future<void> initialize(
       String endpoint, ThetaConfig? config, ThetaTimeout? timeout) {
     throw UnimplementedError('initialize() has not been implemented.');
@@ -112,7 +116,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
         'buildTimeShiftCapture() has not been implemented.');
   }
 
-  Future<String?> startTimeShiftCapture(void Function(double)? onProgress,
+  Future<String?> startTimeShiftCapture(
+      void Function(double)? onProgress,
       void Function(Exception exception)? onStopFailed,
       void Function(CapturingStatusEnum status)? onCapturing) {
     throw UnimplementedError(
@@ -122,6 +127,35 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
   Future<void> stopTimeShiftCapture() {
     throw UnimplementedError(
         'stopTimeShiftCapture() has not been implemented.');
+  }
+
+  Future<void> getTimeShiftManualCaptureBuilder() {
+    throw UnimplementedError(
+        'getTimeShiftManualCaptureBuilder() has not been implemented.');
+  }
+
+  Future<void> buildTimeShiftManualCapture(
+      Map<String, dynamic> options, int interval) {
+    throw UnimplementedError(
+        'buildTimeShiftManualCapture() has not been implemented.');
+  }
+
+  Future<String?> startTimeShiftManualCapture(
+      void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed,
+      void Function(CapturingStatusEnum status)? onCapturing) {
+    throw UnimplementedError(
+        'startTimeShiftManualCapture() has not been implemented.');
+  }
+
+  Future<void> startTimeShiftManualSecondCapture() {
+    throw UnimplementedError(
+        'startTimeShiftManualSecondCapture() has not been implemented.');
+  }
+
+  Future<void> stopTimeShiftManualCapture() {
+    throw UnimplementedError(
+        'stopTimeShiftManualCapture() has not been implemented.');
   }
 
   Future<void> getVideoCaptureBuilder() {
@@ -149,8 +183,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
         'getLimitlessIntervalCaptureBuilder() has not been implemented.');
   }
 
-  Future<void> buildLimitlessIntervalCapture(Map<String, dynamic> options,
-      int interval) {
+  Future<void> buildLimitlessIntervalCapture(
+      Map<String, dynamic> options, int interval) {
     throw UnimplementedError(
         'buildLimitlessIntervalCapture() has not been implemented.');
   }
@@ -295,6 +329,10 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('getMetadata() has not been implemented.');
   }
 
+  Future<void> reboot() {
+    throw UnimplementedError('reboot() has not been implemented.');
+  }
+
   Future<void> reset() {
     throw UnimplementedError('reset() has not been implemented.');
   }
@@ -322,10 +360,10 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
 
   Future<void> setAccessPointDynamically(
       String ssid,
-      bool ssidStealth,
+      bool? ssidStealth,
       AuthModeEnum authMode,
-      String password,
-      int connectionPriority,
+      String? password,
+      int? connectionPriority,
       Proxy? proxy) {
     throw UnimplementedError(
         'setAccessPointDynamically() has not been implemented.');
@@ -333,13 +371,15 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
 
   Future<void> setAccessPointStatically(
       String ssid,
-      bool ssidStealth,
+      bool? ssidStealth,
       AuthModeEnum authMode,
-      String password,
-      int connectionPriority,
+      String? password,
+      int? connectionPriority,
       String ipAddress,
       String subnetMask,
       String defaultGateway,
+      String? dns1,
+      String? dns2,
       Proxy? proxy) {
     throw UnimplementedError(
         'setAccessPointStatically() has not been implemented.');

@@ -1,0 +1,9 @@
+{
+  "name": "camera.getOptions",
+  "state": "done",
+  "results": {
+    "options": {
+      "_microphoneNoiseReduction": "on"
+    }
+  }
+}

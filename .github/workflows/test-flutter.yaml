@@ -9,15 +9,17 @@ permissions:
 
 jobs:
   build:
-    runs-on: macos-13
+    runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: flutter
-      uses: subosito/flutter-action@v2.3.0
+      uses: subosito/flutter-action@v2
       with:
-        architecture: arm64
+        channel: stable
+        flutter-version: 3.29.0
     - name: test-flutter
       run: |
+        flutter --version
         cd ./flutter
         flutter pub get
         flutter test

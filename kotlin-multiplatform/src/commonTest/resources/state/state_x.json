@@ -5,7 +5,9 @@
     "_batteryInsert": true,
     "batteryLevel": 0.33,
     "_batteryState": "disconnect",
-    "_cameraError": ["HIGH_TEMPERATURE_WARNING"],
+    "_cameraError": [
+      "HIGH_TEMPERATURE_WARNING"
+    ],
     "_captureStatus": "idle",
     "_capturedPictures": 0,
     "_currentMicrophone": "Internal",

@@ -1,1 +1,9 @@
-{"name":"camera.getOptions","results":{"options":{"_whiteBalanceAutoStrength":"OFF"}},"state":"done"}
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "_whiteBalanceAutoStrength": "OFF"
+    }
+  },
+  "state": "done"
+}

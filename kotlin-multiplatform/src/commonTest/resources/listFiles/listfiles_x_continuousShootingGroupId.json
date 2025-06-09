@@ -1,1 +1,28 @@
-{"results":{"entries":[{"_continuousShootingGroupId":"-2162368964566516622","dateTimeZone":"2023:06:23 15:50:12+09:00","_favorite":false,"fileUrl":"http://192.168.1.1/files/100RICOH/R0010115.JPG","height":2752,"_imageDescription":"","isProcessed":true,"lat":35.48560555555556,"lng":134.24010277777776,"name":"R0010115.JPG","previewUrl":"","_projectionType":"Equirectangular","size":3481981,"_storageID":"412176649172527ab3d5edabb50a7d69","_thumbSize":1888,"_uploaded":false,"width":5504}],"totalEntries":37},"name":"camera.listFiles","state":"done"}
+{
+  "results": {
+    "entries": [
+      {
+        "_continuousShootingGroupId": "-2162368964566516622",
+        "dateTimeZone": "2023:06:23 15:50:12+09:00",
+        "_favorite": false,
+        "fileUrl": "http://192.168.1.1/files/100RICOH/R0010115.JPG",
+        "height": 2752,
+        "_imageDescription": "",
+        "isProcessed": true,
+        "lat": 35.48560555555556,
+        "lng": 134.24010277777776,
+        "name": "R0010115.JPG",
+        "previewUrl": "",
+        "_projectionType": "Equirectangular",
+        "size": 3481981,
+        "_storageID": "412176649172527ab3d5edabb50a7d69",
+        "_thumbSize": 1888,
+        "_uploaded": false,
+        "width": 5504
+      }
+    ],
+    "totalEntries": 37
+  },
+  "name": "camera.listFiles",
+  "state": "done"
+}

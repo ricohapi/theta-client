@@ -6,6 +6,8 @@ import Button from '../../components/ui/button';
 import {
   ApertureEnum,
   BluetoothRoleEnum,
+  CameraControlSourceEnum,
+  CameraLockEnum,
   CameraPowerEnum,
   CaptureModeEnum,
   ContinuousNumberEnum,
@@ -17,19 +19,28 @@ import {
   IsoAutoHighLimitEnum,
   IsoEnum,
   MaxRecordableTimeEnum,
+  MicrophoneNoiseReductionEnum,
   OffDelayEnum,
+  OffDelayUsbEnum,
   OptionNameEnum,
   Options,
   PresetEnum,
+  PreviewFormatEnum,
   SleepDelayEnum,
   TopBottomCorrectionOptionEnum,
+  UsbConnectionEnum,
   VideoStitchingEnum,
   VisibilityReductionEnum,
   WhiteBalanceEnum,
+  WlanAntennaConfigEnum,
   getOptions,
   offDelayToSeconds,
+  offDelayUsbToSeconds,
   setOptions,
   sleepDelayToSeconds,
+  CompassDirectionRefEnum,
+  WlanFrequencyEnum,
+  NetworkTypeEnum,
 } from '../../modules/theta-client';
 import {
   AutoBracketEdit,
@@ -38,6 +49,9 @@ import {
   TopBottomCorrectionRotationEdit,
   EnumEdit,
   EthernetConfigEdit,
+  WlanFrequencyClModeEdit,
+  MobileNetworkSettingEdit,
+  CameraLockConfigEdit,
 } from '../../components/options';
 import { ItemSelectorView, type Item } from '../../components/ui/item-list';
 import { NumberEdit } from '../../components/options/number-edit';
@@ -59,6 +73,18 @@ interface OptionItem extends Item {
 
 const optionList: OptionItem[] = [
   {
+    name: 'aiAutoThumbnailSupport',
+    value: {
+      optionName: OptionNameEnum.AiAutoThumbnailSupport,
+    },
+  },
+  {
+    name: 'accessInfo',
+    value: {
+      optionName: OptionNameEnum.AccessInfo,
+    },
+  },
+  {
     name: 'aperture',
     value: {
       optionName: OptionNameEnum.Aperture,
@@ -73,6 +99,12 @@ const optionList: OptionItem[] = [
         />
       ),
       defaultValue: { aperture: ApertureEnum.APERTURE_AUTO },
+    },
+  },
+  {
+    name: 'apertureSupport',
+    value: {
+      optionName: OptionNameEnum.ApertureSupport,
     },
   },
   {
@@ -103,6 +135,54 @@ const optionList: OptionItem[] = [
     },
   },
   {
+    name: 'cameraControlSource',
+    value: {
+      optionName: OptionNameEnum.CameraControlSource,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'cameraControlSource'}
+          option={options?.cameraControlSource}
+          onChange={(cameraControlSource) => {
+            onChange({ cameraControlSource });
+          }}
+          optionEnum={CameraControlSourceEnum}
+        />
+      ),
+      defaultValue: { cameraControlSource: CameraControlSourceEnum.CAMERA },
+    },
+  },
+  {
+    name: 'cameraControlSourceSupport',
+    value: {
+      optionName: OptionNameEnum.CameraControlSourceSupport,
+    },
+  },
+  {
+    name: 'cameraLock',
+    value: {
+      optionName: OptionNameEnum.CameraLock,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'cameraLock'}
+          option={options?.cameraLock}
+          onChange={(cameraLock) => {
+            onChange({ cameraLock });
+          }}
+          optionEnum={CameraLockEnum}
+        />
+      ),
+    },
+  },
+  {
+    name: 'cameraLockConfig',
+    value: {
+      optionName: OptionNameEnum.CameraLockConfig,
+      editor: (options, onChange) => (
+        <CameraLockConfigEdit onChange={onChange} options={options} />
+      ),
+    },
+  },
+  {
     name: 'cameraPower',
     value: {
       optionName: OptionNameEnum.CameraPower,
@@ -117,6 +197,12 @@ const optionList: OptionItem[] = [
         />
       ),
       defaultValue: { cameraPower: CameraPowerEnum.ON },
+    },
+  },
+  {
+    name: 'cameraPowerSupport',
+    value: {
+      optionName: OptionNameEnum.CameraPowerSupport,
     },
   },
   {
@@ -147,6 +233,53 @@ const optionList: OptionItem[] = [
           options={options}
         />
       ),
+    },
+  },
+  {
+    name: 'colorTemperatureSupport',
+    value: {
+      optionName: OptionNameEnum.ColorTemperatureSupport,
+    },
+  },
+  {
+    name: 'compositeShootingOutputIntervalSupport',
+    value: {
+      optionName: OptionNameEnum.CompositeShootingOutputIntervalSupport,
+    },
+  },
+  {
+    name: 'compositeShootingTime',
+    value: {
+      optionName: OptionNameEnum.CompositeShootingTime,
+      editor: (options, onChange) => (
+        <NumberEdit
+          propName={'compositeShootingTime'}
+          onChange={onChange}
+          options={options}
+        />
+      ),
+    },
+  },
+  {
+    name: 'compassDirectionRef',
+    value: {
+      optionName: OptionNameEnum.CompassDirectionRef,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'compassDirectionRef'}
+          option={options?.compassDirectionRef}
+          onChange={(compassDirectionRef) => {
+            onChange({ compassDirectionRef });
+          }}
+          optionEnum={CompassDirectionRefEnum}
+        />
+      ),
+    },
+  },
+  {
+    name: 'compositeShootingTimeSupport',
+    value: {
+      optionName: OptionNameEnum.CompositeShootingTimeSupport,
     },
   },
   {
@@ -210,6 +343,12 @@ const optionList: OptionItem[] = [
     },
   },
   {
+    name: 'exposureDelaySupport',
+    value: {
+      optionName: OptionNameEnum.ExposureDelaySupport,
+    },
+  },
+  {
     name: 'exposureProgram',
     value: {
       optionName: OptionNameEnum.ExposureProgram,
@@ -265,6 +404,12 @@ const optionList: OptionItem[] = [
       editor: (options, onChange) => (
         <GpsInfoEdit onChange={onChange} options={options} hideLabel />
       ),
+    },
+  },
+  {
+    name: 'gpsTagRecordingSupport',
+    value: {
+      optionName: OptionNameEnum.GpsTagRecordingSupport,
     },
   },
   {
@@ -327,6 +472,50 @@ const optionList: OptionItem[] = [
     },
   },
   {
+    name: 'microphoneNoiseReduction',
+    value: {
+      optionName: OptionNameEnum.MicrophoneNoiseReduction,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'microphoneNoiseReduction'}
+          option={options?.microphoneNoiseReduction}
+          onChange={(microphoneNoiseReduction) => {
+            onChange({ microphoneNoiseReduction });
+          }}
+          optionEnum={MicrophoneNoiseReductionEnum}
+        />
+      ),
+      defaultValue: {
+        microphoneNoiseReduction: MicrophoneNoiseReductionEnum.ON,
+      },
+    },
+  },
+  {
+    name: 'mobileNetworkSetting',
+    value: {
+      optionName: OptionNameEnum.MobileNetworkSetting,
+      editor: (options, onChange) => (
+        <MobileNetworkSettingEdit onChange={onChange} options={options} />
+      ),
+    },
+  },
+  {
+    name: 'networkType',
+    value: {
+      optionName: OptionNameEnum.NetworkType,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'networkType'}
+          option={options.networkType}
+          onChange={(networkType) => {
+            onChange({ networkType });
+          }}
+          optionEnum={NetworkTypeEnum}
+        />
+      ),
+    },
+  },
+  {
     name: 'offDelay enum',
     value: {
       optionName: OptionNameEnum.OffDelay,
@@ -372,6 +561,51 @@ const optionList: OptionItem[] = [
     },
   },
   {
+    name: 'offDelayUsb enum',
+    value: {
+      optionName: OptionNameEnum.OffDelayUsb,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'offDelayUsb'}
+          option={options.offDelayUsb}
+          onChange={(offDelayUsb) => {
+            onChange({ offDelayUsb });
+          }}
+          optionEnum={OffDelayUsbEnum}
+        />
+      ),
+      defaultValue: { offDelayUsb: OffDelayUsbEnum.DISABLE },
+    },
+  },
+  {
+    name: 'offDelayUsb number',
+    value: {
+      optionName: OptionNameEnum.OffDelayUsb,
+      editor: (options, onChange) => (
+        <InputNumber
+          title={'offDelayUsb'}
+          onChange={(newValue) => {
+            onChange({ offDelayUsb: newValue });
+          }}
+          value={
+            typeof options.offDelayUsb === 'string'
+              ? offDelayUsbToSeconds(options.offDelayUsb as OffDelayUsbEnum)
+              : typeof options.offDelayUsb === 'number'
+              ? options.offDelayUsb
+              : 0
+          }
+        />
+      ),
+      onWillSet: (options: Options) => {
+        if (typeof options.offDelayUsb === 'string') {
+          options.offDelay = offDelayUsbToSeconds(
+            options.offDelayUsb as OffDelayUsbEnum
+          );
+        }
+      },
+    },
+  },
+  {
     name: 'preset',
     value: {
       optionName: OptionNameEnum.Preset,
@@ -386,6 +620,23 @@ const optionList: OptionItem[] = [
         />
       ),
       defaultValue: { preset: PresetEnum.FACE },
+    },
+  },
+  {
+    name: 'previewFormat',
+    value: {
+      optionName: OptionNameEnum.PreviewFormat,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'previewFormat'}
+          option={options.previewFormat}
+          onChange={(previewFormat) => {
+            onChange({ previewFormat });
+          }}
+          optionEnum={PreviewFormatEnum}
+        />
+      ),
+      defaultValue: { previewFormat: PreviewFormatEnum.W1024_H512_F30 },
     },
   },
   {
@@ -462,6 +713,40 @@ const optionList: OptionItem[] = [
     },
   },
   {
+    name: 'topBottomCorrectionRotation',
+    value: {
+      optionName: OptionNameEnum.TopBottomCorrectionRotation,
+      editor: (options, onChange) => (
+        <TopBottomCorrectionRotationEdit
+          onChange={onChange}
+          options={options}
+        />
+      ),
+    },
+  },
+  {
+    name: 'usbConnection',
+    value: {
+      optionName: OptionNameEnum.UsbConnection,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'usbConnection'}
+          option={options?.usbConnection}
+          onChange={(usbConnection) => {
+            onChange({ usbConnection });
+          }}
+          optionEnum={UsbConnectionEnum}
+        />
+      ),
+    },
+  },
+  {
+    name: 'topBottomCorrectionRotationSupport',
+    value: {
+      optionName: OptionNameEnum.TopBottomCorrectionRotationSupport,
+    },
+  },
+  {
     name: 'videoStitching',
     value: {
       optionName: OptionNameEnum.VideoStitching,
@@ -478,18 +763,6 @@ const optionList: OptionItem[] = [
       defaultValue: {
         videoStitching: VideoStitchingEnum.NONE,
       },
-    },
-  },
-  {
-    name: 'topBottomCorrectionRotation',
-    value: {
-      optionName: OptionNameEnum.TopBottomCorrectionRotation,
-      editor: (options, onChange) => (
-        <TopBottomCorrectionRotationEdit
-          onChange={onChange}
-          options={options}
-        />
-      ),
     },
   },
   {
@@ -528,6 +801,54 @@ const optionList: OptionItem[] = [
       defaultValue: { whiteBalance: WhiteBalanceEnum.AUTO },
     },
   },
+  {
+    name: 'wlanAntennaConfig',
+    value: {
+      optionName: OptionNameEnum.WlanAntennaConfig,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'wlanAntennaConfig'}
+          option={options.wlanAntennaConfig}
+          onChange={(wlanAntennaConfig) => {
+            onChange({ wlanAntennaConfig });
+          }}
+          optionEnum={WlanAntennaConfigEnum}
+        />
+      ),
+    },
+  },
+  {
+    name: 'wlanFrequency',
+    value: {
+      optionName: OptionNameEnum.WlanFrequency,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'wlanFrequency'}
+          option={options.wlanFrequency}
+          onChange={(wlanFrequency) => {
+            onChange({ wlanFrequency });
+          }}
+          optionEnum={WlanFrequencyEnum}
+        />
+      ),
+    },
+  },
+  {
+    name: 'wlanFrequencySupport',
+    value: {
+      optionName: OptionNameEnum.WlanFrequencySupport,
+    },
+  },
+  {
+    name: 'wlanFrequencyClMode',
+    value: {
+      optionName: OptionNameEnum.WlanFrequencyClMode,
+      editor: (options, onChange) => (
+        <WlanFrequencyClModeEdit onChange={onChange} options={options} />
+      ),
+      defaultValue: { whiteBalance: WhiteBalanceEnum.AUTO },
+    },
+  },
 ];
 
 const OptionsScreen: React.FC<
@@ -553,7 +874,8 @@ const OptionsScreen: React.FC<
     }
     try {
       const options = await getOptions([selectedOption.value.optionName]);
-      setMessage(JSON.stringify(options));
+      console.log('call getOptions(): ' + JSON.stringify(options));
+      setMessage(JSON.stringify(options, null, '\t'));
       setEditOptions(options);
     } catch (error) {
       if (error instanceof Error) {
@@ -596,6 +918,8 @@ const OptionsScreen: React.FC<
               selectedItem={selectedOption}
               placeHolder="select option"
             />
+          </View>
+          <View style={styles.editorContainerLayout}>
             <Button
               title="Get"
               onPress={onPressGet}

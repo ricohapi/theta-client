@@ -2,6 +2,7 @@ import { CameraControlSourceEnum } from '../../theta-repository/options/option-c
 
 describe('CameraControlSourceEnum', () => {
   const data: string[][] = [
+    [CameraControlSourceEnum.UNKNOWN, 'UNKNOWN'],
     [CameraControlSourceEnum.CAMERA, 'CAMERA'],
     [CameraControlSourceEnum.APP, 'APP'],
   ];

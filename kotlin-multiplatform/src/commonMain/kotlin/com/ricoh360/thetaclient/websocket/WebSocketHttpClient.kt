@@ -1,12 +1,11 @@
 package com.ricoh360.thetaclient.websocket
 
+import com.ricoh360.thetaclient.ThetaApiLogger
 import com.ricoh360.thetaclient.setupDigestAuth
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.plugins.websocket.webSocketSession
@@ -31,7 +30,7 @@ internal class WebSocketHttpClientImpl : WebSocketHttpClient {
             pingInterval = WEBSOCKET_PING_INTERVAL
         }
         install(Logging) {
-            logger = Logger.SIMPLE // DEFAULT, SIMPLE or EMPTY
+            logger = ThetaApiLogger()
             level = LogLevel.ALL // ALL, HEADERS, BODY, INFO or NONE
         }
     }

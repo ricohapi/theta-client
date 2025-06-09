@@ -5,6 +5,7 @@ package com.ricoh360.thetaclient
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import java.lang.ref.WeakReference
 import java.util.UUID
 
 /**
@@ -33,3 +34,5 @@ actual fun randomUUID(): String {
 actual fun currentTimeMillis(): Long {
     return System.currentTimeMillis()
 }
+
+actual typealias WeakReference<T> = WeakReference<T>

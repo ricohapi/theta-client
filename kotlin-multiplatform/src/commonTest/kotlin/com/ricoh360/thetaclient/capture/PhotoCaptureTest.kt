@@ -8,14 +8,19 @@ import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.CaptureMode
 import com.ricoh360.thetaclient.transferred.MediaFileFormat
 import com.ricoh360.thetaclient.transferred.MediaType
-import io.ktor.client.network.sockets.*
-import io.ktor.http.*
-import io.ktor.utils.io.*
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.http.HttpStatusCode
+import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class PhotoCaptureTest {
     private val endpoint = "http://192.168.1.1:80/"
@@ -75,6 +80,7 @@ class PhotoCaptureTest {
                 else -> {
                     when (request.url.encodedPath) {
                         "/osc/commands/status" -> {
+                            assertEquals(request.headers.get("Cache-Control"), "no-store")
                             assertEquals(
                                 request.url.encodedPath,
                                 requestPathArray[2],
@@ -82,6 +88,7 @@ class PhotoCaptureTest {
                             )
                             responseArray[2]
                         }
+
                         else -> stateIdleResponse
                     }
                 }
@@ -102,6 +109,7 @@ class PhotoCaptureTest {
         assertNull(photoCapture.getFileFormat(), "set option fileFormat")
 
         var file: String? = null
+        var onCapturingCount = 0
         photoCapture.takePicture(object : PhotoCapture.TakePictureCallback {
             override fun onSuccess(fileUrl: String?) {
                 file = fileUrl
@@ -109,7 +117,11 @@ class PhotoCaptureTest {
             }
 
             override fun onCapturing(status: CapturingStatusEnum) {
-                assertEquals(status, CapturingStatusEnum.CAPTURING)
+                when (onCapturingCount) {
+                    0 -> assertEquals(status, CapturingStatusEnum.STARTING)
+                    else -> assertEquals(status, CapturingStatusEnum.CAPTURING)
+                }
+                onCapturingCount += 1
             }
 
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
@@ -531,7 +543,7 @@ class PhotoCaptureTest {
             // check result
             assertEquals(
                 photoCapture.getAperture(),
-                it,
+                if (it == ThetaRepository.ApertureEnum.UNKNOWN) null else it,
                 "set option aperture $valueIndex"
             )
 
@@ -641,7 +653,7 @@ class PhotoCaptureTest {
 
             // check result
             assertEquals(
-                photoCapture.getExposureCompensation(),
+                photoCapture.getExposureCompensation() ?: ThetaRepository.ExposureCompensationEnum.UNKNOWN,
                 it,
                 "set option exposureCompensation $valueIndex"
             )
@@ -696,7 +708,7 @@ class PhotoCaptureTest {
 
             // check result
             assertEquals(
-                photoCapture.getExposureDelay(),
+                photoCapture.getExposureDelay() ?: ThetaRepository.ExposureDelayEnum.UNKNOWN,
                 it,
                 "set option exposureDelay $valueIndex"
             )
@@ -1501,7 +1513,8 @@ class PhotoCaptureTest {
 
             override fun onCapturing(status: CapturingStatusEnum) {
                 when (onCapturingCount) {
-                    0 -> assertEquals(status, CapturingStatusEnum.SELF_TIMER_COUNTDOWN)
+                    0 -> assertEquals(status, CapturingStatusEnum.STARTING)
+                    1 -> assertEquals(status, CapturingStatusEnum.SELF_TIMER_COUNTDOWN)
                     else -> assertEquals(status, CapturingStatusEnum.CAPTURING)
                 }
                 onCapturingCount += 1
@@ -1520,6 +1533,6 @@ class PhotoCaptureTest {
 
         // check result
         assertTrue(file?.startsWith("http://") ?: false, "take picture")
-        assertEquals(onCapturingCount, 2)
+        assertEquals(onCapturingCount, 3)
     }
 }

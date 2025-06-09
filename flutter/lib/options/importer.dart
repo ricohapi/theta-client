@@ -1,10 +1,31 @@
 /// Options
 library;
 
+export 'ai_auto_thumbnail.dart';
+export 'aperture.dart';
 export 'bluetooth_role.dart';
+export 'camera_control_source.dart';
+export 'camera_lock.dart';
+export 'camera_lock_config.dart';
 export 'camera_power.dart';
+export 'compass_direction_ref.dart';
 export 'ethernet_config.dart';
+export 'exposure_compensation.dart';
+export 'exposure_delay.dart';
 export 'file_format.dart';
+export 'gps_tag_recording.dart';
 export 'max_recordable_time.dart';
+export 'microphone_noise_reduction.dart';
+export 'mobile_network_setting.dart';
+export 'network_type.dart';
 export 'off_delay.dart';
+export 'off_delay_usb.dart';
+export 'preview_format.dart';
 export 'sleep_delay.dart';
+export 'top_bottom_correction.dart';
+export 'top_bottom_correction_rotation.dart';
+export 'top_bottom_correction_rotation_support.dart';
+export 'usb_connection.dart';
+export 'wlan_antenna_config.dart';
+export 'wlan_frequency.dart';
+export 'wlan_frequency_cl_mode.dart';

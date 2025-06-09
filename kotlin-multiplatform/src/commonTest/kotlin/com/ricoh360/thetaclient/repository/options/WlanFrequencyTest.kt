@@ -6,11 +6,15 @@ import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.Options
 import com.ricoh360.thetaclient.transferred.WlanFrequency
-import io.ktor.http.*
-import io.ktor.utils.io.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class WlanFrequencyTest {
@@ -48,6 +52,30 @@ class WlanFrequencyTest {
         val thetaRepository = ThetaRepository(endpoint)
         val options = thetaRepository.getOptions(optionNames)
         assertEquals(options.wlanFrequency, ThetaRepository.WlanFrequencyEnum.GHZ_5, "wlanFrequency")
+    }
+
+    /**
+     * Get option UNKNOWN.
+     */
+    @Test
+    fun getOptionUnknownTest() = runTest {
+        val optionNames = listOf(
+            ThetaRepository.OptionNameEnum.WlanFrequency
+        )
+        val stringOptionNames = listOf(
+            "_wlanFrequency"
+        )
+
+        MockApiClient.onRequest = { request ->
+            // check request
+            CheckRequest.checkGetOptions(request, stringOptionNames)
+
+            ByteReadChannel(Resource("src/commonTest/resources/options/option_wlan_frequency_unknown.json").readText())
+        }
+
+        val thetaRepository = ThetaRepository(endpoint)
+        val options = thetaRepository.getOptions(optionNames)
+        assertEquals(options.wlanFrequency, ThetaRepository.WlanFrequencyEnum.UNKNOWN, "wlanFrequency")
     }
 
     /**
@@ -90,10 +118,14 @@ class WlanFrequencyTest {
     @Test
     fun convertOptionWlanFrequencyTest() = runTest {
         val values = listOf(
+            Pair(ThetaRepository.WlanFrequencyEnum.UNKNOWN, WlanFrequency.UNKNOWN),
             Pair(ThetaRepository.WlanFrequencyEnum.GHZ_2_4, WlanFrequency.GHZ_2_4),
             Pair(ThetaRepository.WlanFrequencyEnum.GHZ_5, WlanFrequency.GHZ_5),
+            Pair(ThetaRepository.WlanFrequencyEnum.GHZ_5_2, WlanFrequency.GHZ_5_2),
+            Pair(ThetaRepository.WlanFrequencyEnum.GHZ_5_8, WlanFrequency.GHZ_5_8),
         )
 
+        assertEquals(ThetaRepository.WlanFrequencyEnum.entries.size, values.size)
         values.forEach {
             val orgOptions = Options(
                 _wlanFrequency = it.second

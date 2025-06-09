@@ -1,1 +1,6 @@
-{"state":{"_batteryTemp":50,"_boardTemp":43}}
+{
+  "state": {
+    "_batteryTemp": 50,
+    "_boardTemp": 43
+  }
+}

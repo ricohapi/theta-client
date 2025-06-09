@@ -1052,7 +1052,12 @@ class BurstCaptureTest {
 
             override fun onCapturing(status: CapturingStatusEnum) {
                 when {
-                    stateCounter < 2 -> assertEquals(
+                    stateCounter == 0 -> assertEquals(
+                        status,
+                        CapturingStatusEnum.STARTING
+                    )
+
+                    stateCounter == 1 -> assertEquals(
                         status,
                         CapturingStatusEnum.SELF_TIMER_COUNTDOWN
                     )

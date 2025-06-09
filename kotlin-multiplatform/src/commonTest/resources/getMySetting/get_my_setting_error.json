@@ -1,1 +1,8 @@
-{"name":"camera._getMySetting","state":"error","error":{"code":"missingParameter","message":"Any required parameter is not specified."}}
+{
+  "name": "camera._getMySetting",
+  "state": "error",
+  "error": {
+    "code": "missingParameter",
+    "message": "Any required parameter is not specified."
+  }
+}

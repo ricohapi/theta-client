@@ -13,6 +13,11 @@ import io.ktor.client.statement.HttpResponse
  */
 enum class CapturingStatusEnum {
     /**
+     * The process is starting
+     */
+    STARTING,
+
+    /**
      * Capture in progress
      */
     CAPTURING,
@@ -21,6 +26,22 @@ enum class CapturingStatusEnum {
      * Self-timer in progress
      */
     SELF_TIMER_COUNTDOWN,
+
+    /**
+     * Performing timeShift shooting
+     */
+    TIME_SHIFT_SHOOTING,
+
+    /**
+     * Performing second capture of manual timeShift shooting
+     */
+    TIME_SHIFT_SHOOTING_SECOND,
+
+    /**
+     * In the case of time-lag shooting by manual lens,
+     * set while waiting for the second shot to be taken after the first shot is completed.
+     */
+    TIME_SHIFT_SHOOTING_IDLE,
 }
 
 /*

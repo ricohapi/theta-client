@@ -1,1 +1,9 @@
-{"results":{"options":{"_cameraPower":"powerSaving"}},"name":"camera.getOptions","state":"done"}
+{
+  "results": {
+    "options": {
+      "_cameraPower": "powerSaving"
+    }
+  },
+  "name": "camera.getOptions",
+  "state": "done"
+}

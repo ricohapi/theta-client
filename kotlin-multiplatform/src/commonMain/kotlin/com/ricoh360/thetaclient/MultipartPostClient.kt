@@ -498,7 +498,7 @@ interface MultipartPostClient {
         filePaths: List<String>,
         connectionTimeout: Long,
         socketTimeout: Long,
-        callback: ((Int) -> Unit)?,
+        callback: ((Int) -> Boolean)?,
         boundary: String = BOUNDARY,
     ): ByteArray
 }
@@ -679,14 +679,25 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
         filePaths: List<String>,
         connectionTimeout: Long,
         socketTimeout: Long,
-        callback: ((Int) -> Unit)?,
+        callback: ((Int) -> Boolean)?,
         boundary: String,
     ): ByteArray {
         val authorizationHeader: String? = checkAuthenticationNeeded(endpoint, path, connectionTimeout, socketTimeout)
-        requestWithAuth(endpoint, path, filePaths, connectionTimeout, socketTimeout, callback, boundary, authorizationHeader)
+        val isSuccess = requestWithAuth(
+            endpoint,
+            path,
+            filePaths,
+            connectionTimeout,
+            socketTimeout,
+            callback,
+            boundary,
+            authorizationHeader
+        )
         close()
         val httpStatusCode = HttpStatusCode(this.status, this.statusMessage ?: "")
-        if (httpStatusCode.isSuccess() || httpStatusCode.value == 0) {
+        if (!isSuccess) {
+            throw (BaseHttpClientException("Request canceled"))
+        } else if (httpStatusCode.isSuccess() || httpStatusCode.value == 0) {
             return this.responseBody ?: byteArrayOf()
         } else if (httpStatusCode == HttpStatusCode.NotFound) {
             throw (BaseHttpClientException("Request failed: ${this.status} ${this.statusMessage}: API path \"$path\" may be wrong"))
@@ -720,10 +731,10 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
         filePaths: List<String>,
         connectionTimeout: Long,
         socketTimeout: Long,
-        callback: ((Int) -> Unit)?,
+        callback: ((Int) -> Boolean)?,
         boundary: String,
         digest: String? = null,
-    ) {
+    ): Boolean {
         val contentLength = getContentLength(filePaths, boundary)
         if (!isConnected()) connect(endpoint, connectionTimeout, socketTimeout)
         writeRequestLine(path, HttpMethod.Post)
@@ -731,6 +742,8 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
         val buffer = ByteArray(READ_BUFFER_SIZE)
         var sentCount = 0L
         var lastPercent = 0
+        var isActive = true
+        var isCanceled = false
         filePaths.forEach {
             var src: Source? = null
             try {
@@ -744,15 +757,24 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
                     callback?.let {
                         val percent = (sentCount * PERCENTAGE_100 / contentLength).toInt()
                         if (percent > lastPercent) {
-                            it(percent)
+                            if (!it(percent)) {
+                                isActive = false
+                            }
                             lastPercent = percent
                         }
                     }
                     count = src.readAtMostTo(buffer, 0, READ_BUFFER_SIZE)
-                } while (count != -1)
+                } while (count != -1 && isActive)
+                if (count != -1 && !isActive) {
+                    isCanceled = true
+                }
             } finally {
                 src?.close()
             }
+        }
+        if (isCanceled) {
+            close()
+            return false
         }
         writeCloseDelimiter(boundary)
         callback?.let {
@@ -767,6 +789,7 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
         } finally {
             close()
         }
+        return true
     }
 
     /**

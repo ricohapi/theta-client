@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './styles';
-import { reset, restoreSettings, finishWlan } from '../../modules/theta-client';
+import {
+  reset,
+  restoreSettings,
+  finishWlan,
+  reboot,
+} from '../../modules/theta-client';
 import Button from '../../components/ui/button';
 import { ItemListView, type Item } from '../../components/ui/item-list';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -16,13 +21,26 @@ interface CommandItem extends Item {
 
 const commandList: CommandItem[] = [
   {
+    name: 'reboot',
+    value: {
+      commandFunction: async () => {
+        try {
+          await reboot();
+        } catch (error) {
+          return JSON.stringify(error, null, 2);
+        }
+        return 'OK';
+      },
+    },
+  },
+  {
     name: 'reset',
     value: {
       commandFunction: async () => {
         try {
           await reset();
         } catch (error) {
-          return JSON.stringify(error);
+          return JSON.stringify(error, null, 2);
         }
         return 'OK';
       },
@@ -35,7 +53,7 @@ const commandList: CommandItem[] = [
         try {
           await restoreSettings();
         } catch (error) {
-          return JSON.stringify(error);
+          return JSON.stringify(error, null, 2);
         }
         return 'OK';
       },
@@ -48,7 +66,7 @@ const commandList: CommandItem[] = [
         try {
           await finishWlan();
         } catch (error) {
-          return JSON.stringify(error);
+          return JSON.stringify(error, null, 2);
         }
         return 'OK';
       },

@@ -132,7 +132,7 @@ void main() {
 
     int progressCount = 0;
     var resultCapture =
-    platform.startShotCountSpecifiedIntervalCapture((completion) {
+        platform.startShotCountSpecifiedIntervalCapture((completion) {
       progressCount++;
     }, null, null);
     var result = await resultCapture.timeout(const Duration(seconds: 5));
@@ -164,7 +164,7 @@ void main() {
 
     var isOnStopFailed = false;
     var resultCapture =
-    platform.startShotCountSpecifiedIntervalCapture(null, (exception) {
+        platform.startShotCountSpecifiedIntervalCapture(null, (exception) {
       isOnStopFailed = true;
     }, null);
     var result = await resultCapture.timeout(const Duration(seconds: 5));
@@ -195,9 +195,8 @@ void main() {
     });
 
     CapturingStatusEnum? lastStatus;
-    var resultCapture =
-    platform.startShotCountSpecifiedIntervalCapture(
-        null, (exception) {}, (status) {
+    var resultCapture = platform
+        .startShotCountSpecifiedIntervalCapture(null, (exception) {}, (status) {
       lastStatus = status;
     });
     var result = await resultCapture.timeout(const Duration(seconds: 5));

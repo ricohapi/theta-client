@@ -6,8 +6,8 @@ import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.Options
 import com.ricoh360.thetaclient.transferred.Preset
-import io.ktor.http.*
-import io.ktor.utils.io.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlin.test.AfterTest

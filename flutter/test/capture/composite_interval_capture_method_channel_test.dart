@@ -167,7 +167,7 @@ void main() {
 
     var isOnStopFailed = false;
     var resultCapture =
-    platform.startCompositeIntervalCapture(null, (exception) {
+        platform.startCompositeIntervalCapture(null, (exception) {
       isOnStopFailed = true;
     }, null);
     var result = await resultCapture.timeout(const Duration(seconds: 5));
@@ -199,7 +199,7 @@ void main() {
 
     CapturingStatusEnum? lastStatus;
     var resultCapture =
-    platform.startCompositeIntervalCapture(null, (exception) {}, (status) {
+        platform.startCompositeIntervalCapture(null, (exception) {}, (status) {
       lastStatus = status;
     });
     var result = await resultCapture.timeout(const Duration(seconds: 5));

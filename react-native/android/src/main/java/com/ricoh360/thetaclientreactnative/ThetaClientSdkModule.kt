@@ -29,6 +29,9 @@ class ThetaClientReactNativeModule(
   var timeShiftCaptureBuilder: TimeShiftCapture.Builder? = null
   var timeShiftCapture: TimeShiftCapture? = null
   var timeShiftCapturing: TimeShiftCapturing? = null
+  var timeShiftManualCaptureBuilder: TimeShiftManualCapture.Builder? = null
+  var timeShiftManualCapture: TimeShiftManualCapture? = null
+  var timeShiftManualCapturing: TimeShiftManualCapturing? = null
   var videoCaptureBuilder: VideoCapture.Builder? = null
   var videoCapture: VideoCapture? = null
   var videoCapturing: VideoCapturing? = null
@@ -88,6 +91,21 @@ class ThetaClientReactNativeModule(
   override fun getConstants(): MutableMap<String, Any> =
     hashMapOf("DEFAULT_EVENT_NAME" to EVENT_NAME)
 
+
+  val apiLogListener = { message: String ->
+    val params = Arguments.createMap()
+    params.putString(KEY_NOTIFY_PARAM_MESSAGE, message)
+    sendNotifyEvent(
+      toNotify(NOTIFY_API_LOG, params)
+    )
+  }
+
+  @ReactMethod
+  fun setApiLogListener(enabled: Boolean, promise: Promise) {
+    com.ricoh360.thetaclient.setApiLogListener(if (enabled) apiLogListener else null)
+    promise.resolve(null)
+  }
+
   /**
    * initialize Theta repository with endpoint
    * @param endpoint endpoint to connect THETA
@@ -105,6 +123,9 @@ class ThetaClientReactNativeModule(
         timeShiftCaptureBuilder = null
         timeShiftCapture = null
         timeShiftCapturing = null
+        timeShiftManualCaptureBuilder = null
+        timeShiftManualCapture = null
+        timeShiftManualCapturing = null
         videoCaptureBuilder = null
         videoCapture = null
         videoCapturing = null
@@ -302,7 +323,9 @@ class ThetaClientReactNativeModule(
     }
     val fileList = mutableListOf<String>()
     for (index in 0..(fileUrls.size() - 1)) {
-      fileList.add(fileUrls.getString(index))
+      fileUrls.getString(index)?.let {
+        fileList.add(it)
+      }
     }
     launch {
       try {
@@ -451,6 +474,7 @@ class ThetaClientReactNativeModule(
         "data:image/jpeg;base64," +
           packet.first.copyOfRange(0, packet.second).toBase64()
       )
+      param.putInt("dataSize", packet.second)
       reactApplicationContext
         .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
         .emit(EVENT_NAME, param)
@@ -688,6 +712,127 @@ class ThetaClientReactNativeModule(
       throw Exception(messageNotInit)
     }
     timeShiftCapturing?.cancelCapture()
+  }
+
+  /**
+   * getTimeShiftManualCaptureBuilder  -  get manual time-shift builder from repository
+   */
+  @ReactMethod
+  fun getTimeShiftManualCaptureBuilder(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    timeShiftManualCaptureBuilder = theta.getTimeShiftManualCaptureBuilder()
+    promise.resolve(true)
+  }
+
+  /**
+   * buildTimeShiftManualCapture  -  build manual time-shift
+   * @param options option to execute manual time-shift
+   * @param promise Promise for buildTimeShiftManualCapture
+   */
+  @ReactMethod
+  fun buildTimeShiftManualCapture(options: ReadableMap, promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    if (timeShiftManualCaptureBuilder == null) {
+      promise.reject(Exception("no timeShiftManualCaptureBuilder"))
+      return
+    }
+    timeShiftManualCapture = null
+    timeShiftManualCapturing = null
+    launch {
+      try {
+        timeShiftManualCaptureBuilder?.let {
+          setCaptureBuilderParams(optionMap = options, builder = it)
+          setTimeShiftManualCaptureBuilderParams(optionMap = options, builder = it)
+          timeShiftManualCapture = it.build()
+        }
+        promise.resolve(true)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      } finally {
+        timeShiftManualCaptureBuilder = null
+      }
+    }
+  }
+
+  /**
+   * startTimeShiftManualCapture  -  start manual time-shift
+   * @param promise promise for startTimeShiftManualCapture
+   */
+  @ReactMethod
+  fun startTimeShiftManualCapture(promise: Promise) {
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    if (timeShiftManualCapture == null) {
+      promise.reject(Exception("no timeShiftManualCapture"))
+      return
+    }
+    class StartCaptureCallback : TimeShiftManualCapture.StartCaptureCallback {
+      override fun onCaptureCompleted(fileUrl: String?) {
+        promise.resolve(fileUrl)
+        timeShiftManualCapturing = null
+      }
+
+      override fun onProgress(completion: Float) {
+        sendNotifyEvent(
+          toNotify(NOTIFY_TIMESHIFT_MANUAL_PROGRESS, toCaptureProgressNotifyParam(value = completion))
+        )
+      }
+
+      override fun onCapturing(status: CapturingStatusEnum) {
+        super.onCapturing(status)
+        sendNotifyEvent(
+          toNotify(NOTIFY_TIMESHIFT_MANUAL_CAPTURING, toCapturingNotifyParam(status = status))
+        )
+      }
+
+      override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
+        promise.reject(exception)
+        timeShiftManualCapturing = null
+      }
+
+      override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
+        sendNotifyEvent(
+          toNotify(
+            NOTIFY_TIMESHIFT_MANUAL_STOP_ERROR,
+            toMessageNotifyParam(exception.message ?: exception.toString())
+          )
+        )
+      }
+    }
+    timeShiftManualCapturing = timeShiftManualCapture?.startCapture(StartCaptureCallback())
+  }
+
+  /**
+   * startTimeShiftManualSecondCapture  -  start manual time-shift second capture
+   * @param promise promise for startTimeShiftManualSecondCapture
+   */
+  @ReactMethod
+  fun startTimeShiftManualSecondCapture(promise: Promise) {
+    if (theta == null) {
+      throw Exception(messageNotInit)
+    }
+    timeShiftManualCapturing?.startSecondCapture()
+  }
+
+  /**
+   * cancelTimeShiftManualCapture  -  stop manual time-shift
+   * @param promise promise for cancelTimeShiftManualCapture
+   */
+  @ReactMethod
+  fun cancelTimeShiftManualCapture(promise: Promise) {
+    if (theta == null) {
+      throw Exception(messageNotInit)
+    }
+    timeShiftManualCapturing?.cancelCapture()
   }
 
   /**
@@ -1549,6 +1694,27 @@ class ThetaClientReactNativeModule(
   }
 
   /**
+   * reboot  -  reboot THETA via repository
+   * @param promise promise to set result
+   */
+  @ReactMethod
+  fun reboot(promise: Promise) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    launch {
+      try {
+        theta.reboot()
+        promise.resolve(true)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+    }
+  }
+
+  /**
    * reset  -  reset THETA via repository
    * @param promise promise to set result
    */
@@ -1714,22 +1880,12 @@ class ThetaClientReactNativeModule(
 
   /**
    * setAccessPointDynamically  -  set access point with dhcp
-   * @param ssid ssid to connect
-   * @param ssidStealth ssid is stealth or not
-   * @param authMode auth mode to connect
-   * @param password password to connect with auth
-   * @param connectionPriority connection priority
-   * @param proxy Proxy information to be used for the access point.
+   * @param params parameters of setAccessPointDynamically
    * @param promise promise to set result
    */
   @ReactMethod
   fun setAccessPointDynamically(
-    ssid: String,
-    ssidStealth: Boolean,
-    authMode: String,
-    password: String,
-    connectionPriority: Int,
-    proxy: ReadableMap?,
+    params: ReadableMap,
     promise: Promise
   ) {
     val theta = theta
@@ -1739,13 +1895,14 @@ class ThetaClientReactNativeModule(
     }
     launch {
       try {
+        val accessPointParams = toSetAccessPointParams(params)
         theta.setAccessPointDynamically(
-          ssid,
-          ssidStealth,
-          ThetaRepository.AuthModeEnum.valueOf(authMode),
-          password,
-          connectionPriority,
-          toProxy(map = proxy)
+          accessPointParams.ssid,
+          accessPointParams.ssidStealth,
+          accessPointParams.authMode,
+          accessPointParams.password,
+          accessPointParams.connectionPriority,
+          accessPointParams.proxy,
         )
         promise.resolve(true)
       } catch (t: Throwable) {
@@ -1756,28 +1913,12 @@ class ThetaClientReactNativeModule(
 
   /**
    * setAccessPointStatically  -  set access point with static connection info
-   * @param ssid ssid to connect
-   * @param ssidStealth ssid is stealth or not
-   * @param authMode auth mode to connect
-   * @param password password to connect with auth
-   * @param connectionPriority connection priority
-   * @param ipAddress static ipaddress to connect
-   * @param subnetMask subnet mask for ip address
-   * @param defaultGateway default gateway address
+   * @param params parameters of setAccessPointStatically
    * @param promise promise to set result
-   * @param proxy Proxy information to be used for the access point.
    */
   @ReactMethod
   fun setAccessPointStatically(
-    ssid: String,
-    ssidStealth: Boolean,
-    authMode: String,
-    password: String,
-    connectionPriority: Int,
-    ipAddress: String,
-    subnetMask: String,
-    defaultGateway: String,
-    proxy: ReadableMap?,
+    params: ReadableMap,
     promise: Promise
   ) {
     val theta = theta
@@ -1787,16 +1928,20 @@ class ThetaClientReactNativeModule(
     }
     launch {
       try {
+        val accessPointParams = toSetAccessPointParams(params)
+        val staticallyParams = toSetAccessPointStaticallyParams(params)
         theta.setAccessPointStatically(
-          ssid,
-          ssidStealth,
-          ThetaRepository.AuthModeEnum.valueOf(authMode),
-          password,
-          connectionPriority,
-          ipAddress,
-          subnetMask,
-          defaultGateway,
-          toProxy(map = proxy)
+          accessPointParams.ssid,
+          accessPointParams.ssidStealth,
+          accessPointParams.authMode,
+          accessPointParams.password,
+          accessPointParams.connectionPriority,
+          staticallyParams.ipAddress,
+          staticallyParams.subnetMask,
+          staticallyParams.defaultGateway,
+          accessPointParams.dns1,
+          accessPointParams.dns2,
+          accessPointParams.proxy
         )
         promise.resolve(true)
       } catch (t: Throwable) {
@@ -1889,8 +2034,9 @@ class ThetaClientReactNativeModule(
       try {
         val optionNameList = mutableListOf<ThetaRepository.OptionNameEnum>()
         for (index in 0..(optionNames.size() - 1)) {
-          val option = optionNames.getString(index)
-          optionNameList.add(ThetaRepository.OptionNameEnum.valueOf(option))
+          optionNames.getString(index)?.let {
+            optionNameList.add(ThetaRepository.OptionNameEnum.valueOf(it))
+          }
         }
         val options = theta.getMySetting(optionNameList)
         promise.resolve(toResult(options = options))
@@ -2109,8 +2255,9 @@ class ThetaClientReactNativeModule(
       try {
         val pluginList = mutableListOf<String>()
         for (index in 0..(plugins.size() - 1)) {
-          val plugin = plugins.getString(index)
-          pluginList.add(plugin)
+          plugins.getString(index)?.let {
+            pluginList.add(it)
+          }
         }
         theta.setPluginOrders(pluginList)
         promise.resolve(true)
@@ -2195,6 +2342,9 @@ class ThetaClientReactNativeModule(
     const val NOTIFY_TIMESHIFT_PROGRESS = "TIME-SHIFT-PROGRESS"
     const val NOTIFY_TIMESHIFT_STOP_ERROR = "TIME-SHIFT-STOP-ERROR"
     const val NOTIFY_TIMESHIFT_CAPTURING = "TIME-SHIFT-CAPTURING"
+    const val NOTIFY_TIMESHIFT_MANUAL_PROGRESS = "TIME-SHIFT-MANUAL-PROGRESS"
+    const val NOTIFY_TIMESHIFT_MANUAL_STOP_ERROR = "TIME-SHIFT-MANUAL-STOP-ERROR"
+    const val NOTIFY_TIMESHIFT_MANUAL_CAPTURING = "TIME-SHIFT-MANUAL-CAPTURING"
     const val NOTIFY_VIDEO_CAPTURE_STOP_ERROR = "VIDEO-CAPTURE-STOP-ERROR"
     const val NOTIFY_VIDEO_CAPTURE_CAPTURING = "VIDEO-CAPTURE-CAPTURING"
     const val NOTIFY_VIDEO_CAPTURE_STARTED = "VIDEO-CAPTURE-STARTED"
@@ -2217,5 +2367,6 @@ class ThetaClientReactNativeModule(
     const val NOTIFY_EVENT_WEBSOCKET_EVENT = "EVENT-WEBSOCKET-EVENT"
     const val NOTIFY_EVENT_WEBSOCKET_CLOSE = "EVENT-WEBSOCKET-CLOSE"
     const val NOTIFY_CONVERT_VIDEO_FORMATS_PROGRESS = "CONVERT-VIDEO-FORMATS-PROGRESS"
+    const val NOTIFY_API_LOG = "API-LOG"
   }
 }

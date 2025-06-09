@@ -1,1 +1,9 @@
-{"options":{"fileFormat":{"height":5504,"type":"jpeg","width":11008}}}
+{
+  "options": {
+    "fileFormat": {
+      "height": 5504,
+      "type": "jpeg",
+      "width": 11008
+    }
+  }
+}

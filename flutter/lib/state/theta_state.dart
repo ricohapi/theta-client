@@ -74,7 +74,8 @@ class ThetaState {
   /// This represents the current temperature inside the battery as an integer value, ranging from -10°C to 100°C with a precision of 1°C.
   int? batteryTemp;
 
-  ThetaState(this.fingerprint,
+  ThetaState(
+      this.fingerprint,
       this.batteryLevel,
       this.storageUri,
       this.storageID,

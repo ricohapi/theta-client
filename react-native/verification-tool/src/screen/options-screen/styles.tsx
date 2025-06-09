@@ -12,10 +12,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   topViewContainer: {
-    height: 70,
+    height: 90,
   },
   contentContainer: {
-    width: '100%',
+    width: '90%',
   },
   bottomViewContainer: {
     flex: 1,
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     height: 300,
   },
   inputArea: {
-    width: '90%',
+    width: '100%',
     height: '10%',
     minHeight: 200,
   },

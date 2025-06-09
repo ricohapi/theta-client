@@ -1,0 +1,13 @@
+{
+  "name": "camera.getOptions",
+  "state": "done",
+  "results": {
+    "options": {
+      "_cameraControlSourceSupport": [
+        "camera",
+        "app",
+        "abc"
+      ]
+    }
+  }
+}

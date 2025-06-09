@@ -47,6 +47,8 @@ internal object ThetaApi {
     var lastSetTimeConsumingOptionTime: Long = 0
     var currentOptions = Options()
 
+    var apiLogListener: ((message: String) -> Unit)? = null
+
     fun initOptions() {
         currentOptions = Options()
         lastSetTimeConsumingOptionTime = 0
@@ -68,7 +70,12 @@ internal object ThetaApi {
         endpoint: String,
     ): InfoApiResponse {
         return syncExecutor(requestScope, ApiClient.timeout.requestTimeout) {
-            httpClient.get(getApiUrl(endpoint, InfoApi.PATH)).body()
+            httpClient.get(getApiUrl(endpoint, InfoApi.PATH)) {
+                headers {
+                    append("Content-Type", "application/json; charset=utf-8")
+                    append("Cache-Control", "no-store")
+                }
+            }.body()
         }
     }
 
@@ -106,7 +113,12 @@ internal object ThetaApi {
         endpoint: String,
     ): StateApiResponse {
         return syncExecutor(requestScope, ApiClient.timeout.requestTimeout) {
-            httpClient.post(getApiUrl(endpoint, StateApi.PATH)).body()
+            httpClient.post(getApiUrl(endpoint, StateApi.PATH)) {
+                headers {
+                    append("Content-Type", "application/json; charset=utf-8")
+                    append("Cache-Control", "no-store")
+                }
+            }.body()
         }
     }
 
@@ -133,7 +145,7 @@ internal object ThetaApi {
             val response = httpClient.post(getApiUrl(endpoint, StatusApi.PATH)) {
                 headers {
                     append("Content-Type", "application/json; charset=utf-8")
-                    append("Cache-Control", "no-cache")
+                    append("Cache-Control", "no-store")
                 }
                 setBody(request)
             }
@@ -166,7 +178,7 @@ internal object ThetaApi {
         filePaths: List<String>,
         connectTimeout: Long,
         socketTimeout: Long,
-        callback: ((Int) -> Unit)?,
+        callback: ((Int) -> Boolean)?,
     ): UpdateFirmwareApiResponse {
         val DUMMY_RESPONSE = "{\"name\":\"camera.${apiPath}\",\"state\":\"done\"}"
         if (filePaths.isEmpty()) {
@@ -431,6 +443,25 @@ internal object ThetaApi {
         params: ListFilesParams,
     ): ListFilesResponse {
         val request = ListFilesRequest(parameters = params)
+        return postCommandApi(endpoint, request).body()
+    }
+
+    /**
+     * Call camera._reboot
+     * @param endpoint Endpoint of Theta web API
+     * @return response of reboot command
+     * @see ResetResponse
+     * @exception java.net.ConnectException can not connect to target endpoint
+     * @exception io.ktor.client.network.sockets.ConnectTimeoutException timeout to connect target endpoint
+     * @exception io.ktor.client.plugins.RedirectResponseException target response 3xx status
+     * @exception io.ktor.client.plugins.ClientRequestException target response 4xx status
+     * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
+     */
+    @Throws(Throwable::class)
+    suspend fun callRebootCommand(
+        endpoint: String,
+    ): ResetResponse {
+        val request = RebootRequest()
         return postCommandApi(endpoint, request).body()
     }
 
@@ -904,7 +935,7 @@ internal object ThetaApi {
             httpClient.post(getApiUrl(endpoint, CommandApi.PATH)) {
                 headers {
                     append("Content-Type", "application/json; charset=utf-8")
-                    append("Cache-Control", "no-cache")
+                    append("Cache-Control", "no-store")
                 }
                 setBody<T>(body)
             }

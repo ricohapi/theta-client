@@ -4,7 +4,7 @@
 
 - モジュールの`build.gradle`の`dependencies`に次を追加します。
   ```
-  implementation "com.ricoh360.thetaclient:theta-client:1.12.1"
+  implementation "com.ricoh360.thetaclient:theta-client:1.13.0"
   ```
 - 本 SDK を使用したアプリケーションが動作するスマートフォンと THETA を無線 LAN 接続しておきます。
 

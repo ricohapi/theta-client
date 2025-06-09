@@ -1,17 +1,20 @@
 package com.ricoh360.thetaclient.repository
 
 import com.ricoh360.thetaclient.MockApiClient
+import com.ricoh360.thetaclient.PreviewClient
 import com.ricoh360.thetaclient.PreviewClientException
 import com.ricoh360.thetaclient.ThetaRepository
-import io.ktor.client.network.sockets.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import io.ktor.client.network.sockets.ConnectTimeoutException
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class GetLivePreviewTest {
     private val endpoint = "http://192.168.1.1:80/"
 
@@ -173,5 +176,21 @@ class GetLivePreviewTest {
         } catch (e: ThetaRepository.NotConnectedException) {
             assertTrue(e.message!!.indexOf("timeout") >= 0, "Exception NotConnectedException")
         }
+    }
+
+    /**
+     * Timeout test
+     */
+    @Test
+    fun previewClientTimeoutSettingTest(): TestResult = runTest {
+        var thetaRepository = ThetaRepository(endpoint)
+        assertEquals(20_000, PreviewClient.timeout.connectTimeout)
+        assertEquals(20_000, PreviewClient.timeout.requestTimeout)
+        assertEquals(20_000, PreviewClient.timeout.socketTimeout)
+
+        thetaRepository = ThetaRepository(endpoint, null, ThetaRepository.Timeout(1, 2, 3))
+        assertEquals(1, PreviewClient.timeout.connectTimeout)
+        assertEquals(2, PreviewClient.timeout.requestTimeout)
+        assertEquals(3, PreviewClient.timeout.socketTimeout)
     }
 }

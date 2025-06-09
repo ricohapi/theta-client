@@ -1,0 +1,13 @@
+{
+  "name": "camera.getOptions",
+  "state": "done",
+  "results": {
+    "options": {
+      "_wlanFrequencyCLmode": {
+        "enable2.4GHz": true,
+        "enable5.2GHz": false,
+        "enable5.8GHz": false
+      }
+    }
+  }
+}

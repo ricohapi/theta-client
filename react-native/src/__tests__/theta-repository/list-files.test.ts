@@ -25,7 +25,9 @@ describe('listFiles', () => {
   ];
 
   const codecEnumArray: [CodecEnum, string][] = [
+    [CodecEnum.UNKNOWN, 'UNKNOWN'],
     [CodecEnum.H264MP4AVC, 'H264MP4AVC'],
+    [CodecEnum.H265HEVC, 'H265HEVC'],
   ];
 
   const projectionTypeEnumArray: [ProjectionTypeEnum, string][] = [

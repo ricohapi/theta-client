@@ -1,0 +1,13 @@
+{
+  "name": "camera.getOptions",
+  "results": {
+    "options": {
+      "_colorTemperatureSupport": {
+        "maxTemperature": 10000,
+        "minTemperature": 2500,
+        "stepSize": 100
+      }
+    }
+  },
+  "state": "done"
+}

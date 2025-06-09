@@ -193,6 +193,7 @@ class ContinuousCapture private constructor(
                     callback.onCaptureFailed(exception = ThetaRepository.ThetaWebApiException(message = error.message))
                     return@launch
                 }
+                callback.onCapturing(CapturingStatusEnum.STARTING)
 
                 startCaptureResponse.id?.let {
                     monitorCommandStatus(it, callback)

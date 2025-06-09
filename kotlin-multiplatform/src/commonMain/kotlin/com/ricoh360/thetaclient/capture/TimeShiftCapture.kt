@@ -3,10 +3,28 @@ package com.ricoh360.thetaclient.capture
 import com.ricoh360.thetaclient.CHECK_COMMAND_STATUS_INTERVAL
 import com.ricoh360.thetaclient.ThetaApi
 import com.ricoh360.thetaclient.ThetaRepository
-import com.ricoh360.thetaclient.transferred.*
-import io.ktor.client.plugins.*
-import io.ktor.serialization.*
-import kotlinx.coroutines.*
+import com.ricoh360.thetaclient.transferred.CaptureMode
+import com.ricoh360.thetaclient.transferred.CaptureStatus
+import com.ricoh360.thetaclient.transferred.CommandApiResponse
+import com.ricoh360.thetaclient.transferred.CommandState
+import com.ricoh360.thetaclient.transferred.FirstShootingEnum
+import com.ricoh360.thetaclient.transferred.Options
+import com.ricoh360.thetaclient.transferred.Preset
+import com.ricoh360.thetaclient.transferred.SetOptionsParams
+import com.ricoh360.thetaclient.transferred.ShootingMethod
+import com.ricoh360.thetaclient.transferred.ShootingMode
+import com.ricoh360.thetaclient.transferred.StartCaptureParams
+import com.ricoh360.thetaclient.transferred.StartCaptureResponse
+import com.ricoh360.thetaclient.transferred.StatusApiParams
+import com.ricoh360.thetaclient.transferred.TakePictureResponse
+import com.ricoh360.thetaclient.transferred.TimeShift
+import io.ktor.client.plugins.ResponseException
+import io.ktor.serialization.JsonConvertException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 /*
  * TimeShiftCapture
@@ -107,6 +125,10 @@ class TimeShiftCapture private constructor(
                     endpoint = endpoint,
                     params = StartCaptureParams(_mode = ShootingMode.TIME_SHIFT_SHOOTING)
                 )
+                startCaptureResponse.error ?: let {
+                    callback.onCapturing(CapturingStatusEnum.STARTING)
+                }
+
                 monitor.start()
 
                 /*

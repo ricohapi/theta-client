@@ -8,9 +8,7 @@ import io.ktor.client.engine.cio.CIO
 import io.ktor.client.engine.cio.endpoint
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -55,7 +53,7 @@ internal object ApiClient {
             }
             // See [Logging](https://ktor.io/docs/client-logging.html)
             install(Logging) {
-                logger = Logger.SIMPLE // DEFAULT, SIMPLE or EMPTY
+                logger = ThetaApiLogger()
                 level = LogLevel.ALL // ALL, HEADERS, BODY, INFO or NONE
             }
         }

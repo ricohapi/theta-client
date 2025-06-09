@@ -7,14 +7,18 @@ import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.transferred.AccessPoint
 import com.ricoh360.thetaclient.transferred.AuthenticationMode
 import com.ricoh360.thetaclient.transferred.IpAddressAllocation
-import io.ktor.client.network.sockets.*
-import io.ktor.http.*
-import io.ktor.utils.io.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.http.HttpStatusCode
+import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.test.runTest
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class ListAccessPointsTest {
     private val endpoint = "http://192.168.1.1:80/"
 
@@ -57,6 +61,24 @@ class ListAccessPointsTest {
                 assertNotNull(it.defaultGateway, "defaultGateway")
             }
         }
+    }
+
+    /**
+     * call listAccessPoints. The security is unknown.
+     */
+    @Test
+    fun listAccessPointsSecurityUnknownTest() = runTest {
+        MockApiClient.onRequest = { request ->
+            // check request
+            CheckRequest.checkCommandName(request, "camera._listAccessPoints")
+            ByteReadChannel(Resource("src/commonTest/resources/listAccessPoints/list_access_points_unknown.json").readText())
+        }
+
+        val thetaRepository = ThetaRepository(endpoint)
+        val response = thetaRepository.listAccessPoints()
+
+        assertEquals(response.size, 1, "Has One AccessPoints")
+        assertEquals(response[0].authMode, ThetaRepository.AuthModeEnum.UNKNOWN)
     }
 
     /**
@@ -186,7 +208,9 @@ class ListAccessPointsTest {
             ipAddressAllocation = ipAddressAllocation,
             ipAddress = "ipAddress",
             subnetMask = "subnetMask",
-            defaultGateway = "defaultGateway"
+            defaultGateway = "defaultGateway",
+            dns1 = "dns1",
+            dns2 = "dns2"
         )
         val accessPoint = ThetaRepository.AccessPoint(orgAccessPoint)
 
@@ -199,6 +223,8 @@ class ListAccessPointsTest {
         assertEquals(accessPoint.ipAddress, orgAccessPoint.ipAddress, "ipAddress")
         assertEquals(accessPoint.subnetMask, orgAccessPoint.subnetMask, "subnetMask")
         assertEquals(accessPoint.defaultGateway, orgAccessPoint.defaultGateway, "defaultGateway")
+        assertEquals(accessPoint.dns1, orgAccessPoint.dns1, "dns1")
+        assertEquals(accessPoint.dns2, orgAccessPoint.dns2, "dns2")
     }
 
     /**
@@ -206,8 +232,10 @@ class ListAccessPointsTest {
      */
     @Test
     fun checkAccessPointsTest() = runTest {
+        checkAccessPoint(AuthenticationMode.UNKNOWN, IpAddressAllocation.DYNAMIC, ThetaRepository.AuthModeEnum.UNKNOWN, true)
         checkAccessPoint(AuthenticationMode.NONE, IpAddressAllocation.DYNAMIC, ThetaRepository.AuthModeEnum.NONE, true)
         checkAccessPoint(AuthenticationMode.WEP, IpAddressAllocation.STATIC, ThetaRepository.AuthModeEnum.WEP, false)
         checkAccessPoint(AuthenticationMode.WPA_WPA2_PSK, IpAddressAllocation.DYNAMIC, ThetaRepository.AuthModeEnum.WPA, true)
+        checkAccessPoint(AuthenticationMode.WPA3_SAE, IpAddressAllocation.DYNAMIC, ThetaRepository.AuthModeEnum.WPA3, true)
     }
 }

@@ -359,23 +359,13 @@ void main() {
 
   test('AuthModeEnum', () async {
     List<List<dynamic>> data = [
+      [AuthModeEnum.unknown, 'UNKNOWN'],
       [AuthModeEnum.none, 'NONE'],
       [AuthModeEnum.wep, 'WEP'],
       [AuthModeEnum.wpa, 'WPA'],
+      [AuthModeEnum.wpa3, 'WPA3'],
     ];
     expect(data.length, AuthModeEnum.values.length, reason: 'enum count');
-    for (int i = 0; i < data.length; i++) {
-      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
-    }
-  });
-
-  test('AiAutoThumbnailEnum', () async {
-    List<List<dynamic>> data = [
-      [AiAutoThumbnailEnum.on, 'ON'],
-      [AiAutoThumbnailEnum.off, 'OFF'],
-    ];
-    expect(data.length, AiAutoThumbnailEnum.values.length,
-        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -391,18 +381,6 @@ void main() {
       [ApertureEnum.aperture_5_6, 'APERTURE_5_6'],
     ];
     expect(data.length, ApertureEnum.values.length, reason: 'enum count');
-    for (int i = 0; i < data.length; i++) {
-      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
-    }
-  });
-
-  test('CameraControlSourceEnum', () async {
-    List<List<dynamic>> data = [
-      [CameraControlSourceEnum.camera, 'CAMERA'],
-      [CameraControlSourceEnum.app, 'APP'],
-    ];
-    expect(data.length, CameraControlSourceEnum.values.length,
-        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -430,29 +408,6 @@ void main() {
       [CaptureModeEnum.preset, 'PRESET'],
     ];
     expect(data.length, CaptureModeEnum.values.length, reason: 'enum count');
-    for (int i = 0; i < data.length; i++) {
-      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
-    }
-  });
-
-  test('ExposureCompensationEnum', () async {
-    List<List<dynamic>> data = [
-      [ExposureCompensationEnum.m2_0, 'M2_0'],
-      [ExposureCompensationEnum.m1_7, 'M1_7'],
-      [ExposureCompensationEnum.m1_3, 'M1_3'],
-      [ExposureCompensationEnum.m1_0, 'M1_0'],
-      [ExposureCompensationEnum.m0_7, 'M0_7'],
-      [ExposureCompensationEnum.m0_3, 'M0_3'],
-      [ExposureCompensationEnum.zero, 'ZERO'],
-      [ExposureCompensationEnum.p0_3, 'P0_3'],
-      [ExposureCompensationEnum.p0_7, 'P0_7'],
-      [ExposureCompensationEnum.p1_0, 'P1_0'],
-      [ExposureCompensationEnum.p1_3, 'P1_3'],
-      [ExposureCompensationEnum.p1_7, 'P1_7'],
-      [ExposureCompensationEnum.p2_0, 'P2_0'],
-    ];
-    expect(data.length, ExposureCompensationEnum.values.length,
-        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -557,6 +512,7 @@ void main() {
       [VideoFileFormatEnum.video_2KnoCodec, 'VIDEO_2K_NO_CODEC'],
       [VideoFileFormatEnum.video_4K, 'VIDEO_4K'],
       [VideoFileFormatEnum.video_4KnoCodec, 'VIDEO_4K_NO_CODEC'],
+      [VideoFileFormatEnum.video_2K_15F, 'VIDEO_2K_15F'],
       [VideoFileFormatEnum.video_2K_30F, 'VIDEO_2K_30F'],
       [VideoFileFormatEnum.video_2K_60F, 'VIDEO_2K_60F'],
       [VideoFileFormatEnum.video_2_7K_2752_2F, 'VIDEO_2_7K_2752_2F'],
@@ -567,6 +523,8 @@ void main() {
       [VideoFileFormatEnum.video_2_7K_2F, 'VIDEO_2_7K_2F'],
       [VideoFileFormatEnum.video_3_6K_1F, 'VIDEO_3_6K_1F'],
       [VideoFileFormatEnum.video_3_6K_2F, 'VIDEO_3_6K_2F'],
+      [VideoFileFormatEnum.video_4K_2F, 'VIDEO_4K_2F'],
+      [VideoFileFormatEnum.video_4K_5F, 'VIDEO_4K_5F'],
       [VideoFileFormatEnum.video_4K_10F, 'VIDEO_4K_10F'],
       [VideoFileFormatEnum.video_4K_15F, 'VIDEO_4K_15F'],
       [VideoFileFormatEnum.video_4K_30F, 'VIDEO_4K_30F'],
@@ -579,6 +537,17 @@ void main() {
       [VideoFileFormatEnum.video_7K_2F, 'VIDEO_7K_2F'],
       [VideoFileFormatEnum.video_7K_5F, 'VIDEO_7K_5F'],
       [VideoFileFormatEnum.video_7K_10F, 'VIDEO_7K_10F'],
+      [VideoFileFormatEnum.video_2K_30F_h265Hevc, 'VIDEO_2K_30F_H265_HEVC'],
+      [VideoFileFormatEnum.video_4K_2F_h265Hevc, 'VIDEO_4K_2F_H265_HEVC'],
+      [VideoFileFormatEnum.video_4K_5F_h265Hevc, 'VIDEO_4K_5F_H265_HEVC'],
+      [VideoFileFormatEnum.video_4K_10F_h265Hevc, 'VIDEO_4K_10F_H265_HEVC'],
+      [VideoFileFormatEnum.video_4K_30F_h265Hevc, 'VIDEO_4K_30F_H265_HEVC'],
+      [VideoFileFormatEnum.video_5_7K_2F_h265Hevc, 'VIDEO_5_7K_2F_H265_HEVC'],
+      [VideoFileFormatEnum.video_5_7K_5F_h265Hevc, 'VIDEO_5_7K_5F_H265_HEVC'],
+      [VideoFileFormatEnum.video_5_7K_10F_h265Hevc, 'VIDEO_5_7K_10F_H265_HEVC'],
+      [VideoFileFormatEnum.video_7K_2F_h265Hevc, 'VIDEO_7K_2F_H265_HEVC'],
+      [VideoFileFormatEnum.video_7K_5F_h265Hevc, 'VIDEO_7K_5F_H265_HEVC'],
+      [VideoFileFormatEnum.video_7K_10F_h265Hevc, 'VIDEO_7K_10F_H265_HEVC'],
     ];
     expect(data.length, VideoFileFormatEnum.values.length,
         reason: 'enum count');
@@ -608,18 +577,6 @@ void main() {
       [GainEnum.mute, 'MUTE'],
     ];
     expect(data.length, GainEnum.values.length, reason: 'enum count');
-    for (int i = 0; i < data.length; i++) {
-      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
-    }
-  });
-
-  test('GpsTagRecordingEnum', () async {
-    List<List<dynamic>> data = [
-      [GpsTagRecordingEnum.on, 'ON'],
-      [GpsTagRecordingEnum.off, 'OFF'],
-    ];
-    expect(data.length, GpsTagRecordingEnum.values.length,
-        reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -704,19 +661,6 @@ void main() {
     }
   });
 
-  test('NetworkTypeEnum', () async {
-    List<List<dynamic>> data = [
-      [NetworkTypeEnum.client, 'CLIENT'],
-      [NetworkTypeEnum.direct, 'DIRECT'],
-      [NetworkTypeEnum.ethernet, 'ETHERNET'],
-      [NetworkTypeEnum.off, 'OFF'],
-    ];
-    expect(data.length, NetworkTypeEnum.values.length, reason: 'enum count');
-    for (int i = 0; i < data.length; i++) {
-      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
-    }
-  });
-
   test('PowerSavingEnum', () async {
     List<List<dynamic>> data = [
       [PowerSavingEnum.on, 'ON'],
@@ -736,24 +680,6 @@ void main() {
       [PresetEnum.room, 'ROOM'],
     ];
     expect(data.length, PresetEnum.values.length, reason: 'enum count');
-    for (int i = 0; i < data.length; i++) {
-      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
-    }
-  });
-
-  test('PreviewFormatEnum', () async {
-    List<List<dynamic>> data = [
-      [PreviewFormatEnum.w1024_h512_f30, 'W1024_H512_F30'],
-      [PreviewFormatEnum.w1024_h512_f15, 'W1024_H512_F15'],
-      [PreviewFormatEnum.w512_h512_f30, 'W512_H512_F30'],
-      [PreviewFormatEnum.w1920_h960_f8, 'W1920_H960_F8'],
-      [PreviewFormatEnum.w1024_h512_f8, 'W1024_H512_F8'],
-      [PreviewFormatEnum.w640_h320_f30, 'W640_H320_F30'],
-      [PreviewFormatEnum.w640_h320_f8, 'W640_H320_F8'],
-      [PreviewFormatEnum.w640_h320_f10, 'W640_H320_F10'],
-      [PreviewFormatEnum.w3840_h1920_f30, 'W3840_H1920_F30'],
-    ];
-    expect(data.length, PreviewFormatEnum.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
       expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
     }
@@ -798,6 +724,7 @@ void main() {
       [ThetaModel.thetaX, 'THETA_X'],
       [ThetaModel.thetaSC2, 'THETA_SC2'],
       [ThetaModel.thetaSC2B, 'THETA_SC2_B'],
+      [ThetaModel.thetaA1, 'THETA_A1'],
     ];
     expect(data.length, ThetaModel.values.length, reason: 'enum count');
     for (int i = 0; i < data.length; i++) {
@@ -899,21 +826,17 @@ void main() {
     }
   });
 
-  test('WlanFrequencyEnum', () async {
-    List<List<dynamic>> data = [
-      [WlanFrequencyEnum.ghz_2_4, 'GHZ_2_4'],
-      [WlanFrequencyEnum.ghz_5, 'GHZ_5'],
-    ];
-    expect(data.length, WlanFrequencyEnum.values.length, reason: 'enum count');
-    for (int i = 0; i < data.length; i++) {
-      expect(data[i][0].toString(), data[i][1], reason: data[i][1]);
-    }
-  });
-
   test('CapturingStatusEnum', () async {
     List<List<dynamic>> data = [
+      [CapturingStatusEnum.starting, 'STARTING'],
       [CapturingStatusEnum.capturing, 'CAPTURING'],
       [CapturingStatusEnum.selfTimerCountdown, 'SELF_TIMER_COUNTDOWN'],
+      [CapturingStatusEnum.timeShiftShooting, 'TIME_SHIFT_SHOOTING'],
+      [
+        CapturingStatusEnum.timeShiftShootingSecond,
+        'TIME_SHIFT_SHOOTING_SECOND'
+      ],
+      [CapturingStatusEnum.timeShiftShootingIdle, 'TIME_SHIFT_SHOOTING_IDLE'],
     ];
     expect(data.length, CapturingStatusEnum.values.length,
         reason: 'enum count');

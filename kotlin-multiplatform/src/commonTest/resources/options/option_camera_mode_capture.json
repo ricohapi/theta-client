@@ -1,1 +1,9 @@
-{"results":{"options":{"_cameraMode":"capture"}},"name":"camera.getOptions","state":"done"}
+{
+  "results": {
+    "options": {
+      "_cameraMode": "capture"
+    }
+  },
+  "name": "camera.getOptions",
+  "state": "done"
+}

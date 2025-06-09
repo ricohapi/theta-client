@@ -4,6 +4,7 @@ describe('AiAutoThumbnailEnum', () => {
   const data: [AiAutoThumbnailEnum, string][] = [
     [AiAutoThumbnailEnum.ON, 'ON'],
     [AiAutoThumbnailEnum.OFF, 'OFF'],
+    [AiAutoThumbnailEnum.UNKNOWN, 'UNKNOWN'],
   ];
 
   test('length', () => {
