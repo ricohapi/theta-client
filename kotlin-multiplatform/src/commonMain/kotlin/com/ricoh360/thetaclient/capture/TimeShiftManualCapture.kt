@@ -23,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlin.experimental.ExperimentalNativeApi
 
 /*
  * TimeShiftManualCapture
@@ -31,6 +32,7 @@ import kotlinx.coroutines.runBlocking
  * @property options option of manual time-shift capture
  * @property checkCommandStatusInterval the interval for executing commands/status API when state "inProgress"
  */
+@OptIn(ExperimentalNativeApi::class)
 class TimeShiftManualCapture private constructor(
     private val endpoint: String,
     options: Options,
