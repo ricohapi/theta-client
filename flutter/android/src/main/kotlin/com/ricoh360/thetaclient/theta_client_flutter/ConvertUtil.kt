@@ -1253,7 +1253,7 @@ fun toStartedNotifyParam(value: String): Map<String, Any> {
 data class SetAccessPointParams(
     val ssid: String,
     val ssidStealth: Boolean?,
-    val authMode: AuthModeEnum,
+    val authMode: AuthModeEnum?,
     val password: String?,
     val connectionPriority: Int?,
     val dns1: String?,
@@ -1264,9 +1264,7 @@ data class SetAccessPointParams(
 fun toSetAccessPointParams(arguments: Map<*, *>): SetAccessPointParams {
     val ssid = arguments[KEY_SSID] as? String ?: throw IllegalArgumentException(KEY_SSID)
     val ssidStealth = arguments[KEY_SSID_STEALTH] as? Boolean
-    val authMode = (arguments[KEY_AUTH_MODE] as? String?)?.let {
-        AuthModeEnum.valueOf(it)
-    } ?: throw IllegalArgumentException(KEY_AUTH_MODE)
+    val authMode = (arguments[KEY_AUTH_MODE] as? String?)?.let { AuthModeEnum.valueOf(it) }
     val password = arguments[KEY_PASSWORD] as? String
     val connectionPriority = arguments[KEY_CONNECTION_PRIORITY] as? Int
     val dns1 = arguments[KEY_DNS1] as? String

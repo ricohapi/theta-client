@@ -1070,14 +1070,14 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   Future<void> setAccessPointDynamically(
       String ssid,
       bool? ssidStealth,
-      AuthModeEnum authMode,
+      AuthModeEnum? authMode,
       String? password,
       int? connectionPriority,
       Proxy? proxy) async {
     final Map params = <String, dynamic>{
       'ssid': ssid,
       'ssidStealth': ssidStealth,
-      'authMode': authMode.rawValue,
+      'authMode': authMode?.rawValue,
       'password': password,
       'connectionPriority': connectionPriority,
       'proxy': proxy != null ? ConvertUtils.convertProxyParam(proxy) : null
@@ -1090,7 +1090,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   Future<void> setAccessPointStatically(
       String ssid,
       bool? ssidStealth,
-      AuthModeEnum authMode,
+      AuthModeEnum? authMode,
       String? password,
       int? connectionPriority,
       String ipAddress,
@@ -1102,7 +1102,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
     final Map params = <String, dynamic>{
       'ssid': ssid,
       'ssidStealth': ssidStealth,
-      'authMode': authMode.rawValue,
+      'authMode': authMode?.rawValue,
       'password': password,
       'connectionPriority': connectionPriority,
       'ipAddress': ipAddress,
@@ -1113,6 +1113,18 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       'proxy': proxy != null ? ConvertUtils.convertProxyParam(proxy) : null
     };
     return methodChannel.invokeMethod<void>('setAccessPointStatically', params);
+  }
+
+  @override
+  Future<void> setAccessPointConnectionPriority(
+      String ssid, int connectionPriority, bool ssidStealth) async {
+    final Map params = <String, dynamic>{
+      'ssid': ssid,
+      'ssidStealth': ssidStealth,
+      'connectionPriority': connectionPriority,
+    };
+    return methodChannel.invokeMethod<void>(
+        'setAccessPointConnectionPriority', params);
   }
 
   @override

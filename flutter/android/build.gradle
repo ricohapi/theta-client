@@ -52,7 +52,7 @@ android {
         testImplementation("org.mockito:mockito-core:5.0.0")
 
         implementation("com.soywiz.korlibs.krypto:krypto:4.0.10")
-        implementation("com.ricoh360.thetaclient:theta-client:1.13.0")
+        implementation("com.ricoh360.thetaclient:theta-client:1.13.1")
     }
 
     testOptions {

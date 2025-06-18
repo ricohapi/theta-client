@@ -377,7 +377,7 @@ class MockThetaClientFlutterPlatform
   Future<void> setAccessPointDynamically(
       String ssid,
       bool? ssidStealth,
-      AuthModeEnum authMode,
+      AuthModeEnum? authMode,
       String? password,
       int? connectionPriority,
       Proxy? proxy) {
@@ -388,7 +388,7 @@ class MockThetaClientFlutterPlatform
   Future<void> setAccessPointStatically(
       String ssid,
       bool? ssidStealth,
-      AuthModeEnum authMode,
+      AuthModeEnum? authMode,
       String? password,
       int? connectionPriority,
       String ipAddress,
@@ -397,6 +397,12 @@ class MockThetaClientFlutterPlatform
       String? dns1,
       String? dns2,
       Proxy? proxy) {
+    return Future.value();
+  }
+
+  @override
+  Future<void> setAccessPointConnectionPriority(
+      String ssid, int connectionPriority, bool ssidStealth) {
     return Future.value();
   }
 

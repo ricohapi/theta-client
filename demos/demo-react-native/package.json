@@ -13,7 +13,7 @@
   "dependencies": {
     "@react-navigation/native": "^6.1.0",
     "@react-navigation/native-stack": "^6.9.5",
-    "theta-client-react-native": "1.13.0",
+    "theta-client-react-native": "1.13.1",
     "react": "18.2.0",
     "react-native": "0.71.14",
     "react-native-safe-area-context": "^4.4.1",

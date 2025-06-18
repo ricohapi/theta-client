@@ -330,7 +330,7 @@ class ThetaClientFlutter {
   /// - @throws If an error occurs in THETA.
   Future<void> setAccessPointDynamically(String ssid,
       {bool? ssidStealth,
-      AuthModeEnum authMode = AuthModeEnum.none,
+      AuthModeEnum? authMode,
       String? password,
       int? connectionPriority,
       Proxy? proxy}) {
@@ -354,7 +354,7 @@ class ThetaClientFlutter {
   /// - @throws If an error occurs in THETA.
   Future<void> setAccessPointStatically(String ssid,
       {bool? ssidStealth,
-      AuthModeEnum authMode = AuthModeEnum.none,
+      AuthModeEnum? authMode,
       String? password,
       int? connectionPriority,
       required String ipAddress,
@@ -375,6 +375,18 @@ class ThetaClientFlutter {
         dns1,
         dns2,
         proxy);
+  }
+
+  /// Updates the connection priority of the access point.
+  ///
+  /// - @param ssid SSID of the access point.
+  /// - @param connectionPriority Connection priority (1 to 5). Default is 1. Theta X fixed to 1 (The access point registered later has a higher priority.)
+  /// - @param ssidStealth True if SSID stealth is enabled. Default is false.
+  /// - @throws If an error occurs in THETA.
+  Future<void> setAccessPointConnectionPriority(
+      String ssid, int connectionPriority, bool ssidStealth) {
+    return ThetaClientFlutterPlatform.instance.setAccessPointConnectionPriority(
+        ssid, connectionPriority, ssidStealth);
   }
 
   /// Deletes access point information used in client mode.

@@ -1456,7 +1456,7 @@ func toStartedNotifyParam(value: String) -> [String: Any] {
 struct SetAccessPointParams {
     let ssid: String
     let ssidStealth: KotlinBoolean?
-    let authMode: ThetaRepository.AuthModeEnum
+    let authMode: ThetaRepository.AuthModeEnum?
     let password: String?
     let connectionPriority: KotlinInt?
     let dns1: String?
@@ -1469,16 +1469,7 @@ func toSetAccessPointParams(params: [String: Any?]) throws -> SetAccessPointPara
         throw ThetaClientError.invalidArgument(KEY_SSID)
     }
     let ssidStealth = toKotlinBoolean(value: params[KEY_SSID_STEALTH] as? Bool)
-    guard let authMode = params[KEY_AUTH_MODE] as? String else {
-        throw ThetaClientError.invalidArgument(KEY_AUTH_MODE)
-    }
-    guard
-        let authModeEnum = getEnumValue(
-            values: ThetaRepository.AuthModeEnum.values(), name: authMode
-        )
-    else {
-        throw ThetaClientError.invalidArgument(KEY_AUTH_MODE)
-    }
+    let authModeEnum = getEnumValue(values: ThetaRepository.AuthModeEnum.values(), name: (params[KEY_AUTH_MODE] as? String) ?? "")
     let password = params[KEY_PASSWORD] as? String
     let connectionPriority = toKotlinInt(value: params[KEY_CONNECTION_PRIORITY] as? Int)
     let dns1 = params[KEY_DNS1] as? String

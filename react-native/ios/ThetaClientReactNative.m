@@ -235,6 +235,12 @@ RCT_EXTERN_METHOD(setAccessPointStatically:(NSDictionary *)params
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(setAccessPointConnectionPriority:(NSString *)ssid
+                  connectionPriority: (int)connectionPriority
+                  ssidStealth: (BOOL)ssidStealth
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(deleteAccessPoint:(NSString *)ssid
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)

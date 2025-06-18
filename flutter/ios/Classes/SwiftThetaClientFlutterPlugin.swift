@@ -242,6 +242,8 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             setAccessPointDynamically(call: call, result: result)
         case "setAccessPointStatically":
             setAccessPointStatically(call: call, result: result)
+        case "setAccessPointConnectionPriority":
+            setAccessPointConnectionPriority(call: call, result: result)
         case "deleteAccessPoint":
             deleteAccessPoint(call: call, result: result)
         case "getMySetting":
@@ -1733,6 +1735,48 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 dns1: accessPointParams.dns1,
                 dns2: accessPointParams.dns2,
                 proxy: accessPointParams.proxy,
+                completionHandler: { error in
+                    if let thetaError = error {
+                        let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                        result(flutterError)
+                    } else {
+                        result(nil)
+                    }
+                }
+            )
+        } catch {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: error.localizedDescription, details: nil)
+            result(flutterError)
+        }
+    }
+
+    func setAccessPointConnectionPriority(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let thetaRepository else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNotInit, details: nil)
+            result(flutterError)
+            return
+        }
+        guard
+            let arguments = call.arguments as? [String: Any?]
+        else {
+            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: SwiftThetaClientFlutterPlugin.messageNoArgument, details: nil)
+            result(flutterError)
+            return
+        }
+        do {
+            guard let ssid = arguments[KEY_SSID] as? String else {
+                throw ThetaClientError.invalidArgument(KEY_SSID)
+            }
+            guard let connectionPriority = arguments[KEY_CONNECTION_PRIORITY] as? Int32 else {
+                throw ThetaClientError.invalidArgument(KEY_CONNECTION_PRIORITY)
+            }
+            guard let ssidStealth = arguments[KEY_SSID_STEALTH] as? Bool else {
+                throw ThetaClientError.invalidArgument(KEY_SSID_STEALTH)
+            }
+            thetaRepository.setAccessPointConnectionPriority(
+                ssid: ssid,
+                connectionPriority: connectionPriority,
+                ssidStealth: ssidStealth,
                 completionHandler: { error in
                     if let thetaError = error {
                         let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)

@@ -1951,6 +1951,35 @@ class ThetaClientReactNativeModule(
   }
 
   /**
+   * setAccessPointConnectionPriority  -  Updates the connection priority of the access point.
+   * @param ssid ssid to set
+   * @param connectionPriority connectionPriority to set
+   * @param ssidStealth ssidStealth to set
+   * @param promise promise to set result
+   */
+  @ReactMethod
+  fun setAccessPointConnectionPriority(
+    ssid: String,
+    connectionPriority: Int,
+    ssidStealth: Boolean,
+    promise: Promise
+  ) {
+    val theta = theta
+    if (theta == null) {
+      promise.reject(Exception(messageNotInit))
+      return
+    }
+    launch {
+      try {
+        theta.setAccessPointConnectionPriority(ssid, connectionPriority, ssidStealth)
+        promise.resolve(true)
+      } catch (t: Throwable) {
+        promise.reject(t)
+      }
+    }
+  }
+
+  /**
    * deleteAccessPoint  -  delete access point related ssid
    * @param ssid ssid to delete
    * @param promise promise to set result

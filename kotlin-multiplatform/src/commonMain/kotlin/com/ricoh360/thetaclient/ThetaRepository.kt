@@ -8828,10 +8828,10 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     internal suspend fun setAccessPoint(
         ssid: String,
         ssidStealth: Boolean? = null,
-        authMode: AuthModeEnum = AuthModeEnum.NONE,
+        authMode: AuthModeEnum? = null,
         password: String? = null,
         connectionPriority: Int? = null,
-        ipAddressAllocation: IpAddressAllocation,
+        ipAddressAllocation: IpAddressAllocation? = null,
         ipAddress: String? = null,
         subnetMask: String? = null,
         defaultGateway: String? = null,
@@ -8839,10 +8839,14 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         dns2: String? = null,
         proxy: Proxy? = null,
     ) {
+        if (cameraModel == ThetaModel.THETA_A1 && authMode == AuthModeEnum.NONE) {
+            throw ThetaWebApiException("${cameraModel?.value} does not allow authMode to be set to none.")
+        }
+
         val params = SetAccessPointParams(
             ssid = ssid,
             ssidStealth = ssidStealth,
-            security = authMode.value,
+            security = authMode?.value,
             password = password,
             connectionPriority = connectionPriority,
             ipAddressAllocation = ipAddressAllocation,
@@ -8884,7 +8888,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     suspend fun setAccessPointDynamically(
         ssid: String,
         ssidStealth: Boolean? = null,
-        authMode: AuthModeEnum = AuthModeEnum.NONE,
+        authMode: AuthModeEnum? = null,
         password: String? = null,
         connectionPriority: Int? = null,
         proxy: Proxy? = null,
@@ -8921,7 +8925,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     suspend fun setAccessPointStatically(
         ssid: String,
         ssidStealth: Boolean? = null,
-        authMode: AuthModeEnum = AuthModeEnum.NONE,
+        authMode: AuthModeEnum? = null,
         password: String? = null,
         connectionPriority: Int? = null,
         ipAddress: String,
@@ -8944,6 +8948,24 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             dns1 = dns1,
             dns2 = dns2,
             proxy = proxy
+        )
+    }
+
+    /**
+     * Updates the connection priority of the access point.
+     *
+     * @param ssid SSID
+     * @param connectionPriority Connection priority (1 to 5). Default is 1. Theta X fixed to 1 (The access point registered later has a higher priority.)
+     * @param ssidStealth SSID stealth. Default is false.
+     * @exception ThetaWebApiException If an error occurs in THETA.
+     * @exception NotConnectedException
+     */
+    @Throws(Throwable::class)
+    suspend fun setAccessPointConnectionPriority(ssid: String, connectionPriority: Int, ssidStealth: Boolean) {
+        setAccessPoint(
+            ssid = ssid,
+            ssidStealth = ssidStealth,
+            connectionPriority = connectionPriority,
         )
     }
 
