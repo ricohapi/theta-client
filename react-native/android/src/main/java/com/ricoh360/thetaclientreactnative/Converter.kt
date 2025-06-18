@@ -1450,7 +1450,7 @@ fun toSleepDelay(objects: ReadableMap): SleepDelay? {
 data class SetAccessPointParams(
   val ssid: String,
   val ssidStealth: Boolean?,
-  val authMode: AuthModeEnum,
+  val authMode: AuthModeEnum?,
   val password: String?,
   val connectionPriority: Int?,
   val dns1: String?,
@@ -1466,7 +1466,6 @@ fun toSetAccessPointParams(objects: ReadableMap): SetAccessPointParams {
     null
   }
   val authMode = objects.getString(KEY_AUTH_MODE)?.let { AuthModeEnum.valueOf(it) }
-    ?: throw IllegalArgumentException(KEY_AUTH_MODE)
   val password = objects.getString(KEY_PASSWORD)
   val connectionPriority = if (objects.hasKey(KEY_CONNECTION_PRIORITY)) {
     objects.getInt(KEY_CONNECTION_PRIORITY)

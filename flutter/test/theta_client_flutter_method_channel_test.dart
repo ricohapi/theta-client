@@ -1442,6 +1442,25 @@ void main() {
         proxy);
   });
 
+  test('setAccessPointConnectionPriority', () async {
+    const ssid = 'ssid_test';
+    const ssidStealth = true;
+    const connectionPriority = 2;
+
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+      expect(methodCall.method, 'setAccessPointConnectionPriority');
+
+      var arguments = methodCall.arguments as Map<dynamic, dynamic>;
+      expect(arguments['ssid'], ssid);
+      expect(arguments['ssidStealth'], ssidStealth);
+      expect(arguments['connectionPriority'], connectionPriority);
+      return Future.value();
+    });
+    await platform.setAccessPointConnectionPriority(
+        ssid, connectionPriority, ssidStealth);
+  });
+
   test('deleteAccessPoint', () async {
     const ssid = 'ssid_test';
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger

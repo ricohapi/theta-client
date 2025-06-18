@@ -1,4 +1,4 @@
-import { AccessPoint, AuthModeEnum } from './access-point';
+import type { AccessPoint, AuthModeEnum } from './access-point';
 import type { FileTypeEnum, StorageEnum, ThetaFiles } from './theta-files';
 import type { ThetaState } from './theta-state';
 import type { ThetaInfo, ThetaModel } from './theta-info';
@@ -533,13 +533,8 @@ export function setAccessPointDynamically(
     proxy?: Proxy;
   }
 ): Promise<boolean> {
-  const {
-    ssidStealth,
-    authMode = AuthModeEnum.NONE,
-    password,
-    connectionPriority,
-    proxy,
-  } = params ?? {};
+  const { ssidStealth, authMode, password, connectionPriority, proxy } =
+    params ?? {};
   return ThetaClientReactNative.setAccessPointDynamically({
     ssid,
     ssidStealth,
@@ -575,7 +570,7 @@ export function setAccessPointStatically(
   defaultGateway: string,
   params?: {
     ssidStealth?: boolean;
-    authMode: AuthModeEnum;
+    authMode?: AuthModeEnum;
     password?: string;
     connectionPriority?: number;
     dns1?: string;
@@ -585,7 +580,7 @@ export function setAccessPointStatically(
 ): Promise<boolean> {
   const {
     ssidStealth,
-    authMode = AuthModeEnum.NONE,
+    authMode,
     password,
     connectionPriority,
     dns1,
@@ -605,6 +600,27 @@ export function setAccessPointStatically(
     dns2,
     proxy,
   });
+}
+
+/**
+ * Updates the connection priority of the access point.
+ *
+ * @function setAccessPointConnectionPriority
+ * @param {string} ssid SSID of the access point.
+ * @param {number} connectionPriority Connection priority 1 to 5.
+ * @param {boolean} ssidStealth True if SSID stealth is enabled.
+ * @return promise of boolean result
+ */
+export function setAccessPointConnectionPriority(
+  ssid: string,
+  connectionPriority: number,
+  ssidStealth: boolean
+): Promise<boolean> {
+  return ThetaClientReactNative.setAccessPointConnectionPriority(
+    ssid,
+    connectionPriority,
+    ssidStealth
+  );
 }
 
 /**

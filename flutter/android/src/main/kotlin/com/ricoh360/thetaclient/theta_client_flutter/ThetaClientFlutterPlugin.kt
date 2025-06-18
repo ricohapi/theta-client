@@ -459,6 +459,12 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 }
             }
 
+            "setAccessPointConnectionPriority" -> {
+                scope.launch {
+                    setAccessPointConnectionPriority(call, result)
+                }
+            }
+
             "deleteAccessPoint" -> {
                 scope.launch {
                     deleteAccessPoint(call, result)
@@ -1752,6 +1758,23 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 params.dns2,
                 params.proxy
             )
+            result.success(null)
+        } catch (e: Exception) {
+            result.error(e.javaClass.simpleName, e.message, null)
+        }
+    }
+
+    suspend fun setAccessPointConnectionPriority(call: MethodCall, result: Result) {
+        if (thetaRepository == null) {
+            result.error(errorCode, messageNotInit, null)
+            return
+        }
+        try {
+            val arguments = call.arguments as Map<*, *>
+            val ssid = arguments[KEY_SSID] as? String ?: throw IllegalArgumentException(KEY_SSID)
+            val connectionPriority = arguments[KEY_CONNECTION_PRIORITY] as? Int ?: throw IllegalArgumentException(KEY_CONNECTION_PRIORITY)
+            val ssidStealth = arguments[KEY_SSID_STEALTH] as? Boolean ?: throw IllegalArgumentException(KEY_SSID_STEALTH)
+            thetaRepository?.setAccessPointConnectionPriority(ssid, connectionPriority, ssidStealth)
             result.success(null)
         } catch (e: Exception) {
             result.error(e.javaClass.simpleName, e.message, null)

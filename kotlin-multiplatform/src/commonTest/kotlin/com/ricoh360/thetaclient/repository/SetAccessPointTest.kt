@@ -38,10 +38,10 @@ class SetAccessPointTest {
         request: HttpRequestData,
         ssid: String,
         ssidStealth: Boolean,
-        security: AuthenticationMode,
+        security: AuthenticationMode?,
         password: String?,
         connectionPriority: Int,
-        ipAddressAllocation: IpAddressAllocation,
+        ipAddressAllocation: IpAddressAllocation?,
         ipAddress: String?,
         subnetMask: String?,
         defaultGateway: String?,
@@ -89,7 +89,6 @@ class SetAccessPointTest {
         val proxy = ThetaRepository.Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
 
         MockApiClient.onRequest = { request ->
-            // check request
             checkRequest(
                 request,
                 ssid,
@@ -139,7 +138,6 @@ class SetAccessPointTest {
         val proxy = ThetaRepository.Proxy(use = true, url = "https://xxx", port = 8081, userid = "abc", password = "pwpwpw111")
 
         MockApiClient.onRequest = { request ->
-            // check request
             checkRequest(
                 request,
                 ssid,
@@ -172,6 +170,44 @@ class SetAccessPointTest {
             dns1 = dns1,
             dns2 = dns2,
             proxy = proxy
+        )
+        assertTrue(true, "response is normal.")
+    }
+
+    /**
+     * call setAccessPointConnectionPriority.
+     */
+    @Test
+    fun setAccessPointConnectionPriorityTest() = runTest {
+        val ssid = "ssid_test"
+        val ssidStealth = true
+        val connectionPriority = 2
+
+        MockApiClient.onRequest = { request ->
+            checkRequest(
+                request,
+                ssid,
+                ssidStealth,
+                null,
+                null,
+                connectionPriority,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            )
+
+            ByteReadChannel(Resource("src/commonTest/resources/setAccessPoint/set_access_point_done.json").readText())
+        }
+
+        val thetaRepository = ThetaRepository(endpoint)
+        thetaRepository.setAccessPointConnectionPriority(
+            ssid = ssid,
+            ssidStealth = ssidStealth,
+            connectionPriority = connectionPriority,
         )
         assertTrue(true, "response is normal.")
     }
@@ -399,6 +435,80 @@ class SetAccessPointTest {
             assertTrue(false, "response is normal.")
         } catch (e: ThetaRepository.NotConnectedException) {
             assertTrue(e.message!!.indexOf("time", 0, true) >= 0, "timeout exception")
+        }
+    }
+
+    @Test
+    fun setAccessPointAuthModeExceptionTest() = runTest {
+        MockApiClient.onRequest = { _ ->
+            ByteReadChannel(Resource("src/commonTest/resources/listAccessPoints/list_access_points_empty_done.json").readText())
+        }
+
+        val thetaRepository = ThetaRepository(endpoint)
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_A1
+        try {
+            val ssid = "ssid_test"
+            val authMode = ThetaRepository.AuthModeEnum.NONE
+            val ipAddressAllocation = IpAddressAllocation.STATIC
+
+            thetaRepository.setAccessPoint(
+                ssid = ssid,
+                authMode = authMode,
+                ipAddressAllocation = ipAddressAllocation,
+            )
+            assertTrue(false, "response is normal.")
+        } catch (e: ThetaRepository.ThetaWebApiException) {
+            assertTrue(e.message!!.contains("does not allow authMode to be set to none."), "authMode exception")
+        }
+    }
+
+    @Test
+    fun setAccessPointDynamicallyAuthModeExceptionTest() = runTest {
+        MockApiClient.onRequest = { _ ->
+            ByteReadChannel(Resource("src/commonTest/resources/listAccessPoints/list_access_points_empty_done.json").readText())
+        }
+
+        val thetaRepository = ThetaRepository(endpoint)
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_A1
+        try {
+            val ssid = "ssid_test"
+            val authMode = ThetaRepository.AuthModeEnum.NONE
+
+            thetaRepository.setAccessPointDynamically(
+                ssid = ssid,
+                authMode = authMode
+            )
+            assertTrue(false, "response is normal.")
+        } catch (e: ThetaRepository.ThetaWebApiException) {
+            assertTrue(e.message!!.contains("does not allow authMode to be set to none."), "authMode exception")
+        }
+    }
+
+    @Test
+    fun setAccessPointStaticallyAuthModeExceptionTest() = runTest {
+        MockApiClient.onRequest = { _ ->
+            ByteReadChannel(Resource("src/commonTest/resources/listAccessPoints/list_access_points_empty_done.json").readText())
+        }
+
+        val thetaRepository = ThetaRepository(endpoint)
+        thetaRepository.cameraModel = ThetaRepository.ThetaModel.THETA_A1
+        try {
+            val ssid = "ssid_test"
+            val authMode = ThetaRepository.AuthModeEnum.NONE
+            val ipAddress = "192.168.1.2"
+            val subnetMask = "255.255.255.0"
+            val defaultGateway = "192.168.1.3"
+
+            thetaRepository.setAccessPointStatically(
+                ssid = ssid,
+                authMode = authMode,
+                ipAddress = ipAddress,
+                subnetMask = subnetMask,
+                defaultGateway = defaultGateway
+            )
+            assertTrue(false, "response is normal.")
+        } catch (e: ThetaRepository.ThetaWebApiException) {
+            assertTrue(e.message!!.contains("does not allow authMode to be set to none."), "authMode exception")
         }
     }
 }
