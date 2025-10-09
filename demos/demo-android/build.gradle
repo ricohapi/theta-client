@@ -1,7 +1,7 @@
 buildscript {
     ext {
         compose_version = '1.5.3' // depends on Kotlin 2.1.10
-        kotlin_version = '2.1.10'
+        kotlin_version = '2.2.10'
         coroutines_version = '1.7.3'
     }
     dependencies {

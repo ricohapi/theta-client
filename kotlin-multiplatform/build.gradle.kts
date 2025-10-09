@@ -2,7 +2,7 @@ import java.util.Properties
 
 plugins {
     kotlin("multiplatform")
-    kotlin("plugin.serialization") version "2.1.20"
+    kotlin("plugin.serialization") version "2.2.10"
     id("com.android.library")
     id("maven-publish")
     kotlin("native.cocoapods")
@@ -22,11 +22,6 @@ initProp()
 
 kotlin {
     androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
-        }
         publishLibraryVariants("release")
     }
 
@@ -102,7 +97,7 @@ kotlin {
 
 android {
     namespace = "com.ricoh360.thetaclient"
-    compileSdk = 35
+    compileSdk = 36
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
         minSdk = 24

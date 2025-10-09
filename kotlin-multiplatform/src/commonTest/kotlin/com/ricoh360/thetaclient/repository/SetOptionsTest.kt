@@ -18,6 +18,7 @@ import io.ktor.client.request.HttpRequestData
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.TextContent
 import io.ktor.utils.io.ByteReadChannel
+import io.ktor.utils.io.core.release
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test

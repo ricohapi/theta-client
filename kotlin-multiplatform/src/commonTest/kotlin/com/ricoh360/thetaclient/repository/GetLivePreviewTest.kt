@@ -3,8 +3,12 @@ package com.ricoh360.thetaclient.repository
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.PreviewClientException
 import com.ricoh360.thetaclient.ThetaRepository
-import io.ktor.client.network.sockets.*
-import kotlin.test.*
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.utils.io.core.release
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking

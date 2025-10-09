@@ -5,12 +5,12 @@ plugins {
 }
 
 android {
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.ricoh360.thetaclient.thetaClientDemo"
         minSdk 24
-        targetSdk 35
+        targetSdk 36
         versionCode 1
         versionName "1.0.0"
 
@@ -51,7 +51,8 @@ android {
         unitTests.all {
             useJUnitPlatform()
         }
-        unitTests.returnDefaultValues = true // Disable exception "Method e in android.util.Log not mocked."
+        unitTests.returnDefaultValues = true
+        // Disable exception "Method e in android.util.Log not mocked."
     }
     namespace 'com.ricoh360.thetaclient.thetaClientDemo'
 }
