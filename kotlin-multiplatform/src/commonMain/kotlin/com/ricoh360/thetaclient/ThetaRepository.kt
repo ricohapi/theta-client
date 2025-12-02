@@ -5630,6 +5630,10 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             fun get(value: Double): ShutterSpeedEnum? {
                 return ShutterSpeedEnum.values().firstOrNull { it.value == value }
             }
+
+            fun getClosest(value: Double): ShutterSpeedEnum? {
+                return ShutterSpeedEnum.values().minByOrNull { kotlin.math.abs(it.value - value) }
+            }
         }
     }
 
