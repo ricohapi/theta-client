@@ -48,7 +48,7 @@ actual fun randomUUID(): String {
 
 actual fun currentTimeMillis(): Long {
     val interval = NSDate().timeIntervalSince1970
-    return (interval / 1000.0).toLong()
+    return (interval * 1000.0).toLong()
 }
 
 @OptIn(ExperimentalNativeApi::class)
