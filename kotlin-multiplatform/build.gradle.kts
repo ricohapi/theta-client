@@ -191,6 +191,7 @@ publishing {
             url = uri("https://maven.pkg.github.com/danielclipnow/theta-client")
             credentials(PasswordCredentials::class)
         }
+        maven("https://maven.pkg.jetbrains.space/public/p/dokka/dev")
     }
 }
 
