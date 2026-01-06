@@ -12,5 +12,10 @@ buildscript {
     }
 }
 
+repositories {
+    mavenCentral()
+    maven("https://maven.pkg.jetbrains.space/public/p/dokka/dev")
+}
+
 tasks.register("clean", Delete::class) {
 }

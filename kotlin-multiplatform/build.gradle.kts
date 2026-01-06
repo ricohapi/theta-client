@@ -9,12 +9,12 @@ if (localPropertiesFile.exists()) {
     localProperties.load(localPropertiesFile.inputStream())
 }
 
-// Set properties for GitHub Packages credentials if found in local.properties
-localProperties.getProperty("githubPackagesUsername")?.let {
-    extra["GitHubPackagesUsername"] = it
-}
-localProperties.getProperty("githubPackagesPassword")?.let {
-    extra["GitHubPackagesPassword"] = it
+// Set Gradle project properties for GitHub Packages credentials
+val ghUsername = localProperties.getProperty("githubPackagesUsername")
+val ghPassword = localProperties.getProperty("githubPackagesPassword")
+if (ghUsername != null && ghPassword != null) {
+    extra.set("GitHubPackagesUsername", ghUsername)
+    extra.set("GitHubPackagesPassword", ghPassword)
 }
 
 plugins {
@@ -31,7 +31,7 @@ dependencies {
     dokkaPlugin("org.jetbrains.dokka:versioning-plugin:2.0.0")
 }
 
-val thetaClientVersion = "1.13.1"
+val thetaClientVersion = "1.13.4"
 group = "com.ricoh360.thetaclient"
 version = thetaClientVersion
 
@@ -132,16 +132,22 @@ android {
 }
 
 // Publish to GitHub Packages
-// Credentials are loaded from local.properties (github.username, github.token)
-// or environment variables (ORG_GRADLE_PROJECT_gitHubPackagesUsername, ORG_GRADLE_PROJECT_gitHubPackagesPassword)
+// Credentials are loaded from:
+// 1. local.properties (githubPackagesUsername, githubPackagesPassword) - for local development
+// 2. Environment variables (ORG_GRADLE_PROJECT_GitHubPackagesUsername, ORG_GRADLE_PROJECT_GitHubPackagesPassword) - for CI/CD
 publishing {
     repositories {
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/danielclipnow/theta-client")
-            credentials(PasswordCredentials::class)
+            credentials {
+                // Check extra properties (from local.properties), then project properties (from ORG_GRADLE_PROJECT_* env vars)
+                username = (extra.properties["GitHubPackagesUsername"] as String?)
+                    ?: project.findProperty("GitHubPackagesUsername") as String?
+                password = (extra.properties["GitHubPackagesPassword"] as String?)
+                    ?: project.findProperty("GitHubPackagesPassword") as String?
+            }
         }
-        maven("https://maven.pkg.jetbrains.space/public/p/dokka/dev")
     }
 }
 
