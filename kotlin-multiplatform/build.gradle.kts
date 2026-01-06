@@ -1,6 +1,5 @@
 import org.jetbrains.dokka.versioning.VersioningConfiguration
 import org.jetbrains.dokka.versioning.VersioningPlugin
-import com.vanniktech.maven.publish.SonatypeHost
 import java.util.Properties
 
 // Load credentials from local.properties if available
@@ -24,9 +23,8 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.dokka") version "2.0.0"
     kotlin("native.cocoapods")
-    signing
     id("io.gitlab.arturbosch.detekt").version("1.23.3")
-    id("com.vanniktech.maven.publish") version "0.32.0"
+    `maven-publish`
 }
 
 dependencies {
@@ -130,54 +128,6 @@ android {
         minSdk = 28
         setProperty("archivesBaseName", "theta-client")
         consumerProguardFiles("proguard-rules.pro")
-    }
-}
-
-val javadocJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("javadoc")
-}
-
-// Publish the library to Mavan repository.
-// Because the components are created only during the afterEvaluate phase, you must
-// configure your publications using the afterEvaluate() lifecycle method.
-afterEvaluate {
-    mavenPublishing {
-        // publishing to https://central.sonatype.com/
-        publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
-        signAllPublications()
-        coordinates(group.toString(), "theta-client", version.toString())
-        pom {
-            name.set("theta-client")
-            description.set("This library provides a way to control RICOH THETA using RICOH THETA API v2.1")
-            inceptionYear.set("2023")
-            url.set("https://github.com/ricohapi/theta-client")
-            licenses {
-                license {
-                    name.set("MIT")
-                    url.set("https://github.com/ricohapi/theta-client/blob/main/LICENSE")
-                }
-            }
-            developers {
-                developer {
-                    organization.set("RICOH360")
-                    organizationUrl.set("https://github.com/ricohapi/theta-client")
-                }
-            }
-            scm {
-                connection.set("scm:git:git@github.com:ricohapi/theta-client.git")
-                developerConnection.set("scm:git:git@github.com:ricohapi/theta-client.git")
-                url.set("https://github.com/ricohapi/theta-client/tree/main")
-            }
-        }
-        /* Secrets
-         *     Set following environment variables for Central Portal user token
-         *       * ORG_GRADLE_PROJECT_mavenCentralUsername: username of the user token of Central Portal
-         *       * ORG_GRADLE_PROJECT_mavenCentralPassword: password of the user token of Central Portal
-         *     Set following environment variables for GPG key. See https://vanniktech.github.io/gradle-maven-publish-plugin/central/#secrets
-         *       * ORG_GRADLE_PROJECT_signingInMemoryKey : Secret key in PEM format
-         *       * ORG_GRADLE_PROJECT_signingInMemoryKeyId : 8 characters key id
-         *       * ORG_GRADLE_PROJECT_signingInMemoryKeyPassword
-         */
     }
 }
 
