@@ -1,6 +1,22 @@
 import org.jetbrains.dokka.versioning.VersioningConfiguration
 import org.jetbrains.dokka.versioning.VersioningPlugin
 import com.vanniktech.maven.publish.SonatypeHost
+import java.util.Properties
+
+// Load credentials from local.properties if available
+val localPropertiesFile = rootProject.file("local.properties")
+val localProperties = Properties()
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
+}
+
+// Set properties for GitHub Packages credentials if found in local.properties
+localProperties.getProperty("githubPackagesUsername")?.let {
+    extra["gitHubPackagesUsername"] = it
+}
+localProperties.getProperty("githubPackagesPassword")?.let {
+    extra["gitHubPackagesPassword"] = it
+}
 
 plugins {
     kotlin("multiplatform")
@@ -162,6 +178,19 @@ afterEvaluate {
          *       * ORG_GRADLE_PROJECT_signingInMemoryKeyId : 8 characters key id
          *       * ORG_GRADLE_PROJECT_signingInMemoryKeyPassword
          */
+    }
+}
+
+// Publish to GitHub Packages
+// Credentials are loaded from local.properties (github.username, github.token)
+// or environment variables (ORG_GRADLE_PROJECT_gitHubPackagesUsername, ORG_GRADLE_PROJECT_gitHubPackagesPassword)
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/danielclipnow/theta-client")
+            credentials(PasswordCredentials::class)
+        }
     }
 }
 
