@@ -27,6 +27,6 @@ jobs:
 
       - name: Publish to GitHub Packages
         env:
-          ORG_GRADLE_PROJECT_gitHubPackagesUsername: ${{ github.actor }}
-          ORG_GRADLE_PROJECT_gitHubPackagesPassword: ${{ secrets.GITHUB_TOKEN }}
+          ORG_GRADLE_PROJECT_GitHubPackagesUsername: ${{ github.actor }}
+          ORG_GRADLE_PROJECT_GitHubPackagesPassword: ${{ secrets.GITHUB_TOKEN }}
         run: ./gradlew publishAllPublicationsToGitHubPackagesRepository

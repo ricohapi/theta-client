@@ -12,10 +12,10 @@ if (localPropertiesFile.exists()) {
 
 // Set properties for GitHub Packages credentials if found in local.properties
 localProperties.getProperty("githubPackagesUsername")?.let {
-    extra["gitHubPackagesUsername"] = it
+    extra["GitHubPackagesUsername"] = it
 }
 localProperties.getProperty("githubPackagesPassword")?.let {
-    extra["gitHubPackagesPassword"] = it
+    extra["GitHubPackagesPassword"] = it
 }
 
 plugins {
