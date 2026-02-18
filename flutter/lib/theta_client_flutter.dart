@@ -1434,6 +1434,9 @@ enum OptionNameEnum {
   microphoneNoiseReduction(
       'MicrophoneNoiseReduction', MicrophoneNoiseReductionEnum),
 
+  /// Option name _modeMemory
+  modeMemory('ModeMemory', ModeMemoryEnum),
+
   /// Option name _mobileNetworkSetting
   mobileNetworkSetting('MobileNetworkSetting', MobileNetworkSetting),
 
@@ -3198,6 +3201,9 @@ class Options {
   /// see [MicrophoneNoiseReductionEnum]
   MicrophoneNoiseReductionEnum? microphoneNoiseReduction;
 
+  /// see [ModeMemoryEnum]
+  ModeMemoryEnum? modeMemory;
+
   /// see [MobileNetworkSetting]
   MobileNetworkSetting? mobileNetworkSetting;
 
@@ -3422,6 +3428,8 @@ class Options {
         return microphoneNoiseReduction as T;
       case OptionNameEnum.mobileNetworkSetting:
         return mobileNetworkSetting as T;
+      case OptionNameEnum.modeMemory:
+        return modeMemory as T;
       case OptionNameEnum.networkType:
         return networkType as T;
       case OptionNameEnum.offDelay:
@@ -3642,6 +3650,9 @@ class Options {
         break;
       case OptionNameEnum.mobileNetworkSetting:
         mobileNetworkSetting = value;
+        break;
+      case OptionNameEnum.modeMemory:
+        modeMemory = value;
         break;
       case OptionNameEnum.networkType:
         networkType = value;

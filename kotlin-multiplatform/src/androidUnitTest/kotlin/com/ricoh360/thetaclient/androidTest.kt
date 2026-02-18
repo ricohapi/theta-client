@@ -10,3 +10,7 @@ class AndroidGreetingTest {
         assertTrue("Check Android is mentioned", Greeting().greeting().contains("Android"))
     }
 }
+
+actual fun getEnv(name: String): String? {
+    return System.getenv(name)
+}

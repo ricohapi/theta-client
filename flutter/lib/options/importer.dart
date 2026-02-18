@@ -16,6 +16,7 @@ export 'file_format.dart';
 export 'gps_tag_recording.dart';
 export 'max_recordable_time.dart';
 export 'microphone_noise_reduction.dart';
+export 'mode_memory.dart';
 export 'mobile_network_setting.dart';
 export 'network_type.dart';
 export 'off_delay.dart';

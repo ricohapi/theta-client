@@ -3,6 +3,7 @@ package com.ricoh360.thetaclient.repository
 import com.goncalossilva.resources.Resource
 import com.ricoh360.thetaclient.MockApiClient
 import com.ricoh360.thetaclient.ThetaRepository
+import com.ricoh360.thetaclient.getEnv
 import io.ktor.http.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.core.toByteArray
@@ -37,7 +38,7 @@ class UpdateFirmwareTest {
     fun updateFirmwareTest() = runTest {
         var apiPath: String? = null
         kotlin.runCatching {
-            apiPath = System.getenv(FIRMWARE_UPDATE_API_ENV_NAME)
+            apiPath = getEnv(FIRMWARE_UPDATE_API_ENV_NAME)
         }.onFailure {
             println("$FIRMWARE_UPDATE_API_ENV_NAME can not be accessed so updateFirmwareTest() is skipped")
         }

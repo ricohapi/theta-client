@@ -13,3 +13,10 @@ class CommonGreetingTest {
         print("CommonGreetingTest testExample")
     }
 }
+
+/**
+ * Get environment variable value by name
+ * @param name Environment variable name
+ * @return Environment variable value, or null if not set
+ */
+expect fun getEnv(name: String): String?

@@ -41,6 +41,7 @@ import com.ricoh360.thetaclient.transferred.MediaFileFormat
 import com.ricoh360.thetaclient.transferred.MediaType
 import com.ricoh360.thetaclient.transferred.MicrophoneNoiseReduction
 import com.ricoh360.thetaclient.transferred.MobileNetworkSetting
+import com.ricoh360.thetaclient.transferred.ModeMemory
 import com.ricoh360.thetaclient.transferred.NetworkType
 import com.ricoh360.thetaclient.transferred.Options
 import com.ricoh360.thetaclient.transferred.PitchSupport
@@ -196,6 +197,7 @@ class OptionsTest {
         val maxRecordableTime = ThetaRepository.MaxRecordableTimeEnum.RECORDABLE_TIME_1500
         val microphoneNoiseReduction = ThetaRepository.MicrophoneNoiseReductionEnum.ON
         val mobileNetworkSetting = ThetaRepository.MobileNetworkSetting(roaming = ThetaRepository.RoamingEnum.OFF, plan = ThetaRepository.PlanEnum.SORACOM)
+        val modeMemory = ThetaRepository.ModeMemoryEnum.ON
         val networkType = ThetaRepository.NetworkTypeEnum.DIRECT
         val offDelay = ThetaRepository.OffDelayEnum.OFF_DELAY_10M
         val offDelayUsb = ThetaRepository.OffDelayUsbEnum.OFF_DELAY_10M
@@ -291,6 +293,7 @@ class OptionsTest {
             maxRecordableTime = maxRecordableTime,
             microphoneNoiseReduction = microphoneNoiseReduction,
             mobileNetworkSetting = mobileNetworkSetting,
+            modeMemory = modeMemory,
             networkType = networkType,
             offDelay = offDelay,
             offDelayUsb = offDelayUsb,
@@ -381,6 +384,7 @@ class OptionsTest {
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.MaxRecordableTime), maxRecordableTime, "maxRecordableTime")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.MicrophoneNoiseReduction), microphoneNoiseReduction, "microphoneNoiseReduction")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.MobileNetworkSetting), mobileNetworkSetting, "mobileNetworkSetting")
+        assertEquals(options.getValue(ThetaRepository.OptionNameEnum.ModeMemory), modeMemory, "modeMemory")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.NetworkType), networkType, "networkType")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.OffDelay), offDelay, "offDelay")
         assertEquals(options.getValue(ThetaRepository.OptionNameEnum.OffDelayUsb), offDelayUsb, "offDelayUsb")
@@ -534,6 +538,7 @@ class OptionsTest {
                 ThetaRepository.OptionNameEnum.MobileNetworkSetting,
                 ThetaRepository.MobileNetworkSetting(roaming = ThetaRepository.RoamingEnum.ON, plan = ThetaRepository.PlanEnum.SORACOM)
             ),
+            Pair(ThetaRepository.OptionNameEnum.ModeMemory, ThetaRepository.ModeMemoryEnum.ON),
             Pair(ThetaRepository.OptionNameEnum.NetworkType, ThetaRepository.NetworkTypeEnum.ETHERNET),
             Pair(ThetaRepository.OptionNameEnum.OffDelay, ThetaRepository.OffDelayEnum.OFF_DELAY_10M),
             Pair(ThetaRepository.OptionNameEnum.OffDelayUsb, ThetaRepository.OffDelayUsbEnum.OFF_DELAY_10M),
@@ -777,6 +782,7 @@ class OptionsTest {
             MobileNetworkSetting(roaming = Roaming.ON, plan = Plan.SORACOM_PLAN_DU),
             ThetaRepository.MobileNetworkSetting(roaming = ThetaRepository.RoamingEnum.ON, plan = ThetaRepository.PlanEnum.SORACOM_PLAN_DU)
         )
+        val modeMemory = Pair(ModeMemory.OFF, ThetaRepository.ModeMemoryEnum.OFF)
         val networkType = Pair(NetworkType.DIRECT, ThetaRepository.NetworkTypeEnum.DIRECT)
         val offDelay = Pair(600, ThetaRepository.OffDelayEnum.OFF_DELAY_10M)
         val offDelayUsb = Pair(600, ThetaRepository.OffDelayUsbEnum.OFF_DELAY_10M)
@@ -884,6 +890,7 @@ class OptionsTest {
             _maxRecordableTime = maxRecordableTime.first,
             _microphoneNoiseReduction = microphoneNoiseReduction.first,
             _mobileNetworkSetting = mobileNetworkSetting.first,
+            _modeMemory = modeMemory.first,
             _networkType = networkType.first,
             offDelay = offDelay.first,
             _offDelayUSB = offDelayUsb.first,
@@ -967,6 +974,7 @@ class OptionsTest {
         assertEquals(options.maxRecordableTime, maxRecordableTime.second, "maxRecordableTime")
         assertEquals(options.microphoneNoiseReduction, microphoneNoiseReduction.second, "microphoneNoiseReduction")
         assertEquals(options.mobileNetworkSetting, mobileNetworkSetting.second, "mobileNetworkSetting")
+        assertEquals(options.modeMemory, modeMemory.second, "modeMemory")
         assertEquals(options.networkType, networkType.second, "networkType")
         assertEquals(options.offDelay, offDelay.second, "offDelay")
         assertEquals(options.offDelayUsb, offDelayUsb.second, "offDelayUsb")
@@ -1170,6 +1178,7 @@ class OptionsTest {
             MobileNetworkSetting(roaming = Roaming.OFF, plan = Plan.SORACOM),
             ThetaRepository.MobileNetworkSetting(roaming = ThetaRepository.RoamingEnum.OFF, plan = ThetaRepository.PlanEnum.SORACOM)
         )
+        val modeMemory = Pair(ModeMemory.ON, ThetaRepository.ModeMemoryEnum.ON)
         val networkType = Pair(NetworkType.ETHERNET, ThetaRepository.NetworkTypeEnum.ETHERNET)
         val offDelay = Pair(600, ThetaRepository.OffDelayEnum.OFF_DELAY_10M)
         val offDelayUsb = Pair(600, ThetaRepository.OffDelayUsbEnum.OFF_DELAY_10M)
@@ -1258,6 +1267,7 @@ class OptionsTest {
             maxRecordableTime = maxRecordableTime.second,
             microphoneNoiseReduction = microphoneNoiseReduction.second,
             mobileNetworkSetting = mobileNetworkSetting.second,
+            modeMemory = modeMemory.second,
             networkType = networkType.second,
             offDelay = offDelay.second,
             offDelayUsb = offDelayUsb.second,
@@ -1332,6 +1342,7 @@ class OptionsTest {
         assertEquals(options._maxRecordableTime, maxRecordableTime.first, "maxRecordableTime")
         assertEquals(options._microphoneNoiseReduction, microphoneNoiseReduction.first, "microphoneNoiseReduction")
         assertEquals(options._mobileNetworkSetting, mobileNetworkSetting.first, "mobileNetworkSetting")
+        assertEquals(options._modeMemory, modeMemory.first, "modeMemory")
         assertEquals(options._networkType, networkType.first, "networkType")
         assertEquals(options.offDelay, offDelay.first, "offDelay")
         assertEquals(options._offDelayUSB, offDelayUsb.first, "offDelayUsb")

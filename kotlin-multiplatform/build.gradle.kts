@@ -11,6 +11,7 @@ plugins {
     signing
     id("io.gitlab.arturbosch.detekt").version("1.23.3")
     id("com.vanniktech.maven.publish") version "0.32.0"
+    id("com.goncalossilva.resources") version "0.4.0"
 }
 
 dependencies {

@@ -1197,6 +1197,8 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
         options.maxRecordableTime = getEnumValue(values: ThetaRepository.MaxRecordableTimeEnum.values(), name: value as! String)!
     case ThetaRepository.OptionNameEnum.microphonenoisereduction.name:
         options.microphoneNoiseReduction = getEnumValue(values: ThetaRepository.MicrophoneNoiseReductionEnum.values(), name: value as! String)!
+    case ThetaRepository.OptionNameEnum.modememory.name:
+        options.modeMemory = getEnumValue(values: ThetaRepository.ModeMemoryEnum.values(), name: value as! String)!
     case ThetaRepository.OptionNameEnum.mobilenetworksetting.name:
         if let params = value as? [String: Any] {
             options.mobileNetworkSetting = toMobileNetworkSetting(params: params)
