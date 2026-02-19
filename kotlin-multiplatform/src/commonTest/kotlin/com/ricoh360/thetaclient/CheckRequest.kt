@@ -27,6 +27,7 @@ import com.ricoh360.thetaclient.transferred.Language
 import com.ricoh360.thetaclient.transferred.MediaFileFormat
 import com.ricoh360.thetaclient.transferred.MicrophoneNoiseReduction
 import com.ricoh360.thetaclient.transferred.MobileNetworkSetting
+import com.ricoh360.thetaclient.transferred.ModeMemory
 import com.ricoh360.thetaclient.transferred.NetworkType
 import com.ricoh360.thetaclient.transferred.PowerSaving
 import com.ricoh360.thetaclient.transferred.Preset
@@ -143,6 +144,7 @@ internal class CheckRequest {
             maxRecordableTime: Int? = null,
             microphoneNoiseReduction: MicrophoneNoiseReduction? = null,
             mobileNetworkSetting: MobileNetworkSetting? = null,
+            modeMemory: ModeMemory? = null,
             networkType: NetworkType? = null,
             offDelay: Int? = null,
             offDelayUsb: Int? = null,
@@ -299,6 +301,9 @@ internal class CheckRequest {
             }
             mobileNetworkSetting?.let {
                 assertEquals(optionsRequest.parameters.options._mobileNetworkSetting, it, "setOptions mobileNetworkSetting")
+            }
+            modeMemory?.let {
+                assertEquals(optionsRequest.parameters.options._modeMemory, it, "setOptions modeMemory")
             }
             networkType?.let {
                 assertEquals(optionsRequest.parameters.options._networkType, it, "setOptions networkType")

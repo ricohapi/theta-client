@@ -105,6 +105,7 @@ val optionItemNameToEnum: Map<String, OptionNameEnum> = mutableMapOf(
   "latestEnabledExposureDelayTime" to OptionNameEnum.LatestEnabledExposureDelayTime,
   "maxRecordableTime" to OptionNameEnum.MaxRecordableTime,
   "microphoneNoiseReduction" to OptionNameEnum.MicrophoneNoiseReduction,
+  "modeMemory" to OptionNameEnum.ModeMemory,
   "mobileNetworkSetting" to OptionNameEnum.MobileNetworkSetting,
   "networkType" to OptionNameEnum.NetworkType,
   "offDelay" to OptionNameEnum.OffDelay,
@@ -1152,6 +1153,7 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
     OptionNameEnum.LatestEnabledExposureDelayTime -> ExposureDelayEnum.values().find { it.name == valueName }
     OptionNameEnum.MaxRecordableTime -> MaxRecordableTimeEnum.values().find { it.name == valueName }
     OptionNameEnum.MicrophoneNoiseReduction -> MicrophoneNoiseReductionEnum.values().find { it.name == valueName }
+    OptionNameEnum.ModeMemory -> ModeMemoryEnum.values().find { it.name == valueName }
     OptionNameEnum.NetworkType -> NetworkTypeEnum.values().find { it.name == valueName }
     OptionNameEnum.OffDelay -> OffDelayEnum.values().find { it.name == valueName }
     OptionNameEnum.OffDelayUsb -> OffDelayUsbEnum.entries.find { it.name == valueName }

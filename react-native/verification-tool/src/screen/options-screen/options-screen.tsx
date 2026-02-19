@@ -20,6 +20,7 @@ import {
   IsoEnum,
   MaxRecordableTimeEnum,
   MicrophoneNoiseReductionEnum,
+  ModeMemoryEnum,
   OffDelayEnum,
   OffDelayUsbEnum,
   OptionNameEnum,
@@ -497,6 +498,25 @@ const optionList: OptionItem[] = [
       editor: (options, onChange) => (
         <MobileNetworkSettingEdit onChange={onChange} options={options} />
       ),
+    },
+  },
+  {
+    name: 'modeMemory',
+    value: {
+      optionName: OptionNameEnum.ModeMemory,
+      editor: (options, onChange) => (
+        <EnumEdit
+          title={'modeMemory'}
+          option={options?.modeMemory}
+          onChange={(modeMemory) => {
+            onChange({ modeMemory });
+          }}
+          optionEnum={ModeMemoryEnum}
+        />
+      ),
+      defaultValue: {
+        modeMemory: ModeMemoryEnum.ON,
+      },
     },
   },
   {

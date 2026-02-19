@@ -757,6 +757,9 @@ class ConvertUtils {
           result.microphoneNoiseReduction =
               MicrophoneNoiseReductionEnum.getValue(entry.value);
           break;
+        case OptionNameEnum.modeMemory:
+          result.modeMemory = ModeMemoryEnum.getValue(entry.value);
+          break;
         case OptionNameEnum.mobileNetworkSetting:
           result.mobileNetworkSetting =
               convertMobileNetworkSetting(entry.value);
@@ -953,6 +956,8 @@ class ConvertUtils {
     } else if (value is MaxRecordableTimeEnum) {
       return value.rawValue;
     } else if (value is MicrophoneNoiseReductionEnum) {
+      return value.rawValue;
+    } else if (value is ModeMemoryEnum) {
       return value.rawValue;
     } else if (value is MobileNetworkSetting) {
       return convertMobileNetworkSettingParam(value);

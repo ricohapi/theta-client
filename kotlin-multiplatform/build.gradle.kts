@@ -11,13 +11,14 @@ plugins {
     signing
     id("io.gitlab.arturbosch.detekt").version("1.23.3")
     id("com.vanniktech.maven.publish") version "0.32.0"
+    id("com.goncalossilva.resources") version "0.4.0"
 }
 
 dependencies {
     dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.20")
 }
 
-val thetaClientVersion = "1.13.1"
+val thetaClientVersion = "1.13.2"
 group = "com.ricoh360.thetaclient"
 version = thetaClientVersion
 

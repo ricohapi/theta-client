@@ -642,6 +642,17 @@ internal data class Options(
     var _mobileNetworkSettingSupport: MobileNetworkSettingSupport? = null,
 
     /**
+     * @see ModeMemory
+     */
+    var _modeMemory: ModeMemory? = null,
+
+    /**
+     * _modeMemory support
+     * @see ModeMemory
+     */
+    var _modeMemorySupport: List<ModeMemory>? = null,
+
+    /**
      * Network type.
      */
     var _networkType: NetworkType? = null,
@@ -1993,6 +2004,48 @@ internal data class MobileNetworkSettingSupport(
      */
     val plan: List<Plan>
 )
+
+
+internal object ModeMemorySerializer :
+    SerialNameEnumIgnoreUnknownSerializer<ModeMemory>(ModeMemory.entries, ModeMemory.UNKNOWN)
+
+/**
+ * Mode Memory
+ *
+ * The default setting is "off", preserving the previous behavior.
+ * When set to "on", the following shooting parameters will be retained even after power-off or sleep:
+ * - Still image stitching process
+ * - Exposure program / Aperture / Shutter speed / ISO sensitivity / Exposure compensation
+ * - White balance mode / Color temperature setting
+ * - Filters
+ * - Interval shooting: number of shots / interval
+ * - Multi-bracket shooting: number of shots / parameters
+ * - Interval composite shooting: duration / intermediate saving
+ * - Time-shift shooting settings (excluding shooting order)
+ * - Burst shooting options
+ * - Geotag data
+ */
+@Serializable(with = ModeMemorySerializer::class)
+internal enum class ModeMemory : SerialNameEnum {
+    /**
+     * Undefined value
+     */
+    UNKNOWN,
+
+    /**
+     * ON
+     */
+    ON {
+        override val serialName: String = "on"
+    },
+
+    /**
+     * OFF
+     */
+    OFF {
+        override val serialName: String = "off"
+    },
+}
 
 internal object RoamingSerializer :
     SerialNameEnumIgnoreUnknownSerializer<Roaming>(Roaming.entries, Roaming.UNKNOWN)

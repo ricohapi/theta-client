@@ -1026,6 +1026,12 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
 
         /**
          * Option name
+         * _modeMemory
+         */
+        ModeMemory("_modeMemory", ModeMemoryEnum::class),
+
+        /**
+         * Option name
          * _networkType
          */
         NetworkType("_networkType", NetworkTypeEnum::class),
@@ -1559,6 +1565,11 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
         var mobileNetworkSetting: MobileNetworkSetting? = null,
 
         /**
+         * @see ModeMemoryEnum
+         */
+        var modeMemory: ModeMemoryEnum? = null,
+
+        /**
          * Network type of the camera.
          */
         var networkType: NetworkTypeEnum? = null,
@@ -1789,6 +1800,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             maxRecordableTime = null,
             microphoneNoiseReduction = null,
             mobileNetworkSetting = null,
+            modeMemory = null,
             networkType = null,
             offDelay = null,
             offDelayUsb = null,
@@ -1877,6 +1889,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             maxRecordableTime = options._maxRecordableTime?.let { MaxRecordableTimeEnum.get(it) },
             microphoneNoiseReduction = options._microphoneNoiseReduction?.let { MicrophoneNoiseReductionEnum.get(it) },
             mobileNetworkSetting = options._mobileNetworkSetting?.let { MobileNetworkSetting(it) },
+            modeMemory = options._modeMemory?.let { ModeMemoryEnum.get(it) },
             networkType = options._networkType?.let { NetworkTypeEnum.get(it) },
             offDelay = options.offDelay?.let { OffDelayEnum.get(it) },
             offDelayUsb = options._offDelayUSB?.let { OffDelayUsbEnum.get(it) },
@@ -1959,6 +1972,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 _maxRecordableTime = maxRecordableTime?.sec,
                 _microphoneNoiseReduction = microphoneNoiseReduction?.value,
                 _mobileNetworkSetting = mobileNetworkSetting?.toTransferredMobileNetworkSetting(),
+                _modeMemory = modeMemory?.value,
                 _networkType = networkType?.value,
                 offDelay = offDelay?.sec,
                 _offDelayUSB = offDelayUsb?.sec,
@@ -2056,6 +2070,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.MaxRecordableTime -> maxRecordableTime
                 OptionNameEnum.MicrophoneNoiseReduction -> microphoneNoiseReduction
                 OptionNameEnum.MobileNetworkSetting -> mobileNetworkSetting
+                OptionNameEnum.ModeMemory -> modeMemory
                 OptionNameEnum.NetworkType -> networkType
                 OptionNameEnum.OffDelay -> offDelay
                 OptionNameEnum.OffDelayUsb -> offDelayUsb
@@ -2155,6 +2170,7 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
                 OptionNameEnum.MaxRecordableTime -> maxRecordableTime = value as MaxRecordableTimeEnum
                 OptionNameEnum.MicrophoneNoiseReduction -> microphoneNoiseReduction = value as MicrophoneNoiseReductionEnum
                 OptionNameEnum.MobileNetworkSetting -> mobileNetworkSetting = value as MobileNetworkSetting
+                OptionNameEnum.ModeMemory -> modeMemory = value as ModeMemoryEnum
                 OptionNameEnum.NetworkType -> networkType = value as NetworkTypeEnum
                 OptionNameEnum.OffDelay -> offDelay = value as OffDelay
                 OptionNameEnum.OffDelayUsb -> offDelayUsb = value as OffDelayUsb
@@ -5865,6 +5881,51 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
              * @return MicrophoneNoiseReductionEnum
              */
             internal fun get(value: MicrophoneNoiseReduction): MicrophoneNoiseReductionEnum? {
+                return entries.firstOrNull { it.value == value }
+            }
+        }
+    }
+
+    /**
+     * Mode Memory
+     *
+     * The default setting is "off", preserving the previous behavior.
+     * When set to "on", the following shooting parameters will be retained even after power-off or sleep:
+     * - Still image stitching process
+     * - Exposure program / Aperture / Shutter speed / ISO sensitivity / Exposure compensation
+     * - White balance mode / Color temperature setting
+     * - Filters
+     * - Interval shooting: number of shots / interval
+     * - Multi-bracket shooting: number of shots / parameters
+     * - Interval composite shooting: duration / intermediate saving
+     * - Time-shift shooting settings (excluding shooting order)
+     * - Burst shooting options
+     * - Geotag data
+     */
+    enum class ModeMemoryEnum(internal val value: ModeMemory) {
+        /**
+         * Undefined value
+         */
+        UNKNOWN(ModeMemory.UNKNOWN),
+
+        /**
+         * ON
+         */
+        ON(ModeMemory.ON),
+
+        /**
+         * OFF
+         */
+        OFF(ModeMemory.OFF);
+
+        companion object {
+            /**
+             * Convert ModeMemory to ModeMemoryEnum
+             *
+             * @param value ModeMemory.
+             * @return ModeMemoryEnum
+             */
+            internal fun get(value: ModeMemory): ModeMemoryEnum? {
                 return entries.firstOrNull { it.value == value }
             }
         }
