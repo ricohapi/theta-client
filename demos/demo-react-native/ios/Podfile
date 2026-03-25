@@ -1,6 +1,18 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
+# Fix boost pod: JFrog URL is broken (trial expired), use official archives.boost.io
+boost_podspec = File.join(__dir__, '../node_modules/react-native/third-party-podspecs/boost.podspec')
+if File.exist?(boost_podspec)
+  boost_content = File.read(boost_podspec)
+  if boost_content.include?('boostorg.jfrog.io')
+    File.write(boost_podspec, boost_content.gsub(
+      'https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.bz2',
+      'https://archives.boost.io/release/1.76.0/source/boost_1_76_0.tar.bz2'
+    ))
+  end
+end
+
 platform :ios, '15.0'
 install! 'cocoapods', :deterministic_uuids => false
 

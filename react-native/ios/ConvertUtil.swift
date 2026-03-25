@@ -163,6 +163,7 @@ let optionItemNameToEnum = [
     "latestEnabledExposureDelayTime": ThetaRepository.OptionNameEnum.latestenabledexposuredelaytime,
     KEY_MAX_RECORDABLE_TIME: ThetaRepository.OptionNameEnum.maxrecordabletime,
     "microphoneNoiseReduction": ThetaRepository.OptionNameEnum.microphonenoisereduction,
+    "modeMemory": ThetaRepository.OptionNameEnum.modememory,
     "mobileNetworkSetting": ThetaRepository.OptionNameEnum.mobilenetworksetting,
     "networkType": ThetaRepository.OptionNameEnum.networktype,
     KEY_OFF_DELAY: ThetaRepository.OptionNameEnum.offdelay,
@@ -383,6 +384,10 @@ func setOptionsValue(options: ThetaRepository.Options, name: String, value: Any)
     case ThetaRepository.OptionNameEnum.microphonenoisereduction.name:
         options.microphoneNoiseReduction = getEnumValue(
             values: ThetaRepository.MicrophoneNoiseReductionEnum.values(), name: value as! String
+        )!
+    case ThetaRepository.OptionNameEnum.modememory.name:
+        options.modeMemory = getEnumValue(
+            values: ThetaRepository.ModeMemoryEnum.values(), name: value as! String
         )!
     case ThetaRepository.OptionNameEnum.mobilenetworksetting.name:
         if let params = value as? [String: Any] {

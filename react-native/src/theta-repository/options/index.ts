@@ -26,6 +26,7 @@ export * from './option-gps-tag-recording';
 export * from './option-image-stitching';
 export * from './option-max-recordable-time';
 export * from './option-microphone-noise-reduction';
+export * from './option-mode-memory';
 export * from './option-mobile-network-setting';
 export * from './option-network-type';
 export * from './option-off-delay-usb';

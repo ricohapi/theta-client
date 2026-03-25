@@ -25,6 +25,7 @@ import type { ImageStitchingEnum } from './option-image-stitching';
 import type { MaxRecordableTimeEnum } from './option-max-recordable-time';
 import type { MicrophoneNoiseReductionEnum } from './option-microphone-noise-reduction';
 import type { MobileNetworkSetting } from './option-mobile-network-setting';
+import type { ModeMemoryEnum } from './option-mode-memory';
 import type { NetworkTypeEnum } from './option-network-type';
 import type { OffDelayEnum } from './option-off-delay';
 import type { OffDelayUsbEnum } from './option-off-delay-usb';
@@ -381,6 +382,8 @@ export const OptionNameEnum = {
   MicrophoneNoiseReduction: 'MicrophoneNoiseReduction',
   /** _mobileNetworkSetting */
   MobileNetworkSetting: 'MobileNetworkSetting',
+  /** _modeMemory */
+  ModeMemory: 'ModeMemory',
   /** networkType */
   NetworkType: 'NetworkType',
   /** offDelay */
@@ -609,6 +612,8 @@ export type Options = {
   microphoneNoiseReduction?: MicrophoneNoiseReductionEnum;
   /** _mobileNetworkSetting */
   mobileNetworkSetting?: MobileNetworkSetting;
+  /** _modeMemory */
+  modeMemory?: ModeMemoryEnum;
   /** Network type of the camera */
   networkType?: NetworkTypeEnum;
   /** Length of standby time before the camera automatically powers OFF. */

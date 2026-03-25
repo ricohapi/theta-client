@@ -1040,6 +1040,7 @@ fun getOptionValueEnum(name: OptionNameEnum, valueName: String): Any? {
         OptionNameEnum.LatestEnabledExposureDelayTime -> ExposureDelayEnum.values().find { it.name == valueName }
         OptionNameEnum.MaxRecordableTime -> MaxRecordableTimeEnum.values().find { it.name == valueName }
         OptionNameEnum.MicrophoneNoiseReduction -> MicrophoneNoiseReductionEnum.values().find { it.name == valueName }
+        OptionNameEnum.ModeMemory -> ModeMemoryEnum.values().find { it.name == valueName }
         OptionNameEnum.NetworkType -> NetworkTypeEnum.values().find { it.name == valueName }
         OptionNameEnum.OffDelay -> OffDelayEnum.values().find { it.name == valueName }
         OptionNameEnum.OffDelayUsb -> OffDelayUsbEnum.values().find { it.name == valueName }
