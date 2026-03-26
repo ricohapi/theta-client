@@ -78,5 +78,3 @@ Using this verification tool, you can select and send a command with its paramet
 
 [MIT License](LICENSE)
 
-## Useful guides
-* [THETA SDK docs | help](https://docs-theta-sdk.ricoh360.com/)
