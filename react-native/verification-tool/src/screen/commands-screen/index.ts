@@ -1,1 +1,1 @@
-export { default } from './commands-screen';
+export { default } from './commands-screen.tsx';

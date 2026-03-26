@@ -1,6 +1,6 @@
-import { NativeModules } from 'react-native';
-import { BaseNotify, NotifyController } from '../notify-controller';
-const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
+import ThetaClientReactNative from '../../NativeThetaClientReactNative';
+import type { BaseNotify } from '../notify-controller';
+import { NotifyController } from '../notify-controller';
 
 const NOTIFY_PROGRESS = 'CONVERT-VIDEO-FORMATS-PROGRESS';
 const MESSAGE_ERROR_RUNNING = 'convertVideoFormats is running.';

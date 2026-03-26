@@ -1,1 +1,1 @@
-export { default } from './get-metadata-screen';
+export { default } from './get-metadata-screen.tsx';

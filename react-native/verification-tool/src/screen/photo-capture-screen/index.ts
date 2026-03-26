@@ -1,1 +1,1 @@
-export { default } from './photo-capture-screen';
+export { default } from './photo-capture-screen.tsx';

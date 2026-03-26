@@ -1,9 +1,6 @@
 import { CaptureBuilder, CapturingStatusEnum } from './capture';
-import { NativeModules } from 'react-native';
-import {
-  BaseNotify,
-  NotifyController,
-} from '../theta-repository/notify-controller';
+import type { BaseNotify } from '../theta-repository/notify-controller';
+import { NotifyController } from '../theta-repository/notify-controller';
 import type {
   BurstBracketStepEnum,
   BurstCaptureNumEnum,
@@ -13,7 +10,7 @@ import type {
   BurstModeEnum,
   BurstOrderEnum,
 } from '../theta-repository/options';
-const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
+import ThetaClientReactNative from '../NativeThetaClientReactNative';
 
 const NOTIFY_PROGRESS = 'BURST-PROGRESS';
 const NOTIFY_STOP_ERROR = 'BURST-STOP-ERROR';

@@ -1,8 +1,6 @@
-import {
-  NativeEventEmitter,
-  type EmitterSubscription,
-  NativeModules,
-} from 'react-native';
+import type { EmitterSubscription } from 'react-native';
+import { NativeEventEmitter } from 'react-native';
+import ThetaClientReactNative from '../NativeThetaClientReactNative';
 
 export interface BaseNotify {
   name: string;
@@ -55,9 +53,7 @@ export class NotifyController {
     callback: (event: BaseNotify) => void
   ): EmitterSubscription {
     if (this.eventEmitter == null) {
-      this.eventEmitter = new NativeEventEmitter(
-        NativeModules.ThetaClientReactNative
-      );
+      this.eventEmitter = new NativeEventEmitter(ThetaClientReactNative);
     }
     return this.eventEmitter.addListener('ThetaNotify', callback);
   }

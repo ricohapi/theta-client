@@ -1,5 +1,5 @@
 import { convertOptions } from '../../theta-repository/libs';
-import type { Options } from '../../theta-repository/options';
+import { Options } from '../../theta-repository/options';
 
 describe('convertOptions', () => {
   test('getOption', () => {

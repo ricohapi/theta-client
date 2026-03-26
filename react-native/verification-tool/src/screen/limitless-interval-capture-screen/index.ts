@@ -1,1 +1,1 @@
-export { default } from './limitless-interval-capture-screen';
+export { default } from './limitless-interval-capture-screen.tsx';

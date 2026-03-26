@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet, Platform, StatusBar } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
@@ -7,6 +7,41 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
   },
+  // App.tsx styles
+  appContainer: {
+    flex: 1,
+    backgroundColor: '#6200ee',
+    marginTop: Platform.select({
+      ios: 0,
+      android: StatusBar.currentHeight || 0,
+    }),
+  },
+  appHeader: {
+    backgroundColor: '#6200ee',
+    paddingVertical: 15,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  appHeaderRight: {
+    width: 24,
+  },
+  appBackButton: {
+    marginRight: 16,
+    padding: 4,
+  },
+  appHeaderTitle: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    flex: 1,
+  },
+  appContent: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  // Other styles
   thumbnail: {
     width: 100,
     height: 50,

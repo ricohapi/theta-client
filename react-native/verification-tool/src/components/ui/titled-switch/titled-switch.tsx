@@ -1,52 +1,52 @@
 import * as React from 'react';
 import {
-  StyleProp,
-  View,
-  ViewStyle,
-  Text,
-  ViewProps,
-  Switch,
+    StyleProp,
+    View,
+    ViewStyle,
+    Text,
+    ViewProps,
+    Switch,
 } from 'react-native';
-import styles from './styles';
+import styles from './styles.tsx';
 
 interface Props extends Pick<ViewProps, 'testID'> {
-  title?: string;
-  style?: StyleProp<ViewStyle>;
-  value?: boolean;
-  onChange?: (value: boolean) => void;
+    title?: string;
+    style?: StyleProp<ViewStyle>;
+    value?: boolean;
+    onChange?: (value: boolean) => void;
 }
 
 export const TitledSwitch: React.FC<Props> = ({
-  style,
-  title,
-  value,
-  onChange,
+    style,
+    title,
+    value,
+    onChange,
 }) => {
-  const [editValue, setEditValue] = React.useState(value ?? false);
+    const [editValue, setEditValue] = React.useState(value ?? false);
 
-  React.useEffect(() => {
-    if (value != null) {
-      setEditValue(value);
-    }
-  }, [value]);
+    React.useEffect(() => {
+        if (value != null) {
+            setEditValue(value);
+        }
+    }, [value]);
 
-  const onChangeValue = (newValue: boolean) => {
-    setEditValue(newValue);
-    onChange?.(newValue);
-  };
+    const onChangeValue = (newValue: boolean) => {
+        setEditValue(newValue);
+        onChange?.(newValue);
+    };
 
-  return (
-    <View style={style}>
-      <View style={styles.containerLayout}>
-        <View style={styles.titleBack}>
-          <Text style={styles.titleText}>{title}</Text>
+    return (
+        <View style={style}>
+            <View style={styles.containerLayout}>
+                <View style={styles.titleBack}>
+                    <Text style={styles.titleText}>{title}</Text>
+                </View>
+                <View style={styles.itemBack}>
+                    <Switch value={editValue} onValueChange={onChangeValue} />
+                </View>
+            </View>
         </View>
-        <View style={styles.itemBack}>
-          <Switch value={editValue} onValueChange={onChangeValue} />
-        </View>
-      </View>
-    </View>
-  );
+    );
 };
 
 TitledSwitch.displayName = 'TitledSwitch';

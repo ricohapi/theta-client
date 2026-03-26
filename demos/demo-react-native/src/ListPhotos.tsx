@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useCallback} from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   StatusBar,
   Text,
@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import styles from './Styles';
 import {
   listFiles,
@@ -17,33 +16,51 @@ import {
   FileTypeEnum,
   FileInfo,
 } from './modules/theta-client';
+import { Navigation } from './types';
+
+type ListPhotosProps = {
+  navigation: Navigation;
+};
 
 const listPhotos = async () => {
-  const {fileList} = await listFiles(FileTypeEnum.IMAGE, 0, 1000);
+  const { fileList } = await listFiles(FileTypeEnum.IMAGE, 0, 1000);
   return fileList;
 };
 
-const ListPhotos = ({navigation}) => {
+const ListPhotos = ({ navigation }: ListPhotosProps) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [files, setFiles] = useState<FileInfo[]>([]);
 
   const onRefresh = useCallback(async () => {
-    setRefreshing(true);
-    setFiles(await listPhotos());
-    setRefreshing(false);
+    try {
+      setRefreshing(true);
+      const fetchedFiles = await listPhotos();
+      setFiles(fetchedFiles);
+      setRefreshing(false);
+    } catch (error) {
+      setRefreshing(false);
+    }
   }, []);
 
   useEffect(() => {
     const init = async () => {
-      const info = await getThetaInfo();
-      navigation.setOptions({title: `${info.model}:${info.serialNumber}`});
-      await onRefresh();
+      try {
+        const info = await getThetaInfo();
+        navigation.setOptions({ title: `${info.model}:${info.serialNumber}` });
+        await onRefresh();
+      } catch (error) {
+        try {
+          await onRefresh();
+        } catch (refreshError) {
+          // Error refreshing
+        }
+      }
     };
     init();
   }, [onRefresh, navigation]);
 
   const onSelect = (item: FileInfo) => {
-    navigation.navigate('sphere', {item: item});
+    navigation.navigate('sphere', { fileUrl: item.fileUrl });
   };
 
   const items = files.map(item => (
@@ -51,7 +68,7 @@ const ListPhotos = ({navigation}) => {
       style={styles.fileItemBase}
       key={item.name}
       onPress={() => onSelect(item)}>
-      <Image style={styles.thumbnail} source={{uri: item.thumbnailUrl}} />
+      <Image style={styles.thumbnail} source={{ uri: item.thumbnailUrl }} />
       <View
         style={{
           width: Dimensions.get('window').width - 108,
@@ -64,7 +81,7 @@ const ListPhotos = ({navigation}) => {
   ));
 
   return (
-    <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
+    <View style={styles.container}>
       <StatusBar barStyle="light-content" />
       <ScrollView
         refreshControl={
@@ -72,7 +89,7 @@ const ListPhotos = ({navigation}) => {
         }>
         {items}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

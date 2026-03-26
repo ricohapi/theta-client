@@ -14,13 +14,20 @@ describe('time shift capture', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     NotifyController.instance.release();
+    jest.mocked(NativeEventEmitter_addListener).mockImplementation(
+      jest.fn(() => {
+        return {
+          remove: jest.fn(),
+        };
+      })
+    );
   });
 
   afterEach(() => {
-    thetaClient.initialize = jest.fn();
-    thetaClient.buildTimeShiftCapture = jest.fn();
-    thetaClient.startTimeShiftCapture = jest.fn();
-    thetaClient.cancelTimeShiftCapture = jest.fn();
+    thetaClient.initialize = jest.fn(() => Promise.resolve());
+    thetaClient.buildTimeShiftCapture = jest.fn(() => Promise.resolve());
+    thetaClient.startTimeShiftCapture = jest.fn(() => Promise.resolve(''));
+    thetaClient.cancelTimeShiftCapture = jest.fn(() => Promise.resolve());
     NotifyController.instance.release();
   });
 

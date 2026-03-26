@@ -28,13 +28,20 @@ describe('burst shooting', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     NotifyController.instance.release();
+    jest.mocked(NativeEventEmitter_addListener).mockImplementation(
+      jest.fn(() => {
+        return {
+          remove: jest.fn(),
+        };
+      })
+    );
   });
 
   afterEach(() => {
-    thetaClient.initialize = jest.fn();
-    thetaClient.buildBurstCapture = jest.fn();
-    thetaClient.startBurstCapture = jest.fn();
-    thetaClient.cancelBurstCapture = jest.fn();
+    thetaClient.initialize = jest.fn(() => Promise.resolve());
+    thetaClient.buildBurstCapture = jest.fn(() => Promise.resolve());
+    thetaClient.startBurstCapture = jest.fn(() => Promise.resolve([]));
+    thetaClient.cancelBurstCapture = jest.fn(() => Promise.resolve());
     NotifyController.instance.release();
   });
 

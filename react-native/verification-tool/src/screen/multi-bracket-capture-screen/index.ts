@@ -1,1 +1,1 @@
-export { default } from './multi-bracket-capture-screen';
+export { default } from './multi-bracket-capture-screen.tsx';

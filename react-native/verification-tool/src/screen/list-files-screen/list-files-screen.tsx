@@ -1,155 +1,170 @@
-import React, { useEffect, useState } from 'react';
-import { StatusBar, Text, View, ScrollView, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import styles from './styles';
+import React, { useEffect } from 'react';
+import { Text, View, ScrollView, Alert, SafeAreaView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import styles from './styles.tsx';
 import { FileTypeEnum, StorageEnum } from '../../modules/theta-client';
 import Button from '../../components/ui/button';
 import { ListFilesView } from '../../components/list-files-view';
 import { ItemSelectorView } from '../../components/ui/item-list';
 import { InputNumber } from '../../components/ui/input-number';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '../../App';
 
-interface ListFilesProps {
-  fileType: FileTypeEnum;
-  startPosition: number;
-  entryCount: number;
-  storage?: StorageEnum;
+interface ListFilesScreenProps {
+    navigation: {
+        setOptions: (options: { title: string }) => void;
+        navigate: (screen: string, params?: any) => void;
+    };
+    state: {
+        fileType: any;
+        startPosition: number;
+        entryCount: number;
+        storage: any;
+        message: string;
+        selectedFileInfo: any;
+        listFilesProps: any;
+        refreshCounter: number;
+    };
+    setState: (state: any) => void;
 }
 
-export const CommandEnum = {
-  /** still image files. */
-  IMAGE: 'IMAGE',
-  /** video files. */
-  VIDEO: 'VIDEO',
-  /** all files. */
-  ALL: 'ALL',
-} as const;
+const ListFilesScreen: React.FC<ListFilesScreenProps> = ({ navigation, state, setState }) => {
 
-const ListFilesScreen: React.FC<
-  NativeStackScreenProps<RootStackParamList, 'listFiles'>
-> = ({ navigation }) => {
-  const [fileType, setFileType] = useState(FileTypeEnum.ALL);
-  const [startPosition, setStartPosition] = useState(0);
-  const [entryCount, setEntryCount] = useState(100);
-  const [storage, setStorage] = useState<StorageEnum>();
-  const [message, setMessage] = React.useState('');
-  const [listFilesProps, setListFilesProps] = React.useState<ListFilesProps>();
-  const [refreshCounter, setRefreshCounter] = React.useState(0);
+    const fileTypeList = [
+        { name: 'ALL', value: FileTypeEnum.ALL },
+        { name: 'IMAGE', value: FileTypeEnum.IMAGE },
+        { name: 'VIDEO', value: FileTypeEnum.VIDEO },
+    ];
 
-  const fileTypeList = [
-    { name: 'ALL', value: FileTypeEnum.ALL },
-    { name: 'IMAGE', value: FileTypeEnum.IMAGE },
-    { name: 'VIDEO', value: FileTypeEnum.VIDEO },
-  ];
-  const storageList = [
-    { name: '[undefined]', value: undefined },
-    { name: 'INTERNAL', value: StorageEnum.INTERNAL },
-    { name: 'SD', value: StorageEnum.SD },
-    { name: 'CURRENT', value: StorageEnum.CURRENT },
-  ];
+    const storageList = [
+        { name: '[undefined]', value: undefined },
+        { name: 'INTERNAL', value: StorageEnum.INTERNAL },
+        { name: 'SD', value: StorageEnum.SD },
+        { name: 'CURRENT', value: StorageEnum.CURRENT },
+    ];
 
-  useEffect(() => {
-    navigation.setOptions({ title: 'listFiles' });
-  }, [navigation]);
+    useEffect(() => {
+        navigation.setOptions({ title: 'listFiles' });
+    }, [navigation]);
 
-  const showList = () => {
-    setListFilesProps({
-      fileType,
-      startPosition,
-      entryCount,
-      storage,
-    });
-    setRefreshCounter(refreshCounter + 1);
-  };
+    const showList = () => {
+        const newListFilesProps = {
+            fileType: state.fileType || FileTypeEnum.ALL,
+            startPosition: state.startPosition,
+            entryCount: state.entryCount,
+            storage: state.storage,
+        };
+        setState({
+            ...state,
+            listFilesProps: newListFilesProps,
+            refreshCounter: state.refreshCounter + 1,
+            selectedFileInfo: null,
+            message: '',
+        });
+    };
 
-  return (
-    <SafeAreaView
-      style={styles.safeAreaContainer}
-      edges={['left', 'right', 'bottom']}
-    >
-      <StatusBar barStyle="light-content" />
-      <View>
-        <ScrollView style={styles.messageArea}>
-          <Text style={styles.messageText}>{message}</Text>
-        </ScrollView>
-      </View>
-      <ItemSelectorView
-        itemList={fileTypeList}
-        title={'fileType'}
-        onSelected={(item) => {
-          setFileType(item.value);
-        }}
-        selectedItem={fileTypeList.find((item) => item.value === fileType)}
-      />
-      <InputNumber
-        title={'startPosition'}
-        onChange={(newValue) => setStartPosition(newValue ?? 0)}
-        value={startPosition}
-      />
-      <InputNumber
-        title={'entryCount'}
-        onChange={(newValue) => {
-          if (newValue != null) {
-            setEntryCount(newValue);
-          }
-        }}
-        value={entryCount}
-      />
-      <ItemSelectorView
-        itemList={storageList}
-        title={'storage'}
-        onSelected={(item) => {
-          setStorage(item.value);
-        }}
-        selectedItem={storageList.find((item) => item.value === storage)}
-      />
+    const showPhoto = () => {
+        if (state.selectedFileInfo) {
+            navigation.navigate('filePreview', { fileInfo: state.selectedFileInfo });
+        } else {
+            Alert.alert('No file selected', 'Please select a file first', [{ text: 'OK' }]);
+        }
+    };
 
-      <View style={styles.buttonViewContainerLayout}>
-        <Button style={styles.button} title="SHOW LIST" onPress={showList} />
-      </View>
+    return (
+        <SafeAreaView style={styles.safeAreaContainer}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View style={styles.contentContainer}>
+                    <View>
+                        <ScrollView style={styles.messageArea}>
+                            <Text style={styles.messageText}>{state.message}</Text>
+                        </ScrollView>
+                    </View>
 
-      {listFilesProps && (
-        <ListFilesView
-          startPosition={listFilesProps.startPosition}
-          entryCount={listFilesProps.entryCount}
-          fileType={listFilesProps.fileType}
-          storage={listFilesProps.storage}
-          onSelected={(files) => {
-            const fileInfo = files.length > 0 ? files[0] : undefined;
-            console.log('onSelected:' + fileInfo?.fileUrl);
-            if (fileInfo != null) {
-              const jsonString = JSON.stringify(
-                JSON.parse(JSON.stringify(fileInfo)),
-                null,
-                2
-              );
-              setMessage('select:\n' + jsonString);
-            }
-          }}
-          onError={(error) => {
-            Alert.alert('listFiles', 'get error\n' + JSON.stringify(error), [
-              {
-                text: 'OK',
-                onPress: () => {
-                  setListFilesProps(undefined);
-                },
-              },
-            ]);
-          }}
-          refreshCounter={refreshCounter}
-          onRefreshed={(thetaFiles) => {
-            if (thetaFiles != null) {
-              const strInfo = `listFiles\n totalEntries: ${thetaFiles.totalEntries} entryCount: ${thetaFiles.fileList.length}`;
-              setMessage(strInfo);
-            } else {
-              setMessage('');
-            }
-          }}
-        />
-      )}
-    </SafeAreaView>
-  );
+                    <ItemSelectorView
+                        itemList={fileTypeList}
+                        title={'fileType'}
+                        onSelected={(item) => {
+                            setState({ ...state, fileType: item.value });
+                        }}
+                        selectedItem={fileTypeList.find((item) => item.value === (state.fileType || FileTypeEnum.ALL))}
+                    />
+
+                    <InputNumber
+                        title={'startPosition'}
+                        onChange={(newValue) => setState({ ...state, startPosition: newValue ?? 0 })}
+                        value={state.startPosition}
+                    />
+
+                    <InputNumber
+                        title={'entryCount'}
+                        onChange={(newValue) => {
+                            if (newValue != null) {
+                                setState({ ...state, entryCount: newValue });
+                            }
+                        }}
+                        value={state.entryCount}
+                    />
+
+                    <ItemSelectorView
+                        itemList={storageList}
+                        title={'storage'}
+                        onSelected={(item) => {
+                            setState({ ...state, storage: item.value });
+                        }}
+                        selectedItem={storageList.find((item) => item.value === state.storage)}
+                    />
+
+                    <View style={styles.buttonViewContainerLayout}>
+                        <Button style={styles.button} title="SHOW LIST" onPress={showList} />
+                        <Button style={styles.button} title="SHOW PHOTO" onPress={showPhoto} disabled={!state.selectedFileInfo} />
+                    </View>
+
+                    {state.listFilesProps && (
+                        <ListFilesView
+                            startPosition={state.listFilesProps.startPosition}
+                            entryCount={state.listFilesProps.entryCount}
+                            fileType={state.listFilesProps.fileType}
+                            storage={state.listFilesProps.storage}
+                            selectedFiles={state.selectedFileInfo ? [state.selectedFileInfo] : []}
+                            onSelected={(files) => {
+                                const fileInfo = files.length > 0 ? files[0] : undefined;
+                                console.log('onSelected:' + fileInfo?.fileUrl);
+                                if (fileInfo != null) {
+                                    const jsonString = JSON.stringify(
+                                        JSON.parse(JSON.stringify(fileInfo)),
+                                        null,
+                                        2
+                                    );
+                                    setState({ ...state, selectedFileInfo: fileInfo, message: 'select:\n' + jsonString });
+                                }
+                            }}
+                            onError={(error) => {
+                                Alert.alert('listFiles', 'get error\n' + JSON.stringify(error), [
+                                    {
+                                        text: 'OK',
+                                        onPress: () => {
+                                            setState({ ...state, listFilesProps: undefined });
+                                        },
+                                    },
+                                ]);
+                            }}
+                            refreshCounter={state.refreshCounter}
+                            onRefreshed={(thetaFiles) => {
+                                if (thetaFiles != null) {
+                                    const strInfo = `listFiles\ntotalEntries: ${thetaFiles.totalEntries} entryCount: ${thetaFiles.fileList.length}`;
+                                    if (!state.selectedFileInfo) {
+                                        setState({ ...state, message: strInfo });
+                                    }
+                                } else {
+                                    if (!state.selectedFileInfo) {
+                                        setState({ ...state, message: '' });
+                                    }
+                                }
+                            }}
+                        />
+                    )}
+                </View>
+            </TouchableWithoutFeedback>
+        </SafeAreaView>
+    );
 };
 
 export default ListFilesScreen;

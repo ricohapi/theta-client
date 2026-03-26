@@ -1,1 +1,1 @@
-export { default } from './video-convert-screen';
+export { default } from './video-convert-screen.tsx';

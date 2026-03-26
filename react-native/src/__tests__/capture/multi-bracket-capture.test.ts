@@ -25,13 +25,20 @@ describe('multi bracket shooting', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     NotifyController.instance.release();
+    jest.mocked(NativeEventEmitter_addListener).mockImplementation(
+      jest.fn(() => {
+        return {
+          remove: jest.fn(),
+        };
+      })
+    );
   });
 
   afterEach(() => {
-    thetaClient.initialize = jest.fn();
-    thetaClient.buildMultiBracketCapture = jest.fn();
-    thetaClient.startMultiBracketCapture = jest.fn();
-    thetaClient.cancelMultiBracketCapture = jest.fn();
+    thetaClient.initialize = jest.fn(() => Promise.resolve());
+    thetaClient.buildMultiBracketCapture = jest.fn(() => Promise.resolve());
+    thetaClient.startMultiBracketCapture = jest.fn(() => Promise.resolve([]));
+    thetaClient.cancelMultiBracketCapture = jest.fn(() => Promise.resolve());
     NotifyController.instance.release();
   });
 

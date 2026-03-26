@@ -1,5 +1,7 @@
 import { NativeModules } from 'react-native';
-import { ThetaConfig, ThetaTimeout, initialize } from '../../theta-repository';
+import { ThetaConfig, ThetaTimeout } from '../../theta-repository';
+import { initialize } from '../../theta-repository';
+import { NativeEventEmitter_addListener } from '../../__mocks__/react-native';
 import {
   LanguageEnum,
   OffDelayEnum,
@@ -12,18 +14,25 @@ describe('initialize', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.mocked(NativeEventEmitter_addListener).mockImplementation(
+      jest.fn(() => {
+        return {
+          remove: jest.fn(),
+        };
+      })
+    );
   });
 
   afterEach(() => {
-    thetaClient.initialize = jest.fn();
+    thetaClient.initialize = jest.fn(() => Promise.resolve());
   });
 
   test('Call empty parameter', async () => {
     jest.mocked(thetaClient.initialize).mockImplementation(
       jest.fn(async (endpoint, config, timeout) => {
         expect(endpoint).toBe(defaultEndpoint);
-        expect(config).toBeUndefined();
-        expect(timeout).toBeUndefined();
+        expect(config).toBeNull();
+        expect(timeout).toBeNull();
         return true;
       })
     );
@@ -32,8 +41,8 @@ describe('initialize', () => {
     expect(result).toBeTruthy();
     expect(thetaClient.initialize).toHaveBeenCalledWith(
       defaultEndpoint,
-      undefined,
-      undefined
+      null,
+      null
     );
   });
 
@@ -43,8 +52,8 @@ describe('initialize', () => {
     jest.mocked(thetaClient.initialize).mockImplementation(
       jest.fn(async (endpoint, config, timeout) => {
         expect(endpoint).toBe(testEndpoint);
-        expect(config).toBeUndefined();
-        expect(timeout).toBeUndefined();
+        expect(config).toBeNull();
+        expect(timeout).toBeNull();
         return true;
       })
     );
@@ -53,8 +62,8 @@ describe('initialize', () => {
     expect(result).toBeTruthy();
     expect(thetaClient.initialize).toHaveBeenCalledWith(
       testEndpoint,
-      undefined,
-      undefined
+      null,
+      null
     );
   });
 
@@ -78,7 +87,7 @@ describe('initialize', () => {
         expect(config).toBe(testConfig);
         expect(config.clientMode).toBeDefined();
         expect(config.clientMode).toBe(testConfig.clientMode);
-        expect(timeout).toBeUndefined();
+        expect(timeout).toBeNull();
         return true;
       })
     );
@@ -88,7 +97,7 @@ describe('initialize', () => {
     expect(thetaClient.initialize).toHaveBeenCalledWith(
       testEndpoint,
       testConfig,
-      undefined
+      null
     );
   });
 
@@ -134,8 +143,8 @@ describe('initialize', () => {
     }
     expect(thetaClient.initialize).toHaveBeenCalledWith(
       defaultEndpoint,
-      undefined,
-      undefined
+      null,
+      null
     );
   });
 });

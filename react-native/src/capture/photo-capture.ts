@@ -1,12 +1,9 @@
 import { CapturingStatusEnum, PhotoCaptureBuilderBase } from './capture';
 import type { FilterEnum, PresetEnum } from '../theta-repository/options';
 
-import { NativeModules } from 'react-native';
-import {
-  BaseNotify,
-  NotifyController,
-} from '../theta-repository/notify-controller';
-const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
+import ThetaClientReactNative from '../NativeThetaClientReactNative';
+import type { BaseNotify } from '../theta-repository/notify-controller';
+import { NotifyController } from '../theta-repository/notify-controller';
 
 const NOTIFY_CAPTURING = 'PHOTO-CAPTURING';
 

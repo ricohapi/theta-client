@@ -16,13 +16,26 @@ describe('interval composite shooting', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     NotifyController.instance.release();
+    jest.mocked(NativeEventEmitter_addListener).mockImplementation(
+      jest.fn(() => {
+        return {
+          remove: jest.fn(),
+        };
+      })
+    );
   });
 
   afterEach(() => {
-    thetaClient.initialize = jest.fn();
-    thetaClient.buildCompositeIntervalCapture = jest.fn();
-    thetaClient.startCompositeIntervalCapture = jest.fn();
-    thetaClient.cancelCompositeIntervalCapture = jest.fn();
+    thetaClient.initialize = jest.fn(() => Promise.resolve());
+    thetaClient.buildCompositeIntervalCapture = jest.fn(() =>
+      Promise.resolve()
+    );
+    thetaClient.startCompositeIntervalCapture = jest.fn(() =>
+      Promise.resolve([])
+    );
+    thetaClient.cancelCompositeIntervalCapture = jest.fn(() =>
+      Promise.resolve()
+    );
     NotifyController.instance.release();
   });
 

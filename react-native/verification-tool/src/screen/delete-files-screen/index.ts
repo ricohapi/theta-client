@@ -1,1 +1,1 @@
-export { default } from './delete-files-screen';
+export { default } from './delete-files-screen.tsx';

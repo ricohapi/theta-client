@@ -148,7 +148,7 @@ export type CapturingStatusEnum =
   (typeof CapturingStatusEnum)[keyof typeof CapturingStatusEnum];
 
 export class PhotoCaptureBuilderBase<
-  T extends PhotoCaptureBuilderBase<T>
+  T extends PhotoCaptureBuilderBase<T>,
 > extends CaptureBuilder<T> {
   /**
    * Set photo file format.

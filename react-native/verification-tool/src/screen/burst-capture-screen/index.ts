@@ -1,1 +1,1 @@
-export { default } from './burst-capture-screen';
+export { default } from './burst-capture-screen.tsx';

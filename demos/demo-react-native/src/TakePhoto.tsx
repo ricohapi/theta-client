@@ -15,27 +15,35 @@ import {
   THETA_EVENT_NAME,
   isInitialized,
 } from './modules/theta-client';
-import {useIsFocused} from '@react-navigation/native';
 import WebView from 'react-native-webview';
+import { Navigation } from './types';
 
-const TakePhoto = ({navigation}) => {
-  const isFocused = useIsFocused();
+type TakePhotoProps = {
+  navigation: Navigation;
+};
+
+const TakePhoto = ({ navigation }: TakePhotoProps) => {
   const [dataUrl, setDataUrl] = React.useState<string | undefined>();
   const [isLoaded, setLoaded] = React.useState(false);
+  const [listenerReady, setListenerReady] = React.useState(false);
   const webViewRef = React.useRef<WebView>(null);
   const source =
     Platform.OS === 'android'
       ? 'file:///android_asset/live-preview/index.html'
       : './Web.bundle/live-preview/index.html';
 
-  const startLivePreview = async () => {
+  const startLivePreview = () => {
+    if (!listenerReady) {
+      console.log('Listener not ready yet, waiting...');
+      return;
+    }
     getLivePreview()
-      .then(x => {
+      .then((x: boolean) => {
         console.log(`live preview done with ${x}`);
       })
-      .catch(error => {
+      .catch((error: any) => {
         Alert.alert('getLivePreview', 'error: \n' + JSON.stringify(error), [
-          {text: 'OK'},
+          { text: 'OK' },
         ]);
       });
   };
@@ -54,25 +62,30 @@ const TakePhoto = ({navigation}) => {
   };
 
   React.useEffect(() => {
-    if (isFocused) {
-      const emitter = new NativeEventEmitter(
-        NativeModules.ThetaClientReactNative,
-      );
-      const eventListener = emitter.addListener(THETA_EVENT_NAME, event => {
-        setDataUrl(event.data);
+    const emitter = new NativeEventEmitter(
+      NativeModules.ThetaClientReactNative,
+    );
+    const eventListener = emitter.addListener(THETA_EVENT_NAME, event => {
+      setDataUrl(event.data);
+    });
+    setListenerReady(true);
+    return () => {
+      isInitialized().then((isInit: boolean) => {
+        if (isInit) {
+          stopLivePreview();
+        }
       });
+      eventListener.remove();
+      setListenerReady(false);
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (listenerReady) {
       startLivePreview();
-      return () => {
-        isInitialized().then(isInit => {
-          if (isInit) {
-            stopLivePreview();
-          }
-        });
-        eventListener.remove();
-      };
     }
-    return;
-  }, [isFocused]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listenerReady]);
 
   React.useEffect(() => {
     if (isLoaded && dataUrl) {
@@ -82,18 +95,19 @@ const TakePhoto = ({navigation}) => {
   }, [dataUrl, isLoaded]);
 
   const onShutter = async () => {
-    stopLivePreview();
-    const photoCapture = await getPhotoCaptureBuilder().build();
-    const url = await photoCapture.takePicture();
-    if (url) {
-      const urls = url.split('/');
-      navigation.navigate('sphere', {
-        item: {fileUrl: url, name: urls[urls.length - 1]},
-      });
-    } else {
-      Alert.alert('takePicture canceled.', undefined, [
-        {text: 'OK', onPress: () => startLivePreview},
-      ]);
+    try {
+      stopLivePreview();
+      const photoCapture = await getPhotoCaptureBuilder().build();
+      const url = await photoCapture.takePicture();
+      if (url) {
+        navigation.navigate('sphere', { fileUrl: url });
+      } else {
+        Alert.alert('takePicture canceled.', undefined, [
+          { text: 'OK', onPress: () => startLivePreview },
+        ]);
+      }
+    } catch (error) {
+      // Error taking picture
     }
   };
 
@@ -104,8 +118,10 @@ const TakePhoto = ({navigation}) => {
           style={styles.livePreviewWebview}
           ref={webViewRef}
           originWhitelist={['*']}
-          source={{uri: source}}
+          source={{ uri: source }}
           onLoad={onLoad}
+          allowFileAccess={true}
+          allowUniversalAccessFromFileURLs={true}
         />
       </View>
       <View style={styles.livePreviewBottomContainer}>
@@ -115,4 +131,6 @@ const TakePhoto = ({navigation}) => {
   );
 };
 
-export default TakePhoto;
+export default React.memo(TakePhoto, (prevProps, nextProps) => {
+  return prevProps.navigation === nextProps.navigation;
+});

@@ -1,10 +1,7 @@
 import { CaptureBuilder, CapturingStatusEnum } from './capture';
-import { NativeModules } from 'react-native';
-import {
-  BaseNotify,
-  NotifyController,
-} from '../theta-repository/notify-controller';
-const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
+import ThetaClientReactNative from '../NativeThetaClientReactNative';
+import type { BaseNotify } from '../theta-repository/notify-controller';
+import { NotifyController } from '../theta-repository/notify-controller';
 
 const NOTIFY_PROGRESS = 'SHOT-COUNT-SPECIFIED-INTERVAL-PROGRESS';
 const NOTIFY_STOP_ERROR = 'SHOT-COUNT-SPECIFIED-INTERVAL-STOP-ERROR';

@@ -1,0 +1,10 @@
+{
+  "extends": "@react-native/typescript-config/tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "theta-client-react-native": [
+        "../src/index"
+      ]
+    }
+  }
+}
