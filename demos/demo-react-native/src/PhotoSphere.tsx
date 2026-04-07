@@ -8,7 +8,7 @@ type PhotoSphereProps = {
   fileUrl?: string;
 };
 
-const PhotoSphere = ({ _navigation, fileUrl }: PhotoSphereProps) => {
+const PhotoSphere = ({ fileUrl }: PhotoSphereProps) => {
   return (
     <View style={styles.takePhotoBack}>
       {fileUrl ? (

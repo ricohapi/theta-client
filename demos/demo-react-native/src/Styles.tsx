@@ -105,6 +105,38 @@ const styles = StyleSheet.create({
     zIndex: 1,
     elevation: 1,
   },
+  // MainMenu styles
+  statusContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  statusCenter: {
+    alignItems: 'center',
+  },
+  statusConnecting: {
+    marginTop: 10,
+    color: '#666',
+  },
+  statusSuccess: {
+    fontSize: 48,
+    color: '#4CAF50',
+  },
+  statusSuccessText: {
+    marginTop: 10,
+    color: '#4CAF50',
+    fontWeight: 'bold',
+  },
+  statusError: {
+    fontSize: 48,
+    color: '#F44336',
+  },
+  statusErrorText: {
+    marginTop: 10,
+    color: '#F44336',
+  },
+  disabledButton: {
+    opacity: 0.5,
+  },
 });
 
 export default styles;

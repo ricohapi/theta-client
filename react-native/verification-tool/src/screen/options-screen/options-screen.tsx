@@ -40,7 +40,7 @@ import {
     CompassDirectionRefEnum,
     WlanFrequencyEnum,
     NetworkTypeEnum,
-    ModeMemoryEnum
+    ModeMemoryEnum,
 } from '../../modules/theta-client';
 import {
     AutoBracketEdit,

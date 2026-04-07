@@ -69,25 +69,25 @@ const MainMenu = ({ navigation }: MainMenuProps) => {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <View style={{ alignItems: 'center', marginBottom: 20 }}>
+      <View style={styles.statusContainer}>
         {isInitializing ? (
-          <View style={{ alignItems: 'center' }}>
+          <View style={styles.statusCenter}>
             <ActivityIndicator size="large" color="#6200ee" />
-            <Text style={{ marginTop: 10, color: '#666' }}>
+            <Text style={styles.statusConnecting}>
               Connecting to THETA...
             </Text>
           </View>
         ) : isInitialized ? (
-          <View style={{ alignItems: 'center' }}>
-            <Text style={{ fontSize: 48, color: '#4CAF50' }}>✓</Text>
-            <Text style={{ marginTop: 10, color: '#4CAF50', fontWeight: 'bold' }}>
+          <View style={styles.statusCenter}>
+            <Text style={styles.statusSuccess}>✓</Text>
+            <Text style={styles.statusSuccessText}>
               Connected
             </Text>
           </View>
         ) : (
-          <View style={{ alignItems: 'center' }}>
-            <Text style={{ fontSize: 48, color: '#F44336' }}>✗</Text>
-            <Text style={{ marginTop: 10, color: '#F44336' }}>
+          <View style={styles.statusCenter}>
+            <Text style={styles.statusError}>✗</Text>
+            <Text style={styles.statusErrorText}>
               Connection Failed
             </Text>
           </View>
@@ -96,7 +96,7 @@ const MainMenu = ({ navigation }: MainMenuProps) => {
       <TouchableOpacity
         style={[
           styles.buttonBack,
-          (!isInitialized || isInitializing) && { opacity: 0.5 }
+          (!isInitialized || isInitializing) && styles.disabledButton,
         ]}
         onPress={goTake}
         disabled={!isInitialized || isInitializing}
@@ -107,7 +107,7 @@ const MainMenu = ({ navigation }: MainMenuProps) => {
       <TouchableOpacity
         style={[
           styles.buttonBack,
-          (!isInitialized || isInitializing) && { opacity: 0.5 }
+          (!isInitialized || isInitializing) && styles.disabledButton,
         ]}
         onPress={goList}
         disabled={!isInitialized || isInitializing}
