@@ -1,0 +1,13 @@
+node_modules/
+android/
+ios/
+build/
+.bundle/
+dist/
+vendor/
+coverage/
+web/
+*.bundle.*
+.git/
+*.lock
+Gemfile*

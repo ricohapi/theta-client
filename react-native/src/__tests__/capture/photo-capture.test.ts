@@ -18,12 +18,19 @@ describe('photo capture', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     NotifyController.instance.release();
+    jest.mocked(NativeEventEmitter_addListener).mockImplementation(
+      jest.fn(() => {
+        return {
+          remove: jest.fn(),
+        };
+      })
+    );
   });
 
   afterEach(() => {
-    thetaClient.initialize = jest.fn();
-    thetaClient.buildPhotoCapture = jest.fn();
-    thetaClient.takePicture = jest.fn();
+    thetaClient.initialize = jest.fn(() => Promise.resolve());
+    thetaClient.buildPhotoCapture = jest.fn(() => Promise.resolve());
+    thetaClient.takePicture = jest.fn(() => Promise.resolve(''));
     NotifyController.instance.release();
   });
 

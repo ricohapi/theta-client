@@ -2,6 +2,9 @@
 
 rm -rf package
 mkdir package
+rm -rf lib
+yarn prepack
+
 tar -cf - \
     -vz \
     --exclude '.DS_Store' \
@@ -15,6 +18,8 @@ tar -cf - \
     android \
     ios \
     src \
+    lib \
+    frameworks \
     package.json \
     theta-client-react-native.podspec |
      (cd package; tar -zxf -)

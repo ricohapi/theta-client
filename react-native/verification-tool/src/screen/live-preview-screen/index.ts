@@ -1,1 +1,1 @@
-export { default } from './live-preview-screen';
+export { default } from './live-preview-screen.tsx';

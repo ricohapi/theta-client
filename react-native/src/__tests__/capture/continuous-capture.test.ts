@@ -21,13 +21,20 @@ describe('continuous shooting', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     NotifyController.instance.release();
+    jest.mocked(NativeEventEmitter_addListener).mockImplementation(
+      jest.fn(() => {
+        return {
+          remove: jest.fn(),
+        };
+      })
+    );
   });
 
   afterEach(() => {
-    thetaClient.initialize = jest.fn();
-    thetaClient.buildContinuousCapture = jest.fn();
-    thetaClient.startContinuousCapture = jest.fn();
-    thetaClient.getOptions = jest.fn();
+    thetaClient.initialize = jest.fn(() => Promise.resolve());
+    thetaClient.buildContinuousCapture = jest.fn(() => Promise.resolve());
+    thetaClient.startContinuousCapture = jest.fn(() => Promise.resolve([]));
+    thetaClient.getOptions = jest.fn(() => Promise.resolve({}));
     NotifyController.instance.release();
   });
 

@@ -1,1 +1,1 @@
-export { default } from './list-files-screen';
+export { default } from './list-files-screen.tsx';

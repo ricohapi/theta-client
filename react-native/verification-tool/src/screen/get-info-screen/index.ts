@@ -1,1 +1,1 @@
-export { default } from './get-info-screen';
+export { default } from './get-info-screen.tsx';

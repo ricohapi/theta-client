@@ -1,1 +1,1 @@
-export { default } from './time-shift-capture-screen';
+export { default } from './time-shift-capture-screen.tsx';

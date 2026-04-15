@@ -17,14 +17,23 @@ describe('manual time shift capture', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     NotifyController.instance.release();
+    jest.mocked(NativeEventEmitter_addListener).mockImplementation(
+      jest.fn(() => {
+        return {
+          remove: jest.fn(),
+        };
+      })
+    );
   });
 
   afterEach(() => {
-    thetaClient.initialize = jest.fn();
-    thetaClient.buildTimeShiftManualCapture = jest.fn();
-    thetaClient.startTimeShiftManualCapture = jest.fn();
-    thetaClient.startTimeShiftManualSecondCapture = jest.fn();
-    thetaClient.cancelTimeShiftManualCapture = jest.fn();
+    thetaClient.initialize = jest.fn(() => Promise.resolve());
+    thetaClient.buildTimeShiftManualCapture = jest.fn(() => Promise.resolve());
+    thetaClient.startTimeShiftManualCapture = jest.fn(() => Promise.resolve());
+    thetaClient.startTimeShiftManualSecondCapture = jest.fn(() =>
+      Promise.resolve('')
+    );
+    thetaClient.cancelTimeShiftManualCapture = jest.fn(() => Promise.resolve());
     NotifyController.instance.release();
   });
 

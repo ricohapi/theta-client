@@ -18,13 +18,20 @@ describe('EventWebSocket', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     NotifyController.instance.release();
+    jest.mocked(NativeEventEmitter_addListener).mockImplementation(
+      jest.fn(() => {
+        return {
+          remove: jest.fn(),
+        };
+      })
+    );
   });
 
   afterEach(() => {
-    thetaClient.initialize = jest.fn();
-    thetaClient.getEventWebSocket = jest.fn();
-    thetaClient.eventWebSocketStart = jest.fn();
-    thetaClient.eventWebSocketStop = jest.fn();
+    thetaClient.initialize = jest.fn(() => Promise.resolve());
+    thetaClient.getEventWebSocket = jest.fn(() => Promise.resolve());
+    thetaClient.eventWebSocketStart = jest.fn(() => Promise.resolve());
+    thetaClient.eventWebSocketStop = jest.fn(() => Promise.resolve());
     NotifyController.instance.release();
   });
 

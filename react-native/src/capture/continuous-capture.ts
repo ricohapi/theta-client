@@ -1,16 +1,13 @@
 import { CaptureBuilder, CapturingStatusEnum } from './capture';
-import { NativeModules } from 'react-native';
-import {
-  BaseNotify,
-  NotifyController,
-} from '../theta-repository/notify-controller';
+import ThetaClientReactNative from '../NativeThetaClientReactNative';
+import type { BaseNotify } from '../theta-repository/notify-controller';
+import { NotifyController } from '../theta-repository/notify-controller';
+import type { PhotoFileFormatEnum } from '../theta-repository/options';
 import {
   ContinuousNumberEnum,
-  PhotoFileFormatEnum,
   OptionNameEnum,
 } from '../theta-repository/options';
 import { getOptions } from '../theta-repository';
-const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 const NOTIFY_PROGRESS = 'CONTINUOUS-PROGRESS';
 const NOTIFY_CAPTURING = 'CONTINUOUS-CAPTURING';

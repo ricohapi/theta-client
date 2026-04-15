@@ -1,9 +1,7 @@
-import { NativeModules } from 'react-native';
+import ThetaClientReactNative from '../NativeThetaClientReactNative';
 import type { Options } from './options';
 import type { ThetaState } from './theta-state';
 import type { BaseNotify, NotifyController } from './notify-controller';
-
-const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 const NOTIFY_EVENT = 'EVENT-WEBSOCKET-EVENT';
 const NOTIFY_CLOSE = 'EVENT-WEBSOCKET-CLOSE';

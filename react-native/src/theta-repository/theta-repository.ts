@@ -5,7 +5,7 @@ import type { ThetaInfo, ThetaModel } from './theta-info';
 import type { MetaInfo } from './theta-meta';
 import type { PluginInfo } from './theta-plugin';
 
-import { NativeModules } from 'react-native';
+import ThetaClientReactNative from '../NativeThetaClientReactNative';
 import type {
   OptionNameEnum,
   Options,
@@ -35,7 +35,6 @@ import type { ThetaTimeout } from './theta-timeout';
 import { NotifyController } from './notify-controller';
 import { EventWebSocket } from './event-websocket';
 import { convertOptions, convertVideoFormatsImpl } from './libs';
-const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 const NOTIFY_API_LOG = 'API-LOG';
 let apiLogListener: ((message: string) => void) | undefined;
@@ -83,7 +82,11 @@ export async function initialize(
     await setNotifyApiLogListener(apiLogListener);
   }
 
-  return ThetaClientReactNative.initialize(endPoint, config, timeout);
+  return ThetaClientReactNative.initialize(
+    endPoint,
+    config ?? null,
+    timeout ?? null
+  );
 }
 
 /**
@@ -348,16 +351,9 @@ export function setBluetoothDevice(uuid: string): Promise<String> {
  * @function getThetaModel
  * @return promise of THETA model
  **/
-export function getThetaModel(): Promise<ThetaModel | undefined> {
-  return new Promise<ThetaModel | undefined>(async (resolve, reject) => {
-    await ThetaClientReactNative.getThetaModel()
-      .then((result?: string) => {
-        resolve((result as ThetaModel) ?? undefined);
-      })
-      .catch((error: any) => {
-        reject(error);
-      });
-  });
+export async function getThetaModel(): Promise<ThetaModel | undefined> {
+  const result = await ThetaClientReactNative.getThetaModel();
+  return result ? (result as ThetaModel) : undefined;
 }
 
 /**
@@ -367,7 +363,7 @@ export function getThetaModel(): Promise<ThetaModel | undefined> {
  * @return promise of ThetaInfo
  **/
 export function getThetaInfo(): Promise<ThetaInfo> {
-  return ThetaClientReactNative.getThetaInfo();
+  return ThetaClientReactNative.getThetaInfo() as Promise<ThetaInfo>;
 }
 
 /**
@@ -387,7 +383,7 @@ export function getThetaLicense(): Promise<string> {
  * @return promise of ThetaState
  **/
 export function getThetaState(): Promise<ThetaState> {
-  return ThetaClientReactNative.getThetaState();
+  return ThetaClientReactNative.getThetaState() as Promise<ThetaState>;
 }
 
 /**
@@ -416,8 +412,8 @@ export function listFiles(
     fileTypeEnum,
     startPosition,
     entryCount,
-    storage
-  );
+    storage ?? null
+  ) as Promise<ThetaFiles>;
 }
 
 /**
@@ -472,7 +468,10 @@ export function deleteAllVideoFiles(): Promise<boolean> {
 export async function getOptions(
   optionNames: OptionNameEnum[]
 ): Promise<Options> {
-  const response = await ThetaClientReactNative.getOptions(optionNames);
+  const response = (await ThetaClientReactNative.getOptions(optionNames)) as {
+    options: Options;
+    json?: Record<string, string>;
+  };
   const { options, json } = response;
   const result = convertOptions(options, json);
   return result;
@@ -507,7 +506,7 @@ export function getMetadata(fileUrl: string): Promise<MetaInfo> {
  * @return promise of AccessPoint list
  */
 export function listAccessPoints(): Promise<AccessPoint[]> {
-  return ThetaClientReactNative.listAccessPoints();
+  return ThetaClientReactNative.listAccessPoints() as Promise<AccessPoint[]>;
 }
 
 /**
@@ -665,7 +664,7 @@ export function getMySettingFromOldModel(
  * @function setMySetting
  * @param captureMode The target shooting mode.  RICOH THETA S and SC do not support My Settings in video capture mode.
  * @param options registered to My Settings
- * @returns Promise of boolean result, always true
+ * @returns Promise of boolean result
  */
 export function setMySetting(
   captureMode: CaptureModeEnum,
@@ -677,7 +676,7 @@ export function setMySetting(
 /**
  * Delete shooting conditions in My Settings. Supported just by Theta X and Z1.
  * @param captureMode The target shooting mode
- * @returns Promise of boolean result, always true
+ * @returns Promise of boolean result
  */
 export function deleteMySetting(
   captureMode: CaptureModeEnum
@@ -691,14 +690,14 @@ export function deleteMySetting(
  * @return A list of the plugins installed in Theta.
  */
 export function listPlugins(): Promise<PluginInfo[]> {
-  return ThetaClientReactNative.listPlugins();
+  return ThetaClientReactNative.listPlugins() as Promise<PluginInfo[]>;
 }
 
 /**
  * Sets the installed plugin for boot. Supported just by Theta V.
  * @function setPlugin
  * @param packageName Package name of the target plugin.
- * @return Promise of boolean result, always true.
+ * @return Promise of boolean result
  */
 export function setPlugin(packageName: string): Promise<boolean> {
   return ThetaClientReactNative.setPlugin(packageName);
@@ -708,7 +707,7 @@ export function setPlugin(packageName: string): Promise<boolean> {
  * Start the plugin specified by the [packageName].
  * @function startPlugin
  * @param packageName Package name of the target plugin.
- * @return Promise of boolean result, always true.
+ * @return Promise of boolean result
  */
 export function startPlugin(packageName: string): Promise<boolean> {
   return ThetaClientReactNative.startPlugin(packageName);
@@ -717,7 +716,7 @@ export function startPlugin(packageName: string): Promise<boolean> {
 /**
  * Stop the running plugin.
  * @function stopPlugin
- * @return Promise of boolean result, always true.
+ * @return Promise of boolean result
  */
 export function stopPlugin(): Promise<boolean> {
   return ThetaClientReactNative.stopPlugin();
@@ -750,20 +749,13 @@ export function getPluginOrders(): Promise<string[]> {
  * When not specifying, set an empty string.
  * If an empty string is placed mid-way, it will be moved to the front.
  * Specifying zero package name will result in an error
- * @return Promise of boolean result, always true.
+ * @return Promise of boolean result
  */
 export function setPluginOrders(plugins: string[]): Promise<boolean> {
   return ThetaClientReactNative.setPluginOrders(plugins);
 }
 
-export function getEventWebSocket(): Promise<EventWebSocket> {
-  return new Promise<EventWebSocket>(async (resolve, reject) => {
-    ThetaClientReactNative.getEventWebSocket()
-      .then(() => {
-        resolve(new EventWebSocket(NotifyController.instance));
-      })
-      .catch((error: any) => {
-        reject(error);
-      });
-  });
+export async function getEventWebSocket(): Promise<EventWebSocket> {
+  await ThetaClientReactNative.getEventWebSocket();
+  return new EventWebSocket(NotifyController.instance);
 }

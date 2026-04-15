@@ -1,11 +1,8 @@
 import { CaptureBuilder, CapturingStatusEnum } from './capture';
-import { NativeModules } from 'react-native';
-import {
-  BaseNotify,
-  NotifyController,
-} from '../theta-repository/notify-controller';
+import ThetaClientReactNative from '../NativeThetaClientReactNative';
+import type { BaseNotify } from '../theta-repository/notify-controller';
+import { NotifyController } from '../theta-repository/notify-controller';
 import type { BracketSetting } from '../theta-repository/options';
-const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
 
 const NOTIFY_PROGRESS = 'MULTI-BRACKET-PROGRESS';
 const NOTIFY_STOP_ERROR = 'MULTI-BRACKET-STOP-ERROR';

@@ -1,24 +1,21 @@
 import React from 'react';
 import { View, Image } from 'react-native';
 import styles from './styles';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '../../App';
+import type { FileInfo } from '../../modules/theta-client';
 
-const FilePreviewScreen: React.FC<
-  NativeStackScreenProps<RootStackParamList, 'filePreview'>
-> = ({ route, navigation }) => {
-  React.useEffect(() => {
-    navigation.setOptions({ title: route.params.item.name });
-  }, [navigation, route.params.item.name]);
+interface FilePreviewScreenProps {
+    fileInfo: FileInfo;
+}
 
-  return (
-    <View style={styles.takePhotoBack}>
-      <Image
-        style={styles.takePhoto}
-        source={{ uri: route.params.item.fileUrl }}
-      />
-    </View>
-  );
+const FilePreviewScreen: React.FC<FilePreviewScreenProps> = ({ fileInfo }) => {
+    return (
+        <View style={styles.takePhotoBack}>
+            <Image
+                style={styles.takePhoto}
+                source={{ uri: fileInfo.fileUrl }}
+            />
+        </View>
+    );
 };
 
 export default FilePreviewScreen;

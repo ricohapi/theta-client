@@ -110,7 +110,10 @@ class ThetaClientReactNative: RCTEventEmitter {
 
     @objc
     override func supportedEvents() -> [String]! {
-        [ThetaClientReactNative.EVENT_FRAME, ThetaClientReactNative.EVENT_NOTIFY]
+        [
+            ThetaClientReactNative.EVENT_FRAME,
+            ThetaClientReactNative.EVENT_NOTIFY
+        ]
     }
 
     @objc
@@ -118,14 +121,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         true
     }
 
-    @objc
-    override func constantsToExport() -> [AnyHashable: Any]! {
-        [
-            "DEFAULT_EVENT_NAME": ThetaClientReactNative.EVENT_FRAME,
-        ]
-    }
-
-    @objc(setApiLogListener:withResolver:withRejecter:)
+    @objc(setApiLogListener:resolve:reject:)
     func setApiLogListener(enabled: Bool,
                            resolve: @escaping RCTPromiseResolveBlock,
                            reject _: @escaping RCTPromiseRejectBlock)
@@ -146,7 +142,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(initialize:withConfig:withTimeout:withResolver:withRejecter:)
+    @objc(initialize:config:timeout:resolve:reject:)
     func initialize(
         endPoint: String?,
         config: [AnyHashable: Any]?,
@@ -218,7 +214,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(isInitialized:withRejecter:)
+    @objc(isInitialized:reject:)
     func isInitialized(
         resolve: RCTPromiseResolveBlock,
         reject _: RCTPromiseRejectBlock
@@ -226,7 +222,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         resolve(thetaRepository != nil)
     }
 
-    @objc(getThetaModel:withRejecter:)
+    @objc(getThetaModel:reject:)
     func getThetaModel(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -238,7 +234,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         resolve(thetaRepository.cameraModel?.name)
     }
 
-    @objc(getThetaInfo:withRejecter:)
+    @objc(getThetaInfo:reject:)
     func getThetaInfo(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -262,7 +258,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(getThetaLicense:withRejecter:)
+    @objc(getThetaLicense:reject:)
     func getThetaLicense(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -283,7 +279,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(getThetaState:withRejecter:)
+    @objc(getThetaState:reject:)
     func getThetaState(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -304,11 +300,11 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(listFiles:withStartPosition:withEntryCount:withStorage:withResolver:withRejecter:)
+    @objc(listFiles:startPosition:entryCount:storage:resolve:reject:)
     func listFiles(
         fileType: String,
-        startPosition: Int,
-        entryCount: Int,
+        startPosition: Double,
+        entryCount: Double,
         storage: String?,
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -351,7 +347,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(deleteFiles:withResolver:withRejecter:)
+    @objc(deleteFiles:resolve:reject:)
     func deleteFiles(
         fileUrls: [Any],
         resolve: @escaping RCTPromiseResolveBlock,
@@ -375,7 +371,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(deleteAllFiles:withRejecter:)
+    @objc(deleteAllFiles:reject:)
     func deleteAllFiles(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -394,7 +390,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(deleteAllImageFiles:withRejecter:)
+    @objc(deleteAllImageFiles:reject:)
     func deleteAllImageFiles(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -413,7 +409,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(deleteAllVideoFiles:withRejecter:)
+    @objc(deleteAllVideoFiles:reject:)
     func deleteAllVideoFiles(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -432,7 +428,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(getOptions:withResolver:withRejecter:)
+    @objc(getOptions:resolve:reject:)
     func getOptions(
         optionNames: [Any],
         resolve: @escaping RCTPromiseResolveBlock,
@@ -461,7 +457,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(setOptions:withResolver:withRejecter:)
+    @objc(setOptions:resolve:reject:)
     func setOptions(
         options: [AnyHashable: Any],
         resolve: @escaping RCTPromiseResolveBlock,
@@ -488,7 +484,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(getLivePreview:withRejecter:)
+    @objc(getLivePreview:reject:)
     func getLivePreview(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -517,9 +513,10 @@ class ThetaClientReactNative: RCTEventEmitter {
                             )
                             let encodeString = nsData.base64EncodedString()
                             let dataUrl = "data:image/jpeg;base64," + encodeString
+                            let payload: [String: Any] = ["data": dataUrl, "dataSize": nsData.count]
                             thetaClientReactNative.sendEvent(
                                 withName: ThetaClientReactNative.EVENT_FRAME,
-                                body: ["data": dataUrl, "dataSize": nsData.count]
+                                body: payload
                             )
                         }
                     }
@@ -549,7 +546,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(stopLivePreview:withRejecter:)
+    @objc(stopLivePreview:reject:)
     func stopLivePreview(
         resolve: @escaping RCTPromiseResolveBlock,
         reject _: @escaping RCTPromiseRejectBlock
@@ -566,7 +563,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         stopLivePreviewResolve = nil
     }
 
-    @objc(getPhotoCaptureBuilder:withRejecter:)
+    @objc(getPhotoCaptureBuilder:reject:)
     func getPhotoCaptureBuilder(
         resolve: RCTPromiseResolveBlock,
         reject: RCTPromiseRejectBlock
@@ -579,13 +576,13 @@ class ThetaClientReactNative: RCTEventEmitter {
         resolve(nil)
     }
 
-    @objc(buildPhotoCapture:withResolver:withRejecter:)
+    @objc(buildPhotoCapture:resolve:reject:)
     func buildPhotoCapture(
         options: [AnyHashable: Any]?,
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -611,12 +608,12 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(takePicture:withRejecter:)
+    @objc(takePicture:reject:)
     func takePicture(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -667,7 +664,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         )
     }
 
-    @objc(getTimeShiftCaptureBuilder:withRejecter:)
+    @objc(getTimeShiftCaptureBuilder:reject:)
     func getTimeShiftCaptureBuilder(
         resolve: RCTPromiseResolveBlock,
         reject: RCTPromiseRejectBlock
@@ -680,13 +677,13 @@ class ThetaClientReactNative: RCTEventEmitter {
         resolve(nil)
     }
 
-    @objc(buildTimeShiftCapture:withResolver:withRejecter:)
+    @objc(buildTimeShiftCapture:resolve:reject:)
     func buildTimeShiftCapture(
         options: [AnyHashable: Any]?,
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -712,12 +709,12 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(startTimeShiftCapture:withRejecter:)
+    @objc(startTimeShiftCapture:reject:)
     func startTimeShiftCapture(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -789,12 +786,12 @@ class ThetaClientReactNative: RCTEventEmitter {
             ))
     }
 
-    @objc(cancelTimeShiftCapture:withRejecter:)
+    @objc(cancelTimeShiftCapture:reject:)
     func cancelTimeShiftCapture(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -806,7 +803,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         resolve(nil)
     }
 
-    @objc(getTimeShiftManualCaptureBuilder:withRejecter:)
+    @objc(getTimeShiftManualCaptureBuilder:reject:)
     func getTimeShiftManualCaptureBuilder(
         resolve: RCTPromiseResolveBlock,
         reject: RCTPromiseRejectBlock
@@ -819,13 +816,13 @@ class ThetaClientReactNative: RCTEventEmitter {
         resolve(nil)
     }
 
-    @objc(buildTimeShiftManualCapture:withResolver:withRejecter:)
+    @objc(buildTimeShiftManualCapture:resolve:reject:)
     func buildTimeShiftManualCapture(
         options: [AnyHashable: Any]?,
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -853,12 +850,12 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(startTimeShiftManualCapture:withRejecter:)
+    @objc(startTimeShiftManualCapture:reject:)
     func startTimeShiftManualCapture(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -932,12 +929,12 @@ class ThetaClientReactNative: RCTEventEmitter {
             ))
     }
 
-    @objc(startTimeShiftManualSecondCapture:withRejecter:)
+    @objc(startTimeShiftManualSecondCapture:reject:)
     func startTimeShiftManualSecondCapture(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -950,12 +947,12 @@ class ThetaClientReactNative: RCTEventEmitter {
         resolve(nil)
     }
 
-    @objc(cancelTimeShiftManualCapture:withRejecter:)
+    @objc(cancelTimeShiftManualCapture:reject:)
     func cancelTimeShiftManualCapture(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -967,7 +964,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         resolve(nil)
     }
 
-    @objc(getVideoCaptureBuilder:withRejecter:)
+    @objc(getVideoCaptureBuilder:reject:)
     func getVideoCaptureBuilder(
         resolve: RCTPromiseResolveBlock,
         reject: RCTPromiseRejectBlock
@@ -980,13 +977,13 @@ class ThetaClientReactNative: RCTEventEmitter {
         resolve(nil)
     }
 
-    @objc(buildVideoCapture:withResolver:withRejecter:)
+    @objc(buildVideoCapture:resolve:reject:)
     func buildVideoCapture(
         options: [AnyHashable: Any]?,
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -1012,12 +1009,12 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(startVideoCapture:withRejecter:)
+    @objc(startVideoCapture:reject:)
     func startVideoCapture(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -1089,12 +1086,12 @@ class ThetaClientReactNative: RCTEventEmitter {
             ))
     }
 
-    @objc(stopVideoCapture:withRejecter:)
+    @objc(stopVideoCapture:reject:)
     func stopVideoCapture(
         resolve: RCTPromiseResolveBlock,
         reject: RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -1106,7 +1103,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         resolve(nil)
     }
 
-    @objc(getLimitlessIntervalCaptureBuilder:withRejecter:)
+    @objc(getLimitlessIntervalCaptureBuilder:reject:)
     func getLimitlessIntervalCaptureBuilder(
         resolve: RCTPromiseResolveBlock,
         reject: RCTPromiseRejectBlock
@@ -1120,13 +1117,13 @@ class ThetaClientReactNative: RCTEventEmitter {
         resolve(nil)
     }
 
-    @objc(buildLimitlessIntervalCapture:withResolver:withRejecter:)
+    @objc(buildLimitlessIntervalCapture:resolve:reject:)
     func buildLimitlessIntervalCapture(
         options: [AnyHashable: Any]?,
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -1152,12 +1149,12 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(startLimitlessIntervalCapture:withRejecter:)
+    @objc(startLimitlessIntervalCapture:reject:)
     func startLimitlessIntervalCapture(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -1219,12 +1216,12 @@ class ThetaClientReactNative: RCTEventEmitter {
             ))
     }
 
-    @objc(stopLimitlessIntervalCapture:withRejecter:)
+    @objc(stopLimitlessIntervalCapture:reject:)
     func stopLimitlessIntervalCapture(
         resolve: RCTPromiseResolveBlock,
         reject: RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -1236,9 +1233,9 @@ class ThetaClientReactNative: RCTEventEmitter {
         resolve(nil)
     }
 
-    @objc(getShotCountSpecifiedIntervalCaptureBuilder:withResolver:withRejecter:)
+    @objc(getShotCountSpecifiedIntervalCaptureBuilder:resolve:reject:)
     func getShotCountSpecifiedIntervalCaptureBuilder(
-        shotCount: Int,
+        shotCount: Double,
         resolve: RCTPromiseResolveBlock,
         reject: RCTPromiseRejectBlock
     ) {
@@ -1250,13 +1247,13 @@ class ThetaClientReactNative: RCTEventEmitter {
         resolve(nil)
     }
 
-    @objc(buildShotCountSpecifiedIntervalCapture:withResolver:withRejecter:)
+    @objc(buildShotCountSpecifiedIntervalCapture:resolve:reject:)
     func buildShotCountSpecifiedIntervalCapture(
         options: [AnyHashable: Any]?,
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -1282,12 +1279,12 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(startShotCountSpecifiedIntervalCapture:withRejecter:)
+    @objc(startShotCountSpecifiedIntervalCapture:reject:)
     func startShotCountSpecifiedIntervalCapture(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -1359,12 +1356,12 @@ class ThetaClientReactNative: RCTEventEmitter {
             ))
     }
 
-    @objc(cancelShotCountSpecifiedIntervalCapture:withRejecter:)
+    @objc(cancelShotCountSpecifiedIntervalCapture:reject:)
     func cancelShotCountSpecifiedIntervalCapture(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -1376,9 +1373,9 @@ class ThetaClientReactNative: RCTEventEmitter {
         resolve(nil)
     }
 
-    @objc(getCompositeIntervalCaptureBuilder:withResolver:withRejecter:)
+    @objc(getCompositeIntervalCaptureBuilder:resolve:reject:)
     func getCompositeIntervalCaptureBuilder(
-        shootingTimeSec: Int,
+        shootingTimeSec: Double,
         resolve: RCTPromiseResolveBlock,
         reject: RCTPromiseRejectBlock
     ) {
@@ -1390,13 +1387,13 @@ class ThetaClientReactNative: RCTEventEmitter {
         resolve(nil)
     }
 
-    @objc(buildCompositeIntervalCapture:withResolver:withRejecter:)
+    @objc(buildCompositeIntervalCapture:resolve:reject:)
     func buildCompositeIntervalCapture(
         options: [AnyHashable: Any]?,
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -1422,12 +1419,12 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(startCompositeIntervalCapture:withRejecter:)
+    @objc(startCompositeIntervalCapture:reject:)
     func startCompositeIntervalCapture(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -1499,12 +1496,12 @@ class ThetaClientReactNative: RCTEventEmitter {
             ))
     }
 
-    @objc(cancelCompositeIntervalCapture:withRejecter:)
+    @objc(cancelCompositeIntervalCapture:reject:)
     func cancelCompositeIntervalCapture(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -1518,7 +1515,7 @@ class ThetaClientReactNative: RCTEventEmitter {
 
     // MARK: - BurstCapture
 
-    @objc(getBurstCaptureBuilder:burstBracketStep:burstCompensation:burstMaxExposureTime:burstEnableIsoControl:burstOrder:withResolver:withRejecter:)
+    @objc(getBurstCaptureBuilder:burstBracketStep:burstCompensation:burstMaxExposureTime:burstEnableIsoControl:burstOrder:resolve:reject:)
     func getBurstCaptureBuilder(
         burstCaptureNum: String,
         burstBracketStep: String,
@@ -1554,13 +1551,13 @@ class ThetaClientReactNative: RCTEventEmitter {
         resolve(nil)
     }
 
-    @objc(buildBurstCapture:withResolver:withRejecter:)
+    @objc(buildBurstCapture:resolve:reject:)
     func buildBurstCapture(
         options: [AnyHashable: Any]?,
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -1586,12 +1583,12 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(startBurstCapture:withRejecter:)
+    @objc(startBurstCapture:reject:)
     func startBurstCapture(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -1663,12 +1660,12 @@ class ThetaClientReactNative: RCTEventEmitter {
             ))
     }
 
-    @objc(cancelBurstCapture:withRejecter:)
+    @objc(cancelBurstCapture:reject:)
     func cancelBurstCapture(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -1682,7 +1679,7 @@ class ThetaClientReactNative: RCTEventEmitter {
 
     // MARK: - MultiBracketCapture
 
-    @objc(getMultiBracketCaptureBuilder:withRejecter:)
+    @objc(getMultiBracketCaptureBuilder:reject:)
     func getMultiBracketCaptureBuilder(
         resolve: RCTPromiseResolveBlock,
         reject: RCTPromiseRejectBlock
@@ -1695,13 +1692,13 @@ class ThetaClientReactNative: RCTEventEmitter {
         resolve(nil)
     }
 
-    @objc(buildMultiBracketCapture:withResolver:withRejecter:)
+    @objc(buildMultiBracketCapture:resolve:reject:)
     func buildMultiBracketCapture(
         options: [AnyHashable: Any]?,
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -1732,12 +1729,12 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(startMultiBracketCapture:withRejecter:)
+    @objc(startMultiBracketCapture:reject:)
     func startMultiBracketCapture(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -1809,12 +1806,12 @@ class ThetaClientReactNative: RCTEventEmitter {
             ))
     }
 
-    @objc(cancelMultiBracketCapture:withRejecter:)
+    @objc(cancelMultiBracketCapture:reject:)
     func cancelMultiBracketCapture(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -1828,7 +1825,7 @@ class ThetaClientReactNative: RCTEventEmitter {
 
     // MARK: - ContinuousCapture
 
-    @objc(getContinuousCaptureBuilder:withRejecter:)
+    @objc(getContinuousCaptureBuilder:reject:)
     func getContinuousCaptureBuilder(
         resolve: RCTPromiseResolveBlock,
         reject: RCTPromiseRejectBlock
@@ -1841,13 +1838,13 @@ class ThetaClientReactNative: RCTEventEmitter {
         resolve(nil)
     }
 
-    @objc(buildContinuousCapture:withResolver:withRejecter:)
+    @objc(buildContinuousCapture:resolve:reject:)
     func buildContinuousCapture(
         options: [AnyHashable: Any]?,
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -1873,12 +1870,12 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(startContinuousCapture:withRejecter:)
+    @objc(startContinuousCapture:reject:)
     func startContinuousCapture(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard let _ = thetaRepository else {
+        guard thetaRepository != nil else {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
@@ -1941,7 +1938,7 @@ class ThetaClientReactNative: RCTEventEmitter {
 
     // MARK: -
 
-    @objc(getMetadata:withResolver:withRejecter:)
+    @objc(getMetadata:resolve:reject:)
     func getMetadata(
         fileUrl: String,
         resolve: @escaping RCTPromiseResolveBlock,
@@ -1965,7 +1962,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(reboot:withRejecter:)
+    @objc(reboot:reject:)
     func reboot(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -1984,7 +1981,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(reset:withRejecter:)
+    @objc(reset:reject:)
     func reset(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -2003,7 +2000,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(restoreSettings:withRejecter:)
+    @objc(restoreSettings:reject:)
     func restoreSettings(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -2022,7 +2019,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(stopSelfTimer:withRejecter:)
+    @objc(stopSelfTimer:reject:)
     func stopSelfTimer(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -2041,10 +2038,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(
-        convertVideoFormats:withToLowResolution:withApplyTopBottomCorrection:withResolver:
-        withRejecter:
-    )
+    @objc(convertVideoFormats:toLowResolution:applyTopBottomCorrection:resolve:reject:)
     func convertVideoFormats(
         fileUrl: String,
         toLowResolution: Bool,
@@ -2080,7 +2074,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(cancelVideoConvert:withRejecter:)
+    @objc(cancelVideoConvert:reject:)
     func cancelVideoConvert(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -2099,7 +2093,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(finishWlan:withRejecter:)
+    @objc(finishWlan:reject:)
     func finishWlan(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -2118,7 +2112,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(listAccessPoints:withRejecter:)
+    @objc(listAccessPoints:reject:)
     func listAccessPoints(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -2140,11 +2134,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(
-        setAccessPointDynamically:
-        withResolver:
-        withRejecter:
-    )
+    @objc(setAccessPointDynamically:resolve:reject:)
     func setAccessPointDynamically(
         params: [AnyHashable: Any],
         resolve: @escaping RCTPromiseResolveBlock,
@@ -2175,11 +2165,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(
-        setAccessPointStatically:
-        withResolver:
-        withRejecter:
-    )
+    @objc(setAccessPointStatically:resolve:reject:)
     func setAccessPointStatically(
         params: [AnyHashable: Any],
         resolve: @escaping RCTPromiseResolveBlock,
@@ -2216,13 +2202,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(
-        setAccessPointConnectionPriority:
-        connectionPriority:
-        ssidStealth:
-        withResolver:
-        withRejecter:
-    )
+    @objc(setAccessPointConnectionPriority:connectionPriority:ssidStealth:resolve:reject:)
     func setAccessPointConnectionPriority(
         ssid: String,
         connectionPriority: Int,
@@ -2235,7 +2215,10 @@ class ThetaClientReactNative: RCTEventEmitter {
             return
         }
         do {
-          thetaRepository.setAccessPointConnectionPriority(ssid: ssid, connectionPriority: Int32(connectionPriority), ssidStealth: ssidStealth) { error in
+            thetaRepository.setAccessPointConnectionPriority(
+                ssid: ssid, connectionPriority: Int32(clamping: connectionPriority),
+                ssidStealth: ssidStealth
+            ) { error in
                 if let error {
                     reject(ERROR_CODE_ERROR, error.localizedDescription, error)
                 } else {
@@ -2247,7 +2230,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(deleteAccessPoint:withResolver:withRejecter:)
+    @objc(deleteAccessPoint:resolve:reject:)
     func deleteAccessPoint(
         ssid: String,
         resolve: @escaping RCTPromiseResolveBlock,
@@ -2269,7 +2252,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(getMySetting:withResolver:withRejecter:)
+    @objc(getMySetting:resolve:reject:)
     func getMySetting(
         captureMode: String,
         resolve: @escaping RCTPromiseResolveBlock,
@@ -2300,7 +2283,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(getMySettingFromOldModel:withResolver:withRejecter:)
+    @objc(getMySettingFromOldModel:resolve:reject:)
     func getMySettingFromOldModel(
         optionNames: [Any],
         resolve: @escaping RCTPromiseResolveBlock,
@@ -2329,7 +2312,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(setMySetting:withOptions:withResolver:withRejecter:)
+    @objc(setMySetting:options:resolve:reject:)
     func setMySetting(
         captureMode: String,
         options: [AnyHashable: Any],
@@ -2362,7 +2345,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(deleteMySetting:withResolver:withRejecter:)
+    @objc(deleteMySetting:resolve:reject:)
     func deleteMySetting(
         captureMode: String,
         resolve: @escaping RCTPromiseResolveBlock,
@@ -2391,7 +2374,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(listPlugins:withRejecter:)
+    @objc(listPlugins:reject:)
     func listPlugins(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -2411,7 +2394,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(setPlugin:withResolver:withRejecter:)
+    @objc(setPlugin:resolve:reject:)
     func setPlugin(
         packageName: String,
         resolve: @escaping RCTPromiseResolveBlock,
@@ -2431,7 +2414,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(startPlugin:withResolver:withRejecter:)
+    @objc(startPlugin:resolve:reject:)
     func startPlugin(
         packageName: String,
         resolve: @escaping RCTPromiseResolveBlock,
@@ -2451,7 +2434,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(stopPlugin:withRejecter:)
+    @objc(stopPlugin:reject:)
     func stopPlugin(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -2470,7 +2453,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(getPluginLicense:withResolver:withRejecter:)
+    @objc(getPluginLicense:resolve:reject:)
     func getPluginLicense(
         packageName: String,
         resolve: @escaping RCTPromiseResolveBlock,
@@ -2494,7 +2477,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(getPluginOrders:withRejecter:)
+    @objc(getPluginOrders:reject:)
     func getPluginOrders(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -2514,7 +2497,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(setPluginOrders:withResolver:withRejecter:)
+    @objc(setPluginOrders:resolve:reject:)
     func setPluginOrders(
         plugins: [Any],
         resolve: @escaping RCTPromiseResolveBlock,
@@ -2540,7 +2523,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(setBluetoothDevice:withResolver:withRejecter:)
+    @objc(setBluetoothDevice:resolve:reject:)
     func setBluetoothDevice(
         uuid: String,
         resolve: @escaping RCTPromiseResolveBlock,
@@ -2561,7 +2544,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(getEventWebSocket:withRejecter:)
+    @objc(getEventWebSocket:reject:)
     func getEventWebSocket(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -2576,7 +2559,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         resolve(true)
     }
 
-    @objc(eventWebSocketStart:withRejecter:)
+    @objc(eventWebSocketStart:reject:)
     func eventWebSocketStart(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -2628,7 +2611,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
     }
 
-    @objc(eventWebSocketStop:withRejecter:)
+    @objc(eventWebSocketStop:reject:)
     func eventWebSocketStop(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock

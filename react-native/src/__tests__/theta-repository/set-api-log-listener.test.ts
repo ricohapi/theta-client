@@ -10,6 +10,13 @@ describe('setApiLogListener', () => {
     jest.clearAllMocks();
     setApiLogListener();
     NotifyController.instance.release();
+    jest.mocked(NativeEventEmitter_addListener).mockImplementation(
+      jest.fn(() => {
+        return {
+          remove: jest.fn(),
+        };
+      })
+    );
   });
 
   afterEach(() => {

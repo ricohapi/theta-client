@@ -1,1 +1,1 @@
-export { default } from './composite-interval-capture-screen';
+export { default } from './composite-interval-capture-screen.tsx';

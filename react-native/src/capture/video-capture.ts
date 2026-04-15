@@ -4,12 +4,9 @@ import type {
   VideoFileFormatEnum,
 } from '../theta-repository/options';
 
-import { NativeModules } from 'react-native';
-import {
-  BaseNotify,
-  NotifyController,
-} from '../theta-repository/notify-controller';
-const ThetaClientReactNative = NativeModules.ThetaClientReactNative;
+import ThetaClientReactNative from '../NativeThetaClientReactNative';
+import type { BaseNotify } from '../theta-repository/notify-controller';
+import { NotifyController } from '../theta-repository/notify-controller';
 
 const NOTIFY_NAME = 'VIDEO-CAPTURE-STOP-ERROR';
 const NOTIFY_CAPTURING = 'VIDEO-CAPTURE-CAPTURING';

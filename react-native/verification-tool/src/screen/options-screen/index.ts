@@ -1,1 +1,1 @@
-export { default } from './options-screen';
+export { default } from './options-screen.tsx';

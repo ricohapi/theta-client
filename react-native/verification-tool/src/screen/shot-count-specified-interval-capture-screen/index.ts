@@ -1,1 +1,1 @@
-export { default } from './shot-count-specified-interval-capture-screen';
+export { default } from './shot-count-specified-interval-capture-screen.tsx';

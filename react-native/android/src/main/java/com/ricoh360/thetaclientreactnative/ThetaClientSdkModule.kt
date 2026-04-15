@@ -14,7 +14,7 @@ import kotlin.text.String
 
 class ThetaClientReactNativeModule(
   reactContext: ReactApplicationContext
-) : ReactContextBaseJavaModule(reactContext), CoroutineScope {
+) : NativeThetaClientReactNativeSpec(reactContext), CoroutineScope {
 
   override val coroutineContext: CoroutineContext = Job()
 
@@ -63,10 +63,10 @@ class ThetaClientReactNativeModule(
    * add event listener for [eventName]
    */
   @ReactMethod
-  fun addListener(eventName: String) {
+  override fun addListener(eventName: String) {
     // Set up any upstream listeners or background tasks as necessary
     if (eventName.equals(EVENT_NAME)) {
-      listenerCount++;
+      listenerCount++
     }
   }
 
@@ -74,9 +74,22 @@ class ThetaClientReactNativeModule(
    * remove event listener [count]
    */
   @ReactMethod
-  fun removeListeners(count: Int) {
+  override fun removeListeners(count: Double) {
     // Remove upstream listeners, stop unnecessary background tasks
-    listenerCount -= count
+    listenerCount = (listenerCount - count.toInt()).coerceAtLeast(0)
+  }
+
+  fun emitOnThetaFrameOldEvent(param: WritableMap) {
+    reactApplicationContext
+      .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+      .emit(EVENT_NAME, param)
+  }
+
+  private fun toFrameEventParam(dataUrl: String, dataSize: Int): WritableMap {
+    val param = Arguments.createMap()
+    param.putString("data", dataUrl)
+    param.putInt("dataSize", dataSize)
+    return param
   }
 
   fun sendNotifyEvent(param: WritableMap) {
@@ -84,13 +97,6 @@ class ThetaClientReactNativeModule(
       .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
       .emit(EVENT_NOTIFY, param)
   }
-
-  /**
-   * retrieve constant
-   */
-  override fun getConstants(): MutableMap<String, Any> =
-    hashMapOf("DEFAULT_EVENT_NAME" to EVENT_NAME)
-
 
   val apiLogListener = { message: String ->
     val params = Arguments.createMap()
@@ -101,7 +107,8 @@ class ThetaClientReactNativeModule(
   }
 
   @ReactMethod
-  fun setApiLogListener(enabled: Boolean, promise: Promise) {
+
+  override fun setApiLogListener(enabled: Boolean, promise: Promise) {
     com.ricoh360.thetaclient.setApiLogListener(if (enabled) apiLogListener else null)
     promise.resolve(null)
   }
@@ -112,7 +119,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set initialize result
    */
   @ReactMethod
-  fun initialize(endpoint: String, config: ReadableMap?, timeout: ReadableMap?, promise: Promise) {
+
+  override fun initialize(endpoint: String, config: ReadableMap?, timeout: ReadableMap?, promise: Promise) {
     launch {
       try {
         theta = null
@@ -166,7 +174,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun isInitialized(promise: Promise) {
+
+  override fun isInitialized(promise: Promise) {
     promise.resolve(theta != null)
   }
 
@@ -175,7 +184,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun getThetaModel(promise: Promise) {
+
+  override fun getThetaModel(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -189,7 +199,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun getThetaInfo(promise: Promise) {
+
+  override fun getThetaInfo(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -234,7 +245,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun getThetaLicense(promise: Promise) {
+
+  override fun getThetaLicense(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -255,7 +267,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun getThetaState(promise: Promise) {
+
+  override fun getThetaState(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -281,7 +294,7 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun listFiles(fileType: String, startPosition: Int, entryCount: Int, storage: String?, promise: Promise) {
+  override fun listFiles(fileType: String, startPosition: Double, entryCount: Double, storage: String?, promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -291,8 +304,8 @@ class ThetaClientReactNativeModule(
       try {
         val (fileList, totalEntries) = theta.listFiles(
           ThetaRepository.FileTypeEnum.valueOf(fileType),
-          startPosition,
-          entryCount,
+          startPosition.toInt(),
+          entryCount.toInt(),
           storage?.let { ThetaRepository.StorageEnum.valueOf(it) },
         )
         val resultList = Arguments.createArray()
@@ -315,7 +328,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun deleteFiles(fileUrls: ReadableArray, promise: Promise) {
+
+  override fun deleteFiles(fileUrls: ReadableArray, promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -342,7 +356,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun deleteAllFiles(promise: Promise) {
+
+  override fun deleteAllFiles(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -363,7 +378,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun deleteAllImageFiles(promise: Promise) {
+
+  override fun deleteAllImageFiles(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -384,7 +400,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun deleteAllVideoFiles(promise: Promise) {
+
+  override fun deleteAllVideoFiles(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -406,7 +423,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun getOptions(optionNames: ReadableArray, promise: Promise) {
+
+  override fun getOptions(optionNames: ReadableArray, promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -430,7 +448,8 @@ class ThetaClientReactNativeModule(
    * @param rejecter rejecter for setOptions
    */
   @ReactMethod
-  fun setOptions(options: ReadableMap, promise: Promise) {
+
+  override fun setOptions(options: ReadableMap, promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -452,7 +471,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun getLivePreview(promise: Promise) {
+
+  override fun getLivePreview(promise: Promise) {
     if (previewing) {
       promise.reject(Exception(messageLivePreviewRunning))
       return
@@ -468,16 +488,13 @@ class ThetaClientReactNativeModule(
       if (listenerCount == 0) {
         return stopLivePreviewPromise == null
       }
-      val param = Arguments.createMap()
-      param.putString(
-        "data",
-        "data:image/jpeg;base64," +
-          packet.first.copyOfRange(0, packet.second).toBase64()
-      )
-      param.putInt("dataSize", packet.second)
-      reactApplicationContext
-        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-        .emit(EVENT_NAME, param)
+      val dataSize = packet.second
+      val dataUrl =
+        "data:image/jpeg;base64," + packet.first.copyOfRange(0, dataSize).toBase64()
+
+      if (!reactApplicationContext.hasActiveReactInstance()) return false
+      emitOnThetaFrameOldEvent(toFrameEventParam(dataUrl, dataSize))
+
       return stopLivePreviewPromise == null
     }
 
@@ -504,7 +521,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun stopLivePreview(promise: Promise) {
+
+  override fun stopLivePreview(promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -528,7 +546,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun getPhotoCaptureBuilder(promise: Promise) {
+
+  override fun getPhotoCaptureBuilder(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -545,7 +564,8 @@ class ThetaClientReactNativeModule(
    * @param rejecter rejecter for buildPhotoCapture
    */
   @ReactMethod
-  fun buildPhotoCapture(options: ReadableMap, promise: Promise) {
+
+  override fun buildPhotoCapture(options: ReadableMap, promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -575,7 +595,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun takePicture(promise: Promise) {
+
+  override fun takePicture(promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -611,7 +632,8 @@ class ThetaClientReactNativeModule(
    * getTimeShiftCaptureBuilder  -  get time-shift builder from repository
    */
   @ReactMethod
-  fun getTimeShiftCaptureBuilder(promise: Promise) {
+
+  override fun getTimeShiftCaptureBuilder(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -627,7 +649,8 @@ class ThetaClientReactNativeModule(
    * @param promise Promise for buildTimeShiftCapture
    */
   @ReactMethod
-  fun buildTimeShiftCapture(options: ReadableMap, promise: Promise) {
+
+  override fun buildTimeShiftCapture(options: ReadableMap, promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -657,7 +680,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise for startTimeShiftCapture
    */
   @ReactMethod
-  fun startTimeShiftCapture(promise: Promise) {
+
+  override fun startTimeShiftCapture(promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -707,7 +731,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise for stopTimeShiftCapture
    */
   @ReactMethod
-  fun cancelTimeShiftCapture(promise: Promise) {
+
+  override fun cancelTimeShiftCapture(promise: Promise) {
     if (theta == null) {
       throw Exception(messageNotInit)
     }
@@ -718,7 +743,8 @@ class ThetaClientReactNativeModule(
    * getTimeShiftManualCaptureBuilder  -  get manual time-shift builder from repository
    */
   @ReactMethod
-  fun getTimeShiftManualCaptureBuilder(promise: Promise) {
+
+  override fun getTimeShiftManualCaptureBuilder(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -734,7 +760,8 @@ class ThetaClientReactNativeModule(
    * @param promise Promise for buildTimeShiftManualCapture
    */
   @ReactMethod
-  fun buildTimeShiftManualCapture(options: ReadableMap, promise: Promise) {
+
+  override fun buildTimeShiftManualCapture(options: ReadableMap, promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -766,7 +793,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise for startTimeShiftManualCapture
    */
   @ReactMethod
-  fun startTimeShiftManualCapture(promise: Promise) {
+
+  override fun startTimeShiftManualCapture(promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -816,7 +844,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise for startTimeShiftManualSecondCapture
    */
   @ReactMethod
-  fun startTimeShiftManualSecondCapture(promise: Promise) {
+
+  override fun startTimeShiftManualSecondCapture(promise: Promise) {
     if (theta == null) {
       throw Exception(messageNotInit)
     }
@@ -828,7 +857,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise for cancelTimeShiftManualCapture
    */
   @ReactMethod
-  fun cancelTimeShiftManualCapture(promise: Promise) {
+
+  override fun cancelTimeShiftManualCapture(promise: Promise) {
     if (theta == null) {
       throw Exception(messageNotInit)
     }
@@ -840,7 +870,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun getVideoCaptureBuilder(promise: Promise) {
+
+  override fun getVideoCaptureBuilder(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -856,7 +887,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun buildVideoCapture(options: ReadableMap, promise: Promise) {
+
+  override fun buildVideoCapture(options: ReadableMap, promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -886,7 +918,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun startVideoCapture(promise: Promise) {
+
+  override fun startVideoCapture(promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -937,11 +970,14 @@ class ThetaClientReactNativeModule(
    * stopCapture  -  stop capturing video
    */
   @ReactMethod
-  fun stopVideoCapture() {
+
+  override fun stopVideoCapture(promise: Promise) {
     if (theta == null) {
-      throw Exception(messageNotInit)
+      promise.reject(Exception(messageNotInit))
+      return
     }
     videoCapturing?.stopCapture()
+    promise.resolve(null)
   }
 
   /**
@@ -949,7 +985,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun getLimitlessIntervalCaptureBuilder(promise: Promise) {
+
+  override fun getLimitlessIntervalCaptureBuilder(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -965,7 +1002,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun buildLimitlessIntervalCapture(options: ReadableMap, promise: Promise) {
+
+  override fun buildLimitlessIntervalCapture(options: ReadableMap, promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -995,7 +1033,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun startLimitlessIntervalCapture(promise: Promise) {
+
+  override fun startLimitlessIntervalCapture(promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -1049,11 +1088,14 @@ class ThetaClientReactNativeModule(
    * stopCapture  -  stop capturing limitless interval
    */
   @ReactMethod
-  fun stopLimitlessIntervalCapture() {
+
+  override fun stopLimitlessIntervalCapture(promise: Promise) {
     if (theta == null) {
-      throw Exception(messageNotInit)
+      promise.reject(Exception(messageNotInit))
+      return
     }
     limitlessIntervalCapturing?.stopCapture()
+    promise.resolve(null)
   }
 
   /**
@@ -1062,13 +1104,14 @@ class ThetaClientReactNativeModule(
    * @param promise Promise for getShotCountSpecifiedIntervalCaptureBuilder
    */
   @ReactMethod
-  fun getShotCountSpecifiedIntervalCaptureBuilder(shotCount: Int, promise: Promise) {
+
+  override fun getShotCountSpecifiedIntervalCaptureBuilder(shotCount: Double, promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
     }
-    shotCountSpecifiedIntervalCaptureBuilder = theta.getShotCountSpecifiedIntervalCaptureBuilder(shotCount)
+    shotCountSpecifiedIntervalCaptureBuilder = theta.getShotCountSpecifiedIntervalCaptureBuilder(shotCount.toInt())
     promise.resolve(true)
   }
 
@@ -1078,7 +1121,8 @@ class ThetaClientReactNativeModule(
    * @param promise Promise for buildShotCountSpecifiedIntervalCapture
    */
   @ReactMethod
-  fun buildShotCountSpecifiedIntervalCapture(options: ReadableMap, promise: Promise) {
+
+  override fun buildShotCountSpecifiedIntervalCapture(options: ReadableMap, promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -1108,7 +1152,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise for startShotCountSpecifiedIntervalCapture
    */
   @ReactMethod
-  fun startShotCountSpecifiedIntervalCapture(promise: Promise) {
+
+  override fun startShotCountSpecifiedIntervalCapture(promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -1170,7 +1215,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise for cancelShotCountSpecifiedIntervalCapture
    */
   @ReactMethod
-  fun cancelShotCountSpecifiedIntervalCapture(promise: Promise) {
+
+  override fun cancelShotCountSpecifiedIntervalCapture(promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -1185,13 +1231,14 @@ class ThetaClientReactNativeModule(
    * @param promise Promise for getCompositeIntervalCaptureBuilder
    */
   @ReactMethod
-  fun getCompositeIntervalCaptureBuilder(shootingTimeSec: Int, promise: Promise) {
+
+  override fun getCompositeIntervalCaptureBuilder(shootingTimeSec: Double, promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
     }
-    compositeIntervalCaptureBuilder = theta.getCompositeIntervalCaptureBuilder(shootingTimeSec)
+    compositeIntervalCaptureBuilder = theta.getCompositeIntervalCaptureBuilder(shootingTimeSec.toInt())
     promise.resolve(true)
   }
 
@@ -1201,7 +1248,8 @@ class ThetaClientReactNativeModule(
    * @param promise Promise for buildCompositeIntervalCapture
    */
   @ReactMethod
-  fun buildCompositeIntervalCapture(options: ReadableMap, promise: Promise) {
+
+  override fun buildCompositeIntervalCapture(options: ReadableMap, promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -1231,7 +1279,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise for startCompositeIntervalCapture
    */
   @ReactMethod
-  fun startCompositeIntervalCapture(promise: Promise) {
+
+  override fun startCompositeIntervalCapture(promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -1289,7 +1338,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise for cancelCompositeIntervalCapture
    */
   @ReactMethod
-  fun cancelCompositeIntervalCapture(promise: Promise) {
+
+  override fun cancelCompositeIntervalCapture(promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -1310,7 +1360,8 @@ class ThetaClientReactNativeModule(
    * @param promise Promise for getBurstCaptureBuilder
    */
   @ReactMethod
-  fun getBurstCaptureBuilder(
+
+  override fun getBurstCaptureBuilder(
     burstCaptureNum: String,
     burstBracketStep: String,
     burstCompensation: String,
@@ -1342,7 +1393,8 @@ class ThetaClientReactNativeModule(
    * @param promise Promise for buildBurstCapture
    */
   @ReactMethod
-  fun buildBurstCapture(options: ReadableMap, promise: Promise) {
+
+  override fun buildBurstCapture(options: ReadableMap, promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -1372,7 +1424,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise for startBurstCapture
    */
   @ReactMethod
-  fun startBurstCapture(promise: Promise) {
+
+  override fun startBurstCapture(promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -1430,7 +1483,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise for cancelBurstCapture
    */
   @ReactMethod
-  fun cancelBurstCapture(promise: Promise) {
+
+  override fun cancelBurstCapture(promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -1444,7 +1498,8 @@ class ThetaClientReactNativeModule(
    * @param promise Promise for getMultiBracketCaptureBuilder
    */
   @ReactMethod
-  fun getMultiBracketCaptureBuilder(promise: Promise) {
+
+  override fun getMultiBracketCaptureBuilder(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -1460,7 +1515,8 @@ class ThetaClientReactNativeModule(
    * @param promise Promise for buildMultiBracketCapture
    */
   @ReactMethod
-  fun buildMultiBracketCapture(options: ReadableMap, promise: Promise) {
+
+  override fun buildMultiBracketCapture(options: ReadableMap, promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -1490,7 +1546,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise for startMultiBracketCapture
    */
   @ReactMethod
-  fun startMultiBracketCapture(promise: Promise) {
+
+  override fun startMultiBracketCapture(promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -1548,7 +1605,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise for cancelMultiBracketCapture
    */
   @ReactMethod
-  fun cancelMultiBracketCapture(promise: Promise) {
+
+  override fun cancelMultiBracketCapture(promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -1563,7 +1621,8 @@ class ThetaClientReactNativeModule(
    * @param promise Promise for getContinuousCaptureBuilder
    */
   @ReactMethod
-  fun getContinuousCaptureBuilder(promise: Promise) {
+
+  override fun getContinuousCaptureBuilder(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -1580,7 +1639,8 @@ class ThetaClientReactNativeModule(
    * @param promise Promise for buildContinuousCapture
    */
   @ReactMethod
-  fun buildContinuousCapture(options: ReadableMap, promise: Promise) {
+
+  override fun buildContinuousCapture(options: ReadableMap, promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -1610,7 +1670,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise for startContinuousCapture
    */
   @ReactMethod
-  fun startContinuousCapture(promise: Promise) {
+
+  override fun startContinuousCapture(promise: Promise) {
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
       return
@@ -1659,7 +1720,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun getMetadata(fileUrl: String, promise: Promise) {
+
+  override fun getMetadata(fileUrl: String, promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -1698,7 +1760,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun reboot(promise: Promise) {
+
+  override fun reboot(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -1719,7 +1782,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun reset(promise: Promise) {
+
+  override fun reset(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -1740,7 +1804,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun restoreSettings(promise: Promise) {
+
+  override fun restoreSettings(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -1761,7 +1826,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun stopSelfTimer(promise: Promise) {
+
+  override fun stopSelfTimer(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -1780,14 +1846,15 @@ class ThetaClientReactNativeModule(
   /**
    * convertVideoFormats  -  convert video format in THETA
    * @param fileUrl file url to convert
-   * @param is4k 4k or not
+   * @param toLowResolution true to convert to low resolution, false to keep original
    * @param applyTopBottomCorrection apply top bottom correction
    * @param promise promise to set result
    */
   @ReactMethod
-  fun convertVideoFormats(
+
+  override fun convertVideoFormats(
     fileUrl: String,
-    is4k: Boolean,
+    toLowResolution: Boolean,
     applyTopBottomCorrection: Boolean,
     promise: Promise,
   ) {
@@ -1799,7 +1866,7 @@ class ThetaClientReactNativeModule(
     launch {
       try {
         val convertedUrl =
-          theta.convertVideoFormats(fileUrl, is4k, applyTopBottomCorrection) { completion ->
+          theta.convertVideoFormats(fileUrl, toLowResolution, applyTopBottomCorrection) { completion ->
             sendNotifyEvent(
               toNotify(
                 NOTIFY_CONVERT_VIDEO_FORMATS_PROGRESS,
@@ -1820,7 +1887,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun cancelVideoConvert(promise: Promise) {
+
+  override fun cancelVideoConvert(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -1841,7 +1909,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun finishWlan(promise: Promise) {
+
+  override fun finishWlan(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -1862,7 +1931,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun listAccessPoints(promise: Promise) {
+
+  override fun listAccessPoints(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -1884,7 +1954,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun setAccessPointDynamically(
+
+  override fun setAccessPointDynamically(
     params: ReadableMap,
     promise: Promise
   ) {
@@ -1917,7 +1988,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun setAccessPointStatically(
+
+  override fun setAccessPointStatically(
     params: ReadableMap,
     promise: Promise
   ) {
@@ -1958,9 +2030,10 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun setAccessPointConnectionPriority(
+
+  override fun setAccessPointConnectionPriority(
     ssid: String,
-    connectionPriority: Int,
+    connectionPriority: Double,
     ssidStealth: Boolean,
     promise: Promise
   ) {
@@ -1971,7 +2044,7 @@ class ThetaClientReactNativeModule(
     }
     launch {
       try {
-        theta.setAccessPointConnectionPriority(ssid, connectionPriority, ssidStealth)
+        theta.setAccessPointConnectionPriority(ssid, connectionPriority.toInt(), ssidStealth)
         promise.resolve(true)
       } catch (t: Throwable) {
         promise.reject(t)
@@ -1985,7 +2058,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun deleteAccessPoint(ssid: String, promise: Promise) {
+
+  override fun deleteAccessPoint(ssid: String, promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -2007,7 +2081,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun setBluetoothDevice(uuid: String, promise: Promise) {
+
+  override fun setBluetoothDevice(uuid: String, promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -2030,7 +2105,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun getMySetting(captureMode: String, promise: Promise) {
+
+  override fun getMySetting(captureMode: String, promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -2053,7 +2129,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun getMySettingFromOldModel(optionNames: ReadableArray, promise: Promise) {
+
+  override fun getMySettingFromOldModel(optionNames: ReadableArray, promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -2082,7 +2159,8 @@ class ThetaClientReactNativeModule(
    * @param Promise of bolean result, always true
    */
   @ReactMethod
-  fun setMySetting(captureMode: String, options: ReadableMap, promise: Promise) {
+
+  override fun setMySetting(captureMode: String, options: ReadableMap, promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -2105,7 +2183,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result, always true
    */
   @ReactMethod
-  fun deleteMySetting(captureMode: String, promise: Promise) {
+
+  override fun deleteMySetting(captureMode: String, promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -2126,7 +2205,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun listPlugins(promise: Promise) {
+
+  override fun listPlugins(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -2162,7 +2242,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun setPlugin(packageName: String, promise: Promise) {
+
+  override fun setPlugin(packageName: String, promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -2184,7 +2265,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun startPlugin(packageName: String, promise: Promise) {
+
+  override fun startPlugin(packageName: String, promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -2205,7 +2287,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun stopPlugin(promise: Promise) {
+
+  override fun stopPlugin(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -2227,7 +2310,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun getPluginLicense(packageName: String, promise: Promise) {
+
+  override fun getPluginLicense(packageName: String, promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -2248,7 +2332,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result, list of package names of plugins.
    */
   @ReactMethod
-  fun getPluginOrders(promise: Promise) {
+
+  override fun getPluginOrders(promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -2274,7 +2359,8 @@ class ThetaClientReactNativeModule(
    * @param promise promise to set result
    */
   @ReactMethod
-  fun setPluginOrders(plugins: ReadableArray, promise: Promise) {
+
+  override fun setPluginOrders(plugins: ReadableArray, promise: Promise) {
     val theta = theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -2297,7 +2383,8 @@ class ThetaClientReactNativeModule(
   }
 
   @ReactMethod
-  fun getEventWebSocket(promise: Promise) {
+
+  override fun getEventWebSocket(promise: Promise) {
     val theta = this.theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -2311,7 +2398,8 @@ class ThetaClientReactNativeModule(
   }
 
   @ReactMethod
-  fun eventWebSocketStart(promise: Promise) {
+
+  override fun eventWebSocketStart(promise: Promise) {
     val theta = this.theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))
@@ -2346,7 +2434,8 @@ class ThetaClientReactNativeModule(
   }
 
   @ReactMethod
-  fun eventWebSocketStop(promise: Promise) {
+
+  override fun eventWebSocketStop(promise: Promise) {
     val theta = this.theta
     if (theta == null) {
       promise.reject(Exception(messageNotInit))

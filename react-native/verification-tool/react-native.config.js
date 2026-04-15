@@ -1,9 +1,12 @@
 const path = require('path');
-const pak = require('../package.json');
 
+/**
+ * theta-client-react-native is referenced via file:..,
+ * so we explicitly set the root to ensure autolinking detects it correctly.
+ */
 module.exports = {
   dependencies: {
-    [pak.name]: {
+    'theta-client-react-native': {
       root: path.join(__dirname, '..'),
     },
   },

@@ -1,85 +1,106 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import {
-  NativeStackNavigationOptions,
-  createNativeStackNavigator,
-} from '@react-navigation/native-stack';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, StatusBar, Platform, SafeAreaView, Button } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
 import MenuScreen from './screen/menu-screen';
-import VideoConvertScreen from './screen/video-convert-screen';
-import LivePreviewScreen from './screen/live-preview-screen';
-import OptionsScreen from './screen/options-screen/options-screen';
-import CommandsScreen from './screen/commands-screen';
+import GetInfoScreen from './screen/get-info-screen';
 import PhotoCaptureScreen from './screen/photo-capture-screen';
-import FilePreviewScreen from './screen/file-preview-screen';
+import OptionsScreen from './screen/options-screen';
 import ListFilesScreen from './screen/list-files-screen';
-import VideoCaptureScreen from './screen/video-capture-screen/video-capture-screen';
-import DeleteFilesScreen from './screen/delete-files-screen/delete-files-screen';
-import GetMetadataScreen from './screen/get-metadata-screen/get-metadata-screen';
-import GetInfoScreen from './screen/get-info-screen/get-info-screen';
-import TimeShiftCaptureScreen from './screen/time-shift-capture-screen/time-shift-capture-screen';
-import TimeShiftManualCaptureScreen from './screen/time-shift-manual-capture-screen/time-shift-manual-capture-screen';
-import LimitlessIntervalCaptureScreen from './screen/limitless-interval-capture-screen/limitless-interval-capture-screen';
-import ShotCountSpecifiedIntervalCaptureScreen from './screen/shot-count-specified-interval-capture-screen/shot-count-specified-interval-capture-screen';
-import CompositeIntervalCaptureScreen from './screen/composite-interval-capture-screen/composite-interval-capture-screen';
-import BurstCaptureScreen from './screen/burst-capture-screen/burst-capture-screen';
-import ContinuousCaptureScreen from './screen/continuous-capture-screen/continuous-capture-screen';
-import MultiBracketCaptureScreen from './screen/multi-bracket-capture-screen/multi-bracket-capture-screen';
-import { setApiLogListener, type FileInfo } from './modules/theta-client';
-import { Button } from 'react-native';
+import GetMetadataScreen from './screen/get-metadata-screen';
+import DeleteFilesScreen from './screen/delete-files-screen';
+import VideoCaptureScreen from './screen/video-capture-screen';
+import TimeShiftCaptureScreen from './screen/time-shift-capture-screen';
+import TimeShiftManualCaptureScreen from './screen/time-shift-manual-capture-screen';
+import LimitlessIntervalCaptureScreen from './screen/limitless-interval-capture-screen';
+import CompositeIntervalCaptureScreen from './screen/composite-interval-capture-screen';
+import ShotCountSpecifiedIntervalCaptureScreen from './screen/shot-count-specified-interval-capture-screen';
+import BurstCaptureScreen from './screen/burst-capture-screen';
+import MultiBracketCaptureScreen from './screen/multi-bracket-capture-screen';
+import ContinuousCaptureScreen from './screen/continuous-capture-screen';
+import LivePreviewScreen from './screen/live-preview-screen';
+import VideoConvertScreen from './screen/video-convert-screen';
+import CommandsScreen from './screen/commands-screen';
+import FilePreviewScreen from './screen/file-preview-screen';
 import LogPopupView from './components/log-popup-view/log-popup-view';
+import { FileTypeEnum, setApiLogListener } from './modules/theta-client';
 
-export type RootStackParamList = {
-  menu: undefined;
-  getInfo: undefined;
-  listFiles: undefined;
-  deleteFiles: undefined;
-  getMetadata: undefined;
-  livePreview: undefined;
-  videoConvert: undefined;
-  options: undefined;
-  commands: undefined;
-  photoCapture: undefined;
-  videoCapture: undefined;
-  limitlessIntervalCapture: undefined;
-  timeShiftCapture: undefined;
-  timeShiftManualCapture: undefined;
-  shotCountSpecifiedIntervalCapture: undefined;
-  compositeIntervalCapture: undefined;
-  burstCapture: undefined;
-  continuousCapture: undefined;
-  multiBracketCapture: undefined;
-  filePreview: {
-    item: FileInfo;
-  };
+const BackIcon = () => (
+  <Svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M15 18L9 12L15 6"
+      stroke="#fff"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
+type ScreenName =
+  | 'menu'
+  | 'getInfo'
+  | 'listFiles'
+  | 'deleteFiles'
+  | 'getMetadata'
+  | 'livePreview'
+  | 'videoConvert'
+  | 'options'
+  | 'commands'
+  | 'photoCapture'
+  | 'videoCapture'
+  | 'limitlessIntervalCapture'
+  | 'timeShiftCapture'
+  | 'timeShiftManualCapture'
+  | 'shotCountSpecifiedIntervalCapture'
+  | 'compositeIntervalCapture'
+  | 'burstCapture'
+  | 'continuousCapture'
+  | 'multiBracketCapture'
+  | 'filePreview';
+
+const screenTitles: Record<ScreenName, string> = {
+  menu: 'Menu',
+  getInfo: 'Get Info',
+  listFiles: 'List Files',
+  deleteFiles: 'Delete Files',
+  getMetadata: 'Get Metadata',
+  livePreview: 'Live Preview',
+  videoConvert: 'Video Convert',
+  options: 'Options',
+  commands: 'Commands',
+  photoCapture: 'Photo Capture',
+  videoCapture: 'Video Capture',
+  limitlessIntervalCapture: 'Limitless Interval Capture',
+  timeShiftCapture: 'Time Shift Capture',
+  timeShiftManualCapture: 'Time Shift Manual Capture',
+  shotCountSpecifiedIntervalCapture: 'Shot Count Specified Interval Capture',
+  compositeIntervalCapture: 'Composite Interval Capture',
+  burstCapture: 'Burst Capture',
+  continuousCapture: 'Continuous Capture',
+  multiBracketCapture: 'Multi Bracket Capture',
+  filePreview: 'Preview',
 };
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
-
-const screenOptions = {
-  headerStyle: {
-    backgroundColor: '#6200ee',
-  },
-  headerTintColor: '#fff',
-  headerTitleStyle: {
-    fontWeight: 'bold',
-  },
-  headerBackTitle: '',
-} as NativeStackNavigationOptions;
-
 const App = () => {
-  const [log, setLog] = React.useState<string>('');
-  const [isShowLog, setShowLog] = React.useState<boolean>(false);
-  const headerRight = () => (
-    <>
-      <Button onPress={() => setShowLog(true)} title="Api log" />
-      <LogPopupView
-        visible={isShowLog}
-        log={log}
-        onClose={() => setShowLog(false)}
-        onClear={() => setLog('')}
-      />
-    </>
-  );
+  const [currentScreen, setCurrentScreen] = useState<ScreenName>('menu');
+  const [screenHistory, setScreenHistory] = useState<ScreenName[]>([]);
+  const [menuMessage, setMenuMessage] = useState('');
+  const [screenParams, setScreenParams] = useState<any>(null);
+  const [screenTitle, setScreenTitle] = useState<string>('');
+  const [log, setLog] = useState<string>('');
+  const [isShowLog, setShowLog] = useState<boolean>(false);
+
+  // list-files screen state
+  const [listFilesState, setListFilesState] = useState({
+    fileType: FileTypeEnum.ALL,
+    startPosition: 0,
+    entryCount: 100,
+    storage: undefined as any,
+    message: '',
+    selectedFileInfo: null as any,
+    listFilesProps: undefined as any,
+    refreshCounter: 0,
+  });
 
   const getDateTime = () => {
     const dt = new Date();
@@ -103,7 +124,7 @@ const App = () => {
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     setApiLogListener((message) => {
       addLog(message);
     });
@@ -113,115 +134,193 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const navigate = (screen: string, params?: any) => {
+    setScreenHistory([...screenHistory, currentScreen]);
+    setCurrentScreen(screen as ScreenName);
+    setScreenParams(params || null);
+    if (params?.fileInfo) {
+      setScreenTitle(params.fileInfo.name);
+    } else {
+      setScreenTitle('');
+    }
+
+    if (screen === 'listFiles' && params?.reset) {
+      setListFilesState({
+        fileType: FileTypeEnum.ALL,
+        startPosition: 0,
+        entryCount: 100,
+        storage: undefined,
+        message: '',
+        selectedFileInfo: null,
+        listFilesProps: undefined,
+        refreshCounter: 0,
+      });
+    }
+  };
+
+  const goBack = () => {
+    if (screenHistory.length > 0) {
+      const previousScreen = screenHistory[screenHistory.length - 1];
+      setScreenHistory(screenHistory.slice(0, -1));
+      setCurrentScreen(previousScreen);
+      setScreenParams(null);
+      setScreenTitle('');
+    }
+  };
+
+  const setOptions = (_options: { title: string }) => {
+  };
+
+  const navigation = {
+    navigate,
+    goBack,
+    setOptions,
+  };
+
+  const renderScreen = () => {
+    switch (currentScreen) {
+      case 'menu':
+        return (
+          <MenuScreen
+            navigation={navigation}
+            message={menuMessage}
+            onChangeMessage={setMenuMessage}
+          />
+        );
+      case 'getInfo':
+        return <GetInfoScreen />;
+      case 'photoCapture':
+        return <PhotoCaptureScreen navigation={navigation} />;
+      case 'options':
+        return <OptionsScreen navigation={navigation} />;
+      case 'listFiles':
+        return (
+          <ListFilesScreen
+            navigation={navigation}
+            state={listFilesState}
+            setState={setListFilesState}
+          />
+        );
+      case 'getMetadata':
+        return <GetMetadataScreen navigation={navigation} />;
+      case 'deleteFiles':
+        return <DeleteFilesScreen navigation={navigation} />;
+      case 'videoCapture':
+        return <VideoCaptureScreen navigation={navigation} />;
+      case 'timeShiftCapture':
+        return <TimeShiftCaptureScreen navigation={navigation} />;
+      case 'timeShiftManualCapture':
+        return <TimeShiftManualCaptureScreen navigation={navigation} />;
+      case 'limitlessIntervalCapture':
+        return <LimitlessIntervalCaptureScreen navigation={navigation} />;
+      case 'compositeIntervalCapture':
+        return <CompositeIntervalCaptureScreen navigation={navigation} />;
+      case 'shotCountSpecifiedIntervalCapture':
+        return <ShotCountSpecifiedIntervalCaptureScreen navigation={navigation} />;
+      case 'burstCapture':
+        return <BurstCaptureScreen navigation={navigation} />;
+      case 'multiBracketCapture':
+        return <MultiBracketCaptureScreen navigation={navigation} />;
+      case 'continuousCapture':
+        return <ContinuousCaptureScreen navigation={navigation} />;
+      case 'livePreview':
+        return <LivePreviewScreen navigation={navigation} />;
+      case 'videoConvert':
+        return <VideoConvertScreen navigation={navigation} />;
+      case 'commands':
+        return <CommandsScreen navigation={navigation} />;
+      case 'filePreview':
+        return screenParams?.fileInfo ? (
+          <FilePreviewScreen fileInfo={screenParams.fileInfo} />
+        ) : null;
+      default:
+        return (
+          <View style={styles.placeholderContainer}>
+            <Text style={styles.placeholderText}>
+              {screenTitles[currentScreen]} Screen
+            </Text>
+            <Text style={styles.placeholderSubtext}>Not implemented yet</Text>
+          </View>
+        );
+    }
+  };
+
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={screenOptions}>
-        <Stack.Screen
-          options={{ title: 'Menu', headerRight }}
-          name="menu"
-          component={MenuScreen}
-        />
-        <Stack.Screen
-          options={{ title: 'Get Info', headerRight }}
-          name="getInfo"
-          component={GetInfoScreen}
-        />
-        <Stack.Screen
-          options={{ title: 'listFiles', headerRight }}
-          name="listFiles"
-          component={ListFilesScreen}
-        />
-        <Stack.Screen
-          options={{ title: 'DeleteFiles', headerRight }}
-          name="deleteFiles"
-          component={DeleteFilesScreen}
-        />
-        <Stack.Screen
-          options={{ title: 'getMetadata', headerRight }}
-          name="getMetadata"
-          component={GetMetadataScreen}
-        />
-        <Stack.Screen
-          options={{ title: 'Live preview', headerRight }}
-          name="livePreview"
-          component={LivePreviewScreen}
-        />
-        <Stack.Screen
-          options={{ title: 'VideoConvert', headerRight }}
-          name="videoConvert"
-          component={VideoConvertScreen}
-        />
-        <Stack.Screen
-          options={{ title: 'Options', headerRight }}
-          name="options"
-          component={OptionsScreen}
-        />
-        <Stack.Screen
-          options={{ title: 'Commands', headerRight }}
-          name="commands"
-          component={CommandsScreen}
-        />
-        <Stack.Screen
-          options={{ title: 'Photo Capture', headerRight }}
-          name="photoCapture"
-          component={PhotoCaptureScreen}
-        />
-        <Stack.Screen
-          options={{ title: 'Video Capture', headerRight }}
-          name="videoCapture"
-          component={VideoCaptureScreen}
-        />
-        <Stack.Screen
-          options={{ title: 'Limitless Interval Capture', headerRight }}
-          name="limitlessIntervalCapture"
-          component={LimitlessIntervalCaptureScreen}
-        />
-        <Stack.Screen
-          options={{ title: 'TimeShift Capture', headerRight }}
-          name="timeShiftCapture"
-          component={TimeShiftCaptureScreen}
-        />
-        <Stack.Screen
-          options={{ title: 'TimeShift Manual Capture', headerRight }}
-          name="timeShiftManualCapture"
-          component={TimeShiftManualCaptureScreen}
-        />
-        <Stack.Screen
-          options={{
-            title: 'interval shooting with the shot count specified',
-            headerRight,
-          }}
-          name="shotCountSpecifiedIntervalCapture"
-          component={ShotCountSpecifiedIntervalCaptureScreen}
-        />
-        <Stack.Screen
-          options={{ title: 'interval composite shooting', headerRight }}
-          name="compositeIntervalCapture"
-          component={CompositeIntervalCaptureScreen}
-        />
-        <Stack.Screen
-          options={{ title: 'burst shooting', headerRight }}
-          name="burstCapture"
-          component={BurstCaptureScreen}
-        />
-        <Stack.Screen
-          options={{ title: 'MultiBracket Capture', headerRight }}
-          name="multiBracketCapture"
-          component={MultiBracketCaptureScreen}
-        />
-        <Stack.Screen
-          options={{ title: 'continuous shooting', headerRight }}
-          name="continuousCapture"
-          component={ContinuousCaptureScreen}
-        />
-        <Stack.Screen
-          options={{ title: 'Preview', headerRight }}
-          name="filePreview"
-          component={FilePreviewScreen}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#6200ee" />
+      <View style={styles.header}>
+        {screenHistory.length > 0 && (
+          <TouchableOpacity onPress={goBack} style={styles.backButton}>
+            <BackIcon />
+          </TouchableOpacity>
+        )}
+        <Text style={styles.headerTitle}>
+          {screenTitle || screenTitles[currentScreen]}
+        </Text>
+        <View style={styles.headerRight}>
+          <Button onPress={() => setShowLog(true)} title="Api log" />
+        </View>
+      </View>
+      <View style={styles.content}>{renderScreen()}</View>
+      <LogPopupView
+        visible={isShowLog}
+        log={log}
+        onClose={() => setShowLog(false)}
+        onClear={() => setLog('')}
+      />
+    </SafeAreaView>
   );
 };
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#6200ee',
+    marginTop: Platform.select({
+      ios: 0,
+      android: (typeof Platform.Version === 'number' && Platform.Version >= 35) ? (StatusBar.currentHeight || 0) : 0,
+    }),
+  },
+  header: {
+    backgroundColor: '#6200ee',
+    paddingVertical: 15,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  headerRight: {
+    marginLeft: 'auto',
+  },
+  backButton: {
+    marginRight: 16,
+    padding: 4,
+  },
+  headerTitle: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  content: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  placeholderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  placeholderText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  placeholderSubtext: {
+    fontSize: 16,
+    color: '#666',
+  },
+});
+
 export default App;
+

@@ -41,8 +41,10 @@ describe('listFiles', () => {
   });
 
   afterEach(() => {
-    thetaClient.initialize = jest.fn();
-    thetaClient.listFiles = jest.fn();
+    thetaClient.initialize = jest.fn(() => Promise.resolve());
+    thetaClient.listFiles = jest.fn(() =>
+      Promise.resolve({ fileList: [], totalEntries: 0 })
+    );
   });
 
   function createFileInfo(no: number): FileInfo {

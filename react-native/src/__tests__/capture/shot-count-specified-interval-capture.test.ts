@@ -16,13 +16,26 @@ describe('interval shooting with the shot count specified', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     NotifyController.instance.release();
+    jest.mocked(NativeEventEmitter_addListener).mockImplementation(
+      jest.fn(() => {
+        return {
+          remove: jest.fn(),
+        };
+      })
+    );
   });
 
   afterEach(() => {
-    thetaClient.initialize = jest.fn();
-    thetaClient.buildShotCountSpecifiedIntervalCapture = jest.fn();
-    thetaClient.startShotCountSpecifiedIntervalCapture = jest.fn();
-    thetaClient.cancelShotCountSpecifiedIntervalCapture = jest.fn();
+    thetaClient.initialize = jest.fn(() => Promise.resolve());
+    thetaClient.buildShotCountSpecifiedIntervalCapture = jest.fn(() =>
+      Promise.resolve()
+    );
+    thetaClient.startShotCountSpecifiedIntervalCapture = jest.fn(() =>
+      Promise.resolve([])
+    );
+    thetaClient.cancelShotCountSpecifiedIntervalCapture = jest.fn(() =>
+      Promise.resolve()
+    );
     NotifyController.instance.release();
   });
 

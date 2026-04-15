@@ -17,13 +17,20 @@ describe('video capture', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     NotifyController.instance.release();
+    jest.mocked(NativeEventEmitter_addListener).mockImplementation(
+      jest.fn(() => {
+        return {
+          remove: jest.fn(),
+        };
+      })
+    );
   });
 
   afterEach(() => {
-    thetaClient.initialize = jest.fn();
-    thetaClient.buildVideoCapture = jest.fn();
-    thetaClient.startVideoCapture = jest.fn();
-    thetaClient.stopVideoCapture = jest.fn();
+    thetaClient.initialize = jest.fn(() => Promise.resolve());
+    thetaClient.buildVideoCapture = jest.fn(() => Promise.resolve());
+    thetaClient.startVideoCapture = jest.fn(() => Promise.resolve(''));
+    thetaClient.stopVideoCapture = jest.fn(() => Promise.resolve());
     NotifyController.instance.release();
   });
 

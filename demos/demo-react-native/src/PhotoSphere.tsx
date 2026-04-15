@@ -1,18 +1,22 @@
 import React from 'react';
-import {View, Image} from 'react-native';
+import { View, Image } from 'react-native';
 import styles from './Styles';
+import { Navigation } from './types';
 
-const PhotoSphere = ({route, navigation}) => {
-  React.useEffect(() => {
-    navigation.setOptions({title: route.params.item.name});
-  }, [navigation, route.params.item.name]);
+type PhotoSphereProps = {
+  navigation: Navigation;
+  fileUrl?: string;
+};
 
+const PhotoSphere = ({ fileUrl }: PhotoSphereProps) => {
   return (
     <View style={styles.takePhotoBack}>
-      <Image
-        style={styles.takePhoto}
-        source={{uri: route.params.item.fileUrl}}
-      />
+      {fileUrl ? (
+        <Image
+          style={styles.takePhoto}
+          source={{ uri: fileUrl }}
+        />
+      ) : null}
     </View>
   );
 };

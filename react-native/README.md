@@ -1,5 +1,12 @@
 ## How to create React Native project
 
+### Compatibility
+
+| Version | React Native | Legacy Architecture | New Architecture |
+|------------|------------|---------------------|------------------|
+| 1.14.0 or later | 0.78.2 | Not supported | Supported |
+| 1.13.1 or earlier | 0.71.19 | Supported | Not supported |
+
 ### Prerequisite
 
 * Build theta-client.

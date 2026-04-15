@@ -13,6 +13,13 @@ describe('convertVideoFormats', () => {
     thetaClient.convertVideoFormats = jest.fn();
     NotifyController.instance.release();
     jest.clearAllMocks();
+    jest.mocked(NativeEventEmitter_addListener).mockImplementation(
+      jest.fn(() => {
+        return {
+          remove: jest.fn(),
+        };
+      })
+    );
   });
 
   afterEach(() => {

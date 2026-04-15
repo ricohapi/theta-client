@@ -16,13 +16,24 @@ describe('limitless interval capture', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     NotifyController.instance.release();
+    jest.mocked(NativeEventEmitter_addListener).mockImplementation(
+      jest.fn(() => {
+        return {
+          remove: jest.fn(),
+        };
+      })
+    );
   });
 
   afterEach(() => {
-    thetaClient.initialize = jest.fn();
-    thetaClient.buildLimitlessIntervalCapture = jest.fn();
-    thetaClient.startLimitlessIntervalCapture = jest.fn();
-    thetaClient.stopLimitlessIntervalCapture = jest.fn();
+    thetaClient.initialize = jest.fn(() => Promise.resolve());
+    thetaClient.buildLimitlessIntervalCapture = jest.fn(() =>
+      Promise.resolve()
+    );
+    thetaClient.startLimitlessIntervalCapture = jest.fn(() =>
+      Promise.resolve([])
+    );
+    thetaClient.stopLimitlessIntervalCapture = jest.fn(() => Promise.resolve());
     NotifyController.instance.release();
   });
 
