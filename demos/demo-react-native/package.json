@@ -11,7 +11,7 @@
     "postinstall": "./scripts/copy-npm-module-to-web-bundles.sh"
   },
   "dependencies": {
-    "theta-client-react-native": "1.14.0",
+    "theta-client-react-native": "1.14.1",
     "marzipano": "0.10.2",
     "react": "19.0.0",
     "react-native": "0.78.2",
