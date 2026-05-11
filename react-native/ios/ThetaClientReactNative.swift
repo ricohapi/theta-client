@@ -2205,7 +2205,7 @@ class ThetaClientReactNative: RCTEventEmitter {
     @objc(setAccessPointConnectionPriority:connectionPriority:ssidStealth:resolve:reject:)
     func setAccessPointConnectionPriority(
         ssid: String,
-        connectionPriority: Int,
+        connectionPriority: Double,
         ssidStealth: Bool,
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -2214,9 +2214,15 @@ class ThetaClientReactNative: RCTEventEmitter {
             reject(ERROR_CODE_ERROR, MESSAGE_NOT_INIT, nil)
             return
         }
+
+        guard let priority = Int32(exactly:connectionPriority) else {
+            reject(ERROR_CODE_ERROR, MESSAGE_NO_ARGUMENT, nil)
+            return
+        }
+
         do {
             thetaRepository.setAccessPointConnectionPriority(
-                ssid: ssid, connectionPriority: Int32(clamping: connectionPriority),
+                ssid: ssid, connectionPriority: priority,
                 ssidStealth: ssidStealth
             ) { error in
                 if let error {
