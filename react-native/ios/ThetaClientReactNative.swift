@@ -1,6 +1,8 @@
 import THETAClient
 
 let ERROR_CODE_ERROR = "error"
+let ERROR_STATUS_CODE = "statusCode"
+let ERROR_CODE = "errorCode"
 let MESSAGE_NOT_INIT = "Not initialized."
 let MESSAGE_LIVE_PREVIEW_RUNNING = "Live Preview is running."
 let MESSAGE_NO_RESULT = "No result."
@@ -112,7 +114,7 @@ class ThetaClientReactNative: RCTEventEmitter {
     override func supportedEvents() -> [String]! {
         [
             ThetaClientReactNative.EVENT_FRAME,
-            ThetaClientReactNative.EVENT_NOTIFY
+            ThetaClientReactNative.EVENT_NOTIFY,
         ]
     }
 
@@ -205,7 +207,7 @@ class ThetaClientReactNative: RCTEventEmitter {
                 timeout: timeoutParams
             ) { thetaRepository, error in
                 if let error {
-                    reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                    self.rejectWithDetail(reject, error: error)
                 } else {
                     self.thetaRepository = thetaRepository
                     resolve(true)
@@ -245,7 +247,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
         thetaRepository.getThetaInfo { response, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let response {
                 var info = convertResult(thetaInfo: response)
                 if let cameraModel = thetaRepository.cameraModel {
@@ -270,7 +272,7 @@ class ThetaClientReactNative: RCTEventEmitter {
 
         thetaRepository.getThetaLicense { response, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let response {
                 resolve(response)
             } else {
@@ -290,7 +292,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
         thetaRepository.getThetaState { response, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let response {
                 let state = convertResult(thetaState: response)
                 resolve(state)
@@ -333,7 +335,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             storage: storageVal
         ) { files, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let files {
                 let resultList = convertResult(fileInfoList: files.fileList)
                 let resultMap = [
@@ -364,7 +366,7 @@ class ThetaClientReactNative: RCTEventEmitter {
 
         thetaRepository.deleteFiles(fileUrls: urls) { error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else {
                 resolve(true)
             }
@@ -383,7 +385,7 @@ class ThetaClientReactNative: RCTEventEmitter {
 
         thetaRepository.deleteAllFiles { error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else {
                 resolve(true)
             }
@@ -402,7 +404,7 @@ class ThetaClientReactNative: RCTEventEmitter {
 
         thetaRepository.deleteAllImageFiles { error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else {
                 resolve(true)
             }
@@ -421,7 +423,7 @@ class ThetaClientReactNative: RCTEventEmitter {
 
         thetaRepository.deleteAllVideoFiles { error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else {
                 resolve(true)
             }
@@ -448,7 +450,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             optionNames: params
         ) { response, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let response {
                 resolve(convertResult(options: response))
             } else {
@@ -477,7 +479,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             options: params
         ) { error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else {
                 resolve(true)
             }
@@ -537,7 +539,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         thetaRepository.getLivePreview(frameHandler: frameHandler) { error in
             self.previewing = false
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else {
                 self.execAndResetStopLivePreviewResolve(true)
 
@@ -597,7 +599,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
         photoCaptureBuilder.build { capture, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let capture {
                 self.photoCapture = capture
                 self.photoCaptureBuilder = nil
@@ -655,7 +657,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         photoCapture.takePicture(
             callback: Callback({ url, error in
                 if let error {
-                    reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                    self.rejectWithDetail(reject, error: error)
                 } else {
                     self.photoCapture = nil
                     resolve(url)
@@ -698,7 +700,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
         timeShiftCaptureBuilder.build { capture, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let capture {
                 self.timeShiftCapture = capture
                 self.timeShiftCaptureBuilder = nil
@@ -778,7 +780,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             callback: Callback(
                 { url, error in
                     if let error {
-                        reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                        self.rejectWithDetail(reject, error: error)
                     } else {
                         resolve(url)
                     }
@@ -839,7 +841,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
         timeShiftManualCaptureBuilder.build { capture, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let capture {
                 self.timeShiftManualCapture = capture
                 self.timeShiftManualCaptureBuilder = nil
@@ -921,7 +923,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             callback: Callback(
                 { url, error in
                     if let error {
-                        reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                        self.rejectWithDetail(reject, error: error)
                     } else {
                         resolve(url)
                     }
@@ -998,7 +1000,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
         videoCaptureBuilder.build { capture, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let capture {
                 self.videoCapture = capture
                 self.videoCaptureBuilder = nil
@@ -1077,7 +1079,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             callback: Callback(
                 { url, error in
                     if let error {
-                        reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                        self.rejectWithDetail(reject, error: error)
                     } else {
                         self.videoCapture = nil
                         resolve(url)
@@ -1138,7 +1140,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
         limitlessIntervalCaptureBuilder.build { capture, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let capture {
                 self.limitlessIntervalCapture = capture
                 self.limitlessIntervalCaptureBuilder = nil
@@ -1207,7 +1209,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             callback: Callback(
                 { urls, error in
                     if let error {
-                        reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                        self.rejectWithDetail(reject, error: error)
                     } else {
                         self.limitlessIntervalCapture = nil
                         resolve(urls)
@@ -1268,7 +1270,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
         shotCountSpecifiedIntervalCaptureBuilder.build { capture, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let capture {
                 self.shotCountSpecifiedIntervalCapture = capture
                 self.shotCountSpecifiedIntervalCaptureBuilder = nil
@@ -1348,7 +1350,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             callback: Callback(
                 { url, error in
                     if let error {
-                        reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                        self.rejectWithDetail(reject, error: error)
                     } else {
                         resolve(url)
                     }
@@ -1408,7 +1410,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
         compositeIntervalCaptureBuilder.build { capture, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let capture {
                 self.compositeIntervalCapture = capture
                 self.compositeIntervalCaptureBuilder = nil
@@ -1488,7 +1490,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             callback: Callback(
                 { url, error in
                     if let error {
-                        reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                        self.rejectWithDetail(reject, error: error)
                     } else {
                         resolve(url)
                     }
@@ -1572,7 +1574,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
         burstCaptureBuilder.build { capture, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let capture {
                 self.burstCapture = capture
                 self.burstCaptureBuilder = nil
@@ -1652,7 +1654,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             callback: Callback(
                 { url, error in
                     if let error {
-                        reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                        self.rejectWithDetail(reject, error: error)
                     } else {
                         resolve(url)
                     }
@@ -1712,13 +1714,13 @@ class ThetaClientReactNative: RCTEventEmitter {
             do {
                 try setMultiBracketCaptureBuilderParams(params: options, builder: multiBracketCaptureBuilder)
             } catch {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                rejectWithDetail(reject, error: error)
                 return
             }
         }
         multiBracketCaptureBuilder.build { capture, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let capture {
                 self.multiBracketCapture = capture
                 self.multiBracketCaptureBuilder = nil
@@ -1798,7 +1800,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             callback: Callback(
                 { url, error in
                     if let error {
-                        reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                        self.rejectWithDetail(reject, error: error)
                     } else {
                         resolve(url)
                     }
@@ -1859,7 +1861,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
         continuousCaptureBuilder.build { capture, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let capture {
                 self.continuousCapture = capture
                 self.continuousCaptureBuilder = nil
@@ -1928,7 +1930,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             callback: Callback(
                 { url, error in
                     if let error {
-                        reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                        self.rejectWithDetail(reject, error: error)
                     } else {
                         resolve(url)
                     }
@@ -1953,7 +1955,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             fileUrl: fileUrl
         ) { response, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let response {
                 resolve(convertResult(metadata: response))
             } else {
@@ -1974,7 +1976,7 @@ class ThetaClientReactNative: RCTEventEmitter {
 
         thetaRepository.reboot { error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else {
                 resolve(true)
             }
@@ -1993,7 +1995,7 @@ class ThetaClientReactNative: RCTEventEmitter {
 
         thetaRepository.reset { error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else {
                 resolve(true)
             }
@@ -2012,7 +2014,7 @@ class ThetaClientReactNative: RCTEventEmitter {
 
         thetaRepository.restoreSettings { error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else {
                 resolve(true)
             }
@@ -2031,7 +2033,7 @@ class ThetaClientReactNative: RCTEventEmitter {
 
         thetaRepository.stopSelfTimer { error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else {
                 resolve(true)
             }
@@ -2065,7 +2067,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             )
         } completionHandler: { fileUrl, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let fileUrl {
                 resolve(fileUrl)
             } else {
@@ -2086,7 +2088,7 @@ class ThetaClientReactNative: RCTEventEmitter {
 
         thetaRepository.cancelVideoConvert { error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else {
                 resolve(true)
             }
@@ -2105,7 +2107,7 @@ class ThetaClientReactNative: RCTEventEmitter {
 
         thetaRepository.finishWlan { error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else {
                 resolve(true)
             }
@@ -2124,7 +2126,7 @@ class ThetaClientReactNative: RCTEventEmitter {
 
         thetaRepository.listAccessPoints { response, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let response {
                 var list = convertResult(accessPointList: response)
                 resolve(list)
@@ -2155,13 +2157,13 @@ class ThetaClientReactNative: RCTEventEmitter {
                 proxy: accessPointParams.proxy
             ) { error in
                 if let error {
-                    reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                    self.rejectWithDetail(reject, error: error)
                 } else {
                     resolve(true)
                 }
             }
         } catch {
-            reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+            rejectWithDetail(reject, error: error)
         }
     }
 
@@ -2192,13 +2194,13 @@ class ThetaClientReactNative: RCTEventEmitter {
                 proxy: accessPointParams.proxy
             ) { error in
                 if let error {
-                    reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                    self.rejectWithDetail(reject, error: error)
                 } else {
                     resolve(true)
                 }
             }
         } catch {
-            reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+            rejectWithDetail(reject, error: error)
         }
     }
 
@@ -2226,13 +2228,13 @@ class ThetaClientReactNative: RCTEventEmitter {
                 ssidStealth: ssidStealth
             ) { error in
                 if let error {
-                    reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                    self.rejectWithDetail(reject, error: error)
                 } else {
                     resolve(true)
                 }
             }
         } catch {
-            reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+            rejectWithDetail(reject, error: error)
         }
     }
 
@@ -2251,7 +2253,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             ssid: ssid
         ) { error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else {
                 resolve(true)
             }
@@ -2280,7 +2282,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             captureMode: captureMode
         ) { response, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let response {
                 resolve(convertResult(options: response))
             } else {
@@ -2309,7 +2311,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             optionNames: params
         ) { response, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let response {
                 resolve(convertResult(options: response))
             } else {
@@ -2344,7 +2346,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             options: params
         ) { error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else {
                 resolve(true)
             }
@@ -2373,7 +2375,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             captureMode: captureMode
         ) { error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else {
                 resolve(true)
             }
@@ -2391,7 +2393,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
         thetaRepository.listPlugins { pluginList, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let pluginList {
                 resolve(toPluginInfosResult(pluginInfoList: pluginList))
             } else {
@@ -2413,7 +2415,7 @@ class ThetaClientReactNative: RCTEventEmitter {
 
         thetaRepository.setPlugin(packageName: packageName) { error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else {
                 resolve(true)
             }
@@ -2433,7 +2435,7 @@ class ThetaClientReactNative: RCTEventEmitter {
 
         thetaRepository.startPlugin(packageName: packageName) { error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else {
                 resolve(true)
             }
@@ -2452,7 +2454,7 @@ class ThetaClientReactNative: RCTEventEmitter {
 
         thetaRepository.stopPlugin { error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else {
                 resolve(true)
             }
@@ -2474,7 +2476,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             packageName: packageName
         ) { response, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let response {
                 resolve(response)
             } else {
@@ -2494,7 +2496,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
         thetaRepository.getPluginOrders { plugins, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let plugins {
                 resolve(plugins)
             } else {
@@ -2522,7 +2524,7 @@ class ThetaClientReactNative: RCTEventEmitter {
             plugins: plugins
         ) { error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else {
                 resolve(true)
             }
@@ -2541,7 +2543,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
         thetaRepository.setBluetoothDevice(uuid: uuid) { deviceName, error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else if let deviceName {
                 resolve(deviceName)
             } else {
@@ -2610,7 +2612,7 @@ class ThetaClientReactNative: RCTEventEmitter {
         }
         eventWebSocket.start(callback: Callback(self)) { error in
             if let error {
-                reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+                self.rejectWithDetail(reject, error: error)
             } else {
                 resolve(true)
             }
@@ -2633,5 +2635,33 @@ class ThetaClientReactNative: RCTEventEmitter {
         eventWebSocket.stop(completionHandler: { _ in
         })
         resolve(true)
+    }
+
+    private func rejectWithDetail(_ reject: @escaping RCTPromiseRejectBlock, error: Error) {
+        let nsError = error as NSError
+
+        // Kotlin/Native may bridge Kotlin exceptions as NSError with KotlinException in userInfo.
+        guard let kotlinException = nsError.userInfo["KotlinException"] as? ThetaRepository.ThetaWebApiException else {
+            reject(ERROR_CODE_ERROR, error.localizedDescription, error)
+            return
+        }
+
+        var userInfo: [String: Any] = nsError.userInfo
+        let statusCode = kotlinException.statusCode?.intValue
+        if statusCode != nil {
+            userInfo[ERROR_STATUS_CODE] = statusCode
+        }
+        let errorCode = kotlinException.errorCode
+        if let errorCode = kotlinException.errorCode {
+            userInfo[ERROR_CODE] = errorCode
+        }
+        let bridgedError = NSError(
+            domain: "ThetaWebApiException",
+            code: statusCode ?? -1,
+            userInfo: userInfo
+        )
+
+        print("KotlinException statusCode=\(statusCode ?? -1) errorCode=\(errorCode ?? "-") message=\(error.localizedDescription)")
+        reject(ERROR_CODE_ERROR, error.localizedDescription, bridgedError)
     }
 }

@@ -89,8 +89,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<String?> getPlatformVersion() async {
-    final version =
-        await methodChannel.invokeMethod<String>('getPlatformVersion');
+    final version = await methodChannel
+        .invokeMethodWithThetaError<String>('getPlatformVersion');
     return version;
   }
 
@@ -108,7 +108,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
     } else {
       removeNotify(notifyIdApiLog);
     }
-    return methodChannel.invokeMethod<void>(
+    return methodChannel.invokeMethodWithThetaError<void>(
         'setApiLogListener', listener != null);
   }
 
@@ -140,7 +140,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       if (timeout != null) {
         params['timeout'] = ConvertUtils.convertTimeoutParam(timeout);
       }
-      await methodChannel.invokeMethod<void>('initialize', params);
+      await methodChannel.invokeMethodWithThetaError<void>(
+          'initialize', params);
       completer.complete();
     } catch (e) {
       completer.completeError(e);
@@ -150,20 +151,21 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<bool> isInitialized() async {
-    var isInit = await methodChannel.invokeMethod<bool?>('isInitialized');
+    var isInit =
+        await methodChannel.invokeMethodWithThetaError<bool?>('isInitialized');
     return Future.value(isInit != null && isInit);
   }
 
   @override
   Future<void> restoreSettings() async {
-    return methodChannel.invokeMethod<void>('restoreSettings');
+    return methodChannel.invokeMethodWithThetaError<void>('restoreSettings');
   }
 
   @override
   Future<ThetaModel?> getThetaModel() async {
     var completer = Completer<ThetaModel?>();
-    final thetaModel =
-        await methodChannel.invokeMethod<String?>('getThetaModel');
+    final thetaModel = await methodChannel
+        .invokeMethodWithThetaError<String?>('getThetaModel');
     completer.complete(ThetaModel.getValue(thetaModel));
     return completer.future;
   }
@@ -173,8 +175,9 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
     var completer = Completer<ThetaInfo>();
     try {
       debugPrint('call getThetaInfo');
-      var result = await methodChannel.invokeMethod<Map<dynamic, dynamic>>(
-          'getThetaInfo') as Map<dynamic, dynamic>;
+      var result = await methodChannel
+              .invokeMethodWithThetaError<Map<dynamic, dynamic>>('getThetaInfo')
+          as Map<dynamic, dynamic>;
       var thetaInfo = ConvertUtils.convertThetaInfo(result);
       completer.complete(thetaInfo);
     } catch (e) {
@@ -187,7 +190,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   Future<String> getThetaLicense() async {
     var completer = Completer<String>();
     try {
-      var result = await methodChannel.invokeMethod<String>('getThetaLicense');
+      var result = await methodChannel
+          .invokeMethodWithThetaError<String>('getThetaLicense');
       completer.complete(result);
     } catch (e) {
       completer.completeError(e);
@@ -200,8 +204,9 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
     var completer = Completer<ThetaState>();
     try {
       debugPrint('call getThetaState');
-      var result = await methodChannel.invokeMethod<Map<dynamic, dynamic>>(
-          'getThetaState') as Map<dynamic, dynamic>;
+      var result =
+          await methodChannel.invokeMethodWithThetaError<Map<dynamic, dynamic>>(
+              'getThetaState') as Map<dynamic, dynamic>;
       var thetaState = ConvertUtils.convertThetaState(result);
       completer.complete(thetaState);
     } catch (e) {
@@ -219,13 +224,16 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
         final image = params?['image'] as Uint8List?;
         if (image != null && !frameHandler(image)) {
           removeNotify(notifyIdLivePreview);
-          methodChannel.invokeMethod<bool>('stopLivePreview');
+          methodChannel.invokeMethodWithThetaError<bool>('stopLivePreview');
         }
       });
-      await methodChannel.invokeMethod<void>('getLivePreview');
+      await methodChannel.invokeMethodWithThetaError<void>('getLivePreview');
       completer.complete(null);
     } catch (e) {
-      if (e is PlatformException && e.message == "Live preview is running.") {
+      final errorMessage = e is ThetaWebApiException
+          ? e.message
+          : (e is PlatformException ? e.message : null);
+      if (errorMessage == "Live preview is running.") {
         completer.completeError(e);
       } else {
         removeNotify(notifyIdLivePreview);
@@ -249,8 +257,9 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       if (storage != null) {
         params['storage'] = storage.rawValue;
       }
-      var result = await methodChannel.invokeMethod<Map<dynamic, dynamic>>(
-          'listFiles', params) as Map<dynamic, dynamic>;
+      var result =
+          await methodChannel.invokeMethodWithThetaError<Map<dynamic, dynamic>>(
+              'listFiles', params) as Map<dynamic, dynamic>;
       var thetaFiles = ConvertUtils.convertThetaFiles(result);
       completer.complete(thetaFiles);
     } catch (e) {
@@ -261,27 +270,31 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<void> deleteFiles(List<String> fileUrls) async {
-    return methodChannel.invokeMethod<void>('deleteFiles', fileUrls);
+    return methodChannel.invokeMethodWithThetaError<void>(
+        'deleteFiles', fileUrls);
   }
 
   @override
   Future<void> deleteAllFiles() async {
-    return methodChannel.invokeMethod<void>('deleteAllFiles');
+    return methodChannel.invokeMethodWithThetaError<void>('deleteAllFiles');
   }
 
   @override
   Future<void> deleteAllImageFiles() async {
-    return methodChannel.invokeMethod<void>('deleteAllImageFiles');
+    return methodChannel
+        .invokeMethodWithThetaError<void>('deleteAllImageFiles');
   }
 
   @override
   Future<void> deleteAllVideoFiles() async {
-    return methodChannel.invokeMethod<void>('deleteAllVideoFiles');
+    return methodChannel
+        .invokeMethodWithThetaError<void>('deleteAllVideoFiles');
   }
 
   @override
   Future<void> getPhotoCaptureBuilder() async {
-    return methodChannel.invokeMethod<void>('getPhotoCaptureBuilder');
+    return methodChannel
+        .invokeMethodWithThetaError<void>('getPhotoCaptureBuilder');
   }
 
   @override
@@ -289,7 +302,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       Map<String, dynamic> options, int interval) async {
     final params = ConvertUtils.convertCaptureParams(options);
     params['_capture_interval'] = interval;
-    return methodChannel.invokeMethod<void>('buildPhotoCapture', params);
+    return methodChannel.invokeMethodWithThetaError<void>(
+        'buildPhotoCapture', params);
   }
 
   @override
@@ -309,7 +323,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           }
         });
       }
-      final fileUrl = await methodChannel.invokeMethod<String>('takePicture');
+      final fileUrl =
+          await methodChannel.invokeMethodWithThetaError<String>('takePicture');
       removeNotify(notifyIdPhotoCapturing);
       completer.complete(fileUrl);
     } catch (e) {
@@ -321,7 +336,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<void> getTimeShiftCaptureBuilder() async {
-    return methodChannel.invokeMethod<void>('getTimeShiftCaptureBuilder');
+    return methodChannel
+        .invokeMethodWithThetaError<void>('getTimeShiftCaptureBuilder');
   }
 
   @override
@@ -329,7 +345,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       Map<String, dynamic> options, int interval) async {
     final params = ConvertUtils.convertCaptureParams(options);
     params['_capture_interval'] = interval;
-    return methodChannel.invokeMethod<void>('buildTimeShiftCapture', params);
+    return methodChannel.invokeMethodWithThetaError<void>(
+        'buildTimeShiftCapture', params);
   }
 
   @override
@@ -367,8 +384,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           }
         });
       }
-      final fileUrl =
-          await methodChannel.invokeMethod<String>('startTimeShiftCapture');
+      final fileUrl = await methodChannel
+          .invokeMethodWithThetaError<String>('startTimeShiftCapture');
       removeNotify(notifyIdTimeShiftProgress);
       removeNotify(notifyIdTimeShiftStopError);
       removeNotify(notifyIdTimeShiftCapturing);
@@ -384,12 +401,14 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<void> stopTimeShiftCapture() async {
-    return methodChannel.invokeMethod<void>('stopTimeShiftCapture');
+    return methodChannel
+        .invokeMethodWithThetaError<void>('stopTimeShiftCapture');
   }
 
   @override
   Future<void> getTimeShiftManualCaptureBuilder() async {
-    return methodChannel.invokeMethod<void>('getTimeShiftManualCaptureBuilder');
+    return methodChannel
+        .invokeMethodWithThetaError<void>('getTimeShiftManualCaptureBuilder');
   }
 
   @override
@@ -397,7 +416,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       Map<String, dynamic> options, int interval) async {
     final params = ConvertUtils.convertCaptureParams(options);
     params['_capture_interval'] = interval;
-    return methodChannel.invokeMethod<void>(
+    return methodChannel.invokeMethodWithThetaError<void>(
         'buildTimeShiftManualCapture', params);
   }
 
@@ -459,12 +478,14 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<void> stopTimeShiftManualCapture() async {
-    return methodChannel.invokeMethod<void>('stopTimeShiftManualCapture');
+    return methodChannel
+        .invokeMethodWithThetaError<void>('stopTimeShiftManualCapture');
   }
 
   @override
   Future<void> getVideoCaptureBuilder() async {
-    return methodChannel.invokeMethod<void>('getVideoCaptureBuilder');
+    return methodChannel
+        .invokeMethodWithThetaError<void>('getVideoCaptureBuilder');
   }
 
   @override
@@ -472,7 +493,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       Map<String, dynamic> options, int interval) async {
     final params = ConvertUtils.convertCaptureParams(options);
     params['_capture_interval'] = interval;
-    return methodChannel.invokeMethod<void>('buildVideoCapture', params);
+    return methodChannel.invokeMethodWithThetaError<void>(
+        'buildVideoCapture', params);
   }
 
   @override
@@ -508,8 +530,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           onCaptureStarted(fileUrl?.isNotEmpty == true ? fileUrl : null);
         });
       }
-      final fileUrl =
-          await methodChannel.invokeMethod<String>('startVideoCapture');
+      final fileUrl = await methodChannel
+          .invokeMethodWithThetaError<String>('startVideoCapture');
       removeNotify(notifyIdVideoCaptureStopError);
       removeNotify(notifyIdVideoCaptureCapturing);
       completer.complete(fileUrl);
@@ -523,7 +545,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<void> stopVideoCapture() async {
-    return methodChannel.invokeMethod<void>('stopVideoCapture');
+    return methodChannel.invokeMethodWithThetaError<void>('stopVideoCapture');
   }
 
   @override
@@ -537,7 +559,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       Map<String, dynamic> options, int interval) async {
     final params = ConvertUtils.convertCaptureParams(options);
     params['_capture_interval'] = interval;
-    return methodChannel.invokeMethod<void>(
+    return methodChannel.invokeMethodWithThetaError<void>(
         'buildLimitlessIntervalCapture', params);
   }
 
@@ -586,13 +608,14 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<void> stopLimitlessIntervalCapture() async {
-    return methodChannel.invokeMethod<void>('stopLimitlessIntervalCapture');
+    return methodChannel
+        .invokeMethodWithThetaError<void>('stopLimitlessIntervalCapture');
   }
 
   @override
   Future<void> getShotCountSpecifiedIntervalCaptureBuilder(
       int shotCount) async {
-    return methodChannel.invokeMethod<void>(
+    return methodChannel.invokeMethodWithThetaError<void>(
         'getShotCountSpecifiedIntervalCaptureBuilder', shotCount);
   }
 
@@ -601,7 +624,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       Map<String, dynamic> options, int interval) async {
     final params = ConvertUtils.convertCaptureParams(options);
     params['_capture_interval'] = interval;
-    return methodChannel.invokeMethod<void>(
+    return methodChannel.invokeMethodWithThetaError<void>(
         'buildShotCountSpecifiedIntervalCapture', params);
   }
 
@@ -640,8 +663,9 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           }
         });
       }
-      final fileUrls = await methodChannel.invokeMethod<List<dynamic>?>(
-          'startShotCountSpecifiedIntervalCapture');
+      final fileUrls =
+          await methodChannel.invokeMethodWithThetaError<List<dynamic>?>(
+              'startShotCountSpecifiedIntervalCapture');
       removeNotify(notifyIdShotCountSpecifiedIntervalCaptureProgress);
       removeNotify(notifyIdShotCountSpecifiedIntervalCaptureStopError);
       removeNotify(notifyIdShotCountSpecifiedIntervalCaptureCapturing);
@@ -667,7 +691,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<void> getCompositeIntervalCaptureBuilder(int shootingTimeSec) async {
-    return methodChannel.invokeMethod<void>(
+    return methodChannel.invokeMethodWithThetaError<void>(
         'getCompositeIntervalCaptureBuilder', shootingTimeSec);
   }
 
@@ -676,7 +700,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       Map<String, dynamic> options, int interval) async {
     final params = ConvertUtils.convertCaptureParams(options);
     params['_capture_interval'] = interval;
-    return methodChannel.invokeMethod<void>(
+    return methodChannel.invokeMethodWithThetaError<void>(
         'buildCompositeIntervalCapture', params);
   }
 
@@ -736,7 +760,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<void> stopCompositeIntervalCapture() async {
-    return methodChannel.invokeMethod<void>('stopCompositeIntervalCapture');
+    return methodChannel
+        .invokeMethodWithThetaError<void>('stopCompositeIntervalCapture');
   }
 
   @override
@@ -755,7 +780,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       'burstEnableIsoControl': burstEnableIsoControl.rawValue,
       'burstOrder': burstOrder.rawValue,
     };
-    return methodChannel.invokeMethod<void>('getBurstCaptureBuilder', params);
+    return methodChannel.invokeMethodWithThetaError<void>(
+        'getBurstCaptureBuilder', params);
   }
 
   @override
@@ -763,7 +789,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       Map<String, dynamic> options, int interval) async {
     final params = ConvertUtils.convertCaptureParams(options);
     params['_capture_interval'] = interval;
-    return methodChannel.invokeMethod<void>('buildBurstCapture', params);
+    return methodChannel.invokeMethodWithThetaError<void>(
+        'buildBurstCapture', params);
   }
 
   @override
@@ -801,8 +828,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
           }
         });
       }
-      final fileUrls =
-          await methodChannel.invokeMethod<List<dynamic>?>('startBurstCapture');
+      final fileUrls = await methodChannel
+          .invokeMethodWithThetaError<List<dynamic>?>('startBurstCapture');
       removeNotify(notifyIdBurstCaptureProgress);
       removeNotify(notifyIdBurstCaptureStopError);
       removeNotify(notifyIdBurstCaptureCapturing);
@@ -822,12 +849,13 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<void> stopBurstCapture() async {
-    return methodChannel.invokeMethod<void>('stopBurstCapture');
+    return methodChannel.invokeMethodWithThetaError<void>('stopBurstCapture');
   }
 
   @override
   Future<void> getMultiBracketCaptureBuilder() async {
-    return methodChannel.invokeMethod<void>('getMultiBracketCaptureBuilder');
+    return methodChannel
+        .invokeMethodWithThetaError<void>('getMultiBracketCaptureBuilder');
   }
 
   @override
@@ -835,7 +863,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       Map<String, dynamic> options, int interval) async {
     final params = ConvertUtils.convertCaptureParams(options);
     params['_capture_interval'] = interval;
-    return methodChannel.invokeMethod<void>('buildMultiBracketCapture', params);
+    return methodChannel.invokeMethodWithThetaError<void>(
+        'buildMultiBracketCapture', params);
   }
 
   @override
@@ -894,12 +923,14 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<void> stopMultiBracketCapture() async {
-    return methodChannel.invokeMethod<void>('stopMultiBracketCapture');
+    return methodChannel
+        .invokeMethodWithThetaError<void>('stopMultiBracketCapture');
   }
 
   @override
   Future<void> getContinuousCaptureBuilder() async {
-    return methodChannel.invokeMethod<void>('getContinuousCaptureBuilder');
+    return methodChannel
+        .invokeMethodWithThetaError<void>('getContinuousCaptureBuilder');
   }
 
   @override
@@ -907,7 +938,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       Map<String, dynamic> options, int interval) async {
     final params = ConvertUtils.convertCaptureParams(options);
     params['_capture_interval'] = interval;
-    return methodChannel.invokeMethod<void>('buildContinuousCapture', params);
+    return methodChannel.invokeMethodWithThetaError<void>(
+        'buildContinuousCapture', params);
   }
 
   @override
@@ -957,8 +989,9 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   Future<Options> getOptions(List<OptionNameEnum> optionNames) async {
     var completer = Completer<Options>();
     try {
-      var options = await methodChannel.invokeMethod<Map<dynamic, dynamic>>(
-          'getOptions', ConvertUtils.convertGetOptionsParam(optionNames));
+      var options =
+          await methodChannel.invokeMethodWithThetaError<Map<dynamic, dynamic>>(
+              'getOptions', ConvertUtils.convertGetOptionsParam(optionNames));
       completer.complete(ConvertUtils.convertOptions(options!));
     } catch (e) {
       completer.completeError(e);
@@ -970,7 +1003,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   Future<void> setOptions(Options options) async {
     var completer = Completer<void>();
     try {
-      await methodChannel.invokeMethod<void>(
+      await methodChannel.invokeMethodWithThetaError<void>(
           'setOptions', ConvertUtils.convertSetOptionsParam(options));
       completer.complete();
     } catch (e) {
@@ -983,8 +1016,9 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
   Future<Metadata> getMetadata(String fileUrl) async {
     var completer = Completer<Metadata>();
     try {
-      var data = await methodChannel.invokeMethod<Map<dynamic, dynamic>>(
-          'getMetadata', fileUrl);
+      var data =
+          await methodChannel.invokeMethodWithThetaError<Map<dynamic, dynamic>>(
+              'getMetadata', fileUrl);
       completer.complete(ConvertUtils.convertMetadata(data!));
     } catch (e) {
       completer.completeError(e);
@@ -994,17 +1028,17 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<void> reboot() async {
-    return methodChannel.invokeMethod<void>('reboot');
+    return methodChannel.invokeMethodWithThetaError<void>('reboot');
   }
 
   @override
   Future<void> reset() async {
-    return methodChannel.invokeMethod<void>('reset');
+    return methodChannel.invokeMethodWithThetaError<void>('reset');
   }
 
   @override
   Future<void> stopSelfTimer() async {
-    return methodChannel.invokeMethod<void>('stopSelfTimer');
+    return methodChannel.invokeMethodWithThetaError<void>('stopSelfTimer');
   }
 
   @override
@@ -1030,7 +1064,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
         'toLowResolution': toLowResolution,
         'applyTopBottomCorrection': applyTopBottomCorrection,
       };
-      var result = await methodChannel.invokeMethod<String>(
+      var result = await methodChannel.invokeMethodWithThetaError<String>(
           'convertVideoFormats', params);
       completer.complete(result);
     } catch (e) {
@@ -1043,12 +1077,12 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<void> cancelVideoConvert() async {
-    return methodChannel.invokeMethod<void>('cancelVideoConvert');
+    return methodChannel.invokeMethodWithThetaError<void>('cancelVideoConvert');
   }
 
   @override
   Future<void> finishWlan() async {
-    return methodChannel.invokeMethod<void>('finishWlan');
+    return methodChannel.invokeMethodWithThetaError<void>('finishWlan');
   }
 
   @override
@@ -1082,7 +1116,7 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       'connectionPriority': connectionPriority,
       'proxy': proxy != null ? ConvertUtils.convertProxyParam(proxy) : null
     };
-    return methodChannel.invokeMethod<void>(
+    return methodChannel.invokeMethodWithThetaError<void>(
         'setAccessPointDynamically', params);
   }
 
@@ -1112,7 +1146,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       'dns2': dns2,
       'proxy': proxy != null ? ConvertUtils.convertProxyParam(proxy) : null
     };
-    return methodChannel.invokeMethod<void>('setAccessPointStatically', params);
+    return methodChannel.invokeMethodWithThetaError<void>(
+        'setAccessPointStatically', params);
   }
 
   @override
@@ -1123,13 +1158,14 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       'ssidStealth': ssidStealth,
       'connectionPriority': connectionPriority,
     };
-    return methodChannel.invokeMethod<void>(
+    return methodChannel.invokeMethodWithThetaError<void>(
         'setAccessPointConnectionPriority', params);
   }
 
   @override
   Future<void> deleteAccessPoint(String ssid) async {
-    return methodChannel.invokeMethod<void>('deleteAccessPoint', ssid);
+    return methodChannel.invokeMethodWithThetaError<void>(
+        'deleteAccessPoint', ssid);
   }
 
   @override
@@ -1139,8 +1175,9 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       final Map params = <String, dynamic>{
         'captureMode': captureMode.rawValue,
       };
-      var options = await methodChannel.invokeMethod<Map<dynamic, dynamic>>(
-          'getMySetting', params);
+      var options =
+          await methodChannel.invokeMethodWithThetaError<Map<dynamic, dynamic>>(
+              'getMySetting', params);
 
       if (options != null) {
         completer.complete(ConvertUtils.convertOptions(options));
@@ -1162,8 +1199,9 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       final Map params = <String, dynamic>{
         'optionNames': ConvertUtils.convertGetOptionsParam(optionNames),
       };
-      var options = await methodChannel.invokeMethod<Map<dynamic, dynamic>>(
-          'getMySettingFromOldModel', params);
+      var options =
+          await methodChannel.invokeMethodWithThetaError<Map<dynamic, dynamic>>(
+              'getMySettingFromOldModel', params);
 
       if (options != null) {
         completer.complete(ConvertUtils.convertOptions(options));
@@ -1186,7 +1224,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
       'options': ConvertUtils.convertSetOptionsParam(options),
     };
     try {
-      await methodChannel.invokeMethod<void>('setMySetting', params);
+      await methodChannel.invokeMethodWithThetaError<void>(
+          'setMySetting', params);
       completer.complete();
     } catch (e) {
       completer.completeError(e);
@@ -1199,7 +1238,8 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
     var completer = Completer<void>();
     final Map params = <String, dynamic>{'captureMode': captureMode.rawValue};
     try {
-      await methodChannel.invokeMethod<void>('deleteMySetting', params);
+      await methodChannel.invokeMethodWithThetaError<void>(
+          'deleteMySetting', params);
       completer.complete();
     } catch (e) {
       completer.completeError(e);
@@ -1224,24 +1264,26 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<void> setPlugin(String packageName) async {
-    return methodChannel.invokeMethod<void>('setPlugin', packageName);
+    return methodChannel.invokeMethodWithThetaError<void>(
+        'setPlugin', packageName);
   }
 
   @override
   Future<void> startPlugin(String? packageName) async {
-    return methodChannel.invokeMethod<void>('startPlugin', packageName);
+    return methodChannel.invokeMethodWithThetaError<void>(
+        'startPlugin', packageName);
   }
 
   @override
   Future<void> stopPlugin() async {
-    return methodChannel.invokeMethod<void>('stopPlugin');
+    return methodChannel.invokeMethodWithThetaError<void>('stopPlugin');
   }
 
   @override
   Future<String> getPluginLicense(String packageName) async {
     var completer = Completer<String>();
     try {
-      var result = await methodChannel.invokeMethod<String>(
+      var result = await methodChannel.invokeMethodWithThetaError<String>(
           'getPluginLicense', packageName);
       completer.complete(result);
     } catch (e) {
@@ -1265,15 +1307,16 @@ class MethodChannelThetaClientFlutter extends ThetaClientFlutterPlatform {
 
   @override
   Future<void> setPluginOrders(List<String> plugins) async {
-    return methodChannel.invokeMethod<void>('setPluginOrders', plugins);
+    return methodChannel.invokeMethodWithThetaError<void>(
+        'setPluginOrders', plugins);
   }
 
   @override
   Future<String> setBluetoothDevice(String uuid) async {
     var completer = Completer<String>();
     try {
-      var result =
-          await methodChannel.invokeMethod<String>('setBluetoothDevice', uuid);
+      var result = await methodChannel.invokeMethodWithThetaError<String>(
+          'setBluetoothDevice', uuid);
       completer.complete(result);
     } catch (e) {
       completer.completeError(e);

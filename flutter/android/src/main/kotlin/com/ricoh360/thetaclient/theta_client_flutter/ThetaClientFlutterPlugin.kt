@@ -60,6 +60,8 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
 
     companion object {
         const val errorCode: String = "Error"
+        const val errorStatusCode = "statusCode"
+        const val errorErrorCode = "errorCode"
         const val messageNotInit: String = "Not initialized."
         const val messageNoResult: String = "Result is Null."
         const val messageNoArgument: String = "No Argument."
@@ -610,7 +612,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             thetaRepository = ThetaRepository.newInstance(endpoint, config, timeout)
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -627,7 +629,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             thetaRepository!!.restoreSettings()
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -652,7 +654,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             }
             result.success(thetaInfoMap)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -665,7 +667,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             val response = thetaRepository!!.getThetaLicense()
             result.success(response)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -678,7 +680,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             val response = thetaRepository!!.getThetaState()
             result.success(toResult(response))
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -705,7 +707,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             result.success(null)
         } catch (e: Exception) {
             previewing = false
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -734,7 +736,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             photoCapture = photoCaptureBuilder!!.build()
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -756,7 +758,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             }
 
             override fun onError(exception: ThetaRepository.ThetaRepositoryException) {
-                result.error(exception.javaClass.simpleName, exception.message, null)
+                resultErrorWithDetail(result, exception)
             }
         })
     }
@@ -784,7 +786,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             timeShiftCapture = timeShiftCaptureBuilder.build()
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -798,7 +800,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         timeShiftCapturing =
             timeShiftCapture.startCapture(object : TimeShiftCapture.StartCaptureCallback {
                 override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                    result.error(exception.javaClass.simpleName, exception.message, null)
+                    resultErrorWithDetail(result, exception)
                 }
 
                 override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
@@ -864,7 +866,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             timeShiftManualCapture = timeShiftManualCaptureBuilder.build()
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -878,7 +880,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         timeShiftManualCapturing =
             timeShiftManualCapture.startCapture(object : TimeShiftManualCapture.StartCaptureCallback {
                 override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                    result.error(exception.javaClass.simpleName, exception.message, null)
+                    resultErrorWithDetail(result, exception)
                     timeShiftManualCapturing = null
                 }
 
@@ -952,7 +954,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             videoCapture = videoCaptureBuilder!!.build()
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -969,7 +971,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             }
 
             override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                result.error(exception.javaClass.simpleName, exception.message, null)
+                resultErrorWithDetail(result, exception)
             }
 
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
@@ -1026,7 +1028,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             limitlessIntervalCapture = limitlessIntervalCaptureBuilder?.build()
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1043,7 +1045,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             }
 
             override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                result.error(exception.javaClass.simpleName, exception.message, null)
+                resultErrorWithDetail(result, exception)
             }
 
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
@@ -1096,7 +1098,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             shotCountSpecifiedIntervalCapture = shotCountSpecifiedIntervalCaptureBuilder.build()
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1110,7 +1112,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         shotCountSpecifiedIntervalCapturing =
             shotCountSpecifiedIntervalCapture.startCapture(object : ShotCountSpecifiedIntervalCapture.StartCaptureCallback {
                 override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                    result.error(exception.javaClass.simpleName, exception.message, null)
+                    resultErrorWithDetail(result, exception)
                 }
 
                 override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
@@ -1176,7 +1178,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             compositeIntervalCapture = compositeIntervalCaptureBuilder.build()
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1190,7 +1192,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         compositeIntervalCapturing =
             compositeIntervalCapture.startCapture(object : CompositeIntervalCapture.StartCaptureCallback {
                 override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                    result.error(exception.javaClass.simpleName, exception.message, null)
+                    resultErrorWithDetail(result, exception)
                 }
 
                 override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
@@ -1291,7 +1293,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             burstCapture = burstCaptureBuilder.build()
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1304,7 +1306,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         }
         burstCapturing = burstCapture.startCapture(object : BurstCapture.StartCaptureCallback {
             override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                result.error(exception.javaClass.simpleName, exception.message, null)
+                resultErrorWithDetail(result, exception)
             }
 
             override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
@@ -1368,7 +1370,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             multiBracketCapture = multiBracketCaptureBuilder.build()
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1382,7 +1384,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         multiBracketCapturing =
             multiBracketCapture.startCapture(object : MultiBracketCapture.StartCaptureCallback {
                 override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                    result.error(exception.javaClass.simpleName, exception.message, null)
+                    resultErrorWithDetail(result, exception)
                 }
 
                 override fun onStopFailed(exception: ThetaRepository.ThetaRepositoryException) {
@@ -1446,7 +1448,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             continuousCapture = continuousCaptureBuilder.build()
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1459,7 +1461,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
         }
         continuousCapture.startCapture(object : ContinuousCapture.StartCaptureCallback {
             override fun onCaptureFailed(exception: ThetaRepository.ThetaRepositoryException) {
-                result.error(exception.javaClass.simpleName, exception.message, null)
+                resultErrorWithDetail(result, exception)
             }
 
             override fun onProgress(completion: Float) {
@@ -1506,7 +1508,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             )
             result.success(resultmap)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1521,7 +1523,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             thetaRepository!!.deleteFiles(params)
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1534,7 +1536,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             thetaRepository!!.deleteAllFiles()
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1547,7 +1549,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             thetaRepository!!.deleteAllImageFiles()
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1560,7 +1562,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             thetaRepository!!.deleteAllVideoFiles()
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1575,7 +1577,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             val response = thetaRepository!!.getOptions(params)
             result.success(toResult(response))
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1590,7 +1592,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             thetaRepository!!.setOptions(params)
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1605,7 +1607,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             val response = thetaRepository!!.getMetadata(params)
             result.success(toResult(response))
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1618,7 +1620,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             thetaRepository?.reboot()
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1631,7 +1633,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             thetaRepository!!.reset()
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1644,7 +1646,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             thetaRepository!!.stopSelfTimer()
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1669,7 +1671,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             }
             result.success(response)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1682,7 +1684,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             thetaRepository!!.cancelVideoConvert()
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1695,7 +1697,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             thetaRepository!!.finishWlan()
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1712,7 +1714,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 result.error(errorCode, messageNoResult, null)
             }
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1733,7 +1735,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             )
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1760,7 +1762,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             )
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1777,7 +1779,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             thetaRepository?.setAccessPointConnectionPriority(ssid, connectionPriority, ssidStealth)
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1791,7 +1793,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             thetaRepository?.deleteAccessPoint(params)
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1820,7 +1822,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 result.error(errorCode, messageNoResult, null)
             }
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1845,7 +1847,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 return
             }
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1868,7 +1870,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 result.error(errorCode, messageNoArgument, null)
             }
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1890,7 +1892,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 result.error(errorCode, messageNoArgument, null)
             }
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1907,7 +1909,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 result.error(errorCode, messageNoResult, null)
             }
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1925,7 +1927,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 result.error(errorCode, messageNoArgument, null)
             }
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1939,7 +1941,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             thetaRepository?.startPlugin(packageName = params)
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1952,7 +1954,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
             thetaRepository?.stopPlugin()
             result.success(null)
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1975,7 +1977,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 return
             }
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -1992,7 +1994,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 result.error(errorCode, messageNoResult, null)
             }
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -2012,7 +2014,7 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 return
             }
         } catch (e: Exception) {
-            result.error(e.javaClass.simpleName, e.message, null)
+            resultErrorWithDetail(result, e)
         }
     }
 
@@ -2035,6 +2037,23 @@ class ThetaClientFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 return
             }
         } catch (e: Exception) {
+            resultErrorWithDetail(result, e)
+        }
+    }
+
+    private fun resultErrorWithDetail(result: Result, e: Throwable) {
+        val webApiException = e as? ThetaRepository.ThetaWebApiException
+        if (webApiException != null) {
+            val statusCode = webApiException.statusCode
+            val apiErrorCode = webApiException.errorCode
+
+            val userInfo = mutableMapOf<String, Any>()
+            statusCode?.let { userInfo[errorStatusCode] = it }
+            apiErrorCode?.let { userInfo[errorErrorCode] = it }
+
+            Log.i("ThetaClientFlutter", "ThetaWebApiException statusCode=$statusCode errorCode=$apiErrorCode message=${e.message}")
+            result.error(errorCode, e.message, userInfo)
+        } else {
             result.error(e.javaClass.simpleName, e.message, null)
         }
     }

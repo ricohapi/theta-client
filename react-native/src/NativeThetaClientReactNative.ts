@@ -1,5 +1,7 @@
 import type { TurboModule } from 'react-native';
 import { TurboModuleRegistry } from 'react-native';
+import { normalizeNativeError } from './theta-repository/theta-web-api-error';
+import { isPromiseLike } from './theta-repository/libs';
 
 export interface Spec extends TurboModule {
   // Event listeners for Android old architecture only
@@ -193,7 +195,53 @@ export default new Proxy({} as Spec, {
   get(_, prop: string | symbol) {
     const module = getModule();
     const value = module[prop as keyof Spec];
-    // Return the value directly - if it's a function, it will be callable
-    return value;
+    if (typeof value !== 'function') {
+      return value;
+    }
+
+    // Wrap native async methods so rejected promises carry parsed THETA Web API details,
+    // without adding extra microtask ticks on the success path.
+    return (...args: unknown[]) => {
+      const result = (value as (...innerArgs: unknown[]) => unknown).apply(
+        module,
+        args
+      );
+      if (!isPromiseLike(result)) {
+        return result;
+      }
+      // Wrap the original promise in a Proxy that intercepts .then()/.catch() to
+      // normalize errors, while preserving the microtask timing of the original
+      // promise on the success path (no extra .then() hops added).
+      return new Proxy(result, {
+        get(target, p) {
+          if (p === 'then') {
+            return (
+              onFulfilled: ((value: unknown) => unknown) | null | undefined,
+              onRejected: ((reason: unknown) => unknown) | null | undefined
+            ) => {
+              const normalizedRejected = (err: unknown): unknown =>
+                onRejected != null
+                  ? onRejected(normalizeNativeError(err))
+                  : Promise.reject(normalizeNativeError(err));
+              return (target as PromiseLike<unknown>).then(
+                onFulfilled ?? undefined,
+                normalizedRejected
+              );
+            };
+          }
+          if (p === 'catch') {
+            return (
+              onRejected: ((reason: unknown) => unknown) | null | undefined
+            ) =>
+              (target as Promise<unknown>).catch((err: unknown) =>
+                onRejected != null
+                  ? onRejected(normalizeNativeError(err))
+                  : Promise.reject(normalizeNativeError(err))
+              );
+          }
+          return (target as unknown as Record<string | symbol, unknown>)[p];
+        },
+      });
+    };
   },
 });

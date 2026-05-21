@@ -35,6 +35,7 @@ import type { ThetaTimeout } from './theta-timeout';
 import { NotifyController } from './notify-controller';
 import { EventWebSocket } from './event-websocket';
 import { convertOptions, convertVideoFormatsImpl } from './libs';
+export { ThetaWebApiError } from './theta-web-api-error';
 
 const NOTIFY_API_LOG = 'API-LOG';
 let apiLogListener: ((message: string) => void) | undefined;

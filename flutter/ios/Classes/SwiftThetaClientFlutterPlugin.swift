@@ -50,6 +50,8 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
 
     var thetaRepository: ThetaRepository? = nil
     static let errorCode: String = "Error"
+    static let errorStatusCode = "statusCode"
+    static let errorErrorCode = "errorCode"
     static let messageNotInit: String = "Not initialized."
     static let messageNoResult: String = "Result is Null."
     static let messageNoArgument: String = "No Argument."
@@ -337,7 +339,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                     result(nil)
                 } else if let thetaError = error {
                     continuation.resume(throwing: thetaError)
-                    let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                    let flutterError = self.toFlutterError(thetaError)
                     result(flutterError)
                 }
             }
@@ -352,7 +354,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
         thetaRepository!.restoreSettings { error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 result(nil)
@@ -377,7 +379,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
         thetaRepository!.getThetaInfo { response, error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 var resultInfo = convertResult(thetaInfo: response!)
@@ -397,7 +399,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
         thetaRepository!.getThetaLicense(completionHandler: { response, error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 if let response {
@@ -418,7 +420,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
         thetaRepository!.getThetaState { response, error in
             if let error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: error.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(error)
                 result(flutterError)
             } else {
                 let resultState = convertResult(thetaState: response!)
@@ -462,7 +464,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         thetaRepository!.getLivePreview(frameHandler: FrameHandler(plugin: self)) { error in
             self.previewing = false
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 result(nil)
@@ -501,7 +503,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             storage: storage
         ) { files, error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 let resultList = convertResult(fileInfoList: files!.fileList)
@@ -520,7 +522,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         let arguments = call.arguments as! [String]
         thetaRepository!.deleteFiles(fileUrls: arguments) { error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 result(nil)
@@ -536,7 +538,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
         thetaRepository!.deleteAllFiles { error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 result(nil)
@@ -552,7 +554,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
         thetaRepository!.deleteAllImageFiles { error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 result(nil)
@@ -568,7 +570,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
         thetaRepository!.deleteAllVideoFiles { error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 result(nil)
@@ -597,7 +599,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         setPhotoCaptureBuilderParams(params: arguments, builder: photoCaptureBuilder!)
         photoCaptureBuilder!.build(completionHandler: { capture, error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 self.photoCapture = capture
@@ -636,7 +638,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         photoCapture!.takePicture(
             callback: Callback({ fileUrl, error in
                 if let thetaError = error {
-                    let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                    let flutterError = self.toFlutterError(thetaError)
                     result(flutterError)
                 } else {
                     result(fileUrl)
@@ -666,7 +668,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         setTimeShiftCaptureBuilderParams(params: arguments, builder: builder)
         builder.build(completionHandler: { capture, error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 self.timeShiftCapture = capture
@@ -714,7 +716,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         timeShiftCapturing = capture.startCapture(
             callback: Callback({ fileUrl, error in
                                    if let thetaError = error {
-                                       let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                                       let flutterError = self.toFlutterError(thetaError)
                                        result(flutterError)
                                    } else {
                                        result(fileUrl)
@@ -757,7 +759,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         setTimeShiftManualCaptureBuilderParams(params: arguments, builder: builder)
         builder.build(completionHandler: { capture, error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 self.timeShiftManualCapture = capture
@@ -807,7 +809,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         timeShiftManualCapturing = capture.startCapture(
             callback: Callback({ fileUrl, error in
                                    if let thetaError = error {
-                                       let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                                       let flutterError = self.toFlutterError(thetaError)
                                        result(flutterError)
                                    } else {
                                        result(fileUrl)
@@ -858,7 +860,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         setVideoCaptureBuilderParams(params: arguments, builder: videoCaptureBuilder!)
         videoCaptureBuilder!.build(completionHandler: { capture, error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 self.videoCapture = capture
@@ -906,7 +908,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         videoCapturing = videoCapture!.startCapture(
             callback: Callback({ fileUrl, error in
                                    if let thetaError = error {
-                                       let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                                       let flutterError = self.toFlutterError(thetaError)
                                        result(flutterError)
                                    } else {
                                        result(fileUrl)
@@ -948,7 +950,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
         limitlessIntervalCaptureBuilder.build(completionHandler: { capture, error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 self.limitlessIntervalCapture = capture
@@ -992,7 +994,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         limitlessIntervalCapturing = limitlessIntervalCapture.startCapture(
             callback: Callback({ urls, error in
                                    if let error {
-                                       let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: error.localizedDescription, details: nil)
+                                       let flutterError = self.toFlutterError(error)
                                        result(flutterError)
                                    } else {
                                        result(urls)
@@ -1036,7 +1038,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
         builder.build(completionHandler: { capture, error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 self.shotCountSpecifiedIntervalCapture = capture
@@ -1084,7 +1086,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         shotCountSpecifiedIntervalCapturing = capture.startCapture(
             callback: Callback({ fileUrl, error in
                                    if let thetaError = error {
-                                       let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                                       let flutterError = self.toFlutterError(thetaError)
                                        result(flutterError)
                                    } else {
                                        result(fileUrl)
@@ -1128,7 +1130,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
         builder.build(completionHandler: { capture, error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 self.compositeIntervalCapture = capture
@@ -1176,7 +1178,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         compositeIntervalCapturing = capture.startCapture(
             callback: Callback({ fileUrl, error in
                                    if let thetaError = error {
-                                       let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                                       let flutterError = self.toFlutterError(thetaError)
                                        result(flutterError)
                                    } else {
                                        result(fileUrl)
@@ -1245,7 +1247,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
         builder.build(completionHandler: { capture, error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 self.burstCapture = capture
@@ -1293,7 +1295,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         burstCapturing = capture.startCapture(
             callback: Callback({ fileUrl, error in
                                    if let thetaError = error {
-                                       let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                                       let flutterError = self.toFlutterError(thetaError)
                                        result(flutterError)
                                    } else {
                                        result(fileUrl)
@@ -1336,14 +1338,14 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             do {
                 try setMultiBracketCaptureBuilderParams(params: arguments, builder: builder)
             } catch {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: error.localizedDescription, details: nil)
+                let flutterError = toFlutterError(error)
                 result(flutterError)
                 return
             }
         }
         builder.build(completionHandler: { capture, error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 self.multiBracketCapture = capture
@@ -1390,7 +1392,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         multiBracketCapturing = capture.startCapture(
             callback: Callback({ fileUrl, error in
                                    if let thetaError = error {
-                                       let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                                       let flutterError = self.toFlutterError(thetaError)
                                        result(flutterError)
                                    } else {
                                        result(fileUrl)
@@ -1434,7 +1436,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
         builder.build(completionHandler: { capture, error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 self.continuousCapture = capture
@@ -1477,7 +1479,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         capture.startCapture(
             callback: Callback({ fileUrl, error in
                                    if let thetaError = error {
-                                       let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                                       let flutterError = self.toFlutterError(thetaError)
                                        result(flutterError)
                                    } else {
                                        result(fileUrl)
@@ -1499,7 +1501,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         let params = convertGetOptionsParam(params: arguments)
         thetaRepository!.getOptions(optionNames: params, completionHandler: { options, error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 result(convertResult(options: options!))
@@ -1517,7 +1519,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         let params = convertSetOptionsParam(params: arguments)
         thetaRepository!.setOptions(options: params, completionHandler: { error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 result(nil)
@@ -1534,7 +1536,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         let arguments = call.arguments as! String
         thetaRepository!.getMetadata(fileUrl: arguments, completionHandler: { response, error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 result(convertResult(metadata: response!))
@@ -1550,7 +1552,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
         thetaRepository.reboot { error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 result(nil)
@@ -1566,7 +1568,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
         thetaRepository!.reset { error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 result(nil)
@@ -1582,7 +1584,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
         thetaRepository!.stopSelfTimer { error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 result(nil)
@@ -1608,7 +1610,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
             self.sendNotifyEvent(id: NOTIFY_CONVERT_VIDEO_FORMATS_PROGRESS, params: toCaptureProgressNotifyParam(value: completion.floatValue))
         } completionHandler: { response, error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 result(response)
@@ -1624,7 +1626,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
         thetaRepository!.cancelVideoConvert { error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 result(nil)
@@ -1640,7 +1642,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
         thetaRepository!.finishWlan { error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 result(nil)
@@ -1656,7 +1658,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
         thetaRepository.listAccessPoints { response, error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 if let response {
@@ -1694,7 +1696,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 proxy: accessPointParams.proxy,
                 completionHandler: { error in
                     if let thetaError = error {
-                        let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                        let flutterError = self.toFlutterError(thetaError)
                         result(flutterError)
                     } else {
                         result(nil)
@@ -1702,7 +1704,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 }
             )
         } catch {
-            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: error.localizedDescription, details: nil)
+            let flutterError = toFlutterError(error)
             result(flutterError)
         }
     }
@@ -1737,7 +1739,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 proxy: accessPointParams.proxy,
                 completionHandler: { error in
                     if let thetaError = error {
-                        let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                        let flutterError = self.toFlutterError(thetaError)
                         result(flutterError)
                     } else {
                         result(nil)
@@ -1745,7 +1747,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 }
             )
         } catch {
-            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: error.localizedDescription, details: nil)
+            let flutterError = toFlutterError(error)
             result(flutterError)
         }
     }
@@ -1779,7 +1781,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 ssidStealth: ssidStealth,
                 completionHandler: { error in
                     if let thetaError = error {
-                        let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                        let flutterError = self.toFlutterError(thetaError)
                         result(flutterError)
                     } else {
                         result(nil)
@@ -1787,7 +1789,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 }
             )
         } catch {
-            let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: error.localizedDescription, details: nil)
+            let flutterError = toFlutterError(error)
             result(flutterError)
         }
     }
@@ -1805,7 +1807,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         }
         thetaRepository.deleteAccessPoint(ssid: ssid, completionHandler: { error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 result(nil)
@@ -1836,7 +1838,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         if let captureMode {
             thetaRepository.getMySetting(captureMode: captureMode, completionHandler: { options, error in
                 if let thetaError = error {
-                    let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                    let flutterError = self.toFlutterError(thetaError)
                     result(flutterError)
                 } else {
                     if let options {
@@ -1876,7 +1878,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         if let optionNames {
             thetaRepository.getMySetting(optionNames: optionNames, completionHandler: { options, error in
                 if let thetaError = error {
-                    let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                    let flutterError = self.toFlutterError(thetaError)
                     result(flutterError)
                 } else {
                     result(convertResult(options: options!))
@@ -1908,7 +1910,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         let options = convertSetOptionsParam(params: optionDic)
         thetaRepository.setMySetting(captureMode: captureMode, options: options, completionHandler: { error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 result(nil)
@@ -1934,7 +1936,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
 
         thetaRepository.deleteMySetting(captureMode: captureMode, completionHandler: { error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 result(nil)
@@ -1951,7 +1953,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
 
         thetaRepository.listPlugins { response, error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 if let response {
@@ -1979,7 +1981,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
 
         thetaRepository.setPlugin(packageName: arguments, completionHandler: { error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 result(nil)
@@ -1997,7 +1999,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
         let arguments = call.arguments as? String
         thetaRepository.startPlugin(packageName: arguments, completionHandler: { error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 result(nil)
@@ -2014,7 +2016,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
 
         thetaRepository.stopPlugin(completionHandler: { error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 result(nil)
@@ -2037,7 +2039,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
 
         thetaRepository.getPluginLicense(packageName: arguments, completionHandler: { response, error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 if let response {
@@ -2059,7 +2061,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
 
         thetaRepository.getPluginOrders(completionHandler: { response, error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 if let response {
@@ -2087,7 +2089,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
 
         thetaRepository.setPluginOrders(plugins: arguments, completionHandler: { error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 result(nil)
@@ -2110,7 +2112,7 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
 
         thetaRepository.setBluetoothDevice(uuid: arguments, completionHandler: { response, error in
             if let thetaError = error {
-                let flutterError = FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: thetaError.localizedDescription, details: nil)
+                let flutterError = self.toFlutterError(thetaError)
                 result(flutterError)
             } else {
                 if let response {
@@ -2121,5 +2123,23 @@ public class SwiftThetaClientFlutterPlugin: NSObject, FlutterPlugin, FlutterStre
                 }
             }
         })
+    }
+
+    func toFlutterError(_ error: Error) -> FlutterError {
+        let nsError = error as NSError
+        guard let webApiException = nsError.userInfo["KotlinException"] as? ThetaRepository.ThetaWebApiException else {
+            return FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: error.localizedDescription, details: nil)
+        }
+
+        var userInfo = [String: Any]()
+        if let statusCode = webApiException.statusCode as? Int {
+            userInfo[SwiftThetaClientFlutterPlugin.errorStatusCode] = statusCode
+        }
+        if let apiErrorCode = webApiException.errorCode {
+            userInfo[SwiftThetaClientFlutterPlugin.errorErrorCode] = apiErrorCode
+        }
+
+        print("ThetaWebApiException statusCode=\(userInfo[SwiftThetaClientFlutterPlugin.errorStatusCode] ?? -1) errorCode=\(userInfo[SwiftThetaClientFlutterPlugin.errorErrorCode] ?? "-") message=\(error.localizedDescription)")
+        return FlutterError(code: SwiftThetaClientFlutterPlugin.errorCode, message: error.localizedDescription, details: userInfo)
     }
 }

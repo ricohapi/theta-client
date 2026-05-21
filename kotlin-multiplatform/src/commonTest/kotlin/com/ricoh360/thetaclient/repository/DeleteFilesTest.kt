@@ -143,6 +143,7 @@ class DeleteFilesTest {
             thetaRepository.deleteFiles(fileUrls)
             assertTrue(false, "response is normal.")
         } catch (e: ThetaRepository.ThetaWebApiException) {
+            assertEquals(HttpStatusCode.ServiceUnavailable.value, e.statusCode, "status code")
             assertTrue(e.message!!.indexOf("UnitTest", 0, true) >= 0, "error response")
         }
     }
@@ -168,6 +169,7 @@ class DeleteFilesTest {
             thetaRepository.deleteFiles(fileUrls)
             assertTrue(false, "response is normal.")
         } catch (e: ThetaRepository.ThetaWebApiException) {
+            assertEquals(HttpStatusCode.ServiceUnavailable.value, e.statusCode, "status code")
             assertTrue(e.message!!.indexOf("503", 0, true) >= 0, "status error")
         }
     }

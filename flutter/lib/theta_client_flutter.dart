@@ -14,6 +14,7 @@ export 'capture/capture_builder.dart';
 export 'capture/capturing.dart';
 export 'options/importer.dart';
 export 'state/importer.dart';
+export 'theta_web_api_error.dart';
 
 /// Handle Theta web APIs.
 class ThetaClientFlutter {
