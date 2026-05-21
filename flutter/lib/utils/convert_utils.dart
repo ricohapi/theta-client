@@ -3,6 +3,16 @@ import 'package:theta_client_flutter/options/access_info.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
 class ConvertUtils {
+  static int? toInt(dynamic value) {
+    if (value is int) {
+      return value;
+    }
+    if (value is num) {
+      return value.toInt();
+    }
+    return int.tryParse(value?.toString() ?? '');
+  }
+
   static AccessInfo? convertAccessInfo(Map<dynamic, dynamic>? data) {
     if (data == null) {
       return null;

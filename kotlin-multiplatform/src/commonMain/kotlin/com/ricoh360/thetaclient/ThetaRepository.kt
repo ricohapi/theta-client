@@ -7990,16 +7990,23 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
     /**
      * Thrown if an error occurs on Theta Web API.
      */
-    class ThetaWebApiException(message: String) : ThetaRepositoryException(message) {
+    class ThetaWebApiException(
+        message: String,
+        val statusCode: Int? = null,
+        val errorCode: String? = null
+    ) : ThetaRepositoryException(message) {
         companion object {
             internal suspend inline fun create(exception: ResponseException): ThetaWebApiException {
+                val statusCode = exception.response.status.value
+                var errorCode: String? = null
                 val message = try {
                     val response: UnknownResponse = exception.response.body()
+                    errorCode = response.error?.code
                     response.error?.message ?: exception.message ?: exception.toString()
                 } catch (e: Exception) {
                     exception.message ?: exception.toString()
                 }
-                return ThetaWebApiException(message)
+                return ThetaWebApiException(message, statusCode, errorCode)
             }
         }
     }

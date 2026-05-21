@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
 
   s.source_files = "ios/**/*.{h,m,mm,swift,cpp}"
 
-  s.dependency "THETAClient", "1.14.1"
+  s.dependency "THETAClient", "1.15.0"
 
   install_modules_dependencies(s)
 end

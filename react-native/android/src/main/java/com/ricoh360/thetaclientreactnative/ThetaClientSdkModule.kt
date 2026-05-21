@@ -164,7 +164,7 @@ class ThetaClientReactNativeModule(
         )
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -235,7 +235,7 @@ class ThetaClientReactNativeModule(
         }
         promise.resolve(result)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -257,7 +257,7 @@ class ThetaClientReactNativeModule(
         val result = theta.getThetaLicense()
         promise.resolve(result)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -280,7 +280,7 @@ class ThetaClientReactNativeModule(
         val result = toResult(state)
         promise.resolve(result)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -317,7 +317,7 @@ class ThetaClientReactNativeModule(
         resultMap.putInt("totalEntries", totalEntries)
         promise.resolve(resultMap)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -346,7 +346,7 @@ class ThetaClientReactNativeModule(
         theta.deleteFiles(fileList)
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -368,7 +368,7 @@ class ThetaClientReactNativeModule(
         theta.deleteAllFiles()
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -390,7 +390,7 @@ class ThetaClientReactNativeModule(
         theta.deleteAllImageFiles()
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -412,7 +412,7 @@ class ThetaClientReactNativeModule(
         theta.deleteAllVideoFiles()
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -436,7 +436,7 @@ class ThetaClientReactNativeModule(
         val result = toResult(options = response)
         promise.resolve(result)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -461,7 +461,7 @@ class ThetaClientReactNativeModule(
         theta.setOptions(params)
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -509,7 +509,7 @@ class ThetaClientReactNativeModule(
 
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       } finally {
         previewing = false
       }
@@ -584,7 +584,7 @@ class ThetaClientReactNativeModule(
         promise.resolve(true)
         photoCaptureBuilder = null
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
         photoCaptureBuilder = null
       }
     }
@@ -669,7 +669,7 @@ class ThetaClientReactNativeModule(
         promise.resolve(true)
         timeShiftCaptureBuilder = null
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
         timeShiftCaptureBuilder = null
       }
     }
@@ -781,7 +781,7 @@ class ThetaClientReactNativeModule(
         }
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       } finally {
         timeShiftManualCaptureBuilder = null
       }
@@ -907,7 +907,7 @@ class ThetaClientReactNativeModule(
         promise.resolve(true)
         videoCaptureBuilder = null
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
         videoCaptureBuilder = null
       }
     }
@@ -1022,7 +1022,7 @@ class ThetaClientReactNativeModule(
         promise.resolve(true)
         limitlessIntervalCaptureBuilder = null
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
         limitlessIntervalCaptureBuilder = null
       }
     }
@@ -1141,7 +1141,7 @@ class ThetaClientReactNativeModule(
         promise.resolve(true)
         shotCountSpecifiedIntervalCaptureBuilder = null
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
         shotCountSpecifiedIntervalCaptureBuilder = null
       }
     }
@@ -1268,7 +1268,7 @@ class ThetaClientReactNativeModule(
         promise.resolve(true)
         compositeIntervalCaptureBuilder = null
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
         compositeIntervalCaptureBuilder = null
       }
     }
@@ -1413,7 +1413,7 @@ class ThetaClientReactNativeModule(
         promise.resolve(true)
         burstCaptureBuilder = null
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
         burstCaptureBuilder = null
       }
     }
@@ -1535,7 +1535,7 @@ class ThetaClientReactNativeModule(
         promise.resolve(true)
         multiBracketCaptureBuilder = null
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
         multiBracketCaptureBuilder = null
       }
     }
@@ -1659,7 +1659,7 @@ class ThetaClientReactNativeModule(
         promise.resolve(true)
         continuousCaptureBuilder = null
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
         continuousCaptureBuilder = null
       }
     }
@@ -1750,7 +1750,7 @@ class ThetaClientReactNativeModule(
         metaInfo.putMap("xmp", xmp)
         promise.resolve(metaInfo)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -1772,7 +1772,7 @@ class ThetaClientReactNativeModule(
         theta.reboot()
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -1794,7 +1794,7 @@ class ThetaClientReactNativeModule(
         theta.reset()
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -1816,7 +1816,7 @@ class ThetaClientReactNativeModule(
         theta.restoreSettings()
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -1838,7 +1838,7 @@ class ThetaClientReactNativeModule(
         theta.stopSelfTimer()
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -1876,7 +1876,7 @@ class ThetaClientReactNativeModule(
           }
         promise.resolve(convertedUrl)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
 
@@ -1899,7 +1899,7 @@ class ThetaClientReactNativeModule(
         theta.cancelVideoConvert()
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -1921,7 +1921,7 @@ class ThetaClientReactNativeModule(
         theta.finishWlan()
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -1943,7 +1943,7 @@ class ThetaClientReactNativeModule(
         val response = theta.listAccessPoints()
         promise.resolve(toListAccessPointsResult(accessPointList = response))
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -1977,7 +1977,7 @@ class ThetaClientReactNativeModule(
         )
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -2017,7 +2017,7 @@ class ThetaClientReactNativeModule(
         )
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -2047,7 +2047,7 @@ class ThetaClientReactNativeModule(
         theta.setAccessPointConnectionPriority(ssid, connectionPriority.toInt(), ssidStealth)
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -2070,7 +2070,7 @@ class ThetaClientReactNativeModule(
         theta.deleteAccessPoint(ssid)
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -2093,7 +2093,7 @@ class ThetaClientReactNativeModule(
         val deviceName = theta.setBluetoothDevice(uuid)
         promise.resolve(deviceName)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -2117,7 +2117,7 @@ class ThetaClientReactNativeModule(
         val options = theta.getMySetting(ThetaRepository.CaptureModeEnum.valueOf(captureMode))
         promise.resolve(toResult(options = options))
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -2147,7 +2147,7 @@ class ThetaClientReactNativeModule(
         val options = theta.getMySetting(optionNameList)
         promise.resolve(toResult(options = options))
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -2172,7 +2172,7 @@ class ThetaClientReactNativeModule(
         theta.setMySetting(ThetaRepository.CaptureModeEnum.valueOf(captureMode), thetaOptions)
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -2195,7 +2195,7 @@ class ThetaClientReactNativeModule(
         theta.deleteMySetting(ThetaRepository.CaptureModeEnum.valueOf(captureMode))
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -2231,7 +2231,7 @@ class ThetaClientReactNativeModule(
         }
         promise.resolve(result)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -2254,7 +2254,7 @@ class ThetaClientReactNativeModule(
         theta.setPlugin(packageName)
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -2277,7 +2277,7 @@ class ThetaClientReactNativeModule(
         theta.startPlugin(packageName)
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -2299,7 +2299,7 @@ class ThetaClientReactNativeModule(
         theta.stopPlugin()
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -2322,7 +2322,7 @@ class ThetaClientReactNativeModule(
         val result = theta.getPluginLicense(packageName)
         promise.resolve(result)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -2344,7 +2344,7 @@ class ThetaClientReactNativeModule(
         val result = theta.getPluginOrders()
         promise.resolve(Arguments.fromList(result))
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -2377,7 +2377,7 @@ class ThetaClientReactNativeModule(
         theta.setPluginOrders(pluginList)
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -2428,7 +2428,7 @@ class ThetaClientReactNativeModule(
         })
         promise.resolve(true)
       } catch (t: Throwable) {
-        promise.reject(t)
+        rejectWithDetail(promise, t)
       }
     }
   }
@@ -2452,10 +2452,30 @@ class ThetaClientReactNativeModule(
     }
   }
 
+  private fun rejectWithDetail(promise: Promise, error: Throwable) {
+    val webApiException = error as? ThetaRepository.ThetaWebApiException
+    if (webApiException != null) {
+      val statusCode = webApiException.statusCode
+      val errorCode = webApiException.errorCode
+
+      val userInfo = Arguments.createMap()
+      statusCode?.let { userInfo.putInt(ERROR_STATUS_CODE, it) }
+      errorCode?.let { userInfo.putString(ERROR_CODE, it) }
+
+      android.util.Log.i("ThetaClientReactNative", "ThetaWebApiException statusCode=$statusCode errorCode=$errorCode message=${error.message}")
+      promise.reject(ERROR_CODE_ERROR, error.message, userInfo)
+    } else {
+      promise.reject(error)
+    }
+  }
+
   companion object {
     const val NAME = "ThetaClientReactNative"
     const val EVENT_NAME = "ThetaFrameEvent"
     const val EVENT_NOTIFY = "ThetaNotify"
+    const val ERROR_CODE_ERROR = "error"
+    const val ERROR_STATUS_CODE = "statusCode"
+    const val ERROR_CODE = "errorCode"
     const val NOTIFY_PHOTO_CAPTURING = "PHOTO-CAPTURING"
     const val NOTIFY_TIMESHIFT_PROGRESS = "TIME-SHIFT-PROGRESS"
     const val NOTIFY_TIMESHIFT_STOP_ERROR = "TIME-SHIFT-STOP-ERROR"
