@@ -1,9 +1,9 @@
 PODS:
   - Flutter (1.0.0)
-  - theta_client_flutter (1.14.1):
+  - theta_client_flutter (1.15.0):
     - Flutter
-    - THETAClient (= 1.14.1)
-  - THETAClient (1.14.1)
+    - THETAClient (= 1.15.0)
+  - THETAClient (1.15.0)
   - video_player_avfoundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -27,8 +27,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  theta_client_flutter: 8f876719b64283da6ceb43948b826a5c71f706a9
-  THETAClient: af61acd62e96c81065978f7cffd8201f35449b3a
+  theta_client_flutter: 055466866ba2b18f7eda3c0ed07d8d0fdd9cab36
+  THETAClient: f344689d783c5868c2da6e2b6820d696879dfea9
   video_player_avfoundation: e54d03b3b19f64f2c557354f72ce538387541ba6
 
 PODFILE CHECKSUM: 57c8aed26fba39d3ec9424816221f294a07c58eb
