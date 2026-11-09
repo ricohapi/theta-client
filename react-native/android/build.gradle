@@ -67,8 +67,8 @@ dependencies {
   // noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3"
-  implementation "com.ricoh360.thetaclient:theta-client:1.15.0"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0"
+  implementation "com.ricoh360.thetaclient:theta-client:1.16.0"
 }
 
 react {

@@ -166,6 +166,12 @@ const MenuScreen: React.FC<MenuScreenProps> = ({
             },
         },
         {
+            name: 'Client Mode',
+            value: {
+                selectedFunction: () => navigation.navigate('clientMode'),
+            },
+        },
+        {
             name: 'Capture',
             value: {
                 selectedFunction: () => setShowCaptureList(true),

@@ -67,7 +67,7 @@ fun changeUrlToWebSocket(url: String): String {
         protocol = URLProtocol.WS,
         host = orgUrl.host,
         port = orgUrl.port,
-        pathSegments = orgUrl.pathSegments,
+        pathSegments = orgUrl.rawSegments,
         parameters = orgUrl.parameters,
         fragment = orgUrl.fragment,
         user = orgUrl.user,

@@ -8,7 +8,8 @@ import io.ktor.client.plugins.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.*
-import io.ktor.utils.io.core.*
+import kotlinx.io.Source
+import kotlinx.io.readByteArray
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -20,14 +21,28 @@ import kotlin.reflect.KClass
 /**
  * Repository to handle Theta web APIs.
  *
- * @property endpoint URL of Theta web API endpoint.
+ * @param endpoint URL of Theta web API endpoint.
  * @param config Configuration of initialize. If null, get from THETA.
  * @param timeout Timeout of HTTP call.
  */
-class ThetaRepository internal constructor(val endpoint: String, config: Config? = null, timeout: Timeout? = null) {
+class ThetaRepository internal constructor(endpoint: String, config: Config? = null, timeout: Timeout? = null) {
 
     /** logger */
     internal val logger = ThetaApiLogger()
+
+    /**
+     * URL of Theta web API endpoint.
+     *
+     * In the client mode, its "<name>.local" host is replaced with the IP address in initialization.
+     * See [originalEndpoint] for the given one.
+     */
+    var endpoint = endpoint
+        private set
+
+    /**
+     * URL of Theta web API endpoint given to [newInstance], which is not replaced unlike [endpoint].
+     */
+    val originalEndpoint = endpoint
 
     /**
      * Configuration of THETA
@@ -155,6 +170,9 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      */
     @Throws(Throwable::class)
     internal suspend fun init() {
+        // In the client mode, resolve "<name>.local" which some platforms cannot resolve.
+        // In the AP mode, endpoint is not changed.
+        endpoint = MdnsResolver.resolveEndpoint(endpoint)
         try {
             val info = ThetaApi.callInfoApi(endpoint)
             cameraModel = ThetaModel.get(info.model, info.serialNumber)
@@ -425,8 +443,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             if (response.status != HttpStatusCode.OK) {
                 throw ThetaWebApiException(response.toString())
             }
-            val input = response.body<ByteReadPacket>()
-            val bytes = input.readBytes()
+            val input = response.body<Source>()
+            val bytes = input.readByteArray()
             // decodeToString replaces invalid byte sequence with \uFFFD
             return bytes.decodeToString()
         } catch (e: JsonConvertException) {
@@ -7821,17 +7839,17 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
      * ```kotlin
      * getLivePreview()
      *     .conflate()
-     *     .collect { byteReadPacket ->
+     *     .collect { frame ->
      *         if (isActive) {
-     *             // Read byteReadPacket
+     *             // Read frame
      *         }
-     *         byteReadPacket.release()
+     *         frame.close()
      *     }
      * ```
      */
     @Throws(Throwable::class)
     @Suppress("RethrowCaughtException")
-    fun getLivePreview(): Flow<ByteReadPacket> {
+    fun getLivePreview(): Flow<Source> {
         try {
             return ThetaApi.callGetLivePreviewCommand(endpoint)
         } catch (e: PreviewClientException) {
@@ -9542,8 +9560,8 @@ class ThetaRepository internal constructor(val endpoint: String, config: Config?
             if (response.status != HttpStatusCode.OK) {
                 throw ThetaWebApiException(response.toString())
             }
-            val input = response.body<ByteReadPacket>()
-            val bytes = input.readBytes()
+            val input = response.body<Source>()
+            val bytes = input.readByteArray()
             // decodeToString replaces invalid byte sequence with \uFFFD
             return bytes.decodeToString()
         } catch (e: JsonConvertException) {

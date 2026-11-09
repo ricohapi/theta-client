@@ -56,6 +56,7 @@ import {
 import { ItemSelectorView, type Item } from '../../components/ui/item-list';
 import { NumberEdit } from '../../components/options/number-edit';
 import { InputNumber } from '../../components/ui/input-number';
+import { InputString } from '../../components/ui/input-string';
 
 interface OptionItem extends Item {
     value: {
@@ -623,6 +624,21 @@ const optionList: OptionItem[] = [
         },
     },
     {
+        name: 'password',
+        value: {
+            optionName: OptionNameEnum.Password,
+            editor: (options, onChange) => (
+                <InputString
+                    title={'password'}
+                    onChange={(newValue) => {
+                        onChange({ password: newValue });
+                    }}
+                    value={options.password || ''}
+                />
+            ),
+        },
+    },
+    {
         name: 'preset',
         value: {
             optionName: OptionNameEnum.Preset,
@@ -742,6 +758,12 @@ const optionList: OptionItem[] = [
         },
     },
     {
+        name: 'topBottomCorrectionRotationSupport',
+        value: {
+            optionName: OptionNameEnum.TopBottomCorrectionRotationSupport,
+        },
+    },
+    {
         name: 'usbConnection',
         value: {
             optionName: OptionNameEnum.UsbConnection,
@@ -758,9 +780,18 @@ const optionList: OptionItem[] = [
         },
     },
     {
-        name: 'topBottomCorrectionRotationSupport',
+        name: 'username',
         value: {
-            optionName: OptionNameEnum.TopBottomCorrectionRotationSupport,
+            optionName: OptionNameEnum.Username,
+            editor: (options, onChange) => (
+                <InputString
+                    title={'username'}
+                    onChange={(newValue) => {
+                        onChange({ username: newValue });
+                    }}
+                    value={options.username || ''}
+                />
+            ),
         },
     },
     {

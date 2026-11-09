@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import {
+    getPluginLicense,
     getPluginOrders,
     getThetaInfo,
     getThetaLicense,
@@ -115,6 +116,41 @@ const commandList: CommandItem[] = [
                 try {
                     const result = await getPluginOrders();
                     return `OK getPluginOrders()\n${getJsonString(result)}`;
+                } catch (error) {
+                    return error instanceof Error
+                        ? error.toString()
+                        : 'An error occurred.';
+                }
+            },
+        },
+    },
+    {
+        // This screen has no input, so get the licenses of the installed plugins listed by listPlugins().
+        name: 'getPluginLicense',
+        value: {
+            commandFunction: async () => {
+                try {
+                    const plugins = await listPlugins();
+                    if (plugins.length === 0) {
+                        return 'No plugins installed.';
+                    }
+                    const maxChars = 200;
+                    let text = '';
+                    for (const plugin of plugins) {
+                        // Some plugins (e.g. pre-installed ones) may have no license, so show the result of each one.
+                        try {
+                            const result = await getPluginLicense(plugin.packageName);
+                            text +=
+                                `OK getPluginLicense(${plugin.packageName})\nlength:${result.length}\n\n` +
+                                `${result.slice(0, maxChars)}\n\n` +
+                                (result.length > maxChars
+                                    ? `(The remaining ${result.length - maxChars} characters were omitted.)\n\n`
+                                    : '');
+                        } catch (error) {
+                            text += `NG getPluginLicense(${plugin.packageName}) isPreInstalled:${plugin.isPreInstalled}\n${error}\n\n`;
+                        }
+                    }
+                    return text;
                 } catch (error) {
                     return error instanceof Error
                         ? error.toString()

@@ -15,7 +15,6 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.utils.io.*
-import io.ktor.utils.io.core.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,6 +22,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
+import kotlinx.io.Buffer
+import kotlinx.io.Source
 import kotlinx.io.files.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -185,7 +186,7 @@ internal object ThetaApi {
             throw IllegalArgumentException("Empty filePaths")
         }
         val responseBody = multipartPostClient.request(endpoint, apiPath, filePaths, connectTimeout, socketTimeout, callback)
-        return if (responseBody.size > 0) Json.decodeFromString<UpdateFirmwareApiResponse>(String(responseBody))
+        return if (responseBody.size > 0) Json.decodeFromString<UpdateFirmwareApiResponse>(responseBody.decodeToString())
         else Json.decodeFromString(DUMMY_RESPONSE) // Theta X does not send response body
     }
 
@@ -295,11 +296,11 @@ internal object ThetaApi {
      * @return You can get the newest frame in a CoroutineScope like this:
      * ```kotlin
      * callGetLivePreviewCommand(endpoint)
-     *     .collect { byteReadPacket ->
+     *     .collect { frame ->
      *         if (isActive) {
-     *             // Read byteReadPacket
+     *             // Read frame
      *         }
-     *         byteReadPacket.release()
+     *         frame.close()
      *     }
      * ```
      * @exception com.ricoh360.thetaclient.PreviewClientException can not get preview frames
@@ -310,7 +311,7 @@ internal object ThetaApi {
      * @exception io.ktor.client.plugins.ServerResponseException target response 5xx status
      */
     @Throws(Throwable::class)
-    fun callGetLivePreviewCommand(endpoint: String): Flow<ByteReadPacket> = flow {
+    fun callGetLivePreviewCommand(endpoint: String): Flow<Source> = flow {
         waitCaptureStartTime()
         var retry = 4 // retry count when preview command failed
         val WAIT = 500L // time between retry (ms)
@@ -328,7 +329,7 @@ internal object ThetaApi {
             try {
                 while (previewClient.hasNextPart()) {
                     val part = previewClient.nextPart()
-                    emit(ByteReadPacket(part.first, 0, part.second))
+                    emit(Buffer().apply { write(part.first, 0, part.second) })
                 }
             } catch (ex: PreviewClientException) {
                 if (retry <= 0) throw ex

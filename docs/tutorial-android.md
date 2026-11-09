@@ -5,7 +5,7 @@
 - Add following descriptions to the `dependencies` of your module's `build.gradle`.
 
   ```
-  implementation "com.ricoh360.thetaclient:theta-client:1.15.0"
+  implementation "com.ricoh360.thetaclient:theta-client:1.16.0"
   ```
 
 - Connect the wireless LAN between THETA and the smartphone that runs on the application using this SDK.
@@ -193,19 +193,19 @@ The preview is an equirectangular form of motion JPEG.
 | THETA SC2   | 1024  | 512   | 30               |                             |
 | THETA S, SC | 640   | 320   | 10               |                             |
 
-If you call `ThetaRepository.getLivePreview()` then "Flow<[io.ktor.utils.io.core.ByteReadPacket](https://api.ktor.io/ktor-io/io.ktor.utils.io.core/-byte-read-packet/index.html)>" returns, you get the JPEG for each frame.
+If you call `ThetaRepository.getLivePreview()` then "Flow<[kotlinx.io.Source](https://kotlinlang.org/api/kotlinx-io/kotlinx-io-core/kotlinx.io/-source/)>" returns, you get the JPEG for each frame.
 
 ```kotlin
-import io.ktor.utils.io.core.ByteReadPacket
+import kotlinx.io.asInputStream
 
 thetaRepository.getLivePreview()
-	.collect { byteReadPacket ->
+	.collect { frame ->
 		if (isActive) {
-			byteReadPacket.inputStream().use {
+			frame.asInputStream().use {
 				// Displaying the stream as JPEG
 			}
 		}
-		byteReadPacket.release()
+		frame.close()
 	}
 ```
 

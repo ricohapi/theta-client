@@ -6,7 +6,9 @@ package com.ricoh360.thetaclient
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.utils.io.ByteReadChannel
-import io.ktor.utils.io.core.ByteReadPacket
+import io.ktor.utils.io.readPacket
+import io.ktor.utils.io.readUTF8LineTo
+import kotlinx.io.Source
 
 /**
  * Reader for HTTP multipart response body Theta sends.
@@ -17,7 +19,6 @@ import io.ktor.utils.io.core.ByteReadPacket
 internal class MultipartReader(headers: Headers, val readChannel: ByteReadChannel) {
     var boundary: String? // boundary parameter of Content-Type header
     var contentLengthRegex: Regex
-    val BUFFER_SIZE = 128
     val lineBuffer = StringBuilder(BUFFER_SIZE)
 
     init {
@@ -35,40 +36,48 @@ internal class MultipartReader(headers: Headers, val readChannel: ByteReadChanne
      * get next part
      * if next part doesn't found, returns null
      */
-    suspend fun nextPart(): ByteReadPacket? {
-        if (boundary == null) return null
-        var line: String?
-
-        // skip to the next boundary
-        do {
-            line = readTextLine(lineBuffer, BUFFER_SIZE)
-            if (line == null) return null
-        } while (line != boundary)
-
-        // read part headers
-        var contentLength = 0
-        do {
-            line = readTextLine(lineBuffer, BUFFER_SIZE)
-            if (line == null) return null
-            val match = contentLengthRegex.find(line)
-            match?.groups?.get(1)?.value?.let {
-                contentLength = it.toInt()
-            }
-        } while (line!!.length > 0)
+    suspend fun nextPart(): Source? {
+        val contentLength = if (skipToBoundary()) readContentLength() else null
         if (contentLength == 0) {
             println("No Content-Length header")
-            return null
         }
+        if (contentLength == null || contentLength == 0) return null
 
         // read the part body
-        kotlin.runCatching {
+        return kotlin.runCatching {
             readChannel.readPacket(contentLength)
-        }.onSuccess {
-            return it
         }.onFailure {
             println(it.toString())
+        }.getOrNull()
+    }
+
+    /**
+     * Skip to the next boundary.
+     *
+     * @return false when no boundary is found
+     */
+    private suspend fun skipToBoundary(): Boolean {
+        val boundary = boundary ?: return false
+        while (true) {
+            val line = readTextLine(lineBuffer, BUFFER_SIZE) ?: return false
+            if (line == boundary) return true
         }
-        return null
+    }
+
+    /**
+     * Read the part headers.
+     *
+     * @return Value of Content-Length header, 0 when it is missing, or null when the headers do not end
+     */
+    private suspend fun readContentLength(): Int? {
+        var contentLength = 0
+        while (true) {
+            val line = readTextLine(lineBuffer, BUFFER_SIZE) ?: return null
+            if (line.isEmpty()) return contentLength
+            contentLengthRegex.find(line)?.groups?.get(1)?.value?.let {
+                contentLength = it.toInt()
+            }
+        }
     }
 
     /**
@@ -90,6 +99,10 @@ internal class MultipartReader(headers: Headers, val readChannel: ByteReadChanne
             return null
         }
         return buffer.toString()
+    }
+
+    companion object {
+        const val BUFFER_SIZE = 128
     }
 
 }

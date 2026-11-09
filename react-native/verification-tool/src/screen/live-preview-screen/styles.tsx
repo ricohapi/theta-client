@@ -44,6 +44,24 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         paddingVertical: 2,
     },
+    loadingOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    loadingBox: {
+        width: '80%',
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 20,
+        alignItems: 'center',
+    },
+    loadingText: {
+        marginTop: 12,
+        color: 'black',
+        textAlign: 'center',
+    },
 });
 
 export default styles;
