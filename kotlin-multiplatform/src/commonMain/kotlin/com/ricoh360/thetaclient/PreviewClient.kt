@@ -5,7 +5,6 @@ package com.ricoh360.thetaclient
 
 import com.ricoh360.thetaclient.PreviewClient.Companion.timeout
 import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.auth.HttpAuthHeader
 import io.ktor.http.auth.parseAuthorizationHeader
@@ -15,16 +14,13 @@ import io.ktor.network.sockets.InetSocketAddress
 import io.ktor.network.sockets.aSocket
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
-import io.ktor.network.sockets.tcpNoDelay
 import io.ktor.network.tls.tls
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.ByteWriteChannel
 import io.ktor.utils.io.cancel
-import io.ktor.utils.io.charsets.Charsets
-import io.ktor.utils.io.close
-import io.ktor.utils.io.core.String
 import io.ktor.utils.io.core.toByteArray
 import io.ktor.utils.io.discard
+import io.ktor.utils.io.readAvailable
 import io.ktor.utils.io.writeFully
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
@@ -192,7 +188,7 @@ internal class PreviewClientImpl : PreviewClient {
      */
     private suspend fun connect(url: URL): PreviewClientImpl {
         selector = SelectorManager(Dispatchers.Default)
-        val builder = aSocket(selector!!).tcpNoDelay().tcp()
+        val builder = aSocket(selector!!).tcp()
         val self = this
         val context = currentCoroutineContext()
         withTimeout(timeout.connectTimeout) {
@@ -235,7 +231,7 @@ internal class PreviewClientImpl : PreviewClient {
         } catch (_: Throwable) {
         }
         try {
-            output?.close()
+            output?.flushAndClose()
         } catch (_: Throwable) {
         }
         try {
@@ -360,7 +356,7 @@ internal class PreviewClientImpl : PreviewClient {
         }
         if (bp > 0) {
             try {
-                return String(buf, 0, bp, Charsets.UTF_8)
+                return buf.decodeToString(0, bp)
             } catch (t: Throwable) {
                 for (i in 0 until bp) {
                     println(buf[i])
@@ -452,12 +448,11 @@ internal class PreviewClientImpl : PreviewClient {
         val client = requestPreview(endpoint, method, path, body, contentType) as PreviewClientImpl
         return when (client.status) {
             HttpStatusCode.Unauthorized.value -> {
-                val url = URL(endpoint)
                 ApiClient.digestAuth?.let { digestAuth ->
                     responseHeaders?.get(HttpHeaders.WWWAuthenticate.lowercase())?.let { header ->
                         val authHeader = parseAuthorizationHeader(header) as HttpAuthHeader.Parameterized
                         digestAuth.updateAuthHeaderInfo(authHeader)
-                        requestPreview(endpoint, method, path, body, contentType, digestAuth.makeDigestHeader(url.path, HttpMethod.Post.value))
+                        requestPreview(endpoint, method, path, body, contentType, digestAuth.makeDigestHeader(path, method))
                     }
                 } ?: client
             }

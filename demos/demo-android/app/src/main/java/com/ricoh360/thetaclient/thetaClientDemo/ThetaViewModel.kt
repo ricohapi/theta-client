@@ -6,13 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ricoh360.thetaclient.ThetaRepository
 import com.ricoh360.thetaclient.capture.PhotoCapture
-import io.ktor.client.utils.*
-import io.ktor.utils.io.core.*
-import io.ktor.utils.io.streams.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.io.asInputStream
 import timber.log.Timber
 
 /**
@@ -73,9 +71,9 @@ class ThetaViewModel(
             kotlin.runCatching {
                 var beforeBitmap: Bitmap? = null
                 thetaRepository.getLivePreview()
-                    .collect { byteReadPacket ->
+                    .collect { frame ->
                         ensureActive()
-                        byteReadPacket.inputStream().use {
+                        frame.asInputStream().use {
                             val options = BitmapFactory.Options()
                             options.inMutable = true
                             val bitmap = BitmapFactory.decodeStream(it, null, options)
@@ -90,7 +88,7 @@ class ThetaViewModel(
                                 beforeBitmap = bitmap
                             }
                         }
-                        byteReadPacket.release()
+                        frame.close()
                     }
             }.onFailure {
                 when (it) {

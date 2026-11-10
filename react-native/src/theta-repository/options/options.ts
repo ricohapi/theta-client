@@ -625,7 +625,7 @@ export type Options = {
    */
   offDelayUsb?: OffDelayUsbEnum;
   /** Password used for digest authentication when _networkType is set to client mode. */
-  password?: String;
+  password?: string;
   /** Power saving mode */
   powerSaving?: PowerSavingEnum;
   /** Preset mode */
@@ -669,7 +669,7 @@ export type Options = {
   /** _usbConnection */
   usbConnection?: UsbConnectionEnum;
   /** User name used for digest authentication when _networkType is set to client mode. */
-  username?: String;
+  username?: string;
   /** Video stitching during shooting. */
   videoStitching?: VideoStitchingEnum;
   /** Reduction visibility of camera body to still image when stitching. */

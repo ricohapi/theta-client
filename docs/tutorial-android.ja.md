@@ -4,7 +4,7 @@
 
 - モジュールの`build.gradle`の`dependencies`に次を追加します。
   ```
-  implementation "com.ricoh360.thetaclient:theta-client:1.15.0"
+  implementation "com.ricoh360.thetaclient:theta-client:1.16.0"
   ```
 - 本 SDK を使用したアプリケーションが動作するスマートフォンと THETA を無線 LAN 接続しておきます。
 
@@ -206,19 +206,19 @@ videoCapturing.stopCapture()
 | THETA SC2   | 1024      | 512       | 30                  |                             |
 | THETA S, SC | 640       | 320       | 10                  |                             |
 
-`ThetaRepository.getLivePreview()`を呼ぶと、`Flow<io.ktor.utils.io.core.ByteReadPacket>`が返るので、そこか各フレームの JPEG を取得します。
+`ThetaRepository.getLivePreview()`を呼ぶと、`Flow<kotlinx.io.Source>`が返るので、そこか各フレームの JPEG を取得します。
 
 ```kotlin
-import io.ktor.utils.io.core.ByteReadPacket
+import kotlinx.io.asInputStream
 
 thetaRepository.getLivePreview()
-	.collect { byteReadPacket ->
+	.collect { frame ->
 		if (isActive) {
-			byteReadPacket.inputStream().use {
+			frame.asInputStream().use {
 				// Displaying the stream as JPEG
 			}
 		}
-		byteReadPacket.release()
+		frame.close()
 	}
 ```
 

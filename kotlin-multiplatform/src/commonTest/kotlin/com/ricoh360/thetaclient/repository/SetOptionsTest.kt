@@ -351,10 +351,10 @@ class SetOptionsTest {
         try {
             runBlocking {
                 try {
-                    thetaRepository.getLivePreview().collect { byteReadPacket ->
+                    thetaRepository.getLivePreview().collect { frame ->
                         val interval = currentTimeMillis() - startTime
                         assertTrue(interval >= ALLOWED_CAPTURE_INTERVAL, "interval: $interval")
-                        byteReadPacket.release()
+                        frame.close()
                         cancel()
                     }
                 } catch (exception: Exception) {

@@ -1,5 +1,14 @@
 import React from 'react';
-import { View, Alert, Text, Platform, NativeModules, NativeEventEmitter } from 'react-native';
+import {
+    View,
+    Alert,
+    Text,
+    Platform,
+    NativeModules,
+    NativeEventEmitter,
+    Modal,
+    ActivityIndicator,
+} from 'react-native';
 import styles from './styles.tsx';
 import {
     getLivePreview,
@@ -13,6 +22,8 @@ import WebView from 'react-native-webview';
 interface LivePreviewScreenProps {
     navigation: {
         setOptions: (options: { title: string }) => void;
+        goBack: () => void;
+        setBackHandler: (handler: (() => void) | null) => void;
     };
 }
 
@@ -21,7 +32,13 @@ const LivePreviewScreen: React.FC<LivePreviewScreenProps> = ({ navigation }) => 
     const [previewing, setPreviewing] = React.useState<boolean>(false);
     const [isLoaded, setLoaded] = React.useState(false);
     const [frameSize, setFrameSize] = React.useState<number>(0);
+    const [isStopping, setStopping] = React.useState(false);
     const webViewRef = React.useRef<any>(null);
+    // getLivePreview() settles when the live preview finishes.
+    const previewPromiseRef = React.useRef<Promise<unknown> | null>(null);
+    const isLeavingRef = React.useRef(false);
+    const navigationRef = React.useRef(navigation);
+    navigationRef.current = navigation;
     const source =
         Platform.OS === 'android'
             ? 'file:///android_asset/live-preview/index.html'
@@ -31,12 +48,18 @@ const LivePreviewScreen: React.FC<LivePreviewScreenProps> = ({ navigation }) => 
         setPreviewing(true);
         console.log('Starting live preview...');
         try {
-            const ret = await getLivePreview();
+            previewPromiseRef.current = getLivePreview();
+            const ret = await previewPromiseRef.current;
             setPreviewing(false);
+            previewPromiseRef.current = null;
             console.log(`live preview done with ${ret}`);
         } catch (error: unknown) {
             setPreviewing(false);
+            previewPromiseRef.current = null;
             console.log('getLivePreview error: ' + JSON.stringify(error));
+            if (isLeavingRef.current) {
+                return;
+            }
             const errStr = error instanceof Error ? error.message : String(error);
             const message =
                 errStr.includes('serviceUnavailable') || errStr.includes('503')
@@ -87,6 +110,31 @@ const LivePreviewScreen: React.FC<LivePreviewScreenProps> = ({ navigation }) => 
         navigation.setOptions({ title: 'Live Preview' });
     }, [navigation]);
 
+    // Back: stop the live preview and wait for it to finish before leaving.
+    React.useEffect(() => {
+        navigationRef.current.setBackHandler(async () => {
+            const previewPromise = previewPromiseRef.current;
+            if (previewPromise == null) {
+                navigationRef.current.goBack();
+                return;
+            }
+            isLeavingRef.current = true;
+            setStopping(true);
+            try {
+                stopLivePreview().catch((error) => console.log('stopLivePreview error: ' + error));
+                // The SDK stops at the next frame. Give up after 10s when no frame comes.
+                await Promise.race([
+                    previewPromise.catch(() => { }),
+                    new Promise((resolve) => setTimeout(resolve, 10_000)),
+                ]);
+            } finally {
+                setStopping(false);
+                navigationRef.current.goBack();
+            }
+        });
+        return () => navigationRef.current.setBackHandler(null);
+    }, []);
+
     React.useEffect(() => {
         const emitter = new NativeEventEmitter(
             NativeModules.ThetaClientReactNative
@@ -114,6 +162,15 @@ const LivePreviewScreen: React.FC<LivePreviewScreenProps> = ({ navigation }) => 
 
     return (
         <View style={styles.takePhotoBack}>
+            {/* Full screen modal blocks every operation including the back button in the header */}
+            <Modal visible={isStopping} transparent animationType="none" onRequestClose={() => { }}>
+                <View style={styles.loadingOverlay}>
+                    <View style={styles.loadingBox}>
+                        <ActivityIndicator size="large" color="#6200ee" />
+                        <Text style={styles.loadingText}>Stopping live preview...</Text>
+                    </View>
+                </View>
+            </Modal>
             <View style={styles.contentContainer}>
                 <WebView
                     style={styles.webview}

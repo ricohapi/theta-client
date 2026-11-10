@@ -36,3 +36,13 @@ actual fun currentTimeMillis(): Long {
 }
 
 actual typealias WeakReference<T> = WeakReference<T>
+
+/**
+ * Android often cannot resolve mDNS host names (.local).
+ * Tested on THETA X (serial number YRxxxxxxxx), V (YLxxxxxxxx) and Z1 (YNxxxxxxxx). Add other models after testing on them.
+ * THETA V and Z1 answer the IPv6 link-local address too, but refuse HTTP on it, so the OS resolution does not work.
+ */
+internal actual val mdnsHostPrefixes: List<String> = listOf("THETAYR", "THETAYL", "THETAYN")
+
+internal actual suspend fun resolveMdnsHost(host: String, retryCount: Int): String? =
+    MdnsResolver.resolve(host, retryCount)

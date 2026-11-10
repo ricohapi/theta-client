@@ -4,30 +4,28 @@ import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
     kotlin("multiplatform")
-    kotlin("plugin.serialization") version "1.9.20"
+    kotlin("plugin.serialization") version "2.1.21"
     id("com.android.library")
     id("org.jetbrains.dokka") version "1.9.20"
     kotlin("native.cocoapods")
     signing
-    id("io.gitlab.arturbosch.detekt").version("1.23.3")
+    id("io.gitlab.arturbosch.detekt").version("1.23.8")
     id("com.vanniktech.maven.publish") version "0.32.0"
-    id("com.goncalossilva.resources") version "0.4.0"
+    id("com.goncalossilva.resources") version "0.9.0"
 }
 
 dependencies {
     dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.20")
 }
 
-val thetaClientVersion = "1.15.0"
+val thetaClientVersion = "1.16.0"
 group = "com.ricoh360.thetaclient"
 version = thetaClientVersion
 
 kotlin {
     androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
         }
         publishLibraryVariants("release")
     }
@@ -52,16 +50,16 @@ kotlin {
     iosSimulatorArm64()
 
     sourceSets {
-        val coroutinesVersion = "1.7.3"
-        val ktorVersion = "2.3.13"
+        val coroutinesVersion = "1.10.2"
+        val ktorVersion = "3.2.3"
         val kryptoVersion = "4.0.10"
 
         val commonMain by getting {
             dependencies {
                 // Works as common dependency as well as the platform one
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.3.0")
-                api("io.ktor:ktor-client-core:$ktorVersion") // Applications need to use ByteReadPacket class
+                api("org.jetbrains.kotlinx:kotlinx-io-core:0.7.0") // Applications need to use kotlinx.io.Source class
+                api("io.ktor:ktor-client-core:$ktorVersion")
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
                 implementation("io.ktor:ktor-client-cio:$ktorVersion")
                 implementation("io.ktor:ktor-client-logging:$ktorVersion")
@@ -75,28 +73,8 @@ kotlin {
                 implementation(kotlin("test"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
                 implementation("io.ktor:ktor-client-mock:$ktorVersion")
-                implementation("com.goncalossilva:resources:0.4.0")
+                implementation("com.goncalossilva:resources:0.9.0")
             }
-        }
-        val androidMain by getting
-        val androidUnitTest by getting
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
-        }
-        val iosX64Test by getting
-        val iosArm64Test by getting
-        val iosSimulatorArm64Test by getting
-        val iosTest by creating {
-            dependsOn(commonTest)
-            iosX64Test.dependsOn(this)
-            iosArm64Test.dependsOn(this)
-            iosSimulatorArm64Test.dependsOn(this)
         }
     }
 }
@@ -123,7 +101,10 @@ afterEvaluate {
     mavenPublishing {
         // publishing to https://central.sonatype.com/
         publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
-        signAllPublications()
+        // Skip signing without the key, e.g. publishToMavenLocal for local testing. The release build always has it.
+        if (project.hasProperty("signingInMemoryKey")) {
+            signAllPublications()
+        }
         coordinates(group.toString(), "theta-client", version.toString())
         pom {
             name.set("theta-client")

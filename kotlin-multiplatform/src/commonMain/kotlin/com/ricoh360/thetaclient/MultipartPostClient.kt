@@ -13,13 +13,11 @@ import io.ktor.network.sockets.InetSocketAddress
 import io.ktor.network.sockets.aSocket
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
-import io.ktor.network.sockets.tcpNoDelay
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.ByteWriteChannel
 import io.ktor.utils.io.cancel
-import io.ktor.utils.io.charsets.Charsets
 import io.ktor.utils.io.close
-import io.ktor.utils.io.core.String
+import io.ktor.utils.io.readAvailable
 import io.ktor.utils.io.core.toByteArray
 import io.ktor.utils.io.writeFully
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +25,8 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlinx.io.Source
 import kotlinx.io.files.Path
-import kotlinx.io.files.source
+import kotlinx.io.buffered
+import kotlinx.io.files.SystemFileSystem
 
 /**
  * Base class of custom HTTP client
@@ -150,7 +149,7 @@ open class BaseHttpClient {
         reset()
         this.endpoint = URL(endpoint)
         this.selector = SelectorManager(Dispatchers.Default)
-        val builder = aSocket(selector!!).tcpNoDelay().tcp()
+        val builder = aSocket(selector!!).tcp()
         withContext(Dispatchers.Default) {
             withTimeout(connectionTimeout) {
                 val socket = builder.connect(
@@ -185,6 +184,7 @@ open class BaseHttpClient {
             input?.cancel()
         }
         runCatching {
+            @Suppress("DEPRECATION") // fire-and-forget flushAndClose(); close() is not suspend
             output?.close()
         }
         runCatching {
@@ -358,7 +358,7 @@ open class BaseHttpClient {
         }
         if (bp > 0) {
             try {
-                return String(buf, 0, bp, Charsets.UTF_8)
+                return buf.decodeToString(0, bp)
             } catch (t: Throwable) {
                 for (i in 0 until bp) {
                     println(buf[i])
@@ -646,7 +646,7 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
             var size = 0L
             var src: Source? = null
             try {
-                src = Path(filePath).source()
+                src = SystemFileSystem.source(Path(filePath)).buffered()
                 var count = 0
                 while (count != -1) {
                     size += count
@@ -705,7 +705,7 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
             val headers = this.responseHeaders?.entries?.joinToString(prefix = "[", postfix = "]") ?: "[no header]"
             var body = "[empty body]"
             this.responseBody?.let {
-                body = String(it)
+                body = it.decodeToString()
             }
             throw (BaseHttpClientException("Request failed: ${this.status} ${this.statusMessage}\n$headers\n$body}"))
         }
@@ -747,7 +747,7 @@ class MultipartPostClientImpl : MultipartPostClient, BaseHttpClient() {
         filePaths.forEach {
             var src: Source? = null
             try {
-                src = Path(it).source()
+                src = SystemFileSystem.source(Path(it)).buffered()
                 writePartHeaders(boundary, genPartHeaders(getFileName(it)))
                 // write part body
                 var count = 0

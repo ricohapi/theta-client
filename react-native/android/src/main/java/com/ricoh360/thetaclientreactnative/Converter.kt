@@ -590,6 +590,10 @@ fun <T> addOptionsValueToMap(options: Options, name: OptionNameEnum, objects: Wr
         objects.putInt(key, value)
       }
 
+      is Boolean -> {
+        objects.putBoolean(key, value)
+      }
+
       is Number -> {
         objects.putDouble(key, value.toDouble())
       }

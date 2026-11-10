@@ -27,7 +27,7 @@ internal interface WebSocketHttpSession {
 internal class WebSocketHttpClientImpl : WebSocketHttpClient {
     val httpClient = HttpClient(CIO) {
         install(WebSockets) {
-            pingInterval = WEBSOCKET_PING_INTERVAL
+            pingIntervalMillis = WEBSOCKET_PING_INTERVAL
         }
         install(Logging) {
             logger = ThetaApiLogger()

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, StatusBar, Platform, SafeAreaView, Button } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, StatusBar, Platform, SafeAreaView, Button, BackHandler } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import MenuScreen from './screen/menu-screen';
 import GetInfoScreen from './screen/get-info-screen';
@@ -20,6 +20,9 @@ import ContinuousCaptureScreen from './screen/continuous-capture-screen';
 import LivePreviewScreen from './screen/live-preview-screen';
 import VideoConvertScreen from './screen/video-convert-screen';
 import CommandsScreen from './screen/commands-screen';
+import ClientModeScreen from './screen/client-mode-screen';
+import ClientModeAccessPointsScreen from './screen/client-mode-screen/client-mode-access-points-screen';
+import ClientModeOptionsScreen from './screen/client-mode-screen/client-mode-options-screen';
 import FilePreviewScreen from './screen/file-preview-screen';
 import LogPopupView from './components/log-popup-view/log-popup-view';
 import { FileTypeEnum, setApiLogListener } from './modules/theta-client';
@@ -46,6 +49,9 @@ type ScreenName =
   | 'videoConvert'
   | 'options'
   | 'commands'
+  | 'clientMode'
+  | 'clientModeAccessPoints'
+  | 'clientModeOptions'
   | 'photoCapture'
   | 'videoCapture'
   | 'limitlessIntervalCapture'
@@ -68,6 +74,9 @@ const screenTitles: Record<ScreenName, string> = {
   videoConvert: 'Video Convert',
   options: 'Options',
   commands: 'Commands',
+  clientMode: 'Client Mode',
+  clientModeAccessPoints: 'Access Points',
+  clientModeOptions: 'Client Mode Options',
   photoCapture: 'Photo Capture',
   videoCapture: 'Video Capture',
   limitlessIntervalCapture: 'Limitless Interval Capture',
@@ -89,6 +98,8 @@ const App = () => {
   const [screenTitle, setScreenTitle] = useState<string>('');
   const [log, setLog] = useState<string>('');
   const [isShowLog, setShowLog] = useState<boolean>(false);
+  // Set by a screen that must run something before leaving (e.g. client mode screen)
+  const backHandlerRef = useRef<(() => void) | null>(null);
 
   // list-files screen state
   const [listFilesState, setListFilesState] = useState({
@@ -168,6 +179,22 @@ const App = () => {
     }
   };
 
+  // Header back button. A screen that must run something before leaving (e.g. client mode screen) handles it.
+  const onBack = () => (backHandlerRef.current ? backHandlerRef.current() : goBack());
+
+  // Android back button: same as the header one instead of closing the app, which would skip the handler above.
+  // Registered on every render to read the current history.
+  useEffect(() => {
+    const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (screenHistory.length === 0) {
+        return false;
+      }
+      onBack();
+      return true;
+    });
+    return () => subscription.remove();
+  });
+
   const setOptions = (_options: { title: string }) => {
   };
 
@@ -175,6 +202,9 @@ const App = () => {
     navigate,
     goBack,
     setOptions,
+    setBackHandler: (handler: (() => void) | null) => {
+      backHandlerRef.current = handler;
+    },
   };
 
   const renderScreen = () => {
@@ -229,6 +259,12 @@ const App = () => {
         return <VideoConvertScreen navigation={navigation} />;
       case 'commands':
         return <CommandsScreen navigation={navigation} />;
+      case 'clientMode':
+        return <ClientModeScreen navigation={navigation} onChangeMenuMessage={setMenuMessage} />;
+      case 'clientModeAccessPoints':
+        return <ClientModeAccessPointsScreen />;
+      case 'clientModeOptions':
+        return <ClientModeOptionsScreen />;
       case 'filePreview':
         return screenParams?.fileInfo ? (
           <FilePreviewScreen fileInfo={screenParams.fileInfo} />
@@ -250,7 +286,7 @@ const App = () => {
       <StatusBar barStyle="light-content" backgroundColor="#6200ee" />
       <View style={styles.header}>
         {screenHistory.length > 0 && (
-          <TouchableOpacity onPress={goBack} style={styles.backButton}>
+          <TouchableOpacity onPress={onBack} style={styles.backButton}>
             <BackIcon />
           </TouchableOpacity>
         )}

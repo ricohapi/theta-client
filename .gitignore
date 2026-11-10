@@ -9,3 +9,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+/gh-pages
+/demos/demo-flutter/.pub-cache-local/*
+.build/
+.kotlin/

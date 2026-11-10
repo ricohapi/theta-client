@@ -1,8 +1,8 @@
 buildscript {
     ext {
-        compose_version = '1.5.3' // depends on Kotlin 1.9.10
-        kotlin_version = '1.9.10'
-        coroutines_version = '1.7.3'
+        compose_version = '1.5.3'
+        kotlin_version = '2.0.21'
+        coroutines_version = '1.9.0'
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
@@ -15,6 +15,7 @@ plugins {
     id 'com.android.application' version '8.1.2' apply false
     id 'com.android.library' version '8.1.2' apply false
     id 'org.jetbrains.kotlin.android' version "$kotlin_version" apply false
+    id 'org.jetbrains.kotlin.plugin.compose' version "$kotlin_version" apply false
 }
 
 task clean(type: Delete) {

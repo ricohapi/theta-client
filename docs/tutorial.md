@@ -136,7 +136,7 @@ The preview is an equirectangular data of motion JPEG format.
 Only available in the still image shooting mode for THETA S and THETA SC.
 Data acquisition stops when THETA is operated, shooting is started, or the shooting mode is changed.
 
-On Android, call `ThetaRepository.getLivePreview()` then Flow<[io.ktor.utils.io.core.ByteReadPacket](https://api.ktor.io/ktor-io/io.ktor.utils.io.core/-byte-read-packet.html)> returns, from which you get the JPEG data for each frame.
+On Android, call `ThetaRepository.getLivePreview()` then Flow<[kotlinx.io.Source](https://kotlinlang.org/api/kotlinx-io/kotlinx-io-core/kotlinx.io/-source/)> returns, from which you get the JPEG data for each frame.
 
 On other environment, call `ThetaRepository.getLivePreview(frameHandler)`.
 `frameHandler` is a callback function called when each frame is acquired.
