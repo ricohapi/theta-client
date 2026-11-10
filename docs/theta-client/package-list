@@ -1806,6 +1806,7 @@ $dokka.location:com.ricoh360.thetaclient/ThetaRepository/listAccessPoints/#/Poin
 $dokka.location:com.ricoh360.thetaclient/ThetaRepository/listFiles/#com.ricoh360.thetaclient.ThetaRepository.FileTypeEnum#kotlin.Int#kotlin.Int#com.ricoh360.thetaclient.ThetaRepository.StorageEnum?/PointingToDeclaration/theta-client/com.ricoh360.thetaclient/-theta-repository/list-files.html
 $dokka.location:com.ricoh360.thetaclient/ThetaRepository/listFiles/#com.ricoh360.thetaclient.ThetaRepository.FileTypeEnum#kotlin.Int#kotlin.Int/PointingToDeclaration/theta-client/com.ricoh360.thetaclient/-theta-repository/list-files.html
 $dokka.location:com.ricoh360.thetaclient/ThetaRepository/listPlugins/#/PointingToDeclaration/theta-client/com.ricoh360.thetaclient/-theta-repository/list-plugins.html
+$dokka.location:com.ricoh360.thetaclient/ThetaRepository/originalEndpoint/#/PointingToDeclaration/theta-client/com.ricoh360.thetaclient/-theta-repository/original-endpoint.html
 $dokka.location:com.ricoh360.thetaclient/ThetaRepository/reboot/#/PointingToDeclaration/theta-client/com.ricoh360.thetaclient/-theta-repository/reboot.html
 $dokka.location:com.ricoh360.thetaclient/ThetaRepository/reset/#/PointingToDeclaration/theta-client/com.ricoh360.thetaclient/-theta-repository/reset.html
 $dokka.location:com.ricoh360.thetaclient/ThetaRepository/restoreSettings/#/PointingToDeclaration/theta-client/com.ricoh360.thetaclient/-theta-repository/restore-settings.html
