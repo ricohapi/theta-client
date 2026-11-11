@@ -1592,7 +1592,7 @@ PODS:
   - RNWifi (4.13.6):
     - React-Core
   - SocketRocket (0.7.1)
-  - theta-client-react-native (1.15.0):
+  - theta-client-react-native (1.16.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1612,9 +1612,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - THETAClient (= 1.15.0)
+    - THETAClient (= 1.16.0)
     - Yoga
-  - THETAClient (1.15.0)
+  - THETAClient (1.16.0)
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -1909,8 +1909,8 @@ SPEC CHECKSUMS:
   RNSVG: 8588ee1ca9b2e6fd2c99466e35b3db0e9f81bb40
   RNWifi: dfa2db4c4e46496f53016fb8be32b5a51f13aee4
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
-  theta-client-react-native: f909648fc08b257b8b5a8a7da973d2505c9e33e2
-  THETAClient: f344689d783c5868c2da6e2b6820d696879dfea9
+  theta-client-react-native: 29241660f23b80d2823c876daebe2bcb6a5e3fd3
+  THETAClient: 698b0b25c35f34f62b643eb1b7912537f4f29a71
   Yoga: e14bad835e12b6c7e2260fc320bd00e0f4b45add
 
 PODFILE CHECKSUM: 45a7bac29c088539d9820153562b6b639e169ee6
